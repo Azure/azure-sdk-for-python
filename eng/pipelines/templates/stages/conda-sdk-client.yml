@@ -155,6 +155,14 @@ parameters:
     displayName: 'azure-ai-documentintelligence'
     type: boolean
     default: true
+  - name: release_azure_health_deidentification
+    displayName: 'azure-health-deidentification'
+    type: boolean
+    default: true
+  - name: release_azure_ai_agents
+    displayName: 'azure-ai-agents'
+    type: boolean
+    default: true
   - name: release_azure_mgmt
     displayName: 'azure-mgmt'
     type: boolean
@@ -189,7 +197,7 @@ extends:
                       in_batch: ${{ parameters.release_azure_core }}
                       checkout:
                         - package: azure-core
-                          version: 1.32.0
+                          version: 1.34.0
                         - package: azure-mgmt-core
                           version: 1.5.0
                         - package: azure-common
@@ -215,7 +223,7 @@ extends:
                       in_batch: ${{ parameters.release_azure_identity }}
                       checkout:
                         - package: azure-identity
-                          version: 1.20.0
+                          version: 1.23.0
                     - name: azure-healthinsights
                       common_root: azure
                       in_batch: ${{ parameters.release_azure_healthinsights }}
@@ -229,13 +237,13 @@ extends:
                       service: storage
                       checkout:
                         - package: azure-storage-blob
-                          version: 12.24.1
+                          version: 12.25.1
                         - package: azure-storage-queue
                           version: 12.12.0
                         - package: azure-storage-file-share
-                          version: 12.20.1
+                          version: 12.21.0
                         - package: azure-storage-file-datalake
-                          version: 12.18.1
+                          version: 12.20.0
                     - name: azure-ai-ml
                       service: ml
                       in_batch: ${{ parameters.release_azure_ai_ml }}
@@ -243,7 +251,7 @@ extends:
                         - conda-forge
                       checkout:
                         - package: azure-ai-ml
-                          version: 1.25.0
+                          version: 1.27.1
                     - name: azure-ai-contentsafety
                       common_root: azure
                       service: contentsafety
@@ -331,7 +339,7 @@ extends:
                         - package: azure-communication-sms
                           version: 1.1.0
                         - package: azure-communication-rooms
-                          version: 1.1.1
+                          version: 1.2.0
                         - package: azure-communication-jobrouter
                           version: 1.0.0
                         - package: azure-communication-callautomation
@@ -361,7 +369,7 @@ extends:
                       in_batch: ${{ parameters.release_azure_data_tables }}
                       checkout:
                         - package: azure-data-tables
-                          version: 12.6.0
+                          version: 12.7.0
                     - name: azure-developer-loadtesting
                       service: loadtesting
                       in_batch: ${{ parameters.release_azure_developer_loadtesting }}
@@ -379,7 +387,7 @@ extends:
                       in_batch: ${{ parameters.release_azure_eventgrid }}
                       checkout:
                         - package: azure-eventgrid
-                          version: 4.21.0
+                          version: 4.22.0
                     - name: azure-eventhub
                       service: eventhub
                       common_root: azure/eventhub
@@ -390,7 +398,7 @@ extends:
                         - package: azure-eventhub-checkpointstoreblob-aio
                           version: 1.2.0
                         - package: azure-eventhub
-                          version: 5.14.0
+                          version: 5.15.0
                     - name: azure-iot-deviceupdate
                       service: deviceupdate
                       in_batch: ${{ parameters.release_azure_iot_deviceupdate }}
@@ -415,7 +423,7 @@ extends:
                       in_batch: ${{ parameters.release_azure_messaging_webpubsubservice }}
                       checkout:
                         - package: azure-messaging-webpubsubservice
-                          version: 1.2.1
+                          version: 1.2.2
                     - name: azure-messaging-webpubsubclient
                       service: webpubsub
                       in_batch: ${{ parameters.release_azure_messaging_webpubsubclient }}
@@ -467,6 +475,20 @@ extends:
                       in_batch: ${{ parameters.release_azure_ai_documentintelligence }}
                       checkout:
                         - package: azure-ai-documentintelligence
+                          version: 1.0.2
+                    - name: azure-health-deidentification
+                      service: deidentification
+                      common_root: azure
+                      in_batch: ${{ parameters.release_azure_health_deidentification }}
+                      checkout:
+                        - package: azure-health-deidentification
+                          version: 1.0.0
+                    - name: azure-ai-agents
+                      common_root: azure
+                      service: agents
+                      in_batch: ${{ parameters.release_azure_ai_agents }}
+                      checkout:
+                        - package: azure-ai-agents
                           version: 1.0.0
                     - name: azure-mgmt
                       service: mgmt
@@ -480,15 +502,15 @@ extends:
                         - package: azure-mgmt-apicenter
                           version: 1.0.0
                         - package: azure-mgmt-apimanagement
-                          version: 4.0.1
+                          version: 5.0.0
                         - package: azure-mgmt-appcomplianceautomation
                           version: 1.0.0
                         - package: azure-mgmt-appconfiguration
                           version: 4.0.0
                         - package: azure-mgmt-appcontainers
-                          version: 3.1.0
+                          version: 3.2.0
                         - package: azure-mgmt-applicationinsights
-                          version: 4.0.0
+                          version: 4.1.0
                         - package: azure-mgmt-appplatform
                           version: 10.0.0
                         - package: azure-mgmt-attestation
@@ -530,7 +552,7 @@ extends:
                         - package: azure-mgmt-communication
                           version: 2.1.0
                         - package: azure-mgmt-compute
-                          version: 34.0.0
+                          version: 34.1.0
                         - package: azure-mgmt-computefleet
                           version: 1.0.0
                         - package: azure-mgmt-computeschedule
@@ -546,11 +568,11 @@ extends:
                         - package: azure-mgmt-containerinstance
                           version: 10.1.0
                         - package: azure-mgmt-containerregistry
-                          version: 10.3.0
+                          version: 14.0.0
                         - package: azure-mgmt-containerservice
-                          version: 34.1.0
+                          version: 36.0.0
                         - package: azure-mgmt-containerservicefleet
-                          version: 3.0.0
+                          version: 3.1.0
                         - package: azure-mgmt-cosmosdb
                           version: 9.7.0
                         - package: azure-mgmt-costmanagement
@@ -560,15 +582,15 @@ extends:
                         - package: azure-mgmt-dashboard
                           version: 1.1.0
                         - package: azure-mgmt-databox
-                          version: 3.0.0
+                          version: 3.1.0
                         - package: azure-mgmt-databoxedge
-                          version: 1.0.0
+                          version: 2.0.0
                         - package: azure-mgmt-databricks
                           version: 2.0.0
                         - package: azure-mgmt-datadog
                           version: 2.1.0
                         - package: azure-mgmt-datafactory
-                          version: 9.1.0
+                          version: 9.2.0
                         - package: azure-mgmt-datamigration
                           version: 10.0.0
                         - package: azure-mgmt-dataprotection
@@ -581,6 +603,8 @@ extends:
                           version: 2.0.0
                         - package: azure-mgmt-devcenter
                           version: 1.1.0
+                        - package: azure-mgmt-deviceregistry
+                          version: 1.0.0
                         - package: azure-mgmt-deviceupdate
                           version: 1.1.0
                         - package: azure-mgmt-devopsinfrastructure
@@ -602,7 +626,7 @@ extends:
                         - package: azure-mgmt-elasticsan
                           version: 1.1.0
                         - package: azure-mgmt-eventgrid
-                          version: 10.2.0
+                          version: 10.4.0
                         - package: azure-mgmt-eventhub
                           version: 11.2.0
                         - package: azure-mgmt-extendedlocation
@@ -638,7 +662,7 @@ extends:
                         - package: azure-mgmt-informaticadatamanagement
                           version: 1.0.0
                         - package: azure-mgmt-iothub
-                          version: 3.0.0
+                          version: 4.0.0
                         - package: azure-mgmt-iothubprovisioningservices
                           version: 1.1.0
                         - package: azure-mgmt-iotfirmwaredefense
@@ -646,7 +670,7 @@ extends:
                         - package: azure-mgmt-iotoperations
                           version: 1.0.0
                         - package: azure-mgmt-keyvault
-                          version: 10.3.1
+                          version: 11.0.0
                         - package: azure-mgmt-kubernetesconfiguration
                           version: 3.1.0
                         - package: azure-mgmt-kusto
@@ -689,6 +713,8 @@ extends:
                           version: 6.0.2
                         - package: azure-mgmt-msi
                           version: 7.0.0
+                        - package: azure-mgmt-neonpostgres
+                          version: 1.0.0
                         - package: azure-mgmt-netapp
                           version: 13.3.0
                         - package: azure-mgmt-network
@@ -720,7 +746,7 @@ extends:
                         - package: azure-mgmt-portal
                           version: 1.0.0
                         - package: azure-mgmt-postgresqlflexibleservers
-                          version: 1.0.0
+                          version: 1.1.0
                         - package: azure-mgmt-powerbidedicated
                           version: 1.0.0
                         - package: azure-mgmt-privatedns
@@ -730,13 +756,13 @@ extends:
                         - package: azure-mgmt-qumulo
                           version: 2.0.0
                         - package: azure-mgmt-quota
-                          version: 1.1.0
+                          version: 2.0.0
                         - package: azure-mgmt-rdbms
                           version: 10.1.0
                         - package: azure-mgmt-recoveryservices
                           version: 3.0.0
                         - package: azure-mgmt-recoveryservicesbackup
-                          version: 9.1.0
+                          version: 9.2.0
                         - package: azure-mgmt-recoveryservicessiterecovery
                           version: 1.2.0
                         - package: azure-mgmt-redhatopenshift
@@ -750,7 +776,7 @@ extends:
                         - package: azure-mgmt-reservations
                           version: 2.3.0
                         - package: azure-mgmt-resource
-                          version: 23.2.0
+                          version: 23.4.0
                         - package: azure-mgmt-resourceconnector
                           version: 1.0.0
                         - package: azure-mgmt-resourcemover
@@ -770,7 +796,7 @@ extends:
                         - package: azure-mgmt-servermanager
                           version: 2.0.1
                         - package: azure-mgmt-servicebus
-                          version: 8.2.1
+                          version: 9.0.0
                         - package: azure-mgmt-servicefabric
                           version: 2.1.0
                         - package: azure-mgmt-servicefabricmanagedclusters
@@ -778,7 +804,7 @@ extends:
                         - package: azure-mgmt-servicelinker
                           version: 1.1.0
                         - package: azure-mgmt-servicenetworking
-                          version: 1.0.0
+                          version: 2.0.0
                         - package: azure-mgmt-signalr
                           version: 1.2.0
                         - package: azure-mgmt-sphere
@@ -786,9 +812,9 @@ extends:
                         - package: azure-mgmt-sql
                           version: 3.0.1
                         - package: azure-mgmt-standbypool
-                          version: 1.0.0
+                          version: 2.0.0
                         - package: azure-mgmt-storage
-                          version: 22.1.0
+                          version: 23.0.0
                         - package: azure-mgmt-storagecache
                           version: 2.0.0
                         - package: azure-mgmt-storagemover
@@ -816,6 +842,8 @@ extends:
                         - package: azure-mgmt-webpubsub
                           version: 2.0.0
                         - package: azure-mgmt-workloads
+                          version: 1.0.0
+                        - package: azure-mgmt-workloadssapvirtualinstance
                           version: 1.0.0
 
 
