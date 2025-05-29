@@ -13,6 +13,9 @@
 
 ### Bugs Fixed
 
+- Do not count Functions as App Service
+  ([#41327](https://github.com/Azure/azure-sdk-for-python/pull/41327))
+
 ### Other Changes
 
 - Extend version range for `psutil` to include 7.x
