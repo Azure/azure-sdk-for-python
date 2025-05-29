@@ -44,7 +44,7 @@ model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
     # TODO : Remove api_version when the service is stable
-    with AIProjectClient(endpoint=endpoint, credential=credential, api_version="latest") as project_client:
+    with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
         # [START evaluations_agent_sample]
         agent = project_client.agents.create_agent(
