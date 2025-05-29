@@ -5,6 +5,9 @@ This is a Model Context Protocol (MCP) server that provides access to various va
 ## Prerequisites
 
 - Python 3.9 or higher
+- uv
+- tox
+- Node
 
 ## Available Tools
 

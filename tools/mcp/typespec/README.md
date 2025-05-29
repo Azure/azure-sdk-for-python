@@ -6,6 +6,7 @@ This is a Model Context Protocol (MCP) server that wraps the [@azure-tools/types
 
 - Python
 - Node.js and npm/npx
+- uv
 
 ## Available Tools
 
