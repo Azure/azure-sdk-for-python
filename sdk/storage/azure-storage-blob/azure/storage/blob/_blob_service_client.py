@@ -137,7 +137,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
         :param str hostname:
             The hostname of the current location mode.
-        :returns: A formatted endpoint URL including current location mode hostname.
+        :return: A formatted endpoint URL including current location mode hostname.
         :rtype: str
         """
         return f"{self.scheme}://{hostname}/{self._query_str}"
@@ -169,7 +169,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
-        :returns: A Blob service client.
+        :return: A Blob service client.
         :rtype: ~azure.storage.blob.BlobServiceClient
 
         .. admonition:: Example:
@@ -206,7 +206,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: The user delegation key.
+        :return: The user delegation key.
         :rtype: ~azure.storage.blob.UserDelegationKey
         """
         key_info = KeyInfo(start=_to_utc_datetime(key_start_time), expiry=_to_utc_datetime(key_expiry_time))
@@ -227,7 +227,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         The information can also be retrieved if the user has a SAS to a container or blob.
         The keys in the returned dictionary include 'sku_name' and 'account_kind'.
 
-        :returns: A dict of account information (SKU and account type).
+        :return: A dict of account information (SKU and account type).
         :rtype: dict(str, str)
 
         .. admonition:: Example:
@@ -270,7 +270,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: The blob service stats.
+        :return: The blob service stats.
         :rtype: Dict[str, Any]
 
         .. admonition:: Example:
@@ -301,7 +301,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: An object containing blob service properties such as
+        :return: An object containing blob service properties such as
             analytics logging, hour/minute metrics, cors rules, etc.
         :rtype: Dict[str, Any]
 
@@ -371,7 +371,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: None
+        :return: None
         :rtype: None
 
         .. admonition:: Example:
@@ -436,7 +436,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: An iterable (auto-paging) of ContainerProperties.
+        :return: An iterable (auto-paging) of ContainerProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.ContainerProperties]
 
         .. admonition:: Example:
@@ -490,7 +490,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: An iterable (auto-paging) response of BlobProperties.
+        :return: An iterable (auto-paging) response of BlobProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.FilteredBlob]
         """
 
@@ -539,7 +539,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: A container client to interact with the newly created container.
+        :return: A container client to interact with the newly created container.
         :rtype: ~azure.storage.blob.ContainerClient
 
         .. admonition:: Example:
@@ -601,7 +601,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: None
+        :return: None
         :rtype: None
 
         .. admonition:: Example:
@@ -641,7 +641,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: A container client for the renamed container.
+        :return: A container client for the renamed container.
         :rtype: ~azure.storage.blob.ContainerClient
         """
         renamed_container = self.get_container_client(new_name)
@@ -680,7 +680,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: The undeleted ContainerClient.
+        :return: The undeleted ContainerClient.
         :rtype: ~azure.storage.blob.ContainerClient
         """
         new_name = kwargs.pop('new_name', None)
@@ -704,7 +704,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             The container. This can either be the name of the container,
             or an instance of ContainerProperties.
         :type container: str or ~azure.storage.blob.ContainerProperties
-        :returns: A ContainerClient.
+        :return: A ContainerClient.
         :rtype: ~azure.storage.blob.ContainerClient
 
         .. admonition:: Example:
@@ -753,7 +753,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :type snapshot: str or dict(str, Any)
         :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
             specifies the version of the blob to operate on.
-        :returns: A BlobClient.
+        :return: A BlobClient.
         :rtype: ~azure.storage.blob.BlobClient
 
         .. admonition:: Example:

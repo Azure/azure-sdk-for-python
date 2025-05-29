@@ -162,7 +162,7 @@ class AsyncStorageAccountHostsMixin(object):
         """Given a series of request, do a Storage batch call.
 
         :param HttpRequest reqs: A collection of HttpRequest objects.
-        :returns: An AsyncList of HttpResponse objects.
+        :return: An AsyncList of HttpResponse objects.
         :rtype: AsyncList[HttpResponse]
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg

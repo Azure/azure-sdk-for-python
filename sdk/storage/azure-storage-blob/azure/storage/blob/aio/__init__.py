@@ -73,7 +73,7 @@ async def upload_blob_to_url(
         entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
     :keyword str encoding:
         Encoding to use if text is supplied as input. Defaults to UTF-8.
-    :returns: Blob-updated property dict (Etag and last modified)
+    :return: Blob-updated property dict (Etag and last modified)
     :rtype: dict[str, Any]
     """
     async with BlobClient.from_blob_url(blob_url, credential=credential) as client:
@@ -139,7 +139,7 @@ async def download_blob_from_url(
         blob. Also note that if enabled, the memory-efficient upload algorithm
         will not be used, because computing the MD5 hash requires buffering
         entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
-    :returns: None
+    :return: None
     :rtype: None
     """
     overwrite = kwargs.pop('overwrite', False)

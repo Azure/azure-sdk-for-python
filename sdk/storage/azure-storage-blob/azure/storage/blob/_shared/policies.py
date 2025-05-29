@@ -414,7 +414,7 @@ class StorageRetryPolicy(HTTPPolicy):
         """
         A function which sets the next host location on the request, if applicable.
 
-        :param Dict[str, Any]] settings: The configurable values pertaining to the next host location.
+        :param Dict[str, Any] settings: The configurable values pertaining to the next host location.
         :param PipelineRequest request: A pipeline request object.
         """
         if settings["hosts"] and all(settings["hosts"].values()):
@@ -433,7 +433,7 @@ class StorageRetryPolicy(HTTPPolicy):
         
         :param request: A pipeline request object.
         :type request: ~azure.core.pipeline.PipelineRequest
-        :returns: A dictionary containing the retry settings.
+        :return: A dictionary containing the retry settings.
         :rtype: Dict[str, Any]
         """
         body_position = None
@@ -463,7 +463,7 @@ class StorageRetryPolicy(HTTPPolicy):
         Should be calculated by child class.
 
         :param Dict[str, Any] settings: The configurable values pertaining to the backoff time.
-        :returns: The backoff time.
+        :return: The backoff time.
         :rtype: float
         """
         return 0
@@ -499,7 +499,7 @@ class StorageRetryPolicy(HTTPPolicy):
         :param error: An error encountered during the request, or
             None if the response was received successfully.
         :type error: ~azure.core.exceptions.AzureError or None
-        :returns: Whether the retry attempts are exhausted.
+        :return: Whether the retry attempts are exhausted.
         :rtype: bool
         """
         settings["total"] -= 1
@@ -547,7 +547,7 @@ class StorageRetryPolicy(HTTPPolicy):
         
         :param request: A pipeline request object.
         :type request: ~azure.core.pipeline.PipelineRequest
-        :returns: A pipeline response object.
+        :return: A pipeline response object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
         retries_remaining = True
@@ -631,8 +631,8 @@ class ExponentialRetry(StorageRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        :param Dict[str, Any]] settings: The configurable values pertaining to get backoff time.
-        :returns:
+        :param Dict[str, Any] settings: The configurable values pertaining to get backoff time.
+        :return:
             A float indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
         :rtype: float
@@ -683,8 +683,8 @@ class LinearRetry(StorageRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        :param Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
-        :returns:
+        :param Dict[str, Any] settings: The configurable values pertaining to the backoff time.
+        :return:
             A float indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
         :rtype: float
@@ -710,7 +710,7 @@ class StorageBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
         :type request: ~azure.core.pipeline.PipelineRequest
         :param response: The response object.
         :type response: ~azure.core.pipeline.PipelineResponse        
-        :returns: True if the request was authorized, False otherwise.
+        :return: True if the request was authorized, False otherwise.
         :rtype: bool
         """
         try:
