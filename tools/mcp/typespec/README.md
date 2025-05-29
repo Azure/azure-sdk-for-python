@@ -4,7 +4,7 @@ This is a Model Context Protocol (MCP) server that wraps the [@azure-tools/types
 
 ## Prerequisites
 
-- Python
+- Python 3.10 or higher
 - Node.js and npm/npx
 - uv
 
