@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from enum import Enum
 
-from typing import Dict
+from typing import Dict, Union
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._vendor.rouge_score import rouge_scorer
@@ -12,7 +12,7 @@ from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 import math
 
 
-class RougeType(Enum):
+class RougeType(str, Enum):
     """
     Enumeration of ROUGE (Recall-Oriented Understudy for Gisting Evaluation) types.
     """
@@ -179,8 +179,8 @@ class RougeScoreEvaluator(EvaluatorBase):
         """
         ground_truth = eval_input["ground_truth"]
         response = eval_input["response"]
-        scorer = rouge_scorer.RougeScorer(rouge_types=[self._rouge_type.value])
-        metrics = scorer.score(ground_truth, response)[self._rouge_type.value]
+        scorer = rouge_scorer.RougeScorer(rouge_types=[self._rouge_type])
+        metrics = scorer.score(ground_truth, response)[self._rouge_type]
         binary_results = {
             "rouge_precision_result": False,
             "rouge_recall_result": False,

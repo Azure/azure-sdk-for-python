@@ -7,7 +7,7 @@
 FILE: sample_agents_sharepoint.py
 
 DESCRIPTION:
-    This sample demonstrates how to use agent operations with the 
+    This sample demonstrates how to use agent operations with the
     Sharepoint tool from the Azure Agents service using a synchronous client.
     The sharepoint tool is currently available only to whitelisted customers.
     For access and onboarding instructions, please contact azureagents-preview@microsoft.com.
@@ -20,7 +20,12 @@ USAGE:
     pip install azure-ai-agents azure-identity
 
     Set this environment variables with your own values:
-    PROJECT_ENDPOINT - the Azure AI Agents endpoint.
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+                          page of your Azure AI Foundry portal.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
+       the "Models + endpoints" tab in your Azure AI Foundry project.
+    3) SHAREPOINT_CONNECTION_ID  - The ID of the Sharepoint connection, in the format of:
+       /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace-name}/connections/{connection-name}
 """
 
 import os
@@ -38,8 +43,10 @@ agents_client = AgentsClient(
     credential=DefaultAzureCredential(),
 )
 
+conn_id = os.environ["SHAREPOINT_CONNECTION_ID"]
+
 # Initialize Sharepoint tool with connection id
-sharepoint = SharepointTool(connection_id="sharepoint_connection_name")
+sharepoint = SharepointTool(connection_id=conn_id)
 
 # Create agent with Sharepoint tool and process agent run
 with agents_client:

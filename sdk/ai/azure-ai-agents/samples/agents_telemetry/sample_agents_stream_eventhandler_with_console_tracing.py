@@ -22,8 +22,9 @@ USAGE:
     pip install opentelemetry-exporter-otlp-proto-grpc
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - the Azure AI Agents endpoint.
-    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+                          page of your Azure AI Foundry portal.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
     3) AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
        messages, which may contain personal data. False by default.
@@ -46,7 +47,6 @@ from azure.ai.agents.models import (
     ThreadRun,
     RunStep,
 )
-from azure.ai.agents.telemetry import enable_telemetry
 from typing import Any
 from azure.ai.agents.telemetry import AIAgentsInstrumentor
 

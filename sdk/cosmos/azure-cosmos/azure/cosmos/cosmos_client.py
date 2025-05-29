@@ -193,6 +193,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :keyword bool no_response_on_write: Indicates whether service should be instructed to skip sending 
         response payloads on rite operations for items.
     :keyword int throughput_bucket: The desired throughput bucket for the client
+    :keyword str user_agent_suffix: Allows user agent suffix to be specified when creating client
 
     .. admonition:: Example:
 

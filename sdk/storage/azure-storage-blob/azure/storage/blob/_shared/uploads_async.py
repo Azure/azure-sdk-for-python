@@ -12,7 +12,7 @@ from itertools import islice
 from math import ceil
 from typing import AsyncGenerator, Union
 
-from .import encode_base64, url_quote
+from . import encode_base64, url_quote
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
 from .uploads import SubStream, IterStreamer  # pylint: disable=unused-import
@@ -59,19 +59,20 @@ async def _parallel_uploads(uploader, pending, running):
 
 
 async def upload_data_chunks(
-        service=None,
-        uploader_class=None,
-        total_size=None,
-        chunk_size=None,
-        max_concurrency=None,
-        stream=None,
-        progress_hook=None,
-        **kwargs):
+    service=None,
+    uploader_class=None,
+    total_size=None,
+    chunk_size=None,
+    max_concurrency=None,
+    stream=None,
+    progress_hook=None,
+    **kwargs,
+):
 
     parallel = max_concurrency > 1
-    if parallel and 'modified_access_conditions' in kwargs:
+    if parallel and "modified_access_conditions" in kwargs:
         # Access conditions do not work with parallelism
-        kwargs['modified_access_conditions'] = None
+        kwargs["modified_access_conditions"] = None
 
     uploader = uploader_class(
         service=service,
@@ -80,7 +81,8 @@ async def upload_data_chunks(
         stream=stream,
         parallel=parallel,
         progress_hook=progress_hook,
-        **kwargs)
+        **kwargs,
+    )
 
     if parallel:
         upload_tasks = uploader.get_chunk_streams()
@@ -104,18 +106,19 @@ async def upload_data_chunks(
 
 
 async def upload_substream_blocks(
-        service=None,
-        uploader_class=None,
-        total_size=None,
-        chunk_size=None,
-        max_concurrency=None,
-        stream=None,
-        progress_hook=None,
-        **kwargs):
+    service=None,
+    uploader_class=None,
+    total_size=None,
+    chunk_size=None,
+    max_concurrency=None,
+    stream=None,
+    progress_hook=None,
+    **kwargs,
+):
     parallel = max_concurrency > 1
-    if parallel and 'modified_access_conditions' in kwargs:
+    if parallel and "modified_access_conditions" in kwargs:
         # Access conditions do not work with parallelism
-        kwargs['modified_access_conditions'] = None
+        kwargs["modified_access_conditions"] = None
     uploader = uploader_class(
         service=service,
         total_size=total_size,
@@ -123,13 +126,13 @@ async def upload_substream_blocks(
         stream=stream,
         parallel=parallel,
         progress_hook=progress_hook,
-        **kwargs)
+        **kwargs,
+    )
 
     if parallel:
         upload_tasks = uploader.get_substream_blocks()
         running_futures = [
-            asyncio.ensure_future(uploader.process_substream_block(u))
-            for u in islice(upload_tasks, 0, max_concurrency)
+            asyncio.ensure_future(uploader.process_substream_block(u)) for u in islice(upload_tasks, 0, max_concurrency)
         ]
         range_ids = await _parallel_uploads(uploader.process_substream_block, upload_tasks, running_futures)
     else:
@@ -144,15 +147,17 @@ async def upload_substream_blocks(
 class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
 
     def __init__(
-            self, service,
-            total_size,
-            chunk_size,
-            stream,
-            parallel,
-            encryptor=None,
-            padder=None,
-            progress_hook=None,
-            **kwargs):
+        self,
+        service,
+        total_size,
+        chunk_size,
+        stream,
+        parallel,
+        encryptor=None,
+        padder=None,
+        progress_hook=None,
+        **kwargs,
+    ):
         self.service = service
         self.total_size = total_size
         self.chunk_size = chunk_size
@@ -178,7 +183,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
     async def get_chunk_streams(self):
         index = 0
         while True:
-            data = b''
+            data = b""
             read_size = self.chunk_size
 
             # Buffer until we either reach the end of the stream or get a whole chunk.
@@ -189,12 +194,12 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
                 if inspect.isawaitable(temp):
                     temp = await temp
                 if not isinstance(temp, bytes):
-                    raise TypeError('Blob data should be of type bytes.')
+                    raise TypeError("Blob data should be of type bytes.")
                 data += temp or b""
 
                 # We have read an empty string and so are at the end
                 # of the buffer or we have read a full chunk.
-                if temp == b'' or len(data) == self.chunk_size:
+                if temp == b"" or len(data) == self.chunk_size:
                     break
 
             if len(data) == self.chunk_size:
@@ -273,13 +278,13 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
 class BlockBlobChunkUploader(_ChunkUploader):
 
     def __init__(self, *args, **kwargs):
-        kwargs.pop('modified_access_conditions', None)
+        kwargs.pop("modified_access_conditions", None)
         super(BlockBlobChunkUploader, self).__init__(*args, **kwargs)
         self.current_length = None
 
     async def _upload_chunk(self, chunk_offset, chunk_data):
         # TODO: This is incorrect, but works with recording.
-        index = f'{chunk_offset:032d}'
+        index = f"{chunk_offset:032d}"
         block_id = encode_base64(url_quote(encode_base64(index)))
         await self.service.stage_block(
             block_id,
@@ -287,19 +292,21 @@ class BlockBlobChunkUploader(_ChunkUploader):
             body=chunk_data,
             data_stream_total=self.total_size,
             upload_stream_current=self.progress_total,
-            **self.request_options)
+            **self.request_options,
+        )
         return index, block_id
 
     async def _upload_substream_block(self, index, block_stream):
         try:
-            block_id = f'BlockId{(index//self.chunk_size):05}'
+            block_id = f"BlockId{(index//self.chunk_size):05}"
             await self.service.stage_block(
                 block_id,
                 len(block_stream),
                 block_stream,
                 data_stream_total=self.total_size,
                 upload_stream_current=self.progress_total,
-                **self.request_options)
+                **self.request_options,
+            )
         finally:
             block_stream.close()
         return block_id
@@ -311,7 +318,7 @@ class PageBlobChunkUploader(_ChunkUploader):
         # read until non-zero byte is encountered
         # if reached the end without returning, then chunk_data is all 0's
         for each_byte in chunk_data:
-            if each_byte not in [0, b'\x00']:
+            if each_byte not in [0, b"\x00"]:
                 return False
         return True
 
@@ -319,7 +326,7 @@ class PageBlobChunkUploader(_ChunkUploader):
         # avoid uploading the empty pages
         if not self._is_chunk_empty(chunk_data):
             chunk_end = chunk_offset + len(chunk_data) - 1
-            content_range = f'bytes={chunk_offset}-{chunk_end}'
+            content_range = f"bytes={chunk_offset}-{chunk_end}"
             computed_md5 = None
             self.response_headers = await self.service.upload_pages(
                 body=chunk_data,
@@ -329,10 +336,11 @@ class PageBlobChunkUploader(_ChunkUploader):
                 cls=return_response_headers,
                 data_stream_total=self.total_size,
                 upload_stream_current=self.progress_total,
-                **self.request_options)
+                **self.request_options,
+            )
 
-            if not self.parallel and self.request_options.get('modified_access_conditions'):
-                self.request_options['modified_access_conditions'].if_match = self.response_headers['etag']
+            if not self.parallel and self.request_options.get("modified_access_conditions"):
+                self.request_options["modified_access_conditions"].if_match = self.response_headers["etag"]
 
     async def _upload_substream_block(self, index, block_stream):
         pass
@@ -352,18 +360,21 @@ class AppendBlobChunkUploader(_ChunkUploader):
                 cls=return_response_headers,
                 data_stream_total=self.total_size,
                 upload_stream_current=self.progress_total,
-                **self.request_options)
-            self.current_length = int(self.response_headers['blob_append_offset'])
+                **self.request_options,
+            )
+            self.current_length = int(self.response_headers["blob_append_offset"])
         else:
-            self.request_options['append_position_access_conditions'].append_position = \
+            self.request_options["append_position_access_conditions"].append_position = (
                 self.current_length + chunk_offset
+            )
             self.response_headers = await self.service.append_block(
                 body=chunk_data,
                 content_length=len(chunk_data),
                 cls=return_response_headers,
                 data_stream_total=self.total_size,
                 upload_stream_current=self.progress_total,
-                **self.request_options)
+                **self.request_options,
+            )
 
     async def _upload_substream_block(self, index, block_stream):
         pass
@@ -379,11 +390,11 @@ class DataLakeFileChunkUploader(_ChunkUploader):
             cls=return_response_headers,
             data_stream_total=self.total_size,
             upload_stream_current=self.progress_total,
-            **self.request_options
+            **self.request_options,
         )
 
-        if not self.parallel and self.request_options.get('modified_access_conditions'):
-            self.request_options['modified_access_conditions'].if_match = self.response_headers['etag']
+        if not self.parallel and self.request_options.get("modified_access_conditions"):
+            self.request_options["modified_access_conditions"].if_match = self.response_headers["etag"]
 
     async def _upload_substream_block(self, index, block_stream):
         try:
@@ -394,7 +405,7 @@ class DataLakeFileChunkUploader(_ChunkUploader):
                 cls=return_response_headers,
                 data_stream_total=self.total_size,
                 upload_stream_current=self.progress_total,
-                **self.request_options
+                **self.request_options,
             )
         finally:
             block_stream.close()
@@ -411,9 +422,9 @@ class FileChunkUploader(_ChunkUploader):
             length,
             data_stream_total=self.total_size,
             upload_stream_current=self.progress_total,
-            **self.request_options
+            **self.request_options,
         )
-        range_id = f'bytes={chunk_offset}-{chunk_end}'
+        range_id = f"bytes={chunk_offset}-{chunk_end}"
         return range_id, response
 
     # TODO: Implement this method.
@@ -421,10 +432,11 @@ class FileChunkUploader(_ChunkUploader):
         pass
 
 
-class AsyncIterStreamer():
+class AsyncIterStreamer:
     """
     File-like streaming object for AsyncGenerators.
     """
+
     def __init__(self, generator: AsyncGenerator[Union[bytes, str], None], encoding: str = "UTF-8"):
         self.iterator = generator.__aiter__()
         self.leftover = b""

@@ -36,6 +36,7 @@ from ...models._enums import FilePurpose, RunStatus
 from ._operations import FilesOperations as FilesOperationsGenerated
 from ._operations import MessagesOperations as MessagesOperationsGenerated
 from ._operations import RunsOperations as RunsOperationsGenerated
+from ._operations import ThreadsOperations as ThreadsOperationsGenerated
 from ._operations import VectorStoresOperations as VectorStoresOperationsGenerated
 from ._operations import VectorStoreFilesOperations as VectorStoreFilesOperationsGenerated
 from ._operations import VectorStoreFileBatchesOperations as VectorStoreFileBatchesOperationsGenerated
@@ -74,6 +75,19 @@ def _has_errors_in_toolcalls_output(tool_outputs: List[Dict]) -> bool:
             except json.JSONDecodeError:
                 continue
     return False
+
+
+class ThreadsOperations(ThreadsOperationsGenerated):
+    @distributed_trace_async
+    async def delete(self, thread_id: str, **kwargs: Any) -> None:
+        """Deletes an existing thread.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        await super()._delete_thread(thread_id=thread_id, **kwargs)
 
 
 class RunsOperations(RunsOperationsGenerated):
@@ -1292,8 +1306,7 @@ class FilesOperations(FilesOperationsGenerated):
 
         :keyword file_path: Required.
         :type file_path: str
-        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
-         "assistants_output", "batch", "batch_output", and "vision". Required.
+        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision". Required.
         :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :return: FileInfo. The FileInfo is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.FileInfo
@@ -1309,8 +1322,7 @@ class FilesOperations(FilesOperationsGenerated):
 
         :keyword file: Required.
         :paramtype file: ~azure.ai.agents._vendor.FileType
-        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
-         "assistants_output", "batch", "batch_output", and "vision". Required.
+        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision". Required.
         :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :keyword filename: Default value is None.
         :paramtype filename: str
@@ -1350,8 +1362,8 @@ class FilesOperations(FilesOperationsGenerated):
         :paramtype file: Optional[FileType]
         :keyword file_path: Path to the file. Required if `body` and `purpose` are not provided.
         :paramtype file_path: Optional[str]
-        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
-            "assistants_output", "batch", "batch_output", and "vision". Required if `body` and `file` are not provided.
+        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision".
+            Required if `body` and `file` are not provided.
         :paramtype purpose: Union[str, _models.FilePurpose, None]
         :keyword filename: The name of the file.
         :paramtype filename: Optional[str]
@@ -1426,8 +1438,7 @@ class FilesOperations(FilesOperationsGenerated):
 
         :keyword file: Required.
         :paramtype file: ~azure.ai.agents._vendor.FileType
-        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
-         "assistants_output", "batch", "batch_output", and "vision". Required.
+        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision". Required.
         :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :keyword filename: Default value is None.
         :paramtype filename: str
@@ -1456,8 +1467,7 @@ class FilesOperations(FilesOperationsGenerated):
 
         :keyword file_path: Required.
         :type file_path: str
-        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
-         "assistants_output", "batch", "batch_output", and "vision". Required.
+        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision". Required.
         :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :keyword polling_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
@@ -1492,8 +1502,8 @@ class FilesOperations(FilesOperationsGenerated):
         :paramtype file: Optional[FileType]
         :keyword file_path: Path to the file. Required if `body` and `purpose` are not provided.
         :paramtype file_path: Optional[str]
-        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
-            "assistants_output", "batch", "batch_output", and "vision". Required if `body` and `file` are not provided.
+        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision".
+            Required if `body` and `file` are not provided.
         :paramtype purpose: Union[str, _models.FilePurpose, None]
         :keyword filename: The name of the file.
         :paramtype filename: Optional[str]
@@ -1606,6 +1616,17 @@ class FilesOperations(FilesOperationsGenerated):
         except (ValueError, RuntimeError, TypeError, IOError) as e:
             logger.error("An error occurred in save_file: %s", e)
             raise
+
+    @distributed_trace_async
+    async def delete(self, file_id: str, **kwargs: Any) -> None:
+        """Delete a previously uploaded file.
+
+        :param file_id: The ID of the file to delete. Required.
+        :type file_id: str
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        await super()._delete_file(file_id, **kwargs)
 
 
 class VectorStoresOperations(VectorStoresOperationsGenerated):
@@ -1798,6 +1819,16 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
             vector_store = await super().get(vector_store.id)
 
         return vector_store
+
+    @distributed_trace_async
+    async def delete(self, vector_store_id: str, **kwargs: Any) -> None:
+        """Deletes the vector store object matching the specified ID.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :rtype: None
+        """
+        await super()._delete_vector_store(vector_store_id, **kwargs)
 
 
 class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated):
@@ -2162,6 +2193,20 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
 
         return vector_store_file
 
+    @distributed_trace_async
+    async def delete(self, vector_store_id: str, file_id: str, **kwargs: Any) -> None:
+        """Deletes a vector store file. This removes the file‐to‐store link (does not delete the file
+        itself).
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param file_id: Identifier of the file. Required.
+        :type file_id: str
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        await super()._delete_vector_store_file(vector_store_id, file_id, **kwargs)
+
 
 class MessagesOperations(MessagesOperationsGenerated):
 
@@ -2192,7 +2237,7 @@ class MessagesOperations(MessagesOperationsGenerated):
                 return message
         return None
 
-    async def get_last_text_message_by_role(
+    async def get_last_message_text_by_role(
         self,
         thread_id: str,
         role: _models.MessageRole,
@@ -2219,6 +2264,7 @@ class MessagesOperations(MessagesOperationsGenerated):
 
 __all__: List[str] = [
     "MessagesOperations",
+    "ThreadsOperations",
     "RunsOperations",
     "FilesOperations",
     "VectorStoresOperations",

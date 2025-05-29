@@ -28,7 +28,7 @@ class TestNetworkManagementVpnLinkConnectionsOperationsAsync(AzureMgmtRecordedTe
                 gateway_name="str",
                 connection_name="str",
                 link_connection_name="str",
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -43,7 +43,7 @@ class TestNetworkManagementVpnLinkConnectionsOperationsAsync(AzureMgmtRecordedTe
             gateway_name="str",
             connection_name="str",
             link_connection_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -57,7 +57,7 @@ class TestNetworkManagementVpnLinkConnectionsOperationsAsync(AzureMgmtRecordedTe
             gateway_name="str",
             connection_name="str",
             link_connection_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -78,7 +78,7 @@ class TestNetworkManagementVpnLinkConnectionsOperationsAsync(AzureMgmtRecordedTe
                     "properties": {"provisioningState": "str", "sharedKey": "str", "sharedKeyLength": 0},
                     "type": "str",
                 },
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -93,7 +93,7 @@ class TestNetworkManagementVpnLinkConnectionsOperationsAsync(AzureMgmtRecordedTe
             gateway_name="str",
             connection_name="str",
             link_connection_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -108,7 +108,7 @@ class TestNetworkManagementVpnLinkConnectionsOperationsAsync(AzureMgmtRecordedTe
                 gateway_name="str",
                 connection_name="str",
                 link_connection_name="str",
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -122,7 +122,7 @@ class TestNetworkManagementVpnLinkConnectionsOperationsAsync(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             gateway_name="str",
             connection_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

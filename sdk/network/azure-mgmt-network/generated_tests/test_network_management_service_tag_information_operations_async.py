@@ -24,7 +24,7 @@ class TestNetworkManagementServiceTagInformationOperationsAsync(AzureMgmtRecorde
     async def test_service_tag_information_list(self, resource_group):
         response = self.client.service_tag_information.list(
             location="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
