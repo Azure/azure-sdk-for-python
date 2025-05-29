@@ -18,6 +18,8 @@ from ...models._models import (
     EntraIDCredentials,
 )
 from ...models._enums import ConnectionType
+from ...operations._patch_inference import _get_aoai_inference_url
+from ...operations._patch_inference import _get_inference_url
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,48 +41,6 @@ class InferenceOperations:
 
     def __init__(self, outer_instance: "azure.ai.projects.aio.AIProjectClient") -> None:  # type: ignore[name-defined]
         self._outer_instance = outer_instance
-
-    # TODO: Use a common method for both the sync and async operations
-    @classmethod
-    def _get_inference_url(cls, input_url: str) -> str:
-        """
-        Converts an input URL in the format:
-        https://<host-name>/<some-path>
-        to:
-        https://<host-name>/models
-
-        :param input_url: The input endpoint URL used to construct AIProjectClient.
-        :type input_url: str
-
-        :return: The endpoint URL required to construct inference clients from the azure-ai-inference package.
-        :rtype: str
-        """
-        parsed = urlparse(input_url)
-        if parsed.scheme != "https" or not parsed.netloc:
-            raise ValueError("Invalid endpoint URL format. Must be an https URL with a host.")
-        new_url = f"https://{parsed.netloc}/models"
-        return new_url
-
-    # TODO: Use a common method for both the sync and async operations
-    @classmethod
-    def _get_aoai_inference_url(cls, input_url: str) -> str:
-        """
-        Converts an input URL in the format:
-        https://<host-name>/<some-path>
-        to:
-        https://<host-name>
-
-        :param input_url: The input endpoint URL used to construct AIProjectClient.
-        :type input_url: str
-
-        :return: The endpoint URL required to construct an AzureOpenAI client from the `openai` package.
-        :rtype: str
-        """
-        parsed = urlparse(input_url)
-        if parsed.scheme != "https" or not parsed.netloc:
-            raise ValueError("Invalid endpoint URL format. Must be an https URL with a host.")
-        new_url = f"https://{parsed.netloc}"
-        return new_url
 
     @distributed_trace
     def get_chat_completions_client(self, **kwargs: Any) -> "ChatCompletionsClient":  # type: ignore[name-defined]
@@ -107,7 +67,7 @@ class InferenceOperations:
                 "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
             ) from e
 
-        endpoint = self._get_inference_url(self._outer_instance._config.endpoint)  # pylint: disable=protected-access
+        endpoint = _get_inference_url(self._outer_instance._config.endpoint)  # pylint: disable=protected-access
 
         client = ChatCompletionsClient(
             endpoint=endpoint,
@@ -146,7 +106,7 @@ class InferenceOperations:
                 "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
             ) from e
 
-        endpoint = self._get_inference_url(self._outer_instance._config.endpoint)  # pylint: disable=protected-access
+        endpoint = _get_inference_url(self._outer_instance._config.endpoint)  # pylint: disable=protected-access
 
         client = EmbeddingsClient(
             endpoint=endpoint,
@@ -185,7 +145,7 @@ class InferenceOperations:
                 "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
             ) from e
 
-        endpoint = self._get_inference_url(self._outer_instance._config.endpoint)  # pylint: disable=protected-access
+        endpoint = _get_inference_url(self._outer_instance._config.endpoint)  # pylint: disable=protected-access
 
         client = ImageEmbeddingsClient(
             endpoint=endpoint,
@@ -300,7 +260,7 @@ class InferenceOperations:
                 "azure.identity package not installed. Please install it using 'pip install azure.identity'"
             ) from e
 
-        azure_endpoint = self._get_aoai_inference_url(
+        azure_endpoint = _get_aoai_inference_url(
             self._outer_instance._config.endpoint  # pylint: disable=protected-access
         )
 
