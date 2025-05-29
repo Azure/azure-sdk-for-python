@@ -20,17 +20,3 @@ Verifies Node, tox, and Python are installed in your environment.
 ### tox
 
 Run tox environments. (e.g pylint, mypy, pyright)
-
-## Tool Response Format
-
-Each tool returns a response with the following structure:
-
-```json
-{
-    "success": true/false,
-    "stdout": "standard output from the command",
-    "stderr": "standard error from the command",
-    "code": 0,  // return code, 0 means success
-    "error": "error message if any"
-}
-```
