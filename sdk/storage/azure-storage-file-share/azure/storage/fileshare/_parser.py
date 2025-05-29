@@ -9,15 +9,16 @@ from typing import Any, cast, Dict, Optional, Union
 
 from ._generated._serialization import Serializer
 
-_ERROR_TOO_MANY_FILE_PERMISSIONS = 'file_permission and file_permission_key should not be set at the same time'
-_FILE_PERMISSION_TOO_LONG = 'Size of file_permission is too large. file_permission should be <=8KB, else' \
-                            'please use file_permission_key'
+_ERROR_TOO_MANY_FILE_PERMISSIONS = "file_permission and file_permission_key should not be set at the same time"
+_FILE_PERMISSION_TOO_LONG = (
+    "Size of file_permission is too large. file_permission should be <=8KB, else" "please use file_permission_key"
+)
 
 
 def _get_file_permission(file_permission, file_permission_key, default_permission):
     # if file_permission and file_permission_key are both empty, then use the default_permission
     # value as file permission, file_permission size should be <= 8KB, else file permission_key should be used
-    if file_permission and len(str(file_permission).encode('utf-8')) > 8 * 1024:
+    if file_permission and len(str(file_permission).encode("utf-8")) > 8 * 1024:
         raise ValueError(_FILE_PERMISSION_TOO_LONG)
 
     if not file_permission:
@@ -50,11 +51,10 @@ def _datetime_to_str(datetime_obj):
 
 
 def _parse_snapshot(
-    snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-    path_snapshot: Optional[str] = None
+    snapshot: Optional[Union[str, Dict[str, Any]]] = None, path_snapshot: Optional[str] = None
 ) -> Optional[str]:
-    if hasattr(snapshot, 'snapshot'):
+    if hasattr(snapshot, "snapshot"):
         return snapshot.snapshot  # type: ignore
     if isinstance(snapshot, Dict):
-        return cast(str, snapshot['snapshot'])
+        return cast(str, snapshot["snapshot"])
     return snapshot or path_snapshot

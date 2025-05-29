@@ -8,10 +8,7 @@ import sys
 import threading
 import warnings
 from io import BytesIO
-from typing import (
-    Any, Callable, Generator, IO, Iterator, Optional, Tuple,
-    TYPE_CHECKING
-)
+from typing import Any, Callable, Generator, IO, Iterator, Optional, Tuple, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError, ResourceModifiedError
 from azure.core.tracing.common import with_current_context
@@ -36,7 +33,8 @@ def process_content(data: Any) -> bytes:
 
 class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
-        self, client: "FileOperations",
+        self,
+        client: "FileOperations",
         total_size: int,
         chunk_size: int,
         current_progress: int,
@@ -47,7 +45,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         stream: Any = None,
         parallel: Optional[int] = None,
         progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self.client = client
         self.etag = etag
@@ -130,7 +128,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
                 validate_content=self.validate_content,
                 data_stream_total=self.total_size,
                 download_stream_current=self.progress_total,
-                **self.request_options
+                **self.request_options,
             )
             if response.properties.etag != self.etag:
                 raise ResourceModifiedError(message="The file has been modified while downloading.")
@@ -191,7 +189,7 @@ class _ChunkIterator(object):
 
     def _get_chunk_data(self) -> bytes:
         chunk_data = self._current_content[: self._chunk_size]
-        self._current_content = self._current_content[self._chunk_size:]
+        self._current_content = self._current_content[self._chunk_size :]
         return chunk_data
 
 
@@ -212,7 +210,8 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         otherwise the total size of the file."""
 
     def __init__(
-        self, client: "FileOperations" = None,  # type: ignore [assignment]
+        self,
+        client: "FileOperations" = None,  # type: ignore [assignment]
         config: "StorageConfiguration" = None,  # type: ignore [assignment]
         start_range: Optional[int] = None,
         end_range: Optional[int] = None,
@@ -222,7 +221,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         path: str = None,  # type: ignore [assignment]
         share: str = None,  # type: ignore [assignment]
         encoding: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self.name = name
         self.path = path
@@ -236,7 +235,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self._max_concurrency = max_concurrency
         self._encoding = encoding
         self._validate_content = validate_content
-        self._progress_hook = kwargs.pop('progress_hook', None)
+        self._progress_hook = kwargs.pop("progress_hook", None)
         self._request_options = kwargs
         self._location_mode = None
         self._download_complete = False
@@ -291,7 +290,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             self._initial_range[1],
             start_range_required=False,
             end_range_required=False,
-            check_content_md5=self._validate_content
+            check_content_md5=self._validate_content,
         )
 
         try:
@@ -301,7 +300,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                 validate_content=self._validate_content,
                 data_stream_total=None,
                 download_stream_current=0,
-                **self._request_options
+                **self._request_options,
             )
 
             # Check the location we read from to ensure we use the same one
@@ -332,7 +331,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                         validate_content=self._validate_content,
                         data_stream_total=0,
                         download_stream_current=0,
-                        **self._request_options
+                        **self._request_options,
                     )
                 except HttpResponseError as e:
                     process_storage_error(e)
@@ -376,13 +375,14 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                 validate_content=self._validate_content,
                 use_location=self._location_mode,
                 etag=self._etag,
-                **self._request_options
+                **self._request_options,
             )
         return _ChunkIterator(
             size=self.size,
             content=self._current_content,
             downloader=iter_downloader,
-            chunk_size=self._config.max_chunk_get_size)
+            chunk_size=self._config.max_chunk_get_size,
+        )
 
     def readall(self) -> bytes:
         """Download the contents of this file.
@@ -410,10 +410,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         :return: The contents of the file as bytes.
         :rtype: bytes
         """
-        warnings.warn(
-            "content_as_bytes is deprecated, use readall instead",
-            DeprecationWarning
-        )
+        warnings.warn("content_as_bytes is deprecated, use readall instead", DeprecationWarning)
         self._max_concurrency = max_concurrency
         return self.readall()
 
@@ -431,10 +428,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         :return: The contents of the file as a str.
         :rtype: str
         """
-        warnings.warn(
-            "content_as_text is deprecated, use readall instead",
-            DeprecationWarning
-        )
+        warnings.warn("content_as_text is deprecated, use readall instead", DeprecationWarning)
         self._max_concurrency = max_concurrency
         self._encoding = encoding
         return self.readall()
@@ -487,15 +481,13 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             use_location=self._location_mode,
             progress_hook=self._progress_hook,
             etag=self._etag,
-            **self._request_options
+            **self._request_options,
         )
         if parallel:
             import concurrent.futures
+
             with concurrent.futures.ThreadPoolExecutor(self._max_concurrency) as executor:
-                list(executor.map(
-                        with_current_context(downloader.process_chunk),
-                        downloader.get_chunk_offsets()
-                    ))
+                list(executor.map(with_current_context(downloader.process_chunk), downloader.get_chunk_offsets()))
         else:
             for chunk in downloader.get_chunk_offsets():
                 downloader.process_chunk(chunk)
@@ -515,10 +507,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         :returns: The properties of the downloaded file.
         :rtype: Any
         """
-        warnings.warn(
-            "download_to_stream is deprecated, use readinto instead",
-            DeprecationWarning
-        )
+        warnings.warn("download_to_stream is deprecated, use readinto instead", DeprecationWarning)
         self._max_concurrency = max_concurrency
         self.readinto(stream)
         return self.properties

@@ -12,9 +12,20 @@ import warnings
 from datetime import datetime
 from io import BytesIO
 from typing import (
-    Any, AnyStr, AsyncGenerator, AsyncIterable, Callable, cast,
-    Dict, IO, Iterable, List, Optional, Tuple, Union,
-    TYPE_CHECKING
+    Any,
+    AnyStr,
+    AsyncGenerator,
+    AsyncIterable,
+    Callable,
+    cast,
+    Dict,
+    IO,
+    Iterable,
+    List,
+    Optional,
+    Tuple,
+    Union,
+    TYPE_CHECKING,
 )
 from typing_extensions import Self
 
@@ -28,7 +39,7 @@ from .._file_client_helpers import (
     _from_file_url,
     _get_ranges_options,
     _parse_url,
-    _upload_range_from_url_options
+    _upload_range_from_url_options,
 )
 from .._generated.aio import AzureFileStorage
 from .._generated.models import FileHTTPHeaders
@@ -39,7 +50,7 @@ from .._serialize import (
     get_dest_access_conditions,
     get_rename_smb_properties,
     get_smb_properties,
-    get_source_access_conditions
+    get_source_access_conditions,
 )
 from .._shared.base_client import StorageAccountHostsMixin, parse_query
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str
@@ -79,20 +90,22 @@ async def _upload_file_helper(
     file_permission: Optional[str] = None,
     file_permission_key: Optional[str] = None,
     progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> Dict[str, Any]:
     try:
         if size is None or size < 0:
             raise ValueError("A content size must be specified for a File.")
         response = await client.create_file(
-            size, content_settings=content_settings, metadata=metadata,
+            size,
+            content_settings=content_settings,
+            metadata=metadata,
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
             file_last_write_time=file_last_write_time,
             file_permission=file_permission,
             permission_key=file_permission_key,
             timeout=timeout,
-            **kwargs
+            **kwargs,
         )
         if size == 0:
             return response
@@ -107,9 +120,9 @@ async def _upload_file_helper(
             validate_content=validate_content,
             progress_hook=progress_hook,
             timeout=timeout,
-            **kwargs
+            **kwargs,
         )
-        return cast(Dict[str, Any], sorted(responses, key=lambda r: r.get('last_modified'))[-1])
+        return cast(Dict[str, Any], sorted(responses, key=lambda r: r.get("last_modified"))[-1])
     except HttpResponseError as error:
         process_storage_error(error)
 
@@ -166,53 +179,66 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         authentication. Only has an effect when credential is of type AsyncTokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
     """
+
     def __init__(
-        self, account_url: str,
+        self,
+        account_url: str,
         share_name: str,
         file_path: str,
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        credential: Optional[
+            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+        ] = None,  # pylint: disable=line-too-long
         *,
-        token_intent: Optional[Literal['backup']] = None,
-        **kwargs: Any
+        token_intent: Optional[Literal["backup"]] = None,
+        **kwargs: Any,
     ) -> None:
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
-        loop = kwargs.pop('loop', None)
+        loop = kwargs.pop("loop", None)
         if loop and sys.version_info >= (3, 8):
-            warnings.warn("The 'loop' parameter was deprecated from asyncio's high-level"
-                          "APIs in Python 3.8 and is no longer supported.", DeprecationWarning)
-        if hasattr(credential, 'get_token') and not token_intent:
+            warnings.warn(
+                "The 'loop' parameter was deprecated from asyncio's high-level"
+                "APIs in Python 3.8 and is no longer supported.",
+                DeprecationWarning,
+            )
+        if hasattr(credential, "get_token") and not token_intent:
             raise ValueError("'token_intent' keyword is required when 'credential' is an AsyncTokenCredential.")
         parsed_url = _parse_url(account_url, share_name, file_path)
         path_snapshot, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
             raise ValueError(
-                'You need to provide either an account shared key or SAS token when creating a storage service.')
+                "You need to provide either an account shared key or SAS token when creating a storage service."
+            )
         self.snapshot = _parse_snapshot(snapshot, path_snapshot)
         self.share_name = share_name
-        self.file_path = file_path.split('/')
+        self.file_path = file_path.split("/")
         self.file_name = self.file_path[-1]
         self.directory_path = "/".join(self.file_path[:-1])
 
-        self._query_str, credential = self._format_query_string(
-            sas_token, credential, share_snapshot=self.snapshot)
-        super(ShareFileClient, self).__init__(
-            parsed_url, service='file-share', credential=credential, **kwargs)
-        self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
-        self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
+        self._query_str, credential = self._format_query_string(sas_token, credential, share_snapshot=self.snapshot)
+        super(ShareFileClient, self).__init__(parsed_url, service="file-share", credential=credential, **kwargs)
+        self.allow_trailing_dot = kwargs.pop("allow_trailing_dot", None)
+        self.allow_source_trailing_dot = kwargs.pop("allow_source_trailing_dot", None)
         self.file_request_intent = token_intent
-        self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline,
-                                        allow_trailing_dot=self.allow_trailing_dot,
-                                        allow_source_trailing_dot=self.allow_source_trailing_dot,
-                                        file_request_intent=self.file_request_intent)
+        self._client = AzureFileStorage(
+            url=self.url,
+            base_url=self.url,
+            pipeline=self._pipeline,
+            allow_trailing_dot=self.allow_trailing_dot,
+            allow_source_trailing_dot=self.allow_source_trailing_dot,
+            file_request_intent=self.file_request_intent,
+        )
         self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
 
     @classmethod
     def from_file_url(
-        cls, file_url: str,
+        cls,
+        file_url: str,
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
-        **kwargs: Any
+        credential: Optional[
+            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+        ] = None,  # pylint: disable=line-too-long
+        **kwargs: Any,
     ) -> Self:
         """A client to interact with a specific file, although that file may not yet exist.
 
@@ -248,12 +274,15 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
     @classmethod
     def from_connection_string(
-        cls, conn_str: str,
+        cls,
+        conn_str: str,
         share_name: str,
         file_path: str,
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
-        **kwargs: Any
+        credential: Optional[
+            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+        ] = None,  # pylint: disable=line-too-long
+        **kwargs: Any,
     ) -> Self:
         """Create ShareFileClient from a Connection String.
 
@@ -295,11 +324,12 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 :dedent: 12
                 :caption: Creates the file client with connection string.
         """
-        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'file')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, "file")
+        if "secondary_hostname" not in kwargs:
+            kwargs["secondary_hostname"] = secondary
         return cls(
-            account_url, share_name=share_name, file_path=file_path, snapshot=snapshot, credential=credential, **kwargs)
+            account_url, share_name=share_name, file_path=file_path, snapshot=snapshot, credential=credential, **kwargs
+        )
 
     @distributed_trace_async
     async def acquire_lease(self, lease_id: Optional[str] = None, **kwargs: Any) -> ShareLeaseClient:
@@ -321,7 +351,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: A ShareLeaseClient object.
         :rtype: ~azure.storage.fileshare.aio.ShareLeaseClient
         """
-        kwargs['lease_duration'] = -1
+        kwargs["lease_duration"] = -1
         lease = ShareLeaseClient(self, lease_id=lease_id)
         await lease.acquire(**kwargs)
         return lease
@@ -351,13 +381,14 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
     @distributed_trace_async
     async def create_file(
-        self, size: int,
+        self,
+        size: int,
         file_attributes: Optional[Union[str, "NTFSAttributes"]] = None,
         file_creation_time: Optional[Union[str, datetime]] = None,
         file_last_write_time: Optional[Union[str, datetime]] = None,
         file_permission: Optional[str] = None,
         permission_key: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         """Creates a new file.
 
@@ -434,10 +465,10 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 :dedent: 16
                 :caption: Create a file.
         """
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        content_settings = kwargs.pop('content_settings', None)
-        metadata = kwargs.pop('metadata', None)
-        timeout = kwargs.pop('timeout', None)
+        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        content_settings = kwargs.pop("content_settings", None)
+        metadata = kwargs.pop("metadata", None)
+        timeout = kwargs.pop("timeout", None)
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
         file_http_headers = None
@@ -451,37 +482,41 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 file_content_disposition=content_settings.content_disposition,
             )
         file_permission = _get_file_permission(file_permission, permission_key, None)
-        file_change_time = kwargs.pop('file_change_time', None)
+        file_change_time = kwargs.pop("file_change_time", None)
         try:
-            return cast(Dict[str, Any], await self._client.file.create(
-                file_content_length=size,
-                metadata=metadata,
-                file_attributes=str(file_attributes) if file_attributes is not None else file_attributes,
-                file_creation_time=_datetime_to_str(file_creation_time),
-                file_last_write_time=_datetime_to_str(file_last_write_time),
-                file_change_time=_datetime_to_str(file_change_time),
-                file_permission=file_permission,
-                file_permission_key=permission_key,
-                file_http_headers=file_http_headers,
-                lease_access_conditions=access_conditions,
-                headers=headers,
-                timeout=timeout,
-                cls=return_response_headers,
-                **kwargs
-            ))
+            return cast(
+                Dict[str, Any],
+                await self._client.file.create(
+                    file_content_length=size,
+                    metadata=metadata,
+                    file_attributes=str(file_attributes) if file_attributes is not None else file_attributes,
+                    file_creation_time=_datetime_to_str(file_creation_time),
+                    file_last_write_time=_datetime_to_str(file_last_write_time),
+                    file_change_time=_datetime_to_str(file_change_time),
+                    file_permission=file_permission,
+                    file_permission_key=permission_key,
+                    file_http_headers=file_http_headers,
+                    lease_access_conditions=access_conditions,
+                    headers=headers,
+                    timeout=timeout,
+                    cls=return_response_headers,
+                    **kwargs,
+                ),
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
     async def upload_file(
-        self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+        self,
+        data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
         length: Optional[int] = None,
         file_attributes: Optional[Union[str, "NTFSAttributes"]] = None,
         file_creation_time: Optional[Union[str, datetime]] = None,
         file_last_write_time: Optional[Union[str, datetime]] = None,
         file_permission: Optional[str] = None,
         permission_key: Optional[str] = None,
-        **kwargs
+        **kwargs,
     ) -> Dict[str, Any]:
         """Uploads a new file.
 
@@ -568,13 +603,13 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 :dedent: 16
                 :caption: Upload a file.
         """
-        metadata = kwargs.pop('metadata', None)
-        content_settings = kwargs.pop('content_settings', None)
-        max_concurrency = kwargs.pop('max_concurrency', 1)
-        validate_content = kwargs.pop('validate_content', False)
-        progress_hook = kwargs.pop('progress_hook', None)
-        timeout = kwargs.pop('timeout', None)
-        encoding = kwargs.pop('encoding', 'UTF-8')
+        metadata = kwargs.pop("metadata", None)
+        content_settings = kwargs.pop("content_settings", None)
+        max_concurrency = kwargs.pop("max_concurrency", 1)
+        validate_content = kwargs.pop("validate_content", False)
+        progress_hook = kwargs.pop("progress_hook", None)
+        timeout = kwargs.pop("timeout", None)
+        encoding = kwargs.pop("encoding", "UTF-8")
 
         if isinstance(data, str):
             data = data.encode(encoding)
@@ -590,7 +625,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             stream = data
         elif hasattr(data, "__iter__"):
             stream = IterStreamer(data, encoding=encoding)
-        elif hasattr(data, '__aiter__'):
+        elif hasattr(data, "__aiter__"):
             stream = AsyncIterStreamer(cast(AsyncGenerator, data), encoding=encoding)
         else:
             raise TypeError(f"Unsupported data type: {type(data)}")
@@ -610,7 +645,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             file_permission=file_permission,
             file_permission_key=permission_key,
             progress_hook=progress_hook,
-            **kwargs)
+            **kwargs,
+        )
 
     @distributed_trace_async
     async def start_copy_from_url(self, source_url: str, **kwargs: Any) -> Dict[str, Any]:
@@ -752,32 +788,35 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 :dedent: 16
                 :caption: Copy a file from a URL
         """
-        metadata = kwargs.pop('metadata', None)
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        timeout = kwargs.pop('timeout', None)
-        owner = kwargs.pop('owner', None)
-        group = kwargs.pop('group', None)
-        file_mode = kwargs.pop('file_mode', None)
-        file_mode_copy_mode = kwargs.pop('file_mode_copy_mode', None)
-        file_owner_copy_mode = kwargs.pop('owner_copy_mode', None)
+        metadata = kwargs.pop("metadata", None)
+        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        timeout = kwargs.pop("timeout", None)
+        owner = kwargs.pop("owner", None)
+        group = kwargs.pop("group", None)
+        file_mode = kwargs.pop("file_mode", None)
+        file_mode_copy_mode = kwargs.pop("file_mode_copy_mode", None)
+        file_owner_copy_mode = kwargs.pop("owner_copy_mode", None)
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
         kwargs.update(get_smb_properties(kwargs))
         try:
-            return cast(Dict[str, Any], await self._client.file.start_copy(
-                source_url,
-                metadata=metadata,
-                lease_access_conditions=access_conditions,
-                owner=owner,
-                group=group,
-                file_mode=file_mode,
-                file_mode_copy_mode=file_mode_copy_mode,
-                file_owner_copy_mode=file_owner_copy_mode,
-                headers=headers,
-                cls=return_response_headers,
-                timeout=timeout,
-                **kwargs
-            ))
+            return cast(
+                Dict[str, Any],
+                await self._client.file.start_copy(
+                    source_url,
+                    metadata=metadata,
+                    lease_access_conditions=access_conditions,
+                    owner=owner,
+                    group=group,
+                    file_mode=file_mode,
+                    file_mode_copy_mode=file_mode_copy_mode,
+                    file_owner_copy_mode=file_owner_copy_mode,
+                    headers=headers,
+                    cls=return_response_headers,
+                    timeout=timeout,
+                    **kwargs,
+                ),
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -805,26 +844,25 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`__.
+        :returns: None
         :rtype: None
         """
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        timeout = kwargs.pop('timeout', None)
+        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        timeout = kwargs.pop("timeout", None)
         if isinstance(copy_id, FileProperties):
             copy_id = copy_id.copy.id
         elif isinstance(copy_id, Dict):
-            copy_id = copy_id['copy_id']
+            copy_id = copy_id["copy_id"]
         try:
-            await self._client.file.abort_copy(copy_id=copy_id,
-                                               lease_access_conditions=access_conditions,
-                                               timeout=timeout, **kwargs)
+            await self._client.file.abort_copy(
+                copy_id=copy_id, lease_access_conditions=access_conditions, timeout=timeout, **kwargs
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
     async def download_file(
-        self, offset: Optional[int] = None,
-        length: Optional[int] = None,
-        **kwargs: Any
+        self, offset: Optional[int] = None, length: Optional[int] = None, **kwargs: Any
     ) -> StorageStreamDownloader:
         """Downloads a file to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the file into
@@ -888,7 +926,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 raise ValueError("Offset value must not be None if length is set.")
             range_end = offset + length - 1  # Service actually uses an end-range inclusive index
 
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        access_conditions = get_access_conditions(kwargs.pop("lease", None))
 
         downloader = StorageStreamDownloader(
             client=self._client.file,
@@ -896,11 +934,11 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             start_range=offset,
             end_range=range_end,
             name=self.file_name,
-            path='/'.join(self.file_path),
+            path="/".join(self.file_path),
             share=self.share_name,
             lease_access_conditions=access_conditions,
             cls=deserialize_file_stream,
-            **kwargs
+            **kwargs,
         )
         await downloader._setup()  # pylint: disable=protected-access
         return downloader
@@ -934,8 +972,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 :dedent: 16
                 :caption: Delete a file.
         """
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        timeout = kwargs.pop('timeout', None)
+        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        timeout = kwargs.pop("timeout", None)
         try:
             await self._client.file.delete(lease_access_conditions=access_conditions, timeout=timeout, **kwargs)
         except HttpResponseError as error:
@@ -1016,39 +1054,44 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         if not new_name:
             raise ValueError("Please specify a new file name.")
 
-        new_name = new_name.strip('/')
-        new_path_and_query = new_name.split('?')
+        new_name = new_name.strip("/")
+        new_path_and_query = new_name.split("?")
         new_file_path = new_path_and_query[0]
         if len(new_path_and_query) == 2:
-            new_file_sas = new_path_and_query[1] or self._query_str.strip('?')
+            new_file_sas = new_path_and_query[1] or self._query_str.strip("?")
         else:
-            new_file_sas = self._query_str.strip('?')
+            new_file_sas = self._query_str.strip("?")
 
         new_file_client = ShareFileClient(
-            f'{self.scheme}://{self.primary_hostname}', self.share_name, new_file_path,
-            credential=new_file_sas or self.credential, api_version=self.api_version,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, allow_trailing_dot=self.allow_trailing_dot,
-            allow_source_trailing_dot=self.allow_source_trailing_dot, token_intent=self.file_request_intent
+            f"{self.scheme}://{self.primary_hostname}",
+            self.share_name,
+            new_file_path,
+            credential=new_file_sas or self.credential,
+            api_version=self.api_version,
+            _hosts=self._hosts,
+            _configuration=self._config,
+            _pipeline=self._pipeline,
+            _location_mode=self._location_mode,
+            allow_trailing_dot=self.allow_trailing_dot,
+            allow_source_trailing_dot=self.allow_source_trailing_dot,
+            token_intent=self.file_request_intent,
         )
 
         kwargs.update(get_rename_smb_properties(kwargs))
 
         file_http_headers = None
-        content_type = kwargs.pop('content_type', None)
+        content_type = kwargs.pop("content_type", None)
         if content_type:
-            file_http_headers = FileHTTPHeaders(
-                file_content_type=content_type
-            )
+            file_http_headers = FileHTTPHeaders(file_content_type=content_type)
 
-        timeout = kwargs.pop('timeout', None)
-        overwrite = kwargs.pop('overwrite', None)
-        metadata = kwargs.pop('metadata', None)
-        headers = kwargs.pop('headers', {})
+        timeout = kwargs.pop("timeout", None)
+        overwrite = kwargs.pop("overwrite", None)
+        metadata = kwargs.pop("metadata", None)
+        headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
 
-        source_access_conditions = get_source_access_conditions(kwargs.pop('source_lease', None))
-        dest_access_conditions = get_dest_access_conditions(kwargs.pop('destination_lease', None))
+        source_access_conditions = get_source_access_conditions(kwargs.pop("source_lease", None))
+        dest_access_conditions = get_dest_access_conditions(kwargs.pop("destination_lease", None))
 
         try:
             await new_file_client._client.file.rename(  # pylint: disable=protected-access
@@ -1059,7 +1102,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 source_lease_access_conditions=source_access_conditions,
                 destination_lease_access_conditions=dest_access_conditions,
                 headers=headers,
-                **kwargs)
+                **kwargs,
+            )
 
             return new_file_client
         except HttpResponseError as error:
@@ -1086,16 +1130,19 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: FileProperties
         :rtype: ~azure.storage.fileshare.FileProperties
         """
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        timeout = kwargs.pop('timeout', None)
+        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        timeout = kwargs.pop("timeout", None)
         try:
-            file_props = cast(FileProperties, await self._client.file.get_properties(
-                sharesnapshot=self.snapshot,
-                lease_access_conditions=access_conditions,
-                timeout=timeout,
-                cls=deserialize_file_properties,
-                **kwargs
-            ))
+            file_props = cast(
+                FileProperties,
+                await self._client.file.get_properties(
+                    sharesnapshot=self.snapshot,
+                    lease_access_conditions=access_conditions,
+                    timeout=timeout,
+                    cls=deserialize_file_properties,
+                    **kwargs,
+                ),
+            )
         except HttpResponseError as error:
             process_storage_error(error)
         file_props.name = self.file_name
@@ -1106,13 +1153,14 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
     @distributed_trace_async
     async def set_http_headers(
-        self, content_settings: "ContentSettings",
+        self,
+        content_settings: "ContentSettings",
         file_attributes: Optional[Union[str, "NTFSAttributes"]] = None,
         file_creation_time: Optional[Union[str, datetime]] = None,
         file_last_write_time: Optional[Union[str, datetime]] = None,
         file_permission: Optional[str] = None,
         permission_key: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         """Sets HTTP headers on the file.
 
@@ -1172,8 +1220,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        timeout = kwargs.pop('timeout', None)
+        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        timeout = kwargs.pop("timeout", None)
         file_content_length = kwargs.pop("size", None)
         file_http_headers = FileHTTPHeaders(
             file_cache_control=content_settings.cache_control,
@@ -1184,22 +1232,25 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             file_content_disposition=content_settings.content_disposition,
         )
         file_permission = _get_file_permission(file_permission, permission_key, None)
-        file_change_time = kwargs.pop('file_change_time', None)
+        file_change_time = kwargs.pop("file_change_time", None)
         try:
-            return cast(Dict[str, Any], await self._client.file.set_http_headers(
-                file_content_length=file_content_length,
-                file_http_headers=file_http_headers,
-                file_attributes=str(file_attributes) if file_attributes is not None else file_attributes,
-                file_creation_time=_datetime_to_str(file_creation_time),
-                file_last_write_time=_datetime_to_str(file_last_write_time),
-                file_change_time=_datetime_to_str(file_change_time),
-                file_permission=file_permission,
-                file_permission_key=permission_key,
-                lease_access_conditions=access_conditions,
-                timeout=timeout,
-                cls=return_response_headers,
-                **kwargs
-            ))
+            return cast(
+                Dict[str, Any],
+                await self._client.file.set_http_headers(
+                    file_content_length=file_content_length,
+                    file_http_headers=file_http_headers,
+                    file_attributes=str(file_attributes) if file_attributes is not None else file_attributes,
+                    file_creation_time=_datetime_to_str(file_creation_time),
+                    file_last_write_time=_datetime_to_str(file_last_write_time),
+                    file_change_time=_datetime_to_str(file_change_time),
+                    file_permission=file_permission,
+                    file_permission_key=permission_key,
+                    lease_access_conditions=access_conditions,
+                    timeout=timeout,
+                    cls=return_response_headers,
+                    **kwargs,
+                ),
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -1231,25 +1282,27 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        timeout = kwargs.pop('timeout', None)
+        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        timeout = kwargs.pop("timeout", None)
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
         try:
-            return cast(Dict[str, Any], await self._client.file.set_metadata(
-                metadata=metadata, lease_access_conditions=access_conditions,
-                timeout=timeout, cls=return_response_headers, headers=headers, **kwargs
-            ))
+            return cast(
+                Dict[str, Any],
+                await self._client.file.set_metadata(
+                    metadata=metadata,
+                    lease_access_conditions=access_conditions,
+                    timeout=timeout,
+                    cls=return_response_headers,
+                    headers=headers,
+                    **kwargs,
+                ),
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def upload_range(
-        self, data: bytes,
-        offset: int,
-        length: int,
-        **kwargs: Any
-    ) -> Dict[str, Any]:
+    async def upload_range(self, data: bytes, offset: int, length: int, **kwargs: Any) -> Dict[str, Any]:
         """Upload a range of bytes to a file.
 
         :param bytes data:
@@ -1295,37 +1348,36 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: File-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
-        validate_content = kwargs.pop('validate_content', False)
-        timeout = kwargs.pop('timeout', None)
-        encoding = kwargs.pop('encoding', 'UTF-8')
-        file_last_write_mode = kwargs.pop('file_last_write_mode', None)
+        validate_content = kwargs.pop("validate_content", False)
+        timeout = kwargs.pop("timeout", None)
+        encoding = kwargs.pop("encoding", "UTF-8")
+        file_last_write_mode = kwargs.pop("file_last_write_mode", None)
         if isinstance(data, str):
             data = data.encode(encoding)
         end_range = offset + length - 1  # Reformat to an inclusive range index
-        content_range = f'bytes={offset}-{end_range}'
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        content_range = f"bytes={offset}-{end_range}"
+        access_conditions = get_access_conditions(kwargs.pop("lease", None))
         try:
-            return cast(Dict[str, Any], await self._client.file.upload_range(
-                range=content_range,
-                content_length=length,
-                optionalbody=data,
-                timeout=timeout,
-                validate_content=validate_content,
-                file_last_written_mode=file_last_write_mode,
-                lease_access_conditions=access_conditions,
-                cls=return_response_headers,
-                **kwargs
-            ))
+            return cast(
+                Dict[str, Any],
+                await self._client.file.upload_range(
+                    range=content_range,
+                    content_length=length,
+                    optionalbody=data,
+                    timeout=timeout,
+                    validate_content=validate_content,
+                    file_last_written_mode=file_last_write_mode,
+                    lease_access_conditions=access_conditions,
+                    cls=return_response_headers,
+                    **kwargs,
+                ),
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
     async def upload_range_from_url(
-        self, source_url: str,
-        offset: int,
-        length: int,
-        source_offset: int,
-        **kwargs: Any
+        self, source_url: str, offset: int, length: int, source_offset: int, **kwargs: Any
     ) -> Dict[str, Any]:
         """
         Writes the bytes from one Azure File endpoint into the specified range of another Azure File endpoint.
@@ -1395,11 +1447,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :rtype: dict[str, Any]
         """
         options = _upload_range_from_url_options(
-            source_url=source_url,
-            offset=offset,
-            length=length,
-            source_offset=source_offset,
-            **kwargs
+            source_url=source_url, offset=offset, length=length, source_offset=source_offset, **kwargs
         )
         try:
             return cast(Dict[str, Any], await self._client.file.upload_range_from_url(**options))
@@ -1408,9 +1456,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
     @distributed_trace_async
     async def get_ranges(
-        self, offset: Optional[int] = None,
-        length: Optional[int] = None,
-        **kwargs: Any
+        self, offset: Optional[int] = None, length: Optional[int] = None, **kwargs: Any
     ) -> List[Dict[str, int]]:
         """Returns the list of valid page ranges for a file or snapshot
         of a file.
@@ -1436,25 +1482,22 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             A list of valid ranges.
         :rtype: List[dict[str, int]]
         """
-        options = _get_ranges_options(
-            snapshot=self.snapshot,
-            offset=offset,
-            length=length,
-            **kwargs)
+        options = _get_ranges_options(snapshot=self.snapshot, offset=offset, length=length, **kwargs)
         try:
             ranges = await self._client.file.get_range_list(**options)
         except HttpResponseError as error:
             process_storage_error(error)
-        return [{'start': file_range.start, 'end': file_range.end} for file_range in ranges.ranges]
+        return [{"start": file_range.start, "end": file_range.end} for file_range in ranges.ranges]
 
     @distributed_trace_async
     async def get_ranges_diff(
-        self, previous_sharesnapshot: Union[str, Dict[str, Any]],
+        self,
+        previous_sharesnapshot: Union[str, Dict[str, Any]],
         offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
         include_renames: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]:
         """Returns the list of valid page ranges for a file or snapshot
         of a file.
@@ -1495,7 +1538,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             length=length,
             previous_sharesnapshot=previous_sharesnapshot,
             support_rename=include_renames,
-            **kwargs)
+            **kwargs,
+        )
         try:
             ranges = await self._client.file.get_range_list(**options)
         except HttpResponseError as error:
@@ -1529,8 +1573,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: File-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        timeout = kwargs.pop('timeout', None)
+        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        timeout = kwargs.pop("timeout", None)
 
         if offset is None or offset % 512 != 0:
             raise ValueError("offset must be an integer that aligns with 512 bytes file size")
@@ -1539,16 +1583,19 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         end_range = length + offset - 1  # Reformat to an inclusive range index
         content_range = f"bytes={offset}-{end_range}"
         try:
-            return cast(Dict[str, Any], await self._client.file.upload_range(
-                timeout=timeout,
-                cls=return_response_headers,
-                content_length=0,
-                optionalbody=None,
-                file_range_write="clear",
-                range=content_range,
-                lease_access_conditions=access_conditions,
-                **kwargs
-            ))
+            return cast(
+                Dict[str, Any],
+                await self._client.file.upload_range(
+                    timeout=timeout,
+                    cls=return_response_headers,
+                    content_length=0,
+                    optionalbody=None,
+                    file_range_write="clear",
+                    range=content_range,
+                    lease_access_conditions=access_conditions,
+                    **kwargs,
+                ),
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -1574,20 +1621,23 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: File-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        timeout = kwargs.pop('timeout', None)
+        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        timeout = kwargs.pop("timeout", None)
         try:
-            return cast(Dict[str, Any], await self._client.file.set_http_headers(
-                file_content_length=size,
-                file_attributes=None,
-                file_creation_time=None,
-                file_last_write_time=None,
-                file_permission="preserve",
-                lease_access_conditions=access_conditions,
-                cls=return_response_headers,
-                timeout=timeout,
-                **kwargs
-            ))
+            return cast(
+                Dict[str, Any],
+                await self._client.file.set_http_headers(
+                    file_content_length=size,
+                    file_attributes=None,
+                    file_creation_time=None,
+                    file_last_write_time=None,
+                    file_permission="preserve",
+                    lease_access_conditions=access_conditions,
+                    cls=return_response_headers,
+                    timeout=timeout,
+                    **kwargs,
+                ),
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -1604,16 +1654,12 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: An auto-paging iterable of Handle
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.fileshare.Handle]
         """
-        timeout = kwargs.pop('timeout', None)
+        timeout = kwargs.pop("timeout", None)
         results_per_page = kwargs.pop("results_per_page", None)
         command = functools.partial(
-            self._client.file.list_handles,
-            sharesnapshot=self.snapshot,
-            timeout=timeout,
-            **kwargs)
-        return AsyncItemPaged(
-            command, results_per_page=results_per_page,
-            page_iterator_class=HandlesPaged)
+            self._client.file.list_handles, sharesnapshot=self.snapshot, timeout=timeout, **kwargs
+        )
+        return AsyncItemPaged(command, results_per_page=results_per_page, page_iterator_class=HandlesPaged)
 
     @distributed_trace_async
     async def close_handle(self, handle: Union[str, Handle], **kwargs: Any) -> Dict[str, int]:
@@ -1637,19 +1683,15 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             handle_id = handle.id
         else:
             handle_id = handle
-        if handle_id == '*':
+        if handle_id == "*":
             raise ValueError("Handle ID '*' is not supported. Use 'close_all_handles' instead.")
         try:
             response = await self._client.file.force_close_handles(
-                handle_id,
-                marker=None,
-                sharesnapshot=self.snapshot,
-                cls=return_response_headers,
-                **kwargs
+                handle_id, marker=None, sharesnapshot=self.snapshot, cls=return_response_headers, **kwargs
             )
             return {
-                'closed_handles_count': response.get('number_of_handles_closed', 0),
-                'failed_handles_count': response.get('number_of_handles_failed', 0)
+                "closed_handles_count": response.get("number_of_handles_closed", 0),
+                "failed_handles_count": response.get("number_of_handles_failed", 0),
             }
         except HttpResponseError as error:
             process_storage_error(error)
@@ -1671,7 +1713,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             and the number of handles failed to close in a dict.
         :rtype: dict[str, int]
         """
-        timeout = kwargs.pop('timeout', None)
+        timeout = kwargs.pop("timeout", None)
         start_time = time.time()
 
         try_close = True
@@ -1681,33 +1723,31 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         while try_close:
             try:
                 response = await self._client.file.force_close_handles(
-                    handle_id='*',
+                    handle_id="*",
                     timeout=timeout,
                     marker=continuation_token,
                     sharesnapshot=self.snapshot,
                     cls=return_response_headers,
-                    **kwargs
+                    **kwargs,
                 )
             except HttpResponseError as error:
                 process_storage_error(error)
-            continuation_token = response.get('marker')
+            continuation_token = response.get("marker")
             try_close = bool(continuation_token)
-            total_closed += response.get('number_of_handles_closed', 0)
-            total_failed += response.get('number_of_handles_failed', 0)
+            total_closed += response.get("number_of_handles_closed", 0)
+            total_failed += response.get("number_of_handles_failed", 0)
             if timeout:
                 timeout = max(0, timeout - (time.time() - start_time))
-        return {
-            'closed_handles_count': total_closed,
-            'failed_handles_count': total_failed
-        }
+        return {"closed_handles_count": total_closed, "failed_handles_count": total_failed}
 
     @distributed_trace_async
     async def create_hardlink(
-        self, target: str,
+        self,
+        target: str,
         *,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
         timeout: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         """NFS only. Creates a hard link to the file specified by path.
 
@@ -1729,19 +1769,23 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :rtype: dict[str, Any]
         """
         try:
-            return cast(Dict[str, Any], await self._client.file.create_hard_link(
-                target_file=target,
-                lease_access_conditions=lease,
-                timeout=timeout,
-                cls=return_response_headers,
-                **kwargs
-            ))
+            return cast(
+                Dict[str, Any],
+                await self._client.file.create_hard_link(
+                    target_file=target,
+                    lease_access_conditions=lease,
+                    timeout=timeout,
+                    cls=return_response_headers,
+                    **kwargs,
+                ),
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
     async def create_symlink(
-        self, target: str,
+        self,
+        target: str,
         *,
         metadata: Optional[Dict[str, str]] = None,
         file_creation_time: Optional[Union[str, datetime]] = None,
@@ -1750,7 +1794,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         group: Optional[str] = None,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
         timeout: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         """NFS only. Creates a symbolic link to the specified file.
 
@@ -1778,28 +1822,26 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :rtype: dict[str, Any]
         """
         try:
-            return cast(Dict[str, Any], await self._client.file.create_symbolic_link(
-                link_text=target,
-                metadata=metadata,
-                file_creation_time=file_creation_time,
-                file_last_write_time=file_last_write_time,
-                owner=owner,
-                group=group,
-                lease_access_conditions=lease,
-                timeout=timeout,
-                cls=return_response_headers,
-                **kwargs
-            ))
+            return cast(
+                Dict[str, Any],
+                await self._client.file.create_symbolic_link(
+                    link_text=target,
+                    metadata=metadata,
+                    file_creation_time=file_creation_time,
+                    file_last_write_time=file_last_write_time,
+                    owner=owner,
+                    group=group,
+                    lease_access_conditions=lease,
+                    timeout=timeout,
+                    cls=return_response_headers,
+                    **kwargs,
+                ),
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_symlink(
-        self,
-        *,
-        timeout: Optional[int] = None,
-        **kwargs: Any
-    ) -> Dict[str, Any]:
+    async def get_symlink(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]:
         """NFS only. Gets the symbolic link for the file client.
 
         :keyword int timeout:
@@ -1812,10 +1854,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :rtype: dict[str, Any]
         """
         try:
-            return cast(Dict[str, Any], await self._client.file.get_symbolic_link(
-                timeout=timeout,
-                cls=return_response_headers,
-                **kwargs
-            ))
+            return cast(
+                Dict[str, Any],
+                await self._client.file.get_symbolic_link(timeout=timeout, cls=return_response_headers, **kwargs),
+            )
         except HttpResponseError as error:
             process_storage_error(error)

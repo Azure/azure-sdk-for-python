@@ -5,9 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-few-public-methods
 
-from typing import (
-    Any, Callable, Dict, List, Optional
-)
+from typing import Any, Callable, Dict, List, Optional
 
 from azure.core.async_paging import AsyncPageIterator
 from azure.core.exceptions import HttpResponseError
@@ -19,8 +17,8 @@ from .._models import Handle, ShareProperties, DirectoryProperties, FileProperti
 
 def _wrap_item(item):
     if isinstance(item, DirectoryItem):
-        return {'name': item.name, 'is_directory': True}
-    return {'name': item.name, 'size': item.properties.content_length, 'is_directory': False}
+        return {"name": item.name, "is_directory": True}
+    return {"name": item.name, "size": item.properties.content_length, "is_directory": False}
 
 
 class SharePropertiesPaged(AsyncPageIterator):
@@ -49,15 +47,14 @@ class SharePropertiesPaged(AsyncPageIterator):
     """The current page of listed results."""
 
     def __init__(
-        self, command: Callable,
+        self,
+        command: Callable,
         prefix: Optional[str] = None,
         results_per_page: Optional[int] = None,
-        continuation_token: Optional[str] = None
+        continuation_token: Optional[str] = None,
     ) -> None:
         super(SharePropertiesPaged, self).__init__(
-            get_next=self._get_next_cb,
-            extract_data=self._extract_data_cb,
-            continuation_token=continuation_token or ""
+            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
         )
         self._command = command
         self.service_endpoint = None
@@ -74,7 +71,8 @@ class SharePropertiesPaged(AsyncPageIterator):
                 maxresults=self.results_per_page,
                 prefix=self.prefix,
                 cls=return_context_and_deserialized,
-                use_location=self.location_mode)
+                use_location=self.location_mode,
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -84,7 +82,9 @@ class SharePropertiesPaged(AsyncPageIterator):
         self.prefix = self._response.prefix
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
-        self.current_page = [ShareProperties._from_generated(i) for i in self._response.share_items]  # pylint: disable=protected-access
+        self.current_page = [
+            ShareProperties._from_generated(i) for i in self._response.share_items
+        ]  # pylint: disable=protected-access
         return self._response.next_marker or None, self.current_page
 
 
@@ -107,14 +107,10 @@ class HandlesPaged(AsyncPageIterator):
     """The current page of listed results."""
 
     def __init__(
-        self, command: Callable,
-        results_per_page: Optional[int] = None,
-        continuation_token: Optional[str] = None
+        self, command: Callable, results_per_page: Optional[int] = None, continuation_token: Optional[str] = None
     ) -> None:
         super(HandlesPaged, self).__init__(
-            get_next=self._get_next_cb,
-            extract_data=self._extract_data_cb,
-            continuation_token=continuation_token or ""
+            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
         )
         self._command = command
         self.marker = None
@@ -128,13 +124,16 @@ class HandlesPaged(AsyncPageIterator):
                 marker=continuation_token or None,
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
-                use_location=self.location_mode)
+                use_location=self.location_mode,
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
     async def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response = get_next_return
-        self.current_page = [Handle._from_generated(h) for h in self._response.handle_list]  # pylint: disable=protected-access
+        self.current_page = [
+            Handle._from_generated(h) for h in self._response.handle_list
+        ]  # pylint: disable=protected-access
         return self._response.next_marker or None, self.current_page
 
 
@@ -168,15 +167,14 @@ class DirectoryPropertiesPaged(AsyncPageIterator):
     """The current page of listed results."""
 
     def __init__(
-        self, command: Callable,
+        self,
+        command: Callable,
         prefix: Optional[str] = None,
         results_per_page: Optional[int] = None,
-        continuation_token: Optional[str] = None
+        continuation_token: Optional[str] = None,
     ) -> None:
         super(DirectoryPropertiesPaged, self).__init__(
-            get_next=self._get_next_cb,
-            extract_data=self._extract_data_cb,
-            continuation_token=continuation_token or ""
+            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
         )
         self._command = command
         self.service_endpoint = None
@@ -193,7 +191,8 @@ class DirectoryPropertiesPaged(AsyncPageIterator):
                 prefix=self.prefix,
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
-                use_location=self.location_mode)
+                use_location=self.location_mode,
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -203,6 +202,10 @@ class DirectoryPropertiesPaged(AsyncPageIterator):
         self.prefix = self._response.prefix
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
-        self.current_page = [DirectoryProperties._from_generated(i) for i in self._response.segment.directory_items] # pylint: disable = protected-access
-        self.current_page.extend([FileProperties._from_generated(i) for i in self._response.segment.file_items]) # pylint: disable = protected-access
+        self.current_page = [
+            DirectoryProperties._from_generated(i) for i in self._response.segment.directory_items
+        ]  # pylint: disable = protected-access
+        self.current_page.extend(
+            [FileProperties._from_generated(i) for i in self._response.segment.file_items]
+        )  # pylint: disable = protected-access
         return self._response.next_marker or None, self.current_page
