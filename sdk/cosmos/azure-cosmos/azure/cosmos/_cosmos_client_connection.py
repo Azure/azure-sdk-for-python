@@ -3119,14 +3119,13 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 options,
                 partition_key_range_id
             )
-            base.set_session_token_header(self, headers, path, request_params, options, partition_key_range_id)
-
             request_params = RequestObject(
                 resource_type,
                 op_type,
                 headers
             )
             request_params.set_excluded_location_from_options(options)
+            base.set_session_token_header(self, headers, path, request_params, options, partition_key_range_id)
 
             change_feed_state: Optional[ChangeFeedState] = options.get("changeFeedState")
             if change_feed_state is not None:

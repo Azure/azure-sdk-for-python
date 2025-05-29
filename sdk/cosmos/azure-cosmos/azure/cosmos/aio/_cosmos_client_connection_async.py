@@ -2911,7 +2911,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if query is None:
             op_type = documents._OperationType.QueryPlan if is_query_plan else documents._OperationType.ReadFeed
             # Query operations will use ReadEndpoint even though it uses GET(for feed requests)
-            headers = base.GetHeaders(self, initial_headers, "get", path, id_, typ, op_typ,
+            headers = base.GetHeaders(self, initial_headers, "get", path, id_, resource_type, op_type,
                                       options, partition_key_range_id)
             request_params = _request_object.RequestObject(
                 resource_type,
@@ -2952,10 +2952,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             raise SystemError("Unexpected query compatibility mode.")
 
         # Query operations will use ReadEndpoint even though it uses POST(for regular query operations)
+        req_headers = base.GetHeaders(self, initial_headers, "post", path, id_, resource_type,
+                                      documents._OperationType.SqlQuery, options, partition_key_range_id)
         request_params = _request_object.RequestObject(resource_type, documents._OperationType.SqlQuery, req_headers)
         request_params.set_excluded_location_from_options(options)
-        req_headers = base.GetHeaders(self, initial_headers, "post", path, id_, resource_type,
-                                      request_params.operation_type, options, partition_key_range_id)
         if not is_query_plan:
             await base.set_session_token_header_async(self, req_headers, path, request_params, options,
                                                       partition_key_range_id)
