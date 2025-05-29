@@ -71,6 +71,11 @@ class TestBackwardsCompatibility(unittest.TestCase):
         database_read = database.read(session_token=str(uuid.uuid4()))
         assert database_read is not None
         self.client.delete_database(database2.id, session_token=str(uuid.uuid4()))
+        try:
+            database2.read()
+            pytest.fail("Database read should have failed")
+        except CosmosHttpResponseError as e:
+            assert e.status_code == 404
 
         # Container
         container = self.databaseForTest.create_container(str(uuid.uuid4()), PartitionKey(path="/pk"), session_token=str(uuid.uuid4()))
@@ -105,7 +110,11 @@ class TestBackwardsCompatibility(unittest.TestCase):
         database2 = self.client.create_database_if_not_exists(str(uuid.uuid4()), etag=str(uuid.uuid4()), match_condition=MatchConditions.IfNotModified)
         assert database2 is not None
         self.client.delete_database(database2.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
-        self.client.delete_database(database.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
+        try:
+            database2.read()
+            pytest.fail("Database read should have failed")
+        except CosmosHttpResponseError as e:
+            assert e.status_code == 404
 
         # Container
         container = self.databaseForTest.create_container(str(uuid.uuid4()), PartitionKey(path="/pk"),
@@ -150,7 +159,7 @@ class TestBackwardsCompatibility(unittest.TestCase):
         for result in batch_results:
             assert result['statusCode'] in (200, 201)
 
-        self.databaseForTest.delete_container(container.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
+        self.client.delete_database(database.id)
 
 if __name__ == "__main__":
     unittest.main()
