@@ -26,6 +26,7 @@ import platform
 import re
 import base64
 import json
+import time
 from typing import Any, Dict, Optional
 
 from ._version import VERSION
@@ -38,7 +39,6 @@ def get_user_agent(suffix: Optional[str]) -> str:
     if suffix:
         user_agent += f" {suffix}"
     return user_agent
-
 
 def get_user_agent_async(suffix: Optional[str]) -> str:
     os_name = safe_user_agent_header(platform.platform())
@@ -73,3 +73,6 @@ def get_index_metrics_info(delimited_string: Optional[str]) -> Dict[str, Any]:
         return result
     except (json.JSONDecodeError, ValueError):
         return {}
+
+def current_time_millis() -> int:
+    return int(round(time.time() * 1000))
