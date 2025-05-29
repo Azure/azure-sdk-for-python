@@ -2,6 +2,14 @@
 
 # Release History
 
+## 1.1.0b2 (2025-05-29)
+
+### Bugs Fixed
+
+- `asyncio.gather` is used to make function tool calls in parallel for `async` scenario.
+
+- Adding instrumentation for create_thread_and_run.
+
 ## 1.1.0b1 (2025-05-20)
 
 ### Features Added
