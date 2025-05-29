@@ -3162,12 +3162,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options,
             partition_key_range_id
         )
+        request_params = RequestObject(resource_type, documents._OperationType.SqlQuery, req_headers)
+        request_params.set_excluded_location_from_options(options)
         if not is_query_plan:
             req_headers[http_constants.HttpHeaders.IsQuery] = "true"
             base.set_session_token_header(self, req_headers, path, request_params, options, partition_key_range_id)
-
-        request_params = RequestObject(resource_type, documents._OperationType.SqlQuery, req_headers)
-        request_params.set_excluded_location_from_options(options)
 
         # check if query has prefix partition key
         isPrefixPartitionQuery = kwargs.pop("isPrefixPartitionQuery", None)
