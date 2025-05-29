@@ -1129,7 +1129,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         and retains the blob or snapshot for specified number of days.
         After specified number of days, blob's data is removed from the service during garbage collection.
         Soft deleted blob or snapshot is accessible through :func:`list_blobs()` specifying `include=["deleted"]`
-        option. Soft-deleted blob or snapshot can be restored using :func:`~azure.storage.blob.BlobClient.undelete_blob()`
+        option. Soft-deleted blob or snapshot can be restored using
+        :func:`~azure.storage.blob.BlobClient.undelete_blob()`
 
         :param str blob: The blob with which to interact.
         :param str delete_snapshots:

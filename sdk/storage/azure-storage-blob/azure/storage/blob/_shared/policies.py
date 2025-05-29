@@ -473,7 +473,9 @@ class StorageRetryPolicy(HTTPPolicy):
         
         :param Dict[str, Any] settings: The configurable values pertaining to the sleep operation.
         :param transport: The transport to use for sleeping.
-        :type transport: ~azure.core.pipeline.transport.AsyncioBaseTransport or ~azure.core.pipeline.transport.BaseTransport
+        :type transport:
+            ~azure.core.pipeline.transport.AsyncioBaseTransport or
+            ~azure.core.pipeline.transport.BaseTransport
         """
         backoff = self.get_backoff_time(settings)
         if not backoff or backoff < 0:
