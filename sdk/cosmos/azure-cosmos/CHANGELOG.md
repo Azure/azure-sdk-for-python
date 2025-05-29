@@ -13,6 +13,7 @@
 
 #### Other Changes
 * Cross-partition queries will now always send a query plan before attempting to execute. See [PR 40366](https://github.com/Azure/azure-sdk-for-python/pull/40366).
+* Added Client Generated Activity IDs to all Requests. Cosmos Diagnostics Logs will more clearly show the Activity ID for each request and response. [PR 41013](https://github.com/Azure/azure-sdk-for-python/pull/41013)
 
 ### 4.12.0b1 (2025-05-19)
 
