@@ -69,11 +69,9 @@ def run_command(command: List[str], cwd: Optional[str] = None) -> Dict[str, Any]
         }
 
 @mcp.tool("verify_setup")
-def verify_setup_tool(venv: Optional[str] = None) -> Dict[str, Any]:
+def verify_setup_tool() -> Dict[str, Any]:
     """Verify machine is set up correctly for development.
-    
-    Args:
-        venv: Optional venv to check for installed dependencies
+
     """
     def verify_installation(command: List[str], name: str) -> Dict[str, Any]:
         """Helper function to verify installation of a tool."""

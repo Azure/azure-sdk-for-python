@@ -5,7 +5,7 @@ from typing import Dict, Optional, Any, Match, Union
 import logging
 import sys
 import os
-from github import Github, Auth
+from github import Github
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -15,14 +15,14 @@ logger.addHandler(handler)
 # Initialize server
 mcp = FastMCP("typespec")
 
-def get_latest_commit(tspurl: str) -> Union[Match[str], None]:
+def get_latest_commit(tspurl: str) -> str:
     """Get the latest commit hash for a given TypeSpec config URL.
     
     Args:
         tspurl: The URL to the tspconfig.yaml file.
         
     Returns:
-        The latest commit hash for the specified TypeSpec configuration.
+        The URL with the latest commit hash for the specified TypeSpec configuration.
     """
     # Extract the service name, repo, commit, and tspconfig path from the URL
     try:
@@ -39,6 +39,11 @@ def get_latest_commit(tspurl: str) -> Union[Match[str], None]:
             commit = groups["commit"]
             logger.info(f"Extracted commit: {commit}")
             
+        if res is None:
+            raise ValueError(f"Invalid TypeSpec URL format: {tspurl}")
+            
+        groups = res.groupdict()
+        
         # Parse the URL to extract the path within the repository
         repo_parts = tspurl.split("/")
         logger.info(f"Extracted repo parts: {repo_parts}")
