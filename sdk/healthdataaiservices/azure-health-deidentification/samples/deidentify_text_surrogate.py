@@ -28,13 +28,14 @@ def deidentify_text_surrogate():
     )
     from azure.identity import DefaultAzureCredential
     import os
-    
-    
+
     endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
     credential = DefaultAzureCredential()
     client = DeidentificationClient(endpoint, credential)
 
-    body = DeidentificationContent(input_text="Hello, my name is John Smith.", operation_type=DeidentificationOperationType.SURROGATE)
+    body = DeidentificationContent(
+        input_text="Hello, my name is John Smith.", operation_type=DeidentificationOperationType.SURROGATE
+    )
     result: DeidentificationResult = client.deidentify_text(body)
     print(f'\nOriginal Text:     "{body.input_text}"')
     print(f'Surrogated Text:   "{result.output_text}"')  # Surrogated output: Hello, my name is <synthetic name>.

@@ -37,7 +37,6 @@ def deidentify_documents():
     import os
     import uuid
 
-
     endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
     storage_location = os.environ["AZURE_STORAGE_ACCOUNT_LOCATION"]
     inputPrefix = os.environ["INPUT_PREFIX"]

@@ -28,8 +28,7 @@ def deidentify_text_tag():
     )
     from azure.identity import DefaultAzureCredential
     import os
-    
-    
+
     endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
     credential = DefaultAzureCredential()
     client = DeidentificationClient(endpoint, credential)
