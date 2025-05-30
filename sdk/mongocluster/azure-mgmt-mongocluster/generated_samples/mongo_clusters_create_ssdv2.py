@@ -15,7 +15,7 @@ from azure.mgmt.mongocluster import MongoClusterMgmtClient
     pip install azure-identity
     pip install azure-mgmt-mongocluster
 # USAGE
-    python mongo_clusters_firewall_rule_delete.py
+    python mongo_clusters_create_ssdv2.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,25 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.firewall_rules.begin_delete(
-        resource_group_name="TestGroup",
+    response = client.mongo_clusters.begin_create_or_update(
+        resource_group_name="TestResourceGroup",
         mongo_cluster_name="myMongoCluster",
-        firewall_rule_name="rule1",
+        resource={
+            "location": "westus2",
+            "properties": {
+                "administrator": {"password": "password", "userName": "mongoAdmin"},
+                "authConfig": {"allowedModes": ["NativeAuth"]},
+                "compute": {"tier": "M30"},
+                "highAvailability": {"targetMode": "ZoneRedundantPreferred"},
+                "serverVersion": "5.0",
+                "sharding": {"shardCount": 1},
+                "storage": {"iops": 3000, "sizeGb": 32, "throughput": 125, "type": "PremiumSSDv2"},
+            },
+        },
     ).result()
+    print(response)
 
 
-# x-ms-original-file: 2025-04-01-preview/MongoClusters_FirewallRuleDelete.json
+# x-ms-original-file: 2025-04-01-preview/MongoClusters_Create_SSDv2.json
 if __name__ == "__main__":
     main()
