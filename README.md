@@ -50,7 +50,7 @@ Management libraries can be identified by namespaces that start with `azure-mgmt
 
 * For detailed documentation visit our [Azure SDK for Python documentation](https://aka.ms/python-docs)
 * File an issue via [GitHub Issues](https://github.com/Azure/azure-sdk-for-python/issues)
-* Check [previous questions](https://stackoverflow.com/questions/tagged/azure+python) or ask new ones on StackOverflow using `azure` and `python` tags.
+* Check [previous questions](https://stackoverflow.com/questions/tagged/azure+python) or ask new ones on StackOverflow using `azure-python` tag.
 
 
 ## Data Collection
