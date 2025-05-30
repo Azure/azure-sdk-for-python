@@ -267,6 +267,8 @@ with receiver:
 - Standard tier: 256 KB per message
 - Premium tier: 1 MB per message
 
+For the most up-to-date information on Service Bus limits, refer to the [Azure Service Bus quotas and limits](https://learn.microsoft.com/azure/service-bus-messaging/service-bus-quotas) documentation.
+
 ### Message settlement issues
 
 **MessageAlreadySettled resolution:**
@@ -383,7 +385,6 @@ Check the `dead_letter_reason` and `dead_letter_error_description` properties on
 ### Q: How do I process messages faster?
 
 **A:** Consider:
-- Receiving messages in batches
 - Using concurrent message processing
 - Optimizing your message processing logic
 - Using `prefetch_count` to pre-fetch messages
