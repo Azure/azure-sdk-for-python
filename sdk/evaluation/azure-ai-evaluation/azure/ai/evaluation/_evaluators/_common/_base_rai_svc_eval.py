@@ -83,8 +83,8 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :rtype: Union[Dict[str, T], Dict[str, Union[float, Dict[str, List[T]]]]]
         """
-        return super().__call__(*args, **kwargs)
-
+        return super().__call__(*args, **kwargs)    
+    
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, T]:
         """Perform the evaluation using the Azure AI RAI service.
@@ -96,7 +96,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         :return: The evaluation result.
         :rtype: Dict
         """
-        if "query" in eval_input and "response" in eval_input:
+        if "response" in eval_input:
             return await self._evaluate_query_response(eval_input)
 
         conversation = eval_input.get("conversation", None)
@@ -126,17 +126,20 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         return result
 
     async def _evaluate_query_response(self, eval_input: Dict) -> Dict[str, T]:
-        query = str(eval_input.get("query", None))
-        response = str(eval_input.get("response", None))
-        if query is None or response is None:
+        query = eval_input.get("query", None)
+        response = eval_input.get("response", None)
+        if response is None:
             raise EvaluationException(
                 message="Not implemented",
                 internal_message=(
-                    "Reached query/response evaluation without supplying query or response."
+                    "Reached query/response evaluation without supplying response."
                     + " This should have failed earlier."
                 ),
             )
-        input_data = {"query": query, "response": response}
+        input_data = {"response": str(response)}
+        
+        if query is not None:
+            input_data["query"] = str(query)
 
         if "context" in self._singleton_inputs:
             context = eval_input.get("context", None)
