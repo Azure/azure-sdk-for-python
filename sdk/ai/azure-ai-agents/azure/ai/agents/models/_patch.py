@@ -864,9 +864,11 @@ class ConnectionTool(Tool[ToolDefinitionT]):
         """
         if not is_valid_connection_id(connection_id):
             raise ValueError(
-                "Connection ID '" + connection_id + "' does not fit the format:" +
-                "'/subscriptions/<subscription_id>/resourceGroups/<resource_group_name>/" +
-                "providers/<provider_name>/accounts/<account_name>/projects/<project_name>/connections/<connection_name>'"
+                "Connection ID '"
+                + connection_id
+                + "' does not fit the format:"
+                + "'/subscriptions/<subscription_id>/resourceGroups/<resource_group_name>/"
+                + "providers/<provider_name>/accounts/<account_name>/projects/<project_name>/connections/<connection_name>'"
             )
 
         self.connection_ids = [ToolConnection(connection_id=connection_id)]
@@ -899,16 +901,18 @@ class BingGroundingTool(Tool[BingGroundingToolDefinition]):
         :param count: The number of search results to return in the Bing API response.
         :param freshness: Filter search results by a specific time range.
         :raises ValueError: If the connection id is invalid.
-        
-        .. seealso:: 
+
+        .. seealso::
            `Bing Web Search API Query Parameters <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters>`_
         """
 
         if not is_valid_connection_id(connection_id):
             raise ValueError(
-                "Connection ID '" + connection_id + "' does not fit the format:" +
-                "'/subscriptions/<subscription_id>/resourceGroups/<resource_group_name>/" +
-                "providers/<provider_name>/accounts/<account_name>/projects/<project_name>/connections/<connection_name>'"
+                "Connection ID '"
+                + connection_id
+                + "' does not fit the format:"
+                + "'/subscriptions/<subscription_id>/resourceGroups/<resource_group_name>/"
+                + "providers/<provider_name>/accounts/<account_name>/projects/<project_name>/connections/<connection_name>'"
             )
 
         self._search_configurations = [
@@ -1837,22 +1841,25 @@ class AgentRunStream(Generic[BaseAgentEventHandlerT]):
         if callable(close_method):
             close_method()
 
+
 def is_valid_connection_id(connection_id: str) -> bool:
     """
     Validates if a string matches the Azure connection resource ID format.
-    
+
     The expected format is:
     "/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP>/
     providers/<AZURE_PROVIDER>/accounts/<ACCOUNT_NAME>/projects/<PROJECT_NAME>/
     connections/<CONNECTION_NAME>"
-    
+
     :param connection_id: The connection ID string to validate
     :type connection_id: str
     :return: True if the string matches the expected format, False otherwise
     :rtype: bool
     """
-    pattern = r"^/subscriptions/[^/]+/resourceGroups/[^/]+/providers/[^/]+/accounts/[^/]+/projects/[^/]+/connections/[^/]+$"
-    
+    pattern = (
+        r"^/subscriptions/[^/]+/resourceGroups/[^/]+/providers/[^/]+/accounts/[^/]+/projects/[^/]+/connections/[^/]+$"
+    )
+
     # Check if the string matches the pattern
     if re.match(pattern, connection_id):
         return True
