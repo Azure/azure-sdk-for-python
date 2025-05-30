@@ -1197,7 +1197,7 @@ class _AIAgentsInstrumentorPreview:
         if span is None:
             return function(*args, **kwargs)
 
-        with span.change_context(span):
+        with span.change_context(span.span_instance):
             try:
                 result = function(*args, **kwargs)
             except Exception as exc:
@@ -1215,7 +1215,7 @@ class _AIAgentsInstrumentorPreview:
         if span is None:
             return await function(*args, **kwargs)
 
-        with span.change_context(span):
+        with span.change_context(span.span_instance):
             try:
                 result = await function(*args, **kwargs)
             except Exception as exc:
@@ -1261,7 +1261,7 @@ class _AIAgentsInstrumentorPreview:
         if span is None:
             return function(*args, **kwargs)
 
-        with span.change_context(span):
+        with span.change_context(span.span_instance):
             try:
                 kwargs["event_handler"] = self.wrap_handler(event_handler, span)
                 result = function(*args, **kwargs)
@@ -1308,8 +1308,9 @@ class _AIAgentsInstrumentorPreview:
         if span is None:
             return await function(*args, **kwargs)
 
+        # TODO: how to keep span active in the current context without existing?
         # TODO: dummy span for none
-        with span.change_context(span):
+        with span.change_context(span.span_instance):
             try:
                 kwargs["event_handler"] = self.wrap_async_handler(event_handler, span)
                 result = await function(*args, **kwargs)
