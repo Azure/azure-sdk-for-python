@@ -60,7 +60,7 @@ def get_function_and_class_name(func: Callable, *args: object) -> str:
 
 
 @contextmanager
-def change_context(span: Optional[AbstractSpan]) -> ContextManager:
+def change_context(span: Optional[AbstractSpan]) -> Generator:
     """Execute this block inside the given context and restore it afterwards.
 
     This does not start and ends the span, but just make sure all code is executed within
