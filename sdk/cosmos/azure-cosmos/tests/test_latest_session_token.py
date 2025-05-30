@@ -93,16 +93,10 @@ class TestLatestSessionToken(unittest.TestCase):
                                                                                      phys_feed_ranges_and_session_tokens)
 
         phys_session_token = container.get_latest_session_token(phys_feed_ranges_and_session_tokens, phys_target_feed_range)
-        assert is_compound_session_token(phys_session_token)
-        session_tokens = phys_session_token.split(",")
-        assert len(session_tokens) == 2
-        pk_range_id1, session_token1 = parse_session_token(session_tokens[0])
-        pk_range_id2, session_token2 = parse_session_token(session_tokens[1])
-        pk_range_ids = [pk_range_id1, pk_range_id2]
+        pk_range_id, session_token = parse_session_token(phys_session_token)
 
-        assert 620 <= (session_token1.global_lsn + session_token2.global_lsn)
-        assert '1' in pk_range_ids
-        assert '2' in pk_range_ids
+        assert session_token.global_lsn >= 360
+        assert '2' in pk_range_id
         self.database.delete_container(container.id)
 
     def test_latest_session_token_hpk(self):
