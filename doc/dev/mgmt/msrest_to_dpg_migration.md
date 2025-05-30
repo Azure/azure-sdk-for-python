@@ -1,99 +1,247 @@
-# Overview
+# Azure SDK Migration Guide: Swagger to TypeSpec Generation Breaking Changes
 
-Our new generation of SDK incorporates several refinements to enhance efficiency and clarity. Although we have made considerable efforts to maintain backward compatibility, certain specific behaviors have been modified. This document outlines how you can update your source code to accommodate these changes. If you encounter an issue not addressed in this document, please submit a report on GitHub.
+This guide covers the breaking changes you'll encounter when upgrading from Swagger-generated SDKs to our new TypeSpec-generated SDKs and how to fix them in your code.
+Summary of Breaking Changes
 
-## Access to the model as a dictionary
+When migrating from Swagger to TypeSpec-generated SDKs, expect these breaking changes:
 
-### Access for old SDK
+| Change                                                                              | Impact                                                    | Quick Fix                                                                         |
+| ----------------------------------------------------------------------------------- | --------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| [Dictionary Access](#dictionary-access-syntax)                                      | `as_dict()` parameter renamed, output format changed      | Recommended removal of `as_dict()` and directly access model, or replace `keep_readonly=True` with `exclude_readonly=False`, expect camelCase keys |
+| [Model Hierarchy](#model-hierarchy-reflects-rest-api-structure)                     | Multi-level flattened properties removed                  | Replace `obj.level1_level2_prop` with `obj.level1.level2.prop`                    |
+| [Additional Properties](#additional-properties-handling)                            | `additional_properties` parameter removed                 | Use direct dictionary syntax: `model["key"] = value`                              |
+| [String Representation](#string-representation-matches-rest-api)                    | Model key output changed from `snake_case` to `camelCase` | Update any code parsing model strings to expect `camelCase`                       |
+| [Serialization/Deserialization](#serialization-and-deserialization-methods-removed) | Manual serialization methods removed                      | Use dictionary access for serialization, constructor for deserialization          |
+
+## Detailed Breaking Changes
+
+### Dictionary Access Syntax
+
+**What changed**: TypeSpec-generated models support direct dictionary access and use different parameter names and output formats compared to Swagger-generated models.
+
+**What will break**:
+
+- Code that relies on `as_dict()` parameter names
+- Code that expects `snake_case` keys in dictionary output
+
+#### Before (Swagger-Generated SDK)
 
 ```python
 from azure.mgmt.test.models import Model
-model = Model(name="xxx")
-print(model.name)
+model = Model(name="example")
 
-# access property as dictionary
-json_model = model.as_dict()
-print(json_model["name"])
+# Dictionary access required as_dict()
+json_model = model.as_dict(keep_readonly=True)
+print(json_model["name"])  # snake_case key
 ```
 
-### Access for new SDK
+#### After (TypeSpec-Generated SDK)
 
 ```python
 from azure.mgmt.test.models import Model
-model = Model(name="xxx")
-print(model.name)
+model = Model(name="example")
 
-print(model["name"]) # access property as dictionary directly, no need to call `as_dict()` anymore
-print(model.as_dict()["name"]) # still support `as_dict()`
+# Direct dictionary access now works
+print(model["name"])  # Works directly
+
+# as_dict() parameter changed
+json_model = model.as_dict(exclude_readonly=False)  # Parameter renamed
+print(json_model["name"])  # Now returns camelCase key (matches REST API)
 ```
 
-You can access properties of the SDK model as before. When accessing properties as a dictionary, you no longer need to call `.as_dict()`, which provides greater convenience. This also means that editing the model using dictionary syntax directly modifies the model. The `as_dict()` method continues to provide an independent copy of the model's dictionary representation in memory.
+#### Migration steps
 
-### `as_dict()` note
+- (Recommended) Optionally simplify code by using direct dictionary access: `model["key"]` instead of `model.as_dict()["key"]`
+- Replace `keep_readonly=True` with `exclude_readonly=False`
+- Update code expecting snake_case keys to use camelCase keys (consistent with REST API)
 
-- The positional parameter `keep_readonly` with default value `True` in the old SDK's `as_dict()` method has been renamed to a keyword-only parameter `exclude_readonly` with default value `False` in the new SDK.
-- `as_dict()` of old SDK returns dictionary whose key is snake_case while in new SDK it is camelCase which is consistent with REST API layer.
+### Model Hierarchy Reflects REST API Structure
 
-## Model hierarchy
+**What changed**: TypeSpec generation preserves the actual REST API hierarchy instead of artificially flattening it.
 
-Previous SDK models attempted to implement a flat hierarchy that did not accurately reflect the underlying REST API structure, which occasionally led to complications. Beginning with this new generation of SDK, the attribute hierarchy in models will directly mirror the REST API layer. Nevertheless, to ensure backward compatibility, the new SDK model continues to support a simplified flat hierarchy. In instances where the hierarchy was previously flattened across multiple levels, code adjustments will be necessary:
+**What will break**:
+
+- We've maintained backcompat for attribute access for single-level flattened properties, but multi-level flattening will no longer be supported.
+- No level of flattening will be supported when dealing with the the response object from `.to_dict()`.
+
+#### Before (Swagger-Generated SDK)
 
 ```python
-# Old SDK model
 model = Model(...)
-print(model.properties_name) # A
-print(model.properties_properties_name) # B
-
-# New SDK model
-model_after_migration = Model(...)
-print(model_after_migration.properties_name) # A
-print(model_after_migration.properties.name) # equivalent to A
-print(model_after_migration.properties_properties_name) # Will now raise an AttributeError
-print(model_after_migration.properties.properties.name) # recommended approach after migration
+print(model.properties_name)                     # Works
+print(model.properties_properties_name)          # Works (artificially flattened)
+json_model = model.as_dict()
+print(json_model["properties_properties_name"])  # Works (artificially flattened)
 ```
 
-## Additional properties
-
-### Old SDK model for additional properties
-
-To support [additional properties](https://www.apimatic.io/openapi/additionalproperties), SDK models included an `additional_properties` parameter:
+#### After (TypeSpec-Generated SDK)
 
 ```python
-model = Model(additional_properties={"hello": "world"})
-print(model.additional_properties) # output is `{"hello": "world"}`
+
+model = Model(...)
+print(model.properties_name)                # Still works (single-level flattening maintained for compatibility)
+print(model.properties.name)                # Equivalent to above, preferred approach
+print(model["properties_name"])             # ❌ Raises KeyError
+print(model.properties_properties_name)     # ❌ Raises AttributeError
+print(model.properties.properties.name)     # ✅ Use this instead - mirrors actual API structure
+print(model["properties_properties_name"])  # ❌ Raises KeyError
 ```
 
-### New SDK model for additional properties
+#### Migration steps
 
-Now, SDK models inherently support additional properties through dictionary-like behavior. The `additional_properties` parameter is no longer supported in new SDK models, and they can no longer be read using `.additional_properties`.
+Identify any properties with multiple underscores that represent nested structures
+Replace them with the actual nested property access using dot notation
+
+Example: `obj.level1_level2_property` → `obj.level1.level2.property`
+This new structure will match your REST API documentation exactly
+
+### Additional Properties Handling
+
+**What changed**: TypeSpec-generated models inherently support additional properties through dictionary-like behavior, eliminating the need for a separate additional_properties parameter.
+**What will break**:
+
+- Code that passes `additional_properties` parameter
+- Code that reads `.additional_properties` attribute
+
+#### Before (Swagger-Generated SDK)
 
 ```python
-model = Model(additional_properties={"hello": "world"}) # no longer supported
-model = Model({"hello": "world"})
-# or
+# Setting additional properties
+model = Model(additional_properties={"custom": "value"})
+print(model.additional_properties)  # {"custom": "value"}
+```
+
+#### After (TypeSpec-Generated SDK)
+
+```python
+# ❌ This no longer works
+model = Model(additional_properties={"custom": "value"})
+
+# ✅ Use these approaches instead
+model = Model({"custom": "value"})
+# OR
 model = Model()
-model.update({"hello": "world"})
-# or 
+model.update({"custom": "value"})
+# OR
 model = Model()
-model["hello"] = "world"
+model["custom"] = "value"
 
-print(model) # output is `{"hello": "world"}`
+print(model)  # Shows the additional properties directly
 ```
 
-## `__str__` for SDK model
+#### Migration steps
 
-### `__str__` for old SDK model
+- Remove all `additional_properties=` parameters from model constructors
+- Replace with direct dictionary syntax or `.update()` calls
+- Replace `.additional_properties` attribute access with direct dictionary access
+
+### String Representation Matches REST API
+
+**What changed**: TypeSpec-generated model string output uses camelCase (matching the REST API) instead of Python's snake_case convention used in Swagger generation.
+**What will break**:
+
+- Code that parses or matches against model string representations
+- Tests that compare string output
+
+#### Before (Swagger-Generated SDK)
 
 ```python
-model = Model(type_name="type")
-print(model) # output is `{"type_name": "type"}`
+model = Model(type_name="example")
+print(model)  # {"type_name": "example"}
 ```
 
-### `__str__` for new SDK model
+#### After (TypeSpec-Generated SDK)
 
 ```python
-model = Model(type_name="type")
-print(model) # output is `{"typeName": "type"}`
+model = Model(type_name="example")
+print(model)  # {"typeName": "example"} - matches REST API format
 ```
 
-In the REST API layer, property names use camelCase format, whereas Python SDK typically utilizes snake_case. In the previous SDK version, the string output was presented in snake_case format. The new SDK version, however, outputs strings in camelCase format, maintaining consistency with the REST API layer.
+#### Migration steps
+
+- Update any code that parses model string representations to expect `camelCase`
+- Update test assertions that compare against model string output
+- Consider using property access instead of string parsing where possible
+
+### Serialization and Deserialization Methods Removed
+
+**What changed**: TypeSpec-generated models no longer include explicit `serialize()` and `deserialize()` methods. Models are now inherently serializable through dictionary access, and deserialization happens automatically through the constructor.
+
+**What will break**:
+
+- Code that calls `model.serialize()` or `Model.deserialize()`
+- Custom serialization/deserialization workflows
+- Code that depends on the specific format returned by the old serialization methods
+
+#### Before (Swagger-Generated SDK)
+
+```python
+from azure.mgmt.test.models import Model
+import json
+
+# Serialization
+model = Model(name="example", value=42)
+serialized_dict = model.serialize()  # Returns dict ready for JSON
+json_string = json.dumps(serialized_dict)
+
+# Deserialization
+json_data = json.loads(json_string)
+model = Model.deserialize(json_data)  # Static method for deserialization
+print(model.name)  # "example"
+
+# Custom serialization with options
+serialized_full = model.serialize(keep_readonly=True)
+serialized_minimal = model.serialize(keep_readonly=False)
+```
+
+#### After (TypeSpec-Generated SDK)
+
+```python
+from azure.mgmt.test.models import Model
+import json
+
+# Serialization - model is already in serialized format when accessed as dictionary
+model = Model(name="example", value=42)
+
+# Method 1: Direct dictionary conversion (recommended)
+json_string = json.dumps(dict(model))
+
+# Method 2: Explicit as_dict() method (for compatibility)
+json_string = json.dumps(model.as_dict())
+
+# Method 3: Direct dictionary access
+serialized_dict = {}
+for key in model:
+    serialized_dict[key] = model[key]
+
+# Deserialization - pass JSON dict directly to constructor
+json_data = json.loads(json_string)
+model = Model(json_data)  # Constructor handles deserialization automatically
+print(model.name)  # "example"
+
+# Advanced: Constructor also accepts keyword arguments
+model = Model(name="example", value=42)  # Still works as before
+```
+
+#### Migration Steps
+
+- Replace serialization calls: `model.serialize()` → `model or dict(model) or model.as_dict()`
+- Replace deserialization calls: `Model.deserialize(data) → Model(data)`
+- Remove any static method imports
+- Update serialization options:
+  - `serialize(keep_readonly=True)` → `as_dict(exclude_readonly=False)`
+  - `serialize(keep_readonly=False)` → `as_dict(exclude_readonly=True)`
+- Test serialization format:
+  - Verify the output format matches your expectations
+  - Check that camelCase keys are handled correctly
+
+## Why These Changes?
+
+The TypeSpec-generated SDKs prioritize consistency with the underlying REST API:
+
+- **Better API Alignment**: Model hierarchy and property names now match your REST API documentation exactly
+- **Improved Developer Experience**: Direct dictionary access eliminates extra method calls
+- **Consistency**: camelCase output matches what you see in REST API responses
+- **Maintainability**: Reduced artificial flattening makes the SDK easier to maintain and understand
+
+If you encounter issues not covered here, please file an issue on [GitHub](https://github.com/microsoft/typespec/issues) with tag `emitter:client:python`.
