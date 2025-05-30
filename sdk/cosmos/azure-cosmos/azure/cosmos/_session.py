@@ -79,10 +79,22 @@ class SessionContainer(object):
                 if collection_rid in self.rid_to_session_token and collection_name in container_properties_cache:
                     token_dict = self.rid_to_session_token[collection_rid]
                     if partition_key_range_id is not None:
-                        container_routing_map = routing_map_provider._collection_routing_map_by_item[collection_name]
-                        current_range = container_routing_map._rangeById.get(partition_key_range_id)
-                        if current_range is not None:
-                            session_token = self._format_session_token(current_range, token_dict)
+                        # if we find a cached session token for the relevant pk range id, use that session token
+                        if token_dict.get(partition_key_range_id):
+                            vector_session_token = token_dict.get(partition_key_range_id)
+                            session_token = "{0}:{1}".format(partition_key_range_id, vector_session_token.session_token)
+                        # if we don't find it, we do a session token merge for the parent pk ranges
+                        # this should only happen immediately after a partition split
+                        else:
+                            container_routing_map = routing_map_provider._collection_routing_map_by_item[collection_name]
+                            current_range = container_routing_map._rangeById.get(partition_key_range_id)
+                            if current_range is not None:
+                                vector_session_token = self._resolve_partition_local_session_token(current_range,
+                                                                                                   token_dict)
+                                session_token = "{0}:{1}".format(partition_key_range_id,
+                                                                 vector_session_token.session_token)
+                            else:
+                                print(3)
                     else:
                         collection_pk_definition = container_properties_cache[collection_name]["partitionKey"]
                         partition_key = PartitionKey(path=collection_pk_definition['paths'],
@@ -91,6 +103,7 @@ class SessionContainer(object):
                         epk_range = partition_key._get_epk_range_for_partition_key(pk_value=pk_value)
                         pk_range = routing_map_provider.get_overlapping_ranges(collection_name, [epk_range])
                         session_token = self._format_session_token(pk_range, token_dict)
+                        # session_token = token_dict.get(pk_range[0]['id'])
                     return session_token
                 return ""
             except Exception:  # pylint: disable=broad-except
@@ -296,6 +309,24 @@ class SessionContainer(object):
                 session_token_list.append(session_token)
         session_token = ",".join(session_token_list)
         return session_token
+
+    def _resolve_partition_local_session_token(self, pk_range, token_dict) -> VectorSessionToken:
+        parent_session_token = None
+        parents = pk_range[0].get('parents').copy()
+        parents.append(pk_range[0]['id'])
+        for parent in parents:
+            vector_session_token = token_dict.get(parent)
+            # set initial token to be returned
+            if parent_session_token is None:
+                parent_session_token = vector_session_token
+            else:
+                # if initial token is already set, and the next parent's token is cached, merge vector session tokens
+                if vector_session_token is not None:
+                    vector_token_1 = VectorSessionToken.create(parent_session_token)
+                    vector_token_2 = VectorSessionToken.create(vector_session_token)
+                    vector_token = vector_token_1.merge(vector_token_2)
+                    parent_session_token = vector_token.session_token
+        return parent_session_token
 
 
 class Session(object):

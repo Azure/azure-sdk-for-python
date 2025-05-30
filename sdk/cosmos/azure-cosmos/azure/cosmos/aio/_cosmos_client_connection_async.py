@@ -2106,7 +2106,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             )
 
         return AsyncItemPaged(
-            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable,
+            resource_type=http_constants.ResourceType.PartitionKeyRange
         )
 
     def ReadDatabases(
@@ -2313,6 +2314,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             page_iterator_class=query_iterable.QueryIterable,
             response_hook=response_hook,
             raw_response_hook=kwargs.get('raw_response_hook'),
+            resource_type=http_constants.ResourceType.Document
         )
 
     def QueryItemsChangeFeed(
@@ -2444,7 +2446,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             query,
             options,
             fetch_function=fetch_fn,
-            page_iterator_class=query_iterable.QueryIterable
+            page_iterator_class=query_iterable.QueryIterable,
+            resource_type=http_constants.ResourceType.Offer
         )
 
     def ReadUsers(
@@ -2506,7 +2509,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             )
 
         return AsyncItemPaged(
-            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable,
+            resource_type=http_constants.ResourceType.User
         )
 
     def ReadPermissions(
@@ -2555,20 +2559,21 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        resource_type = http_constants.ResourceType.Permission
-        path = base.GetPathFromLink(user_link, resource_type)
+        path = base.GetPathFromLink(user_link, http_constants.ResourceType.Permission)
         user_id = base.GetResourceIdOrFullNameFromLink(user_link)
 
         async def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
             return (
                 await self.__QueryFeed(
-                    path, resource_type, user_id, lambda r: r["Permissions"], lambda _, b: b, query, options, **kwargs
+                    path, http_constants.ResourceType.Permission, user_id, lambda r: r["Permissions"], lambda _, b: b,
+                    query, options, **kwargs
                 ),
                 self.last_response_headers,
             )
 
         return AsyncItemPaged(
-            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable,
+            resource_type=http_constants.ResourceType.Permission
         )
 
     def ReadStoredProcedures(
@@ -2630,7 +2635,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             )
 
         return AsyncItemPaged(
-            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable,
+            resource_type=http_constants.ResourceType.StoredProcedure
         )
 
     def ReadTriggers(
@@ -2692,7 +2698,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             )
 
         return AsyncItemPaged(
-            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable,
+            resource_type=http_constants.ResourceType.Trigger
         )
 
     def ReadUserDefinedFunctions(
@@ -2755,7 +2762,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             )
 
         return AsyncItemPaged(
-            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable,
+            resource_type=http_constants.ResourceType.UserDefinedFunction
         )
 
     def ReadConflicts(
@@ -2816,7 +2824,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             )
 
         return AsyncItemPaged(
-            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable,
+            resource_type=http_constants.ResourceType.Conflict
         )
 
     async def QueryFeed(

@@ -33,7 +33,7 @@ from azure.cosmos._execution_context.execution_dispatcher import _is_partitioned
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 from azure.cosmos.documents import _DistinctType
 from azure.cosmos.exceptions import CosmosHttpResponseError
-from azure.cosmos.http_constants import StatusCodes
+from azure.cosmos.http_constants import StatusCodes, ResourceType
 from ..._constants import _Constants as Constants
 
 # pylint: disable=protected-access
@@ -48,7 +48,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
     """
 
     def __init__(self, client, resource_link, query, options, fetch_function,
-                 response_hook, raw_response_hook):
+                 response_hook, raw_response_hook, resource_type):
         """
         Constructor
         """
@@ -58,6 +58,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         self._resource_link = resource_link
         self._query = query
         self._fetch_function = fetch_function
+        self._resource_type = resource_type
         self._response_hook = response_hook
         self._raw_response_hook = raw_response_hook
         self._fetched_query_plan = False
@@ -77,7 +78,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         :raises StopIteration: If no more result is left.
 
         """
-        if "enableCrossPartitionQuery" not in self._options:
+        if "enableCrossPartitionQuery" not in self._options or self._resource_type != ResourceType.Document:
             try:
                 return await self._execution_context.__anext__()
             except CosmosHttpResponseError as e:
@@ -99,7 +100,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         :return: List of results.
         :rtype: list
         """
-        if "enableCrossPartitionQuery" not in self._options:
+        if "enableCrossPartitionQuery" not in self._options or self._resource_type != ResourceType.Document:
             try:
                 return await self._execution_context.fetch_next_block()
             except CosmosHttpResponseError as e:
