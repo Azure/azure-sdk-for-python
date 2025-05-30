@@ -204,8 +204,9 @@ Connection errors can occur due to network issues, firewall restrictions, or ser
 ```python
 from azure.servicebus import ServiceBusClient, TransportType
 
+# Using connection string with WebSockets
 client = ServiceBusClient.from_connection_string(
-    connection_string,
+    "your_connection_string",
     transport_type=TransportType.AmqpOverWebsocket
 )
 ```
