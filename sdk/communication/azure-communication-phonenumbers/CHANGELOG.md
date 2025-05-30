@@ -4,7 +4,7 @@
 
 ### Features Added
 - GA release of the reservations functionality.
-- API version `2025-04-01` is the default.
+- GA support for automated purchases of phone numbers from countries requiring a Do Not Resell agreement.
 
 ## 1.3.0b1 (2025-05-21)
 
