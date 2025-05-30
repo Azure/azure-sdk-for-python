@@ -424,6 +424,8 @@ class TestStatsbeatMetrics(unittest.TestCase):
         os.environ,
         {
             "FUNCTIONS_WORKER_RUNTIME": "runtime",
+            # Functions can have WEBSITE_SITE_NAME
+            "WEBSITE_SITE_NAME": "site_name",
             "WEBSITE_HOSTNAME": "host_name",
         },
     )
