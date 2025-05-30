@@ -116,7 +116,11 @@ class SupportsTokenInfo(Protocol, ContextManager["SupportsTokenInfo"]):
         ...
 
     def close(self) -> None:
-        pass
+        """Close the credential, releasing any resources it holds.
+
+        :return: None
+        :rtype: None
+        """
 
 
 TokenProvider = Union[TokenCredential, SupportsTokenInfo]
@@ -171,7 +175,7 @@ class AzureKeyCredential:
         to update long-lived clients.
 
         :param str key: The key used to authenticate to an Azure service
-        :raises: ValueError or TypeError
+        :raises ValueError or TypeError: If the key is None, empty, or not a string.
         """
         if not key:
             raise ValueError("The key used for updating can not be None or empty")
