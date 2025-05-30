@@ -86,7 +86,8 @@ class SessionContainer(object):
                         # if we don't find it, we do a session token merge for the parent pk ranges
                         # this should only happen immediately after a partition split
                         else:
-                            container_routing_map = routing_map_provider._collection_routing_map_by_item[collection_name]
+                            container_routing_map = \
+                                routing_map_provider._collection_routing_map_by_item[collection_name]
                             current_range = container_routing_map._rangeById.get(partition_key_range_id)
                             if current_range is not None:
                                 vector_session_token = self._resolve_partition_local_session_token(current_range,
