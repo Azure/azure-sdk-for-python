@@ -7,7 +7,7 @@ When migrating from Swagger to TypeSpec-generated SDKs, expect these breaking ch
 
 | Change                                                                              | Impact                                                    | Quick Fix                                                                         |
 | ----------------------------------------------------------------------------------- | --------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| [Dictionary Access](#dictionary-access-syntax)                                      | `as_dict()` parameter renamed, output format changed      | Recommended removal of `as_dict()` and directly access model, or replace `keep_readonly=True` with `exclude_readonly=False`, expect camelCase keys |
+| [Dictionary Access](#dictionary-access-syntax)                                      | `as_dict()` parameter renamed, output format changed      | Recommended removal of `as_dict()` and directly access model, or replace `keep_readonly=True` with `exclude_readonly=False`, expect `camelCase` keys |
 | [Model Hierarchy](#model-hierarchy-reflects-rest-api-structure)                     | Multi-level flattened properties removed                  | Replace `obj.level1_level2_prop` with `obj.level1.level2.prop`                    |
 | [Additional Properties](#additional-properties-handling)                            | `additional_properties` parameter removed                 | Use direct dictionary syntax: `model["key"] = value`                              |
 | [String Representation](#string-representation-matches-rest-api)                    | Model key output changed from `snake_case` to `camelCase` | Update any code parsing model strings to expect `camelCase`                       |
@@ -32,7 +32,7 @@ model = Model(name="example")
 
 # Dictionary access required as_dict()
 json_model = model.as_dict(keep_readonly=True)
-print(json_model["name"])  # snake_case key
+print(json_model["my_name"])  # snake_case key
 ```
 
 #### After (TypeSpec-Generated SDK)
@@ -42,18 +42,18 @@ from azure.mgmt.test.models import Model
 model = Model(name="example")
 
 # Direct dictionary access now works
-print(model["name"])  # Works directly
+print(model["myName"])  # Works directly
 
 # as_dict() parameter changed
 json_model = model.as_dict(exclude_readonly=False)  # Parameter renamed
-print(json_model["name"])  # Now returns camelCase key (matches REST API)
+print(json_model["myName"])  # Now returns camelCase key (matches REST API)
 ```
 
 #### Migration steps
 
 - (Recommended) Optionally simplify code by using direct dictionary access: `model["key"]` instead of `model.as_dict()["key"]`
 - Replace `keep_readonly=True` with `exclude_readonly=False`
-- Update code expecting snake_case keys to use camelCase keys (consistent with REST API)
+- Update code expecting `snake_case` keys to use `camelCase` keys (consistent with REST API)
 
 ### Model Hierarchy Reflects REST API Structure
 
@@ -137,7 +137,7 @@ print(model)  # Shows the additional properties directly
 
 ### String Representation Matches REST API
 
-**What changed**: TypeSpec-generated model string output uses camelCase (matching the REST API) instead of Python's snake_case convention used in Swagger generation.
+**What changed**: TypeSpec-generated model string output uses `camelCase` (matching the REST API) instead of Python's `snake_case` convention used in Swagger generation.
 **What will break**:
 
 - Code that parses or matches against model string representations
@@ -233,7 +233,7 @@ model = Model(name="example", value=42)  # Still works as before
   - `serialize(keep_readonly=False)` → `as_dict(exclude_readonly=True)`
 - Test serialization format:
   - Verify the output format matches your expectations
-  - Check that camelCase keys are handled correctly
+  - Check that `camelCase` keys are handled correctly
 
 ## Why These Changes?
 
@@ -241,7 +241,7 @@ The TypeSpec-generated SDKs prioritize consistency with the underlying REST API:
 
 - **Better API Alignment**: Model hierarchy and property names now match your REST API documentation exactly
 - **Improved Developer Experience**: Direct dictionary access eliminates extra method calls
-- **Consistency**: camelCase output matches what you see in REST API responses
+- **Consistency**: `camelCase` output matches what you see in REST API responses
 - **Maintainability**: Reduced artificial flattening makes the SDK easier to maintain and understand
 
 If you encounter issues not covered here, please file an issue on [GitHub](https://github.com/microsoft/typespec/issues) with tag `emitter:client:python`.
