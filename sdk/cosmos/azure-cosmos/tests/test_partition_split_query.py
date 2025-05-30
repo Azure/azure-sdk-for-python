@@ -4,7 +4,6 @@
 import random
 import time
 import unittest
-import uuid
 import os
 
 import pytest
@@ -12,17 +11,7 @@ import pytest
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos import DatabaseProxy, PartitionKey, ContainerProxy
-from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
-
-
-def get_test_item():
-    test_item = {
-        'id': 'Item_' + str(uuid.uuid4()),
-        'test_object': True,
-        'lastName': 'Smith',
-        'attr1': random.randint(0, 10)
-    }
-    return test_item
+from azure.cosmos.exceptions import CosmosHttpResponseError
 
 
 def run_queries(container, iterations):
@@ -39,6 +28,17 @@ def run_queries(container, iterations):
                 attr_number = results['attr1']
                 assert str(attr_number) == curr  # verify that all results match their randomly generated attributes
         print("validation succeeded for all query results")
+
+def run_session_token_query(container, split):
+    query = "select * from c"
+    # verify session token sent makes sense for number of partitions present
+    if split:
+        query_iterable = container.query_items(query=query, enable_cross_partition_query=True,
+                                               raw_response_hook=test_config.post_split_hook)
+    else:
+        query_iterable = container.query_items(query=query, enable_cross_partition_query=True,
+                                               raw_response_hook=test_config.pre_split_hook)
+    list(query_iterable)
 
 
 @pytest.mark.cosmosQuery
@@ -59,7 +59,8 @@ class TestPartitionSplitQuery(unittest.TestCase):
         cls.database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         cls.container = cls.database.create_container(
             id=cls.TEST_CONTAINER_ID,
-            partition_key=PartitionKey(path="/id"))
+            partition_key=PartitionKey(path="/id"),
+            offer_throughput=cls.throughput)
         if cls.host == "https://localhost:8081/":
             os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "True"
 
@@ -72,29 +73,31 @@ class TestPartitionSplitQuery(unittest.TestCase):
 
     def test_partition_split_query(self):
         for i in range(100):
-            body = get_test_item()
+            body = test_config.get_test_item()
             self.container.create_item(body=body)
 
         start_time = time.time()
         print("created items, changing offer to 11k and starting queries")
-        self.database.replace_throughput(11000)
+        self.container.replace_throughput(11000)
         offer_time = time.time()
         print("changed offer to 11k")
         print("--------------------------------")
         print("now starting queries")
 
         run_queries(self.container, 100)  # initial check for queries before partition split
+        run_session_token_query(self.container, False) # initial session token check before partition split
         print("initial check succeeded, now reading offer until replacing is done")
-        offer = self.database.get_throughput()
+        offer = self.container.get_throughput()
         while True:
             if time.time() - start_time > 60 * 25:  # timeout test at 25 minutes
                 unittest.skip("Partition split didn't complete in time.")
             if offer.properties['content'].get('isOfferReplacePending', False):
                 time.sleep(10)
-                offer = self.database.get_throughput()
+                offer = self.container.get_throughput()
             else:
                 print("offer replaced successfully, took around {} seconds".format(time.time() - offer_time))
                 run_queries(self.container, 100)  # check queries work post partition split
+                run_session_token_query(self.container, True)  # check session token works post partition split
                 self.assertTrue(offer.offer_throughput > self.throughput)
                 return
 

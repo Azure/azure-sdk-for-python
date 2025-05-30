@@ -33,7 +33,7 @@ from azure.cosmos._execution_context.execution_dispatcher import _is_partitioned
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 from azure.cosmos.documents import _DistinctType
 from azure.cosmos.exceptions import CosmosHttpResponseError
-from azure.cosmos.http_constants import StatusCodes
+from azure.cosmos.http_constants import StatusCodes, ResourceType
 from ..._constants import _Constants as Constants
 
 # pylint: disable=protected-access
@@ -47,7 +47,8 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
     to _MultiExecutionContextAggregator
     """
 
-    def __init__(self, client, resource_link, query, options, fetch_function, response_hook):
+    def __init__(self, client, resource_link, query, options, fetch_function,
+                 response_hook, raw_response_hook, resource_type):
         """
         Constructor
         """
@@ -57,7 +58,17 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         self._resource_link = resource_link
         self._query = query
         self._fetch_function = fetch_function
+        self._resource_type = resource_type
         self._response_hook = response_hook
+        self._raw_response_hook = raw_response_hook
+        self._fetched_query_plan = False
+
+    async def _create_execution_context_with_query_plan(self):
+        self._fetched_query_plan = True
+        query_to_use = self._query if self._query is not None else "Select * from root r"
+        query_execution_info = _PartitionedQueryExecutionInfo(await self._client._GetQueryPlanThroughGateway
+        (query_to_use, self._resource_link, self._options.get('excludedLocations')))
+        self._execution_context = await self._create_pipelined_execution_context(query_execution_info)
 
     async def __anext__(self):
         """Returns the next query result.
@@ -67,17 +78,16 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         :raises StopIteration: If no more result is left.
 
         """
-        try:
-            return await self._execution_context.__anext__()
-        except CosmosHttpResponseError as e:
-            if _is_partitioned_execution_info(e):
-                query_to_use = self._query if self._query is not None else "Select * from root r"
-                query_plan_dict = await self._client._GetQueryPlanThroughGateway(
-                    query_to_use, self._resource_link, self._options.get('excludedLocations'))
-                query_execution_info = _PartitionedQueryExecutionInfo(query_plan_dict)
-                self._execution_context = await self._create_pipelined_execution_context(query_execution_info)
-            else:
-                raise e
+        if "enableCrossPartitionQuery" not in self._options or self._resource_type != ResourceType.Document:
+            try:
+                return await self._execution_context.__anext__()
+            except CosmosHttpResponseError as e:
+                if _is_partitioned_execution_info(e) or _is_hybrid_search_query(self._query, e):
+                    await self._create_execution_context_with_query_plan()
+                else:
+                    raise e
+        else:
+            await self._create_execution_context_with_query_plan()
 
         return await self._execution_context.__anext__()
 
@@ -90,17 +100,16 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         :return: List of results.
         :rtype: list
         """
-        try:
-            return await self._execution_context.fetch_next_block()
-        except CosmosHttpResponseError as e:
-            if _is_partitioned_execution_info(e) or _is_hybrid_search_query(self._query, e):
-                query_to_use = self._query if self._query is not None else "Select * from root r"
-                query_plan_dict = await self._client._GetQueryPlanThroughGateway(
-                    query_to_use, self._resource_link, self._options.get('excludedLocations'))
-                query_execution_info = _PartitionedQueryExecutionInfo(query_plan_dict)
-                self._execution_context = await self._create_pipelined_execution_context(query_execution_info)
-            else:
-                raise e
+        if "enableCrossPartitionQuery" not in self._options or self._resource_type != ResourceType.Document:
+            try:
+                return await self._execution_context.fetch_next_block()
+            except CosmosHttpResponseError as e:
+                if _is_partitioned_execution_info(e) or _is_hybrid_search_query(self._query, e):
+                    await self._create_execution_context_with_query_plan()
+                else:
+                    raise e
+        else:
+            await self._create_execution_context_with_query_plan()
 
         return await self._execution_context.fetch_next_block()
 
@@ -112,6 +121,8 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                   and self._options["enableCrossPartitionQuery"]):
                 raise CosmosHttpResponseError(StatusCodes.BAD_REQUEST,
                                   "Cross partition query only supports 'VALUE <AggregateFunc>' for aggregates")
+        if self._fetched_query_plan:
+            self._options.pop("enableCrossPartitionQuery", None)
 
         # throw exception here for vector search query without limit filter or limit > max_limit
         if query_execution_info.get_non_streaming_order_by():
@@ -131,7 +142,8 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                                                                         self._query,
                                                                                         self._options,
                                                                                         query_execution_info,
-                                                                                        self._response_hook)
+                                                                                        self._response_hook,
+                                                                                        self._raw_response_hook)
             await execution_context_aggregator._configure_partition_ranges()
         elif query_execution_info.has_hybrid_search_query_info():
             hybrid_search_query_info = query_execution_info._query_execution_info['hybridSearchQueryInfo']
@@ -142,15 +154,13 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                                                         self._options,
                                                                         query_execution_info,
                                                                         hybrid_search_query_info,
-                                                                        self._response_hook)
+                                                                        self._response_hook,
+                                                                        self._raw_response_hook)
             await execution_context_aggregator._run_hybrid_search()
         else:
-            execution_context_aggregator = multi_execution_aggregator._MultiExecutionContextAggregator(self._client,
-                                                                                                   self._resource_link,
-                                                                                                   self._query,
-                                                                                                   self._options,
-                                                                                                   query_execution_info,
-                                                                                                   self._response_hook)
+            execution_context_aggregator = multi_execution_aggregator._MultiExecutionContextAggregator(
+                self._client, self._resource_link, self._query, self._options, query_execution_info,
+                self._response_hook, self._raw_response_hook)
             await execution_context_aggregator._configure_partition_ranges()
         return _PipelineExecutionContext(self._client, self._options, execution_context_aggregator,
                                          query_execution_info)
