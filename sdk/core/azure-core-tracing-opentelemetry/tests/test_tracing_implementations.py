@@ -129,17 +129,35 @@ class TestOpentelemetryWrapper:
         spans_names_list = [span.name for span in tracing_helper.exporter.get_finished_spans()]
         assert spans_names_list == ["outer-span-1", "outer-span-2", "Root"]
 
+    def test_suppress_http_under_change_context(self, tracing_helper):
+        from opentelemetry.context import get_value, _SUPPRESS_HTTP_INSTRUMENTATION_KEY
+
+        span1 = OpenTelemetrySpan(name="span1", kind=SpanKind.INTERNAL)
+
+        with OpenTelemetrySpan.change_context(span1.span_instance):
+            # this won't suppress HTTP since it's an arbitrary span
+            assert get_value(_SUPPRESS_HTTP_INSTRUMENTATION_KEY) is None
+
+        with OpenTelemetrySpan.change_context(span1):
+            # this works - we can guarantee suppression under our spans
+            assert get_value(_SUPPRESS_HTTP_INSTRUMENTATION_KEY)
+
     def test_suppress_http_auto_instrumentation_policy(self, tracing_helper):
         from azure.core.rest import HttpRequest
         from azure.core.pipeline.transport import RequestsTransport
-        from azure.core.pipeline.policies import DistributedTracingPolicy
+        from azure.core.pipeline.policies import DistributedTracingPolicy, SansIOHTTPPolicy
         from azure.core.settings import settings
+        from opentelemetry.context import get_value, _SUPPRESS_HTTP_INSTRUMENTATION_KEY
 
         settings.tracing_implementation = "opentelemetry"
 
+        class ContextValidator(SansIOHTTPPolicy):
+            def on_request(self, request):
+                assert get_value(_SUPPRESS_HTTP_INSTRUMENTATION_KEY)
+
         class FooClient:
             def __init__(self, endpoint: str):
-                policies = [DistributedTracingPolicy()]
+                policies = [DistributedTracingPolicy(), ContextValidator()]
                 self._client = PipelineClient(endpoint, policies=policies, transport=RequestsTransport())
 
             @distributed_trace
