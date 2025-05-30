@@ -150,7 +150,7 @@ class StorageAccountHostsMixin(object):
         :return: The full endpoint URL to this entity, including SAS token if used.
         :rtype: str
         """
-        return self._format_url(self._hosts[self._location_mode])   # type: ignore
+        return self._format_url(self._hosts[self._location_mode])  # type: ignore
 
     @property
     def primary_endpoint(self) -> str:
@@ -183,7 +183,7 @@ class StorageAccountHostsMixin(object):
         """
         if not self._hosts[LocationMode.SECONDARY]:
             raise ValueError("No secondary host configured.")
-        return self._format_url(self._hosts[LocationMode.SECONDARY])    # type: ignore
+        return self._format_url(self._hosts[LocationMode.SECONDARY])  # type: ignore
 
     @property
     def secondary_hostname(self) -> Optional[str]:

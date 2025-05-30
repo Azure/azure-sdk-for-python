@@ -436,7 +436,7 @@ class StorageRetryPolicy(HTTPPolicy):
     def configure_retries(self, request: "PipelineRequest") -> Dict[str, Any]:
         """
         Configure the retry settings for the request.
-        
+
         :param request: A pipeline request object.
         :type request: ~azure.core.pipeline.PipelineRequest
         :return: A dictionary containing the retry settings.
@@ -476,7 +476,7 @@ class StorageRetryPolicy(HTTPPolicy):
 
     def sleep(self, settings, transport):
         """Sleep for the backoff time.
-        
+
         :param Dict[str, Any] settings: The configurable values pertaining to the sleep operation.
         :param transport: The transport to use for sleeping.
         :type transport:
@@ -550,7 +550,7 @@ class StorageRetryPolicy(HTTPPolicy):
 
     def send(self, request):
         """Send the request with retry logic.
-        
+
         :param request: A pipeline request object.
         :type request: ~azure.core.pipeline.PipelineRequest
         :return: A pipeline response object.
@@ -711,11 +711,11 @@ class StorageBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
 
     def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
         """Handle the challenge from the service and authorize the request.
-        
+
         :param request: The request object.
         :type request: ~azure.core.pipeline.PipelineRequest
         :param response: The response object.
-        :type response: ~azure.core.pipeline.PipelineResponse        
+        :type response: ~azure.core.pipeline.PipelineResponse
         :return: True if the request was authorized, False otherwise.
         :rtype: bool
         """
