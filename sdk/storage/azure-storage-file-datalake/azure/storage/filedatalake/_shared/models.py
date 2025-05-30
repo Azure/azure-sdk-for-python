@@ -22,6 +22,7 @@ def get_enum_value(value):
 
 
 class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Error codes returned by the service."""
 
     # Generic storage values
     ACCOUNT_ALREADY_EXISTS = "AccountAlreadyExists"

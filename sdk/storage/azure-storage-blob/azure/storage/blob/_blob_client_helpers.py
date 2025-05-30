@@ -270,7 +270,7 @@ def _download_blob_options(
         The string representing the SDK package version.
     :param AzureBlobStorage client:
         The generated Blob Storage client.
-    :returns: A dictionary containing the download blob options.
+    :return: A dictionary containing the download blob options.
     :rtype: Dict[str, Any]
     """
     if length is not None:
