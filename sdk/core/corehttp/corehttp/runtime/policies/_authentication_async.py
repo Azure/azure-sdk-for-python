@@ -36,7 +36,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
     # pylint: disable=unused-argument
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
+        credential: Optional["AsyncTokenCredential"],
         *scopes: str,
         auth_flows: Optional[list[dict[str, Union[str, list[dict[str, str]]]]]] = None,
         **kwargs: Any,
@@ -68,6 +68,11 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         :paramtype auth_flows: list[dict[str, Union[str, list[dict[str, str]]]]]
         :raises: :class:`~corehttp.exceptions.ServiceRequestError`
         """
+        # If auth_flows is an empty list, we should not attempt to authorize the request.
+        if auth_flows is not None and len(auth_flows) == 0:
+            return
+        if not self._credential:
+            raise ValueError("Authentication is required for this operation. Please provide a credential.")
         _BearerTokenCredentialPolicyBase._enforce_https(request)  # pylint:disable=protected-access
 
         if self._token is None or self._need_new_token:
@@ -87,6 +92,8 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         :param ~corehttp.runtime.pipeline.PipelineRequest request: the request
         :param str scopes: required scopes of authentication
         """
+        if not self._credential:
+            raise ValueError("Authentication is required for this operation. Please provide a credential.")
         options: TokenRequestOptions = {}
         # Loop through all the keyword arguments and check if they are part of the TokenRequestOptions.
         for key in list(kwargs.keys()):
@@ -107,7 +114,9 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         :return: The pipeline response object
         :rtype: ~corehttp.runtime.pipeline.PipelineResponse
         """
-        await await_result(self.on_request, request, auth_flows=self._auth_flows)
+        op_auth_flows = request.context.options.pop("auth_flows", None)
+        auth_flows = op_auth_flows if op_auth_flows is not None else self._auth_flows
+        await await_result(self.on_request, request, auth_flows=auth_flows)
         try:
             response = await self.next.send(request)
         except Exception:
