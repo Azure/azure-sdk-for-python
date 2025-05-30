@@ -20,12 +20,12 @@ class TestAVSPlacementPoliciesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_placement_policies_list(self, resource_group):
         response = self.client.placement_policies.list(
             resource_group_name=resource_group.name,
             private_cloud_name="str",
             cluster_name="str",
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,13 +33,13 @@ class TestAVSPlacementPoliciesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_placement_policies_get(self, resource_group):
         response = self.client.placement_policies.get(
             resource_group_name=resource_group.name,
             private_cloud_name="str",
             cluster_name="str",
             placement_policy_name="str",
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         )
 
         # please add some check logic here by yourself
@@ -47,7 +47,7 @@ class TestAVSPlacementPoliciesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_placement_policies_begin_create_or_update(self, resource_group):
         response = self.client.placement_policies.begin_create_or_update(
             resource_group_name=resource_group.name,
             private_cloud_name="str",
@@ -67,7 +67,7 @@ class TestAVSPlacementPoliciesOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -75,7 +75,7 @@ class TestAVSPlacementPoliciesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_placement_policies_begin_update(self, resource_group):
         response = self.client.placement_policies.begin_update(
             resource_group_name=resource_group.name,
             private_cloud_name="str",
@@ -88,7 +88,7 @@ class TestAVSPlacementPoliciesOperations(AzureMgmtRecordedTestCase):
                 "state": "str",
                 "vmMembers": ["str"],
             },
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -96,13 +96,13 @@ class TestAVSPlacementPoliciesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_placement_policies_begin_delete(self, resource_group):
         response = self.client.placement_policies.begin_delete(
             resource_group_name=resource_group.name,
             private_cloud_name="str",
             cluster_name="str",
             placement_policy_name="str",
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

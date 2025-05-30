@@ -7,16 +7,18 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
 from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.settings import settings
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core.tools import get_arm_endpoints
 
 from .. import models as _models
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import AVSClientConfiguration
 from .operations import (
     AddonsOperations,
@@ -26,24 +28,27 @@ from .operations import (
     DatastoresOperations,
     GlobalReachConnectionsOperations,
     HcxEnterpriseSitesOperations,
+    HostsOperations,
     IscsiPathsOperations,
     LocationsOperations,
     Operations,
     PlacementPoliciesOperations,
     PrivateCloudsOperations,
+    ProvisionedNetworksOperations,
+    PureStoragePoliciesOperations,
     ScriptCmdletsOperations,
     ScriptExecutionsOperations,
     ScriptPackagesOperations,
+    SkusOperations,
     VirtualMachinesOperations,
     WorkloadNetworksOperations,
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AVSClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class AVSClient:  # pylint: disable=too-many-instance-attributes
     """Azure VMware Solution API.
 
     :ivar operations: Operations operations
@@ -52,6 +57,8 @@ class AVSClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-
     :vartype locations: azure.mgmt.avs.aio.operations.LocationsOperations
     :ivar private_clouds: PrivateCloudsOperations operations
     :vartype private_clouds: azure.mgmt.avs.aio.operations.PrivateCloudsOperations
+    :ivar skus: SkusOperations operations
+    :vartype skus: azure.mgmt.avs.aio.operations.SkusOperations
     :ivar addons: AddonsOperations operations
     :vartype addons: azure.mgmt.avs.aio.operations.AddonsOperations
     :ivar authorizations: AuthorizationsOperations operations
@@ -62,6 +69,8 @@ class AVSClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-
     :vartype clusters: azure.mgmt.avs.aio.operations.ClustersOperations
     :ivar datastores: DatastoresOperations operations
     :vartype datastores: azure.mgmt.avs.aio.operations.DatastoresOperations
+    :ivar hosts: HostsOperations operations
+    :vartype hosts: azure.mgmt.avs.aio.operations.HostsOperations
     :ivar placement_policies: PlacementPoliciesOperations operations
     :vartype placement_policies: azure.mgmt.avs.aio.operations.PlacementPoliciesOperations
     :ivar virtual_machines: VirtualMachinesOperations operations
@@ -73,6 +82,10 @@ class AVSClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-
     :vartype hcx_enterprise_sites: azure.mgmt.avs.aio.operations.HcxEnterpriseSitesOperations
     :ivar iscsi_paths: IscsiPathsOperations operations
     :vartype iscsi_paths: azure.mgmt.avs.aio.operations.IscsiPathsOperations
+    :ivar provisioned_networks: ProvisionedNetworksOperations operations
+    :vartype provisioned_networks: azure.mgmt.avs.aio.operations.ProvisionedNetworksOperations
+    :ivar pure_storage_policies: PureStoragePoliciesOperations operations
+    :vartype pure_storage_policies: azure.mgmt.avs.aio.operations.PureStoragePoliciesOperations
     :ivar script_executions: ScriptExecutionsOperations operations
     :vartype script_executions: azure.mgmt.avs.aio.operations.ScriptExecutionsOperations
     :ivar script_packages: ScriptPackagesOperations operations
@@ -85,9 +98,9 @@ class AVSClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :param base_url: Service URL. Default value is None.
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-09-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2024-09-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -95,13 +108,17 @@ class AVSClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-
     """
 
     def __init__(
-        self,
-        credential: "AsyncTokenCredential",
-        subscription_id: str,
-        base_url: str = "https://management.azure.com",
-        **kwargs: Any
+        self, credential: "AsyncTokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
     ) -> None:
-        self._config = AVSClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _endpoints = get_arm_endpoints(_cloud)
+        if not base_url:
+            base_url = _endpoints["resource_manager"]
+        credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
+        self._config = AVSClientConfiguration(
+            credential=credential, subscription_id=subscription_id, credential_scopes=credential_scopes, **kwargs
+        )
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -120,7 +137,9 @@ class AVSClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(
+            base_url=cast(str, base_url), policies=_policies, **kwargs
+        )
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -129,11 +148,13 @@ class AVSClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.locations = LocationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.private_clouds = PrivateCloudsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize)
         self.addons = AddonsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.authorizations = AuthorizationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.cloud_links = CloudLinksOperations(self._client, self._config, self._serialize, self._deserialize)
         self.clusters = ClustersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.datastores = DatastoresOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.hosts = HostsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.placement_policies = PlacementPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -147,6 +168,12 @@ class AVSClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-
             self._client, self._config, self._serialize, self._deserialize
         )
         self.iscsi_paths = IscsiPathsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.provisioned_networks = ProvisionedNetworksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.pure_storage_policies = PureStoragePoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.script_executions = ScriptExecutionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
