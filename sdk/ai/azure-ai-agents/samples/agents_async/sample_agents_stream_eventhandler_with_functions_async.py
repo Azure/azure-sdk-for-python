@@ -29,6 +29,7 @@ from azure.ai.agents.aio import AgentsClient
 from azure.ai.agents.models import (
     AsyncAgentEventHandler,
     AsyncFunctionTool,
+    AsyncToolSet,
     ListSortOrder,
     MessageTextContent,
     MessageDeltaChunk,
@@ -41,6 +42,11 @@ from azure.ai.agents.models import (
 )
 from azure.identity.aio import DefaultAzureCredential
 from utils.user_async_functions import user_async_functions
+
+# Initialize function tool with user functions
+functions = AsyncFunctionTool(functions=user_async_functions)
+toolset = AsyncToolSet()
+toolset.add(functions)
 
 
 class MyEventHandler(AsyncAgentEventHandler[str]):
@@ -65,21 +71,8 @@ class MyEventHandler(AsyncAgentEventHandler[str]):
         if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
             tool_calls = run.required_action.submit_tool_outputs.tool_calls
 
-            tool_outputs = []
-            for tool_call in tool_calls:
-                if isinstance(tool_call, RequiredFunctionToolCall):
-                    try:
-                        output = await self.functions.execute(tool_call)
-                        tool_outputs.append(
-                            ToolOutput(
-                                tool_call_id=tool_call.id,
-                                output=output,
-                            )
-                        )
-                    except Exception as e:
-                        print(f"Error executing tool_call {tool_call.id}: {e}")
+            tool_outputs = await toolset.execute_tool_calls(tool_calls)
 
-            print(f"Tool outputs: {tool_outputs}")
             if tool_outputs:
                 await self.agents_client.runs.submit_tool_outputs_stream(
                     thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs, event_handler=self
@@ -105,16 +98,12 @@ async def main() -> None:
             credential=creds,
         ) as agents_client:
 
-            # [START create_agent_with_function_tool]
-            functions = AsyncFunctionTool(functions=user_async_functions)
-
             agent = await agents_client.create_agent(
                 model=os.environ["MODEL_DEPLOYMENT_NAME"],
                 name="my-agent",
                 instructions="You are a helpful agent",
                 tools=functions.definitions,
             )
-            # [END create_agent_with_function_tool]
             print(f"Created agent, ID: {agent.id}")
 
             thread = await agents_client.threads.create()

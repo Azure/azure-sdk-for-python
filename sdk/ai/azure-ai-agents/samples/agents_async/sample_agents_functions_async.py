@@ -29,6 +29,7 @@ import os
 from azure.ai.agents.aio import AgentsClient
 from azure.ai.agents.models import (
     AsyncFunctionTool,
+    AsyncToolSet,
     RequiredFunctionToolCall,
     SubmitToolOutputsAction,
     ToolOutput,
@@ -44,6 +45,8 @@ async def main() -> None:
         async with AgentsClient(endpoint=os.environ["PROJECT_ENDPOINT"], credential=creds) as agents_client:
             # Initialize agent functions
             functions = AsyncFunctionTool(functions=user_async_functions)
+            toolset = AsyncToolSet()
+            toolset.add(functions)
 
             # Create agent
             agent = await agents_client.create_agent(
@@ -80,19 +83,7 @@ async def main() -> None:
                         await agents_client.runs.cancel(thread_id=thread.id, run_id=run.id)
                         break
 
-                    tool_outputs = []
-                    for tool_call in tool_calls:
-                        if isinstance(tool_call, RequiredFunctionToolCall):
-                            try:
-                                output = await functions.execute(tool_call)
-                                tool_outputs.append(
-                                    ToolOutput(
-                                        tool_call_id=tool_call.id,
-                                        output=output,
-                                    )
-                                )
-                            except Exception as e:
-                                print(f"Error executing tool_call {tool_call.id}: {e}")
+                    tool_outputs = await toolset.execute_tool_calls(tool_calls)
 
                     print(f"Tool outputs: {tool_outputs}")
                     if tool_outputs:
