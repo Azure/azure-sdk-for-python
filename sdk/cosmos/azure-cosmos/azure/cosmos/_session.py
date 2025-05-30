@@ -35,7 +35,7 @@ from ._vector_session_token import VectorSessionToken
 from .exceptions import CosmosHttpResponseError
 from .partition_key import PartitionKey
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,too-many-nested-blocks
 
 class SessionContainer(object):
     def __init__(self):
