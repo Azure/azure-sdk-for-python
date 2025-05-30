@@ -149,7 +149,7 @@ class HttpTransport(ContextManager["HttpTransport"], abc.ABC, Generic[HTTPReques
         """Send the request using this HTTP sender.
 
         :param request: The pipeline request object
-        :type request: ~azure.core.transport.HTTPRequest
+        :type request: ~azure.core.transport.HttpRequest
         :return: The pipeline response object.
         :rtype: ~azure.core.pipeline.transport.HttpResponse
         """
@@ -193,7 +193,7 @@ class HttpRequest:
         a dict-like object containing additional headers to add for the file.
     :type files: dict[str, tuple[str, IO, str, dict]] or dict[str, IO]
     :param data: Body to be sent.
-    :type data: bytes or dict (for form)
+    :type data: bytes or dict[str, str]
     """
 
     def __init__(
@@ -266,7 +266,7 @@ class HttpRequest:
         It's assumed all parameters have already been quoted as
         valid URL strings.
 
-        :param dict params: A dictionary of parameters.
+        :param dict[str, str] params: A dictionary of parameters.
         """
         return _format_parameters_helper(self, params)
 
@@ -274,7 +274,7 @@ class HttpRequest:
         """Set a streamable data body.
 
         :param data: The request field data.
-        :type data: stream or generator or asyncgenerator
+        :type data: IO or ~typing.Generator or ~typing.AsyncGenerator
         """
         if not isinstance(data, binary_type) and not any(
             hasattr(data, attr) for attr in ["read", "__iter__", "__aiter__"]
@@ -300,7 +300,7 @@ class HttpRequest:
         """Set an XML element tree as the body of the request.
 
         :param data: The request field data.
-        :type data: XML node
+        :type data: Any
         """
         if data is None:
             self.data = None
@@ -453,8 +453,6 @@ class _HttpResponseBase:
     def text(self, encoding: Optional[str] = None) -> str:
         """Return the whole body as a string.
 
-        .. seealso:: ~body()
-
         :param str encoding: The encoding to apply. If None, use "utf-8" with BOM parsing (utf-8-sig).
          Implementation can be smarter if they want (using headers or chardet).
         :rtype: str
@@ -517,7 +515,7 @@ class HttpResponse(_HttpResponseBase):
 
         :param pipeline: The pipeline object
         :type pipeline: ~azure.core.pipeline.Pipeline
-        :rtype: iterator[bytes]
+        :rtype: ~typing.Iterator[bytes]
         :return: The generator of bytes connected to the socket
         """
         raise NotImplementedError("stream_download is not implemented.")
@@ -525,7 +523,7 @@ class HttpResponse(_HttpResponseBase):
     def parts(self) -> Iterator["HttpResponse"]:
         """Assuming the content-type is multipart/mixed, will return the parts as an iterator.
 
-        :rtype: iterator[HttpResponse]
+        :rtype: ~typing.Iterator[HttpResponse]
         :return: The iterator of HttpResponse if request was multipart/mixed
         :raises ValueError: If the content is not multipart/mixed
         """
@@ -606,11 +604,11 @@ class PipelineClientBase:
 
         :param str method: HTTP method (GET, HEAD, etc.)
         :param str url: URL for the request.
-        :param dict params: URL query parameters.
-        :param dict headers: Headers
+        :param dict[str, str] params: URL query parameters.
+        :param dict[str, str] headers: Headers
         :param content: The body content
-        :type content: bytes or str or dict
-        :param dict form_content: Form content
+        :type content: bytes or str or dict[str, str]
+        :param dict[str, str] form_content: Form content
         :param stream_content: The body content as a stream
         :type stream_content: stream or generator or asyncgenerator
         :return: An HttpRequest object
@@ -684,11 +682,11 @@ class PipelineClientBase:
         """Create a GET request object.
 
         :param str url: The request URL.
-        :param dict params: Request URL parameters.
-        :param dict headers: Headers
+        :param dict[str, str] params: Request URL parameters.
+        :param dict[str, str] headers: Headers
         :param content: The body content
-        :type content: bytes or str or dict
-        :param dict form_content: Form content
+        :type content: bytes or str or dict[str, str]
+        :param dict[str, str] form_content: Form content
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
@@ -708,13 +706,13 @@ class PipelineClientBase:
         """Create a PUT request object.
 
         :param str url: The request URL.
-        :param dict params: Request URL parameters.
-        :param dict headers: Headers
+        :param dict[str, str] params: Request URL parameters.
+        :param dict[str, str] headers: Headers
         :param content: The body content
-        :type content: bytes or str or dict
-        :param dict form_content: Form content
+        :type content: bytes or str or dict[str, str]
+        :param dict[str, str] form_content: Form content
         :param stream_content: The body content as a stream
-        :type stream_content: stream or generator or asyncgenerator
+        :type stream_content: IO or ~typing.Generator or ~typing.AsyncGenerator
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
@@ -733,13 +731,13 @@ class PipelineClientBase:
         """Create a POST request object.
 
         :param str url: The request URL.
-        :param dict params: Request URL parameters.
-        :param dict headers: Headers
+        :param dict[str, str] params: Request URL parameters.
+        :param dict[str, str] headers: Headers
         :param content: The body content
-        :type content: bytes or str or dict
-        :param dict form_content: Form content
+        :type content: bytes or str or dict[str, str]
+        :param dict[str, str] form_content: Form content
         :param stream_content: The body content as a stream
-        :type stream_content: stream or generator or asyncgenerator
+        :type stream_content: IO or ~typing.Generator or ~typing.AsyncGenerator
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
@@ -758,13 +756,13 @@ class PipelineClientBase:
         """Create a HEAD request object.
 
         :param str url: The request URL.
-        :param dict params: Request URL parameters.
-        :param dict headers: Headers
+        :param dict[str, str] params: Request URL parameters.
+        :param dict[str, str] headers: Headers
         :param content: The body content
-        :type content: bytes or str or dict
-        :param dict form_content: Form content
+        :type content: bytes or str or dict[str, str]
+        :param dict[str, str] form_content: Form content
         :param stream_content: The body content as a stream
-        :type stream_content: stream or generator or asyncgenerator
+        :type stream_content: IO or ~typing.Generator or ~typing.AsyncGenerator
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
@@ -783,13 +781,13 @@ class PipelineClientBase:
         """Create a PATCH request object.
 
         :param str url: The request URL.
-        :param dict params: Request URL parameters.
-        :param dict headers: Headers
+        :param dict[str, str] params: Request URL parameters.
+        :param dict[str, str] headers: Headers
         :param content: The body content
-        :type content: bytes or str or dict
-        :param dict form_content: Form content
+        :type content: bytes or str or dict[str, str]
+        :param dict[str, str] form_content: Form content
         :param stream_content: The body content as a stream
-        :type stream_content: stream or generator or asyncgenerator
+        :type stream_content: IO or ~typing.Generator or ~typing.AsyncGenerator
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
@@ -807,11 +805,11 @@ class PipelineClientBase:
         """Create a DELETE request object.
 
         :param str url: The request URL.
-        :param dict params: Request URL parameters.
-        :param dict headers: Headers
+        :param dict[str, str] params: Request URL parameters.
+        :param dict[str, str] headers: Headers
         :param content: The body content
-        :type content: bytes or str or dict
-        :param dict form_content: Form content
+        :type content: bytes or str or dict[str, str]
+        :param dict[str, str] form_content: Form content
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
@@ -829,11 +827,11 @@ class PipelineClientBase:
         """Create a MERGE request object.
 
         :param str url: The request URL.
-        :param dict params: Request URL parameters.
-        :param dict headers: Headers
+        :param dict[str, str] params: Request URL parameters.
+        :param dict[str, str] headers: Headers
         :param content: The body content
-        :type content: bytes or str or dict
-        :param dict form_content: Form content
+        :type content: bytes or str or dict[str, str]
+        :param dict[str, str] form_content: Form content
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
@@ -853,11 +851,11 @@ class PipelineClientBase:
         """Create a OPTIONS request object.
 
         :param str url: The request URL.
-        :param dict params: Request URL parameters.
-        :param dict headers: Headers
+        :param dict[str, str] params: Request URL parameters.
+        :param dict[str, str] headers: Headers
         :keyword content: The body content
-        :type content: bytes or str or dict
-        :keyword dict form_content: Form content
+        :paramtype content: bytes or str or dict[str, str]
+        :keyword dict[str, str] form_content: Form content
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """

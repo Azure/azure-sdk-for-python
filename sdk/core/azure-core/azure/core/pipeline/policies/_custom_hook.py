@@ -40,8 +40,8 @@ class CustomHookPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """A simple policy that enable the given callback
     with the response.
 
-    :keyword callback raw_request_hook: Callback function. Will be invoked on request.
-    :keyword callback raw_response_hook: Callback function. Will be invoked on response.
+    :keyword callable raw_request_hook: Callback function. Will be invoked on request.
+    :keyword callable raw_response_hook: Callback function. Will be invoked on response.
     """
 
     def __init__(self, **kwargs: Any):

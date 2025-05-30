@@ -291,7 +291,7 @@ class _HttpResponseBase(abc.ABC):
     def text(self, encoding: Optional[str] = None) -> str:
         """Returns the response body as a string.
 
-        :param optional[str] encoding: The encoding you want to decode the text with. Can
+        :param str encoding: The encoding you want to decode the text with. Can
          also be set independently through our encoding property
         :return: The response's content decoded as a string.
         :rtype: str

@@ -195,8 +195,6 @@ class ODataV4Format:
         }
 
     :param dict json_object: A Python dict representing a ODataV4 JSON
-    :ivar str ~.code: Its value is a service-defined error code.
-     This code serves as a sub-status for the HTTP error code specified in the response.
     :ivar str message: Human-readable, language-dependent representation of the error.
     :ivar str target: The target of the particular error (for example, the name of the property in error).
      This field is optional and may be None.
@@ -475,8 +473,6 @@ class ODataV4Error(HttpResponseError):
 
     :param ~azure.core.rest.HttpResponse response: The response object.
     :ivar dict odata_json: The parsed JSON body as attribute for convenience.
-    :ivar str ~.code: Its value is a service-defined error code.
-     This code serves as a sub-status for the HTTP error code specified in the response.
     :ivar str message: Human-readable, language-dependent representation of the error.
     :ivar str target: The target of the particular error (for example, the name of the property in error).
      This field is optional and may be None.
