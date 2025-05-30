@@ -43,11 +43,12 @@ python -m pip install azure.identity
 
 You can use [DefaultAzureCredential][default_azure_credential] to automatically find the best credential to use at runtime.
 
-You will need a **service URL** to instantiate a client object. You can find the service URL for a particular resource in the [Azure portal][azure_portal], or using the [Azure CLI][azure_cli]:
+You will need a **service URL** to instantiate a client object. You can find the service URL for a particular resource in the [Azure portal][azure_portal], or using the [Azure CLI][azure_cli].
+Here's an example of setting an environment variable in Bash using Azure CLI:
 
 ```bash
 # Get the service URL for the resource
-az deidservice show --name "<resource-name>" --resource-group "<resource-group-name>" --query "properties.serviceUrl"
+export AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT=$(az deidservice show --name "<resource-name>" --resource-group "<resource-group-name>" --query "properties.serviceUrl")
 ```
 
 Optionally, save the service URL as an environment variable named `AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT` for the sample client initialization code.
@@ -56,6 +57,11 @@ Create a client with the endpoint and credential:
 <!-- SNIPPET: examples.create_client -->
 
 ```python
+from azure.health.deidentification import DeidentificationClient
+from azure.identity import DefaultAzureCredential
+import os
+
+
 endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
 credential = DefaultAzureCredential()
 client = DeidentificationClient(endpoint, credential)
@@ -79,29 +85,81 @@ You can de-identify text directly using the `DeidentificationClient`:
 <!-- SNIPPET: deidentify_text_surrogate.surrogate -->
 
 ```python
-body = DeidentificationContent(input_text="Hello, my name is John Smith.")
+from azure.health.deidentification import DeidentificationClient
+from azure.health.deidentification.models import (
+    DeidentificationContent,
+    DeidentificationOperationType,
+    DeidentificationResult,
+)
+from azure.identity import DefaultAzureCredential
+import os
+
+
+endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
+credential = DefaultAzureCredential()
+client = DeidentificationClient(endpoint, credential)
+
+body = DeidentificationContent(input_text="Hello, my name is John Smith.", operation_type=DeidentificationOperationType.SURROGATE)
 result: DeidentificationResult = client.deidentify_text(body)
-print(f'\nOriginal Text:        "{body.input_text}"')
+print(f'\nOriginal Text:     "{body.input_text}"')
 print(f'Surrogated Text:   "{result.output_text}"')  # Surrogated output: Hello, my name is <synthetic name>.
 ```
 
 <!-- END SNIPPET -->
 
-To de-identify documents in Azure Storage, see [Tutorial: Configure Azure Storage to de-identify documents][deid_configure_storage]
-for prerequisites and configuration options.
+To de-identify documents in Azure Storage, you'll need a storage account with a container to which the 
+de-identification service has been granted an appropriate role. See [Tutorial: Configure Azure Storage to de-identify documents][deid_configure_storage]
+for prerequisites and configuration options. You can upload the files in the [test data folder][test_data] as blobs, like: `https://<storageaccount>.blob.core.windows.net/<container>/example_patient_1/doctor_dictation.txt`.
 
-To run the sample code below, populate the following environment variables:
-- `AZURE_STORAGE_ACCOUNT_LOCATION`: an Azure Storage container endpoint, like `https://<storageaccount>.blob.core.windows.net/<container>`.
-- `INPUT_PREFIX`: the prefix of the input document name(s) in the container. For example, providing `folder1` would create a job that would process documents like `https://<storageaccount>.blob.core.windows.net/<container>/folder1/document1.txt`
+You can create jobs to de-identify documents in the source Azure Storage account and container with an optional input prefix. If there's no input prefix, all blobs in the container will be de-identified. Azure Storage blobs can use `/` in the blob name to emulate a folder or directory layout. For more on blob naming, see [Naming and Referencing Containers, Blobs, and Metadata][blob_names]. The files you've uploaded can be de-identified by providing `example_patient_1` as the input prefix:
+```
+<container>/
+├── example_patient_1/
+       └──doctor_dictation.txt
+       └──row-2-data.txt
+       └──visit-summary.txt
+```
+
+Your target Azure Storage account and container where documents will be written can be the same as the source, or a different account or container. In the examples below, the source and target account and container are the same. You can specify an output prefix to indicate where the job's output documents should be written (defaulting to `_output`). Each document processed by the job will have the same relative blob name with the input prefix replaced by the output prefix:
+```
+<container>/
+├── example_patient_1/
+       └──doctor_dictation.txt
+       └──row-2-data.txt
+       └──visit-summary.txt
+├── _output/
+       └──doctor_dictation.txt
+       └──row-2-data.txt
+       └──visit-summary.txt
+```
+
+Set the following environment variables, updating the storage account and container with real values:
+```bash
+export AZURE_STORAGE_ACCOUNT_LOCATION="https://<storageaccount>.blob.core.windows.net/<container>"
+export INPUT_PREFIX="example_patient_1"
+export OUTPUT_PREFIX="_output"
+```
 
 The client exposes a `begin_deidentify_documents` method that returns a [LROPoller](https://learn.microsoft.com/python/api/azure-core/azure.core.polling.lropoller) instance. You can get the result of the operation by calling `result()`, optionally passing in a `timeout` value in seconds:
 <!-- SNIPPET: deidentify_documents.sample -->
 
 ```python
+from azure.health.deidentification import DeidentificationClient
+from azure.health.deidentification.models import (
+    DeidentificationJob,
+    DeidentificationOperationType,
+    SourceStorageLocation,
+    TargetStorageLocation,
+)
+from azure.identity import DefaultAzureCredential
+import os
+import uuid
+
+
 endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
 storage_location = os.environ["AZURE_STORAGE_ACCOUNT_LOCATION"]
 inputPrefix = os.environ["INPUT_PREFIX"]
-outputPrefix = "_output"
+outputPrefix = os.environ.get("OUTPUT_PREFIX", "_output")
 
 credential = DefaultAzureCredential()
 
@@ -110,6 +168,7 @@ client = DeidentificationClient(endpoint, credential)
 jobname = f"sample-job-{uuid.uuid4().hex[:8]}"
 
 job = DeidentificationJob(
+    operation_type=DeidentificationOperationType.SURROGATE,
     source_location=SourceStorageLocation(
         location=storage_location,
         prefix=inputPrefix,
@@ -117,7 +176,7 @@ job = DeidentificationJob(
     target_location=TargetStorageLocation(location=storage_location, prefix=outputPrefix, overwrite=True),
 )
 
-finished_job: DeidentificationJob = client.begin_deidentify_documents(jobname, job).result(timeout=60)
+finished_job: DeidentificationJob = client.begin_deidentify_documents(jobname, job).result(timeout=120)
 
 print(f"Job Name:   {finished_job.job_name}")
 print(f"Job Status: {finished_job.status}")
@@ -140,6 +199,20 @@ When you specify the `TAG` operation, the service will return information about 
 <!-- SNIPPET: deidentify_text_tag.tag -->
 
 ```python
+from azure.health.deidentification import DeidentificationClient
+from azure.health.deidentification.models import (
+    DeidentificationContent,
+    DeidentificationOperationType,
+    DeidentificationResult,
+)
+from azure.identity import DefaultAzureCredential
+import os
+
+
+endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
+credential = DefaultAzureCredential()
+client = DeidentificationClient(endpoint, credential)
+
 body = DeidentificationContent(
     input_text="Hello, I'm Dr. John Smith.", operation_type=DeidentificationOperationType.TAG
 )
@@ -163,11 +236,25 @@ When you specify the `REDACT` operation, the service will replace the PHI entiti
 <!-- SNIPPET: deidentify_text_redact.redact -->
 
 ```python
+from azure.health.deidentification import DeidentificationClient
+from azure.health.deidentification.models import (
+    DeidentificationContent,
+    DeidentificationOperationType,
+    DeidentificationResult,
+)
+from azure.identity import DefaultAzureCredential
+import os
+
+
+endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
+credential = DefaultAzureCredential()
+client = DeidentificationClient(endpoint, credential)
+
 body = DeidentificationContent(
     input_text="It's great to work at Contoso.", operation_type=DeidentificationOperationType.REDACT
 )
 result: DeidentificationResult = client.deidentify_text(body)
-print(f'\nOriginal Text:        "{body.input_text}"')
+print(f'\nOriginal Text:   "{body.input_text}"')
 print(f'Redacted Text:   "{result.output_text}"')  # Redacted output: "It's great to work at [organization]."
 ```
 
@@ -178,9 +265,23 @@ The default operation is the `SURROGATE` operation. Using this operation, the se
 <!-- SNIPPET: deidentify_text_surrogate.surrogate -->
 
 ```python
-body = DeidentificationContent(input_text="Hello, my name is John Smith.")
+from azure.health.deidentification import DeidentificationClient
+from azure.health.deidentification.models import (
+    DeidentificationContent,
+    DeidentificationOperationType,
+    DeidentificationResult,
+)
+from azure.identity import DefaultAzureCredential
+import os
+
+
+endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
+credential = DefaultAzureCredential()
+client = DeidentificationClient(endpoint, credential)
+
+body = DeidentificationContent(input_text="Hello, my name is John Smith.", operation_type=DeidentificationOperationType.SURROGATE)
 result: DeidentificationResult = client.deidentify_text(body)
-print(f'\nOriginal Text:        "{body.input_text}"')
+print(f'\nOriginal Text:     "{body.input_text}"')
 print(f'Surrogated Text:   "{result.output_text}"')  # Surrogated output: Hello, my name is <synthetic name>.
 ```
 
@@ -193,6 +294,12 @@ In the following code snippet, the error is handled and displayed:
 <!-- SNIPPET: examples.handle_error -->
 
 ```python
+from azure.core.exceptions import AzureError
+from azure.health.deidentification.models import (
+    DeidentificationContent,
+)
+
+
 error_client = DeidentificationClient("https://contoso.deid.azure.com", credential)
 body = DeidentificationContent(input_text="Hello, I'm Dr. John Smith.")
 
@@ -252,3 +359,5 @@ additional questions or comments.
 [azure_error]: https://learn.microsoft.com/python/api/azure-core/azure.core.exceptions.azureerror
 [samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples
 [github_issue_label]: https://github.com/Azure/azure-sdk-for-python/labels/Health%20Deidentification
+[blob_names]: https://learn.microsoft.com/rest/api/storageservices/naming-and-referencing-containers--blobs--and-metadata#blob-names
+[test_data]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/tests/data

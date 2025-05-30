@@ -18,27 +18,27 @@ USAGE:
 """
 
 
-from azure.health.deidentification import DeidentificationClient
-from azure.health.deidentification.models import (
-    DeidentificationContent,
-    DeidentificationOperationType,
-    DeidentificationResult,
-)
-from azure.identity import DefaultAzureCredential
-import os
-
-
 def deidentify_text_redact():
+    # [START redact]
+    from azure.health.deidentification import DeidentificationClient
+    from azure.health.deidentification.models import (
+        DeidentificationContent,
+        DeidentificationOperationType,
+        DeidentificationResult,
+    )
+    from azure.identity import DefaultAzureCredential
+    import os
+    
+    
     endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
     credential = DefaultAzureCredential()
     client = DeidentificationClient(endpoint, credential)
 
-    # [START redact]
     body = DeidentificationContent(
         input_text="It's great to work at Contoso.", operation_type=DeidentificationOperationType.REDACT
     )
     result: DeidentificationResult = client.deidentify_text(body)
-    print(f'\nOriginal Text:        "{body.input_text}"')
+    print(f'\nOriginal Text:   "{body.input_text}"')
     print(f'Redacted Text:   "{result.output_text}"')  # Redacted output: "It's great to work at [organization]."
     # [END redact]
 
