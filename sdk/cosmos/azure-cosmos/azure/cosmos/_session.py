@@ -92,8 +92,7 @@ class SessionContainer(object):
                             if current_range is not None:
                                 vector_session_token = self._resolve_partition_local_session_token(current_range,
                                                                                                    token_dict)
-                                session_token = "{0}:{1}".format(partition_key_range_id,
-                                                                 vector_session_token.session_token)
+                                session_token = "{0}:{1}".format(partition_key_range_id, vector_session_token)
                             else:
                                 print(3)
                     else:
@@ -311,17 +310,15 @@ class SessionContainer(object):
         session_token = ",".join(session_token_list)
         return session_token
 
-    def _resolve_partition_local_session_token(self, pk_range, token_dict) -> VectorSessionToken:
+    def _resolve_partition_local_session_token(self, pk_range, token_dict) -> str:
         parent_session_token = None
         parents = pk_range[0].get('parents').copy()
-        parents.append(pk_range[0]['id'])
         for parent in parents:
-            vector_session_token = token_dict.get(parent)
-            # set initial token to be returned
+            vector_session_token = token_dict.get(parent).session_token
             if parent_session_token is None:
                 parent_session_token = vector_session_token
+            # if initial token is already set, and the next parent's token is cached, merge vector session tokens
             else:
-                # if initial token is already set, and the next parent's token is cached, merge vector session tokens
                 if vector_session_token is not None:
                     vector_token_1 = VectorSessionToken.create(parent_session_token)
                     vector_token_2 = VectorSessionToken.create(vector_session_token)
