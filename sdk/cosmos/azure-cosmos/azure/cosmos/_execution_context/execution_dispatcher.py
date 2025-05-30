@@ -108,7 +108,8 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         :raises StopIteration: If no more result is left.
 
         """
-        if "enableCrossPartitionQuery" not in self._options or self._resource_type != ResourceType.Document:
+        if ("enableCrossPartitionQuery" not in self._options or self._fetched_query_plan or
+                self._resource_type != ResourceType.Document):
             try:
                 return next(self._execution_context)
             except CosmosHttpResponseError as e:
@@ -130,7 +131,8 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         :return: List of results.
         :rtype: list
         """
-        if "enableCrossPartitionQuery" not in self._options or self._resource_type != ResourceType.Document:
+        if ("enableCrossPartitionQuery" not in self._options or self._fetched_query_plan or
+                self._resource_type != ResourceType.Document):
             try:
                 return self._execution_context.fetch_next_block()
             except CosmosHttpResponseError as e:
@@ -151,8 +153,8 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                 raise CosmosHttpResponseError(
                     StatusCodes.BAD_REQUEST,
                     "Cross partition query only supports 'VALUE <AggregateFunc>' for aggregates")
-        if self._fetched_query_plan:
-            self._options.pop("enableCrossPartitionQuery", None)
+        # if self._fetched_query_plan:
+        #     self._options.pop("enableCrossPartitionQuery", None)
 
         # throw exception here for vector search query without limit filter or limit > max_limit
         if query_execution_info.get_non_streaming_order_by():

@@ -30,11 +30,9 @@ async def run_session_token_query(container, split):
     query = "select * from c"
     # verify session token sent makes sense for number of partitions present
     if split:
-        query_iterable = container.query_items(query=query, enable_cross_partition_query=True,
-                                               raw_response_hook=test_config.post_split_hook)
+        query_iterable = container.query_items(query=query, raw_response_hook=test_config.post_split_hook)
     else:
-        query_iterable = container.query_items(query=query, enable_cross_partition_query=True,
-                                               raw_response_hook=test_config.pre_split_hook)
+        query_iterable = container.query_items(query=query, raw_response_hook=test_config.pre_split_hook)
     item_list = [item async for item in query_iterable]
 
 
@@ -61,6 +59,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey)
+        await self.client.__aenter__()
         self.created_database = self.client.get_database_client(self.TEST_DATABASE_ID)
         self.container = await self.created_database.create_container(
             id=self.TEST_CONTAINER_ID,
