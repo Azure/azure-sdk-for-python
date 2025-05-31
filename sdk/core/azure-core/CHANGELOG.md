@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- Added timeout in aiohttp.close().
+- Reduce risk of hanging while closing if server do not follow best practices. Fix #41363
 
 ### Other Changes
 
