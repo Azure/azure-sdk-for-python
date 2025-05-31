@@ -324,6 +324,11 @@ test:
     - azure.mgmt.devcenter.aio.operations
     - azure.mgmt.devcenter.models
     - azure.mgmt.devcenter.operations
+    - azure.mgmt.deviceregistry
+    - azure.mgmt.deviceregistry.aio
+    - azure.mgmt.deviceregistry.aio.operations
+    - azure.mgmt.deviceregistry.models
+    - azure.mgmt.deviceregistry.operations
     - azure.mgmt.deviceupdate
     - azure.mgmt.deviceupdate.aio
     - azure.mgmt.deviceupdate.aio.operations
@@ -624,6 +629,11 @@ test:
     - azure.mgmt.msi.v2023_01_31.aio.operations
     - azure.mgmt.msi.v2023_01_31.models
     - azure.mgmt.msi.v2023_01_31.operations
+    - azure.mgmt.neonpostgres
+    - azure.mgmt.neonpostgres.aio
+    - azure.mgmt.neonpostgres.aio.operations
+    - azure.mgmt.neonpostgres.models
+    - azure.mgmt.neonpostgres.operations
     - azure.mgmt.network
     - azure.mgmt.network.aio
     - azure.mgmt.network.aio.operations
@@ -1020,6 +1030,11 @@ test:
     - azure.mgmt.workloads.aio.operations
     - azure.mgmt.workloads.models
     - azure.mgmt.workloads.operations
+    - azure.mgmt.workloadssapvirtualinstance
+    - azure.mgmt.workloadssapvirtualinstance.aio
+    - azure.mgmt.workloadssapvirtualinstance.aio.operations
+    - azure.mgmt.workloadssapvirtualinstance.models
+    - azure.mgmt.workloadssapvirtualinstance.operations
 
 about:
   home: "https://github.com/Azure/azure-sdk-for-python/"
