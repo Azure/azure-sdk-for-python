@@ -10,6 +10,8 @@
 
 ### Bugs Fixed
 
+- Reduce risk of hanging while closing if server do not follow best practices. Fix #41363
+
 ### Other Changes
 
 - A timeout error when using the `aiohttp` transport (the default for async SDKs) will now be raised as a `azure.core.exceptions.ServiceResponseTimeoutError`, a subtype of the previously raised `ServiceResponseError`.

@@ -168,7 +168,10 @@ class AioHttpTransport(AsyncHttpTransport):
     async def close(self):
         """Closes the connection."""
         if self._session_owner and self.session:
-            await self.session.close()
+            try:
+                await asyncio.wait_for(self.session.close(), timeout=0.1)  # close immediately
+            except asyncio.TimeoutError:
+                pass
             self.session = None
 
     def _build_ssl_config(self, cert, verify):
