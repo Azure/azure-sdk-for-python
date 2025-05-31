@@ -1,12 +1,10 @@
 # Release History
 
-## 1.35.0 (Unreleased)
+## 1.35.0 (2025-05-30)
 
 ### Features Added
 
 - Added a `start_time` keyword argument to the `start_span` and `start_as_current_span` methods in the `OpenTelemetryTracer` class. This allows users to specify a custom start time for created spans. #41106
-
-### Breaking Changes
 
 ### Bugs Fixed
 
