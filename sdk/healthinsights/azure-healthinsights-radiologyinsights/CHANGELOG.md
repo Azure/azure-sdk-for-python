@@ -1,16 +1,10 @@
 # Release History
 
-## 2.0.0 (Unreleased)
+## 1.1.0 (Unreleased)
 Extending scope with inferences for scoring and assessment, quality measure and clinical guidance
 
 ### Features Added
 - Added samples for scoring and assessment, quality measure and clinical guidance
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.0.0 (2024-09-10)
 
