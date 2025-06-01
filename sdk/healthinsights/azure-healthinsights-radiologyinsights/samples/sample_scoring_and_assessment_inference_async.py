@@ -59,7 +59,9 @@ async def radiology_insights_async() -> None:
 
     There are multiple cystic and partly cystic sub-5 mm nodules noted within the right lobe (TIRADS 2).
     In the lower pole of the left lobe there is a 9 x 8 x 6 mm predominantly solid isoechoic nodule (TIRADS 3).
-
+    
+    CADRADS 3/4
+    
     Impression:
     Multiple bilateral small cystic benign thyroid nodules. A low suspicion 9 mm left lobe thyroid nodule (TI-RADS 3) which, given its small size, does not warrant follow-up."""
 
@@ -114,14 +116,12 @@ async def radiology_insights_async() -> None:
     # Set followup recommendation options
     followup_recommendation_options = models.FollowupRecommendationOptions(
         include_recommendations_with_no_specified_modality=True,
-        include_recommendations_in_references=True, 
-        provide_focused_sentence_evidence=True
+        include_recommendations_in_references=True,
+        provide_focused_sentence_evidence=True,
     )
 
     # Set finding options
-    finding_options = models.FindingOptions(
-        provide_focused_sentence_evidence=True
-    )
+    finding_options = models.FindingOptions(provide_focused_sentence_evidence=True)
 
     # Create inference options
     inference_options = models.RadiologyInsightsInferenceOptions(
@@ -152,8 +152,9 @@ async def radiology_insights_async() -> None:
     except Exception as ex:
         raise ex
 
-# [START display_quality_measure]
+
 def display_quality_measure(radiology_insights_result):
+    # [START display_scoring_and_assessment]
     for patient_result in radiology_insights_result.patient_results:
         counter = 0
         for ri_inference in patient_result.inferences:
@@ -175,9 +176,9 @@ def display_quality_measure(radiology_insights_result):
 
                 # Print Range Value
                 if hasattr(ri_inference, "range_value") and ri_inference.range_value is not None:
-                    display_range_value(ri_inference.range_value)                    
+                    display_range_value(ri_inference.range_value)
+    # [END display_scoring_and_assessment]
 
-# [END display_quality_measure]
 
 def display_range_value(range_value):
     if hasattr(range_value, "minimum") and hasattr(range_value, "maximum"):

@@ -117,22 +117,20 @@ def radiology_insights_sync() -> None:
     # Set followup recommendation options
     followup_recommendation_options = models.FollowupRecommendationOptions(
         include_recommendations_with_no_specified_modality=True,
-        include_recommendations_in_references=True, 
-        provide_focused_sentence_evidence=True
+        include_recommendations_in_references=True,
+        provide_focused_sentence_evidence=True,
     )
 
     # Set finding options
-    finding_options = models.FindingOptions(
-        provide_focused_sentence_evidence=True
-    )
+    finding_options = models.FindingOptions(provide_focused_sentence_evidence=True)
 
     # Set quality measure options
-    quality_measure_options = models.QualityMeasureOptions (
-        measure_types= [
+    quality_measure_options = models.QualityMeasureOptions(
+        measure_types=[
             models.QualityMeasureType.MIPS364,
             models.QualityMeasureType.MIPS360,
             models.QualityMeasureType.MIPS436,
-            models.QualityMeasureType.ACRAD36
+            models.QualityMeasureType.ACRAD36,
         ]
     )
 
@@ -140,11 +138,13 @@ def radiology_insights_sync() -> None:
     inference_options = models.RadiologyInsightsInferenceOptions(
         followup_recommendation_options=followup_recommendation_options,
         finding_options=finding_options,
-        quality_measure_options=quality_measure_options
+        quality_measure_options=quality_measure_options,
     )
 
     # Create configuration and set inference options
-    configuration = models.RadiologyInsightsModelConfiguration(verbose=False, include_evidence=True, locale="en-US", inference_options=inference_options) 
+    configuration = models.RadiologyInsightsModelConfiguration(
+        verbose=False, include_evidence=True, locale="en-US", inference_options=inference_options
+    )
 
     # Construct the request with the patient and configuration
     patient_data = models.RadiologyInsightsJob(
@@ -163,8 +163,9 @@ def radiology_insights_sync() -> None:
     except Exception as ex:
         raise ex
 
-# [START display_quality_measure]
+
 def display_quality_measure(radiology_insights_result):
+    # [START display_quality_measure]
     for patient_result in radiology_insights_result.patient_results:
         counter = 0
         for ri_inference in patient_result.inferences:
@@ -184,7 +185,8 @@ def display_quality_measure(radiology_insights_result):
                 if hasattr(ri_inference, "quality_criteria") and ri_inference.quality_criteria:
                     for criteria in ri_inference.quality_criteria:
                         print(f"Quality Criterium: {criteria}")
-# [END display_quality_measure]
+    # [END display_quality_measure]
+
 
 if __name__ == "__main__":
     radiology_insights_sync()
