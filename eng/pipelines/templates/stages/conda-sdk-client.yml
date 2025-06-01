@@ -211,13 +211,13 @@ extends:
                       in_batch: true
                       checkout:
                         - package: msal
-                          download_uri: https://files.pythonhosted.org/packages/3f/f3/cdf2681e83a73c3355883c2884b6ff2f2d2aadfc399c28e9ac4edc3994fd/msal-1.31.1.tar.gz
+                          download_uri: https://files.pythonhosted.org/packages/3f/90/81dcc50f0be11a8c4dcbae1a9f761a26e5f905231330a7cacc9f04ec4c61/msal-1.32.3.tar.gz
                     - name: msal-extensions
                       common_root: msal
                       in_batch: true
                       checkout:
                         - package: msal-extensions
-                          download_uri: https://files.pythonhosted.org/packages/2d/38/ad49272d0a5af95f7a0cb64a79bbd75c9c187f3b789385a143d8d537a5eb/msal_extensions-1.2.0.tar.gz
+                          download_uri: https://files.pythonhosted.org/packages/01/99/5d239b6156eddf761a636bded1118414d161bd6b7b37a9335549ed159396/msal_extensions-1.3.1.tar.gz
                     - name: azure-identity
                       service: identity
                       in_batch: ${{ parameters.release_azure_identity }}

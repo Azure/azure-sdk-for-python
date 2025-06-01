@@ -4,7 +4,7 @@
 
 ### Packages included
 
-- msal-extensions-1.2.0
+- msal-extensions-1.3.1
 
 ## 2025.03.01
 
