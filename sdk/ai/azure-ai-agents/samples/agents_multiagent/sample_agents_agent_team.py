@@ -15,7 +15,7 @@ DESCRIPTION:
     IMPORTANT - leader-agent model configuration
         `utils/agent_team_config.yaml` contains the key  TEAM_LEADER_MODEL.
         Its value must be the name of a **deployed** model in your Azure AI
-        project (e.g. "gpt-4o-mini").  
+        project (e.g. "gpt-4o-mini").
         If this model deployment is not available, AgentTeam cannot instantiate
         the leader agent and the sample will fail.
 
@@ -28,7 +28,7 @@ USAGE:
     2. Ensure `utils/agent_team_config.yaml` is present and TEAM_LEADER_MODEL points
        to a valid model deployment.
     3. Set these environment variables with your own values:
-         PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview 
+         PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
                             page of your Azure AI Foundry portal.
          MODEL_DEPLOYMENT_NAME - The model deployment name used for the worker agents.
 """

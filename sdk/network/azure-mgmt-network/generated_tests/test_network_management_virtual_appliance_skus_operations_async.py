@@ -23,7 +23,7 @@ class TestNetworkManagementVirtualApplianceSkusOperationsAsync(AzureMgmtRecorded
     @recorded_by_proxy_async
     async def test_virtual_appliance_skus_list(self, resource_group):
         response = self.client.virtual_appliance_skus.list(
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestNetworkManagementVirtualApplianceSkusOperationsAsync(AzureMgmtRecorded
     async def test_virtual_appliance_skus_get(self, resource_group):
         response = await self.client.virtual_appliance_skus.get(
             sku_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
