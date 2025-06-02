@@ -22,8 +22,8 @@ Determine which workflow the user needs based on their request:
 
 ## CORE PRINCIPLES
 
-### RULE 1: DO NOT REPEAT INSTRUCTIONS
-**NEVER repeat instructions when guiding users. Users should follow instructions independently.**
+### RULE 1: EFFICIENT GUIDANCE
+**Provide concise guidance without repeating detailed step-by-step instructions. Reference the appropriate workflow and let users follow the detailed steps independently.**
 
 ### RULE 2: REFERENCE OFFICIAL DOCUMENTATION
 **ALWAYS** reference the [Azure SDK Python Design Guidelines](https://azure.github.io/azure-sdk/python_design.html)
@@ -39,7 +39,10 @@ Determine which workflow the user needs based on their request:
 
 ### TypeSpec SDK Generation
 **When to use:** User requests SDK generation from TypeSpec  
-**What to do:** Load and execute steps from `.github/prompts/typespec-sdk-generation.prompt.md`  
+**What to do:** 
+1. First use `read_file` tool to load `.github/prompts/typespec-sdk-generation.prompt.md`
+2. Execute each step sequentially as outlined in the prompt file
+3. If any step fails, inform user and provide guidance on resolution
 **Expected time:** 5-6 minutes
 
 ### Static Validation Operations
