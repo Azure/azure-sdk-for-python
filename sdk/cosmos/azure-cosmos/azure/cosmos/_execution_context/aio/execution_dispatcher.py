@@ -78,7 +78,8 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         :raises StopIteration: If no more result is left.
 
         """
-        if "enableCrossPartitionQuery" not in self._options or self._resource_type != ResourceType.Document:
+        if ("enableCrossPartitionQuery" not in self._options or self._fetched_query_plan or
+                self._resource_type != ResourceType.Document):
             try:
                 return await self._execution_context.__anext__()
             except CosmosHttpResponseError as e:
@@ -100,7 +101,8 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         :return: List of results.
         :rtype: list
         """
-        if "enableCrossPartitionQuery" not in self._options or self._resource_type != ResourceType.Document:
+        if ("enableCrossPartitionQuery" not in self._options or self._fetched_query_plan or
+                self._resource_type != ResourceType.Document):
             try:
                 return await self._execution_context.fetch_next_block()
             except CosmosHttpResponseError as e:
