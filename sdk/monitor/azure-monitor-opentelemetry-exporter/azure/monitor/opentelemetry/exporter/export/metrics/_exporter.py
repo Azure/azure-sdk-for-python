@@ -79,7 +79,7 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             preferred_temporality=APPLICATION_INSIGHTS_METRIC_TEMPORALITIES,  # type: ignore
             preferred_aggregation=kwargs.get("preferred_aggregation"),  # type: ignore
         )
-        self._metrics_to_log_analytics = _determine_metrics_to_log_analytics(kwargs)
+        self._metrics_to_log_analytics = _determine_metrics_to_log_analytics()
 
     # pylint: disable=R1702
     def export(
@@ -298,13 +298,10 @@ def _get_metric_export_result(result: ExportResult) -> MetricExportResult:
         return MetricExportResult.SUCCESS
     return MetricExportResult.FAILURE
 
-def _determine_metrics_to_log_analytics(kwargs) -> bool:
+def _determine_metrics_to_log_analytics() -> bool:
     """
     Returns whether metrics should be sent to Log Analytics.
     """
-    param = kwargs.get("metrics_to_log_analytics")
-    if param is not None:
-        return str(param).lower().strip() == "true"
     # Disabling metrics to Log Analytics via env var is currently only specified for AKS Attach scenarios.
     if not _utils._is_on_aks() or not _utils._is_attach_enabled():
         return True
