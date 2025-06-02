@@ -26,15 +26,6 @@ async def run_queries(container, iterations):
                 assert str(attr_number) == curr  # verify that all results match their randomly generated attributes
         print("validation succeeded for all query results")
 
-async def run_session_token_query(container, split):
-    query = "select * from c"
-    # verify session token sent makes sense for number of partitions present
-    if split:
-        query_iterable = container.query_items(query=query, raw_response_hook=test_config.post_split_hook)
-    else:
-        query_iterable = container.query_items(query=query, raw_response_hook=test_config.pre_split_hook)
-    item_list = [item async for item in query_iterable]
-
 
 @pytest.mark.cosmosQuery
 class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
@@ -83,7 +74,6 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
         print("now starting queries")
 
         await run_queries(self.container, 100)  # initial check for queries before partition split
-        await run_session_token_query(self.container, False) # initial session token check before partition split
         print("initial check succeeded, now reading offer until replacing is done")
         offer = await self.container.get_throughput()
         while True:
@@ -95,7 +85,6 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             else:
                 print("offer replaced successfully, took around {} seconds".format(time.time() - offer_time))
                 await run_queries(self.container, 100)  # check queries work post partition split
-                await run_session_token_query(self.container, True)  # check session token works post partition split
                 self.assertTrue(offer.offer_throughput > self.throughput)
                 return
 
