@@ -198,7 +198,7 @@ class LocalFileStorage:
     def _check_and_set_folder_permissions(self):
         try:
             # Create path if it doesn't exist
-            os.makedirs(self._path + "test", exist_ok=True)
+            os.makedirs(self._path, exist_ok=True)
             #Windows
             if os.name == "nt":
                 user = self._get_current_user()
