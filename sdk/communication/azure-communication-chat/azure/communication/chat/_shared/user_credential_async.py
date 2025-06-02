@@ -8,15 +8,16 @@ from asyncio import Condition, Lock, Event
 from datetime import timedelta
 from typing import Any
 import sys
-
-from .utils import get_current_utc_as_int
-from .utils import create_access_token
-from .utils_async import AsyncTimer
+from utils import get_current_utc_as_int
+from utils import create_access_token
+from utils_async import AsyncTimer
+from token_exchange import AsyncTokenExchangeClient
+import asyncio
+from token_exchange import TokenExchangeClient
 
 
 class CommunicationTokenCredential(object):
     """Credential type used for authenticating to an Azure Communication service.
-
     :param str token: The token used to authenticate to an Azure Communication service.
     :keyword token_refresher: The async token refresher to provide capacity to fetch a fresh token.
      The returned token must be valid (expiration date must be in the future).
@@ -27,7 +28,6 @@ class CommunicationTokenCredential(object):
      the proactive refresh will request a new token by calling the 'token_refresher' callback.
      When 'proactive_refresh is enabled', the Credential object must be either run within a context manager
      or the 'close' method must be called once the object usage has been finished.
-
     :raises: TypeError if paramater 'token' is not a string
     :raises: ValueError if the 'proactive_refresh' is enabled without providing the 'token_refresher' function.
     """
@@ -35,14 +35,29 @@ class CommunicationTokenCredential(object):
     _ON_DEMAND_REFRESHING_INTERVAL_MINUTES = 2
     _DEFAULT_AUTOREFRESH_INTERVAL_MINUTES = 10
 
-    def __init__(self, token: str, **kwargs: Any):
-        if not isinstance(token, str):
-            raise TypeError("Token must be a string.")
-        self._token = create_access_token(token)
-        self._token_refresher = kwargs.pop("token_refresher", None)
-        self._proactive_refresh = kwargs.pop("proactive_refresh", False)
-        if self._proactive_refresh and self._token_refresher is None:
-            raise ValueError("When 'proactive_refresh' is True, 'token_refresher' must not be None.")
+    def __init__(self, token: str = None, **kwargs: Any):
+        self._resource_endpoint = kwargs.pop("resource_endpoint", None)
+        self._token_credential = kwargs.pop("token_credential", None)
+        self._scopes = kwargs.pop("scopes", None)
+
+        if self._resource_endpoint and self._token_credential and self._scopes:
+            self._token_exchange_client = AsyncTokenExchangeClient(self._resource_endpoint, self._token_credential, self._scopes)
+            self._token_refresher = lambda: self._token_exchange_client.exchange_entra_token()
+            self._proactive_refresh = kwargs.pop("proactive_refresh", False)
+
+            async def _initialize_token():
+                self._token = await self._token_exchange_client.exchange_entra_token()
+
+            asyncio.get_event_loop().run_until_complete(_initialize_token())
+        else:
+            if not isinstance(token, str):
+                raise TypeError("Token must be a string.")
+            self._token = create_access_token(token)
+            self._token_refresher = kwargs.pop("token_refresher", None)
+            self._proactive_refresh = kwargs.pop("proactive_refresh", False)
+            if self._proactive_refresh and self._token_refresher is None:
+                raise ValueError("When 'proactive_refresh' is True, 'token_refresher' must not be None.")
+
         self._timer = None
         self._async_mutex = Lock()
         if sys.version_info[:3] == (3, 10, 0):
