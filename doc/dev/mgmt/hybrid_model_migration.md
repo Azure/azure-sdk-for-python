@@ -117,7 +117,7 @@ print(model.additional_properties)  # {"custom": "value"}
 **After**:
 
 ```python
-# ❌ This no longer works
+# ❌ Raises TypeError
 model = Model(additional_properties={"custom": "value"})
 
 # ✅ Use these approaches instead
