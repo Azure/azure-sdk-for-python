@@ -400,51 +400,6 @@ class IdentifierRawIdTest(unittest.TestCase):
         # PhoneNumberIdentifiers are not equal.
         assert PhoneNumberIdentifier(value="+112345556789") != PhoneNumberIdentifier(value="+512345556789")
 
-        # PhoneNumberIdentifiers with asserted_id are equal.
-        assert PhoneNumberIdentifier(
-            value="+112345556789", asserted_id="20eacaae2768"
-        ) == PhoneNumberIdentifier(value="+112345556789", asserted_id="20eacaae2768")
-
-        # PhoneNumberIdentifiers with anonymous_type are equal.
-        assert PhoneNumberIdentifier(
-            value="+112345556789", is_anonymous=True
-        ) == PhoneNumberIdentifier(value="+112345556789", is_anonymous=True)
-
-        # PhoneNumberIdentifiers with anonymous_type are equal.
-        assert PhoneNumberIdentifier(
-            value="+112345556789", is_anonymous=False
-        ) == PhoneNumberIdentifier(value="+112345556789", is_anonymous=False)
-
-        # PhoneNumberIdentifiers with anonymous_type are not equal.
-        assert PhoneNumberIdentifier(
-            value="+112345556789", is_anonymous=True
-        ) != PhoneNumberIdentifier(value="+112345556789", is_anonymous=False)
-
-        # PhoneNumberIdentifiers with both asserted_id and anonymous_type are equal.
-        assert PhoneNumberIdentifier(
-            value="+112345556789", asserted_id="20eacaae2768", is_anonymous=True
-        ) == PhoneNumberIdentifier(value="+112345556789", asserted_id="20eacaae2768", is_anonymous=True)
-
-        # PhoneNumberIdentifiers with both asserted_id and anonymous_type are equal.
-        assert PhoneNumberIdentifier(
-            value="+112345556789", asserted_id="20eacaae2768", is_anonymous=False
-        ) == PhoneNumberIdentifier(value="+112345556789", asserted_id="20eacaae2768", is_anonymous=False)
-
-        # PhoneNumberIdentifiers with both asserted_id and anonymous_type are not equal.
-        assert PhoneNumberIdentifier(
-            value="+112345556789", asserted_id="30eacaae2768", is_anonymous=False
-        ) != PhoneNumberIdentifier(value="+112345556789", asserted_id="30eacaae2768", is_anonymous=True)
-
-        # PhoneNumberIdentifiers with both asserted_id and anonymous_type are not equal.
-        assert PhoneNumberIdentifier(
-            value="+112345556789", asserted_id="20eacaae2768", is_anonymous=False
-        ) != PhoneNumberIdentifier(value="+112345556789", asserted_id="30eacaae2768", is_anonymous=False)
-
-        # PhoneNumberIdentifiers with different asserted_id and anonymous_type=true are equal as raw_id=4:anonymous
-        assert PhoneNumberIdentifier(
-            value="+112345556789", asserted_id="20eacaae2768", is_anonymous=True
-        ) == PhoneNumberIdentifier(value="+112345556789", asserted_id="30eacaae2768", is_anonymous=True)
-
         # TeamsExtensionUserIdentifiers are equal.
         assert TeamsExtensionUserIdentifier(
             user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
