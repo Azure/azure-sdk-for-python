@@ -28,7 +28,7 @@ class EntraTokenGuardPolicy(HTTPPolicy):
             response = self.next.send(request)
             self._response_cache = response
         if response is None:
-            raise RuntimeError("Failed to obtain a valid PipelineResponse in AsyncEntraTokenGuardPolicy.send")
+            raise RuntimeError("Failed to obtain a valid PipelineResponse in EntraTokenGuardPolicy.send")
         return response
 
 
