@@ -79,7 +79,6 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             preferred_temporality=APPLICATION_INSIGHTS_METRIC_TEMPORALITIES,  # type: ignore
             preferred_aggregation=kwargs.get("preferred_aggregation"),  # type: ignore
         )
-        # TODO: JEREVOSS 
         self._metrics_to_log_analytics = kwargs.get("metrics_to_log_analytics", False)  # type: bool
 
     # pylint: disable=R1702
@@ -152,6 +151,9 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         resource: Optional[Resource] = None,
         scope: Optional[InstrumentationScope] = None,
     ) -> Optional[TelemetryItem]:
+        # When Metrics to Log Analytics is disabled, only send Standard metrics and _OTELRESOURCE_
+        if not self._metrics_to_log_analytics and name not in _AUTOCOLLECTED_INSTRUMENT_NAMES:
+            return None
         envelope = _convert_point_to_envelope(point, name, resource, scope)
         if name in _AUTOCOLLECTED_INSTRUMENT_NAMES:
             envelope = _handle_std_metric_envelope(envelope, name, point.attributes)  # type: ignore
@@ -163,22 +165,15 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         """
         Returns whether metrics should be sent to Log Analytics.
         """
-        metrics_to_log_analytics_param = kwargs.get("metrics_to_log_analytics")
-        if metrics_to_log_analytics_param:
-            metrics_to_log_analytics_param = metrics_to_log_analytics_param.lower().strip()
-            if metrics_to_log_analytics_param == "true":
-                return True
-            if metrics_to_log_analytics_param == "false":
-                return False
+        param = kwargs.get("metrics_to_log_analytics")
+        if param is not None:
+            return str(param).lower().strip() == "true"
+        # Disabling metrics to Log Analytics via env var is currently only specified for AKS Attach scenarios.
         if not _utils._is_on_aks() or not _utils._is_attach_enabled():
             return True
-        metrics_to_log_analytics_env_var = os.environ.get(_APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED)
-        if metrics_to_log_analytics_env_var:
-            metrics_to_log_analytics_env_var = metrics_to_log_analytics_env_var.lower().strip()
-            if metrics_to_log_analytics_env_var == "true":
-                return True
-            if metrics_to_log_analytics_env_var == "false":
-                return False
+        env_var = os.environ.get(_APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED)
+        if env_var is not None:
+            return env_var.lower().strip() == "true"
         return True
 
     # pylint: disable=docstring-keyword-should-match-keyword-only
