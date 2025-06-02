@@ -1,5 +1,7 @@
 # Azure SDK Migration Guide: New Hybrid Model Design Generation Breaking Changes
 
+The direct link to this page can be found at aka.ms/azsdk/python/migrate/hybrid-models
+
 This guide covers the breaking changes you'll encounter when upgrading to our new model design and how to fix them in your code.
 
 Our new hybrid models are named as such because they have a dual dictionary and model nature.
