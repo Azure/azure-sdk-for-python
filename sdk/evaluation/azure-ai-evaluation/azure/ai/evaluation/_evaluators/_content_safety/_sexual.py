@@ -78,7 +78,8 @@ class SexualEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
 
     id = "azureml://registries/azureml/models/Sexual-Content-Evaluator/versions/3"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
-
+    _OPTIONAL_PARAMS = ["query"]
+    
     @override
     def __init__(
         self,

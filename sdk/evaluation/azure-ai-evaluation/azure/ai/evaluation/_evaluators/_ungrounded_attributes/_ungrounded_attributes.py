@@ -59,7 +59,8 @@ class UngroundedAttributesEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
 
     id = "ungrounded_attributes"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
-
+    _OPTIONAL_PARAMS = ["query"]
+    
     @override
     def __init__(
         self,
