@@ -349,7 +349,7 @@ for patient_result in radiology_insights_result.patient_results:
         for ri_inference in patient_result.inferences:
             if ri_inference.kind == models.RadiologyInsightsInferenceType.SCORING_AND_ASSESSMENT:
                 counter += 1
-                print(f"Scoring and assesment {counter} Inference found")
+                print(f"Scoring and assessment {counter} Inference found")
 
                 # Print Category
                 if hasattr(ri_inference, "category"):
