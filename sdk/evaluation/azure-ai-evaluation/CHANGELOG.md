@@ -1,17 +1,14 @@
 # Release History
 
-## 1.8.0 (Unreleased)
+## 1.8.0 (2025-05-29)
 
 ### Features Added
 
 - Introduces `AttackStrategy.MultiTurn` and `AttackStrategy.Crescendo` to `RedTeam`. These strategies attack the target of a `RedTeam` scan over the course of multi-turn conversations. 
 - Added the support of reasoning models as judge for Azure AI evaluators.
 
-### Breaking Changes
-
 ### Bugs Fixed
-
-### Other Changes
+- AdversarialSimulator in `ADVERSARIAL_CONVERSATION` mode was broken. It is now fixed.
 
 ## 1.7.0 (2025-05-12)
 

@@ -1,14 +1,16 @@
 # Release History
 
-## 1.6.10 (Unreleased)
+## 1.6.10 (2025-05-30)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- Enabled diagnostics for AKS Attach
+    ([#40988](https://github.com/Azure/azure-sdk-for-python/pull/40988))
 
 ### Other Changes
+
+- Defensively import and vendor experimental components from OpenTelemetry and azure.core + upgrade dependencies to latest OpenTelemetry
+    ([#41245](https://github.com/Azure/azure-sdk-for-python/pull/41245))
 
 ## 1.6.9 (2025-05-12)
 
