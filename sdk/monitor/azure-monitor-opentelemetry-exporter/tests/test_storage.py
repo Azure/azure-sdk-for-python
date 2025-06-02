@@ -189,29 +189,33 @@ class TestLocalFileStoragePermissions(unittest.TestCase):
         if os.path.exists(self.test_dir):
             shutil.rmtree(self.test_dir)
 
-    @mock.patch("os.name", "nt")
-    @mock.patch("subprocess.run")
-    @mock.patch("getpass.getuser", return_value="TestUser")
-    def test_windows_permissions(self, mock_getuser, mock_subprocess):
-        with mock.patch("os.path.isdir", return_value=False):
-            with mock.patch("os.makedirs"):
-                LocalFileStorage(self.test_dir)
-        mock_subprocess.assert_any_call(
-            [
-                "icacls",
-                self.test_dir,
-                "/inheritance:r",
-                "/grant:r",
-                "TestUser:(OI)(CI)F",
-            ],
-            check=False,
-            capture_output=True,
-        )
+    def test_windows_permissions(self):
+        import os as _os
+        with mock.patch.object(_os, "name", "nt"):
+            with mock.patch("subprocess.run") as mock_subprocess, \
+                 mock.patch("getpass.getuser", return_value="TestUser"), \
+                 mock.patch("os.path.isdir", return_value=False), \
+                 mock.patch("os.makedirs"):
+                with LocalFileStorage(self.test_dir) as stor:
+                    stor.put(({"test": "data"}))
+                    mock_subprocess.assert_any_call(
+                        [
+                            "icacls",
+                            self.test_dir,
+                            "/inheritance:r",
+                            "/grant:r",
+                            "TestUser:(OI)(CI)F",
+                        ],
+                        check=False,
+                        capture_output=True,
+                    )
 
-    @mock.patch("os.name", "posix")
-    @mock.patch("os.chmod")
-    def test_unix_permissions(self, mock_chmod):
-        with mock.patch("os.path.isdir", return_value=False):
-            with mock.patch("os.makedirs"):
-                LocalFileStorage(self.test_dir)
-        mock_chmod.assert_any_call(self.test_dir, 0o700)
+    def test_unix_permissions(self):
+        import os as _os
+        with mock.patch.object(_os, "name", "posix"):
+            with mock.patch("os.chmod") as mock_chmod, \
+                 mock.patch("os.path.isdir", return_value=False), \
+                 mock.patch("os.makedirs"):
+                with LocalFileStorage(self.test_dir) as stor:
+                    stor.put(({"test": "data"}))
+                    mock_chmod.assert_any_call(self.test_dir, 0o700)

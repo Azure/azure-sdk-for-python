@@ -12,6 +12,9 @@ from azure.monitor.opentelemetry.exporter._utils import PeriodicTask
 
 logger = logging.getLogger(__name__)
 
+ICACLS_PATH = os.path.join(os.environ.get("SYSTEMDRIVE", "C:"), r"\Windows\System32\icacls.exe")
+POWERSHELL_PATH = os.path.join(os.environ.get("SYSTEMDRIVE", "C:"), r"\Windows\System32\WindowsPowerShell\v1.0\powershell.exe")
+
 
 def _fmt(timestamp):
     return timestamp.strftime("%Y-%m-%dT%H%M%S.%f")
@@ -102,6 +105,9 @@ class LocalFileStorage:
         self._lease_period = lease_period
         self._maintenance_task.daemon = True
         self._maintenance_task.start()
+        self._enabled = self._check_and_set_folder_permissions()
+        if not self._enabled:
+            logger.error("Could not set secure permissions on storage folder.")
 
     def close(self):
         self._maintenance_task.cancel()
@@ -123,6 +129,8 @@ class LocalFileStorage:
             pass  # keep silent
 
     def gets(self):
+        if not self._enabled:
+            return None
         now = _now()
         lease_deadline = _fmt(now)
         retention_deadline = _fmt(now - _seconds(self._retention_period))
@@ -159,6 +167,8 @@ class LocalFileStorage:
             pass  # keep silent
 
     def get(self):
+        if not self._enabled:
+            return None
         cursor = self.gets()
         try:
             return next(cursor)
@@ -167,33 +177,9 @@ class LocalFileStorage:
         return None
 
     def put(self, data, lease_period=None):
+        if not self._enabled:
+            return None
         # Create path if it doesn't exist
-        try:
-            if not os.path.isdir(self._path):
-                os.makedirs(self._path, exist_ok=True)
-                try:
-                    if os.name == "nt":
-                        import getpass
-
-                        user = getpass.getuser()
-                        # Remove inherited permissions and grant full control to current user only
-                        subprocess.run(
-                            [
-                                "icacls",
-                                self._path,
-                                "/inheritance:r",
-                                "/grant:r",
-                                f"{user}:(OI)(CI)F",
-                            ],
-                            check=False,
-                            capture_output=True,
-                        )
-                    else:
-                        os.chmod(self._path, 0o700)  # Restrict permissions to owner only
-                except Exception:
-                    pass  # keep silent if chmod/icacls fails
-        except Exception:
-            pass  # keep silent
         if not self._check_storage_size():
             return None
         blob = LocalFileBlob(
@@ -208,6 +194,35 @@ class LocalFileStorage:
         if lease_period is None:
             lease_period = self._lease_period
         return blob.put(data, lease_period=lease_period)
+
+    def _check_and_set_folder_permissions(self):
+        try:
+            # Create path if it doesn't exist
+            os.makedirs(self._path + "test", exist_ok=True)
+            #Windows
+            if os.name == "nt":
+                user = self._get_current_user()
+                result = subprocess.run(
+                    [
+                        ICACLS_PATH,
+                        self._path,
+                        "/grant",
+                        "*S-1-5-32-544:(OI)(CI)F", # Full permission for Administrators
+                        f"{user}:(OI)(CI)F",
+                        "/inheritance:r",
+                    ],
+                    check=False,
+                    capture_output=True,
+                )
+                if result.returncode == 0:
+                    return True
+            # Unix
+            else:
+                os.chmod(self._path, 0o700)
+                return True
+        except Exception:
+            pass # keep silent
+        return False
 
     def _check_storage_size(self):
         size = 0
@@ -235,3 +250,24 @@ class LocalFileStorage:
                         )
                         return False
         return True
+
+    def _get_current_user(self):
+        """Get the current user name using PowerShell on Windows."""
+        try:
+            if os.name == "nt":
+                result = subprocess.run(
+                    [
+                        POWERSHELL_PATH,
+                        "-Command",
+                        "[System.Security.Principal.WindowsIdentity]::GetCurrent().Name"
+                    ],
+                    capture_output=True,
+                    text=True,
+                    check=True,
+                )
+                user = result.stdout.strip()
+                if user:
+                    return user
+        except Exception:
+            pass
+        return None
