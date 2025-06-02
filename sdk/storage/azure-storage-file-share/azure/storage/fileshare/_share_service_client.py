@@ -7,10 +7,7 @@
 
 import sys
 import functools
-from typing import (
-    Union, Optional, Any, Dict, List,
-    TYPE_CHECKING
-)
+from typing import Union, Optional, Any, Dict, List, TYPE_CHECKING
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
@@ -100,31 +97,39 @@ class ShareServiceClient(StorageAccountHostsMixin):
             :dedent: 8
             :caption: Create the share service client with url and credential.
     """
+
     def __init__(
-        self, account_url: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        self,
+        account_url: str,
+        credential: Optional[
+            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+        ] = None,  # pylint: disable=line-too-long
         *,
-        token_intent: Optional[Literal['backup']] = None,
-        **kwargs: Any
+        token_intent: Optional[Literal["backup"]] = None,
+        **kwargs: Any,
     ) -> None:
-        if hasattr(credential, 'get_token') and not token_intent:
+        if hasattr(credential, "get_token") and not token_intent:
             raise ValueError("'token_intent' keyword is required when 'credential' is an TokenCredential.")
         parsed_url = _parse_url(account_url=account_url)
         _, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
             raise ValueError(
-                'You need to provide either an account shared key or SAS token when creating a storage service.')
+                "You need to provide either an account shared key or SAS token when creating a storage service."
+            )
 
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(ShareServiceClient, self).__init__(
-            parsed_url, service='file-share', credential=credential, **kwargs)
-        self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
-        self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
+        super(ShareServiceClient, self).__init__(parsed_url, service="file-share", credential=credential, **kwargs)
+        self.allow_trailing_dot = kwargs.pop("allow_trailing_dot", None)
+        self.allow_source_trailing_dot = kwargs.pop("allow_source_trailing_dot", None)
         self.file_request_intent = token_intent
-        self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline,
-                                        allow_trailing_dot=self.allow_trailing_dot,
-                                        allow_source_trailing_dot=self.allow_source_trailing_dot,
-                                        file_request_intent=self.file_request_intent)
+        self._client = AzureFileStorage(
+            url=self.url,
+            base_url=self.url,
+            pipeline=self._pipeline,
+            allow_trailing_dot=self.allow_trailing_dot,
+            allow_source_trailing_dot=self.allow_source_trailing_dot,
+            file_request_intent=self.file_request_intent,
+        )
         self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
 
     def _format_url(self, hostname: str) -> str:
@@ -139,9 +144,12 @@ class ShareServiceClient(StorageAccountHostsMixin):
 
     @classmethod
     def from_connection_string(
-        cls, conn_str: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-        **kwargs: Any
+        cls,
+        conn_str: str,
+        credential: Optional[
+            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+        ] = None,  # pylint: disable=line-too-long
+        **kwargs: Any,
     ) -> Self:
         """Create ShareServiceClient from a Connection String.
 
@@ -173,9 +181,9 @@ class ShareServiceClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Create the share service client with connection string.
         """
-        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'file')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, "file")
+        if "secondary_hostname" not in kwargs:
+            kwargs["secondary_hostname"] = secondary
         return cls(account_url, credential=credential, **kwargs)
 
     @distributed_trace
@@ -202,7 +210,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Get file share service properties.
         """
-        timeout = kwargs.pop('timeout', None)
+        timeout = kwargs.pop("timeout", None)
         try:
             service_props = self._client.service.get_properties(timeout=timeout, **kwargs)
             return service_properties_deserialize(service_props)
@@ -211,11 +219,12 @@ class ShareServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def set_service_properties(
-        self, hour_metrics: Optional["Metrics"] = None,
+        self,
+        hour_metrics: Optional["Metrics"] = None,
         minute_metrics: Optional["Metrics"] = None,
         cors: Optional[List[CorsRule]] = None,
         protocol: Optional["ShareProtocolSettings"] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Sets the properties of a storage account's File Share service, including
         Azure Storage Analytics. If an element (e.g. hour_metrics) is left as None, the
@@ -254,12 +263,12 @@ class ShareServiceClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Sets file share service properties.
         """
-        timeout = kwargs.pop('timeout', None)
+        timeout = kwargs.pop("timeout", None)
         props = StorageServiceProperties(
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
             cors=CorsRule._to_generated(cors),  # pylint: disable=protected-access
-            protocol=protocol
+            protocol=protocol,
         )
         try:
             self._client.service.set_properties(storage_service_properties=props, timeout=timeout, **kwargs)
@@ -268,10 +277,11 @@ class ShareServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def list_shares(
-        self, name_starts_with: Optional[str] = None,
+        self,
+        name_starts_with: Optional[str] = None,
         include_metadata: Optional[bool] = False,
         include_snapshots: Optional[bool] = False,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ItemPaged[ShareProperties]:
         """Returns auto-paging iterable of dict-like ShareProperties under the specified account.
         The generator will lazily follow the continuation tokens returned by
@@ -305,25 +315,26 @@ class ShareServiceClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: List shares in the file share service.
         """
-        timeout = kwargs.pop('timeout', None)
+        timeout = kwargs.pop("timeout", None)
         include = []
-        include_deleted = kwargs.pop('include_deleted', None)
+        include_deleted = kwargs.pop("include_deleted", None)
         if include_deleted:
             include.append("deleted")
         if include_metadata:
-            include.append('metadata')
+            include.append("metadata")
         if include_snapshots:
-            include.append('snapshots')
+            include.append("snapshots")
 
-        results_per_page = kwargs.pop('results_per_page', None)
+        results_per_page = kwargs.pop("results_per_page", None)
         command = functools.partial(
-            self._client.service.list_shares_segment,
-            include=include,
-            timeout=timeout,
-            **kwargs)
+            self._client.service.list_shares_segment, include=include, timeout=timeout, **kwargs
+        )
         return ItemPaged(
-            command, prefix=name_starts_with, results_per_page=results_per_page,
-            page_iterator_class=SharePropertiesPaged)
+            command,
+            prefix=name_starts_with,
+            results_per_page=results_per_page,
+            page_iterator_class=SharePropertiesPaged,
+        )
 
     @distributed_trace
     def create_share(self, share_name: str, **kwargs: Any) -> ShareClient:
@@ -357,28 +368,26 @@ class ShareServiceClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Create a share in the file share service.
         """
-        metadata = kwargs.pop('metadata', None)
-        quota = kwargs.pop('quota', None)
-        timeout = kwargs.pop('timeout', None)
-        provisioned_iops = kwargs.pop('provisioned_iops', None)
-        provisioned_bandwidth_mibps = kwargs.pop('provisioned_bandwidth_mibps', None)
+        metadata = kwargs.pop("metadata", None)
+        quota = kwargs.pop("quota", None)
+        timeout = kwargs.pop("timeout", None)
+        provisioned_iops = kwargs.pop("provisioned_iops", None)
+        provisioned_bandwidth_mibps = kwargs.pop("provisioned_bandwidth_mibps", None)
         share = self.get_share_client(share_name)
-        kwargs.setdefault('merge_span', True)
+        kwargs.setdefault("merge_span", True)
         share.create_share(
             metadata=metadata,
             quota=quota,
             timeout=timeout,
             provisioned_iops=provisioned_iops,
             provisioned_bandwidth_mibps=provisioned_bandwidth_mibps,
-            **kwargs
+            **kwargs,
         )
         return share
 
     @distributed_trace
     def delete_share(
-        self, share_name: Union[ShareProperties, str],
-        delete_snapshots: Optional[bool] = False,
-        **kwargs: Any
+        self, share_name: Union[ShareProperties, str], delete_snapshots: Optional[bool] = False, **kwargs: Any
     ) -> None:
         """Marks the specified share for deletion. The share is
         later deleted during garbage collection.
@@ -395,6 +404,8 @@ class ShareServiceClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`__.
+        :return: None
+            If the share exists, it will be deleted.
         :rtype: None
 
         .. admonition:: Example:
@@ -406,11 +417,10 @@ class ShareServiceClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Delete a share in the file share service.
         """
-        timeout = kwargs.pop('timeout', None)
+        timeout = kwargs.pop("timeout", None)
         share = self.get_share_client(share_name)
-        kwargs.setdefault('merge_span', True)
-        share.delete_share(
-            delete_snapshots=delete_snapshots, timeout=timeout, **kwargs)
+        kwargs.setdefault("merge_span", True)
+        share.delete_share(delete_snapshots=delete_snapshots, timeout=timeout, **kwargs)
 
     @distributed_trace
     def undelete_share(self, deleted_share_name: str, deleted_share_version: str, **kwargs: Any) -> ShareClient:
@@ -439,16 +449,18 @@ class ShareServiceClient(StorageAccountHostsMixin):
         share = self.get_share_client(deleted_share_name)
 
         try:
-            share._client.share.restore(deleted_share_name=deleted_share_name,  # pylint: disable=protected-access
-                                        deleted_share_version=deleted_share_version,
-                                        timeout=kwargs.pop('timeout', None), **kwargs)
+            share._client.share.restore(
+                deleted_share_name=deleted_share_name,  # pylint: disable=protected-access
+                deleted_share_version=deleted_share_version,
+                timeout=kwargs.pop("timeout", None),
+                **kwargs,
+            )
             return share
         except HttpResponseError as error:
             process_storage_error(error)
 
     def get_share_client(
-        self, share: Union[ShareProperties, str],
-        snapshot: Optional[Union[Dict[str, Any], str]] = None
+        self, share: Union[ShareProperties, str], snapshot: Optional[Union[Dict[str, Any], str]] = None
     ) -> ShareClient:
         """Get a client to interact with the specified share.
         The share need not already exist.
@@ -478,12 +490,20 @@ class ShareServiceClient(StorageAccountHostsMixin):
             share_name = share
 
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable=protected-access
-            policies=self._pipeline._impl_policies # pylint: disable=protected-access
+            transport=TransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies,  # pylint: disable=protected-access
         )
         return ShareClient(
-            self.url, share_name=share_name, snapshot=snapshot, credential=self.credential,
-            api_version=self.api_version, _hosts=self._hosts,
-            _configuration=self._config, _pipeline=_pipeline, _location_mode=self._location_mode,
-            allow_trailing_dot=self.allow_trailing_dot, allow_source_trailing_dot=self.allow_source_trailing_dot,
-            token_intent=self.file_request_intent)
+            self.url,
+            share_name=share_name,
+            snapshot=snapshot,
+            credential=self.credential,
+            api_version=self.api_version,
+            _hosts=self._hosts,
+            _configuration=self._config,
+            _pipeline=_pipeline,
+            _location_mode=self._location_mode,
+            allow_trailing_dot=self.allow_trailing_dot,
+            allow_source_trailing_dot=self.allow_source_trailing_dot,
+            token_intent=self.file_request_intent,
+        )

@@ -42,17 +42,17 @@ class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         A string representing the lease ID of an existing lease. This value does not
         need to be specified in order to acquire a new lease, or break one.
     """
+
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
-        self, client: Union["ShareFileClient", "ShareClient"],
-        lease_id: Optional[str] = None
+        self, client: Union["ShareFileClient", "ShareClient"], lease_id: Optional[str] = None
     ) -> None:
         self.id = lease_id or str(uuid.uuid4())
         self.last_modified = None
         self.etag = None
-        if hasattr(client, 'file_name'):
+        if hasattr(client, "file_name"):
             self._client = client._client.file  # type: ignore
             self._snapshot = None
-        elif hasattr(client, 'share_name'):
+        elif hasattr(client, "share_name"):
             self._client = client._client.share
             self._snapshot = client.snapshot
         else:
@@ -87,23 +87,25 @@ class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`__.
+        :return: None
         :rtype: None
         """
         try:
-            lease_duration = kwargs.pop('lease_duration', -1)
+            lease_duration = kwargs.pop("lease_duration", -1)
             if self._snapshot:
-                kwargs['sharesnapshot'] = self._snapshot
+                kwargs["sharesnapshot"] = self._snapshot
             response = await self._client.acquire_lease(
-                timeout=kwargs.pop('timeout', None),
+                timeout=kwargs.pop("timeout", None),
                 duration=lease_duration,
                 proposed_lease_id=self.id,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs
+            )
         except HttpResponseError as error:
             process_storage_error(error)
-        self.id = response.get('lease_id')
-        self.last_modified = response.get('last_modified')
-        self.etag = response.get('etag')
+        self.id = response.get("lease_id")
+        self.last_modified = response.get("last_modified")
+        self.etag = response.get("etag")
 
     @distributed_trace_async
     async def renew(self, **kwargs: Any) -> None:
@@ -130,15 +132,16 @@ class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         try:
             response = await self._client.renew_lease(
                 lease_id=self.id,
-                timeout=kwargs.pop('timeout', None),
+                timeout=kwargs.pop("timeout", None),
                 sharesnapshot=self._snapshot,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs
+            )
         except HttpResponseError as error:
             process_storage_error(error)
-        self.etag = response.get('etag')
-        self.id = response.get('lease_id')
-        self.last_modified = response.get('last_modified')
+        self.etag = response.get("etag")
+        self.id = response.get("lease_id")
+        self.last_modified = response.get("last_modified")
 
     @distributed_trace_async
     async def release(self, **kwargs: Any) -> None:
@@ -153,24 +156,23 @@ class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`__.
         :return: None
+        :rtype: None
         """
         try:
             if self._snapshot:
-                kwargs['sharesnapshot'] = self._snapshot
+                kwargs["sharesnapshot"] = self._snapshot
             response = await self._client.release_lease(
-                lease_id=self.id,
-                timeout=kwargs.pop('timeout', None),
-                cls=return_response_headers,
-                **kwargs)
+                lease_id=self.id, timeout=kwargs.pop("timeout", None), cls=return_response_headers, **kwargs
+            )
         except HttpResponseError as error:
             process_storage_error(error)
-        self.etag = response.get('etag')
-        self.id = response.get('lease_id')
-        self.last_modified = response.get('last_modified')
+        self.etag = response.get("etag")
+        self.id = response.get("lease_id")
+        self.last_modified = response.get("last_modified")
 
     @distributed_trace_async
     async def change(self, proposed_lease_id: str, **kwargs: Any) -> None:
-        """ Changes the lease ID of an active lease. A change must include the current lease ID in x-ms-lease-id and
+        """Changes the lease ID of an active lease. A change must include the current lease ID in x-ms-lease-id and
         a new lease ID in x-ms-proposed-lease-id.
 
         :param str proposed_lease_id:
@@ -183,21 +185,23 @@ class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`__.
         :return: None
+        :rtype: None
         """
         try:
             if self._snapshot:
-                kwargs['sharesnapshot'] = self._snapshot
+                kwargs["sharesnapshot"] = self._snapshot
             response = await self._client.change_lease(
                 lease_id=self.id,
                 proposed_lease_id=proposed_lease_id,
-                timeout=kwargs.pop('timeout', None),
+                timeout=kwargs.pop("timeout", None),
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs
+            )
         except HttpResponseError as error:
             process_storage_error(error)
-        self.etag = response.get('etag')
-        self.id = response.get('lease_id')
-        self.last_modified = response.get('last_modified')
+        self.etag = response.get("etag")
+        self.id = response.get("lease_id")
+        self.last_modified = response.get("last_modified")
 
     @distributed_trace_async
     async def break_lease(self, **kwargs: Any) -> int:
@@ -232,18 +236,17 @@ class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         :rtype: int
         """
         try:
-            lease_break_period = kwargs.pop('lease_break_period', None)
+            lease_break_period = kwargs.pop("lease_break_period", None)
             if self._snapshot:
-                kwargs['sharesnapshot'] = self._snapshot
+                kwargs["sharesnapshot"] = self._snapshot
             if isinstance(self._client, ShareOperations):
-                kwargs['break_period'] = lease_break_period
+                kwargs["break_period"] = lease_break_period
             if isinstance(self._client, FileOperations) and lease_break_period:
                 raise TypeError("Setting a lease break period is only applicable to Share leases.")
 
             response = await self._client.break_lease(
-                timeout=kwargs.pop('timeout', None),
-                cls=return_response_headers,
-                **kwargs)
+                timeout=kwargs.pop("timeout", None), cls=return_response_headers, **kwargs
+            )
         except HttpResponseError as error:
             process_storage_error(error)
-        return response.get('lease_time')  # type: ignore
+        return response.get("lease_time")  # type: ignore
