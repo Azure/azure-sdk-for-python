@@ -52,7 +52,8 @@ class ECIEvaluator(RaiServiceEvaluatorBase):
 
     id = "eci"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
-
+    _OPTIONAL_PARAMS = ["query"]
+    
     @override
     def __init__(
         self,
