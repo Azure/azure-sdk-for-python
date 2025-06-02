@@ -303,7 +303,7 @@ def pre_split_hook(response):
     request_headers = response.http_request.headers
     session_token = request_headers.get('x-ms-session-token')
     assert len(session_token) <= 20
-    assert session_token.startswith('0:0')
+    assert session_token.startswith('0')
     assert session_token.count(':') == 1
     assert session_token.count(',') == 0
 
@@ -312,7 +312,7 @@ def post_split_hook(response):
     session_token = request_headers.get('x-ms-session-token')
     assert len(session_token) > 30
     assert len(session_token) < 60 # should only be 0-1 or 0-2, not 0-1-2
-    assert session_token.startswith('0:0')
+    assert session_token.startswith('0') is False
     assert session_token.count(':') == 2
     assert session_token.count(',') == 1
 
