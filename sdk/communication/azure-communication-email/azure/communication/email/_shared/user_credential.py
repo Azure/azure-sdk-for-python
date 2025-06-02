@@ -8,9 +8,9 @@ from threading import Lock, Condition, Timer, TIMEOUT_MAX, Event
 from datetime import timedelta
 from typing import Any
 
-from utils import get_current_utc_as_int
-from utils import create_access_token
-from token_exchange import TokenExchangeClient
+from .utils import get_current_utc_as_int
+from .utils import create_access_token
+from .token_exchange import TokenExchangeClient
 
 
 class CommunicationTokenCredential(object):
