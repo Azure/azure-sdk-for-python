@@ -34,6 +34,7 @@ from opentelemetry.semconv.metrics.http_metrics import (
 from opentelemetry.semconv.trace import SpanAttributes
 
 from azure.monitor.opentelemetry.exporter._constants import (
+    _APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED,
     _APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN,
     _AUTOCOLLECTED_INSTRUMENT_NAMES,
     _METRIC_ENVELOPE_NAME,
@@ -78,6 +79,8 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             preferred_temporality=APPLICATION_INSIGHTS_METRIC_TEMPORALITIES,  # type: ignore
             preferred_aggregation=kwargs.get("preferred_aggregation"),  # type: ignore
         )
+        # TODO: JEREVOSS 
+        self._metrics_to_log_analytics = kwargs.get("metrics_to_log_analytics", False)  # type: bool
 
     # pylint: disable=R1702
     def export(
@@ -155,6 +158,28 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         if envelope is not None:
             envelope.instrumentation_key = self._instrumentation_key
         return envelope
+
+    def _metrics_to_log_analytics(self, kwargs) -> bool:
+        """
+        Returns whether metrics should be sent to Log Analytics.
+        """
+        metrics_to_log_analytics_param = kwargs.get("metrics_to_log_analytics")
+        if metrics_to_log_analytics_param:
+            metrics_to_log_analytics_param = metrics_to_log_analytics_param.lower().strip()
+            if metrics_to_log_analytics_param == "true":
+                return True
+            if metrics_to_log_analytics_param == "false":
+                return False
+        if not _utils._is_on_aks() or not _utils._is_attach_enabled():
+            return True
+        metrics_to_log_analytics_env_var = os.environ.get(_APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED)
+        if metrics_to_log_analytics_env_var:
+            metrics_to_log_analytics_env_var = metrics_to_log_analytics_env_var.lower().strip()
+            if metrics_to_log_analytics_env_var == "true":
+                return True
+            if metrics_to_log_analytics_env_var == "false":
+                return False
+        return True
 
     # pylint: disable=docstring-keyword-should-match-keyword-only
     @classmethod
