@@ -32,7 +32,7 @@ from azure.cosmos._execution_context.base_execution_context import _QueryExecuti
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 from azure.cosmos.documents import _DistinctType
-from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, ResourceType
+from azure.cosmos.http_constants import StatusCodes, SubStatusCodes
 from .._constants import _Constants as Constants
 
 # pylint: disable=protected-access
