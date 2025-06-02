@@ -50,6 +50,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = "1234abcd-5678-4efa-8abc-1234567890ab"
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         cls._exporter = AzureMonitorMetricExporter()
+        cls._exporter_log_analytics_disabled = AzureMonitorMetricExporter(metrics_to_log_analytics=False)
         cls._metrics_data = MetricsData(
             resource_metrics=[
                 ResourceMetrics(
@@ -477,6 +478,78 @@ class TestAzureMetricExporter(unittest.TestCase):
         envelope = exporter._point_to_envelope(point, "http.server.request.size", resource)
         self.assertIsNone(envelope)
 
+    ### Kusto Disabled
+
+    def test_constructor_log_analytics_enabled_default(self):
+        exporter = AzureMonitorMetricExporter()
+        self.assertTrue(exporter._metrics_to_log_analytics)
+
+    def test_constructor_log_analytics_enabled_param(self):
+        exporter = AzureMonitorMetricExporter(metrics_to_log_analytics=True)
+        self.assertTrue(exporter._metrics_to_log_analytics)
+
+    def test_constructor_log_analytics_disabled_param(self):
+        exporter = AzureMonitorMetricExporter(metrics_to_log_analytics=False)
+        self.assertFalse(exporter._metrics_to_log_analytics)
+
+    @mock.patch.dict("os.environ", {
+        "APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED": " TRUE"
+    })
+    def test_constructor_log_analytics_enabled_env_var(self):
+        exporter = AzureMonitorMetricExporter()
+        self.assertTrue(exporter._metrics_to_log_analytics)
+
+    @mock.patch.dict("os.environ", {
+        "APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED": " false "
+    })
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_on_aks", return_value=False)
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=False)
+    def test_constructor_log_analytics_disabled_env_var(self, attach_mock, aks_mock):
+        exporter = AzureMonitorMetricExporter()
+        # APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED is currently only specified for AKS Attach
+        self.assertTrue(exporter._metrics_to_log_analytics)
+
+    @mock.patch.dict("os.environ", {
+        "APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED": " false "
+    })
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_on_aks", return_value=True)
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True)
+    def test_constructor_log_analytics_disabled_env_var_aks(self, attach_mock, aks_mock):
+        exporter = AzureMonitorMetricExporter()
+        self.assertFalse(exporter._metrics_to_log_analytics)
+
+    @mock.patch.dict("os.environ", {
+        "APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED": " d"
+    })
+    def test_constructor_log_analytics_invalid_env_var(self):
+        exporter = AzureMonitorMetricExporter()
+        self.assertTrue(exporter._metrics_to_log_analytics)
+
+    @mock.patch.dict("os.environ", {
+        "APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED": ""
+    })
+    def test_constructor_log_analytics_blank_env_var(self):
+        exporter = AzureMonitorMetricExporter()
+        self.assertTrue(exporter._metrics_to_log_analytics)
+
+    @mock.patch.dict("os.environ", {
+        "APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED": ""
+    })
+    def test_constructor_log_analytics_blank_env_var(self):
+        exporter = AzureMonitorMetricExporter()
+        self.assertTrue(exporter._metrics_to_log_analytics)
+
+    @mock.patch.dict("os.environ", {
+        "APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED": "false"
+    })
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_on_aks", return_value=True)
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True)
+    def test_constructor_log_analytics_param_over_env_var_aks(self, attach_mock, aks_mock):
+        exporter = AzureMonitorMetricExporter(metrics_to_log_analytics=True)
+        self.assertTrue(exporter._metrics_to_log_analytics)
+
+
+# JEREVOSS: Privitize metrics_to_log_analytics
 
 class TestAzureMetricExporterUtils(unittest.TestCase):
     def test_get_metric_export_result(self):

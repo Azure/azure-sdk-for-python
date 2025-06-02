@@ -79,7 +79,7 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             preferred_temporality=APPLICATION_INSIGHTS_METRIC_TEMPORALITIES,  # type: ignore
             preferred_aggregation=kwargs.get("preferred_aggregation"),  # type: ignore
         )
-        self._metrics_to_log_analytics = kwargs.get("metrics_to_log_analytics", False)  # type: bool
+        self._metrics_to_log_analytics = _determine_metrics_to_log_analytics(kwargs)
 
     # pylint: disable=R1702
     def export(
@@ -160,21 +160,6 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         if envelope is not None:
             envelope.instrumentation_key = self._instrumentation_key
         return envelope
-
-    def _metrics_to_log_analytics(self, kwargs) -> bool:
-        """
-        Returns whether metrics should be sent to Log Analytics.
-        """
-        param = kwargs.get("metrics_to_log_analytics")
-        if param is not None:
-            return str(param).lower().strip() == "true"
-        # Disabling metrics to Log Analytics via env var is currently only specified for AKS Attach scenarios.
-        if not _utils._is_on_aks() or not _utils._is_attach_enabled():
-            return True
-        env_var = os.environ.get(_APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED)
-        if env_var is not None:
-            return env_var.lower().strip() == "true"
-        return True
 
     # pylint: disable=docstring-keyword-should-match-keyword-only
     @classmethod
@@ -312,3 +297,18 @@ def _get_metric_export_result(result: ExportResult) -> MetricExportResult:
     if result == ExportResult.SUCCESS:
         return MetricExportResult.SUCCESS
     return MetricExportResult.FAILURE
+
+def _determine_metrics_to_log_analytics(kwargs) -> bool:
+    """
+    Returns whether metrics should be sent to Log Analytics.
+    """
+    param = kwargs.get("metrics_to_log_analytics")
+    if param is not None:
+        return str(param).lower().strip() == "true"
+    # Disabling metrics to Log Analytics via env var is currently only specified for AKS Attach scenarios.
+    if not _utils._is_on_aks() or not _utils._is_attach_enabled():
+        return True
+    env_var = os.environ.get(_APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED)
+    if env_var is not None:
+        return env_var.lower().strip() == "true"
+    return True
