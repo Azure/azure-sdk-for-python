@@ -108,17 +108,13 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         :raises StopIteration: If no more result is left.
 
         """
-        if ("enableCrossPartitionQuery" not in self._options or self._fetched_query_plan or
-                self._resource_type != ResourceType.Document):
-            try:
-                return next(self._execution_context)
-            except CosmosHttpResponseError as e:
-                if _is_partitioned_execution_info(e) or _is_hybrid_search_query(self._query, e):
-                    self._create_execution_context_with_query_plan()
-                else:
-                    raise e
-        else:
-            self._create_execution_context_with_query_plan()
+        try:
+            return next(self._execution_context)
+        except CosmosHttpResponseError as e:
+            if _is_partitioned_execution_info(e) or _is_hybrid_search_query(self._query, e):
+                self._create_execution_context_with_query_plan()
+            else:
+                raise e
 
         return next(self._execution_context)
 
@@ -131,17 +127,13 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         :return: List of results.
         :rtype: list
         """
-        if ("enableCrossPartitionQuery" not in self._options or self._fetched_query_plan or
-                self._resource_type != ResourceType.Document):
-            try:
-                return self._execution_context.fetch_next_block()
-            except CosmosHttpResponseError as e:
-                if _is_partitioned_execution_info(e) or _is_hybrid_search_query(self._query, e):
-                    self._create_execution_context_with_query_plan()
-                else:
-                    raise e
-        else:
-            self._create_execution_context_with_query_plan()
+        try:
+            return self._execution_context.fetch_next_block()
+        except CosmosHttpResponseError as e:
+            if _is_partitioned_execution_info(e) or _is_hybrid_search_query(self._query, e):
+                self._create_execution_context_with_query_plan()
+            else:
+                raise e
 
         return self._execution_context.fetch_next_block()
 

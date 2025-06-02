@@ -46,7 +46,7 @@ class SessionContainer(object):
     def get_session_token(
             self,
             resource_path: str,
-            pk_value: str,
+            pk_value: Any,
             container_properties_cache: Dict[str, Dict[str, Any]],
             routing_map_provider: SmartRoutingMapProvider,
             partition_key_range_id: Optional[int]) -> str:
@@ -55,7 +55,7 @@ class SessionContainer(object):
         :param str resource_path: Self link / path to the resource
         :param ~azure.cosmos.SmartRoutingMapProvider routing_map_provider: routing map containing relevant session
             information, such as partition key ranges for a given collection
-        :param str pk_value: The partition key value being used for the operation
+        :param Any pk_value: The partition key value being used for the operation
         :param container_properties_cache: Container properties cache used to fetch partition key definitions
         :type container_properties_cache: Dict[str, Dict[str, Any]]
         :param int partition_key_range_id: The partition key range ID used for the operation
@@ -94,14 +94,18 @@ class SessionContainer(object):
                                                                                                    token_dict)
                                 if vector_session_token is not None:
                                     session_token = "{0}:{1}".format(partition_key_range_id, vector_session_token)
-                    else:
+                    elif pk_value is not None:
                         collection_pk_definition = container_properties_cache[collection_name]["partitionKey"]
                         partition_key = PartitionKey(path=collection_pk_definition['paths'],
                                                      kind=collection_pk_definition['kind'],
                                                      version=collection_pk_definition['version'])
                         epk_range = partition_key._get_epk_range_for_partition_key(pk_value=pk_value)
                         pk_range = routing_map_provider.get_overlapping_ranges(collection_name, [epk_range])
-                        session_token = self._format_session_token(pk_range, token_dict)
+                        if len(pk_range) > 0:
+                            partition_key_range_id = pk_range[0]['id']
+                            vector_session_token = self._resolve_partition_local_session_token(pk_range, token_dict)
+                            if vector_session_token is not None:
+                                session_token = "{0}:{1}".format(partition_key_range_id, vector_session_token)
                     return session_token
                 return ""
             except Exception:  # pylint: disable=broad-except
@@ -110,7 +114,7 @@ class SessionContainer(object):
     async def get_session_token_async(
             self,
             resource_path: str,
-            pk_value: str,
+            pk_value: Any,
             container_properties_cache: Dict[str, Dict[str, Any]],
             routing_map_provider: SmartRoutingMapProviderAsync,
             partition_key_range_id: Optional[str]) -> str:
@@ -119,7 +123,7 @@ class SessionContainer(object):
         :param str resource_path: Self link / path to the resource
         :param ~azure.cosmos.SmartRoutingMapProviderAsync routing_map_provider: routing map containing relevant session
             information, such as partition key ranges for a given collection
-        :param str pk_value: The partition key value being used for the operation
+        :param Any pk_value: The partition key value being used for the operation
         :param container_properties_cache: Container properties cache used to fetch partition key definitions
         :type container_properties_cache: Dict[str, Dict[str, Any]]
         :param Any routing_map_provider: The routing map provider containing the partition key range cache logic
@@ -131,7 +135,6 @@ class SessionContainer(object):
 
         with self.session_lock:
             is_name_based = _base.IsNameBased(resource_path)
-            collection_rid = ""
             session_token = ""
 
             try:
@@ -161,14 +164,18 @@ class SessionContainer(object):
                                                                                                    token_dict)
                                 if vector_session_token is not None:
                                     session_token = "{0}:{1}".format(partition_key_range_id, vector_session_token)
-                    else:
+                    elif pk_value is not None:
                         collection_pk_definition = container_properties_cache[collection_name]["partitionKey"]
                         partition_key = PartitionKey(path=collection_pk_definition['paths'],
                                                      kind=collection_pk_definition['kind'],
                                                      version=collection_pk_definition['version'])
                         epk_range = partition_key._get_epk_range_for_partition_key(pk_value=pk_value)
                         pk_range = await routing_map_provider.get_overlapping_ranges(collection_name, [epk_range])
-                        session_token = self._format_session_token(pk_range, token_dict)
+                        if len(pk_range) > 0:
+                            partition_key_range_id = pk_range[0]['id']
+                            vector_session_token = self._resolve_partition_local_session_token(pk_range, token_dict)
+                            if vector_session_token is not None:
+                                session_token = "{0}:{1}".format(partition_key_range_id, vector_session_token)
                     return session_token
                 return ""
             except Exception:  # pylint: disable=broad-except
@@ -323,13 +330,15 @@ class SessionContainer(object):
     def _resolve_partition_local_session_token(self, pk_range, token_dict):
         parent_session_token = None
         parents = pk_range[0].get('parents').copy()
+        parents.append(pk_range[0]['id'])
         for parent in parents:
-            vector_session_token = token_dict.get(parent).session_token
-            if parent_session_token is None:
-                parent_session_token = vector_session_token
-            # if initial token is already set, and the next parent's token is cached, merge vector session tokens
-            else:
-                if vector_session_token is not None:
+            session_token = token_dict.get(parent)
+            if session_token is not None:
+                vector_session_token = session_token.session_token
+                if parent_session_token is None:
+                    parent_session_token = vector_session_token
+                # if initial token is already set, and the next parent's token is cached, merge vector session tokens
+                else:
                     vector_token_1 = VectorSessionToken.create(parent_session_token)
                     vector_token_2 = VectorSessionToken.create(vector_session_token)
                     vector_token = vector_token_1.merge(vector_token_2)
