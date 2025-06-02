@@ -14,6 +14,8 @@
 
 - Extend version range for `psutil` to include 7.x
   ([#40459](https://github.com/Azure/azure-sdk-for-python/pull/40459))
+- Add folder permissions for local files
+  ([#41384](https://github.com/Azure/azure-sdk-for-python/pull/41384))
 
 ## 1.0.0b36 (2025-04-07)
 
