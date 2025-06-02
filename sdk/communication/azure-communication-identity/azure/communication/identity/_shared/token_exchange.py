@@ -10,7 +10,7 @@ from azure.core.credentials import AccessToken
 from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
-from entra_token_guard_policy import EntraTokenGuardPolicy, AsyncEntraTokenGuardPolicy
+from .entra_token_guard_policy import EntraTokenGuardPolicy, AsyncEntraTokenGuardPolicy
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.credentials import TokenCredential
 from typing import List, Optional
