@@ -1,9 +1,12 @@
-# Azure SDK Migration Guide: Swagger to TypeSpec Generation Breaking Changes
+# Azure SDK Migration Guide: New Hybrid Model Design Generation Breaking Changes
 
-This guide covers the breaking changes you'll encounter when upgrading from Swagger-generated SDKs to our new TypeSpec-generated SDKs and how to fix them in your code.
-Summary of Breaking Changes
+This guide covers the breaking changes you'll encounter when upgrading to our new model design and how to fix them in your code.
 
-When migrating from Swagger to TypeSpec-generated SDKs, expect these breaking changes:
+Our new hybrid models are named as such because they have a dual dictionary and model nature.
+
+## Summary of Breaking Changes
+
+When migrating to the hybrid model design, expect these breaking changes:
 
 | Change                                                                              | Impact                                                    | Quick Fix                                                                         |
 | ----------------------------------------------------------------------------------- | --------------------------------------------------------- | --------------------------------------------------------------------------------- |
@@ -11,20 +14,20 @@ When migrating from Swagger to TypeSpec-generated SDKs, expect these breaking ch
 | [Model Hierarchy](#model-hierarchy-reflects-rest-api-structure)                     | Multi-level flattened properties removed                  | Replace `obj.level1_level2_prop` with `obj.level1.level2.prop`                    |
 | [Additional Properties](#additional-properties-handling)                            | `additional_properties` parameter removed                 | Use direct dictionary syntax: `model["key"] = value`                              |
 | [String Representation](#string-representation-matches-rest-api)                    | Model key output changed from `snake_case` to `camelCase` | Update any code parsing model strings to expect `camelCase`                       |
-| [Serialization/Deserialization](#serialization-and-deserialization-methods-removed) | Manual serialization methods removed                      | Use dictionary access for serialization, constructor for deserialization          |
+| [Serialization/Deserialization](#serialization-and-deserialization-methods-removed) | `serialization` and `deserialization` methods removed     | Use dictionary access for serialization, constructor for deserialization          |
 
 ## Detailed Breaking Changes
 
 ### Dictionary Access Syntax
 
-**What changed**: TypeSpec-generated models support direct dictionary access and use different parameter names and output formats compared to Swagger-generated models.
+**What changed**: Hybrid models support direct dictionary access and use different parameter names and output formats compared to our old models.
 
 **What will break**:
 
-- Code that relies on `as_dict()` parameter names
+- Code that relies on parameter `keep_readonly` to `.on_dict()`
 - Code that expects `snake_case` keys in dictionary output
 
-#### Before (Swagger-Generated SDK)
+**Before**:
 
 ```python
 from azure.mgmt.test.models import Model
@@ -35,7 +38,7 @@ json_model = model.as_dict(keep_readonly=True)
 print(json_model["my_name"])  # snake_case key
 ```
 
-#### After (TypeSpec-Generated SDK)
+**After**:
 
 ```python
 from azure.mgmt.test.models import Model
@@ -49,7 +52,7 @@ json_model = model.as_dict(exclude_readonly=False)  # Parameter renamed
 print(json_model["myName"])  # Now returns camelCase key (matches REST API)
 ```
 
-#### Migration steps
+**Migration steps:**
 
 - (Recommended) Optionally simplify code by using direct dictionary access: `model["key"]` instead of `model.as_dict()["key"]`
 - Replace `keep_readonly=True` with `exclude_readonly=False`
@@ -57,14 +60,14 @@ print(json_model["myName"])  # Now returns camelCase key (matches REST API)
 
 ### Model Hierarchy Reflects REST API Structure
 
-**What changed**: TypeSpec generation preserves the actual REST API hierarchy instead of artificially flattening it.
+**What changed**: Hybrid model generation preserves the actual REST API hierarchy instead of artificially flattening it.
 
 **What will break**:
 
 - We've maintained backcompat for attribute access for single-level flattened properties, but multi-level flattening will no longer be supported.
 - No level of flattening will be supported when dealing with the the response object from `.to_dict()`.
 
-#### Before (Swagger-Generated SDK)
+**Before**:
 
 ```python
 model = Model(...)
@@ -74,7 +77,7 @@ json_model = model.as_dict()
 print(json_model["properties_properties_name"])  # Works (artificially flattened)
 ```
 
-#### After (TypeSpec-Generated SDK)
+**After**:
 
 ```python
 
@@ -87,7 +90,7 @@ print(model.properties.properties.name)     # ✅ Use this instead - mirrors act
 print(model["properties_properties_name"])  # ❌ Raises KeyError
 ```
 
-#### Migration steps
+**Migration steps:**
 
 Identify any properties with multiple underscores that represent nested structures
 Replace them with the actual nested property access using dot notation
@@ -97,13 +100,13 @@ This new structure will match your REST API documentation exactly
 
 ### Additional Properties Handling
 
-**What changed**: TypeSpec-generated models inherently support additional properties through dictionary-like behavior, eliminating the need for a separate additional_properties parameter.
+**What changed**: Hybrid models inherently support additional properties through dictionary-like behavior, eliminating the need for a separate additional_properties parameter.
 **What will break**:
 
 - Code that passes `additional_properties` parameter
 - Code that reads `.additional_properties` attribute
 
-#### Before (Swagger-Generated SDK)
+**Before**:
 
 ```python
 # Setting additional properties
@@ -111,7 +114,7 @@ model = Model(additional_properties={"custom": "value"})
 print(model.additional_properties)  # {"custom": "value"}
 ```
 
-#### After (TypeSpec-Generated SDK)
+**After**:
 
 ```python
 # ❌ This no longer works
@@ -129,7 +132,7 @@ model["custom"] = "value"
 print(model)  # Shows the additional properties directly
 ```
 
-#### Migration steps
+**Migration steps:**
 
 - Remove all `additional_properties=` parameters from model constructors
 - Replace with direct dictionary syntax or `.update()` calls
@@ -137,27 +140,27 @@ print(model)  # Shows the additional properties directly
 
 ### String Representation Matches REST API
 
-**What changed**: TypeSpec-generated model string output uses `camelCase` (matching the REST API) instead of Python's `snake_case` convention used in Swagger generation.
+**What changed**: Hybrid models string output uses `camelCase` (matching the REST API) instead of Python's `snake_case` convention in our old models.
 **What will break**:
 
 - Code that parses or matches against model string representations
 - Tests that compare string output
 
-#### Before (Swagger-Generated SDK)
+**Before**:
 
 ```python
 model = Model(type_name="example")
 print(model)  # {"type_name": "example"}
 ```
 
-#### After (TypeSpec-Generated SDK)
+**After**:
 
 ```python
 model = Model(type_name="example")
 print(model)  # {"typeName": "example"} - matches REST API format
 ```
 
-#### Migration steps
+**Migration steps:**
 
 - Update any code that parses model string representations to expect `camelCase`
 - Update test assertions that compare against model string output
@@ -165,7 +168,7 @@ print(model)  # {"typeName": "example"} - matches REST API format
 
 ### Serialization and Deserialization Methods Removed
 
-**What changed**: TypeSpec-generated models no longer include explicit `serialize()` and `deserialize()` methods. Models are now inherently serializable through dictionary access, and deserialization happens automatically through the constructor.
+**What changed**: Hybrid models no longer include explicit `serialize()` and `deserialize()` methods. Models are now inherently serializable through dictionary access, and deserialization happens automatically through the constructor.
 
 **What will break**:
 
@@ -173,7 +176,7 @@ print(model)  # {"typeName": "example"} - matches REST API format
 - Custom serialization/deserialization workflows
 - Code that depends on the specific format returned by the old serialization methods
 
-#### Before (Swagger-Generated SDK)
+**Before**:
 
 ```python
 from azure.mgmt.test.models import Model
@@ -194,7 +197,7 @@ serialized_full = model.serialize(keep_readonly=True)
 serialized_minimal = model.serialize(keep_readonly=False)
 ```
 
-#### After (TypeSpec-Generated SDK)
+**After**:
 
 ```python
 from azure.mgmt.test.models import Model
@@ -203,13 +206,10 @@ import json
 # Serialization - model is already in serialized format when accessed as dictionary
 model = Model(name="example", value=42)
 
-# Method 1: Direct dictionary conversion (recommended)
-json_string = json.dumps(dict(model))
-
-# Method 2: Explicit as_dict() method (for compatibility)
+# Method 1: Explicit as_dict() method (recommended)
 json_string = json.dumps(model.as_dict())
 
-# Method 3: Direct dictionary access
+# Method 2: Direct dictionary access
 serialized_dict = {}
 for key in model:
     serialized_dict[key] = model[key]
@@ -223,9 +223,9 @@ print(model.name)  # "example"
 model = Model(name="example", value=42)  # Still works as before
 ```
 
-#### Migration Steps
+**Migration steps:**
 
-- Replace serialization calls: `model.serialize()` → `model or dict(model) or model.as_dict()`
+- Replace serialization calls: `model.serialize()` → `model or model.as_dict() or dict(model)`
 - Replace deserialization calls: `Model.deserialize(data) → Model(data)`
 - Remove any static method imports
 - Update serialization options:
@@ -237,7 +237,7 @@ model = Model(name="example", value=42)  # Still works as before
 
 ## Why These Changes?
 
-The TypeSpec-generated SDKs prioritize consistency with the underlying REST API:
+Our hybrid models prioritize consistency with the underlying REST API:
 
 - **Better API Alignment**: Model hierarchy and property names now match your REST API documentation exactly
 - **Improved Developer Experience**: Direct dictionary access eliminates extra method calls
