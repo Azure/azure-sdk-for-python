@@ -202,6 +202,9 @@ class LocalFileStorage:
             #Windows
             if os.name == "nt":
                 user = self._get_current_user()
+                if not user:
+                    logger.warning("Failed to retrieve current user. Skipping folder permission setup.")
+                    return False
                 result = subprocess.run(
                     [
                         ICACLS_PATH,
