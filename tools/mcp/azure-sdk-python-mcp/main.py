@@ -20,8 +20,9 @@ logger.info(f"Virtual environment path: {os.environ.get('VIRTUAL_ENV', 'Not runn
 logger.info(f"Working directory: {os.getcwd()}")
 
 # Initialize constants
-_REPO_ROOT = Path(__file__).parents[3]
-_TOX_INI_PATH = os.path.abspath(_REPO_ROOT / "eng" / "tox" / "tox.ini")
+# Initialize with a default path that will be updated if needed
+_REPO_ROOT = None
+_TOX_INI_PATH = None
 
 # Initialize server
 mcp = FastMCP("azure-sdk-python-mcp")
@@ -94,6 +95,25 @@ def run_command(command: List[str], cwd: Optional[str] = None, is_typespec: bool
             "stderr": str(e),
             "code": 1,
         }
+
+@mcp.tool("get_python_repo_root")
+def get_python_repo_root(repo_path:str) -> Dict[str, Any]:
+    """Get the root directory of the Python repository."""
+    repo_path = Path(repo_path).resolve()
+    if not repo_path.exists():
+        return {"success": False, "message": "Repository path does not exist."}
+
+    # Traverse up the directory tree to find the repo root
+    for parent in repo_path.parents:
+        if (parent / "eng" / "tox").exists() and (parent / "sdk").exists():
+            logger.info(f"Found Azure SDK for Python repository at: {parent}")
+            _REPO_ROOT = parent
+            _TOX_INI_PATH = os.path.abspath(_REPO_ROOT / "eng" / "tox" / "tox.ini")
+            logger.info(f"Repository root set to: {_REPO_ROOT}")
+            return {"success": True, "repo_root": str(parent)}
+
+    return {"success": False, "message": "Could not find Azure SDK for Python repository root."}
+
 
 @mcp.tool("verify_setup")
 def verify_setup_tool() -> Dict[str, Any]:

@@ -4,7 +4,10 @@
 
 ## GETTING STARTED
 
-### FIRST: ALWAYS VERIFY ENVIRONMENT
+### FIRST: GET REPOSITORY ROOT
+**BEFORE any commands:** Use MCP tool to get the repository root path to the azure-sdk-for-python repository. This is essential for all subsequent operations. If you are not in the azure-sdk-for-python repository ask the user for the path before running the tool.
+
+### THEN: VERIFY ENVIRONMENT
 **BEFORE any commands:** Use `verify_setup` tool and ensure Python virtual environment is active
 
 ### THEN: IDENTIFY THE TASK
