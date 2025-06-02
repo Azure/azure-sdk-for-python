@@ -54,7 +54,7 @@ print(json_model["myName"])  # Now returns camelCase key (matches REST API)
 
 **Migration steps:**
 
-- (Recommended) Optionally simplify code by using direct dictionary access: `model["key"]` instead of `model.as_dict()["key"]`
+- (Recommended) If you don't need a memory copy as a dict, simplify code by using direct dictionary access: `model["key"]` instead of `model.as_dict()["key"]`
 - Replace `keep_readonly=True` with `exclude_readonly=False`
 - Update code expecting `snake_case` keys to use `camelCase` keys (consistent with REST API)
 
@@ -82,12 +82,13 @@ print(json_model["properties_properties_name"])  # Works (artificially flattened
 ```python
 
 model = Model(...)
-print(model.properties_name)                # Still works (single-level flattening maintained for compatibility)
-print(model.properties.name)                # Equivalent to above, preferred approach
-print(model["properties_name"])             # ❌ Raises KeyError
-print(model.properties_properties_name)     # ❌ Raises AttributeError
-print(model.properties.properties.name)     # ✅ Use this instead - mirrors actual API structure
-print(model["properties_properties_name"])  # ❌ Raises KeyError
+print(model.properties_name)                      # Still works (single-level flattening maintained for compatibility)
+print(model.properties.name)                      # Equivalent to above, preferred approach
+print(model["properties_name"])                   # ❌ Raises KeyError
+print(model.properties_properties_name)           # ❌ Raises AttributeError
+print(model.properties.properties.name)           # ✅ Mirrors actual API structure
+print(model["properties_properties_name"])        # ❌ Raises KeyError
+print(model["properties"]["properties"]["name"])  # ✅ Mirrors actual API structure
 ```
 
 **Migration steps:**
@@ -184,7 +185,7 @@ import json
 
 # Serialization
 model = Model(name="example", value=42)
-serialized_dict = model.serialize()  # Returns dict ready for JSON
+serialized_dict = model.serialize()  # Returns dict using the REST API name, compatible with `json.dump` 
 json_string = json.dumps(serialized_dict)
 
 # Deserialization
@@ -225,7 +226,7 @@ model = Model(name="example", value=42)  # Still works as before
 
 **Migration steps:**
 
-- Replace serialization calls: `model.serialize()` → `model or model.as_dict() or dict(model)`
+- Replace serialization calls: `model.serialize()` → `model` or `model.as_dict()` or `dict(model)`
 - Replace deserialization calls: `Model.deserialize(data) → Model(data)`
 - Remove any static method imports
 - Update serialization options:
