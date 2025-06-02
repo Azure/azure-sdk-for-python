@@ -3,7 +3,10 @@ import pytest
 import logging
 from azure.storage.blob.aio import BlobServiceClient
 
-@pytest.mark.skipif(sys.version_info < (3, 11), reason="ssl_shutdown_timeout in aiohttp only takes effect on Python 3.11+")
+
+@pytest.mark.skipif(
+    sys.version_info < (3, 11), reason="ssl_shutdown_timeout in aiohttp only takes effect on Python 3.11+"
+)
 @pytest.mark.asyncio
 async def test_download_blob_aiohttp(caplog):
     logger = logging.getLogger(__name__)
