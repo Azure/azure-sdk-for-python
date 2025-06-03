@@ -1,5 +1,578 @@
 # Release History
 
+## 1.0.0 (2025-06-03)
+
+### Features Added
+
+  - Client `RecoveryServicesDataReplicationMgmtClient` added method `send_request`
+  - Client `RecoveryServicesDataReplicationMgmtClient` added operation group `fabric_agent`
+  - Client `RecoveryServicesDataReplicationMgmtClient` added operation group `job`
+  - Client `RecoveryServicesDataReplicationMgmtClient` added operation group `private_endpoint_connections`
+  - Client `RecoveryServicesDataReplicationMgmtClient` added operation group `private_endpoint_connection_proxies`
+  - Client `RecoveryServicesDataReplicationMgmtClient` added operation group `private_link_resources`
+  - Client `RecoveryServicesDataReplicationMgmtClient` added operation group `recovery_point`
+  - Client `RecoveryServicesDataReplicationMgmtClient` added operation group `check_name_availability`
+  - Client `RecoveryServicesDataReplicationMgmtClient` added operation group `deployment_preflight`
+  - Client `RecoveryServicesDataReplicationMgmtClient` added operation group `operation_results`
+  - Client `RecoveryServicesDataReplicationMgmtClient` added operation group `location_based_operation_results`
+  - Model `DeploymentPreflightResource` added property `properties`
+  - Model `EmailConfigurationModelProperties` added property `provisioning_state`
+  - Model `EventModelProperties` added property `provisioning_state`
+  - Model `HyperVToAzStackHCIDiskInput` added property `disk_block_size`
+  - Model `HyperVToAzStackHCIDiskInput` added property `disk_logical_sector_size`
+  - Model `HyperVToAzStackHCIDiskInput` added property `disk_physical_sector_size`
+  - Model `HyperVToAzStackHCIDiskInput` added property `disk_identifier`
+  - Model `HyperVToAzStackHCIDiskInput` added property `disk_controller`
+  - Model `HyperVToAzStackHCINicInput` added property `is_static_ip_migration_enabled`
+  - Model `HyperVToAzStackHCINicInput` added property `is_mac_migration_enabled`
+  - Model `HyperVToAzStackHCIProtectedDiskProperties` added property `disk_block_size`
+  - Model `HyperVToAzStackHCIProtectedDiskProperties` added property `disk_logical_sector_size`
+  - Model `HyperVToAzStackHCIProtectedDiskProperties` added property `disk_physical_sector_size`
+  - Model `HyperVToAzStackHCIProtectedItemModelCustomProperties` added property `source_fabric_agent_name`
+  - Model `HyperVToAzStackHCIProtectedItemModelCustomProperties` added property `target_fabric_agent_name`
+  - Model `ProtectedItemModelProperties` added property `fabric_agent_id`
+  - Model `ProtectedItemModelProperties` added property `target_fabric_agent_id`
+  - Model `RecoveryPointModelProperties` added property `provisioning_state`
+  - Model `TaskModel` added property `children_jobs`
+  - Model `VMwareToAzStackHCIDiskInput` added property `disk_block_size`
+  - Model `VMwareToAzStackHCIDiskInput` added property `disk_logical_sector_size`
+  - Model `VMwareToAzStackHCIDiskInput` added property `disk_physical_sector_size`
+  - Model `VMwareToAzStackHCIDiskInput` added property `disk_identifier`
+  - Model `VMwareToAzStackHCIDiskInput` added property `disk_controller`
+  - Model `VMwareToAzStackHCINicInput` added property `is_static_ip_migration_enabled`
+  - Model `VMwareToAzStackHCINicInput` added property `is_mac_migration_enabled`
+  - Model `VMwareToAzStackHCIProtectedDiskProperties` added property `disk_block_size`
+  - Model `VMwareToAzStackHCIProtectedDiskProperties` added property `disk_logical_sector_size`
+  - Model `VMwareToAzStackHCIProtectedDiskProperties` added property `disk_physical_sector_size`
+  - Model `VMwareToAzStackHCIProtectedItemModelCustomProperties` added property `source_fabric_agent_name`
+  - Model `VMwareToAzStackHCIProtectedItemModelCustomProperties` added property `target_fabric_agent_name`
+  - Model `VaultModel` added property `identity`
+  - Model `VaultModelUpdate` added property `identity`
+  - Added model `AffectedObjectDetails`
+  - Added model `ConnectionDetails`
+  - Added enum `CreatedByType`
+  - Added model `DiskControllerInputs`
+  - Added model `FabricAgentModel`
+  - Added model `FabricAgentModelCustomProperties`
+  - Added model `FabricAgentModelProperties`
+  - Added model `FailoverJobModelCustomProperties`
+  - Added model `GroupConnectivityInformation`
+  - Added model `HyperVToAzStackHCIProtectedItemModelCustomPropertiesUpdate`
+  - Added model `JobModel`
+  - Added model `JobModelCustomProperties`
+  - Added model `JobModelProperties`
+  - Added enum `JobObjectType`
+  - Added enum `JobState`
+  - Added model `ManagedServiceIdentity`
+  - Added enum `ManagedServiceIdentityType`
+  - Added model `PrivateEndpoint`
+  - Added model `PrivateEndpointConnection`
+  - Added model `PrivateEndpointConnectionProxy`
+  - Added model `PrivateEndpointConnectionProxyProperties`
+  - Added model `PrivateEndpointConnectionResponseProperties`
+  - Added enum `PrivateEndpointConnectionStatus`
+  - Added model `PrivateLinkResource`
+  - Added model `PrivateLinkResourceProperties`
+  - Added model `PrivateLinkServiceConnection`
+  - Added model `PrivateLinkServiceConnectionState`
+  - Added model `PrivateLinkServiceProxy`
+  - Added model `ProtectedItemModelCustomPropertiesUpdate`
+  - Added model `ProtectedItemModelPropertiesUpdate`
+  - Added model `ProtectedItemModelUpdate`
+  - Added model `ProxyResource`
+  - Added model `RemotePrivateEndpoint`
+  - Added model `RemotePrivateEndpointConnection`
+  - Added model `Resource`
+  - Added model `SystemData`
+  - Added model `TestFailoverCleanupJobModelCustomProperties`
+  - Added model `TestFailoverJobModelCustomProperties`
+  - Added model `TrackedResource`
+  - Added model `UserAssignedIdentity`
+  - Added model `VMwareFabricAgentModelCustomProperties`
+  - Added model `VMwareToAzStackHCIEventModelCustomProperties`
+  - Added model `VMwareToAzStackHCIProtectedItemModelCustomPropertiesUpdate`
+  - Added model `VMwareToAzStackHCIRecoveryPointModelCustomProperties`
+  - Added model `VaultIdentityModel`
+  - Added enum `VaultIdentityType`
+  - Model `EventOperations` added parameter `odata_options` in method `list`
+  - Model `EventOperations` added parameter `page_size` in method `list`
+  - Model `ProtectedItemOperations` added parameter `odata_options` in method `list`
+  - Model `ProtectedItemOperations` added parameter `continuation_token_parameter` in method `list`
+  - Model `ProtectedItemOperations` added parameter `page_size` in method `list`
+  - Model `ProtectedItemOperations` added method `begin_update`
+  - Added model `CheckNameAvailabilityOperations`
+  - Added model `DeploymentPreflightOperations`
+  - Added model `FabricAgentOperations`
+  - Added model `JobOperations`
+  - Added model `LocationBasedOperationResultsOperations`
+  - Added model `OperationResultsOperations`
+  - Added model `PrivateEndpointConnectionProxiesOperations`
+  - Added model `PrivateEndpointConnectionsOperations`
+  - Added model `PrivateLinkResourcesOperations`
+  - Added model `RecoveryPointOperations`
+  - Method `AzStackHCIClusterProperties.__init__` has a new overload `def __init__(self: None, cluster_name: str, resource_name: str, storage_account_name: str, storage_containers: List[_models.StorageContainerProperties])`
+  - Method `AzStackHCIClusterProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `AzStackHCIFabricModelCustomProperties.__init__` has a new overload `def __init__(self: None, az_stack_hci_site_id: str, cluster: _models.AzStackHCIClusterProperties, migration_solution_id: str)`
+  - Method `AzStackHCIFabricModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `AzStackHCIFabricModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `AzStackHCIFabricModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `CheckNameAvailabilityModel.__init__` has a new overload `def __init__(self: None, name: Optional[str], type: Optional[str])`
+  - Method `CheckNameAvailabilityModel.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `CheckNameAvailabilityResponseModel.__init__` has a new overload `def __init__(self: None, name_available: Optional[bool], reason: Optional[str], message: Optional[str])`
+  - Method `CheckNameAvailabilityResponseModel.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `DeploymentPreflightModel.__init__` has a new overload `def __init__(self: None, resources: Optional[List[_models.DeploymentPreflightResource]])`
+  - Method `DeploymentPreflightModel.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `DeploymentPreflightResource.__init__` has a new overload `def __init__(self: None, name: Optional[str], type: Optional[str], location: Optional[str], api_version: Optional[str], properties: Optional[Any])`
+  - Method `DeploymentPreflightResource.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `EmailConfigurationModel.__init__` has a new overload `def __init__(self: None, properties: Optional[_models.EmailConfigurationModelProperties])`
+  - Method `EmailConfigurationModel.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `EmailConfigurationModelProperties.__init__` has a new overload `def __init__(self: None, send_to_owners: bool, custom_email_addresses: Optional[List[str]], locale: Optional[str])`
+  - Method `EmailConfigurationModelProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `ErrorResponse.__init__` has a new overload `def __init__(self: None, error: Optional[_models.ErrorDetail])`
+  - Method `ErrorResponse.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `EventModel.__init__` has a new overload `def __init__(self: None, properties: Optional[_models.EventModelProperties])`
+  - Method `EventModel.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `EventModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `EventModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `EventModelProperties.__init__` has a new overload `def __init__(self: None, custom_properties: _models.EventModelCustomProperties)`
+  - Method `EventModelProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `FabricModel.__init__` has a new overload `def __init__(self: None, location: str, tags: Optional[Dict[str, str]], properties: Optional[_models.FabricModelProperties])`
+  - Method `FabricModel.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `FabricModel.__init__` has a new overload `def __init__(self: None, location: str, tags: Optional[Dict[str, str]])`
+  - Method `FabricModel.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `FabricModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `FabricModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `FabricModelProperties.__init__` has a new overload `def __init__(self: None, custom_properties: _models.FabricModelCustomProperties)`
+  - Method `FabricModelProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `FabricModelUpdate.__init__` has a new overload `def __init__(self: None, tags: Optional[Dict[str, str]], properties: Optional[_models.FabricModelProperties])`
+  - Method `FabricModelUpdate.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `HealthErrorModel.__init__` has a new overload `def __init__(self: None, affected_resource_type: Optional[str], affected_resource_correlation_ids: Optional[List[str]], child_errors: Optional[List[_models.InnerHealthErrorModel]])`
+  - Method `HealthErrorModel.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `HyperVMigrateFabricModelCustomProperties.__init__` has a new overload `def __init__(self: None, hyper_v_site_id: str, migration_solution_id: str)`
+  - Method `HyperVMigrateFabricModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `HyperVMigrateFabricModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `HyperVMigrateFabricModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `HyperVToAzStackHCIDiskInput.__init__` has a new overload `def __init__(self: None, disk_id: str, disk_size_gb: int, disk_file_format: str, is_os_disk: bool, storage_container_id: Optional[str], is_dynamic: Optional[bool], disk_block_size: Optional[int], disk_logical_sector_size: Optional[int], disk_physical_sector_size: Optional[int], disk_identifier: Optional[str], disk_controller: Optional[_models.DiskControllerInputs])`
+  - Method `HyperVToAzStackHCIDiskInput.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `HyperVToAzStackHCIEventModelCustomProperties.__init__` has a new overload `def __init__(self: None)`
+  - Method `HyperVToAzStackHCIEventModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `HyperVToAzStackHCIEventModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `HyperVToAzStackHCIEventModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `HyperVToAzStackHCINicInput.__init__` has a new overload `def __init__(self: None, nic_id: str, selection_type_for_failover: Union[str, _models.VMNicSelection], target_network_id: Optional[str], test_network_id: Optional[str], is_static_ip_migration_enabled: Optional[bool], is_mac_migration_enabled: Optional[bool])`
+  - Method `HyperVToAzStackHCINicInput.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `HyperVToAzStackHCIPlannedFailoverModelCustomProperties.__init__` has a new overload `def __init__(self: None, shutdown_source_vm: bool)`
+  - Method `HyperVToAzStackHCIPlannedFailoverModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `HyperVToAzStackHCIPlannedFailoverModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `HyperVToAzStackHCIPlannedFailoverModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `HyperVToAzStackHCIPolicyModelCustomProperties.__init__` has a new overload `def __init__(self: None, recovery_point_history_in_minutes: int, crash_consistent_frequency_in_minutes: int, app_consistent_frequency_in_minutes: int)`
+  - Method `HyperVToAzStackHCIPolicyModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `HyperVToAzStackHCIPolicyModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `HyperVToAzStackHCIPolicyModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `HyperVToAzStackHCIProtectedItemModelCustomProperties.__init__` has a new overload `def __init__(self: None, target_hci_cluster_id: str, target_arc_cluster_custom_location_id: str, fabric_discovery_machine_id: str, disks_to_include: List[_models.HyperVToAzStackHCIDiskInput], nics_to_include: List[_models.HyperVToAzStackHCINicInput], target_resource_group_id: str, storage_container_id: str, hyper_v_generation: str, run_as_account_id: str, source_fabric_agent_name: str, target_fabric_agent_name: str, custom_location_region: str, target_vm_name: Optional[str], target_network_id: Optional[str], test_network_id: Optional[str], target_cpu_cores: Optional[int], is_dynamic_ram: Optional[bool], dynamic_memory_config: Optional[_models.ProtectedItemDynamicMemoryConfig], target_memory_in_mega_bytes: Optional[int])`
+  - Method `HyperVToAzStackHCIProtectedItemModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `HyperVToAzStackHCIProtectedItemModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `HyperVToAzStackHCIProtectedItemModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `HyperVToAzStackHCIRecoveryPointModelCustomProperties.__init__` has a new overload `def __init__(self: None)`
+  - Method `HyperVToAzStackHCIRecoveryPointModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `HyperVToAzStackHCIRecoveryPointModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `HyperVToAzStackHCIRecoveryPointModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `HyperVToAzStackHCIReplicationExtensionModelCustomProperties.__init__` has a new overload `def __init__(self: None, hyper_v_fabric_arm_id: str, az_stack_hci_fabric_arm_id: str, storage_account_id: Optional[str], storage_account_sas_secret_name: Optional[str])`
+  - Method `HyperVToAzStackHCIReplicationExtensionModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `HyperVToAzStackHCIReplicationExtensionModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `HyperVToAzStackHCIReplicationExtensionModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `IdentityModel.__init__` has a new overload `def __init__(self: None, tenant_id: str, application_id: str, object_id: str, audience: str, aad_authority: str)`
+  - Method `IdentityModel.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `Operation.__init__` has a new overload `def __init__(self: None, display: Optional[_models.OperationDisplay])`
+  - Method `Operation.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `OperationStatus.__init__` has a new overload `def __init__(self: None, id: Optional[str], name: Optional[str], status: Optional[str], start_time: Optional[str], end_time: Optional[str])`
+  - Method `OperationStatus.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `PlannedFailoverModel.__init__` has a new overload `def __init__(self: None, properties: _models.PlannedFailoverModelProperties)`
+  - Method `PlannedFailoverModel.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `PlannedFailoverModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `PlannedFailoverModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `PlannedFailoverModelProperties.__init__` has a new overload `def __init__(self: None, custom_properties: _models.PlannedFailoverModelCustomProperties)`
+  - Method `PlannedFailoverModelProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `PolicyModel.__init__` has a new overload `def __init__(self: None, properties: Optional[_models.PolicyModelProperties])`
+  - Method `PolicyModel.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `PolicyModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `PolicyModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `PolicyModelProperties.__init__` has a new overload `def __init__(self: None, custom_properties: _models.PolicyModelCustomProperties)`
+  - Method `PolicyModelProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `ProtectedItemDynamicMemoryConfig.__init__` has a new overload `def __init__(self: None, maximum_memory_in_mega_bytes: int, minimum_memory_in_mega_bytes: int, target_memory_buffer_percentage: int)`
+  - Method `ProtectedItemDynamicMemoryConfig.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `ProtectedItemModel.__init__` has a new overload `def __init__(self: None, properties: Optional[_models.ProtectedItemModelProperties])`
+  - Method `ProtectedItemModel.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `ProtectedItemModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `ProtectedItemModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `ProtectedItemModelProperties.__init__` has a new overload `def __init__(self: None, policy_name: str, replication_extension_name: str, custom_properties: _models.ProtectedItemModelCustomProperties)`
+  - Method `ProtectedItemModelProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `RecoveryPointModel.__init__` has a new overload `def __init__(self: None, properties: Optional[_models.RecoveryPointModelProperties])`
+  - Method `RecoveryPointModel.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `RecoveryPointModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `RecoveryPointModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `RecoveryPointModelProperties.__init__` has a new overload `def __init__(self: None, recovery_point_time: datetime, recovery_point_type: Union[str, _models.RecoveryPointType], custom_properties: _models.RecoveryPointModelCustomProperties)`
+  - Method `RecoveryPointModelProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `ReplicationExtensionModel.__init__` has a new overload `def __init__(self: None, properties: Optional[_models.ReplicationExtensionModelProperties])`
+  - Method `ReplicationExtensionModel.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `ReplicationExtensionModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `ReplicationExtensionModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `ReplicationExtensionModelProperties.__init__` has a new overload `def __init__(self: None, custom_properties: _models.ReplicationExtensionModelCustomProperties)`
+  - Method `ReplicationExtensionModelProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `StorageContainerProperties.__init__` has a new overload `def __init__(self: None, name: str, cluster_shared_volume_path: str)`
+  - Method `StorageContainerProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `TaskModel.__init__` has a new overload `def __init__(self: None, custom_properties: Optional[_models.TaskModelCustomProperties], children_jobs: Optional[List[_models.JobModel]])`
+  - Method `TaskModel.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `TaskModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `TaskModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VMwareMigrateFabricModelCustomProperties.__init__` has a new overload `def __init__(self: None, vmware_site_id: str, migration_solution_id: str)`
+  - Method `VMwareMigrateFabricModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VMwareMigrateFabricModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `VMwareMigrateFabricModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VMwareToAzStackHCIDiskInput.__init__` has a new overload `def __init__(self: None, disk_id: str, disk_size_gb: int, disk_file_format: str, is_os_disk: bool, storage_container_id: Optional[str], is_dynamic: Optional[bool], disk_block_size: Optional[int], disk_logical_sector_size: Optional[int], disk_physical_sector_size: Optional[int], disk_identifier: Optional[str], disk_controller: Optional[_models.DiskControllerInputs])`
+  - Method `VMwareToAzStackHCIDiskInput.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VMwareToAzStackHCINicInput.__init__` has a new overload `def __init__(self: None, nic_id: str, label: str, selection_type_for_failover: Union[str, _models.VMNicSelection], target_network_id: Optional[str], test_network_id: Optional[str], is_static_ip_migration_enabled: Optional[bool], is_mac_migration_enabled: Optional[bool])`
+  - Method `VMwareToAzStackHCINicInput.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VMwareToAzStackHCIPlannedFailoverModelCustomProperties.__init__` has a new overload `def __init__(self: None, shutdown_source_vm: bool)`
+  - Method `VMwareToAzStackHCIPlannedFailoverModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VMwareToAzStackHCIPlannedFailoverModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `VMwareToAzStackHCIPlannedFailoverModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VMwareToAzStackHCIPolicyModelCustomProperties.__init__` has a new overload `def __init__(self: None, recovery_point_history_in_minutes: int, crash_consistent_frequency_in_minutes: int, app_consistent_frequency_in_minutes: int)`
+  - Method `VMwareToAzStackHCIPolicyModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VMwareToAzStackHCIPolicyModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `VMwareToAzStackHCIPolicyModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VMwareToAzStackHCIProtectedItemModelCustomProperties.__init__` has a new overload `def __init__(self: None, target_hci_cluster_id: str, target_arc_cluster_custom_location_id: str, storage_container_id: str, target_resource_group_id: str, custom_location_region: str, disks_to_include: List[_models.VMwareToAzStackHCIDiskInput], nics_to_include: List[_models.VMwareToAzStackHCINicInput], hyper_v_generation: str, fabric_discovery_machine_id: str, run_as_account_id: str, source_fabric_agent_name: str, target_fabric_agent_name: str, target_vm_name: Optional[str], target_network_id: Optional[str], test_network_id: Optional[str], target_cpu_cores: Optional[int], is_dynamic_ram: Optional[bool], dynamic_memory_config: Optional[_models.ProtectedItemDynamicMemoryConfig], target_memory_in_mega_bytes: Optional[int], perform_auto_resync: Optional[bool])`
+  - Method `VMwareToAzStackHCIProtectedItemModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VMwareToAzStackHCIProtectedItemModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `VMwareToAzStackHCIProtectedItemModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VMwareToAzStackHCIProtectedNicProperties.__init__` has a new overload `def __init__(self: None, is_primary_nic: Optional[bool])`
+  - Method `VMwareToAzStackHCIProtectedNicProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VMwareToAzStackHCIReplicationExtensionModelCustomProperties.__init__` has a new overload `def __init__(self: None, vmware_fabric_arm_id: str, az_stack_hci_fabric_arm_id: str, storage_account_id: Optional[str], storage_account_sas_secret_name: Optional[str])`
+  - Method `VMwareToAzStackHCIReplicationExtensionModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VMwareToAzStackHCIReplicationExtensionModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `VMwareToAzStackHCIReplicationExtensionModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VaultModel.__init__` has a new overload `def __init__(self: None, location: str, tags: Optional[Dict[str, str]], properties: Optional[_models.VaultModelProperties], identity: Optional[_models.ManagedServiceIdentity])`
+  - Method `VaultModel.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VaultModel.__init__` has a new overload `def __init__(self: None, location: str, tags: Optional[Dict[str, str]])`
+  - Method `VaultModel.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VaultModelProperties.__init__` has a new overload `def __init__(self: None, vault_type: Optional[Union[str, _models.ReplicationVaultType]])`
+  - Method `VaultModelProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VaultModelUpdate.__init__` has a new overload `def __init__(self: None, tags: Optional[Dict[str, str]], properties: Optional[_models.VaultModelProperties], identity: Optional[_models.VaultIdentityModel])`
+  - Method `VaultModelUpdate.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `AffectedObjectDetails.__init__` has a new overload `def __init__(self: None, description: Optional[str], type: Optional[Literal[object]])`
+  - Method `AffectedObjectDetails.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `ConnectionDetails.__init__` has a new overload `def __init__(self: None, id: Optional[str], private_ip_address: Optional[str], link_identifier: Optional[str], group_id: Optional[str], member_name: Optional[str])`
+  - Method `ConnectionDetails.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `DiskControllerInputs.__init__` has a new overload `def __init__(self: None, controller_name: str, controller_id: int, controller_location: int)`
+  - Method `DiskControllerInputs.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `FabricAgentModel.__init__` has a new overload `def __init__(self: None, properties: Optional[_models.FabricAgentModelProperties])`
+  - Method `FabricAgentModel.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `FabricAgentModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `FabricAgentModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `FabricAgentModelProperties.__init__` has a new overload `def __init__(self: None, machine_id: str, machine_name: str, authentication_identity: _models.IdentityModel, resource_access_identity: _models.IdentityModel, custom_properties: _models.FabricAgentModelCustomProperties)`
+  - Method `FabricAgentModelProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `FailoverJobModelCustomProperties.__init__` has a new overload `def __init__(self: None)`
+  - Method `FailoverJobModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `FailoverJobModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `FailoverJobModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `GroupConnectivityInformation.__init__` has a new overload `def __init__(self: None, group_id: Optional[str], member_name: Optional[str], customer_visible_fqdns: Optional[List[str]], internal_fqdn: Optional[str], redirect_map_id: Optional[str], private_link_service_arm_region: Optional[str])`
+  - Method `GroupConnectivityInformation.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `HyperVToAzStackHCIProtectedItemModelCustomPropertiesUpdate.__init__` has a new overload `def __init__(self: None, nics_to_include: Optional[List[_models.HyperVToAzStackHCINicInput]], target_cpu_cores: Optional[int], is_dynamic_ram: Optional[bool], dynamic_memory_config: Optional[_models.ProtectedItemDynamicMemoryConfig], target_memory_in_mega_bytes: Optional[int], os_type: Optional[str])`
+  - Method `HyperVToAzStackHCIProtectedItemModelCustomPropertiesUpdate.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `HyperVToAzStackHCIProtectedItemModelCustomPropertiesUpdate.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `HyperVToAzStackHCIProtectedItemModelCustomPropertiesUpdate.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `JobModel.__init__` has a new overload `def __init__(self: None, properties: Optional[_models.JobModelProperties])`
+  - Method `JobModel.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `JobModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `JobModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `JobModelProperties.__init__` has a new overload `def __init__(self: None, custom_properties: _models.JobModelCustomProperties)`
+  - Method `JobModelProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `ManagedServiceIdentity.__init__` has a new overload `def __init__(self: None, type: Union[str, _models.ManagedServiceIdentityType], user_assigned_identities: Optional[Dict[str, _models.UserAssignedIdentity]])`
+  - Method `ManagedServiceIdentity.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `PrivateEndpoint.__init__` has a new overload `def __init__(self: None, id: Optional[str])`
+  - Method `PrivateEndpoint.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `PrivateEndpointConnection.__init__` has a new overload `def __init__(self: None, properties: Optional[_models.PrivateEndpointConnectionResponseProperties])`
+  - Method `PrivateEndpointConnection.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `PrivateEndpointConnectionProxy.__init__` has a new overload `def __init__(self: None, properties: Optional[_models.PrivateEndpointConnectionProxyProperties], etag: Optional[str])`
+  - Method `PrivateEndpointConnectionProxy.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `PrivateEndpointConnectionProxyProperties.__init__` has a new overload `def __init__(self: None, remote_private_endpoint: Optional[_models.RemotePrivateEndpoint])`
+  - Method `PrivateEndpointConnectionProxyProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `PrivateEndpointConnectionResponseProperties.__init__` has a new overload `def __init__(self: None, private_endpoint: Optional[_models.PrivateEndpoint], private_link_service_connection_state: Optional[_models.PrivateLinkServiceConnectionState])`
+  - Method `PrivateEndpointConnectionResponseProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `PrivateLinkResource.__init__` has a new overload `def __init__(self: None, properties: Optional[_models.PrivateLinkResourceProperties])`
+  - Method `PrivateLinkResource.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `PrivateLinkResourceProperties.__init__` has a new overload `def __init__(self: None, group_id: Optional[str], required_members: Optional[List[str]], required_zone_names: Optional[List[str]])`
+  - Method `PrivateLinkResourceProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `PrivateLinkServiceConnection.__init__` has a new overload `def __init__(self: None, name: Optional[str], group_ids: Optional[List[str]], request_message: Optional[str])`
+  - Method `PrivateLinkServiceConnection.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `PrivateLinkServiceConnectionState.__init__` has a new overload `def __init__(self: None, status: Optional[Union[str, _models.PrivateEndpointConnectionStatus]], description: Optional[str], actions_required: Optional[str])`
+  - Method `PrivateLinkServiceConnectionState.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `PrivateLinkServiceProxy.__init__` has a new overload `def __init__(self: None, id: Optional[str], remote_private_link_service_connection_state: Optional[_models.PrivateLinkServiceConnectionState], remote_private_endpoint_connection: Optional[_models.RemotePrivateEndpointConnection], group_connectivity_information: Optional[List[_models.GroupConnectivityInformation]])`
+  - Method `PrivateLinkServiceProxy.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `ProtectedItemModelCustomPropertiesUpdate.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `ProtectedItemModelCustomPropertiesUpdate.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `ProtectedItemModelPropertiesUpdate.__init__` has a new overload `def __init__(self: None, custom_properties: Optional[_models.ProtectedItemModelCustomPropertiesUpdate])`
+  - Method `ProtectedItemModelPropertiesUpdate.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `ProtectedItemModelUpdate.__init__` has a new overload `def __init__(self: None, properties: Optional[_models.ProtectedItemModelPropertiesUpdate])`
+  - Method `ProtectedItemModelUpdate.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `RemotePrivateEndpoint.__init__` has a new overload `def __init__(self: None, id: str, private_link_service_connections: Optional[List[_models.PrivateLinkServiceConnection]], manual_private_link_service_connections: Optional[List[_models.PrivateLinkServiceConnection]], private_link_service_proxies: Optional[List[_models.PrivateLinkServiceProxy]], connection_details: Optional[List[_models.ConnectionDetails]])`
+  - Method `RemotePrivateEndpoint.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `RemotePrivateEndpointConnection.__init__` has a new overload `def __init__(self: None, id: Optional[str])`
+  - Method `RemotePrivateEndpointConnection.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `SystemData.__init__` has a new overload `def __init__(self: None, created_by: Optional[str], created_by_type: Optional[Union[str, _models.CreatedByType]], created_at: Optional[datetime], last_modified_by: Optional[str], last_modified_by_type: Optional[Union[str, _models.CreatedByType]], last_modified_at: Optional[datetime])`
+  - Method `SystemData.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `TestFailoverCleanupJobModelCustomProperties.__init__` has a new overload `def __init__(self: None)`
+  - Method `TestFailoverCleanupJobModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `TestFailoverCleanupJobModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `TestFailoverCleanupJobModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `TestFailoverJobModelCustomProperties.__init__` has a new overload `def __init__(self: None)`
+  - Method `TestFailoverJobModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `TestFailoverJobModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `TestFailoverJobModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `TrackedResource.__init__` has a new overload `def __init__(self: None, location: str, tags: Optional[Dict[str, str]])`
+  - Method `TrackedResource.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VMwareFabricAgentModelCustomProperties.__init__` has a new overload `def __init__(self: None, bios_id: str, mars_authentication_identity: _models.IdentityModel)`
+  - Method `VMwareFabricAgentModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VMwareFabricAgentModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `VMwareFabricAgentModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VMwareToAzStackHCIEventModelCustomProperties.__init__` has a new overload `def __init__(self: None)`
+  - Method `VMwareToAzStackHCIEventModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VMwareToAzStackHCIEventModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `VMwareToAzStackHCIEventModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VMwareToAzStackHCIProtectedItemModelCustomPropertiesUpdate.__init__` has a new overload `def __init__(self: None, nics_to_include: Optional[List[_models.VMwareToAzStackHCINicInput]], target_cpu_cores: Optional[int], is_dynamic_ram: Optional[bool], dynamic_memory_config: Optional[_models.ProtectedItemDynamicMemoryConfig], target_memory_in_mega_bytes: Optional[int], os_type: Optional[str])`
+  - Method `VMwareToAzStackHCIProtectedItemModelCustomPropertiesUpdate.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VMwareToAzStackHCIProtectedItemModelCustomPropertiesUpdate.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `VMwareToAzStackHCIProtectedItemModelCustomPropertiesUpdate.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VMwareToAzStackHCIRecoveryPointModelCustomProperties.__init__` has a new overload `def __init__(self: None)`
+  - Method `VMwareToAzStackHCIRecoveryPointModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VMwareToAzStackHCIRecoveryPointModelCustomProperties.__init__` has a new overload `def __init__(self: None, instance_type: str)`
+  - Method `VMwareToAzStackHCIRecoveryPointModelCustomProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `VaultIdentityModel.__init__` has a new overload `def __init__(self: None, type: Union[str, _models.VaultIdentityType])`
+  - Method `VaultIdentityModel.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `EmailConfigurationOperations.create` has a new overload `def create(self: None, resource_group_name: str, vault_name: str, email_configuration_name: str, resource: JSON, content_type: str)`
+  - Method `EmailConfigurationOperations.create` has a new overload `def create(self: None, resource_group_name: str, vault_name: str, email_configuration_name: str, resource: IO[bytes], content_type: str)`
+  - Method `EmailConfigurationOperations.create` has a new overload `def create(self: None, resource_group_name: str, vault_name: str, email_configuration_name: str, resource: EmailConfigurationModel, content_type: str)`
+  - Method `FabricOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, fabric_name: str, resource: JSON, content_type: str)`
+  - Method `FabricOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, fabric_name: str, resource: IO[bytes], content_type: str)`
+  - Method `FabricOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, fabric_name: str, resource: FabricModel, content_type: str)`
+  - Method `FabricOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, fabric_name: str, properties: JSON, content_type: str)`
+  - Method `FabricOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, fabric_name: str, properties: IO[bytes], content_type: str)`
+  - Method `FabricOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, fabric_name: str, properties: FabricModelUpdate, content_type: str)`
+  - Method `PolicyOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, vault_name: str, policy_name: str, resource: JSON, content_type: str)`
+  - Method `PolicyOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, vault_name: str, policy_name: str, resource: IO[bytes], content_type: str)`
+  - Method `PolicyOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, vault_name: str, policy_name: str, resource: PolicyModel, content_type: str)`
+  - Method `ProtectedItemOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, vault_name: str, protected_item_name: str, resource: JSON, content_type: str)`
+  - Method `ProtectedItemOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, vault_name: str, protected_item_name: str, resource: IO[bytes], content_type: str)`
+  - Method `ProtectedItemOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, vault_name: str, protected_item_name: str, resource: ProtectedItemModel, content_type: str)`
+  - Method `ProtectedItemOperations.begin_planned_failover` has a new overload `def begin_planned_failover(self: None, resource_group_name: str, vault_name: str, protected_item_name: str, body: JSON, content_type: str)`
+  - Method `ProtectedItemOperations.begin_planned_failover` has a new overload `def begin_planned_failover(self: None, resource_group_name: str, vault_name: str, protected_item_name: str, body: IO[bytes], content_type: str)`
+  - Method `ProtectedItemOperations.begin_planned_failover` has a new overload `def begin_planned_failover(self: None, resource_group_name: str, vault_name: str, protected_item_name: str, body: PlannedFailoverModel, content_type: str)`
+  - Method `ProtectedItemOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, vault_name: str, protected_item_name: str, properties: ProtectedItemModelUpdate, content_type: str)`
+  - Method `ProtectedItemOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, vault_name: str, protected_item_name: str, properties: JSON, content_type: str)`
+  - Method `ProtectedItemOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, vault_name: str, protected_item_name: str, properties: IO[bytes], content_type: str)`
+  - Method `ReplicationExtensionOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, vault_name: str, replication_extension_name: str, resource: JSON, content_type: str)`
+  - Method `ReplicationExtensionOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, vault_name: str, replication_extension_name: str, resource: IO[bytes], content_type: str)`
+  - Method `ReplicationExtensionOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, vault_name: str, replication_extension_name: str, resource: ReplicationExtensionModel, content_type: str)`
+  - Method `VaultOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, vault_name: str, resource: JSON, content_type: str)`
+  - Method `VaultOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, vault_name: str, resource: IO[bytes], content_type: str)`
+  - Method `VaultOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, vault_name: str, resource: VaultModel, content_type: str)`
+  - Method `VaultOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, vault_name: str, properties: JSON, content_type: str)`
+  - Method `VaultOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, vault_name: str, properties: IO[bytes], content_type: str)`
+  - Method `VaultOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, vault_name: str, properties: VaultModelUpdate, content_type: str)`
+  - Method `CheckNameAvailabilityOperations.post` has a new overload `def post(self: None, location: str, body: Optional[CheckNameAvailabilityModel], content_type: str)`
+  - Method `CheckNameAvailabilityOperations.post` has a new overload `def post(self: None, location: str, body: Optional[JSON], content_type: str)`
+  - Method `CheckNameAvailabilityOperations.post` has a new overload `def post(self: None, location: str, body: Optional[IO[bytes]], content_type: str)`
+  - Method `DeploymentPreflightOperations.post` has a new overload `def post(self: None, resource_group_name: str, deployment_id: str, body: Optional[DeploymentPreflightModel], content_type: str)`
+  - Method `DeploymentPreflightOperations.post` has a new overload `def post(self: None, resource_group_name: str, deployment_id: str, body: Optional[JSON], content_type: str)`
+  - Method `DeploymentPreflightOperations.post` has a new overload `def post(self: None, resource_group_name: str, deployment_id: str, body: Optional[IO[bytes]], content_type: str)`
+  - Method `FabricAgentOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, fabric_name: str, fabric_agent_name: str, resource: FabricAgentModel, content_type: str)`
+  - Method `FabricAgentOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, fabric_name: str, fabric_agent_name: str, resource: JSON, content_type: str)`
+  - Method `FabricAgentOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, fabric_name: str, fabric_agent_name: str, resource: IO[bytes], content_type: str)`
+  - Method `PrivateEndpointConnectionProxiesOperations.create` has a new overload `def create(self: None, resource_group_name: str, vault_name: str, private_endpoint_connection_proxy_name: str, resource: PrivateEndpointConnectionProxy, content_type: str)`
+  - Method `PrivateEndpointConnectionProxiesOperations.create` has a new overload `def create(self: None, resource_group_name: str, vault_name: str, private_endpoint_connection_proxy_name: str, resource: JSON, content_type: str)`
+  - Method `PrivateEndpointConnectionProxiesOperations.create` has a new overload `def create(self: None, resource_group_name: str, vault_name: str, private_endpoint_connection_proxy_name: str, resource: IO[bytes], content_type: str)`
+  - Method `PrivateEndpointConnectionProxiesOperations.validate` has a new overload `def validate(self: None, resource_group_name: str, vault_name: str, private_endpoint_connection_proxy_name: str, body: PrivateEndpointConnectionProxy, content_type: str)`
+  - Method `PrivateEndpointConnectionProxiesOperations.validate` has a new overload `def validate(self: None, resource_group_name: str, vault_name: str, private_endpoint_connection_proxy_name: str, body: JSON, content_type: str)`
+  - Method `PrivateEndpointConnectionProxiesOperations.validate` has a new overload `def validate(self: None, resource_group_name: str, vault_name: str, private_endpoint_connection_proxy_name: str, body: IO[bytes], content_type: str)`
+  - Method `PrivateEndpointConnectionsOperations.update` has a new overload `def update(self: None, resource_group_name: str, vault_name: str, private_endpoint_connection_name: str, resource: PrivateEndpointConnection, content_type: str)`
+  - Method `PrivateEndpointConnectionsOperations.update` has a new overload `def update(self: None, resource_group_name: str, vault_name: str, private_endpoint_connection_name: str, resource: JSON, content_type: str)`
+  - Method `PrivateEndpointConnectionsOperations.update` has a new overload `def update(self: None, resource_group_name: str, vault_name: str, private_endpoint_connection_name: str, resource: IO[bytes], content_type: str)`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `RecoveryServicesDataReplicationMgmtClient.dra`
+  - Deleted or renamed client operation group `RecoveryServicesDataReplicationMgmtClient.dra_operation_status`
+  - Deleted or renamed client operation group `RecoveryServicesDataReplicationMgmtClient.fabric_operations_status`
+  - Deleted or renamed client operation group `RecoveryServicesDataReplicationMgmtClient.policy_operation_status`
+  - Deleted or renamed client operation group `RecoveryServicesDataReplicationMgmtClient.protected_item_operation_status`
+  - Deleted or renamed client operation group `RecoveryServicesDataReplicationMgmtClient.recovery_points`
+  - Deleted or renamed client operation group `RecoveryServicesDataReplicationMgmtClient.replication_extension_operation_status`
+  - Deleted or renamed client operation group `RecoveryServicesDataReplicationMgmtClient.vault_operation_status`
+  - Deleted or renamed client operation group `RecoveryServicesDataReplicationMgmtClient.workflow`
+  - Deleted or renamed client operation group `RecoveryServicesDataReplicationMgmtClient.workflow_operation_status`
+  - Deleted or renamed client method `RecoveryServicesDataReplicationMgmtClient.check_name_availability`
+  - Deleted or renamed client method `RecoveryServicesDataReplicationMgmtClient.deployment_preflight`
+  - Model `AzStackHCIClusterProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `AzStackHCIFabricModelCustomProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `CheckNameAvailabilityModel` deleted or renamed its instance variable `additional_properties`
+  - Model `CheckNameAvailabilityResponseModel` deleted or renamed its instance variable `additional_properties`
+  - Model `DeploymentPreflightModel` deleted or renamed its instance variable `additional_properties`
+  - Model `DeploymentPreflightResource` deleted or renamed its instance variable `additional_properties`
+  - Model `EmailConfigurationModel` deleted or renamed its instance variable `additional_properties`
+  - Model `EmailConfigurationModelProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `ErrorAdditionalInfo` deleted or renamed its instance variable `additional_properties`
+  - Model `ErrorDetail` deleted or renamed its instance variable `additional_properties`
+  - Model `ErrorModel` deleted or renamed its instance variable `additional_properties`
+  - Model `ErrorResponse` deleted or renamed its instance variable `additional_properties`
+  - Model `EventModel` deleted or renamed its instance variable `additional_properties`
+  - Model `EventModelCustomProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `EventModelProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `FabricModel` deleted or renamed its instance variable `additional_properties`
+  - Model `FabricModelCustomProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `FabricModelProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `FabricModelUpdate` deleted or renamed its instance variable `additional_properties`
+  - Model `FailoverProtectedItemProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `HealthErrorModel` deleted or renamed its instance variable `additional_properties`
+  - Model `HyperVMigrateFabricModelCustomProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `HyperVToAzStackHCIDiskInput` deleted or renamed its instance variable `additional_properties`
+  - Model `HyperVToAzStackHCIEventModelCustomProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `HyperVToAzStackHCINicInput` deleted or renamed its instance variable `additional_properties`
+  - Model `HyperVToAzStackHCIPlannedFailoverModelCustomProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `HyperVToAzStackHCIPolicyModelCustomProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `HyperVToAzStackHCIProtectedDiskProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `HyperVToAzStackHCIProtectedItemModelCustomProperties` deleted or renamed its instance variable `source_dra_name`
+  - Model `HyperVToAzStackHCIProtectedItemModelCustomProperties` deleted or renamed its instance variable `target_dra_name`
+  - Model `HyperVToAzStackHCIProtectedItemModelCustomProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `HyperVToAzStackHCIProtectedNicProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `HyperVToAzStackHCIRecoveryPointModelCustomProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `HyperVToAzStackHCIReplicationExtensionModelCustomProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `IdentityModel` deleted or renamed its instance variable `additional_properties`
+  - Model `InnerHealthErrorModel` deleted or renamed its instance variable `additional_properties`
+  - Model `Operation` deleted or renamed its instance variable `additional_properties`
+  - Model `OperationDisplay` deleted or renamed its instance variable `additional_properties`
+  - Model `OperationStatus` deleted or renamed its instance variable `additional_properties`
+  - Model `PlannedFailoverModel` deleted or renamed its instance variable `additional_properties`
+  - Model `PlannedFailoverModelCustomProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `PlannedFailoverModelProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `PolicyModel` deleted or renamed its instance variable `additional_properties`
+  - Model `PolicyModelCustomProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `PolicyModelProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `ProtectedItemDynamicMemoryConfig` deleted or renamed its instance variable `additional_properties`
+  - Model `ProtectedItemJobProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `ProtectedItemModel` deleted or renamed its instance variable `additional_properties`
+  - Model `ProtectedItemModelCustomProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `ProtectedItemModelProperties` deleted or renamed its instance variable `dra_id`
+  - Model `ProtectedItemModelProperties` deleted or renamed its instance variable `target_dra_id`
+  - Model `ProtectedItemModelProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `RecoveryPointModel` deleted or renamed its instance variable `additional_properties`
+  - Model `RecoveryPointModelCustomProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `RecoveryPointModelProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `ReplicationExtensionModel` deleted or renamed its instance variable `additional_properties`
+  - Model `ReplicationExtensionModelCustomProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `ReplicationExtensionModelProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `StorageContainerProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `TaskModel` deleted or renamed its instance variable `children_workflows`
+  - Model `TaskModel` deleted or renamed its instance variable `additional_properties`
+  - Model `TaskModelCustomProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `VMwareMigrateFabricModelCustomProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `VMwareToAzStackHCIDiskInput` deleted or renamed its instance variable `additional_properties`
+  - Model `VMwareToAzStackHCINicInput` deleted or renamed its instance variable `additional_properties`
+  - Model `VMwareToAzStackHCIPlannedFailoverModelCustomProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `VMwareToAzStackHCIPolicyModelCustomProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `VMwareToAzStackHCIProtectedDiskProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `VMwareToAzStackHCIProtectedItemModelCustomProperties` deleted or renamed its instance variable `source_dra_name`
+  - Model `VMwareToAzStackHCIProtectedItemModelCustomProperties` deleted or renamed its instance variable `target_dra_name`
+  - Model `VMwareToAzStackHCIProtectedItemModelCustomProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `VMwareToAzStackHCIProtectedNicProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `VMwareToAzStackHCIReplicationExtensionModelCustomProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `VaultModel` deleted or renamed its instance variable `additional_properties`
+  - Model `VaultModelProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `VaultModelUpdate` deleted or renamed its instance variable `additional_properties`
+  - Deleted or renamed model `DraModel`
+  - Deleted or renamed model `DraModelCollection`
+  - Deleted or renamed model `DraModelCustomProperties`
+  - Deleted or renamed model `DraModelProperties`
+  - Deleted or renamed model `DraModelSystemData`
+  - Deleted or renamed model `EmailConfigurationModelCollection`
+  - Deleted or renamed model `EmailConfigurationModelSystemData`
+  - Deleted or renamed model `EventModelCollection`
+  - Deleted or renamed model `EventModelSystemData`
+  - Deleted or renamed model `FabricModelCollection`
+  - Deleted or renamed model `FabricModelSystemData`
+  - Deleted or renamed model `FabricModelUpdateSystemData`
+  - Deleted or renamed model `FailoverWorkflowModelCustomProperties`
+  - Deleted or renamed model `OperationModel`
+  - Deleted or renamed model `OperationModelCollection`
+  - Deleted or renamed model `OperationModelProperties`
+  - Deleted or renamed model `PolicyModelCollection`
+  - Deleted or renamed model `PolicyModelSystemData`
+  - Deleted or renamed model `ProtectedItemModelCollection`
+  - Deleted or renamed model `ProtectedItemModelPropertiesCurrentJob`
+  - Deleted or renamed model `ProtectedItemModelPropertiesLastFailedEnableProtectionJob`
+  - Deleted or renamed model `ProtectedItemModelPropertiesLastFailedPlannedFailoverJob`
+  - Deleted or renamed model `ProtectedItemModelPropertiesLastTestFailoverJob`
+  - Deleted or renamed model `ProtectedItemModelSystemData`
+  - Deleted or renamed model `RecoveryPointModelCollection`
+  - Deleted or renamed model `RecoveryPointModelSystemData`
+  - Deleted or renamed model `ReplicationExtensionModelCollection`
+  - Deleted or renamed model `ReplicationExtensionModelSystemData`
+  - Deleted or renamed model `SystemDataModel`
+  - Deleted or renamed model `TestFailoverCleanupWorkflowModelCustomProperties`
+  - Deleted or renamed model `TestFailoverWorkflowModelCustomProperties`
+  - Deleted or renamed model `VMwareDraModelCustomProperties`
+  - Deleted or renamed model `VaultModelCollection`
+  - Deleted or renamed model `VaultModelSystemData`
+  - Deleted or renamed model `VaultModelUpdateSystemData`
+  - Deleted or renamed model `WorkflowModel`
+  - Deleted or renamed model `WorkflowModelCollection`
+  - Deleted or renamed model `WorkflowModelCustomProperties`
+  - Deleted or renamed model `WorkflowModelProperties`
+  - Deleted or renamed model `WorkflowModelSystemData`
+  - Deleted or renamed model `WorkflowObjectType`
+  - Deleted or renamed model `WorkflowState`
+  - Method `EmailConfigurationOperations.create` inserted a `positional_or_keyword` parameter `resource`
+  - Method `EmailConfigurationOperations.create` deleted or renamed its parameter `body` of kind `positional_or_keyword`
+  - Method `EventOperations.list` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
+  - Method `EventOperations.list` deleted or renamed its parameter `filter` of kind `positional_or_keyword`
+  - Method `FabricOperations.begin_create` inserted a `positional_or_keyword` parameter `resource`
+  - Method `FabricOperations.begin_create` deleted or renamed its parameter `body` of kind `positional_or_keyword`
+  - Method `FabricOperations.begin_update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `FabricOperations.begin_update` deleted or renamed its parameter `body` of kind `positional_or_keyword`
+  - Method `FabricOperations.list` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
+  - Method `FabricOperations.list_by_subscription` deleted or renamed its parameter `continuation_token_parameter` of kind `positional_or_keyword`
+  - Method `PolicyOperations.begin_create` inserted a `positional_or_keyword` parameter `resource`
+  - Method `PolicyOperations.begin_create` deleted or renamed its parameter `body` of kind `positional_or_keyword`
+  - Method `ProtectedItemOperations.begin_create` inserted a `positional_or_keyword` parameter `resource`
+  - Method `ProtectedItemOperations.begin_create` deleted or renamed its parameter `body` of kind `positional_or_keyword`
+  - Method `ProtectedItemOperations.begin_delete` changed its parameter `force_delete` from `positional_or_keyword` to `keyword_only`
+  - Method `ProtectedItemOperations.begin_planned_failover` removed default value `None` from its parameter `body`
+  - Method `ReplicationExtensionOperations.begin_create` inserted a `positional_or_keyword` parameter `resource`
+  - Method `ReplicationExtensionOperations.begin_create` deleted or renamed its parameter `body` of kind `positional_or_keyword`
+  - Method `VaultOperations.begin_create` inserted a `positional_or_keyword` parameter `resource`
+  - Method `VaultOperations.begin_create` deleted or renamed its parameter `body` of kind `positional_or_keyword`
+  - Method `VaultOperations.begin_update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `VaultOperations.begin_update` deleted or renamed its parameter `body` of kind `positional_or_keyword`
+  - Method `VaultOperations.list` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
+  - Method `VaultOperations.list_by_subscription` deleted or renamed its parameter `continuation_token_parameter` of kind `positional_or_keyword`
+  - Deleted or renamed model `DraOperationStatusOperations`
+  - Deleted or renamed model `DraOperations`
+  - Deleted or renamed model `FabricOperationsStatusOperations`
+  - Deleted or renamed model `PolicyOperationStatusOperations`
+  - Deleted or renamed model `ProtectedItemOperationStatusOperations`
+  - Deleted or renamed model `RecoveryPointsOperations`
+  - Deleted or renamed model `RecoveryServicesDataReplicationMgmtClientOperationsMixin`
+  - Deleted or renamed model `ReplicationExtensionOperationStatusOperations`
+  - Deleted or renamed model `VaultOperationStatusOperations`
+  - Deleted or renamed model `WorkflowOperationStatusOperations`
+  - Deleted or renamed model `WorkflowOperations`
+  - Method `PolicyOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'vault_name', 'policy_name', 'body', 'kwargs']` to `['self', 'resource_group_name', 'vault_name', 'policy_name', 'resource', 'kwargs']`
+  - Method `EmailConfigurationOperations.create` re-ordered its parameters from `['self', 'resource_group_name', 'vault_name', 'email_configuration_name', 'body', 'kwargs']` to `['self', 'resource_group_name', 'vault_name', 'email_configuration_name', 'resource', 'kwargs']`
+  - Method `FabricOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'fabric_name', 'body', 'kwargs']` to `['self', 'resource_group_name', 'fabric_name', 'resource', 'kwargs']`
+  - Method `FabricOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'fabric_name', 'body', 'kwargs']` to `['self', 'resource_group_name', 'fabric_name', 'properties', 'kwargs']`
+  - Method `ReplicationExtensionOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'vault_name', 'replication_extension_name', 'body', 'kwargs']` to `['self', 'resource_group_name', 'vault_name', 'replication_extension_name', 'resource', 'kwargs']`
+  - Method `VaultOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'vault_name', 'body', 'kwargs']` to `['self', 'resource_group_name', 'vault_name', 'resource', 'kwargs']`
+  - Method `VaultOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'vault_name', 'body', 'kwargs']` to `['self', 'resource_group_name', 'vault_name', 'properties', 'kwargs']`
+  - Method `ProtectedItemOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'vault_name', 'protected_item_name', 'body', 'kwargs']` to `['self', 'resource_group_name', 'vault_name', 'protected_item_name', 'resource', 'kwargs']`
+
 ## 1.0.0 (2025-05-12)
 
 ### Features Added

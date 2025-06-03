@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -120,7 +120,7 @@ class Operations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.Operation"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Operation"]:
         """List the operations for the provider.
 
         :return: An iterator like instance of Operation
@@ -477,7 +477,7 @@ class EmailConfigurationOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, vault_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.EmailConfigurationModel"]:
+    ) -> AsyncItemPaged["_models.EmailConfigurationModel"]:
         """Gets the list of alert configuration settings for the given vault.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1241,7 +1241,7 @@ class VaultOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.VaultModel"]:
+    ) -> AsyncItemPaged["_models.VaultModel"]:
         """Gets the list of vaults in the given subscription and resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1334,7 +1334,7 @@ class VaultOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.VaultModel"]:
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.VaultModel"]:
         """Gets the list of vaults in the given subscription.
 
         :return: An iterator like instance of VaultModel
@@ -1519,7 +1519,7 @@ class EventOperations:
         continuation_token_parameter: Optional[str] = None,
         page_size: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.EventModel"]:
+    ) -> AsyncItemPaged["_models.EventModel"]:
         """Gets the list of events in the given vault.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2292,7 +2292,7 @@ class FabricOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.FabricModel"]:
+    ) -> AsyncItemPaged["_models.FabricModel"]:
         """Gets the list of fabrics in the given subscription and resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2385,7 +2385,7 @@ class FabricOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.FabricModel"]:
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.FabricModel"]:
         """Gets the list of fabrics in the given subscription.
 
         :return: An iterator like instance of FabricModel
@@ -2935,7 +2935,7 @@ class FabricAgentOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, fabric_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.FabricAgentModel"]:
+    ) -> AsyncItemPaged["_models.FabricAgentModel"]:
         """Gets the list of fabric agents in the given fabric.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3125,7 +3125,7 @@ class JobOperations:
         continuation_token_parameter: Optional[str] = None,
         page_size: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.JobModel"]:
+    ) -> AsyncItemPaged["_models.JobModel"]:
         """Gets the list of jobs in the given vault.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3689,7 +3689,7 @@ class PolicyOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list(self, resource_group_name: str, vault_name: str, **kwargs: Any) -> AsyncIterable["_models.PolicyModel"]:
+    def list(self, resource_group_name: str, vault_name: str, **kwargs: Any) -> AsyncItemPaged["_models.PolicyModel"]:
         """Gets the list of policies in the given vault.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4183,7 +4183,7 @@ class PrivateEndpointConnectionsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, vault_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.PrivateEndpointConnection"]:
+    ) -> AsyncItemPaged["_models.PrivateEndpointConnection"]:
         """Gets the all private endpoint connections configured on the vault.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4685,7 +4685,7 @@ class PrivateEndpointConnectionProxiesOperations:  # pylint: disable=name-too-lo
     @distributed_trace
     def list(
         self, resource_group_name: str, vault_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.PrivateEndpointConnectionProxy"]:
+    ) -> AsyncItemPaged["_models.PrivateEndpointConnectionProxy"]:
         """Gets the all private endpoint connections proxies.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -5058,7 +5058,7 @@ class PrivateLinkResourcesOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, vault_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.PrivateLinkResource"]:
+    ) -> AsyncItemPaged["_models.PrivateLinkResource"]:
         """Gets the list of private link resources.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -5889,7 +5889,7 @@ class ProtectedItemOperations:
         continuation_token_parameter: Optional[str] = None,
         page_size: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ProtectedItemModel"]:
+    ) -> AsyncItemPaged["_models.ProtectedItemModel"]:
         """Gets the list of protected items in the given vault.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -6345,7 +6345,7 @@ class RecoveryPointOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, vault_name: str, protected_item_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.RecoveryPointModel"]:
+    ) -> AsyncItemPaged["_models.RecoveryPointModel"]:
         """Gets the list of recovery points of the given protected item.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -6906,7 +6906,7 @@ class ReplicationExtensionOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, vault_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ReplicationExtensionModel"]:
+    ) -> AsyncItemPaged["_models.ReplicationExtensionModel"]:
         """Gets the list of replication extensions in the given vault.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.

@@ -17,6 +17,39 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
+class AffectedObjectDetails(_Model):
+    """Details of the affected object.
+
+    :ivar description: Description of the affected object details.
+    :vartype description: str
+    :ivar type: Type of the affected object details. Default value is "object".
+    :vartype type: str
+    """
+
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Description of the affected object details."""
+    type: Optional[Literal["object"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Type of the affected object details. Default value is \"object\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        type: Optional[Literal["object"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AzStackHCIClusterProperties(_Model):
     """AzStackHCI cluster properties.
 
@@ -415,7 +448,7 @@ class DiskControllerInputs(_Model):
 
 
 class Resource(_Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
+    """Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -443,8 +476,7 @@ class Resource(_Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
-    tags and a location.
+    """Proxy Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -634,8 +666,7 @@ class ErrorModel(_Model):
 
 
 class ErrorResponse(_Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations.
+    """Error response.
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.recoveryservicesdatareplication.models.ErrorDetail
@@ -980,8 +1011,7 @@ class FabricAgentModelProperties(_Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which
-    has 'tags' and a 'location'.
+    """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -1192,13 +1222,13 @@ class JobModelCustomProperties(_Model):
     :vartype instance_type: str
     :ivar affected_object_details: Gets or sets any custom properties of the affected object.
     :vartype affected_object_details:
-     ~azure.mgmt.recoveryservicesdatareplication.models.JobModelCustomPropertiesAffectedObjectDetails
+     ~azure.mgmt.recoveryservicesdatareplication.models.AffectedObjectDetails
     """
 
     __mapping__: Dict[str, _Model] = {}
     instance_type: str = rest_discriminator(name="instanceType")
     """Discriminator property for JobModelCustomProperties. Required. Default value is None."""
-    affected_object_details: Optional["_models.JobModelCustomPropertiesAffectedObjectDetails"] = rest_field(
+    affected_object_details: Optional["_models.AffectedObjectDetails"] = rest_field(
         name="affectedObjectDetails", visibility=["read"]
     )
     """Gets or sets any custom properties of the affected object."""
@@ -1226,7 +1256,7 @@ class FailoverJobModelCustomProperties(JobModelCustomProperties, discriminator="
 
     :ivar affected_object_details: Gets or sets any custom properties of the affected object.
     :vartype affected_object_details:
-     ~azure.mgmt.recoveryservicesdatareplication.models.JobModelCustomPropertiesAffectedObjectDetails
+     ~azure.mgmt.recoveryservicesdatareplication.models.AffectedObjectDetails
     :ivar protected_item_details: Gets or sets the failed over protected item details.
     :vartype protected_item_details:
      list[~azure.mgmt.recoveryservicesdatareplication.models.FailoverProtectedItemProperties]
@@ -2759,38 +2789,6 @@ class JobModel(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class JobModelCustomPropertiesAffectedObjectDetails(_Model):  # pylint: disable=name-too-long
-    """JobModelCustomPropertiesAffectedObjectDetails.
-
-    :ivar description:
-    :vartype description: str
-    :ivar type: Default value is "object".
-    :vartype type: str
-    """
-
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    type: Optional[Literal["object"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Default value is \"object\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        description: Optional[str] = None,
-        type: Optional[Literal["object"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class JobModelProperties(_Model):
     """Job model properties.
 
@@ -2956,7 +2954,7 @@ class ManagedServiceIdentity(_Model):
 
 
 class Operation(_Model):
-    """Details of a REST API operation, returned from the Resource Provider Operations API.
+    """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
@@ -4595,7 +4593,7 @@ class TestFailoverCleanupJobModelCustomProperties(
 
     :ivar affected_object_details: Gets or sets any custom properties of the affected object.
     :vartype affected_object_details:
-     ~azure.mgmt.recoveryservicesdatareplication.models.JobModelCustomPropertiesAffectedObjectDetails
+     ~azure.mgmt.recoveryservicesdatareplication.models.AffectedObjectDetails
     :ivar comments: Gets or sets the test failover cleanup comments.
     :vartype comments: str
     :ivar instance_type: Gets or sets the instance type. Required. Default value is
@@ -4629,7 +4627,7 @@ class TestFailoverJobModelCustomProperties(JobModelCustomProperties, discriminat
 
     :ivar affected_object_details: Gets or sets any custom properties of the affected object.
     :vartype affected_object_details:
-     ~azure.mgmt.recoveryservicesdatareplication.models.JobModelCustomPropertiesAffectedObjectDetails
+     ~azure.mgmt.recoveryservicesdatareplication.models.AffectedObjectDetails
     :ivar protected_item_details: Gets or sets the test VM details.
     :vartype protected_item_details:
      list[~azure.mgmt.recoveryservicesdatareplication.models.FailoverProtectedItemProperties]
@@ -4664,16 +4662,16 @@ class TestFailoverJobModelCustomProperties(JobModelCustomProperties, discriminat
 class UserAssignedIdentity(_Model):
     """User assigned identity properties.
 
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
     :ivar principal_id: The principal ID of the assigned identity.
     :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
     """
 
-    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
-    """The client ID of the assigned identity."""
     principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
     """The principal ID of the assigned identity."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
+    """The client ID of the assigned identity."""
 
 
 class VaultIdentityModel(_Model):
