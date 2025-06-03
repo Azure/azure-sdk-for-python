@@ -108,8 +108,6 @@ def faultinjector(live_eventhub, request: pytest.FixtureRequest):
     try:
         time.sleep(1)
 
-        # TODO: I can't quite get this to work - client_args is always empty in the test.
-        # request.node.user_properties.append(("client_args", AMQPPROXY_CLIENT_ARGS))
         yield AMQPPROXY_CLIENT_ARGS
 
         print(f"===> Fault injector logs are in '{logs_dir}'")
