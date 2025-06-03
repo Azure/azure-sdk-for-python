@@ -59,15 +59,15 @@ class TestAccessControl(KeyVaultTestCase):
         assert len(created_definition.permissions) == 1
         assert created_definition.permissions[0].data_actions == [KeyVaultDataAction.READ_HSM_KEY]
         assert created_definition.assignable_scopes == [KeyVaultRoleScope.GLOBAL]
-
         # update custom role definition
         permissions = [
             KeyVaultPermission(data_actions=[], not_data_actions=[KeyVaultDataAction.READ_HSM_KEY])
         ]
+        role_name2 = self.get_resource_name("role-name2")
         updated_definition = client.set_role_definition(
-            scope=scope, name=definition_name, permissions=permissions
+            scope=scope, name=definition_name, role_name=role_name2, permissions=permissions
         )
-        assert updated_definition.role_name == ""
+        assert updated_definition.role_name == role_name2
         assert updated_definition.description == ""
         assert len(updated_definition.permissions) == 1
         assert len(updated_definition.permissions[0].data_actions) == 0
