@@ -14,7 +14,7 @@
 
 ### RULE 3: VERIFY ENVIRONMENT FIRST
 **BEFORE any commands:**
-1. Use `verify_setup` tool from azure-sdk-validation server
+1. Use `verify_setup` tool from azure-sdk-python-mcp server
 2. Ensure Python virtual environment is active
 
 **Virtual Environment Setup:**
@@ -88,7 +88,7 @@ IF missing dependencies:
 
 ### STEP 2: SDK GENERATION
 ```
-ACTION: Use typespec-python mcp server tools
+ACTION: Use azure-sdk-python-mcp server tools
 TIMING: ALWAYS inform user before starting: "This SDK generation step will take approximately 5-6 minutes to complete."
 IF local path provided:
     USE local mcp tools with tspconfig.yaml path
