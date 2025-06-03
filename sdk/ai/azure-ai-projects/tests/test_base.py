@@ -12,7 +12,7 @@ from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 servicePreparerConnectionsTests = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_projects_connections_tests",
-    azure_ai_projects_connections_tests_project_endpoint="https://services-account-name.services.ai.azure.com/api/projects/project-name",
+    azure_ai_projects_connections_tests_project_endpoint="https://sanitized.services.ai.azure.com/api/projects/sanitized-project-name",
     azure_ai_projects_connections_tests_connection_name="connection-name",
 )
 

@@ -7,18 +7,22 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import ConnectionType
 from tests.test_base import TestBase, servicePreparerConnectionsTests
-
+from devtools_testutils import recorded_by_proxy
 
 class TestConnections(TestBase):
 
+    # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
+    # cls & pytest tests\connections\test_connections.py::TestConnections::test_connections -s
     @servicePreparerConnectionsTests()
+    @recorded_by_proxy
     def test_connections(self, **kwargs):
 
         endpoint = kwargs.pop("azure_ai_projects_connections_tests_project_endpoint")
         connection_name = kwargs.pop("azure_ai_projects_connections_tests_connection_name")
 
-        print("Endpoint:", endpoint)
-        print("Connection name:", connection_name)
+        print("")
+        print("=====> Endpoint:", endpoint)
+        print("=====> Connection name:", connection_name)
 
         with DefaultAzureCredential() as credential:
 
