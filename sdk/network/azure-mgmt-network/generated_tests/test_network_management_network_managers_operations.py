@@ -24,7 +24,7 @@ class TestNetworkManagementNetworkManagersOperations(AzureMgmtRecordedTestCase):
         response = self.client.network_managers.get(
             resource_group_name=resource_group.name,
             network_manager_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -61,7 +61,7 @@ class TestNetworkManagementNetworkManagersOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -73,7 +73,7 @@ class TestNetworkManagementNetworkManagersOperations(AzureMgmtRecordedTestCase):
         response = self.client.network_managers.begin_delete(
             resource_group_name=resource_group.name,
             network_manager_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestNetworkManagementNetworkManagersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_manager_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -96,7 +96,7 @@ class TestNetworkManagementNetworkManagersOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_network_managers_list_by_subscription(self, resource_group):
         response = self.client.network_managers.list_by_subscription(
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -107,7 +107,7 @@ class TestNetworkManagementNetworkManagersOperations(AzureMgmtRecordedTestCase):
     def test_network_managers_list(self, resource_group):
         response = self.client.network_managers.list(
             resource_group_name=resource_group.name,
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

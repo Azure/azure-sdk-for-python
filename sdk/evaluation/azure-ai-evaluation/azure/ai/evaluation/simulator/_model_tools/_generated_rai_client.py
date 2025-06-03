@@ -47,6 +47,7 @@ class GeneratedRAIClient:
             ).rai_svc
         else:
             self._client = AIProjectClient(endpoint=azure_ai_project, credential=token_manager).red_teams
+            self._operations_client = AIProjectClient(endpoint=azure_ai_project, credential=token_manager).evaluations
             self._evaluation_onedp_client = EvaluationServiceOneDPClient(endpoint=azure_ai_project, credential=token_manager)
         
     def _get_service_discovery_url(self):

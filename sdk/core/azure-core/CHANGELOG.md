@@ -1,14 +1,19 @@
 # Release History
 
-## 1.34.1 (Unreleased)
+## 1.35.0 (Unreleased)
 
 ### Features Added
+
+- Added a `start_time` keyword argument to the `start_span` and `start_as_current_span` methods in the `OpenTelemetryTracer` class. This allows users to specify a custom start time for created spans. #41106
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+- A timeout error when using the `aiohttp` transport (the default for async SDKs) will now be raised as a `azure.core.exceptions.ServiceResponseTimeoutError`, a subtype of the previously raised `ServiceResponseError`.
+- When using with `aiohttp` 3.10 or later, a connection timeout error will now be raised as a `azure.core.exceptions.ServiceRequestTimeoutError`, which can be retried.
 
 ## 1.34.0 (2025-05-01)
 

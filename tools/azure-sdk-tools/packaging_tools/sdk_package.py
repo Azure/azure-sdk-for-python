@@ -78,7 +78,8 @@ def main(generate_input, generate_output):
             check_call(
                 [
                     "python",
-                    "-m" "pip",
+                    "-m",
+                    "pip",
                     "install",
                     "-r",
                     "../../../eng/apiview_reqs.txt",

@@ -27,6 +27,10 @@ class AzureAuthorityHostsMeta(type):
 
 
 class AzureAuthorityHosts(metaclass=AzureAuthorityHostsMeta):
+    """Constants for Microsoft Entra ID authority hosts.
+    These are used to construct authority URLs for various Azure environments.
+    """
+
     AZURE_CHINA = "login.chinacloudapi.cn"
     AZURE_GOVERNMENT = "login.microsoftonline.us"
     AZURE_PUBLIC_CLOUD = "login.microsoftonline.com"
