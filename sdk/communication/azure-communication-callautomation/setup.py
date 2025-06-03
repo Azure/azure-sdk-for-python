@@ -68,6 +68,7 @@ setup(
         "msrest>=0.7.1",
         "azure-core>=1.29.5",
         "typing-extensions>=4.3.0",
+        "azure-identity>=1.23.0",
     ],
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
