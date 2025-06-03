@@ -10,7 +10,7 @@
 
 ### Bugs Fixed
 
-- Reduce risk of hanging while closing if server does not follow best practices. Fix #41363
+- Reduce risk of hanging while closing aiohttp transport if server does not follow best practices. Fix #41363
 
 ### Other Changes
 

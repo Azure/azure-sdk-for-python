@@ -51,8 +51,8 @@ async def test_aiohttp_transport_close_timeout():
     await transport.close()
     end_time = time.time()
 
-    # Verify close returned in a reasonable time (should be around 0.1 seconds due to timeout)
-    assert end_time - start_time < 1.0, f"Transport close took {end_time - start_time} seconds, should be < 1.0 seconds"
+    # Verify close returned in a reasonable time (should be around 0.001 seconds due to timeout)
+    assert end_time - start_time < 0.1, f"Transport close took {end_time - start_time} seconds, should be < 0.1 seconds"
 
     # Ensure transport's session was set to None
     assert transport.session is None

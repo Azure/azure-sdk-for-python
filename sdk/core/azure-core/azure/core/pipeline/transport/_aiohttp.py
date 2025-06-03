@@ -170,7 +170,7 @@ class AioHttpTransport(AsyncHttpTransport):
         if self._session_owner and self.session:
             try:
                 await asyncio.wait_for(self.session.close(), timeout=0.001)  # close immediately
-            except asyncio.TimeoutError:
+            except (asyncio.TimeoutError, TimeoutError):
                 pass
             self.session = None
 
