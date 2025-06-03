@@ -23,7 +23,7 @@ from azure.core.pipeline import AsyncPipeline, PipelineResponse
 
 TEAMS_EXTENSION_SCOPE_PREFIX = "https://auth.msft.communication.azure.com/"
 COMMUNICATION_CLIENTS_SCOPE_PREFIX = "https://communication.azure.com/clients/"
-TEAMS_EXTENSION_ENDPOINT = "/access/teamsPhone/:exchangeAccessToken"
+TEAMS_EXTENSION_ENDPOINT = "/access/teamsExtension/:exchangeAccessToken"
 TEAMS_EXTENSION_API_VERSION = "2025-06-30"
 COMMUNICATION_CLIENTS_ENDPOINT = "/access/entra/:exchangeAccessToken"
 COMMUNICATION_CLIENTS_API_VERSION = "2025-03-02-preview"
