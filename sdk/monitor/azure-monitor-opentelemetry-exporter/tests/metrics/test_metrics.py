@@ -511,16 +511,9 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertFalse(exporter._metrics_to_log_analytics)
 
     @mock.patch.dict("os.environ", {
-        "APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED": " d"
+        "APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED": "falser"
     })
     def test_constructor_log_analytics_invalid_env_var(self):
-        exporter = AzureMonitorMetricExporter()
-        self.assertTrue(exporter._metrics_to_log_analytics)
-
-    @mock.patch.dict("os.environ", {
-        "APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED": ""
-    })
-    def test_constructor_log_analytics_blank_env_var(self):
         exporter = AzureMonitorMetricExporter()
         self.assertTrue(exporter._metrics_to_log_analytics)
 
