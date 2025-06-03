@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -30,14 +31,13 @@ def main():
         subscription_id="4adb32ad-8327-4cbb-b775-b84b4465bb38",
     )
 
-    response = client.resource_health_metadata.get_by_site_slot(
+    response = client.resource_health_metadata.get_by_site(
         resource_group_name="Default-Web-NorthCentralUS",
         name="newsiteinnewASE-NCUS",
-        slot="Production",
     )
     print(response)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2024-04-01/examples/GetResourceHealthMetadataBySite.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2024-11-01/examples/GetResourceHealthMetadataBySite.json
 if __name__ == "__main__":
     main()

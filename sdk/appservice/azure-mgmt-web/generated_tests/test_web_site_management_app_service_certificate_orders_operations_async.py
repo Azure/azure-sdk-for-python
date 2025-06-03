@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.web.aio import WebSiteManagementClient
+from azure.mgmt.web.v2024_11_01.aio import WebSiteManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -23,7 +23,7 @@ class TestWebSiteManagementAppServiceCertificateOrdersOperationsAsync(AzureMgmtR
     @recorded_by_proxy_async
     async def test_app_service_certificate_orders_list(self, resource_group):
         response = self.client.app_service_certificate_orders.list(
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -91,7 +91,7 @@ class TestWebSiteManagementAppServiceCertificateOrdersOperationsAsync(AzureMgmtR
                 "type": "str",
                 "validityInYears": 1,
             },
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -102,7 +102,7 @@ class TestWebSiteManagementAppServiceCertificateOrdersOperationsAsync(AzureMgmtR
     async def test_app_service_certificate_orders_list_by_resource_group(self, resource_group):
         response = self.client.app_service_certificate_orders.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -114,7 +114,7 @@ class TestWebSiteManagementAppServiceCertificateOrdersOperationsAsync(AzureMgmtR
         response = await self.client.app_service_certificate_orders.get(
             resource_group_name=resource_group.name,
             certificate_order_name="str",
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -187,7 +187,7 @@ class TestWebSiteManagementAppServiceCertificateOrdersOperationsAsync(AzureMgmtR
                     "type": "str",
                     "validityInYears": 1,
                 },
-                api_version="2024-04-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -200,7 +200,7 @@ class TestWebSiteManagementAppServiceCertificateOrdersOperationsAsync(AzureMgmtR
         response = await self.client.app_service_certificate_orders.delete(
             resource_group_name=resource_group.name,
             certificate_order_name="str",
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -268,7 +268,7 @@ class TestWebSiteManagementAppServiceCertificateOrdersOperationsAsync(AzureMgmtR
                 "type": "str",
                 "validityInYears": 1,
             },
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -280,7 +280,7 @@ class TestWebSiteManagementAppServiceCertificateOrdersOperationsAsync(AzureMgmtR
         response = self.client.app_service_certificate_orders.list_certificates(
             resource_group_name=resource_group.name,
             certificate_order_name="str",
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -293,7 +293,7 @@ class TestWebSiteManagementAppServiceCertificateOrdersOperationsAsync(AzureMgmtR
             resource_group_name=resource_group.name,
             certificate_order_name="str",
             name="str",
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -318,7 +318,7 @@ class TestWebSiteManagementAppServiceCertificateOrdersOperationsAsync(AzureMgmtR
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-04-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -332,7 +332,7 @@ class TestWebSiteManagementAppServiceCertificateOrdersOperationsAsync(AzureMgmtR
             resource_group_name=resource_group.name,
             certificate_order_name="str",
             name="str",
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -354,7 +354,7 @@ class TestWebSiteManagementAppServiceCertificateOrdersOperationsAsync(AzureMgmtR
                 "provisioningState": "str",
                 "type": "str",
             },
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -376,7 +376,7 @@ class TestWebSiteManagementAppServiceCertificateOrdersOperationsAsync(AzureMgmtR
                 "name": "str",
                 "type": "str",
             },
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -397,7 +397,7 @@ class TestWebSiteManagementAppServiceCertificateOrdersOperationsAsync(AzureMgmtR
                 "name": "str",
                 "type": "str",
             },
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -409,7 +409,7 @@ class TestWebSiteManagementAppServiceCertificateOrdersOperationsAsync(AzureMgmtR
         response = await self.client.app_service_certificate_orders.resend_email(
             resource_group_name=resource_group.name,
             certificate_order_name="str",
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -422,7 +422,7 @@ class TestWebSiteManagementAppServiceCertificateOrdersOperationsAsync(AzureMgmtR
             resource_group_name=resource_group.name,
             certificate_order_name="str",
             name_identifier={"name": "str"},
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -435,7 +435,7 @@ class TestWebSiteManagementAppServiceCertificateOrdersOperationsAsync(AzureMgmtR
             resource_group_name=resource_group.name,
             certificate_order_name="str",
             site_seal_request={"lightTheme": bool, "locale": "str"},
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -447,7 +447,7 @@ class TestWebSiteManagementAppServiceCertificateOrdersOperationsAsync(AzureMgmtR
         response = await self.client.app_service_certificate_orders.verify_domain_ownership(
             resource_group_name=resource_group.name,
             certificate_order_name="str",
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -459,7 +459,7 @@ class TestWebSiteManagementAppServiceCertificateOrdersOperationsAsync(AzureMgmtR
         response = await self.client.app_service_certificate_orders.retrieve_certificate_actions(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -471,7 +471,7 @@ class TestWebSiteManagementAppServiceCertificateOrdersOperationsAsync(AzureMgmtR
         response = await self.client.app_service_certificate_orders.retrieve_certificate_email_history(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
