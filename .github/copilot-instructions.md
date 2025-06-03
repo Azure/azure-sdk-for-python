@@ -1,224 +1,161 @@
-# AZURE SDK FOR PYTHON - COPILOT INSTRUCTIONS
+# Azure SDK for Python - LLM Assistant Instructions
 
----
+This document provides comprehensive instructions for an LLM assistant working with the Azure SDK for Python repository. Follow these guidelines to provide accurate, efficient assistance to developers.
 
-## CORE PRINCIPLES
+## Initial Setup Requirements
 
-### RULE 1: DO NOT REPEAT INSTRUCTIONS
-**NEVER repeat instructions when guiding users. Users should follow instructions independently.**
+### Step 1: Repository Root Detection
+**CRITICAL FIRST STEP:** Always use the `get_python_repo_root` MCP tool to identify the azure-sdk-for-python repository root path. This is mandatory before executing any other operations.
 
-### RULE 2: REFERENCE OFFICIAL DOCUMENTATION
-**ALWAYS** reference the [Azure SDK Python Design Guidelines](https://azure.github.io/azure-sdk/python_design.html)
-- Link to specific pages when answering guidelines questions
-- Use this as the authoritative source for SDK development guidance
+- If not currently in the azure-sdk-for-python repository, prompt the user for the correct path
+- All subsequent file paths and operations depend on this root directory
+- Store this path for reference throughout the session
 
-### RULE 3: VERIFY ENVIRONMENT FIRST
-**BEFORE any commands:**
-1. Use `verify_setup` tool from azure-sdk-validation server
-2. Ensure Python virtual environment is active
+### Step 2: Environment Verification
+**REQUIRED SECOND STEP:** Execute the `verify_setup` tool to confirm:
+- Python virtual environment is active and properly configured
+- Required development tools are installed
+- Environment meets Azure SDK development requirements
 
-**Virtual Environment Setup:**
-```bash
-# Create new environment
-python -m venv <env_name>
+### Step 3: Task Classification
+Analyze the user's request and categorize it into one of these workflows:
 
-# Activate environment
-# Linux/macOS:
-source <env_name>/bin/activate
-# Windows:
-<env_name>\Scripts\activate
-```
+**SDK Generation Tasks:**
+- User mentions "generate SDK", "TypeSpec", "tspconfig", or "client library"
+- Expected duration: 5-6 minutes
+- Workflow: TypeSpec SDK Generation
 
----
+**Code Quality Validation Tasks:**
+- User requests "pylint", "mypy", "pyright", "verifytypes", or "static analysis"
+- Expected duration: 3-5 minutes per validation type
+- Workflow: Static Validation Operations
 
-## TYPESPEC SDK GENERATION - COMPLETE WORKFLOW
+**Code Issue Resolution Tasks:**
+- User has specific pylint warnings, errors, or code quality issues to fix
+- Expected duration: Variable based on complexity
+- Workflow: Pylint Warning Resolution
 
-### PHASE 1: CONTEXT ASSESSMENT
+**Development Environment Tasks:**
+- User needs environment setup, verification, or troubleshooting
+- Expected duration: 2-3 minutes
+- Workflow: Environment Setup
 
-**ACTION:** Determine TypeSpec project location
-```
-IF TypeSpec project paths exist in context:
-    USE local paths to generate SDK from tspconfig.yaml
-ELSE:
-    ASK user for tspconfig.yaml file path
-```
+**Version Control Tasks:**
+- User wants to commit changes, push code, or manage pull requests
+- Expected duration: 2-4 minutes
+- Workflow: Git and PR Operations
 
-### PHASE 2: PREREQUISITES CHECK
+## Assistant Behavior Guidelines
 
-**REQUIRED CONDITIONS:**
-1. GitHub CLI authenticated: `gh auth login`
-2. User on feature branch (NOT main)
-   ```bash
-   git checkout -b <branch_name>
-   ```
+### Principle 1: Efficient Communication
+- Provide clear, actionable guidance without excessive detail repetition
+- Reference specific workflow documents rather than duplicating their content
+- Focus on high-level direction and let users follow detailed steps independently
+- Always inform users of expected completion times before starting workflows
 
-### PHASE 3: TSP-CLIENT RULES
+### Principle 2: Authoritative Documentation
+**ALWAYS reference the official Azure SDK Python Design Guidelines:**
+- Primary source: [Azure SDK Python Design Guidelines](https://azure.github.io/azure-sdk/python_design.html)
+- Link to specific sections when answering design or guideline questions
+- Use this as the definitive authority for SDK development standards
+- Ensure all generated code follows these established patterns
 
-**CRITICAL RULES:**
-- **LOCAL REPO:** Do NOT grab commit hash
-- **DIRECTORIES:** Let commands auto-create directories
-- **PACKAGE GENERATION:** Find tsp-location.yaml in azure-sdk-for-python repo
-- **URL REFERENCES:** Use commit hash (NOT branch name) for tspconfig.yaml URLs
+### Principle 3: Time Transparency
+**ALWAYS communicate expected completion times:**
+- Inform users before starting any workflow about estimated duration
+- Provide progress updates for longer operations
+- Set realistic expectations to improve user experience
 
-**Get latest commit hash:**
-```bash
-curl -s "https://api.github.com/repos/Azure/azure-rest-api-specs/commits?path=<path_to_tspconfig.yaml>&per_page=1"
-```
+## Detailed Workflow Execution Instructions
 
-**DEPENDENCIES:** Verify installation of: node, python, tox
+### TypeSpec SDK Generation Workflow
+**Trigger conditions:** User requests SDK generation from TypeSpec specifications
 
----
+**Execution steps:**
+1. Use `read_file` tool to load `.github/prompts/typespec-sdk-generation.prompt.md`
+2. Execute each step sequentially as outlined in the loaded prompt file
+3. Monitor each step for successful completion
+4. If any step fails, immediately inform the user and provide specific guidance for resolution
+5. Validate final output meets Azure SDK standards
 
-## EXECUTION SEQUENCE - 7 MANDATORY STEPS
+**Expected completion time:** 5-6 minutes
+**Key dependencies:** TypeSpec compiler, tspconfig.yaml file, network connectivity
 
-**ESTIMATED TOTAL TIME: 10-15 minutes**
-- SDK Generation: 5-6 minutes
-- Static Validation: 3-5 minutes  
-- Documentation & Commit: 2-4 minutes
+### Static Validation Operations Workflow
+**Trigger conditions:** User needs code quality validation (pylint, mypy, pyright, verifytypes)
 
-**ALWAYS inform users of time expectations before starting any long-running operations.**
+**Execution steps:**
+1. Load execution steps from `.github/prompts/static-validation.prompt.md`
+2. Execute validation tools in the specified order
+3. Collect and present results in a structured format
+4. Highlight critical issues that require immediate attention
 
-### STEP 1: ENVIRONMENT VERIFICATION
-```
-ACTION: Run verify_setup tool
-IF missing dependencies:
-    STOP and install missing dependencies
-    THEN proceed to Step 2
-```
+**Expected completion time:** 3-5 minutes per validation step
+**Key dependencies:** Python environment, linting tools, source code files
 
-### STEP 2: SDK GENERATION
-```
-ACTION: Use typespec-python mcp server tools
-TIMING: ALWAYS inform user before starting: "This SDK generation step will take approximately 5-6 minutes to complete."
-IF local path provided:
-    USE local mcp tools with tspconfig.yaml path
-IF commands fail:
-    ANALYZE error messages
-    DIRECT user to fix TypeSpec errors in source repo
-```
+### Pylint Warning Resolution Workflow
+**Trigger conditions:** User has specific pylint warnings or errors to address
 
-### STEP 3: STATIC VALIDATION (SEQUENTIAL)
-```
-TIMING: Inform user: "Static validation will take approximately 3-5 minutes for each step."
-FOR EACH validation step:
-    RUN validation
-    IF errors/warnings found:
-        FIX issues
-        RERUN same step
-    ONLY proceed to next step when current step passes
-```
+**Execution steps:**
+1. Load resolution steps from `.github/prompts/next-pylint.prompt.md`
+2. Analyze specific warnings provided by the user
+3. Apply appropriate fixes following Azure SDK coding standards
+4. Validate fixes don't introduce new issues
 
-**Validation Commands:**
-```bash
-# Step 3a: Pylint
-tox -e pylint -c [path to tox.ini] --root .
+**Expected completion time:** Variable based on warning complexity and quantity
+**Key dependencies:** Source code access, pylint configuration, understanding of Azure patterns
 
-# Step 3b: MyPy  
-tox -e mypy -c [path to tox.ini] --root .
+### Environment Setup Workflow
+**Trigger conditions:** User needs development environment configuration or troubleshooting
 
-# Step 3c: Pyright
-tox -e pyright -c [path to tox.ini] --root .
+**Execution steps:**
+1. Load setup steps from `.github/prompts/environment-setup.prompt.md`
+2. Verify current environment state
+3. Execute necessary configuration changes
+4. Validate environment meets all requirements
 
-# Step 3d: Verifytypes
-tox -e verifytypes -c [path to tox.ini] --root .
-```
+**Expected completion time:** 2-3 minutes
+**Key dependencies:** System permissions, network access, Python installation
 
-**REQUIREMENTS:**
-- Provide summary after each validation step
-- Edit ONLY files with validation errors/warnings
-- Fix each issue before proceeding
+### Git and PR Operations Workflow
+**Trigger conditions:** User needs version control operations (commit, push, pull request management)
 
-### STEP 4: DOCUMENTATION UPDATE
-```
-REQUIRED ACTIONS:
-1. CREATE/UPDATE CHANGELOG.md with changes
-2. VERIFY package version matches API spec version
-3. IF version incorrect: UPDATE _version.py AND CHANGELOG
-4. SET CHANGELOG entry date to TODAY
-```
+**Execution steps:**
+1. Load operation steps from `.github/prompts/git-operations.prompt.md`
+2. Execute git commands safely with appropriate validation
+3. Provide clear feedback on operation results
+4. Guide user through any required manual steps
 
-### STEP 5: COMMIT AND PUSH
-```
-ACTION: Show changed files (ignore .github, .vscode)
-IF user confirms:
-    git add <changed_files>
-    git commit -m "<commit_message>"
-    git push -u origin <branch_name>
-IF authentication fails:
-    PROMPT: gh auth login
-IF user rejects:
-    GUIDE to fix issues and revalidate
-```
+**Expected completion time:** 2-4 minutes
+**Key dependencies:** Git configuration, repository permissions, network connectivity
 
-### STEP 6: PULL REQUEST MANAGEMENT
-```
-CHECK: Does PR exist for current branch?
-IF PR exists:
-    SHOW PR details
-IF NO PR exists:
-    VERIFY branch != "main"
-    PUSH changes to remote
-    GENERATE PR title and description
-    CREATE PR in DRAFT mode
-    RETURN PR link
-ALWAYS: Display PR summary with status, checks, action items
-```
+## Azure Development Integration
 
-### STEP 7: HANDOFF
-```
-FINAL ACTIONS:
-1. RETURN PR URL for review
-2. PROMPT user with exact text:
-   "Use the azure-rest-api-specs agent to handle the rest of the process and provide it the pull request."
-```
+### Azure Best Practices Integration
+When working with Azure-specific code, commands, or operations:
+- Invoke `azure_development-get_best_practices` tool when available
+- Apply Azure-specific coding patterns and conventions
+- Ensure compliance with Azure SDK design principles
+- Use Azure-recommended libraries and approaches
 
----
+### Tool Integration Requirements
+- Always use absolute file paths when invoking tools that require file locations
+- Handle URI schemes (like `untitled:` or `vscode-userdata:`) appropriately
+- Validate tool parameters before execution
+- Provide meaningful error messages when tools fail
 
-## PYLINT OPERATIONS
+## Error Handling and Recovery
 
-### RUNNING PYLINT
+### Common Error Scenarios
+1. **Repository not found:** Guide user to correct azure-sdk-for-python path
+2. **Environment issues:** Run verification and provide setup guidance
+3. **Tool failures:** Diagnose issue and provide specific resolution steps
+4. **Network connectivity:** Suggest offline alternatives when possible
 
-**REFERENCE DOCUMENTATION:**
-- [Official pylint guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/pylint_checking.md)
-- [Tox formatting guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox)
+### Recovery Procedures
+- Always attempt automatic recovery before requesting user intervention
+- Provide clear, actionable steps for manual resolution
+- Document successful recovery methods for future reference
+- Escalate complex issues with detailed context
 
-**COMMAND:**
-```bash
-tox -e pylint --c <path_to_tox.ini> --root .
-```
-
-**DEFAULT PATH:** `azure-sdk-for-python/eng/tox/tox.ini`
-
-### FIXING PYLINT WARNINGS
-
-**REFERENCE SOURCES:**
-- [Azure pylint guidelines](https://github.com/Azure/azure-sdk-tools/blob/main/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md)
-- [Pylint documentation](https://pylint.readthedocs.io/en/stable/user_guide/checkers/features.html)
-
-**ALLOWED ACTIONS:**
-✅ Fix warnings with 100% confidence
-✅ Use existing file for all solutions
-✅ Reference official guidelines
-
-**FORBIDDEN ACTIONS:**
-❌ Fix warnings without complete confidence
-❌ Create new files for solutions
-❌ Import non-existent modules
-❌ Add new dependencies/imports
-❌ Make unnecessary large changes
-❌ Change code style without reason
-❌ Delete code without clear justification
-
----
-
-## MYPY OPERATIONS
-
-### RUNNING AND FIXING MYPY
-
-**REFERENCE DOCUMENTATION:**
-- [Tox guidance](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox)
-- [MyPy fixing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking_cheat_sheet.md)
-
-**REQUIREMENTS:**
-- Use Python 3.9 compatible environment
-- Follow official fixing guidelines
+This document serves as the comprehensive guide for LLM assistants working with the Azure SDK for Python repository. Follow these instructions to provide consistent, effective support to developers.
