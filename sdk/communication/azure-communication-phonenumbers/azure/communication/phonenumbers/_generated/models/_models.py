@@ -8,12 +8,141 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
+
+
+class AvailablePhoneNumber(_serialization.Model):
+    """Represents a phone number available in inventory.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: The id of the phone number.
+    :vartype id: str
+    :ivar country_code: The ISO 3166-2 country code, e.g. US. Required.
+    :vartype country_code: str
+    :ivar phone_number: The phone number in E.164 format, e.g. +11234567890.
+    :vartype phone_number: str
+    :ivar capabilities: Capabilities of a phone number. Required.
+    :vartype capabilities: ~azure.communication.phonenumbers.models.PhoneNumberCapabilities
+    :ivar phone_number_type: Represents the number type of the offering. Required. Known values
+     are: "geographic" and "tollFree".
+    :vartype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
+    :ivar assignment_type: Represents the assignment type of the offering. Also known as the use
+     case. Required. Known values are: "person" and "application".
+    :vartype assignment_type: str or
+     ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
+    :ivar cost: The incurred cost for this phone number.
+    :vartype cost: ~azure.communication.phonenumbers.models.PhoneNumberCost
+    :ivar status: Represents the status of the phone number. Possible values include: 'available',
+     'reserved', 'expired', 'error', 'purchased'. Known values are: "available", "reserved",
+     "expired", "error", and "purchased".
+    :vartype status: str or ~azure.communication.phonenumbers.models.PhoneNumberAvailabilityStatus
+    :ivar is_agreement_to_not_resell_required: Indicates if do not resell agreement is required. If
+     true, the phone number cannot be acquired unless the customer provides explicit agreement to
+     not resell it.
+    :vartype is_agreement_to_not_resell_required: bool
+    :ivar error: The Communication Services error.
+    :vartype error: ~azure.communication.phonenumbers.models.CommunicationError
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "country_code": {"required": True},
+        "phone_number": {"readonly": True},
+        "capabilities": {"required": True},
+        "phone_number_type": {"required": True},
+        "assignment_type": {"required": True},
+        "cost": {"readonly": True},
+        "status": {"readonly": True},
+        "is_agreement_to_not_resell_required": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "country_code": {"key": "countryCode", "type": "str"},
+        "phone_number": {"key": "phoneNumber", "type": "str"},
+        "capabilities": {"key": "capabilities", "type": "PhoneNumberCapabilities"},
+        "phone_number_type": {"key": "phoneNumberType", "type": "str"},
+        "assignment_type": {"key": "assignmentType", "type": "str"},
+        "cost": {"key": "cost", "type": "PhoneNumberCost"},
+        "status": {"key": "status", "type": "str"},
+        "is_agreement_to_not_resell_required": {"key": "isAgreementToNotResellRequired", "type": "bool"},
+        "error": {"key": "error", "type": "CommunicationError"},
+    }
+
+    def __init__(
+        self,
+        *,
+        country_code: str,
+        capabilities: "_models.PhoneNumberCapabilities",
+        phone_number_type: Union[str, "_models.PhoneNumberType"],
+        assignment_type: Union[str, "_models.PhoneNumberAssignmentType"],
+        error: Optional["_models.CommunicationError"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword country_code: The ISO 3166-2 country code, e.g. US. Required.
+        :paramtype country_code: str
+        :keyword capabilities: Capabilities of a phone number. Required.
+        :paramtype capabilities: ~azure.communication.phonenumbers.models.PhoneNumberCapabilities
+        :keyword phone_number_type: Represents the number type of the offering. Required. Known values
+         are: "geographic" and "tollFree".
+        :paramtype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
+        :keyword assignment_type: Represents the assignment type of the offering. Also known as the use
+         case. Required. Known values are: "person" and "application".
+        :paramtype assignment_type: str or
+         ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
+        :keyword error: The Communication Services error.
+        :paramtype error: ~azure.communication.phonenumbers.models.CommunicationError
+        """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.country_code = country_code
+        self.phone_number: Optional[str] = None
+        self.capabilities = capabilities
+        self.phone_number_type = phone_number_type
+        self.assignment_type = assignment_type
+        self.cost: Optional["_models.PhoneNumberCost"] = None
+        self.status: Optional[Union[str, "_models.PhoneNumberAvailabilityStatus"]] = None
+        self.is_agreement_to_not_resell_required: Optional[bool] = None
+        self.error = error
+
+
+class AvailablePhoneNumberError(_serialization.Model):
+    """Contains error details in case of failure when reserving, releasing or purchasing the phone
+    number. Note that this is ignored by the service when present in requests.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code indicating the reason why the operation performed on the phone
+     number failed.
+    :vartype code: str
+    :ivar message: The error message describing the failure that occurred.
+    :vartype message: str
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
 
 
 class CommunicationError(_serialization.Model):
@@ -61,9 +190,9 @@ class CommunicationError(_serialization.Model):
         super().__init__(**kwargs)
         self.code = code
         self.message = message
-        self.target = None
-        self.details = None
-        self.inner_error = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.CommunicationError"]] = None
+        self.inner_error: Optional["_models.CommunicationError"] = None
 
 
 class CommunicationErrorResponse(_serialization.Model):
@@ -131,9 +260,11 @@ class OperatorDetails(_serialization.Model):
 
     :ivar name: Name of the phone operator.
     :vartype name: str
-    :ivar mobile_network_code: Mobile Network Code, 2 or 3 decimal digits that identify mobile networks within a country/region.
+    :ivar mobile_network_code: Mobile Network Code, 2 or 3 decimal digits that identify mobile
+     networks within a country/region.
     :vartype mobile_network_code: str
-    :ivar mobile_country_code: Mobile Country Code, 3 decimal digits that identify a country/region.
+    :ivar mobile_country_code: Mobile Country Code, 3 decimal digits that identify a
+     country/region.
     :vartype mobile_country_code: str
     """
 
@@ -154,9 +285,11 @@ class OperatorDetails(_serialization.Model):
         """
         :keyword name: Name of the phone operator.
         :paramtype name: str
-        :keyword mobile_network_code: Mobile Network Code, 2 or 3 decimal digits that identify mobile networks within a country/region.
+        :keyword mobile_network_code: Mobile Network Code, 2 or 3 decimal digits that identify mobile
+         networks within a country/region.
         :paramtype mobile_network_code: str
-        :keyword mobile_country_code: Mobile Country Code, 3 decimal digits that identify a country/region.
+        :keyword mobile_country_code: Mobile Country Code, 3 decimal digits that identify a
+         country/region.
         :paramtype mobile_country_code: str
         """
         super().__init__(**kwargs)
@@ -409,6 +542,42 @@ class PhoneNumberAreaCodes(_serialization.Model):
         super().__init__(**kwargs)
         self.area_codes = area_codes
         self.next_link = next_link
+
+
+class PhoneNumberBrowseCapabilitiesRequest(_serialization.Model):
+    """The minimum desired capabilities for the browse operation request.
+
+    :ivar calling: Capability value for calling. Known values are: "none", "inbound", "outbound",
+     and "inbound+outbound".
+    :vartype calling: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
+    :ivar sms: Capability value for SMS. Known values are: "none", "inbound", "outbound", and
+     "inbound+outbound".
+    :vartype sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
+    """
+
+    _attribute_map = {
+        "calling": {"key": "calling", "type": "str"},
+        "sms": {"key": "sms", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        calling: Optional[Union[str, "_models.PhoneNumberCapabilityType"]] = None,
+        sms: Optional[Union[str, "_models.PhoneNumberCapabilityType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword calling: Capability value for calling. Known values are: "none", "inbound",
+         "outbound", and "inbound+outbound".
+        :paramtype calling: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
+        :keyword sms: Capability value for SMS. Known values are: "none", "inbound", "outbound", and
+         "inbound+outbound".
+        :paramtype sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
+        """
+        super().__init__(**kwargs)
+        self.calling = calling
+        self.sms = sms
 
 
 class PhoneNumberCapabilities(_serialization.Model):
@@ -747,7 +916,8 @@ class PhoneNumberOperation(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar operation_type: The type of operation, e.g. Search. Required. Known values are:
-     "purchase", "releasePhoneNumber", "search", and "updatePhoneNumberCapabilities".
+     "purchase", "releasePhoneNumber", "search", "updatePhoneNumberCapabilities", and
+     "reservationPurchase".
     :vartype operation_type: str or
      ~azure.communication.phonenumbers.models.PhoneNumberOperationType
     :ivar status: Status of operation. Required. Known values are: "notStarted", "running",
@@ -796,7 +966,8 @@ class PhoneNumberOperation(_serialization.Model):
     ) -> None:
         """
         :keyword operation_type: The type of operation, e.g. Search. Required. Known values are:
-         "purchase", "releasePhoneNumber", "search", and "updatePhoneNumberCapabilities".
+         "purchase", "releasePhoneNumber", "search", "updatePhoneNumberCapabilities", and
+         "reservationPurchase".
         :paramtype operation_type: str or
          ~azure.communication.phonenumbers.models.PhoneNumberOperationType
         :keyword status: Status of operation. Required. Known values are: "notStarted", "running",
@@ -818,7 +989,7 @@ class PhoneNumberOperation(_serialization.Model):
         self.created_date_time = created_date_time
         self.error = error
         self.id = id
-        self.last_action_date_time = None
+        self.last_action_date_time: Optional[datetime.datetime] = None
 
 
 class PhoneNumberPurchaseRequest(_serialization.Model):
@@ -826,19 +997,117 @@ class PhoneNumberPurchaseRequest(_serialization.Model):
 
     :ivar search_id: The search id.
     :vartype search_id: str
+    :ivar agree_to_not_resell: The agreement to not resell the phone numbers. Defaults to false if
+     not provided.
+    :vartype agree_to_not_resell: bool
     """
 
     _attribute_map = {
         "search_id": {"key": "searchId", "type": "str"},
+        "agree_to_not_resell": {"key": "agreeToNotResell", "type": "bool"},
     }
 
-    def __init__(self, *, search_id: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, search_id: Optional[str] = None, agree_to_not_resell: Optional[bool] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword search_id: The search id.
         :paramtype search_id: str
+        :keyword agree_to_not_resell: The agreement to not resell the phone numbers. Defaults to false
+         if not provided.
+        :paramtype agree_to_not_resell: bool
         """
         super().__init__(**kwargs)
         self.search_id = search_id
+        self.agree_to_not_resell = agree_to_not_resell
+
+
+class PhoneNumbersBrowseRequest(_serialization.Model):
+    """The parameters for the browse operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar phone_number_type: Represents the number type of the offering. Required. Known values
+     are: "geographic" and "tollFree".
+    :vartype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
+    :ivar capabilities: The minimum desired capabilities for the browse operation request.
+    :vartype capabilities:
+     ~azure.communication.phonenumbers.models.PhoneNumberBrowseCapabilitiesRequest
+    :ivar assignment_type: Represents the assignment type of the offering. Also known as the use
+     case. Known values are: "person" and "application".
+    :vartype assignment_type: str or
+     ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
+    :ivar phone_number_prefixes: The phone number prefix to match. If specified, the search will be
+     limited to phone numbers that start with the any of the given prefixes.
+    :vartype phone_number_prefixes: list[str]
+    """
+
+    _validation = {
+        "phone_number_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "phone_number_type": {"key": "phoneNumberType", "type": "str"},
+        "capabilities": {"key": "capabilities", "type": "PhoneNumberBrowseCapabilitiesRequest"},
+        "assignment_type": {"key": "assignmentType", "type": "str"},
+        "phone_number_prefixes": {"key": "phoneNumberPrefixes", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        phone_number_type: Union[str, "_models.PhoneNumberType"],
+        capabilities: Optional["_models.PhoneNumberBrowseCapabilitiesRequest"] = None,
+        assignment_type: Optional[Union[str, "_models.PhoneNumberAssignmentType"]] = None,
+        phone_number_prefixes: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword phone_number_type: Represents the number type of the offering. Required. Known values
+         are: "geographic" and "tollFree".
+        :paramtype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
+        :keyword capabilities: The minimum desired capabilities for the browse operation request.
+        :paramtype capabilities:
+         ~azure.communication.phonenumbers.models.PhoneNumberBrowseCapabilitiesRequest
+        :keyword assignment_type: Represents the assignment type of the offering. Also known as the use
+         case. Known values are: "person" and "application".
+        :paramtype assignment_type: str or
+         ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
+        :keyword phone_number_prefixes: The phone number prefix to match. If specified, the search will
+         be limited to phone numbers that start with the any of the given prefixes.
+        :paramtype phone_number_prefixes: list[str]
+        """
+        super().__init__(**kwargs)
+        self.phone_number_type = phone_number_type
+        self.capabilities = capabilities
+        self.assignment_type = assignment_type
+        self.phone_number_prefixes = phone_number_prefixes
+
+
+class PhoneNumbersBrowseResult(_serialization.Model):
+    """The result of a phone number browse operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar phone_numbers: The phone numbers that are available for purchase. Required.
+    :vartype phone_numbers: list[~azure.communication.phonenumbers.models.AvailablePhoneNumber]
+    """
+
+    _validation = {
+        "phone_numbers": {"required": True},
+    }
+
+    _attribute_map = {
+        "phone_numbers": {"key": "phoneNumbers", "type": "[AvailablePhoneNumber]"},
+    }
+
+    def __init__(self, *, phone_numbers: List["_models.AvailablePhoneNumber"], **kwargs: Any) -> None:
+        """
+        :keyword phone_numbers: The phone numbers that are available for purchase. Required.
+        :paramtype phone_numbers: list[~azure.communication.phonenumbers.models.AvailablePhoneNumber]
+        """
+        super().__init__(**kwargs)
+        self.phone_numbers = phone_numbers
 
 
 class PhoneNumberSearchRequest(_serialization.Model):
@@ -937,6 +1206,18 @@ class PhoneNumberSearchResult(_serialization.Model):
      longer on hold. A search result expires in less than 15min, e.g. 2020-11-19T16:31:49.048Z.
      Required.
     :vartype search_expires_by: ~datetime.datetime
+    :ivar is_agreement_to_not_resell_required: Indicates if do not resell agreement is required. If
+     true, the phone numbers cannot be acquired unless the customer provides explicit agreement to
+     not resell them.
+    :vartype is_agreement_to_not_resell_required: bool
+    :ivar error_code: The error code of the search.
+    :vartype error_code: int
+    :ivar error: Mapping Error Messages to Codes. Known values are: "NoError", "UnknownErrorCode",
+     "OutOfStock", "AuthorizationDenied", "MissingAddress", "InvalidAddress", "InvalidOfferModel",
+     "NotEnoughLicenses", "NoWallet", "NotEnoughCredit", "NumbersPartiallyAcquired",
+     "AllNumbersNotAcquired", "ReservationExpired", "PurchaseFailed", "BillingUnavailable",
+     "ProvisioningFailed", and "UnknownSearchError".
+    :vartype error: str or ~azure.communication.phonenumbers.models.PhoneNumberSearchResultError
     """
 
     _validation = {
@@ -957,6 +1238,9 @@ class PhoneNumberSearchResult(_serialization.Model):
         "capabilities": {"key": "capabilities", "type": "PhoneNumberCapabilities"},
         "cost": {"key": "cost", "type": "PhoneNumberCost"},
         "search_expires_by": {"key": "searchExpiresBy", "type": "iso-8601"},
+        "is_agreement_to_not_resell_required": {"key": "isAgreementToNotResellRequired", "type": "bool"},
+        "error_code": {"key": "errorCode", "type": "int"},
+        "error": {"key": "error", "type": "str"},
     }
 
     def __init__(
@@ -969,6 +1253,9 @@ class PhoneNumberSearchResult(_serialization.Model):
         capabilities: "_models.PhoneNumberCapabilities",
         cost: "_models.PhoneNumberCost",
         search_expires_by: datetime.datetime,
+        is_agreement_to_not_resell_required: Optional[bool] = None,
+        error_code: Optional[int] = None,
+        error: Optional[Union[str, "_models.PhoneNumberSearchResultError"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -992,6 +1279,18 @@ class PhoneNumberSearchResult(_serialization.Model):
          longer on hold. A search result expires in less than 15min, e.g. 2020-11-19T16:31:49.048Z.
          Required.
         :paramtype search_expires_by: ~datetime.datetime
+        :keyword is_agreement_to_not_resell_required: Indicates if do not resell agreement is required.
+         If true, the phone numbers cannot be acquired unless the customer provides explicit agreement
+         to not resell them.
+        :paramtype is_agreement_to_not_resell_required: bool
+        :keyword error_code: The error code of the search.
+        :paramtype error_code: int
+        :keyword error: Mapping Error Messages to Codes. Known values are: "NoError",
+         "UnknownErrorCode", "OutOfStock", "AuthorizationDenied", "MissingAddress", "InvalidAddress",
+         "InvalidOfferModel", "NotEnoughLicenses", "NoWallet", "NotEnoughCredit",
+         "NumbersPartiallyAcquired", "AllNumbersNotAcquired", "ReservationExpired", "PurchaseFailed",
+         "BillingUnavailable", "ProvisioningFailed", and "UnknownSearchError".
+        :paramtype error: str or ~azure.communication.phonenumbers.models.PhoneNumberSearchResultError
         """
         super().__init__(**kwargs)
         self.search_id = search_id
@@ -1001,6 +1300,123 @@ class PhoneNumberSearchResult(_serialization.Model):
         self.capabilities = capabilities
         self.cost = cost
         self.search_expires_by = search_expires_by
+        self.is_agreement_to_not_resell_required = is_agreement_to_not_resell_required
+        self.error_code = error_code
+        self.error = error
+
+
+class PhoneNumbersReservation(_serialization.Model):
+    """Represents a reservation for phone numbers. A reservation is a temporary hold on phone numbers
+    that can later be purchased. The reservation has a limited lifetime after which the phone
+    numbers are released if not purchased. Reservations older than 1 month are automatically
+    deleted.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The id of the reservation.
+    :vartype id: str
+    :ivar expires_at: The time at which the reservation will expire. If a reservation is not
+     purchased before this time, all of the reserved phone numbers will be released and made
+     available for others to purchase.
+    :vartype expires_at: ~datetime.datetime
+    :ivar phone_numbers: A dictionary containing the reservation phone numbers. The key is the ID
+     of the phone number (digits only) and values are AvailablePhoneNumber objects. Not populated
+     when retrieving PhoneNumbersReservation collections.
+    :vartype phone_numbers: dict[str,
+     ~azure.communication.phonenumbers.models.AvailablePhoneNumber]
+    :ivar status: Represents the status of the reservation. Possible values include: 'active',
+     'submitted', 'completed', 'expired'. Known values are: "active", "submitted", "completed", and
+     "expired".
+    :vartype status: str or ~azure.communication.phonenumbers.models.ReservationStatus
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "expires_at": {"readonly": True},
+        "status": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "expires_at": {"key": "expiresAt", "type": "iso-8601"},
+        "phone_numbers": {"key": "phoneNumbers", "type": "{AvailablePhoneNumber}"},
+        "status": {"key": "status", "type": "str"},
+    }
+
+    def __init__(
+        self, *, phone_numbers: Optional[Dict[str, "_models.AvailablePhoneNumber"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword phone_numbers: A dictionary containing the reservation phone numbers. The key is the
+         ID of the phone number (digits only) and values are AvailablePhoneNumber objects. Not populated
+         when retrieving PhoneNumbersReservation collections.
+        :paramtype phone_numbers: dict[str,
+         ~azure.communication.phonenumbers.models.AvailablePhoneNumber]
+        """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.expires_at: Optional[datetime.datetime] = None
+        self.phone_numbers = phone_numbers
+        self.status: Optional[Union[str, "_models.ReservationStatus"]] = None
+
+
+class PhoneNumbersReservationPurchaseRequest(_serialization.Model):
+    """The phone number search purchase request.
+
+    :ivar agree_to_not_resell: The agreement to not resell the phone numbers. Defaults to false if
+     not provided.
+    :vartype agree_to_not_resell: bool
+    """
+
+    _attribute_map = {
+        "agree_to_not_resell": {"key": "agreeToNotResell", "type": "bool"},
+    }
+
+    def __init__(self, *, agree_to_not_resell: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword agree_to_not_resell: The agreement to not resell the phone numbers. Defaults to false
+         if not provided.
+        :paramtype agree_to_not_resell: bool
+        """
+        super().__init__(**kwargs)
+        self.agree_to_not_resell = agree_to_not_resell
+
+
+class PhoneNumbersReservations(_serialization.Model):
+    """Represents a list of phone numbers reservations. Note that the phone numbers from each
+    reservation are not included.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar reservations: Represents a list of phone numbers reservations. Note that the phone
+     numbers from each reservation are not included. Required.
+    :vartype reservations: list[~azure.communication.phonenumbers.models.PhoneNumbersReservation]
+    :ivar next_link: Represents the URL link to the next page of phone number results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "reservations": {"required": True},
+    }
+
+    _attribute_map = {
+        "reservations": {"key": "reservations", "type": "[PhoneNumbersReservation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, reservations: List["_models.PhoneNumbersReservation"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword reservations: Represents a list of phone numbers reservations. Note that the phone
+         numbers from each reservation are not included. Required.
+        :paramtype reservations: list[~azure.communication.phonenumbers.models.PhoneNumbersReservation]
+        :keyword next_link: Represents the URL link to the next page of phone number results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.reservations = reservations
+        self.next_link = next_link
 
 
 class PurchasedPhoneNumber(_serialization.Model):
