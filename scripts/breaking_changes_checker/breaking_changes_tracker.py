@@ -10,7 +10,7 @@ import re
 from enum import Enum
 from typing import Any, Dict, List, Union
 from copy import deepcopy
-from _models import ChangesChecker, Suppression, RegexSuppression
+from _models import ChangesChecker, Suppression, RegexSuppression, PostProcessingChecker
 
 
 class BreakingChangeType(str, Enum):
@@ -91,8 +91,8 @@ class BreakingChangesTracker:
         self.stable = stable
         self.current = current
         self.diff = jsondiff.diff(stable, current)
-        self.features_added = []
-        self.breaking_changes = []
+        self.features_added: List = []
+        self.breaking_changes: List = []
         self.package_name = package_name
         self._module_name = None
         self._class_name = None
@@ -103,13 +103,30 @@ class BreakingChangesTracker:
         for checker in checkers:
             if not isinstance(checker, ChangesChecker):
                 raise TypeError(f"Checker {checker} does not implement ChangesChecker protocol")
+        post_processing_checkers: List[PostProcessingChecker] = kwargs.get("post_processing_checkers", [])
+        for checker in post_processing_checkers:
+            if not isinstance(checker, PostProcessingChecker):
+                raise TypeError(f"Checker {checker} does not implement PostProcessingChecker protocol")
         self.checkers = checkers
+        self.post_processing_checkers = post_processing_checkers
 
     def run_checks(self) -> None:
         self.run_breaking_change_diff_checks()
         self.check_parameter_ordering()  # not part of diff
-        self.run_async_cleanup(self.breaking_changes)
+        self.run_post_processing()
 
+    def run_post_processing(self) -> None:
+        # Remove duplicate reporting of changes that apply to both sync and async package components
+        self.run_async_cleanup(self.breaking_changes)
+        # Run user-defined post-processing checks
+        for checker in self.post_processing_checkers:
+            bc_list, fa_list = checker.run_check(
+                self.breaking_changes, self.features_added,
+                diff=self.diff, stable_nodes=self.stable, current_nodes=self.current
+            )
+            self.breaking_changes = bc_list
+            self.features_added = fa_list
+        
     # Remove duplicate reporting of changes that apply to both sync and async package components
     def run_async_cleanup(self, changes_list: List) -> None:
         # Create a list of all sync changes
@@ -645,6 +662,8 @@ class BreakingChangesTracker:
             function_name = args[1] if len(args) > 1 else None
             parameter_name = args[2] if len(args) > 2 else None
 
+            if bc_type == "AddedMethodOverload":
+                (f"Skipping AddedMethodOverload: {bc}")
             for rule in ignored:
                 suppression = Suppression(*rule)
 
