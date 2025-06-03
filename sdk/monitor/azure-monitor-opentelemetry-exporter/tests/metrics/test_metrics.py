@@ -50,7 +50,8 @@ class TestAzureMetricExporter(unittest.TestCase):
         os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = "1234abcd-5678-4efa-8abc-1234567890ab"
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         cls._exporter = AzureMonitorMetricExporter()
-        cls._exporter_log_analytics_disabled = AzureMonitorMetricExporter(metrics_to_log_analytics=False)
+        cls._exporter_log_analytics_disabled = AzureMonitorMetricExporter()
+        cls._exporter_log_analytics_disabled._metrics_to_log_analytics = False
         cls._metrics_data = MetricsData(
             resource_metrics=[
                 ResourceMetrics(
@@ -204,6 +205,9 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE), "testServiceInstanceId")
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_NODE_NAME), "testServiceInstanceId")
 
+        envelope = self._exporter_log_analytics_disabled._point_to_envelope(point, "test name", resource)
+        self.assertIsNone(envelope)
+
     def test_point_to_envelope_partA_default(self):
         exporter = self._exporter
         resource = Resource({"service.name": "testServiceName"})
@@ -222,6 +226,9 @@ class TestAzureMetricExporter(unittest.TestCase):
             envelope.tags.get(ContextTagKeys.AI_INTERNAL_NODE_NAME),
             envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE),
         )
+
+        envelope = self._exporter_log_analytics_disabled._point_to_envelope(point, "test name", resource)
+        self.assertIsNone(envelope)
 
     def test_point_to_envelope_number(self):
         exporter = self._exporter
@@ -247,6 +254,9 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.metrics[0].namespace, None)
         self.assertEqual(envelope.data.base_data.metrics[0].value, 10)
         self.assertEqual(envelope.data.base_data.metrics[0].count, 1)
+
+        envelope = self._exporter_log_analytics_disabled._point_to_envelope(point, "test name", resource, scope)
+        self.assertIsNone(envelope)
 
     def test_point_to_envelope_histogram(self):
         exporter = self._exporter
@@ -275,6 +285,9 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.metrics[0].name, "test name")
         self.assertEqual(envelope.data.base_data.metrics[0].value, 31)
         self.assertEqual(envelope.data.base_data.metrics[0].count, 7)
+
+        envelope = self._exporter_log_analytics_disabled._point_to_envelope(point, "test name", resource)
+        self.assertIsNone(envelope)
 
     @mock.patch.dict(
         "os.environ",
@@ -306,6 +319,9 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.metrics[0].namespace, "test_scope")
         self.assertEqual(envelope.data.base_data.metrics[0].value, 10)
         self.assertEqual(envelope.data.base_data.metrics[0].count, 1)
+
+        envelope = self._exporter_log_analytics_disabled._point_to_envelope(point, "test name", resource, scope)
+        self.assertIsNone(envelope)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export.trace._utils._get_target_and_path_for_http_dependency")
     def test_point_to_envelope_std_metric_client_duration(self, target_mock):
@@ -479,6 +495,28 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertIsNone(envelope)
 
     # Log Analytics Metrics Disabled
+
+    def test_point_to_envelope_std_metric_log_analytics_disabled(self):
+        exporter = self._exporter
+        resource = Resource(
+            {
+                "service.name": "testServiceName",
+                "service.namespace": "testServiceNamespace",
+                "service.instance.id": "testServiceInstanceId",
+            }
+        )
+        point = NumberDataPoint(
+            attributes={
+                "http.status_code": 200,
+                "peer.service": "test_service",
+                "custom_attr": "custom_key",
+            },
+            start_time_unix_nano=1646865018558419456,
+            time_unix_nano=1646865018558419457,
+            value=15.0,
+        )
+        envelope = exporter._point_to_envelope(point, "http.server.request.size", resource)
+        self.assertIsNone(envelope)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_on_aks", return_value=True)
     @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True)
