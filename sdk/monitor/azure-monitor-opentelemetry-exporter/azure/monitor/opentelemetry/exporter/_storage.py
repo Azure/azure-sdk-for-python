@@ -12,8 +12,13 @@ from azure.monitor.opentelemetry.exporter._utils import PeriodicTask
 
 logger = logging.getLogger(__name__)
 
-ICACLS_PATH = os.path.join(os.environ.get("SYSTEMDRIVE", "C:"), r"\Windows\System32\icacls.exe")
-POWERSHELL_PATH = os.path.join(os.environ.get("SYSTEMDRIVE", "C:"), r"\Windows\System32\WindowsPowerShell\v1.0\powershell.exe")
+ICACLS_PATH = os.path.join(
+    os.environ.get("SYSTEMDRIVE", "C:"), r"\Windows\System32\icacls.exe"
+)
+POWERSHELL_PATH = os.path.join(
+    os.environ.get("SYSTEMDRIVE", "C:"),
+    r"\Windows\System32\WindowsPowerShell\v1.0\powershell.exe",
+)
 
 
 def _fmt(timestamp):
@@ -165,6 +170,7 @@ class LocalFileStorage:
                         yield LocalFileBlob(path)
         except Exception:
             pass  # keep silent
+        return None
 
     def get(self):
         if not self._enabled:
@@ -199,18 +205,20 @@ class LocalFileStorage:
         try:
             # Create path if it doesn't exist
             os.makedirs(self._path, exist_ok=True)
-            #Windows
+            # Windows
             if os.name == "nt":
                 user = self._get_current_user()
                 if not user:
-                    logger.warning("Failed to retrieve current user. Skipping folder permission setup.")
+                    logger.warning(
+                        "Failed to retrieve current user. Skipping folder permission setup."
+                    )
                     return False
                 result = subprocess.run(
                     [
                         ICACLS_PATH,
                         self._path,
                         "/grant",
-                        "*S-1-5-32-544:(OI)(CI)F", # Full permission for Administrators
+                        "*S-1-5-32-544:(OI)(CI)F",  # Full permission for Administrators
                         f"{user}:(OI)(CI)F",
                         "/inheritance:r",
                     ],
@@ -224,7 +232,7 @@ class LocalFileStorage:
                 os.chmod(self._path, 0o700)
                 return True
         except Exception:
-            pass # keep silent
+            pass  # keep silent
         return False
 
     def _check_storage_size(self):
@@ -249,20 +257,21 @@ class LocalFileStorage:
                             "Persistent storage max capacity has been "
                             "reached. Currently at {}KB. Telemetry will be "
                             "lost. Please consider increasing the value of "
-                            "'storage_max_size' in exporter config.".format(str(size / 1024))
+                            "'storage_max_size' in exporter config.".format(
+                                str(size / 1024)
+                            )
                         )
                         return False
         return True
 
     def _get_current_user(self):
-        """Get the current user name using PowerShell on Windows."""
         try:
             if os.name == "nt":
                 result = subprocess.run(
                     [
                         POWERSHELL_PATH,
                         "-Command",
-                        "[System.Security.Principal.WindowsIdentity]::GetCurrent().Name"
+                        "[System.Security.Principal.WindowsIdentity]::GetCurrent().Name",
                     ],
                     capture_output=True,
                     text=True,
