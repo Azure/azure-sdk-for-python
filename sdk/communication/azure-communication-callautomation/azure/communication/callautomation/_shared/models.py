@@ -87,6 +87,8 @@ ACS_USER_DOD_CLOUD_PREFIX = "8:dod-acs:"
 ACS_USER_GCCH_CLOUD_PREFIX = "8:gcch-acs:"
 SPOOL_USER_PREFIX = "8:spool:"
 
+PHONE_NUMBER_ANONYMOUS_SUFFIX = "anonymous"
+
 
 class CommunicationUserProperties(TypedDict):
     """Dictionary of properties for a CommunicationUserIdentifier."""
@@ -144,8 +146,6 @@ class PhoneNumberIdentifier:
     raw_id: str
     """The raw ID of the identifier."""
 
-    PHONE_NUMBER_ANONYMOUS_SUFFIX = "anonymous"
-
     def __init__(self, value: str, **kwargs: Any) -> None:
         """
         :param str value: The phone number.
@@ -159,7 +159,7 @@ class PhoneNumberIdentifier:
 
         if raw_id is not None:
             phone_number = raw_id[len(PHONE_NUMBER_PREFIX):]
-            is_anonymous = phone_number == PhoneNumberIdentifier.PHONE_NUMBER_ANONYMOUS_SUFFIX
+            is_anonymous = phone_number == PHONE_NUMBER_ANONYMOUS_SUFFIX
             asserted_id_index = -1 if is_anonymous else phone_number.rfind("_") + 1
             has_asserted_id = 0 < asserted_id_index < len(phone_number)
             asserted_id = phone_number[asserted_id_index:] if has_asserted_id else None
@@ -181,14 +181,6 @@ class PhoneNumberIdentifier:
         # validation should only happen server-side, not client-side.
         value = properties["value"]
         return f"{PHONE_NUMBER_PREFIX}{value}"
-
-    @property
-    def asserted_id(self) -> Optional[str]:
-        return self.properties.get("asserted_id")
-
-    @property
-    def is_anonymous(self) -> bool:
-        return bool(self.properties.get("is_anonymous"))
 
 class UnknownIdentifier:
     """Represents an identifier of an unknown type.
