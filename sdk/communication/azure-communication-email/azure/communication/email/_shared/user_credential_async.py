@@ -27,6 +27,10 @@ class CommunicationTokenCredential(object):
      the proactive refresh will request a new token by calling the 'token_refresher' callback.
      When 'proactive_refresh is enabled', the Credential object must be either run within a context manager
      or the 'close' method must be called once the object usage has been finished.
+    :keyword str resource_endpoint: The endpoint URL of the resource to authenticate against.
+    :keyword token_credential: The credential to use for token exchange.
+    :paramtype token_credential: ~azure.core.credentials.TokenCredential
+    :keyword list[str] scopes: The scopes to request during the token exchange.
     :raises: TypeError if paramater 'token' is not a string
     :raises: ValueError if the 'proactive_refresh' is enabled without providing the 'token_refresher' function.
     """
