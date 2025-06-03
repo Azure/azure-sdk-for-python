@@ -58,13 +58,11 @@ class _PartitionHealthInfo(object):
         self.write_consecutive_failure_count: int = 0
         self.unavailability_info: Dict[str, Any] = {}
 
-    def reset_health_stats(self) -> None:
+    def reset_failure_rate_health_stats(self) -> None:
         self.write_failure_count = 0
         self.read_failure_count = 0
         self.write_success_count = 0
         self.read_success_count = 0
-        self.read_consecutive_failure_count = 0
-        self.write_consecutive_failure_count = 0
 
     def transition_health_status(self, target_health_status: str, curr_time: int) -> None:
         if target_health_status == UNHEALTHY :
@@ -290,4 +288,4 @@ class _PartitionHealthTracker(object):
     def _reset_partition_health_tracker_stats(self) -> None:
         for locations in self.pk_range_wrapper_to_health_info.values():
             for health_info in locations.values():
-                health_info.reset_health_stats()
+                health_info.reset_failure_rate_health_stats()
