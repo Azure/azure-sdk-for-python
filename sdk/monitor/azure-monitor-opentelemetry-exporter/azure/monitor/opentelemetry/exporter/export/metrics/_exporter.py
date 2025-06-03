@@ -154,6 +154,8 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             envelope = _handle_std_metric_envelope(envelope, name, point.attributes)  # type: ignore
         if envelope is not None:
             envelope.instrumentation_key = self._instrumentation_key
+            envelope.data.base_data.properties["_MS.SentToAMW"] = str(_utils._is_sending_to_amw())
+
         return envelope
 
     # pylint: disable=docstring-keyword-should-match-keyword-only
