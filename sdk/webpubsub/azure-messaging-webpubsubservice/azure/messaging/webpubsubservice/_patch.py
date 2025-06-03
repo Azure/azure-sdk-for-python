@@ -25,17 +25,21 @@
 #
 # --------------------------------------------------------------------------
 
+
 from typing import Any, TYPE_CHECKING, Optional, Union, Awaitable
 from datetime import datetime, timedelta
 import jwt
 
+from azure.core.paging import ItemPaged
+
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import SansIOHTTPPolicy, ProxyPolicy
 from azure.core.credentials import AzureKeyCredential
+from azure.core.tracing.decorator import distributed_trace
 
 from ._client import WebPubSubServiceClient as WebPubSubServiceClientGenerated
 from ._operations._patch import _UTC_TZ
-
+from ._models import GroupMember
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -191,7 +195,6 @@ class WebPubSubServiceClient(WebPubSubServiceClientBase, WebPubSubServiceClientG
 
         credential = AzureKeyCredential(kwargs.pop("accesskey"))
         return cls(hub=hub, credential=credential, **kwargs)
-
 
 __all__ = ["WebPubSubServiceClient"]
 
