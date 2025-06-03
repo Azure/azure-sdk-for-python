@@ -1,131 +1,78 @@
-# Azure Planetary Computer client library for Python
+# Azure Planetarycomputer client library for Python
+<!-- write necessary description of service -->
 
-This package provides a Python SDK for interacting with the **Azure Planetary Computer** data plane API. It enables developers to manage and explore geospatial collections using STAC standards, perform ingestion, rendering, mosaic configuration, and tile service access.
+## Getting started
 
-> ⚠️ This library is in **preview** and subject to change.
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- Python 3.9 or later
-- An [Azure subscription][azure_sub]
-- A deployed Azure Planetary Computer instance (endpoint)
-- [Azure Identity SDK][azure_identity_pip] for authentication
-
----
-
-### Installation
-
-Install the SDK via [PyPI][pip]:
+### Install the package
 
 ```bash
-pip install azure-planetarycomputer
+python -m pip install azure-planetarycomputer
 ```
 
-Install the Azure Identity library (required for authentication):
+#### Prequisites
 
-```bash
-pip install azure-identity
-```
+- Python 3.9 or later is required to use this package.
+- You need an [Azure subscription][azure_sub] to use this package.
+- An existing Azure Planetarycomputer instance.
 
----
+#### Create with an Azure Active Directory Credential
+To use an [Azure Active Directory (AAD) token credential][authenticate_with_token],
+provide an instance of the desired credential type obtained from the
+[azure-identity][azure_identity_credentials] library.
 
-### Authentication
+To authenticate with AAD, you must first [pip][pip] install [`azure-identity`][azure_identity_pip]
 
-To authenticate with the Azure Planetary Computer service, use `DefaultAzureCredential` from the `azure-identity` package.
+After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
+As an example, [DefaultAzureCredential][default_azure_credential] can be used to authenticate the client:
 
-Set the following environment variables for your Azure Active Directory (AAD) application:
+Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
+`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`
 
-```bash
-AZURE_CLIENT_ID=<your-client-id>
-AZURE_TENANT_ID=<your-tenant-id>
-AZURE_CLIENT_SECRET=<your-client-secret>
-```
-
-Then create a client:
+Use the returned token credential to authenticate the client:
 
 ```python
-from azure.planetarycomputer import MicrosoftPlanetaryComputerProClient
-from azure.identity import DefaultAzureCredential
-
-client = MicrosoftPlanetaryComputerProClient(
-    endpoint="https://<your-endpoint>",  # Example: https://example.geocatalog.spatio.azure.com
-    credential=DefaultAzureCredential()
-)
+>>> from azure.planetarycomputer import PlanetaryComputerClient
+>>> from azure.identity import DefaultAzureCredential
+>>> client = PlanetaryComputerClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 ```
 
----
-
-## Usage Examples
-
-### Basic API Call
+## Examples
 
 ```python
-from azure.planetarycomputer import MicrosoftPlanetaryComputerProClient
-from azure.identity import DefaultAzureCredential
-from azure.core.exceptions import HttpResponseError
+>>> from azure.planetarycomputer import PlanetaryComputerClient
+>>> from azure.identity import DefaultAzureCredential
+>>> from azure.core.exceptions import HttpResponseError
 
-client = MicrosoftPlanetaryComputerProClient(
-    endpoint="https://your-geocatalog-endpoint",
-    credential=DefaultAzureCredential()
-)
-
-try:
-    # Example operation
-    result = client.stac_collection_operations.get_all()
-    print(result)
-except HttpResponseError as e:
-    print("Error:", e.response.json())
-```
-
----
-
-## Directory Structure
+>>> client = PlanetaryComputerClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+>>> try:
+        <!-- write test code here -->
+    except HttpResponseError as e:
+        print('service responds error: {}'.format(e.response.json()))
 
 ```
-sdk/
-└── planetarycomputer/
-    └── azure-planetarycomputer/
-        ├── azure/planetarycomputer/         # ✅ Core SDK package
-        ├── generated_samples/               # ✅ Auto-generated usage examples
-        ├── generated_tests/                 # ✅ Auto-generated tests (not required for preview)
-        ├── tutorial/                        # ✅ Jupyter notebook tutorial for real-world scenarios
-        ├── README.md                        # ✅ This file
-        ├── CHANGELOG.md                     # ✅ Version history
-        ├── setup.py                         # ✅ Python packaging setup
-        ├── LICENSE, MANIFEST.in             # ✅ Legal and package metadata
-```
-
----
-
-## Resources
-
-- [Microsoft Planetary Computer Docs](https://planetarycomputer.microsoft.com/)
-- [STAC Specification](https://stacspec.org/)
-- [Azure SDK for Python](https://github.com/Azure/azure-sdk-for-python)
-- [Azure Identity Authentication](https://learn.microsoft.com/azure/developer/python/sdk/authentication-overview)
-
----
 
 ## Contributing
 
-This project welcomes contributions. To contribute:
+This project welcomes contributions and suggestions. Most contributions require
+you to agree to a Contributor License Agreement (CLA) declaring that you have
+the right to, and actually do, grant us the rights to use your contribution.
+For details, visit https://cla.microsoft.com.
 
-1. Fork the repo and create your feature branch.
-2. Ensure code passes validation.
-3. Submit a pull request.
+When you submit a pull request, a CLA-bot will automatically determine whether
+you need to provide a CLA and decorate the PR appropriately (e.g., label,
+comment). Simply follow the instructions provided by the bot. You will only
+need to do this once across all repos using our CLA.
 
-Before submitting, you must sign the [Microsoft CLA](https://cla.microsoft.com).
+This project has adopted the
+[Microsoft Open Source Code of Conduct][code_of_conduct]. For more information,
+see the Code of Conduct FAQ or contact opencode@microsoft.com with any
+additional questions or comments.
 
-This project follows the [Microsoft Open Source Code of Conduct][code_of_conduct].
-
----
-
-<!-- Links -->
-[azure_sub]: https://azure.microsoft.com/free/
-[azure_identity_pip]: https://pypi.org/project/azure-identity/
+<!-- LINKS -->
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
+[authenticate_with_token]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
+[azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
+[azure_identity_pip]: https://pypi.org/project/azure-identity/
+[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [pip]: https://pypi.org/project/pip/
+[azure_sub]: https://azure.microsoft.com/free/

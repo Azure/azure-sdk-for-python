@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -14,8 +15,8 @@ from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
-from .._serialization import Deserializer, Serializer
-from ._configuration import MicrosoftPlanetaryComputerProClientConfiguration
+from .._utils.serialization import Deserializer, Serializer
+from ._configuration import PlanetaryComputerClientConfiguration
 from .operations import (
     GeoCatalogAuthConfigOperationsOperations,
     GeoCatalogAzmapsClientOperations,
@@ -77,8 +78,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class MicrosoftPlanetaryComputerProClient:  # pylint: disable=too-many-instance-attributes
-    """MicrosoftPlanetaryComputerProClient.
+class PlanetaryComputerClient:  # pylint: disable=too-many-instance-attributes
+    """PlanetaryComputerClient.
 
     :ivar ingestions: IngestionsOperations operations
     :vartype ingestions: azure.planetarycomputer.aio.operations.IngestionsOperations
@@ -247,9 +248,7 @@ class MicrosoftPlanetaryComputerProClient:  # pylint: disable=too-many-instance-
         **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
-        self._config = MicrosoftPlanetaryComputerProClientConfiguration(
-            credential=credential, endpoint=endpoint, **kwargs
-        )
+        self._config = PlanetaryComputerClientConfiguration(credential=credential, endpoint=endpoint, **kwargs)
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:

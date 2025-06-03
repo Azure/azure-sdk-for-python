@@ -13,16 +13,15 @@ from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, U
 
 from azure.core.exceptions import ODataV4Format
 
-from .. import _model_base
-from .._model_base import rest_discriminator, rest_field
-from .._vendor import FileType
+from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
+from .._utils.utils import FileType
 from ._enums import IngestionSourceType
 
 if TYPE_CHECKING:
     from .. import _types, models as _models
 
 
-class Asset(_model_base.Model):
+class Asset(_Model):
     """`https://github.com/radiantearth/stac-spec/blob/v1.0.0/item-spec/item-spec.md#asset-object
     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/item-spec/item-spec.md#asset-object>`_
 
@@ -41,9 +40,9 @@ class Asset(_model_base.Model):
     :ivar gsd: Ground sample distance in meters.
     :vartype gsd: float
     :ivar created: Creation timestamp of the data.
-    :vartype created: ~datetime
+    :vartype created: ~datetime.datetime
     :ivar updated: Last update timestamp of the data.
-    :vartype updated: ~datetime
+    :vartype updated: ~datetime.datetime
     :ivar title: Human-readable title for the asset.
     :vartype title: str
     :ivar description: Detailed description of the asset.
@@ -70,11 +69,11 @@ class Asset(_model_base.Model):
     """Organizations or individuals who provide the data."""
     gsd: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Ground sample distance in meters."""
-    created: Optional[datetime] = rest_field(
+    created: Optional[datetime.datetime] = rest_field(
         visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """Creation timestamp of the data."""
-    updated: Optional[datetime] = rest_field(
+    updated: Optional[datetime.datetime] = rest_field(
         visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """Last update timestamp of the data."""
@@ -100,8 +99,8 @@ class Asset(_model_base.Model):
         mission: Optional[str] = None,
         providers: Optional[List["_models.Provider"]] = None,
         gsd: Optional[float] = None,
-        created: Optional[datetime] = None,
-        updated: Optional[datetime] = None,
+        created: Optional[datetime.datetime] = None,
+        updated: Optional[datetime.datetime] = None,
         title: Optional[str] = None,
         description: Optional[str] = None,
         type: Optional[str] = None,
@@ -119,7 +118,7 @@ class Asset(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AssetMetadata(_model_base.Model):
+class AssetMetadata(_Model):
     """Asset metadata model.
 
     :ivar key: The key of the asset. Required.
@@ -167,7 +166,7 @@ class AssetMetadata(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AssetStatisticsResponse(_model_base.Model):
+class AssetStatisticsResponse(_Model):
     """Return dataset's statistics.
 
     :ivar data: Response Asset Statistics Api Collections  Collection Id  Items  Item Id  Asset
@@ -197,7 +196,7 @@ class AssetStatisticsResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthConfig(_model_base.Model):
+class AuthConfig(_Model):
     """Microsoft Authentication Library (MSAL) configuration for frontend authentication.
 
     :ivar authn_app_id: Application ID for authentication. Required.
@@ -240,7 +239,7 @@ class AuthConfig(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AzMapsClientId(_model_base.Model):
+class AzMapsClientId(_Model):
     """Represents an Azure Maps client ID for authentication.
 
     :ivar client_id: The client ID for Azure Maps authentication. Required.
@@ -268,7 +267,7 @@ class AzMapsClientId(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AzMapsToken(_model_base.Model):
+class AzMapsToken(_Model):
     """Represents an Azure Maps token for map visualization.
 
     :ivar token: The authentication token for Azure Maps. Required.
@@ -301,7 +300,7 @@ class AzMapsToken(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BandStatistics(_model_base.Model):
+class BandStatistics(_Model):
     """Statistical information about a data band.
 
     :ivar min: Minimum value in the band. Required.
@@ -408,7 +407,7 @@ class BandStatistics(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BoundsResponse(_model_base.Model):
+class BoundsResponse(_Model):
     """Geographic extent of a dataset expressed as a bounding box.
 
     :ivar bounds: Array of coordinates defining the bounding box [west, south, east, north].
@@ -437,11 +436,11 @@ class BoundsResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ClassmapLegendResponse(_model_base.Model):
+class ClassmapLegendResponse(_Model):
     """Classmap legend response model."""
 
 
-class ConformanceClasses(_model_base.Model):
+class ConformanceClasses(_Model):
     """`https://github.com/radiantearth/stac-api-spec/blob/master/api-spec.md#ogc-api---features-endpoints
     <https://github.com/radiantearth/stac-api-spec/blob/master/api-spec.md#ogc-api---features-endpoints>`_
 
@@ -472,7 +471,7 @@ class ConformanceClasses(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ContextExtension(_model_base.Model):
+class ContextExtension(_Model):
     """`https://github.com/radiantearth/stac-api-spec/tree/master/extensions/context#context-extension-specification
     <https://github.com/radiantearth/stac-api-spec/tree/master/extensions/context#context-extension-specification>`_
 
@@ -513,7 +512,7 @@ class ContextExtension(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Cql(_model_base.Model):
+class Cql(_Model):
     """CQL model.
 
     :ivar filter_lang: Filter language. Required.
@@ -553,7 +552,7 @@ class Cql(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class CqlFilter(_model_base.Model):
+class CqlFilter(_Model):
     """CQL Filter model.
 
     :ivar op: Logical operator. Required.
@@ -588,7 +587,7 @@ class CqlFilter(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class CqlProperty(_model_base.Model):
+class CqlProperty(_Model):
     """Model for CQL property.
 
     :ivar property: Property name. Required.
@@ -616,7 +615,7 @@ class CqlProperty(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DefaultLocation(_model_base.Model):
+class DefaultLocation(_Model):
     """Defines a default geographic location for map visualization.
 
     :ivar zoom: Default zoom level for the map. Required.
@@ -649,7 +648,7 @@ class DefaultLocation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Extent(_model_base.Model):
+class Extent(_Model):
     """`https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#extent-object
     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#extent-object>`_
 
@@ -672,12 +671,12 @@ class Extent(_model_base.Model):
     spatial: "_models.SpatialExtent" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """`https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object
      <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object>`_
-
+     
      Spatial extent defined by bounding boxes. Required."""
     temporal: "_models.TimeInterval" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """`https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#temporal-extent-object
      <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#temporal-extent-object>`_
-
+     
      Temporal extent defined by time intervals. Required."""
 
     @overload
@@ -699,7 +698,7 @@ class Extent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class FeatureCollections(_model_base.Model):
+class FeatureCollections(_Model):
     """`http://docs.opengeospatial.org/is/17-069r3/17-069r3.html#_feature_collections_rootcollections
     <http://docs.opengeospatial.org/is/17-069r3/17-069r3.html#_feature_collections_rootcollections>`_
 
@@ -735,7 +734,7 @@ class FeatureCollections(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class FeaturePolygonDictStrRioTilerModelsInfo(_model_base.Model):
+class FeaturePolygonDictStrRioTilerModelsInfo(_Model):
     """GeoJSON Feature object containing rio-tiler model information.
 
     :ivar type: GeoJSON type identifier. Required. "Feature"
@@ -791,13 +790,13 @@ class FeaturePolygonDictStrRioTilerModelsInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class FormData(_model_base.Model):
+class FormData(_Model):
     """FormData model for file upload.
 
     :ivar data: Asset metadata. Required.
     :vartype data: ~azure.planetarycomputer.models.AssetMetadata
     :ivar file: Binary file content to be uploaded. Required.
-    :vartype file: ~azure.planetarycomputer._vendor.FileType
+    :vartype file: ~azure.planetarycomputer._utils.utils.FileType
     """
 
     data: "_models.AssetMetadata" = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -826,7 +825,7 @@ class FormData(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class GeoJsonStatisticsItemCollectionResponse(_model_base.Model):
+class GeoJsonStatisticsItemCollectionResponse(_Model):
     """`https://github.com/radiantearth/stac-spec/blob/v1.0.0/item-spec/itemcollection-spec.mdCollection
     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/item-spec/itemcollection-spec.mdCollection>`_
     of STAC items with statistical information.
@@ -890,7 +889,7 @@ class GeoJsonStatisticsItemCollectionResponse(_model_base.Model):
     )
     """`https://github.com/radiantearth/stac-api-spec/tree/master/extensions/context#context-extension-specification
      <https://github.com/radiantearth/stac-api-spec/tree/master/extensions/context#context-extension-specification>`_
-
+     
      Pagination context for the response."""
 
     @overload
@@ -920,7 +919,7 @@ class GeoJsonStatisticsItemCollectionResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class GeoJsonStatisticsItemResponse(_model_base.Model):
+class GeoJsonStatisticsItemResponse(_Model):
     """STAC Item representing a spatiotemporal asset with statistical information.
 
     :ivar type: GeoJSON type identifier for Feature. Required. "Feature"
@@ -1021,7 +1020,7 @@ class GeoJsonStatisticsItemResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ImageRequest(_model_base.Model):
+class ImageRequest(_Model):
     """Parameters for requesting a rendered image from a collection.
 
     :ivar cql: Cql. Required.
@@ -1093,7 +1092,7 @@ class ImageRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class InfoOperationResponse(_model_base.Model):
+class InfoOperationResponse(_Model):
     """Return dataset's basic info or the list of available assets.
 
     :ivar data: Response Info Api Collections  Collection Id  Items  Item Id  Info Get. Required.
@@ -1121,7 +1120,7 @@ class InfoOperationResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class IngestionDefinition(_model_base.Model):
+class IngestionDefinition(_Model):
     """Spatio geo-catalog ingestion definition.
 
     :ivar import_type: Ingestion type. Required. "StaticCatalog"
@@ -1137,7 +1136,7 @@ class IngestionDefinition(_model_base.Model):
     :ivar id: Ingestion id. Required.
     :vartype id: str
     :ivar creation_time: Ingestion creation time. Required.
-    :vartype creation_time: ~datetime
+    :vartype creation_time: ~datetime.datetime
     :ivar status: Ingestion status. Required. Known values are: "Ready" and "Deleting".
     :vartype status: str or ~azure.planetarycomputer.models.IngestionStatus
     """
@@ -1164,7 +1163,7 @@ class IngestionDefinition(_model_base.Model):
     """Keep original source assets."""
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Ingestion id. Required."""
-    creation_time: datetime = rest_field(
+    creation_time: datetime.datetime = rest_field(
         name="creationTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """Ingestion creation time. Required."""
@@ -1179,7 +1178,7 @@ class IngestionDefinition(_model_base.Model):
         *,
         import_type: Union[str, "_models.IngestionType"],
         id: str,  # pylint: disable=redefined-builtin
-        creation_time: datetime,
+        creation_time: datetime.datetime,
         status: Union[str, "_models.IngestionStatus"],
         display_name: Optional[str] = None,
         source_catalog_url: Optional[str] = None,
@@ -1198,7 +1197,7 @@ class IngestionDefinition(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class IngestionDefinitionCreation(_model_base.Model):
+class IngestionDefinitionCreation(_Model):
     """Spatio geo-catalog ingestion creation model.
 
     :ivar import_type: Ingestion type. Required. "StaticCatalog"
@@ -1256,7 +1255,7 @@ class IngestionDefinitionCreation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class IngestionDefinitionsPagedResponse(_model_base.Model):
+class IngestionDefinitionsPagedResponse(_Model):
     """Ingestions Definitions paged response.
 
     :ivar value: Ingestion Definitions. Required.
@@ -1289,7 +1288,7 @@ class IngestionDefinitionsPagedResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class IngestionRun(_model_base.Model):
+class IngestionRun(_Model):
     """Spatio geo-catalog ingestion run.
 
     :ivar id: Run id. Required.
@@ -1299,7 +1298,7 @@ class IngestionRun(_model_base.Model):
     :ivar operation: Operation. Required.
     :vartype operation: ~azure.planetarycomputer.models.IngestionRunOperation
     :ivar creation_time: Creation time. Required.
-    :vartype creation_time: ~datetime
+    :vartype creation_time: ~datetime.datetime
     :ivar source_catalog_url: URL of the source catalog.
     :vartype source_catalog_url: str
     :ivar skip_existing_items: Skip any item that already exist in the GeoCatalog.
@@ -1316,7 +1315,7 @@ class IngestionRun(_model_base.Model):
     """Run id which this run is associated to becase has been retried or rerun."""
     operation: "_models.IngestionRunOperation" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Operation. Required."""
-    creation_time: datetime = rest_field(
+    creation_time: datetime.datetime = rest_field(
         name="creationTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """Creation time. Required."""
@@ -1339,7 +1338,7 @@ class IngestionRun(_model_base.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         operation: "_models.IngestionRunOperation",
-        creation_time: datetime,
+        creation_time: datetime.datetime,
         parent_run_id: Optional[str] = None,
         source_catalog_url: Optional[str] = None,
         skip_existing_items: Optional[bool] = None,
@@ -1357,7 +1356,7 @@ class IngestionRun(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class IngestionRunOperation(_model_base.Model):
+class IngestionRunOperation(_Model):
     """Spatio geo-catalog ingestion run operation.
 
     :ivar id: Operation id. Required.
@@ -1366,13 +1365,13 @@ class IngestionRunOperation(_model_base.Model):
      "Canceled", "Canceling", and "Failed".
     :vartype status: str or ~azure.planetarycomputer.models.OperationStatus
     :ivar creation_time: The UTC time at which the operation was created. Required.
-    :vartype creation_time: ~datetime
+    :vartype creation_time: ~datetime.datetime
     :ivar status_history: The history of the operation status in time. Required.
     :vartype status_history: list[~azure.planetarycomputer.models.OperationStatusHistoryItem]
     :ivar start_time: The UTC time at which the operation was started.
-    :vartype start_time: ~datetime
+    :vartype start_time: ~datetime.datetime
     :ivar finish_time: The UTC time at which the operation finished its execution.
-    :vartype finish_time: ~datetime
+    :vartype finish_time: ~datetime.datetime
     :ivar total_items: The number of total items to be processed. Required.
     :vartype total_items: int
     :ivar total_pending_items: The number of items pending to be processed. Required.
@@ -1390,7 +1389,7 @@ class IngestionRunOperation(_model_base.Model):
     )
     """Operation status. Required. Known values are: \"Pending\", \"Running\", \"Succeeded\",
      \"Canceled\", \"Canceling\", and \"Failed\"."""
-    creation_time: datetime = rest_field(
+    creation_time: datetime.datetime = rest_field(
         name="creationTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The UTC time at which the operation was created. Required."""
@@ -1398,11 +1397,11 @@ class IngestionRunOperation(_model_base.Model):
         name="statusHistory", visibility=["read", "create", "update", "delete", "query"]
     )
     """The history of the operation status in time. Required."""
-    start_time: Optional[datetime] = rest_field(
+    start_time: Optional[datetime.datetime] = rest_field(
         name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The UTC time at which the operation was started."""
-    finish_time: Optional[datetime] = rest_field(
+    finish_time: Optional[datetime.datetime] = rest_field(
         name="finishTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The UTC time at which the operation finished its execution."""
@@ -1427,14 +1426,14 @@ class IngestionRunOperation(_model_base.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         status: Union[str, "_models.OperationStatus"],
-        creation_time: datetime,
+        creation_time: datetime.datetime,
         status_history: List["_models.OperationStatusHistoryItem"],
         total_items: int,
         total_pending_items: int,
         total_successful_items: int,
         total_failed_items: int,
-        start_time: Optional[datetime] = None,
-        finish_time: Optional[datetime] = None,
+        start_time: Optional[datetime.datetime] = None,
+        finish_time: Optional[datetime.datetime] = None,
     ) -> None: ...
 
     @overload
@@ -1448,7 +1447,7 @@ class IngestionRunOperation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class IngestionRunsPagedResponse(_model_base.Model):
+class IngestionRunsPagedResponse(_Model):
     """Ingestion Runs paged response.
 
     :ivar value: Ingestion Runs. Required.
@@ -1481,7 +1480,7 @@ class IngestionRunsPagedResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class IngestionSource(_model_base.Model):
+class IngestionSource(_Model):
     """Ingestion Source.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1490,16 +1489,16 @@ class IngestionSource(_model_base.Model):
     :ivar id: Ingestion source id. Required.
     :vartype id: str
     :ivar created: Created time in UTC format. Required.
-    :vartype created: ~datetime
+    :vartype created: ~datetime.datetime
     :ivar kind: Discriminator for the ingestion source. Required. Known values are: "SasToken" and
      "BlobManagedIdentity".
     :vartype kind: str or ~azure.planetarycomputer.models.IngestionSourceType
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: Dict[str, _Model] = {}
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Ingestion source id. Required."""
-    created: datetime = rest_field(
+    created: datetime.datetime = rest_field(
         visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """Created time in UTC format. Required."""
@@ -1512,7 +1511,7 @@ class IngestionSource(_model_base.Model):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        created: datetime,
+        created: datetime.datetime,
         kind: str,
     ) -> None: ...
 
@@ -1527,7 +1526,7 @@ class IngestionSource(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class IngestionSourceCreate(_model_base.Model):
+class IngestionSourceCreate(_Model):
     """Ingestion Source.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1540,7 +1539,7 @@ class IngestionSourceCreate(_model_base.Model):
     :vartype kind: str or ~azure.planetarycomputer.models.IngestionSourceType
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: Dict[str, _Model] = {}
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Ingestion source id. Required."""
     kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
@@ -1566,7 +1565,7 @@ class IngestionSourceCreate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class IngestionSourcesPagedResponse(_model_base.Model):
+class IngestionSourcesPagedResponse(_Model):
     """Ingestion Sources paged response.
 
     :ivar value: Ingestion sources. Required.
@@ -1601,7 +1600,7 @@ class IngestionSourcesPagedResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class IngestionSourceSummary(_model_base.Model):
+class IngestionSourceSummary(_Model):
     """Ingestion source summary.
 
     :ivar id: Ingestion source id. Required.
@@ -1610,7 +1609,7 @@ class IngestionSourceSummary(_model_base.Model):
      "BlobManagedIdentity".
     :vartype kind: str or ~azure.planetarycomputer.models.IngestionSourceType
     :ivar created: Created time in UTC format. Required.
-    :vartype created: ~datetime
+    :vartype created: ~datetime.datetime
     """
 
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1619,7 +1618,7 @@ class IngestionSourceSummary(_model_base.Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Ingestion source type. Required. Known values are: \"SasToken\" and \"BlobManagedIdentity\"."""
-    created: datetime = rest_field(
+    created: datetime.datetime = rest_field(
         visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """Created time in UTC format. Required."""
@@ -1630,7 +1629,7 @@ class IngestionSourceSummary(_model_base.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         kind: Union[str, "_models.IngestionSourceType"],
-        created: datetime,
+        created: datetime.datetime,
     ) -> None: ...
 
     @overload
@@ -1644,7 +1643,7 @@ class IngestionSourceSummary(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ItemCollection(_model_base.Model):
+class ItemCollection(_Model):
     """`https://github.com/radiantearth/stac-spec/blob/v1.0.0/item-spec/itemcollection-spec.md
     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/item-spec/itemcollection-spec.md>`_
 
@@ -1730,7 +1729,7 @@ class ItemCollection(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ItemProperties(_model_base.Model):
+class ItemProperties(_Model):
     """Properties of a STAC Item containing metadata about the asset.
 
     `https://github.com/radiantearth/stac-spec/blob/v1.0.0/item-spec/item-spec.md#properties-object
@@ -1749,9 +1748,9 @@ class ItemProperties(_model_base.Model):
     :ivar gsd: Ground sample distance in meters.
     :vartype gsd: float
     :ivar created: Creation timestamp of the data.
-    :vartype created: ~datetime
+    :vartype created: ~datetime.datetime
     :ivar updated: Last update timestamp of the data.
-    :vartype updated: ~datetime
+    :vartype updated: ~datetime.datetime
     :ivar title: Human-readable title for the item.
     :vartype title: str
     :ivar description: Detailed description of the item.
@@ -1759,9 +1758,9 @@ class ItemProperties(_model_base.Model):
     :ivar datetime: Datetime the asset represents in RFC 3339 format. Required.
     :vartype datetime: str
     :ivar start_datetime: Start time of the item observation period.
-    :vartype start_datetime: ~datetime
+    :vartype start_datetime: ~datetime.datetime
     :ivar end_datetime: End time of the item observation period.
-    :vartype end_datetime: ~datetime
+    :vartype end_datetime: ~datetime.datetime
     """
 
     platform: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1778,11 +1777,11 @@ class ItemProperties(_model_base.Model):
     """Organizations or individuals who provide the data."""
     gsd: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Ground sample distance in meters."""
-    created: Optional[datetime] = rest_field(
+    created: Optional[datetime.datetime] = rest_field(
         visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """Creation timestamp of the data."""
-    updated: Optional[datetime] = rest_field(
+    updated: Optional[datetime.datetime] = rest_field(
         visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """Last update timestamp of the data."""
@@ -1792,11 +1791,11 @@ class ItemProperties(_model_base.Model):
     """Detailed description of the item."""
     datetime: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Datetime the asset represents in RFC 3339 format. Required."""
-    start_datetime: Optional[datetime] = rest_field(
+    start_datetime: Optional[datetime.datetime] = rest_field(
         visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """Start time of the item observation period."""
-    end_datetime: Optional[datetime] = rest_field(
+    end_datetime: Optional[datetime.datetime] = rest_field(
         visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """End time of the item observation period."""
@@ -1812,12 +1811,12 @@ class ItemProperties(_model_base.Model):
         mission: Optional[str] = None,
         providers: Optional[List["_models.Provider"]] = None,
         gsd: Optional[float] = None,
-        created: Optional[datetime] = None,
-        updated: Optional[datetime] = None,
+        created: Optional[datetime.datetime] = None,
+        updated: Optional[datetime.datetime] = None,
         title: Optional[str] = None,
         description: Optional[str] = None,
-        start_datetime: Optional[datetime] = None,
-        end_datetime: Optional[datetime] = None,
+        start_datetime: Optional[datetime.datetime] = None,
+        end_datetime: Optional[datetime.datetime] = None,
     ) -> None: ...
 
     @overload
@@ -1831,7 +1830,7 @@ class ItemProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class LandingPage(_model_base.Model):
+class LandingPage(_Model):
     """`https://github.com/radiantearth/stac-api-spec/blob/master/api-spec.md#ogc-api---features-endpoints
     <https://github.com/radiantearth/stac-api-spec/blob/master/api-spec.md#ogc-api---features-endpoints>`_
 
@@ -1918,7 +1917,7 @@ class LandingPage(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class LineString(_model_base.Model):
+class LineString(_Model):
     """Represents a LineString.
 
     :ivar type: The type of the linestring. Required. "LineString"
@@ -1956,7 +1955,7 @@ class LineString(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Link(_model_base.Model):
+class Link(_Model):
     """Link model.
 
     Ref:
@@ -2055,7 +2054,7 @@ class Link(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedIdentitiesPagedResponse(_model_base.Model):
+class ManagedIdentitiesPagedResponse(_Model):
     """Managed Identities paged response.
 
     :ivar value: Managed Identities. Required.
@@ -2090,7 +2089,7 @@ class ManagedIdentitiesPagedResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedIdentityConnection(_model_base.Model):
+class ManagedIdentityConnection(_Model):
     """Managed Identity connection information.
 
     :ivar container_url: Azure Blob Storage container URL. Required.
@@ -2130,7 +2129,7 @@ class ManagedIdentityIngestionSource(IngestionSource, discriminator="BlobManaged
     :ivar id: Ingestion source id. Required.
     :vartype id: str
     :ivar created: Created time in UTC format. Required.
-    :vartype created: ~datetime
+    :vartype created: ~datetime.datetime
     :ivar kind: Required. Azure Blob Managed Identity
     :vartype kind: str or ~azure.planetarycomputer.models.BLOB_MANAGED_IDENTITY
     :ivar connection_info: Managed identity connection information. Required.
@@ -2149,7 +2148,7 @@ class ManagedIdentityIngestionSource(IngestionSource, discriminator="BlobManaged
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        created: datetime,
+        created: datetime.datetime,
         connection_info: "_models.ManagedIdentityConnection",
     ) -> None: ...
 
@@ -2201,7 +2200,7 @@ class ManagedIdentityIngestionSourceCreate(IngestionSourceCreate, discriminator=
         super().__init__(*args, kind=IngestionSourceType.BLOB_MANAGED_IDENTITY, **kwargs)
 
 
-class ManagedIdentityMetadata(_model_base.Model):
+class ManagedIdentityMetadata(_Model):
     """Managed Identity metadata.
 
     :ivar object_id: Object id of the managed identity. Required.
@@ -2234,7 +2233,7 @@ class ManagedIdentityMetadata(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Metadata(_model_base.Model):
+class Metadata(_Model):
     """Metadata information for mosaic or search results.
 
     :ivar type: Type of metadata resource. Known values are: "mosaic" and "search".
@@ -2294,7 +2293,7 @@ class Metadata(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Mosaic(_model_base.Model):
+class Mosaic(_Model):
     """Defines a named mosaic with filtering criteria.
 
     :ivar id: Unique identifier for the mosaic. Required.
@@ -2338,7 +2337,7 @@ class Mosaic(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MosaicInfo(_model_base.Model):
+class MosaicInfo(_Model):
     """Configuration for data mosaic visualization.
 
     :ivar mosaics: Predefined data mosaics available for this collection. Required.
@@ -2388,7 +2387,7 @@ class MosaicInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MultiLineString(_model_base.Model):
+class MultiLineString(_Model):
     """Represents a MultiLineString.
 
     :ivar type: The type of the multilinestring. Required. "MultiLineString"
@@ -2428,7 +2427,7 @@ class MultiLineString(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MultiPoint(_model_base.Model):
+class MultiPoint(_Model):
     """Represents a MultiPoint.
 
     :ivar type: The type of the multipoint. Required. "MultiPoint"
@@ -2466,7 +2465,7 @@ class MultiPoint(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MultiPolygon(_model_base.Model):
+class MultiPolygon(_Model):
     """Represents a MultiPolygon.
 
     :ivar coordinates: The coordinates of the multipolygon. Required.
@@ -2506,7 +2505,7 @@ class MultiPolygon(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_model_base.Model):
+class Operation(_Model):
     """Spatio geo-catalog operation.
 
     :ivar id: Operation id. Required.
@@ -2517,15 +2516,15 @@ class Operation(_model_base.Model):
     :ivar type: Operation type. Required.
     :vartype type: str
     :ivar creation_time: The UTC time at which the operation was created. Required.
-    :vartype creation_time: ~datetime
+    :vartype creation_time: ~datetime.datetime
     :ivar collection_id: Collection ID.
     :vartype collection_id: str
     :ivar status_history: The history of the operation status in time. Required.
     :vartype status_history: list[~azure.planetarycomputer.models.OperationStatusHistoryItem]
     :ivar start_time: The UTC time at which the operation was started.
-    :vartype start_time: ~datetime
+    :vartype start_time: ~datetime.datetime
     :ivar finish_time: The UTC time at which the operation finished its execution.
-    :vartype finish_time: ~datetime
+    :vartype finish_time: ~datetime.datetime
     :ivar additional_information: Additional information elements about the particular operation
      type.
     :vartype additional_information: dict[str, str]
@@ -2542,7 +2541,7 @@ class Operation(_model_base.Model):
      \"Canceled\", \"Canceling\", and \"Failed\"."""
     type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Operation type. Required."""
-    creation_time: datetime = rest_field(
+    creation_time: datetime.datetime = rest_field(
         name="creationTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The UTC time at which the operation was created. Required."""
@@ -2554,11 +2553,11 @@ class Operation(_model_base.Model):
         name="statusHistory", visibility=["read", "create", "update", "delete", "query"]
     )
     """The history of the operation status in time. Required."""
-    start_time: Optional[datetime] = rest_field(
+    start_time: Optional[datetime.datetime] = rest_field(
         name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The UTC time at which the operation was started."""
-    finish_time: Optional[datetime] = rest_field(
+    finish_time: Optional[datetime.datetime] = rest_field(
         name="finishTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The UTC time at which the operation finished its execution."""
@@ -2576,11 +2575,11 @@ class Operation(_model_base.Model):
         id: str,  # pylint: disable=redefined-builtin
         status: Union[str, "_models.OperationStatus"],
         type: str,
-        creation_time: datetime,
+        creation_time: datetime.datetime,
         status_history: List["_models.OperationStatusHistoryItem"],
         collection_id: Optional[str] = None,
-        start_time: Optional[datetime] = None,
-        finish_time: Optional[datetime] = None,
+        start_time: Optional[datetime.datetime] = None,
+        finish_time: Optional[datetime.datetime] = None,
         additional_information: Optional[Dict[str, str]] = None,
         error: Optional[ODataV4Format] = None,
     ) -> None: ...
@@ -2596,7 +2595,7 @@ class Operation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationsPagedResponse(_model_base.Model):
+class OperationsPagedResponse(_Model):
     """Operations paged response.
 
     :ivar value: Operations. Required.
@@ -2629,11 +2628,11 @@ class OperationsPagedResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationStatusHistoryItem(_model_base.Model):
+class OperationStatusHistoryItem(_Model):
     """Operation status history item.
 
     :ivar timestamp: The UTC time at which the status was set. Required.
-    :vartype timestamp: ~datetime
+    :vartype timestamp: ~datetime.datetime
     :ivar status: The status of the operation. Required. Known values are: "Pending", "Running",
      "Succeeded", "Canceled", "Canceling", and "Failed".
     :vartype status: str or ~azure.planetarycomputer.models.OperationStatus
@@ -2643,7 +2642,7 @@ class OperationStatusHistoryItem(_model_base.Model):
     :vartype error_message: str
     """
 
-    timestamp: datetime = rest_field(
+    timestamp: datetime.datetime = rest_field(
         visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The UTC time at which the status was set. Required."""
@@ -2663,7 +2662,7 @@ class OperationStatusHistoryItem(_model_base.Model):
     def __init__(
         self,
         *,
-        timestamp: datetime,
+        timestamp: datetime.datetime,
         status: Union[str, "_models.OperationStatus"],
         error_code: Optional[str] = None,
         error_message: Optional[str] = None,
@@ -2680,7 +2679,7 @@ class OperationStatusHistoryItem(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PartitionType(_model_base.Model):
+class PartitionType(_Model):
     """Defines how data is partitioned for efficient storage and retrieval.
 
     :ivar scheme: Partitioning scheme to use for data organization. Known values are: "year",
@@ -2712,7 +2711,7 @@ class PartitionType(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PatchRequest(_model_base.Model):
+class PatchRequest(_Model):
     """Patch request model.
 
     :ivar display_name: Ingestion name.
@@ -2763,7 +2762,7 @@ class PatchRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PgStacSearch(_model_base.Model):
+class PgStacSearch(_Model):
     """PgSTAC Search entry.
 
     ref:
@@ -2780,7 +2779,7 @@ class PgStacSearch(_model_base.Model):
     :ivar orderby: SQL ORDER BY clause for sorting results. Required.
     :vartype orderby: str
     :ivar lastused: Timestamp when the search was last accessed. Required.
-    :vartype lastused: ~datetime
+    :vartype lastused: ~datetime.datetime
     :ivar usecount: Number of times the search has been accessed. Required.
     :vartype usecount: int
     :ivar metadata: Additional metadata associated with the search. Required.
@@ -2795,7 +2794,7 @@ class PgStacSearch(_model_base.Model):
     """SQL WHERE clause representing the search filters. Required."""
     orderby: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """SQL ORDER BY clause for sorting results. Required."""
-    lastused: datetime = rest_field(
+    lastused: datetime.datetime = rest_field(
         visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """Timestamp when the search was last accessed. Required."""
@@ -2812,7 +2811,7 @@ class PgStacSearch(_model_base.Model):
         search: "_models.Cql",
         where: str,
         orderby: str,
-        lastused: datetime,
+        lastused: datetime.datetime,
         usecount: int,
         metadata: "_models.Metadata",
     ) -> None: ...
@@ -2828,7 +2827,7 @@ class PgStacSearch(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Point(_model_base.Model):
+class Point(_Model):
     """Represents a GeoJSON Point geometry.
 
     :ivar type: The geometry type, always "Point" for Point geometries. Required. "Point"
@@ -2866,7 +2865,7 @@ class Point(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Polygon(_model_base.Model):
+class Polygon(_Model):
     """Represents a Polygon.
 
     :ivar coordinates: The coordinates of the polygon. Required.
@@ -2904,7 +2903,7 @@ class Polygon(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Provider(_model_base.Model):
+class Provider(_Model):
     """`https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#provider-object
     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#provider-object>`_
 
@@ -2950,7 +2949,7 @@ class Provider(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class QueryableDefinition(_model_base.Model):
+class QueryableDefinition(_Model):
     """Definition of a queryable field for STAC API filtering.
 
     :ivar name: Name of the queryable field. Required.
@@ -2999,7 +2998,7 @@ class QueryableDefinition(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class QueryableDefinitionType(_model_base.Model):
+class QueryableDefinitionType(_Model):
     """QueryableDefinitionType.
 
     :ivar create_index: Whether to create a database index for this property.
@@ -3041,7 +3040,7 @@ class QueryableDefinitionType(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RegisterResponse(_model_base.Model):
+class RegisterResponse(_Model):
     """Response from a successful mosaic registration with search ID and related links.
 
     :ivar search_id: Unique identifier for the registered search. Required.
@@ -3074,7 +3073,7 @@ class RegisterResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RenderOption(_model_base.Model):
+class RenderOption(_Model):
     """Defines visualization parameters for rendering data on a map.
 
     :ivar id: Unique identifier for the render option. Required.
@@ -3165,7 +3164,7 @@ class RenderOption(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RenderOptionCondition(_model_base.Model):
+class RenderOptionCondition(_Model):
     """Defines a condition for enabling a render option.
 
     :ivar property: Property name to check in the active CQL filter. Required.
@@ -3198,7 +3197,7 @@ class RenderOptionCondition(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RenderOptionLegend(_model_base.Model):
+class RenderOptionLegend(_Model):
     """Configuration for generating a data legend.
 
     :ivar type: Legend type to make,
@@ -3269,7 +3268,7 @@ class RenderOptionLegend(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RenderOptionVectorOptions(_model_base.Model):
+class RenderOptionVectorOptions(_Model):
     """Defines parameters for vector tile rendering.
 
     :ivar tilejson_key: Asset key containing the TileJSON URL. Required.
@@ -3326,16 +3325,16 @@ class RenderOptionVectorOptions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SasToken(_model_base.Model):
+class SasToken(_Model):
     """SasToken.
 
     :ivar msft_expiry: Msft:Expiry. Required.
-    :vartype msft_expiry: ~datetime
+    :vartype msft_expiry: ~datetime.datetime
     :ivar token: Token. Required.
     :vartype token: str
     """
 
-    msft_expiry: datetime = rest_field(
+    msft_expiry: datetime.datetime = rest_field(
         name="msft:expiry", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """Msft:Expiry. Required."""
@@ -3346,7 +3345,7 @@ class SasToken(_model_base.Model):
     def __init__(
         self,
         *,
-        msft_expiry: datetime,
+        msft_expiry: datetime.datetime,
         token: str,
     ) -> None: ...
 
@@ -3361,18 +3360,18 @@ class SasToken(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SasTokenConnection(_model_base.Model):
+class SasTokenConnection(_Model):
     """SAS Token connection information.
 
     :ivar container_url: Azure Blob Storage container URL. Required.
     :vartype container_url: str
     :ivar expiration: Azure Blob Storage SAS token expiration in UTC format. Required.
-    :vartype expiration: ~datetime
+    :vartype expiration: ~datetime.datetime
     """
 
     container_url: str = rest_field(name="containerUrl", visibility=["read", "create", "update", "delete", "query"])
     """Azure Blob Storage container URL. Required."""
-    expiration: datetime = rest_field(
+    expiration: datetime.datetime = rest_field(
         visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """Azure Blob Storage SAS token expiration in UTC format. Required."""
@@ -3382,7 +3381,7 @@ class SasTokenConnection(_model_base.Model):
         self,
         *,
         container_url: str,
-        expiration: datetime,
+        expiration: datetime.datetime,
     ) -> None: ...
 
     @overload
@@ -3396,7 +3395,7 @@ class SasTokenConnection(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SasTokenConnectionCreate(_model_base.Model):
+class SasTokenConnectionCreate(_Model):
     """SAS Token connection information.
 
     :ivar container_url: Azure Blob Storage container URL. Required.
@@ -3435,7 +3434,7 @@ class SasTokenIngestionSource(IngestionSource, discriminator="SasToken"):
     :ivar id: Ingestion source id. Required.
     :vartype id: str
     :ivar created: Created time in UTC format. Required.
-    :vartype created: ~datetime
+    :vartype created: ~datetime.datetime
     :ivar kind: Required. Azure Blob Storage SAS token
     :vartype kind: str or ~azure.planetarycomputer.models.SAS_TOKEN
     :ivar connection_info: SAS token connection information. Required.
@@ -3454,7 +3453,7 @@ class SasTokenIngestionSource(IngestionSource, discriminator="SasToken"):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        created: datetime,
+        created: datetime.datetime,
         connection_info: "_models.SasTokenConnection",
     ) -> None: ...
 
@@ -3506,7 +3505,7 @@ class SasTokenIngestionSourceCreate(IngestionSourceCreate, discriminator="SasTok
         super().__init__(*args, kind=IngestionSourceType.SAS_TOKEN, **kwargs)
 
 
-class SearchPostRequest(_model_base.Model):
+class SearchPostRequest(_Model):
     """Search model.
 
     Overrides the validation for datetime from the base request model.
@@ -3589,25 +3588,25 @@ class SearchPostRequest(_model_base.Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """`https://github.com/stac-api-extensions/query <https://github.com/stac-api-extensions/query>`_
-
+     
      Query."""
     sortby: Optional[List["_models.SortExtension"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """`https://github.com/stac-api-extensions/sort <https://github.com/stac-api-extensions/sort>`_
-
+     
      Sort criteria for the search results."""
     fields: Optional[List["_models.SearchPostRequestFields"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """`https://github.com/stac-api-extensions/fields
      <https://github.com/stac-api-extensions/fields>`_
-
+     
      Specifies which fields to include or exclude in the response."""
     filter: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """`https://github.com/stac-api-extensions/filter
      <https://github.com/stac-api-extensions/filter>`_
-
+     
      Filter."""
     filter_crs: Optional[str] = rest_field(
         name="filter-crs", visibility=["read", "create", "update", "delete", "query"]
@@ -3654,7 +3653,7 @@ class SearchPostRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchPostRequestFields(_model_base.Model):
+class SearchPostRequestFields(_Model):
     """FieldsExtension.
 
     Attributes:
@@ -3693,7 +3692,7 @@ class SearchPostRequestFields(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SortBy(_model_base.Model):
+class SortBy(_Model):
     """SortBy model.
 
     :ivar field: Field to sort by. Required.
@@ -3726,7 +3725,7 @@ class SortBy(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SortExtension(_model_base.Model):
+class SortExtension(_Model):
     """`https://github.com/radiantearth/stac-api-spec/tree/master/extensions/sort#sort-api-extension
     <https://github.com/radiantearth/stac-api-spec/tree/master/extensions/sort#sort-api-extension>`_
 
@@ -3765,7 +3764,7 @@ class SortExtension(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SpatialExtent(_model_base.Model):
+class SpatialExtent(_Model):
     """`https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object
     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object>`_
 
@@ -3797,7 +3796,7 @@ class SpatialExtent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class StacCollection(_model_base.Model):
+class StacCollection(_Model):
     """`https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md
     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md>`_
 
@@ -3884,7 +3883,7 @@ class StacCollection(_model_base.Model):
     summaries: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """`https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#summaries
      <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#summaries>`_
-
+     
      Summaries."""
 
     @overload
@@ -3920,7 +3919,7 @@ class StacCollection(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class StacItem(_model_base.Model):
+class StacItem(_Model):
     """Represents a STAC Item, which is a GeoJSON Feature with additional metadata.
 
     :ivar type: GeoJSON type identifier for Feature. Required. "Feature"
@@ -4031,15 +4030,15 @@ class StacItem(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class StatisticsResponse(_model_base.Model):
+class StatisticsResponse(_Model):
     """Return dataset's statistics."""
 
 
-class StringRecord(_model_base.Model):
+class StringRecord(_Model):
     """String record."""
 
 
-class TileJsonResponse(_model_base.Model):
+class TileJsonResponse(_Model):
     """TileJSON model.
 
     Based on `https://github.com/mapbox/tilejson-spec/tree/master/2.2.0TileJSON
@@ -4143,7 +4142,7 @@ class TileJsonResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TileMatrix(_model_base.Model):
+class TileMatrix(_Model):
     """Tile Matrix Definition
 
     A tile matrix, usually corresponding to a particular zoom level of a
@@ -4236,7 +4235,7 @@ class TileMatrix(_model_base.Model):
         name="variableMatrixWidths", visibility=["read", "create", "update", "delete", "query"]
     )
     """Describes the rows that has variable matrix width
-
+     
      ref:
      `https://github.com/opengeospatial/2D-Tile-Matrix-Set/blob/master/schemas/tms/2.0/json/variableMatrixWidth.json
      <https://github.com/opengeospatial/2D-Tile-Matrix-Set/blob/master/schemas/tms/2.0/json/variableMatrixWidth.json>`_."""
@@ -4271,7 +4270,7 @@ class TileMatrix(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TileMatrixSet(_model_base.Model):
+class TileMatrixSet(_Model):
     """`https://github.com/opengeospatial/2D-Tile-Matrix-Set/blob/master/schemas/tms/2.0/json/tileMatrixSet.json
     <https://github.com/opengeospatial/2D-Tile-Matrix-Set/blob/master/schemas/tms/2.0/json/tileMatrixSet.json>`_
 
@@ -4363,7 +4362,7 @@ class TileMatrixSet(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TileMatrixSetBoundingBox(_model_base.Model):
+class TileMatrixSetBoundingBox(_Model):
     """Geographic extent of the tile matrix set expressed in the specified coordinate reference
     system.
 
@@ -4411,7 +4410,7 @@ class TileMatrixSetBoundingBox(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TilerInfo(_model_base.Model):
+class TilerInfo(_Model):
     """TilerInfo.
 
     :ivar bounds: Bounds. Required.
@@ -4521,7 +4520,7 @@ class TilerInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TileSettings(_model_base.Model):
+class TileSettings(_Model):
     """Configuration for map tile visualization.
 
     :ivar min_zoom: The minimum zoom level that can be requested for this collection. Provides a
@@ -4569,7 +4568,7 @@ class TileSettings(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TimeInterval(_model_base.Model):
+class TimeInterval(_Model):
     """`https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#temporal-extent-object
     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#temporal-extent-object>`_
 
@@ -4600,7 +4599,7 @@ class TimeInterval(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TitilerCoreModelsResponsesPoint(_model_base.Model):
+class TitilerCoreModelsResponsesPoint(_Model):
     """Point model.
 
     response model for ``/point`` endpointsResponse model for point query operations providing
@@ -4641,7 +4640,7 @@ class TitilerCoreModelsResponsesPoint(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TitilerPgstacModelInfo(_model_base.Model):
+class TitilerPgstacModelInfo(_Model):
     """Information about a registered STAC search query.
 
     :ivar search: PgSTAC Search entry.
@@ -4658,11 +4657,11 @@ class TitilerPgstacModelInfo(_model_base.Model):
 
     search: "_models.PgStacSearch" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """PgSTAC Search entry.
-
+     
      ref:
      `https://github.com/stac-utils/pgstac/blob/3499daa2bfa700ae7bb07503795c169bf2ebafc7/sql/004_search.sql#L907-L915
      <https://github.com/stac-utils/pgstac/blob/3499daa2bfa700ae7bb07503795c169bf2ebafc7/sql/004_search.sql#L907-L915>`_
-
+     
      Details of the saved search query. Required."""
     links: Optional[List["_models.Link"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Related links for the search query."""
@@ -4686,16 +4685,16 @@ class TitilerPgstacModelInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UnsignedLink(_model_base.Model):
+class UnsignedLink(_Model):
     """UnsignedLink.
 
     :ivar msft_expiry: Msft:Expiry.
-    :vartype msft_expiry: ~datetime
+    :vartype msft_expiry: ~datetime.datetime
     :ivar href: Href. Required.
     :vartype href: str
     """
 
-    msft_expiry: Optional[datetime] = rest_field(
+    msft_expiry: Optional[datetime.datetime] = rest_field(
         name="msft:expiry", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """Msft:Expiry."""
@@ -4707,7 +4706,7 @@ class UnsignedLink(_model_base.Model):
         self,
         *,
         href: str,
-        msft_expiry: Optional[datetime] = None,
+        msft_expiry: Optional[datetime.datetime] = None,
     ) -> None: ...
 
     @overload
@@ -4721,7 +4720,7 @@ class UnsignedLink(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UserCollectionSettings(_model_base.Model):
+class UserCollectionSettings(_Model):
     """User-specific collection settings for visualization.
 
     :ivar tile_settings: Settings for map tile visualization. Required.
@@ -4758,7 +4757,7 @@ class UserCollectionSettings(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class VariableMatrixWidth(_model_base.Model):
+class VariableMatrixWidth(_Model):
     """Model for variableMatrixWidth.
 
     :ivar coalesce: Number of tiles in width that coalesce in a single tile for these rows.

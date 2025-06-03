@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import MicrosoftPlanetaryComputerProClient
+from azure.planetarycomputer import PlanetaryComputerClient
 
 """
 # PREREQUISITES
@@ -25,12 +25,12 @@ from azure.planetarycomputer import MicrosoftPlanetaryComputerProClient
 
 
 def main():
-    client = MicrosoftPlanetaryComputerProClient(
+    client = PlanetaryComputerClient(
         credential=DefaultAzureCredential(),
     )
 
     response = client.ingestion_operations.get(
-        operation_id="9bb31abd-91d6-4649-9c6f-beadbec7c622",
+        operation_id="59c757bb-01fc-4196-8036-11e3ee0c08b8",
     )
     print(response)
 

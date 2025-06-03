@@ -1,4 +1,4 @@
-directory: specification/orbitalplanetarycomputer/Orbital.Spatio
-commit: <replace with your value>
-repo: <replace with your value>
+directory: specification/orbital/Microsoft.PlanetaryComputer
+commit: f3ed32d02379c5b65843e276864f94558851549b
+repo: Azure/azure-rest-api-specs
 additionalDirectories: 

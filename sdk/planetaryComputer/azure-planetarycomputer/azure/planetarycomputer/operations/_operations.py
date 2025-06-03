@@ -29,11 +29,11 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import _model_base, models as _models
-from .._configuration import MicrosoftPlanetaryComputerProClientConfiguration
-from .._model_base import SdkJSONEncoder, _deserialize, _deserialize_xml
-from .._serialization import Deserializer, Serializer
-from .._vendor import prepare_multipart_form_data
+from .. import models as _models
+from .._configuration import PlanetaryComputerClientConfiguration
+from .._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _deserialize_xml
+from .._utils.serialization import Deserializer, Serializer
+from .._utils.utils import prepare_multipart_form_data
 
 if TYPE_CHECKING:
     from .. import _types
@@ -1804,10 +1804,10 @@ def build_tiler_geo_json_statistics_get_all_request(  # pylint: disable=name-too
 def build_tiler_tiles_get_zxy_scalex_format_request(  # pylint: disable=name-too-long
     collection_id: str,
     item_id: str,
-    z: str,
-    x: str,
-    y: str,
-    scale: str,
+    z: float,
+    x: float,
+    y: float,
+    scale: float,
     format: str,
     *,
     assets: Optional[List[str]] = None,
@@ -1841,10 +1841,10 @@ def build_tiler_tiles_get_zxy_scalex_format_request(  # pylint: disable=name-too
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
         "itemId": _SERIALIZER.url("item_id", item_id, "str"),
-        "z": _SERIALIZER.url("z", z, "str"),
-        "x": _SERIALIZER.url("x", x, "str"),
-        "y": _SERIALIZER.url("y", y, "str"),
-        "scale": _SERIALIZER.url("scale", scale, "str"),
+        "z": _SERIALIZER.url("z", z, "float"),
+        "x": _SERIALIZER.url("x", x, "float"),
+        "y": _SERIALIZER.url("y", y, "float"),
+        "scale": _SERIALIZER.url("scale", scale, "float"),
         "format": _SERIALIZER.url("format", format, "str"),
     }
 
@@ -1900,10 +1900,10 @@ def build_tiler_tile_matrix_sets_get_zxy_scalex_format_request(  # pylint: disab
     collection_id: str,
     item_id: str,
     tile_matrix_set_id: str,
-    z: str,
-    x: str,
-    y: str,
-    scale: str,
+    z: float,
+    x: float,
+    y: float,
+    scale: float,
     format: str,
     *,
     assets: Optional[List[str]] = None,
@@ -1937,10 +1937,10 @@ def build_tiler_tile_matrix_sets_get_zxy_scalex_format_request(  # pylint: disab
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
         "itemId": _SERIALIZER.url("item_id", item_id, "str"),
         "tileMatrixSetId": _SERIALIZER.url("tile_matrix_set_id", tile_matrix_set_id, "str"),
-        "z": _SERIALIZER.url("z", z, "str"),
-        "x": _SERIALIZER.url("x", x, "str"),
-        "y": _SERIALIZER.url("y", y, "str"),
-        "scale": _SERIALIZER.url("scale", scale, "str"),
+        "z": _SERIALIZER.url("z", z, "float"),
+        "x": _SERIALIZER.url("x", x, "float"),
+        "y": _SERIALIZER.url("y", y, "float"),
+        "scale": _SERIALIZER.url("scale", scale, "float"),
         "format": _SERIALIZER.url("format", format, "str"),
     }
 
@@ -2351,8 +2351,8 @@ def build_tiler_wmts_tile_matrix_sets_get_capabilities_xml_request(  # pylint: d
 def build_tiler_points_get_lon_lat_request(
     collection_id: str,
     item_id: str,
-    lon: str,
-    lat: str,
+    lon: float,
+    lat: float,
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
@@ -2375,8 +2375,8 @@ def build_tiler_points_get_lon_lat_request(
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
         "itemId": _SERIALIZER.url("item_id", item_id, "str"),
-        "lon": _SERIALIZER.url("lon", lon, "str"),
-        "lat": _SERIALIZER.url("lat", lat, "str"),
+        "lon": _SERIALIZER.url("lon", lon, "float"),
+        "lat": _SERIALIZER.url("lat", lat, "float"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -2584,12 +2584,12 @@ def build_tiler_previews_get_request(
 def build_tiler_parts_get_minx_miny_maxx_maxy_widthx_height_format_request(  # pylint: disable=name-too-long
     collection_id: str,
     item_id: str,
-    minx: str,
-    miny: str,
-    maxx: str,
-    maxy: str,
-    width: str,
-    height: str,
+    minx: float,
+    miny: float,
+    maxx: float,
+    maxy: float,
+    width: float,
+    height: float,
     format: str,
     *,
     assets: Optional[List[str]] = None,
@@ -2622,12 +2622,12 @@ def build_tiler_parts_get_minx_miny_maxx_maxy_widthx_height_format_request(  # p
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
         "itemId": _SERIALIZER.url("item_id", item_id, "str"),
-        "minx": _SERIALIZER.url("minx", minx, "str"),
-        "miny": _SERIALIZER.url("miny", miny, "str"),
-        "maxx": _SERIALIZER.url("maxx", maxx, "str"),
-        "maxy": _SERIALIZER.url("maxy", maxy, "str"),
-        "width": _SERIALIZER.url("width", width, "str"),
-        "height": _SERIALIZER.url("height", height, "str"),
+        "minx": _SERIALIZER.url("minx", minx, "float"),
+        "miny": _SERIALIZER.url("miny", miny, "float"),
+        "maxx": _SERIALIZER.url("maxx", maxx, "float"),
+        "maxy": _SERIALIZER.url("maxy", maxy, "float"),
+        "width": _SERIALIZER.url("width", width, "float"),
+        "height": _SERIALIZER.url("height", height, "float"),
         "format": _SERIALIZER.url("format", format, "str"),
     }
 
@@ -2680,10 +2680,10 @@ def build_tiler_parts_get_minx_miny_maxx_maxy_widthx_height_format_request(  # p
 def build_tiler_parts_get_minx_miny_maxx_maxy_format_request(  # pylint: disable=name-too-long
     collection_id: str,
     item_id: str,
-    minx: str,
-    miny: str,
-    maxx: str,
-    maxy: str,
+    minx: float,
+    miny: float,
+    maxx: float,
+    maxy: float,
     format: str,
     *,
     assets: Optional[List[str]] = None,
@@ -2718,10 +2718,10 @@ def build_tiler_parts_get_minx_miny_maxx_maxy_format_request(  # pylint: disable
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
         "itemId": _SERIALIZER.url("item_id", item_id, "str"),
-        "minx": _SERIALIZER.url("minx", minx, "str"),
-        "miny": _SERIALIZER.url("miny", miny, "str"),
-        "maxx": _SERIALIZER.url("maxx", maxx, "str"),
-        "maxy": _SERIALIZER.url("maxy", maxy, "str"),
+        "minx": _SERIALIZER.url("minx", minx, "float"),
+        "miny": _SERIALIZER.url("miny", miny, "float"),
+        "maxx": _SERIALIZER.url("maxx", maxx, "float"),
+        "maxy": _SERIALIZER.url("maxy", maxy, "float"),
         "format": _SERIALIZER.url("format", format, "str"),
     }
 
@@ -2778,8 +2778,8 @@ def build_tiler_parts_get_minx_miny_maxx_maxy_format_request(  # pylint: disable
 def build_tiler_geo_jsons_crop_widthx_height_format_request(  # pylint: disable=name-too-long
     collection_id: str,
     item_id: str,
-    width: str,
-    height: str,
+    width: float,
+    height: float,
     format: str,
     *,
     assets: Optional[List[str]] = None,
@@ -2812,8 +2812,8 @@ def build_tiler_geo_jsons_crop_widthx_height_format_request(  # pylint: disable=
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
         "itemId": _SERIALIZER.url("item_id", item_id, "str"),
-        "width": _SERIALIZER.url("width", width, "str"),
-        "height": _SERIALIZER.url("height", height, "str"),
+        "width": _SERIALIZER.url("width", width, "float"),
+        "height": _SERIALIZER.url("height", height, "float"),
         "format": _SERIALIZER.url("format", format, "str"),
     }
 
@@ -3055,10 +3055,10 @@ def build_maps_legends_get_request(
 
 def build_mosaics_tiles_get_zxy_scalex_format_request(  # pylint: disable=name-too-long
     search_id: str,
-    z: str,
-    x: str,
-    y: str,
-    scale: str,
+    z: float,
+    x: float,
+    y: float,
+    scale: float,
     format: str,
     *,
     assets: Optional[List[str]] = None,
@@ -3096,10 +3096,10 @@ def build_mosaics_tiles_get_zxy_scalex_format_request(  # pylint: disable=name-t
     _url = "/data/mosaic/{searchId}/tiles/{z}/{x}/{y}@{scale}x.{format}"
     path_format_arguments = {
         "searchId": _SERIALIZER.url("search_id", search_id, "str"),
-        "z": _SERIALIZER.url("z", z, "str"),
-        "x": _SERIALIZER.url("x", x, "str"),
-        "y": _SERIALIZER.url("y", y, "str"),
-        "scale": _SERIALIZER.url("scale", scale, "str"),
+        "z": _SERIALIZER.url("z", z, "float"),
+        "x": _SERIALIZER.url("x", x, "float"),
+        "y": _SERIALIZER.url("y", y, "float"),
+        "scale": _SERIALIZER.url("scale", scale, "float"),
         "format": _SERIALIZER.url("format", format, "str"),
     }
 
@@ -3164,10 +3164,10 @@ def build_mosaics_tiles_get_zxy_scalex_format_request(  # pylint: disable=name-t
 def build_mosaics_tile_matrix_sets_get_zxy_scalex_format_request(  # pylint: disable=name-too-long
     search_id: str,
     tile_matrix_set_id: str,
-    z: str,
-    x: str,
-    y: str,
-    scale: str,
+    z: float,
+    x: float,
+    y: float,
+    scale: float,
     format: str,
     *,
     assets: Optional[List[str]] = None,
@@ -3205,10 +3205,10 @@ def build_mosaics_tile_matrix_sets_get_zxy_scalex_format_request(  # pylint: dis
     path_format_arguments = {
         "searchId": _SERIALIZER.url("search_id", search_id, "str"),
         "tileMatrixSetId": _SERIALIZER.url("tile_matrix_set_id", tile_matrix_set_id, "str"),
-        "z": _SERIALIZER.url("z", z, "str"),
-        "x": _SERIALIZER.url("x", x, "str"),
-        "y": _SERIALIZER.url("y", y, "str"),
-        "scale": _SERIALIZER.url("scale", scale, "str"),
+        "z": _SERIALIZER.url("z", z, "float"),
+        "x": _SERIALIZER.url("x", x, "float"),
+        "y": _SERIALIZER.url("y", y, "float"),
+        "scale": _SERIALIZER.url("scale", scale, "float"),
         "format": _SERIALIZER.url("format", format, "str"),
     }
 
@@ -3618,9 +3618,9 @@ def build_mosaics_info_search_get_request(search_id: str, **kwargs: Any) -> Http
 
 def build_mosaics_assets_for_tiles_get_zxy_assets_request(  # pylint: disable=name-too-long
     search_id: str,
-    z: str,
-    x: str,
-    y: str,
+    z: float,
+    x: float,
+    y: float,
     *,
     scan_limit: Optional[int] = None,
     items_limit: Optional[int] = None,
@@ -3640,9 +3640,9 @@ def build_mosaics_assets_for_tiles_get_zxy_assets_request(  # pylint: disable=na
     _url = "/data/mosaic/{searchId}/tiles/{z}/{x}/{y}/assets"
     path_format_arguments = {
         "searchId": _SERIALIZER.url("search_id", search_id, "str"),
-        "z": _SERIALIZER.url("z", z, "str"),
-        "x": _SERIALIZER.url("x", x, "str"),
-        "y": _SERIALIZER.url("y", y, "str"),
+        "z": _SERIALIZER.url("z", z, "float"),
+        "x": _SERIALIZER.url("x", x, "float"),
+        "y": _SERIALIZER.url("y", y, "float"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -3671,9 +3671,9 @@ def build_mosaics_assets_for_tiles_get_zxy_assets_request(  # pylint: disable=na
 def build_mosaics_assets_for_tile_matrix_sets_get_zxy_assets_request(  # pylint: disable=name-too-long
     search_id: str,
     tile_matrix_set_id: str,
-    z: str,
-    x: str,
-    y: str,
+    z: float,
+    x: float,
+    y: float,
     *,
     scan_limit: Optional[int] = None,
     items_limit: Optional[int] = None,
@@ -3693,9 +3693,9 @@ def build_mosaics_assets_for_tile_matrix_sets_get_zxy_assets_request(  # pylint:
     path_format_arguments = {
         "searchId": _SERIALIZER.url("search_id", search_id, "str"),
         "tileMatrixSetId": _SERIALIZER.url("tile_matrix_set_id", tile_matrix_set_id, "str"),
-        "z": _SERIALIZER.url("z", z, "str"),
-        "x": _SERIALIZER.url("x", x, "str"),
-        "y": _SERIALIZER.url("y", y, "str"),
+        "z": _SERIALIZER.url("z", z, "float"),
+        "x": _SERIALIZER.url("x", x, "float"),
+        "y": _SERIALIZER.url("y", y, "float"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -3721,8 +3721,8 @@ def build_mosaics_assets_for_tile_matrix_sets_get_zxy_assets_request(  # pylint:
 
 def build_mosaics_assets_for_points_get_lon_lat_assets_request(  # pylint: disable=name-too-long
     search_id: str,
-    lon: str,
-    lat: str,
+    lon: float,
+    lat: float,
     *,
     scan_limit: Optional[int] = None,
     items_limit: Optional[int] = None,
@@ -3742,8 +3742,8 @@ def build_mosaics_assets_for_points_get_lon_lat_assets_request(  # pylint: disab
     _url = "/data/mosaic/{searchId}/{lon},{lat}/assets"
     path_format_arguments = {
         "searchId": _SERIALIZER.url("search_id", search_id, "str"),
-        "lon": _SERIALIZER.url("lon", lon, "str"),
-        "lat": _SERIALIZER.url("lat", lat, "str"),
+        "lon": _SERIALIZER.url("lon", lon, "float"),
+        "lat": _SERIALIZER.url("lat", lat, "float"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -4111,16 +4111,14 @@ class IngestionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`ingestions` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4674,16 +4672,14 @@ class StacItemsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`stac_items` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -5606,16 +5602,14 @@ class IngestionSourcesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`ingestion_sources` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -6120,16 +6114,14 @@ class IngestionOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`ingestion_operations` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -6371,16 +6363,14 @@ class StacLandingPagesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`stac_landing_pages` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -6450,16 +6440,14 @@ class StacConformanceClassOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`stac_conformance_class` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -6529,16 +6517,14 @@ class StacSearchOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`stac_search_operations` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -6802,16 +6788,14 @@ class StacQueryablesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`stac_queryables` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -7298,16 +7282,14 @@ class StacCollectionAssetsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`stac_collection_assets` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -7401,7 +7383,7 @@ class StacCollectionAssetsOperations:
 
         cls: ClsType[_models.StacCollection] = kwargs.pop("cls", None)
 
-        _body = body.as_dict() if isinstance(body, _model_base.Model) else body
+        _body = body.as_dict() if isinstance(body, _Model) else body
         _file_fields: List[str] = ["file"]
         _data_fields: List[str] = ["data"]
         _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
@@ -7545,7 +7527,7 @@ class StacCollectionAssetsOperations:
 
         cls: ClsType[_models.StacCollection] = kwargs.pop("cls", None)
 
-        _body = body.as_dict() if isinstance(body, _model_base.Model) else body
+        _body = body.as_dict() if isinstance(body, _Model) else body
         _file_fields: List[str] = ["file"]
         _data_fields: List[str] = ["data"]
         _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
@@ -7660,16 +7642,14 @@ class StacCollectionThumbnailsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`stac_collection_thumbnails` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -7757,16 +7737,14 @@ class StacCollectionConfigOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`stac_collection_config` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -7839,16 +7817,14 @@ class StacCollectionMosaicsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`stac_collection_mosaics` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -8336,16 +8312,14 @@ class StacCollectionRenderOptionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`stac_collection_render_options` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -8845,16 +8819,14 @@ class StacCollectionTileSettingsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`stac_collection_tile_settings` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9064,16 +9036,14 @@ class StacCollectionPartitionTypesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`stac_collection_partition_types` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9346,16 +9316,14 @@ class GeoCatalogAzmapsTokenOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`geo_catalog_azmaps_token` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9427,16 +9395,14 @@ class GeoCatalogAzmapsClientOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`geo_catalog_azmaps_client` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9508,16 +9474,14 @@ class GeoCatalogAuthConfigOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`geo_catalog_auth_config_operations` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9588,16 +9552,14 @@ class TilerStaticImagesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`tiler_static_images` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9818,16 +9780,14 @@ class TilerBoundOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`tiler_bound` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9903,16 +9863,14 @@ class TilerInfoOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`tiler_info_operations` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9993,16 +9951,14 @@ class TilerInfoGeoJsonOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`tiler_info_geo_json_operations` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -10084,16 +10040,14 @@ class TilerAvailableAssetsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`tiler_available_assets` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -10171,16 +10125,14 @@ class TilerAssetStatisticsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`tiler_asset_statistics` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -10336,16 +10288,14 @@ class TilerStatisticsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`tiler_statistics` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -10501,16 +10451,14 @@ class TilerGeoJsonStatisticsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`tiler_geo_json_statistics` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -11260,16 +11208,14 @@ class TilerTilesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`tiler_tiles` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -11278,10 +11224,10 @@ class TilerTilesOperations:
         self,
         collection_id: str,
         item_id: str,
-        z: str,
-        x: str,
-        y: str,
-        scale: str,
+        z: float,
+        x: float,
+        y: float,
+        scale: float,
         format: str,
         *,
         assets: Optional[List[str]] = None,
@@ -11314,16 +11260,16 @@ class TilerTilesOperations:
         :type item_id: str
         :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
          representing the scaleDenominator the tile. Required.
-        :type z: str
+        :type z: float
         :param x: Column (X) index of the tile on the selected TileMatrix. It cannot exceed the
          MatrixHeight-1 for the selected TileMatrix. Required.
-        :type x: str
+        :type x: float
         :param y: Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the
          MatrixWidth-1 for the selected TileMatrix. Required.
-        :type y: str
+        :type y: float
         :param scale: Numeric scale factor for the tile. Higher values produce larger tiles (default:
          "1"). Required.
-        :type scale: str
+        :type scale: float
         :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
          Required.
         :type format: str
@@ -11499,16 +11445,14 @@ class TilerTileMatrixSetsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`tiler_tile_matrix_sets` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -11518,10 +11462,10 @@ class TilerTileMatrixSetsOperations:
         collection_id: str,
         item_id: str,
         tile_matrix_set_id: str,
-        z: str,
-        x: str,
-        y: str,
-        scale: str,
+        z: float,
+        x: float,
+        y: float,
+        scale: float,
         format: str,
         *,
         assets: Optional[List[str]] = None,
@@ -11555,16 +11499,16 @@ class TilerTileMatrixSetsOperations:
         :type tile_matrix_set_id: str
         :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
          representing the scaleDenominator the tile. Required.
-        :type z: str
+        :type z: float
         :param x: Column (X) index of the tile on the selected TileMatrix. It cannot exceed the
          MatrixHeight-1 for the selected TileMatrix. Required.
-        :type x: str
+        :type x: float
         :param y: Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the
          MatrixWidth-1 for the selected TileMatrix. Required.
-        :type y: str
+        :type y: float
         :param scale: Numeric scale factor for the tile. Higher values produce larger tiles (default:
          "1"). Required.
-        :type scale: str
+        :type scale: float
         :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
          Required.
         :type format: str
@@ -11731,16 +11675,14 @@ class TilerTileJsonOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`tiler_tile_json_operations` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -11948,16 +11890,14 @@ class TilerTileJsonTileMatrixSetsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`tiler_tile_json_tile_matrix_sets` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -12160,16 +12100,14 @@ class TilerWmtsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`tiler_wmts` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -12380,16 +12318,14 @@ class TilerWmtsTileMatrixSetsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`tiler_wmts_tile_matrix_sets` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -12593,16 +12529,14 @@ class TilerPointsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`tiler_points` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -12611,8 +12545,8 @@ class TilerPointsOperations:
         self,
         collection_id: str,
         item_id: str,
-        lon: str,
-        lat: str,
+        lon: float,
+        lat: float,
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
@@ -12633,9 +12567,9 @@ class TilerPointsOperations:
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :param lon: Longitude. Required.
-        :type lon: str
+        :type lon: float
         :param lat: Latitude. Required.
-        :type lat: str
+        :type lat: float
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
@@ -12727,16 +12661,14 @@ class TilerPreviewsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`tiler_previews` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -13124,16 +13056,14 @@ class TilerPartsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`tiler_parts` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -13142,12 +13072,12 @@ class TilerPartsOperations:
         self,
         collection_id: str,
         item_id: str,
-        minx: str,
-        miny: str,
-        maxx: str,
-        maxy: str,
-        width: str,
-        height: str,
+        minx: float,
+        miny: float,
+        maxx: float,
+        maxy: float,
+        width: float,
+        height: float,
         format: str,
         *,
         assets: Optional[List[str]] = None,
@@ -13178,17 +13108,17 @@ class TilerPartsOperations:
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :param minx: Bounding box min X. Required.
-        :type minx: str
+        :type minx: float
         :param miny: Bounding box min Y. Required.
-        :type miny: str
+        :type miny: float
         :param maxx: Bounding box max X. Required.
-        :type maxx: str
+        :type maxx: float
         :param maxy: Bounding box max Y. Required.
-        :type maxy: str
+        :type maxy: float
         :param width: Width in pixels for the output image. Required.
-        :type width: str
+        :type width: float
         :param height: Height in pixels for the output image. Required.
-        :type height: str
+        :type height: float
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
         :keyword assets: Asset's names. Default value is None.
@@ -13351,10 +13281,10 @@ class TilerPartsOperations:
         self,
         collection_id: str,
         item_id: str,
-        minx: str,
-        miny: str,
-        maxx: str,
-        maxy: str,
+        minx: float,
+        miny: float,
+        maxx: float,
+        maxy: float,
         format: str,
         *,
         assets: Optional[List[str]] = None,
@@ -13387,13 +13317,13 @@ class TilerPartsOperations:
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :param minx: Bounding box min X. Required.
-        :type minx: str
+        :type minx: float
         :param miny: Bounding box min Y. Required.
-        :type miny: str
+        :type miny: float
         :param maxx: Bounding box max X. Required.
-        :type maxx: str
+        :type maxx: float
         :param maxy: Bounding box max Y. Required.
-        :type maxy: str
+        :type maxy: float
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
         :keyword assets: Asset's names. Default value is None.
@@ -13562,16 +13492,14 @@ class TilerGeoJsonsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`tiler_geo_jsons` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -13580,8 +13508,8 @@ class TilerGeoJsonsOperations:
         self,
         collection_id: str,
         item_id: str,
-        width: str,
-        height: str,
+        width: float,
+        height: float,
         format: str,
         body: _models.Point,
         *,
@@ -13613,9 +13541,9 @@ class TilerGeoJsonsOperations:
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :param width: Width in pixels for the output image. Required.
-        :type width: str
+        :type width: float
         :param height: Height in pixels for the output image. Required.
-        :type height: str
+        :type height: float
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
         :param body: Request GeoJson body. Required.
@@ -13701,8 +13629,8 @@ class TilerGeoJsonsOperations:
         self,
         collection_id: str,
         item_id: str,
-        width: str,
-        height: str,
+        width: float,
+        height: float,
         format: str,
         body: _models.LineString,
         *,
@@ -13734,9 +13662,9 @@ class TilerGeoJsonsOperations:
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :param width: Width in pixels for the output image. Required.
-        :type width: str
+        :type width: float
         :param height: Height in pixels for the output image. Required.
-        :type height: str
+        :type height: float
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
         :param body: Request GeoJson body. Required.
@@ -13822,8 +13750,8 @@ class TilerGeoJsonsOperations:
         self,
         collection_id: str,
         item_id: str,
-        width: str,
-        height: str,
+        width: float,
+        height: float,
         format: str,
         body: _models.Polygon,
         *,
@@ -13855,9 +13783,9 @@ class TilerGeoJsonsOperations:
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :param width: Width in pixels for the output image. Required.
-        :type width: str
+        :type width: float
         :param height: Height in pixels for the output image. Required.
-        :type height: str
+        :type height: float
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
         :param body: Request GeoJson body. Required.
@@ -13943,8 +13871,8 @@ class TilerGeoJsonsOperations:
         self,
         collection_id: str,
         item_id: str,
-        width: str,
-        height: str,
+        width: float,
+        height: float,
         format: str,
         body: _models.MultiPoint,
         *,
@@ -13976,9 +13904,9 @@ class TilerGeoJsonsOperations:
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :param width: Width in pixels for the output image. Required.
-        :type width: str
+        :type width: float
         :param height: Height in pixels for the output image. Required.
-        :type height: str
+        :type height: float
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
         :param body: Request GeoJson body. Required.
@@ -14064,8 +13992,8 @@ class TilerGeoJsonsOperations:
         self,
         collection_id: str,
         item_id: str,
-        width: str,
-        height: str,
+        width: float,
+        height: float,
         format: str,
         body: _models.MultiLineString,
         *,
@@ -14097,9 +14025,9 @@ class TilerGeoJsonsOperations:
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :param width: Width in pixels for the output image. Required.
-        :type width: str
+        :type width: float
         :param height: Height in pixels for the output image. Required.
-        :type height: str
+        :type height: float
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
         :param body: Request GeoJson body. Required.
@@ -14185,8 +14113,8 @@ class TilerGeoJsonsOperations:
         self,
         collection_id: str,
         item_id: str,
-        width: str,
-        height: str,
+        width: float,
+        height: float,
         format: str,
         body: _models.MultiPolygon,
         *,
@@ -14218,9 +14146,9 @@ class TilerGeoJsonsOperations:
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :param width: Width in pixels for the output image. Required.
-        :type width: str
+        :type width: float
         :param height: Height in pixels for the output image. Required.
-        :type height: str
+        :type height: float
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
         :param body: Request GeoJson body. Required.
@@ -14306,8 +14234,8 @@ class TilerGeoJsonsOperations:
         self,
         collection_id: str,
         item_id: str,
-        width: str,
-        height: str,
+        width: float,
+        height: float,
         format: str,
         body: "_types.GeoJson",
         *,
@@ -14338,9 +14266,9 @@ class TilerGeoJsonsOperations:
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :param width: Width in pixels for the output image. Required.
-        :type width: str
+        :type width: float
         :param height: Height in pixels for the output image. Required.
-        :type height: str
+        :type height: float
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
         :param body: Request GeoJson body. Is one of the following types: Point, LineString, Polygon,
@@ -15467,16 +15395,14 @@ class MapsIntervalLegendsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`maps_interval_legends` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -15567,16 +15493,14 @@ class MapsClassmapLegendsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`maps_classmap_legends` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -15665,16 +15589,14 @@ class MapsLegendsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`maps_legends` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -15786,16 +15708,14 @@ class MosaicsTilesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`mosaics_tiles` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -15803,10 +15723,10 @@ class MosaicsTilesOperations:
     def get_zxy_scalex_format(
         self,
         search_id: str,
-        z: str,
-        x: str,
-        y: str,
-        scale: str,
+        z: float,
+        x: float,
+        y: float,
+        scale: float,
         format: str,
         *,
         assets: Optional[List[str]] = None,
@@ -15842,16 +15762,16 @@ class MosaicsTilesOperations:
         :type search_id: str
         :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
          representing the scaleDenominator the tile. Required.
-        :type z: str
+        :type z: float
         :param x: Column (X) index of the tile on the selected TileMatrix. It cannot exceed the
          MatrixHeight-1 for the selected TileMatrix. Required.
-        :type x: str
+        :type x: float
         :param y: Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the
          MatrixWidth-1 for the selected TileMatrix. Required.
-        :type y: str
+        :type y: float
         :param scale: Numeric scale factor for the tile. Higher values produce larger tiles (default:
          "1"). Required.
-        :type scale: str
+        :type scale: float
         :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
          Required.
         :type format: str
@@ -16047,16 +15967,14 @@ class MosaicsTileMatrixSetsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`mosaics_tile_matrix_sets` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -16065,10 +15983,10 @@ class MosaicsTileMatrixSetsOperations:
         self,
         search_id: str,
         tile_matrix_set_id: str,
-        z: str,
-        x: str,
-        y: str,
-        scale: str,
+        z: float,
+        x: float,
+        y: float,
+        scale: float,
         format: str,
         *,
         assets: Optional[List[str]] = None,
@@ -16105,16 +16023,16 @@ class MosaicsTileMatrixSetsOperations:
         :type tile_matrix_set_id: str
         :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
          representing the scaleDenominator the tile. Required.
-        :type z: str
+        :type z: float
         :param x: Column (X) index of the tile on the selected TileMatrix. It cannot exceed the
          MatrixHeight-1 for the selected TileMatrix. Required.
-        :type x: str
+        :type x: float
         :param y: Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the
          MatrixWidth-1 for the selected TileMatrix. Required.
-        :type y: str
+        :type y: float
         :param scale: Numeric scale factor for the tile. Higher values produce larger tiles (default:
          "1"). Required.
-        :type scale: str
+        :type scale: float
         :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
          Required.
         :type format: str
@@ -16303,16 +16221,14 @@ class MosaicsTileJsonOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`mosaics_tile_json_operations` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -16550,16 +16466,14 @@ class MosaicsTileMatrixSetsTileJsonOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`mosaics_tile_matrix_sets_tile_json` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -16793,16 +16707,14 @@ class MosaicsWmtsMosaicsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`mosaics_wmts_mosaics` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -16912,16 +16824,14 @@ class MosaicsWmtsMosaicsTileMatrixSetsOperations:  # pylint: disable=name-too-lo
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`mosaics_wmts_mosaics_tile_matrix_sets` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -17026,16 +16936,14 @@ class MosaicsRegisterSearchOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`mosaics_register_search` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -17267,16 +17175,14 @@ class MosaicsInfoSearchOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`mosaics_info_search` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -17349,16 +17255,14 @@ class MosaicsAssetsForTilesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`mosaics_assets_for_tiles` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -17366,9 +17270,9 @@ class MosaicsAssetsForTilesOperations:
     def get_zxy_assets(
         self,
         search_id: str,
-        z: str,
-        x: str,
-        y: str,
+        z: float,
+        x: float,
+        y: float,
         *,
         scan_limit: Optional[int] = None,
         items_limit: Optional[int] = None,
@@ -17386,13 +17290,13 @@ class MosaicsAssetsForTilesOperations:
         :type search_id: str
         :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
          representing the scaleDenominator the tile. Required.
-        :type z: str
+        :type z: float
         :param x: Column (X) index of the tile on the selected TileMatrix. It cannot exceed the
          MatrixHeight-1 for the selected TileMatrix. Required.
-        :type x: str
+        :type x: float
         :param y: Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the
          MatrixWidth-1 for the selected TileMatrix. Required.
-        :type y: str
+        :type y: float
         :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
          value is None.
         :paramtype scan_limit: int
@@ -17488,16 +17392,14 @@ class MosaicsAssetsForTileMatrixSetsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`mosaics_assets_for_tile_matrix_sets` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -17506,9 +17408,9 @@ class MosaicsAssetsForTileMatrixSetsOperations:
         self,
         search_id: str,
         tile_matrix_set_id: str,
-        z: str,
-        x: str,
-        y: str,
+        z: float,
+        x: float,
+        y: float,
         *,
         scan_limit: Optional[int] = None,
         items_limit: Optional[int] = None,
@@ -17527,13 +17429,13 @@ class MosaicsAssetsForTileMatrixSetsOperations:
         :type tile_matrix_set_id: str
         :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
          representing the scaleDenominator the tile. Required.
-        :type z: str
+        :type z: float
         :param x: Column (X) index of the tile on the selected TileMatrix. It cannot exceed the
          MatrixHeight-1 for the selected TileMatrix. Required.
-        :type x: str
+        :type x: float
         :param y: Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the
          MatrixWidth-1 for the selected TileMatrix. Required.
-        :type y: str
+        :type y: float
         :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
          value is None.
         :paramtype scan_limit: int
@@ -17622,16 +17524,14 @@ class MosaicsAssetsForPointsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`mosaics_assets_for_points` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -17639,8 +17539,8 @@ class MosaicsAssetsForPointsOperations:
     def get_lon_lat_assets(
         self,
         search_id: str,
-        lon: str,
-        lat: str,
+        lon: float,
+        lat: float,
         *,
         scan_limit: Optional[int] = None,
         items_limit: Optional[int] = None,
@@ -17657,9 +17557,9 @@ class MosaicsAssetsForPointsOperations:
         :param search_id: Search Id (pgSTAC Search Hash). Required.
         :type search_id: str
         :param lon: Longitude. Required.
-        :type lon: str
+        :type lon: float
         :param lat: Latitude. Required.
-        :type lat: str
+        :type lat: float
         :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
          value is None.
         :paramtype scan_limit: int
@@ -17750,16 +17650,14 @@ class TileMatrixListOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`tile_matrix_list` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -17831,16 +17729,14 @@ class TileMatrixDefinitionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`tile_matrix_definitions` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -17913,16 +17809,14 @@ class SasOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`sas` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -18122,16 +18016,14 @@ class StacCollectionOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`stac_collection_operations` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -18739,16 +18631,14 @@ class IngestionsIngestionRunsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.MicrosoftPlanetaryComputerProClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
         :attr:`ingestion_runs` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftPlanetaryComputerProClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

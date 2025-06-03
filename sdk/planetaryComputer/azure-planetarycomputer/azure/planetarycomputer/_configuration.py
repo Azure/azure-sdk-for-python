@@ -16,8 +16,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class MicrosoftPlanetaryComputerProClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
-    """Configuration for MicrosoftPlanetaryComputerProClient.
+class PlanetaryComputerClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for PlanetaryComputerClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
