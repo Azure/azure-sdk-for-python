@@ -478,7 +478,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         envelope = exporter._point_to_envelope(point, "http.server.request.size", resource)
         self.assertIsNone(envelope)
 
-    ### Kusto Disabled
+    # Log Analytics Metrics Disabled
 
     def test_constructor_log_analytics_enabled_default(self):
         exporter = AzureMonitorMetricExporter()
