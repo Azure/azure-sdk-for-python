@@ -314,6 +314,7 @@ class AioHttpTransport(AsyncHttpTransport):
             timeout = config.pop("connection_timeout", self.connection_config.timeout)
             read_timeout = config.pop("read_timeout", self.connection_config.read_timeout)
             socket_timeout = aiohttp.ClientTimeout(sock_connect=timeout, sock_read=read_timeout)
+            address_resolved = self._log_dns_resolution(request, before_request=True)
             result = await self.session.request(  # type: ignore
                 request.method,
                 request.url,
@@ -324,6 +325,8 @@ class AioHttpTransport(AsyncHttpTransport):
                 proxy=proxy,
                 **config,
             )
+            if not address_resolved:
+                self._log_dns_resolution(request, before_request=False)
             if _is_rest(request):
                 from azure.core.rest._aiohttp import RestAioHttpTransportResponse
 
@@ -364,6 +367,48 @@ class AioHttpTransport(AsyncHttpTransport):
             raise ServiceRequestError(err, error=err) from err
         return response
 
+    def _log_dns_resolution(self, request: Union[HttpRequest, RestHttpRequest], before_request: bool) -> bool:
+        """Log DNS resolution."""
+        address_resolved = False
+        from urllib.parse import urlparse
+        url = urlparse(request.url)
+        host = url.hostname
+        port = url.port
+        key = (host, port)
+        cached_hosts = self.session._connector._cached_hosts
+        if key in cached_hosts:
+            address_resolved = True
+            if before_request:
+                log_str = 'Address is already resolved'
+            else:
+                log_str = 'Address has been resolved'
+
+            log_str = f'\n{log_str}\n'
+            dns_table = cached_hosts.next_addrs(key)[0]
+            if 'hostname' in dns_table:
+                endpoint = dns_table['hostname']
+                if 'host' in dns_table:
+                    resolved_address = dns_table['host']
+                    timestamp = cached_hosts._timestamps[key]
+                    log_str += (f'\tdns_table key:    {key}\n'
+                                f'\tendpoint:         {endpoint}\n'
+                                f'\tresolved address: {resolved_address}\n'
+                                f'\ttimestamp:        {timestamp}')
+                else:
+                    log_str += f'\tresolved address not found in dns_table: {dns_table}'
+            else:
+                log_str += f'\tendpoint not found in dns_table: {dns_table}'
+        else:
+            if before_request:
+                log_str = 'Address is not yet resolved'
+            else:
+                log_str = 'Failed to resolve address'
+            log_str = (f'\n{log_str}\n'
+                       f'\tdns_table key:    {key}')
+
+        print(log_str)
+        _LOGGER.info(log_str)
+        return address_resolved
 
 class AioHttpStreamDownloadGenerator(AsyncIterator):
     """Streams the response body data.
