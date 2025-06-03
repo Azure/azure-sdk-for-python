@@ -11,9 +11,7 @@ import time
 import warnings
 from typing import Callable, Dict, Any
 
-from opentelemetry.environment_variables import OTEL_METRICS_EXPORTER
 from opentelemetry.semconv.resource import ResourceAttributes
-from opentelemetry.sdk.environment_variables import OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.util import ns_to_iso_str
 from opentelemetry.util.types import Attributes
@@ -79,14 +77,6 @@ def _is_attach_enabled():
     if _is_on_aks():
         return _AKS_ARM_NAMESPACE_ID in environ
     return False
-
-def _is_sending_to_amw():
-    return (
-        _is_on_aks()
-        and _is_attach_enabled()
-        and OTEL_EXPORTER_OTLP_METRICS_ENDPOINT in environ
-        and OTEL_METRICS_EXPORTER in environ
-    )
 
 
 def _get_sdk_version_prefix():
