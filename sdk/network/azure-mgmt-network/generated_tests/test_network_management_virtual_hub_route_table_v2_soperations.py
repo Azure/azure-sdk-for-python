@@ -25,7 +25,7 @@ class TestNetworkManagementVirtualHubRouteTableV2SOperations(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             route_table_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -48,7 +48,7 @@ class TestNetworkManagementVirtualHubRouteTableV2SOperations(AzureMgmtRecordedTe
                     {"destinationType": "str", "destinations": ["str"], "nextHopType": "str", "nextHops": ["str"]}
                 ],
             },
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -61,7 +61,7 @@ class TestNetworkManagementVirtualHubRouteTableV2SOperations(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             route_table_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -73,7 +73,7 @@ class TestNetworkManagementVirtualHubRouteTableV2SOperations(AzureMgmtRecordedTe
         response = self.client.virtual_hub_route_table_v2_s.list(
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

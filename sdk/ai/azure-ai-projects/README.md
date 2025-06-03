@@ -14,6 +14,8 @@ resources in your Azure AI Foundry Project. Use it to:
 * **Run Evaluations** to assess the performance of generative AI applications, using the `evaluations` operations.
 * **Enable OpenTelemetry tracing** using the `enable_telemetry` function.
 
+The client library uses version `2025-05-15-preview` of the AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects/rest-api-reference).
+
 > **Note:** There have been significant updates with the release of version 1.0.0b11, including breaking changes.
 please see new code snippets below and the samples folder. Agents are now implemented in a separate package `azure-ai-agents`
 which will get installed automatically when you install `azure-ai-projects`. You can continue using ".agents"
@@ -88,6 +90,8 @@ project_client = AIProjectClient.from_connection_string(
     endpoint=os.environ["PROJECT_ENDPOINT"],
 )
 ```
+
+**Note:** Support for project connection string and hub-based projects has been discontinued. We recommend creating a new Azure AI Foundry resource utilizing project endpoint. If this is not possible, please pin the version of or pin the version of `azure-ai-projects` to `1.0.0b10` or earlier.
 
 ## Examples
 

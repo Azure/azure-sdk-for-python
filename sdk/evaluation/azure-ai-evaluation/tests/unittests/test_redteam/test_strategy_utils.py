@@ -5,28 +5,21 @@ import pytest
 from unittest.mock import MagicMock, patch
 from typing import Dict, List, Callable
 
-try:
-    import pyrit
-    has_pyrit = True
-except ImportError:
-    has_pyrit = False
-if has_pyrit:
-    from azure.ai.evaluation.red_team._utils.strategy_utils import (
-        strategy_converter_map,
-        get_converter_for_strategy,
-        get_chat_target,
-        get_orchestrators_for_attack_strategies
-    )
-    from azure.ai.evaluation.red_team._attack_strategy import AttackStrategy
-    from azure.ai.evaluation.red_team._callback_chat_target import _CallbackChatTarget
-    from pyrit.prompt_converter import (
-        PromptConverter, Base64Converter, FlipConverter, MorseConverter
-    )
-    from pyrit.prompt_target import PromptChatTarget, OpenAIChatTarget
+from azure.ai.evaluation.red_team._utils.strategy_utils import (
+    strategy_converter_map,
+    get_converter_for_strategy,
+    get_chat_target,
+    get_orchestrators_for_attack_strategies
+)
+from azure.ai.evaluation.red_team._attack_strategy import AttackStrategy
+from azure.ai.evaluation.red_team._callback_chat_target import _CallbackChatTarget
+from pyrit.prompt_converter import (
+    PromptConverter, Base64Converter, FlipConverter, MorseConverter
+)
+from pyrit.prompt_target import PromptChatTarget, OpenAIChatTarget
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestStrategyConverterMap:
     """Test the strategy_converter_map function."""
 
@@ -52,7 +45,6 @@ class TestStrategyConverterMap:
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestConverterForStrategy:
     """Test the get_converter_for_strategy function."""
 
@@ -77,7 +69,6 @@ class TestConverterForStrategy:
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestChatTargetFunctions:
     """Test chat target related functions."""
 
@@ -201,7 +192,6 @@ class TestChatTargetFunctions:
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestOrchestratorFunctions:
     """Test orchestrator related functions."""
 
