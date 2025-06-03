@@ -1,8 +1,6 @@
 # Release History
 
-# Release History
-
-## 10.2.1 (2025-06-04)
+## 10.2.1 (2025-06-03)
 
 ### Other Changes
 
