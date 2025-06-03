@@ -222,3 +222,40 @@ tox -e pylint --c <path_to_tox.ini> --root .
 **REQUIREMENTS:**
 - Use Python 3.9 compatible environment
 - Follow official fixing guidelines
+
+
+## Python SDK Health tool
+
+- Use the azure-sdk-health mcp tool to lookup a library's health status.
+- Always include the date of last update based on the Last Refresh date.
+- Explanation of statuses can be found here: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/repo_health_status.md
+- Release blocking checks are MyPy, Pylint, Sphinx, and Tests - CI. These checks should all PASS. If not PASS, mention that the library is blocked for release.
+- If links are available in the table, make the statuses (e.g. PASS, WARNING, etc) you report linked. Avoid telling the user to check the links in the report themselves.
+- Don't share information like SDK Owned
+
+### Example
+
+As of <Last Refresh date>, here is the health status for azure-ai-projects:
+
+Overall Status: ⚠️ NEEDS_ACTION
+
+✅ Passing Checks:
+
+Pyright: PASS
+Sphinx: PASS
+Type Checked Samples: ENABLED
+SLA Questions and Bugs: 0
+
+⚠️ Areas Needing Attention:
+
+Pylint: WARNING
+Tests - Live: ❓ UNKNOWN
+Tests - Samples: ❌ DISABLED
+Customer-reported issues: 🔴 5 open issues
+
+❌ Release blocking
+
+Mypy: FAIL
+Tests - CI: FAIL
+
+This library is failing two release blocking checks - Mypy and Tests - CI. The library needs attention primarily due to Pylint warnings, disabled sample tests, and open customer-reported issues.
