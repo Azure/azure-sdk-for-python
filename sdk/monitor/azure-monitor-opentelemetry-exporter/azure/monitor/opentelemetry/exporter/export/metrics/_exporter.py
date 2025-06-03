@@ -5,7 +5,9 @@ import os
 
 from typing import Dict, Optional, Union, Any
 
+from opentelemetry.environment_variables import OTEL_METRICS_EXPORTER
 from opentelemetry.util.types import Attributes
+from opentelemetry.sdk.environment_variables import OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
 from opentelemetry.sdk.metrics import (
     Counter,
     Histogram,
@@ -154,7 +156,15 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             envelope = _handle_std_metric_envelope(envelope, name, point.attributes)  # type: ignore
         if envelope is not None:
             envelope.instrumentation_key = self._instrumentation_key
-            envelope.data.base_data.properties["_MS.SentToAMW"] = str(_utils._is_sending_to_amw())
+            # Only set SentToAMW on AKS Attach
+            if _utils._is_on_aks() and _utils._is_attach_enabled():
+                if (
+                    OTEL_EXPORTER_OTLP_METRICS_ENDPOINT in os.environ
+                    and "otlp" in os.environ.get("OTEL_METRICS_EXPORTER", "")
+                ):
+                    envelope.data.base_data.properties["_MS.SentToAMW"] = "True"
+                else:
+                    envelope.data.base_data.properties["_MS.SentToAMW"] = "False"
 
         return envelope
 
