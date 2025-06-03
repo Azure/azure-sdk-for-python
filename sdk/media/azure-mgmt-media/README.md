@@ -1,6 +1,8 @@
 # Microsoft Azure SDK for Python
 
-This package has been deprecated and will no longer be maintained after 06-04-2025. This package will only receive security fixes until 06-04-2025.
+Please note, this package has been deprecated and will no longer be maintained after 06/30/2024.
+Refer to [Azure Media Services retirement guide](https://learn.microsoft.com/azure/media-services/latest/azure-media-services-retirement) for more retirement details and how to migrate to the new services.
+Refer to our deprecation policy (https://aka.ms/azsdk/support-policies) for more details.
 
 This is the Microsoft Azure Media Services Client Library.
 This package has been tested with Python 3.7+.
