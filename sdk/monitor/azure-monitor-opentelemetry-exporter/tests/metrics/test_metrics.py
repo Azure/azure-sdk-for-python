@@ -684,8 +684,6 @@ class TestAzureMetricExporter(unittest.TestCase):
         envelope = exporter._point_to_envelope(point, "http.server.request.size", resource)
         self.assertIsNone(envelope)
 
-    # Log Analytics Metrics Disabled
-
     def test_point_to_envelope_std_metric_log_analytics_disabled(self):
         exporter = self._exporter
         resource = Resource(
