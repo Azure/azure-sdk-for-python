@@ -87,6 +87,27 @@ class TestAzureMetricExporter(unittest.TestCase):
                 )
             ]
         )
+        cls._histogram_data_point = HistogramDataPoint(
+            attributes={
+                "test": "attribute",
+            },
+            bucket_counts=[0, 3, 4],
+            count=7,
+            explicit_bounds=[0, 5, 10, 0],
+            max=18,
+            min=1,
+            start_time_unix_nano=1646865018558419456,
+            time_unix_nano=1646865018558419457,
+            sum=31,
+        )
+        cls._number_data_point = NumberDataPoint(
+            attributes={
+                "test": "attribute",
+            },
+            start_time_unix_nano=1646865018558419456,
+            time_unix_nano=1646865018558419457,
+            value=10,
+        )
 
     @classmethod
     def tearDownClass(cls):
@@ -208,14 +229,7 @@ class TestAzureMetricExporter(unittest.TestCase):
     def test_point_to_envelope_partA_default(self):
         exporter = self._exporter
         resource = Resource({"service.name": "testServiceName"})
-        point = NumberDataPoint(
-            attributes={
-                "test": "attribute",
-            },
-            start_time_unix_nano=1646865018558419456,
-            time_unix_nano=1646865018558419457,
-            value=10,
-        )
+        point = self._number_data_point
         envelope = exporter._point_to_envelope(point, "test name", resource)
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE), "testServiceName")
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE), platform.node())
@@ -228,14 +242,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         exporter = self._exporter
         resource = Resource.create(attributes={"asd": "test_resource"})
         scope = InstrumentationScope("test_scope")
-        point = NumberDataPoint(
-            attributes={
-                "test": "attribute",
-            },
-            start_time_unix_nano=1646865018558419456,
-            time_unix_nano=1646865018558419457,
-            value=10,
-        )
+        point = self._number_data_point
         envelope = exporter._point_to_envelope(point, "test name", resource, scope)
         self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
@@ -252,19 +259,7 @@ class TestAzureMetricExporter(unittest.TestCase):
     def test_point_to_envelope_histogram(self):
         exporter = self._exporter
         resource = Resource.create(attributes={"asd": "test_resource"})
-        point = HistogramDataPoint(
-            attributes={
-                "test": "attribute",
-            },
-            bucket_counts=[0, 3, 4],
-            count=7,
-            explicit_bounds=[0, 5, 10, 0],
-            max=18,
-            min=1,
-            start_time_unix_nano=1646865018558419456,
-            time_unix_nano=1646865018558419457,
-            sum=31,
-        )
+        point = self._histogram_data_point
         envelope = exporter._point_to_envelope(point, "test name", resource)
         self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
@@ -287,14 +282,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         exporter = self._exporter
         resource = Resource.create(attributes={"asd": "test_resource"})
         scope = InstrumentationScope("test_scope")
-        point = NumberDataPoint(
-            attributes={
-                "test": "attribute",
-            },
-            start_time_unix_nano=1646865018558419456,
-            time_unix_nano=1646865018558419457,
-            value=10,
-        )
+        point = self._number_data_point
         envelope = exporter._point_to_envelope(point, "test name", resource, scope)
         self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
@@ -312,33 +300,14 @@ class TestAzureMetricExporter(unittest.TestCase):
         exporter = self._exporter_log_analytics_disabled
         resource = Resource.create(attributes={"asd": "test_resource"})
         scope = InstrumentationScope("test_scope")
-        point = NumberDataPoint(
-            attributes={
-                "test": "attribute",
-            },
-            start_time_unix_nano=1646865018558419456,
-            time_unix_nano=1646865018558419457,
-            value=10,
-        )
+        point = self._number_data_point
         envelope = exporter._point_to_envelope(point, "test name", resource, scope)
         self.assertIsNone(envelope)
 
     def test_point_to_envelope_histogram_log_analytics_disabled(self):
         exporter = self._exporter_log_analytics_disabled
         resource = Resource.create(attributes={"asd": "test_resource"})
-        point = HistogramDataPoint(
-            attributes={
-                "test": "attribute",
-            },
-            bucket_counts=[0, 3, 4],
-            count=7,
-            explicit_bounds=[0, 5, 10, 0],
-            max=18,
-            min=1,
-            start_time_unix_nano=1646865018558419456,
-            time_unix_nano=1646865018558419457,
-            sum=31,
-        )
+        point = self._histogram_data_point
         envelope = exporter._point_to_envelope(point, "test name", resource)
         self.assertIsNone(envelope)
 
