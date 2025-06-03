@@ -494,6 +494,177 @@ class TestAzureMetricExporter(unittest.TestCase):
         envelope = exporter._point_to_envelope(point, "http.server.request.size", resource)
         self.assertIsNone(envelope)
 
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.trace._utils._get_target_and_path_for_http_dependency")
+    def test_point_to_envelope_std_metric_client_duration_log_analytics_disabled(self, target_mock):
+        exporter = self._exporter_log_analytics_disabled
+        resource = Resource(
+            {
+                "service.name": "testServiceName",
+                "service.namespace": "testServiceNamespace",
+                "service.instance.id": "testServiceInstanceId",
+            }
+        )
+        point = mock.Mock(spec=NumberDataPoint)
+        point.attributes = {
+            "http.status_code": 200,
+            "custom_attr": "custom_key",
+        }
+        point.start_time_unix_nano = 1646865018558419456
+        point.time_unix_nano = 1646865018558419457
+        point.value = 15.0
+        target_mock.return_value = ("test_service", "test_path")
+        envelope = exporter._point_to_envelope(point, "http.client.duration", resource)
+        self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
+        self.assertEqual(envelope.time, ns_to_iso_str(point.time_unix_nano))
+        self.assertEqual(envelope.data.base_type, "MetricData")
+        self.assertEqual(envelope.data.base_data.properties["_MS.MetricId"], "dependencies/duration")
+        self.assertEqual(envelope.data.base_data.properties["_MS.IsAutocollected"], "True")
+        self.assertEqual(envelope.data.base_data.properties["Dependency.Type"], "http")
+        self.assertEqual(envelope.data.base_data.properties["Dependency.Success"], "True")
+        self.assertEqual(envelope.data.base_data.properties["dependency/target"], "test_service")
+        self.assertEqual(envelope.data.base_data.properties["dependency/resultCode"], "200")
+        self.assertEqual(envelope.data.base_data.properties["cloud/roleInstance"], "testServiceInstanceId")
+        self.assertEqual(envelope.data.base_data.properties["cloud/roleName"], "testServiceNamespace.testServiceName")
+        self.assertIsNone(envelope.data.base_data.properties.get("custom_attr"))
+        self.assertEqual(len(envelope.data.base_data.metrics), 1)
+        self.assertEqual(envelope.data.base_data.metrics[0].name, "http.client.duration")
+        self.assertEqual(envelope.data.base_data.metrics[0].value, 15.0)
+
+        # Success/Failure
+        point.attributes["http.status_code"] = 500
+        envelope = exporter._point_to_envelope(point, "http.client.duration", resource)
+        self.assertEqual(envelope.data.base_data.properties["Dependency.Success"], "False")
+
+        point.attributes["http.status_code"] = None
+        envelope = exporter._point_to_envelope(point, "http.client.duration", resource)
+        self.assertEqual(envelope.data.base_data.properties["Dependency.Success"], "False")
+        self.assertEqual(envelope.data.base_data.properties["dependency/resultCode"], "0")
+
+        point.attributes["http.status_code"] = "None"
+        envelope = exporter._point_to_envelope(point, "http.client.duration", resource)
+        self.assertEqual(envelope.data.base_data.properties["Dependency.Success"], "False")
+        self.assertEqual(envelope.data.base_data.properties["dependency/resultCode"], "0")
+
+        # stable
+        point.attributes = {
+            "http.response.status_code": 200,
+            "custom_attr": "custom_key",
+        }
+        envelope = exporter._point_to_envelope(point, "http.client.request.duration", resource)
+        self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
+        self.assertEqual(envelope.time, ns_to_iso_str(point.time_unix_nano))
+        self.assertEqual(envelope.data.base_type, "MetricData")
+        self.assertEqual(envelope.data.base_data.properties["_MS.MetricId"], "dependencies/duration")
+        self.assertEqual(envelope.data.base_data.properties["_MS.IsAutocollected"], "True")
+        self.assertEqual(envelope.data.base_data.properties["Dependency.Type"], "http")
+        self.assertEqual(envelope.data.base_data.properties["Dependency.Success"], "True")
+        self.assertEqual(envelope.data.base_data.properties["dependency/target"], "test_service")
+        self.assertEqual(envelope.data.base_data.properties["dependency/resultCode"], "200")
+        self.assertEqual(envelope.data.base_data.properties["cloud/roleInstance"], "testServiceInstanceId")
+        self.assertEqual(envelope.data.base_data.properties["cloud/roleName"], "testServiceNamespace.testServiceName")
+        self.assertIsNone(envelope.data.base_data.properties.get("custom_attr"))
+        self.assertEqual(len(envelope.data.base_data.metrics), 1)
+        self.assertEqual(envelope.data.base_data.metrics[0].name, "http.client.request.duration")
+        self.assertEqual(envelope.data.base_data.metrics[0].value, 15.0)
+
+    def test_point_to_envelope_std_metric_server_duration_log_analytics_disabled(self):
+        exporter = self._exporter_log_analytics_disabled
+        resource = Resource(
+            {
+                "service.name": "testServiceName",
+                "service.namespace": "testServiceNamespace",
+                "service.instance.id": "testServiceInstanceId",
+            }
+        )
+        point = mock.Mock(spec=NumberDataPoint)
+        point.attributes = {
+            "http.status_code": 200,
+            "custom_attr": "custom_key",
+        }
+        point.start_time_unix_nano = 1646865018558419456
+        point.time_unix_nano = 1646865018558419457
+        point.value = 15.0
+        envelope = exporter._point_to_envelope(point, "http.server.duration", resource)
+        self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
+        self.assertEqual(envelope.time, ns_to_iso_str(point.time_unix_nano))
+        self.assertEqual(envelope.data.base_type, "MetricData")
+        self.assertEqual(envelope.data.base_data.properties["_MS.MetricId"], "requests/duration")
+        self.assertEqual(envelope.data.base_data.properties["_MS.IsAutocollected"], "True")
+        self.assertEqual(envelope.data.base_data.properties["Request.Success"], "True")
+        self.assertEqual(envelope.data.base_data.properties["request/resultCode"], "200")
+        self.assertEqual(envelope.data.base_data.properties["cloud/roleInstance"], "testServiceInstanceId")
+        self.assertEqual(envelope.data.base_data.properties["cloud/roleName"], "testServiceNamespace.testServiceName")
+        self.assertIsNone(envelope.data.base_data.properties.get("custom_attr"))
+        self.assertEqual(len(envelope.data.base_data.metrics), 1)
+        self.assertEqual(envelope.data.base_data.metrics[0].name, "http.server.duration")
+        self.assertEqual(envelope.data.base_data.metrics[0].value, 15.0)
+
+        # Success/Failure
+        point.attributes["http.status_code"] = 500
+        envelope = exporter._point_to_envelope(point, "http.server.duration", resource)
+        self.assertEqual(envelope.data.base_data.properties["Request.Success"], "False")
+
+        point.attributes["http.status_code"] = None
+        envelope = exporter._point_to_envelope(point, "http.server.duration", resource)
+        self.assertEqual(envelope.data.base_data.properties["Request.Success"], "False")
+        self.assertEqual(envelope.data.base_data.properties.get("request/resultCode"), "0")
+
+        point.attributes["http.status_code"] = "None"
+        envelope = exporter._point_to_envelope(point, "http.server.duration", resource)
+        self.assertEqual(envelope.data.base_data.properties["Request.Success"], "False")
+        self.assertEqual(envelope.data.base_data.properties.get("request/resultCode"), "0")
+
+        # Synthetic
+        point.attributes["user_agent.synthetic.type"] = "bot"
+        envelope = exporter._point_to_envelope(point, "http.server.duration", resource)
+        self.assertEqual(envelope.data.base_data.properties["operation/synthetic"], "True")
+
+        # Stable
+        point.attributes = {
+            "http.response.status_code": 200,
+            "custom_attr": "custom_key",
+        }
+        envelope = exporter._point_to_envelope(point, "http.server.request.duration", resource)
+        self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
+        self.assertEqual(envelope.time, ns_to_iso_str(point.time_unix_nano))
+        self.assertEqual(envelope.data.base_type, "MetricData")
+        self.assertEqual(envelope.data.base_data.properties["_MS.MetricId"], "requests/duration")
+        self.assertEqual(envelope.data.base_data.properties["_MS.IsAutocollected"], "True")
+        self.assertEqual(envelope.data.base_data.properties["Request.Success"], "True")
+        self.assertEqual(envelope.data.base_data.properties["request/resultCode"], "200")
+        self.assertEqual(envelope.data.base_data.properties["cloud/roleInstance"], "testServiceInstanceId")
+        self.assertEqual(envelope.data.base_data.properties["cloud/roleName"], "testServiceNamespace.testServiceName")
+        self.assertIsNone(envelope.data.base_data.properties.get("custom_attr"))
+        self.assertEqual(len(envelope.data.base_data.metrics), 1)
+        self.assertEqual(envelope.data.base_data.metrics[0].name, "http.server.request.duration")
+        self.assertEqual(envelope.data.base_data.metrics[0].value, 15.0)
+
+    def test_point_to_envelope_std_metric_unsupported_log_analytics_disabled(self):
+        exporter = self._exporter_log_analytics_disabled
+        resource = Resource(
+            {
+                "service.name": "testServiceName",
+                "service.namespace": "testServiceNamespace",
+                "service.instance.id": "testServiceInstanceId",
+            }
+        )
+        point = NumberDataPoint(
+            attributes={
+                "http.status_code": 200,
+                "peer.service": "test_service",
+                "custom_attr": "custom_key",
+            },
+            start_time_unix_nano=1646865018558419456,
+            time_unix_nano=1646865018558419457,
+            value=15.0,
+        )
+        envelope = exporter._point_to_envelope(point, "http.server.request.size", resource)
+        self.assertIsNone(envelope)
+
     # Log Analytics Metrics Disabled
 
     def test_point_to_envelope_std_metric_log_analytics_disabled(self):
