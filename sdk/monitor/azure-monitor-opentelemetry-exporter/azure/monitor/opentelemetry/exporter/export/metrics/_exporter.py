@@ -302,7 +302,7 @@ def _determine_metrics_to_log_analytics() -> bool:
     """
     Determines whether metrics should be sent to Log Analytics.
     
-    :return: True if metrics should be sent to Log Analytics, False otherwise
+    :return: False if metrics should are not be sent to Log Analytics, True otherwise.
     :rtype: bool
     """
     # Disabling metrics to Log Analytics via env var is currently only specified for AKS Attach scenarios.
@@ -310,5 +310,5 @@ def _determine_metrics_to_log_analytics() -> bool:
         return True
     env_var = os.environ.get(_APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED)
     if env_var is not None:
-        return env_var.lower().strip() == "true"
+        return env_var.lower().strip() != "false"
     return True
