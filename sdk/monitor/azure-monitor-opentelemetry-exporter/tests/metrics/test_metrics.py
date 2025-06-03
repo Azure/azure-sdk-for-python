@@ -205,9 +205,6 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE), "testServiceInstanceId")
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_NODE_NAME), "testServiceInstanceId")
 
-        envelope = self._exporter_log_analytics_disabled._point_to_envelope(point, "test name", resource)
-        self.assertIsNone(envelope)
-
     def test_point_to_envelope_partA_default(self):
         exporter = self._exporter
         resource = Resource({"service.name": "testServiceName"})
@@ -226,9 +223,6 @@ class TestAzureMetricExporter(unittest.TestCase):
             envelope.tags.get(ContextTagKeys.AI_INTERNAL_NODE_NAME),
             envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE),
         )
-
-        envelope = self._exporter_log_analytics_disabled._point_to_envelope(point, "test name", resource)
-        self.assertIsNone(envelope)
 
     def test_point_to_envelope_number(self):
         exporter = self._exporter
@@ -254,9 +248,6 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.metrics[0].namespace, None)
         self.assertEqual(envelope.data.base_data.metrics[0].value, 10)
         self.assertEqual(envelope.data.base_data.metrics[0].count, 1)
-
-        envelope = self._exporter_log_analytics_disabled._point_to_envelope(point, "test name", resource, scope)
-        self.assertIsNone(envelope)
 
     def test_point_to_envelope_histogram(self):
         exporter = self._exporter
@@ -285,9 +276,6 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.metrics[0].name, "test name")
         self.assertEqual(envelope.data.base_data.metrics[0].value, 31)
         self.assertEqual(envelope.data.base_data.metrics[0].count, 7)
-
-        envelope = self._exporter_log_analytics_disabled._point_to_envelope(point, "test name", resource)
-        self.assertIsNone(envelope)
 
     @mock.patch.dict(
         "os.environ",
@@ -320,7 +308,38 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.metrics[0].value, 10)
         self.assertEqual(envelope.data.base_data.metrics[0].count, 1)
 
-        envelope = self._exporter_log_analytics_disabled._point_to_envelope(point, "test name", resource, scope)
+    def test_point_to_envelope_number_log_analytics_disabled(self):
+        exporter = self._exporter_log_analytics_disabled
+        resource = Resource.create(attributes={"asd": "test_resource"})
+        scope = InstrumentationScope("test_scope")
+        point = NumberDataPoint(
+            attributes={
+                "test": "attribute",
+            },
+            start_time_unix_nano=1646865018558419456,
+            time_unix_nano=1646865018558419457,
+            value=10,
+        )
+        envelope = exporter._point_to_envelope(point, "test name", resource, scope)
+        self.assertIsNone(envelope)
+
+    def test_point_to_envelope_histogram_log_analytics_disabled(self):
+        exporter = self._exporter_log_analytics_disabled
+        resource = Resource.create(attributes={"asd": "test_resource"})
+        point = HistogramDataPoint(
+            attributes={
+                "test": "attribute",
+            },
+            bucket_counts=[0, 3, 4],
+            count=7,
+            explicit_bounds=[0, 5, 10, 0],
+            max=18,
+            min=1,
+            start_time_unix_nano=1646865018558419456,
+            time_unix_nano=1646865018558419457,
+            sum=31,
+        )
+        envelope = exporter._point_to_envelope(point, "test name", resource)
         self.assertIsNone(envelope)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export.trace._utils._get_target_and_path_for_http_dependency")
