@@ -4,7 +4,7 @@
 
 ### Other Changes
 
-- This package has been deprecated and will no longer be maintained after MM-DD-YYYY. This package will only receive security fixes until MM-DD-YYYY.
+- This package has been deprecated and will no longer be maintained after 03-31-2025. This package will only receive security fixes until 03-31-2025.
 
 ## 10.0.0 (2024-10-29)
 
