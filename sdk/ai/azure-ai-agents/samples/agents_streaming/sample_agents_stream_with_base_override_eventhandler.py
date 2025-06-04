@@ -27,7 +27,7 @@ USAGE:
 import json
 from typing import Generator, Optional
 
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import (
     MessageDeltaChunk,
     MessageDeltaTextContent,
@@ -38,6 +38,11 @@ from azure.identity import DefaultAzureCredential
 
 import os
 
+
+project_client = AIProjectClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
+     credential=DefaultAzureCredential(),
+)
 
 # Our goal is to parse the event data in a string and return the chunk in text for each iteration.
 # Because we want the iteration to be a string, we define str as the generic type for BaseAsyncAgentEventHandler
@@ -74,32 +79,28 @@ class MyEventHandler(BaseAgentEventHandler[Optional[str]]):
                 yield chunk
 
 
-agents_client = AgentsClient(
-    endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+with project_client:
+    with project_client.agents as agents_client:
+        agent = agents_client.create_agent(
+            model=os.environ["MODEL_DEPLOYMENT_NAME"], name="my-agent", instructions="You are helpful agent"
+        )
+        print(f"Created agent, agent ID: {agent.id}")
 
-with agents_client:
-    agent = agents_client.create_agent(
-        model=os.environ["MODEL_DEPLOYMENT_NAME"], name="my-agent", instructions="You are helpful agent"
-    )
-    print(f"Created agent, agent ID: {agent.id}")
+        thread = agents_client.threads.create()
+        print(f"Created thread, thread ID {thread.id}")
 
-    thread = agents_client.threads.create()
-    print(f"Created thread, thread ID {thread.id}")
+        message = agents_client.messages.create(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+        print(f"Created message, message ID {message.id}")
 
-    message = agents_client.messages.create(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-    print(f"Created message, message ID {message.id}")
+        with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()) as stream:
+            for chunk in stream.get_stream_chunks():
+                print(chunk)
 
-    with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()) as stream:
-        for chunk in stream.get_stream_chunks():
-            print(chunk)
+        agents_client.delete_agent(agent.id)
+        print("Deleted agent")
 
-    agents_client.delete_agent(agent.id)
-    print("Deleted agent")
-
-    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
-    for msg in messages:
-        if msg.text_messages:
-            last_text = msg.text_messages[-1]
-            print(f"{msg.role}: {last_text.text.value}")
+        messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+        for msg in messages:
+            if msg.text_messages:
+                last_text = msg.text_messages[-1]
+                print(f"{msg.role}: {last_text.text.value}")
