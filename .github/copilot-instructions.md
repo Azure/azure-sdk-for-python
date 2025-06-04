@@ -14,8 +14,9 @@
 
 ### RULE 3: VERIFY ENVIRONMENT FIRST
 **BEFORE any commands:**
-1. Use `verify_setup` tool from azure-sdk-validation server
-2. Ensure Python virtual environment is active
+1. Get path to azure-sdk-for-python repo root, and path to tox.ini file
+2. Use `verify_setup` tool from azure-sdk-python-mcp server
+3. Ensure Python virtual environment is active
 
 **Virtual Environment Setup:**
 ```bash
@@ -80,7 +81,7 @@ curl -s "https://api.github.com/repos/Azure/azure-rest-api-specs/commits?path=<p
 
 ### STEP 1: ENVIRONMENT VERIFICATION
 ```
-ACTION: Run verify_setup tool
+ACTION: Run verify_setup mcp tool
 IF missing dependencies:
     STOP and install missing dependencies
     THEN proceed to Step 2
@@ -88,7 +89,7 @@ IF missing dependencies:
 
 ### STEP 2: SDK GENERATION
 ```
-ACTION: Use typespec-python mcp server tools
+ACTION: Use azure-sdk-python-mcp sdk generation server tools (init, init_local)
 TIMING: ALWAYS inform user before starting: "This SDK generation step will take approximately 5-6 minutes to complete."
 IF local path provided:
     USE local mcp tools with tspconfig.yaml path
@@ -101,7 +102,7 @@ IF commands fail:
 ```
 TIMING: Inform user: "Static validation will take approximately 3-5 minutes for each step."
 FOR EACH validation step:
-    RUN validation
+    RUN validation (tox mcp tool)
     IF errors/warnings found:
         FIX issues
         RERUN same step
@@ -222,3 +223,4 @@ tox -e pylint --c <path_to_tox.ini> --root .
 **REQUIREMENTS:**
 - Use Python 3.9 compatible environment
 - Follow official fixing guidelines
+- Use tox mcp tool for running MyPy
