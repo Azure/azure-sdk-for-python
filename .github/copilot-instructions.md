@@ -48,7 +48,7 @@ ACTION: ask user provide commit id
 ACTION: Use typespec-python mcp server tools
 TIMING: ALWAYS inform user before starting: "This SDK generation step will take approximately 5-6 minutes to complete."
 IF local path provided:
-    USE local mcp tools `init_local_tool` with tspconfig.yaml path and commit id to generate SDK
+    USE local mcp tools `init_local` with tspconfig.yaml path and commit id to generate SDK
 IF commands fail:
     ANALYZE error messages
     DIRECT user to fix TypeSpec errors in source repo
