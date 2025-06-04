@@ -24,7 +24,7 @@ USAGE:
 """
 import asyncio
 import os
-from azure.ai.agents.aio import AgentsClient
+from azure.ai.projects.aio import AIProjectClient
 from azure.ai.agents.models import (
     CodeInterpreterTool,
     FilePurpose,
@@ -39,50 +39,55 @@ asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../as
 
 async def main():
     async with DefaultAzureCredential() as creds:
-        async with AgentsClient(endpoint=os.environ["PROJECT_ENDPOINT"], credential=creds) as agents_client:
-            # Upload a file and wait for it to be processed
-            file = await agents_client.files.upload_and_poll(file_path=asset_file_path, purpose=FilePurpose.AGENTS)
-            print(f"Uploaded file, file ID: {file.id}")
+        async with AIProjectClient(
+            endpoint=os.environ["PROJECT_ENDPOINT"],
+            credential=creds,
+        ) as project_client:
 
-            code_interpreter = CodeInterpreterTool()
+            async with project_client.agents as agents_client:
+                # Upload a file and wait for it to be processed
+                file = await agents_client.files.upload_and_poll(file_path=asset_file_path, purpose=FilePurpose.AGENTS)
+                print(f"Uploaded file, file ID: {file.id}")
 
-            # Notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
-            agent = await agents_client.create_agent(
-                model=os.environ["MODEL_DEPLOYMENT_NAME"],
-                name="my-agent",
-                instructions="You are helpful agent",
-                tools=code_interpreter.definitions,
-            )
-            print(f"Created agent, agent ID: {agent.id}")
+                code_interpreter = CodeInterpreterTool()
 
-            thread = await agents_client.threads.create()
-            print(f"Created thread, thread ID: {thread.id}")
+                # Notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
+                agent = await agents_client.create_agent(
+                    model=os.environ["MODEL_DEPLOYMENT_NAME"],
+                    name="my-agent",
+                    instructions="You are helpful agent",
+                    tools=code_interpreter.definitions,
+                )
+                print(f"Created agent, agent ID: {agent.id}")
 
-            # Create a message with the attachment
-            attachment = MessageAttachment(file_id=file.id, tools=code_interpreter.definitions)
-            message = await agents_client.messages.create(
-                thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]
-            )
-            print(f"Created message, message ID: {message.id}")
+                thread = await agents_client.threads.create()
+                print(f"Created thread, thread ID: {thread.id}")
 
-            run = await agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
-            print(f"Run finished with status: {run.status}")
+                # Create a message with the attachment
+                attachment = MessageAttachment(file_id=file.id, tools=code_interpreter.definitions)
+                message = await agents_client.messages.create(
+                    thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]
+                )
+                print(f"Created message, message ID: {message.id}")
 
-            if run.status == "failed":
-                # Check if you got "Rate limit is exceeded.", then you want to get more quota
-                print(f"Run failed: {run.last_error}")
+                run = await agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
+                print(f"Run finished with status: {run.status}")
 
-            await agents_client.files.delete(file.id)
-            print("Deleted file")
+                if run.status == "failed":
+                    # Check if you got "Rate limit is exceeded.", then you want to get more quota
+                    print(f"Run failed: {run.last_error}")
 
-            await agents_client.delete_agent(agent.id)
-            print("Deleted agent")
+                await agents_client.files.delete(file.id)
+                print("Deleted file")
 
-            messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
-            async for msg in messages:
-                last_part = msg.content[-1]
-                if isinstance(last_part, MessageTextContent):
-                    print(f"{msg.role}: {last_part.text.value}")
+                await agents_client.delete_agent(agent.id)
+                print("Deleted agent")
+
+                messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+                async for msg in messages:
+                    last_part = msg.content[-1]
+                    if isinstance(last_part, MessageTextContent):
+                        print(f"{msg.role}: {last_part.text.value}")
 
 
 if __name__ == "__main__":
