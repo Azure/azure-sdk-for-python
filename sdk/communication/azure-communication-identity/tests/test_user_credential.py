@@ -25,6 +25,12 @@ from _shared.helper import (
 )
 
 
+class DummyToken:
+    def __init__(self, token, expires_on):
+        self.token = token
+        self.expires_on = expires_on
+
+
 class DummyTokenExchangeClient:
     def __init__(self, resource_endpoint, token_credential, scopes):
         self.resource_endpoint = resource_endpoint
@@ -32,11 +38,8 @@ class DummyTokenExchangeClient:
         self.scopes = scopes
 
     def exchange_entra_token(self):
-        class DummyToken:
-            token = "dummy"
-            expires_on = 9999999999
-
-        return DummyToken()
+        return DummyToken("dummy", 9999999999)
+        
 
 class DummyTokenExchangeClientSwitch:
     def __init__(self, resource_endpoint, token_credential, scopes):
@@ -47,16 +50,11 @@ class DummyTokenExchangeClientSwitch:
 
     def exchange_entra_token(self):
         self.call_count += 1
-        class DummyToken:
-            pass
-        token = DummyToken()
         if self.call_count == 1:
-            token.token = "dummy_expired"
-            token.expires_on = int(time.time()) - 5 * 60  # expired 5 min ago
+            return DummyToken("dummy_expired", int(time.time()) - 5 * 60)
         else:
-            token.token = "dummy_valid"
-            token.expires_on = int(time.time()) + 60 * 60  # valid for 1 hour
-        return token
+            return DummyToken("dummy_valid", int(time.time()) + 60 * 60)
+
 
 class TestCommunicationTokenCredential(TestCase):
     @classmethod
