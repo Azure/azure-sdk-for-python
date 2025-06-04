@@ -1,5 +1,11 @@
 # Release History
 
+## 10.0.1 (TBD)
+
+### Other Changes
+
+- This package has been deprecated and will no longer be maintained after MM-DD-YYYY. This package will only receive security fixes until MM-DD-YYYY.
+
 ## 10.0.0 (2024-10-29)
 
 ### Breaking Changes
