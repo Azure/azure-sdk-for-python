@@ -10,8 +10,8 @@ autorest ./PHONE_NUMBER_SWAGGER.md
 
 ### Settings
 ``` yaml
-tag: package-phonenumber-2025-02-11
-require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/a3d9c16f14fbfa814d6315a4972517cec77c6bfb/specification/communication/data-plane/PhoneNumbers/readme.md
+tag: package-phonenumber-2025-04-01
+require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/de9cb12d2840ca0915849ce6a3bf8c956a32c022/specification/communication/data-plane/PhoneNumbers/readme.md
 output-folder: ../azure/communication/phonenumbers/_generated
 namespace: azure.communication.phonenumbers
 license-header: MICROSOFT_MIT_NO_VERSION
@@ -38,4 +38,29 @@ directive:
   where: $.parameters.Endpoint
   transform: >
     $["format"] = "";
+```
+
+### Set remove-empty-child-schemas
+```yaml
+modelerfour:
+    remove-empty-child-schemas: true
+```
+
+### Rename AvailablePhoneNumberStatus to PhoneNumberAvailabilityStatus
+```yaml
+directive:
+  from: swagger-document
+  where: $.definitions.AvailablePhoneNumber.properties.status.x-ms-enum
+  transform: >
+    $["name"] = "PhoneNumberAvailabilityStatus";
+```
+
+### Replace type from AvailablePhoneNumberError to CommunicationError
+```yaml
+directive:
+  - from: swagger-document
+    where: $.definitions.AvailablePhoneNumber.properties.error
+    transform: >
+      $.type = "object";
+      $.$ref = "../../../Common/stable/2021-03-07/common.json#/definitions/CommunicationError";
 ```
