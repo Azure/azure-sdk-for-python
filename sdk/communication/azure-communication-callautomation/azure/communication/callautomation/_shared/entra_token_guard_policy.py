@@ -67,22 +67,17 @@ class _EntraTokenGuardUtils:
 
         @staticmethod
         def is_acs_token_cache_valid(response_cache):
-            if response_cache is None or response_cache.http_response.status_code != 200:
+            if (response_cache is None or response_cache.http_response is None or
+                    response_cache.http_response.status_code != 200):
                 return False
-            return _EntraTokenGuardUtils.is_access_token_valid(response_cache)
-
-        @staticmethod
-        def is_access_token_valid(response_cache):
             try:
-                if response_cache is None or response_cache.http_response is None:
-                    return False
                 content = response_cache.http_response.text()
                 data = json.loads(content)
                 expires_on = data["accessToken"]["expiresOn"]
-                
                 expires_on_dt = dateutil_parser.parse(expires_on)
                 return datetime.now(timezone.utc) < expires_on_dt
             except Exception:
                 return False
+
 
         
