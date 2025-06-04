@@ -467,16 +467,3 @@ class ResourceType:
     Topology = "topology"
     DatabaseAccount = "databaseaccount"
     PartitionKey = "partitionkey"
-
-    @staticmethod
-    def IsCollectionChild(resourceType: str) -> bool:
-        return resourceType in (
-            ResourceType.Document,
-            ResourceType.Attachment,
-            ResourceType.Conflict,
-            ResourceType.Schema,
-            ResourceType.UserDefinedFunction,
-            ResourceType.Trigger,
-            ResourceType.StoredProcedure,
-            ResourceType.PartitionKey,
-        )

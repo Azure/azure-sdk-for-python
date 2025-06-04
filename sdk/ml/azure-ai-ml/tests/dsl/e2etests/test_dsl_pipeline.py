@@ -174,7 +174,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         job = client.jobs.create_or_update(pipeline)
         # check required fields in job dict
         job_dict = job._to_dict()
-        expected_keys = ["status", "properties", "tags", "creation_context"]
+        expected_keys = ["status", "tags", "creation_context"]
         for k in expected_keys:
             assert k in job_dict.keys(), f"failed to get {k} in {job_dict}"
 

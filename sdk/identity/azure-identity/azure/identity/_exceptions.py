@@ -37,6 +37,7 @@ class AuthenticationRequiredError(CredentialUnavailableError):
     def scopes(self) -> Iterable[str]:
         """Scopes requested during the failed authentication.
 
+        :return: Scopes requested during the failed authentication.
         :rtype: ~typing.Iterable[str]
         """
         return self._scopes
@@ -45,6 +46,7 @@ class AuthenticationRequiredError(CredentialUnavailableError):
     def claims(self) -> Optional[str]:
         """Additional claims required in the next authentication.
 
+        :return: Additional claims required in the next authentication, or None if no additional claims are required.
         :rtype: str or None
         """
         return self._claims
