@@ -14,11 +14,11 @@ model:
 
 inputs:
   query:
-    type: List
+    type: array
   tool_call:
-    type: Dict
+    type: object
   tool_definition:
-    type: Dict
+    type: object
 
 ---
 system:
