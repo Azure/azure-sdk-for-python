@@ -442,7 +442,7 @@ def try_create_teams_extension_user(prefix: str, suffix: str) -> Optional[TeamsE
         cloud = CommunicationCloudEnvironment.GCCH
     else:
         raise ValueError(f"Invalid prefix {prefix} for TeamsExtensionUserIdentifier")
-    return TeamsExtensionUserIdentifier(user_id, tenant_id, resource_id, cloud)
+    return TeamsExtensionUserIdentifier(user_id, tenant_id, resource_id, cloud=cloud)
 
 def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: disable=too-many-return-statements
     """
