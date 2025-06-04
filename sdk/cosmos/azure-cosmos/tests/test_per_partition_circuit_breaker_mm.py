@@ -330,7 +330,7 @@ class TestPerPartitionCircuitBreakerMM:
         sleep(1)
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
         # lower refresh interval for testing
-        _partition_health_tracker.REFRESH_INTERVAL = 10 * 1000
+        _partition_health_tracker.REFRESH_INTERVAL_MS = 10 * 1000
         try:
             for i in range(2):
                 validate_unhealthy_partitions(global_endpoint_manager, 0)
@@ -360,7 +360,7 @@ class TestPerPartitionCircuitBreakerMM:
 
             validate_stats(global_endpoint_manager, 2, 3, 1, 0, 0, 0)
         finally:
-            _partition_health_tracker.REFRESH_INTERVAL = 60 * 1000
+            _partition_health_tracker.REFRESH_INTERVAL_MS = 60 * 1000
 
     @pytest.mark.parametrize("read_operation, write_operation", operations())
     def test_service_request_error(self, read_operation, write_operation):
