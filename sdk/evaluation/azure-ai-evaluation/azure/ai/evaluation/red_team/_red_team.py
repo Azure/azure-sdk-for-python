@@ -1556,10 +1556,10 @@ class RedTeam:
                                                     # Extract risk assessments for all categories
                                                     for risk in self.risk_categories:
                                                         risk_value = risk.value
-                                                        if f"outputs.{risk_value}.{risk_value}" in r and f"outputs.{risk_value}.{risk_value}_reason" in r:
+                                                        if f"outputs.{risk_value}.{risk_value}" in r or f"outputs.{risk_value}.{risk_value}_reason" in r:
                                                             risk_assessment[risk_value] = {
-                                                                "severity_label": r[f"outputs.{risk_value}.{risk_value}"],
-                                                                "reason": r[f"outputs.{risk_value}.{risk_value}_reason"]
+                                                                "severity_label": r[f"outputs.{risk_value}.{risk_value}"] if f"outputs.{risk_value}.{risk_value}" in r else None,
+                                                                "reason": r[f"outputs.{risk_value}.{risk_value}_reason"] if f"outputs.{risk_value}.{risk_value}_reason" in r else None
                                                             }
                                         
                                         # Add to tracking arrays for statistical analysis
@@ -1962,7 +1962,7 @@ class RedTeam:
                     else:
                         result = evaluate_output.get(f"{risk_cat_value}_label", "")
                         row[f"outputs.{risk_cat_value}.{risk_cat_value}_reason"] = evaluate_output.get(f"{risk_cat_value}_reason", "")
-                        row[f"outputs.{risk_cat_value}.{risk_cat_value}_result"] = EVALUATION_PASS_FAIL_MAPPING[result]
+                        row[f"outputs.{risk_cat_value}.{risk_cat_value}_result"] = EVALUATION_PASS_FAIL_MAPPING[result == False]
                         self.logger.debug(f"Successfully evaluated conversation {idx+1} for {risk_category.value}/{strategy_name}")
                         return row
             except Exception as e:
