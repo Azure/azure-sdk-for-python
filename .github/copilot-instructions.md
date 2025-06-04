@@ -45,11 +45,14 @@ IF missing dependencies:
 ```
 
 ### STEP 2: SDK GENERATION
+ACTION: ask user provide commit id
+
+### STEP 2: SDK GENERATION
 ```
 ACTION: Use typespec-python mcp server tools
 TIMING: ALWAYS inform user before starting: "This SDK generation step will take approximately 5-6 minutes to complete."
 IF local path provided:
-    USE local mcp tools with tspconfig.yaml path
+    USE local mcp tools with tspconfig.yaml path and commit id
 IF commands fail:
     ANALYZE error messages
     DIRECT user to fix TypeSpec errors in source repo

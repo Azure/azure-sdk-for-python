@@ -5,7 +5,9 @@ from typing import Dict, Optional, Any, Match, Union
 import logging
 import sys
 import os
+from pathlib import Path
 from github import Github
+import json
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -154,7 +156,7 @@ def init_tool(tsp_config_url: str) -> Dict[str, Any]:
     return run_typespec_cli_command("init", args, root_dir=root_dir)
 
 @mcp.tool("init_local")
-def init_local_tool(tsp_config_path: str) -> Dict[str, Any]:
+def init_local_tool(tsp_config_path: str, commit_id: str) -> Dict[str, Any]:
     """Initializes and subsequently generates a typespec client library directory from a local azure-rest-api-specs repo.
 
     This command is used to generate a client library from a local azure-rest-api-specs repository. No additional
@@ -163,19 +165,88 @@ def init_local_tool(tsp_config_path: str) -> Dict[str, Any]:
 
     Args:
         tsp_config_path: The path to the local tspconfig.yaml file.
+        commit_id: The commit ID of the local azure-rest-api-specs repository.
 
     Returns:
         A dictionary containing the result of the command.
     """
     # Prepare arguments for the CLI command
-    args = {}
-    args["tsp-config"] = tsp_config_path
+    tsp_config_path = Path(tsp_config_path).resolve().as_posix()
     
     # If root_dir is not provided, use the repository root
     root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
     logger.info(f"No root_dir provided, using repository root: {root_dir}")
     
-    return run_typespec_cli_command("init", args, root_dir=root_dir)
+    # install dependencies
+    if os.name == "nt":
+        python_interpreter = os.path.join(root_dir, ".venv", "Scripts", "python.exe")
+    else:
+        python_interpreter = os.path.join(root_dir, ".venv", "bin", "python")
+    try:
+        # create .venv if it does not exist
+        venv_path = os.path.join(root_dir, ".venv")
+        if not os.path.exists(venv_path):
+            logger.info(f"Creating virtual environment at {venv_path}")
+            subprocess.run(["python", "-m", "venv", ".venv"], check=True, cwd=root_dir)
+        
+        # install dependencies
+        result = subprocess.run(
+            [python_interpreter, "scripts/dev_setup.py", "-p", "azure-core"],
+            capture_output=True,
+            text=True,
+            stdin=subprocess.DEVNULL,  # Explicitly close stdin
+            cwd=root_dir,
+        )
+        logger.info(f"Command output: {result.stdout}")
+        
+        # create generate_input.json
+        spec_folder = tsp_config_path.split("azure-rest-api-specs")[0] + "azure-rest-api-specs"
+        tsp_folder = tsp_config_path.split("azure-rest-api-specs/")[1].split("/tspconfig.yaml")[0]
+        generate_input = {
+            "specFolder": spec_folder,
+            "headSha": commit_id,
+            "repoHttpsUrl": "https://github.com/Azure/azure-rest-api-specs",
+            "relatedTypeSpecProjectFolder": [tsp_folder],
+        }
+        generate_input_path = os.path.join(root_dir, ".venv/generate_input.json")
+        generate_output_path = os.path.join(root_dir, ".venv/generate_output.json")
+        generate_tmp_path = os.path.join(root_dir, ".venv/tmp.json")
+        with open(generate_input_path, "w") as f:
+            json.dump(generate_input, f, indent=2)
+        with open(generate_tmp_path, "w") as f:
+            json.dump({}, f, indent=2)
+            
+        # generate SDK
+        result = subprocess.run(
+            [python_interpreter, "-m", "packaging_tools.sdk_generator", generate_input_path, generate_tmp_path],
+            capture_output=True,
+            text=True,
+            stdin=subprocess.DEVNULL,  # Explicitly close stdin
+            cwd=root_dir,
+        )
+        logger.info(f"generate sdk: {result.stdout}")
+        result = subprocess.run(
+            [python_interpreter, "-m", "packaging_tools.sdk_package", generate_tmp_path, generate_output_path],
+            capture_output=True,
+            text=True,
+            stdin=subprocess.DEVNULL,  # Explicitly close stdin
+            cwd=root_dir,
+        )
+        logger.info(f"package sdk: {result.stdout}")
+        return {
+            "success": True,
+            "stdout": result.stdout,
+            "stderr": result.stderr,
+            "code": result.returncode
+        }
+    except Exception as e:
+        logger.error(f"Failed to install dependencies: {str(e)}")
+        return {
+            "success": False,
+            "stdout": "",
+            "stderr": str(e),
+            "code": 1
+        }
 
 # Run the MCP server
 if __name__ == "__main__":
