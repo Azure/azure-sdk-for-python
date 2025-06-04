@@ -915,7 +915,7 @@ message = agents_client.messages.create(
 
 To process your message, you can use `runs.create`, `runs.create_and_process`, or `runs.stream`.
 
-`create_run` requests the Agent to process the message without polling for the result. If you are using `function tools` regardless as `toolset` or not, your code is responsible for polling for the result and acknowledging the status of `Run`. When the status is `requires_action`, your code is responsible for calling the function tools. For a code sample, visit [`sample_agents_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_tools/sample_agents_functions.py).
+`runs.create` requests the Agent to process the message without polling for the result. If you are using `function tools`, your code is responsible for polling for the result and acknowledging the status of `Run`. When the status is `requires_action`, your code is responsible for calling the function tools. For a code sample, visit [`sample_agents_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_tools/sample_agents_functions.py).
 
 Here is an example of `runs.create` and poll until the run is completed:
 
@@ -933,9 +933,19 @@ while run.status in ["queued", "in_progress", "requires_action"]:
 
 <!-- END SNIPPET -->
 
-To have the SDK poll on your behalf and call `function tools`, use the `create_and_process` method. Note that `function tools` will only be invoked if they are provided as `toolset` during the `create_agent` call.
+To have the SDK poll on your behalf and call `function tools`, supply your function implementations through `enable_auto_function_calls` along with `runs.create_and_process` method .
 
 Here is an example:
+
+```python
+functions = FunctionTool(user_functions)
+
+toolset = ToolSet()
+toolset.add(functions)
+
+# To enable tool calls executed automatically
+agents_client.enable_auto_function_calls(toolset)
+```
 
 <!-- SNIPPET:sample_agents_run_with_toolset.create_and_process_run -->
 
@@ -945,9 +955,9 @@ run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.
 
 <!-- END SNIPPET -->
 
-With streaming, polling need not be considered. If `function tools` are provided as `toolset` during the `create_agent` call, they will be invoked by the SDK.
+With streaming, polling need not be considered. If `function tools` were added to the agents, you should decide to have the function tools called manually or automatically.  Please visit [`manual function call sample`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_streaming/sample_agents_stream_eventhandler_with_functions.py) or [`automatic function call sample`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_streaming/sample_agents_stream_iteration_with_toolset.py).    
 
-Here is an example of streaming:
+Here is a basic example of streaming:
 
 <!-- SNIPPET:sample_agents_basics_stream_iteration.iterate_stream -->
 
