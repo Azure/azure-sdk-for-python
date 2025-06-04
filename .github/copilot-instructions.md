@@ -228,7 +228,7 @@ tox -e pylint --c <path_to_tox.ini> --root .
 
 ## Python SDK Health tool
 
-- Use the azure-sdk-health mcp tool to lookup a library's health status.
+- Use the azure-sdk-python-mcp mcp tool to lookup a library's health status.
 - Always include the date of last update based on the Last Refresh date.
 - Explanation of statuses can be found here: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/repo_health_status.md
 - Release blocking checks are MyPy, Pylint, Sphinx, and Tests - CI. These checks should all PASS. If not PASS, mention that the library is blocked for release.

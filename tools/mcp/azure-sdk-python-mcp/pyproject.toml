@@ -13,4 +13,5 @@ dependencies = [
     "pygithub>=2.6.1",
     "pylint>=3.3.7",
     "tox>=4.26.0",
+    "httpx>=0.24.0",
 ]

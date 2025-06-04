@@ -8,15 +8,6 @@
                 "run",
                 "main.py"
             ],
-        },
-        "azure-sdk-health": {
-            "command": "uv",
-            "args": [
-                "--directory",
-                "${workspaceFolder}/tools/mcp/health/",
-                "run",
-                "main.py"
-            ]
         }
     }
   }
