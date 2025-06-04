@@ -179,6 +179,7 @@ class _PartitionHealthTracker(object):
         if current_time - self.last_refresh > REFRESH_INTERVAL:
             # all partition stats reset every minute
             self._reset_partition_health_tracker_stats()
+            self.last_refresh = current_time
 
 
     def get_unhealthy_locations(
