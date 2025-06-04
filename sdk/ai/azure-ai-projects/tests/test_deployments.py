@@ -3,17 +3,17 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from azure.ai.projects.aio import AIProjectClient
-from tests.test_base import TestBase, servicePreparerDeploymentsTests
-from devtools_testutils.aio import recorded_by_proxy_async
+from azure.ai.projects import AIProjectClient
+from test_base import TestBase, servicePreparerDeploymentsTests
+from devtools_testutils import recorded_by_proxy
 
-class TestDeploymentsAsync(TestBase):
+class TestDeployments(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
-    # cls & pytest tests\deployments\test_deployments_async.py::TestDeploymentsAsync::test_deployments_async -s
+    # cls & pytest tests\deployments\test_deployments.py::TestDeployments::test_deployments -s
     @servicePreparerDeploymentsTests()
-    @recorded_by_proxy_async
-    async def test_deployments_async(self, **kwargs):
+    @recorded_by_proxy
+    def test_deployments(self, **kwargs):
 
         endpoint = kwargs.pop("azure_ai_projects_deployments_tests_project_endpoint")
 
@@ -24,32 +24,32 @@ class TestDeploymentsAsync(TestBase):
         model_name = self.test_deployments_params["model_name"]
         model_deployment_name = self.test_deployments_params["model_deployment_name"]
 
-        async with AIProjectClient(
+        with AIProjectClient(
             endpoint=endpoint,
-            credential=self.get_credential(AIProjectClient, is_async=True),
+            credential=self.get_credential(AIProjectClient, is_async=False),
         ) as project_client:
 
             print("[test_deployments] List all deployments")
             empty = True
-            async for deployment in project_client.deployments.list():
+            for deployment in project_client.deployments.list():
                 empty = False
                 TestBase.validate_deployment(deployment)
             assert not empty
 
             print(f"[test_deployments] List all deployments by the model publisher `{model_publisher}`")
             empty = True
-            async for deployment in project_client.deployments.list(model_publisher=model_publisher):
+            for deployment in project_client.deployments.list(model_publisher=model_publisher):
                 empty = False
                 TestBase.validate_deployment(deployment, expected_model_publisher=model_publisher)
             assert not empty
 
             print(f"[test_deployments] List all deployments of model `{model_name}`")
             empty = True
-            async for deployment in project_client.deployments.list(model_name=model_name):
+            for deployment in project_client.deployments.list(model_name=model_name):
                 empty = False
                 TestBase.validate_deployment(deployment, expected_model_name=model_name)
             assert not empty
 
             print(f"[test_deployments] Get a single deployment named `{model_deployment_name}`")
-            deployment = await project_client.deployments.get(model_deployment_name)
+            deployment = project_client.deployments.get(model_deployment_name)
             TestBase.validate_deployment(deployment, expected_model_deployment_name=model_deployment_name)

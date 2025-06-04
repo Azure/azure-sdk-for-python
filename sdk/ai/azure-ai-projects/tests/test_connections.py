@@ -4,8 +4,7 @@
 # ------------------------------------
 
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import ConnectionType
-from tests.test_base import TestBase, servicePreparerConnectionsTests
+from test_base import TestBase, servicePreparerConnectionsTests
 from devtools_testutils import recorded_by_proxy
 
 class TestConnections(TestBase):
