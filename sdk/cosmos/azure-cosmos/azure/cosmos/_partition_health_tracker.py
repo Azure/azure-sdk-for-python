@@ -32,9 +32,9 @@ from ._utils import current_time_millis
 from ._constants import _Constants as Constants
 
 MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
-MAX_UNAVAILABLE_TIME = 1200 * 1000 # milliseconds
-REFRESH_INTERVAL = 60 * 1000 # milliseconds
-INITIAL_UNAVAILABLE_TIME = 60 * 1000 # milliseconds
+MAX_UNAVAILABLE_TIME = 1200 * 1000 # 20 minutes in milliseconds
+REFRESH_INTERVAL_MS = 60 * 1000 # 1 minute in milliseconds
+INITIAL_UNAVAILABLE_TIME = 60 * 1000 # 1 minute in milliseconds
 # partition is unhealthy if sdk tried to recover and failed
 UNHEALTHY = "unhealthy"
 # partition is unhealthy tentative when it initially marked unavailable
@@ -176,7 +176,7 @@ class _PartitionHealthTracker(object):
                                 partition_health_info.transition_health_status(UNHEALTHY, current_time)
                                 request.healthy_tentative_location = location
 
-        if current_time - self.last_refresh > REFRESH_INTERVAL:
+        if current_time - self.last_refresh > REFRESH_INTERVAL_MS:
             # all partition stats reset every minute
             self._reset_partition_health_tracker_stats()
             self.last_refresh = current_time
