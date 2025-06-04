@@ -38,6 +38,7 @@ from ._utils import (
     serialize_phone_identifier,
     serialize_identifier,
     serialize_communication_user_identifier,
+    serialize_msft_teams_app_identifier,
     build_call_locator,
     process_repeatability_first_sent,
 )
@@ -58,6 +59,7 @@ if TYPE_CHECKING:
         CommunicationIdentifier,
         CommunicationUserIdentifier,
         PhoneNumberIdentifier,
+        MicrosoftTeamsAppIdentifier
     )
     from ._generated.models._enums import (
         CallRejectReason,
@@ -303,6 +305,7 @@ class CallAutomationClient:
         cognitive_services_endpoint: Optional[str] = None,
         media_streaming: Optional['MediaStreamingOptions'] = None,
         transcription: Optional['TranscriptionOptions'] = None,
+        teams_app_source: Optional["MicrosoftTeamsAppIdentifier"] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """Create a call connection request to a target identity.
@@ -329,6 +332,8 @@ class CallAutomationClient:
         :keyword transcription: Configuration of live transcription.
         :paramtype transcription: ~azure.communication.callautomation.TranscriptionOptions
          or None
+        :keyword teams_app_source: The Microsoft Teams App Identifier.
+        :paramtype teams_app_source: ~azure.communication.callautomation.MicrosoftTeamsAppIdentifier
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -362,7 +367,8 @@ class CallAutomationClient:
             operation_context=operation_context,
             call_intelligence_options=call_intelligence_options,
             media_streaming_options=media_config,
-            transcription_options=transcription_config
+            transcription_options=transcription_config,
+            teams_app_source=serialize_msft_teams_app_identifier(teams_app_source),
         )
         process_repeatability_first_sent(kwargs)
         result = self._client.create_call(create_call_request=create_call_request, **kwargs)
@@ -378,6 +384,7 @@ class CallAutomationClient:
         source_display_name: Optional[str] = None,
         operation_context: Optional[str] = None,
         cognitive_services_endpoint: Optional[str] = None,
+        teams_app_source: Optional["MicrosoftTeamsAppIdentifier"] = None,
         **kwargs,
     ) -> CallConnectionProperties:
         """Create a call connection request to a list of multiple target identities.
@@ -398,6 +405,8 @@ class CallAutomationClient:
         :keyword cognitive_services_endpoint:
          The identifier of the Cognitive Service resource assigned to this call.
         :paramtype cognitive_services_endpoint: str
+        :keyword teams_app_source: The Microsoft Teams App Identifier.
+        :paramtype teams_app_source: ~azure.communication.callautomation.MicrosoftTeamsAppIdentifier
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -413,6 +422,7 @@ class CallAutomationClient:
             source_display_name=source_display_name,
             operation_context=operation_context,
             cognitive_services_endpoint=cognitive_services_endpoint,
+            teams_app_source=teams_app_source,
             **kwargs,
         )
 
@@ -699,6 +709,7 @@ class CallAutomationClient:
         external_storage = build_external_storage(kwargs.pop("recording_storage", None))
         start_recording_request = StartCallRecordingRequest(
             call_locator=call_locator if call_locator else None,
+            call_connection_id=kwargs.pop("call_connection_id", None),
             recording_state_callback_uri=kwargs.pop("recording_state_callback_url", None),
             recording_content_type=kwargs.pop("recording_content_type", None),
             recording_channel_type=kwargs.pop("recording_channel_type", None),
