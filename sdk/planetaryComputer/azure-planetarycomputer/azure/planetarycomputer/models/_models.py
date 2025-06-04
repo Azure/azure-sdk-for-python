@@ -1755,8 +1755,8 @@ class ItemProperties(_Model):
     :vartype title: str
     :ivar description: Detailed description of the item.
     :vartype description: str
-    :ivar datetime: Datetime the asset represents in RFC 3339 format. Required.
-    :vartype datetime: str
+    :ivar datetime_s: Datetime the asset represents in RFC 3339 format. Required.
+    :vartype datetime_s: str
     :ivar start_datetime: Start time of the item observation period.
     :vartype start_datetime: ~datetime.datetime
     :ivar end_datetime: End time of the item observation period.
@@ -1789,7 +1789,7 @@ class ItemProperties(_Model):
     """Human-readable title for the item."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Detailed description of the item."""
-    datetime: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    datetime_s: str = rest_field(name="datetime", visibility=["read", "create", "update", "delete", "query"])
     """Datetime the asset represents in RFC 3339 format. Required."""
     start_datetime: Optional[datetime.datetime] = rest_field(
         visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
@@ -1804,7 +1804,7 @@ class ItemProperties(_Model):
     def __init__(
         self,
         *,
-        datetime: str,
+        datetime_s: str,
         platform: Optional[str] = None,
         instruments: Optional[List[str]] = None,
         constellation: Optional[str] = None,
