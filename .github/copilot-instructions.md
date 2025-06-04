@@ -14,8 +14,9 @@
 
 ### RULE 3: VERIFY ENVIRONMENT FIRST
 **BEFORE any commands:**
-1. Use `verify_setup` tool from azure-sdk-python-mcp server
-2. Ensure Python virtual environment is active
+1. Get path to azure-sdk-for-python repo root, and path to tox.ini file
+2. Use `verify_setup` tool from azure-sdk-python-mcp server
+3. Ensure Python virtual environment is active
 
 **Virtual Environment Setup:**
 ```bash
