@@ -50,12 +50,12 @@
 # PRLabel: %Azure.Identity
 /sdk/identity/                                                       @pvaneck @xiangyan99 @Azure/azure-sdk-write-identity
 
-# AzureSdkOwners: @kashifkhan
+# AzureSdkOwners: @lmazuel
 # ServiceLabel: %Event Hubs
 # ServiceOwners: @kasun04
 
 # PRLabel: %Event Hubs
-/sdk/eventhub/                                                       @annatisch @kashifkhan @swathipil @l0lawrence
+/sdk/eventhub/                                                       @lmazuel
 
 # ServiceLabel: %Storage
 # ServiceOwners: @jalauzon-msft @vincenttran-msft
@@ -236,10 +236,10 @@
 # ServiceLabel: %Durable Task Scheduler %Service Attention
 /sdk/durabletask/                                                    @berndverst @kaibocai @torosent @RyanLettieri @philliphoff @cgillum
 
-# AzureSdkOwners: @kashifkhan
+# AzureSdkOwners: @lmazuel
 # ServiceLabel: %Event Grid
 # PRLabel: %Event Grid
-/sdk/eventgrid/                                                      @kashifkhan @l0lawrence
+/sdk/eventgrid/                                                      @lmazuel
 
 # PRLabel: %Image Analysis
 # ServiceLabel: %Image Analysis %Service Attention
@@ -337,12 +337,12 @@
 # PRLabel: %Recovery Services
 /sdk/recoveryservices/                                               @DheerendraRathor
 
-# AzureSdkOwners: @kashifkhan
+# AzureSdkOwners: @lmazuel
 # ServiceLabel: %Schema Registry
 # ServiceOwners: @arerlend @alzimmermsft
 
 # PRLabel: %Schema Registry
-/sdk/schemaregistry/                                                 @kashifkhan @swathipil
+/sdk/schemaregistry/                                                 @lmazuel
 
 # ServiceLabel: %Search
 # AzureSdkOwners: @xiangyan99
@@ -357,12 +357,12 @@
 # ServiceLabel: %SQL
 # ServiceOwners: @azureSQLGitHub
 
-# AzureSdkOwners: @kashifkhan
+# AzureSdkOwners: @lmazuel
 # ServiceLabel: %Service Bus
 # ServiceOwners:  @EldertGrootenboer
 
 # PRLabel: %Service Bus
-/sdk/servicebus/                                                     @annatisch @kashifkhan @swathipil @l0lawrence
+/sdk/servicebus/                                                     @lmazuel
 
 # ServiceOwners:  @wanyang7 @zesluo
 # ServiceLabel: %Synapse
