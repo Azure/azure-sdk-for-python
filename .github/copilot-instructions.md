@@ -29,12 +29,8 @@ ELSE:
 
 **REQUIRED CONDITIONS:**
 1. GitHub CLI authenticated: `gh auth login`
-2. User on feature branch (NOT main)
-   ```bash
-   git checkout -b <branch_name>
-   ```
 
-## EXECUTION SEQUENCE - 7 MANDATORY STEPS
+## EXECUTION SEQUENCE - 6 MANDATORY STEPS
 
 ### STEP 1: ENVIRONMENT VERIFICATION
 ```
@@ -47,18 +43,18 @@ IF missing dependencies:
 ### STEP 2: SDK GENERATION
 ACTION: ask user provide commit id
 
-### STEP 2: SDK GENERATION
+### STEP 3: SDK GENERATION
 ```
 ACTION: Use typespec-python mcp server tools
 TIMING: ALWAYS inform user before starting: "This SDK generation step will take approximately 5-6 minutes to complete."
 IF local path provided:
-    USE local mcp tools with tspconfig.yaml path and commit id
+    USE local mcp tools `init_local_tool` with tspconfig.yaml path and commit id to generate SDK
 IF commands fail:
     ANALYZE error messages
     DIRECT user to fix TypeSpec errors in source repo
 ```
 
-### STEP 3: COMMIT AND PUSH
+### STEP 4: COMMIT AND PUSH
 ```
 ACTION: Show changed files (ignore .github, .vscode)
 IF user confirms:
@@ -71,7 +67,7 @@ IF user rejects:
     GUIDE to fix issues and revalidate
 ```
 
-### STEP 4: PULL REQUEST MANAGEMENT
+### STEP 5: PULL REQUEST MANAGEMENT
 ```
 CHECK: Does PR exist for current branch?
 IF PR exists:
@@ -85,7 +81,7 @@ IF NO PR exists:
 ALWAYS: Display PR summary with status, checks, action items
 ```
 
-### STEP 7: HANDOFF
+### STEP 6: HANDOFF
 ```
 FINAL ACTIONS:
 1. RETURN PR URL for review
