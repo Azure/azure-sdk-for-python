@@ -16,6 +16,7 @@
   "extraPaths": [        
     "./../../core/azure-core",
     "./../../identity/azure-identity",
-    "./../../monitor/azure-monitor-opentelemetry"
+    "./../../monitor/azure-monitor-opentelemetry",
+    "./../azure-ai-projects",
   ]
 }

@@ -25,40 +25,45 @@ USAGE:
 """
 
 import os
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import AgentThreadCreationOptions, ThreadMessageOptions, ListSortOrder
 from azure.identity import DefaultAzureCredential
 
-agents_client = AgentsClient(endpoint=os.environ["PROJECT_ENDPOINT"], credential=DefaultAzureCredential())
+project_client = AIProjectClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
+     credential=DefaultAzureCredential(),
+)
 
-with agents_client:
-    agent = agents_client.create_agent(
-        model=os.environ["MODEL_DEPLOYMENT_NAME"],
-        name="process-run-sample-agent",
-        instructions="You are a friendly assistant that generates jokes.",
-    )
-    print(f"Created agent: {agent.id}")
+with project_client:
+    with project_client.agents as agents_client:
 
-    # [START create_thread_and_process_run]
-    run = agents_client.create_thread_and_process_run(
-        agent_id=agent.id,
-        thread=AgentThreadCreationOptions(
-            messages=[ThreadMessageOptions(role="user", content="Hi! Tell me your favorite programming joke.")]
-        ),
-    )
-    # [END create_thread_and_process_run]
-    print(f"Run completed with status: {run.status!r}")
+        agent = agents_client.create_agent(
+            model=os.environ["MODEL_DEPLOYMENT_NAME"],
+            name="process-run-sample-agent",
+            instructions="You are a friendly assistant that generates jokes.",
+        )
+        print(f"Created agent: {agent.id}")
 
-    if run.status == "failed":
-        print("Run failed:", run.last_error)
+        # [START create_thread_and_process_run]
+        run = agents_client.create_thread_and_process_run(
+            agent_id=agent.id,
+            thread=AgentThreadCreationOptions(
+                messages=[ThreadMessageOptions(role="user", content="Hi! Tell me your favorite programming joke.")]
+            ),
+        )
+        # [END create_thread_and_process_run]
+        print(f"Run completed with status: {run.status!r}")
 
-    # List out all messages in the thread
-    messages = agents_client.messages.list(thread_id=run.thread_id, order=ListSortOrder.ASCENDING)
-    for msg in messages:
-        if msg.text_messages:
-            last_text = msg.text_messages[-1]
-            print(f"{msg.role}: {last_text.text.value}")
+        if run.status == "failed":
+            print("Run failed:", run.last_error)
 
-    # clean up
-    agents_client.delete_agent(agent.id)
-    print(f"Deleted agent {agent.id}")
+        # List out all messages in the thread
+        messages = agents_client.messages.list(thread_id=run.thread_id, order=ListSortOrder.ASCENDING)
+        for msg in messages:
+            if msg.text_messages:
+                last_text = msg.text_messages[-1]
+                print(f"{msg.role}: {last_text.text.value}")
+
+        # clean up
+        agents_client.delete_agent(agent.id)
+        print(f"Deleted agent {agent.id}")

@@ -23,7 +23,7 @@ USAGE:
 """
 
 import os
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 
 from azure.ai.agents.models import (
@@ -36,10 +36,11 @@ from azure.ai.agents.models import (
 
 from typing import Any, Optional
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
+     credential=DefaultAzureCredential(),
 )
+
 
 
 # [START stream_event_handler]
@@ -71,33 +72,36 @@ class MyEventHandler(AgentEventHandler[str]):
 # [END stream_event_handler]
 
 
-with agents_client:
-    # Create an agent and run stream with event handler
-    agent = agents_client.create_agent(
-        model=os.environ["MODEL_DEPLOYMENT_NAME"], name="my-agent", instructions="You are a helpful agent"
-    )
-    print(f"Created agent, agent ID {agent.id}")
+with project_client:
+    with project_client.agents as agents_client:
 
-    thread = agents_client.threads.create()
-    print(f"Created thread, thread ID {thread.id}")
 
-    message = agents_client.messages.create(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-    print(f"Created message, message ID {message.id}")
+        # Create an agent and run stream with event handler
+        agent = agents_client.create_agent(
+            model=os.environ["MODEL_DEPLOYMENT_NAME"], name="my-agent", instructions="You are a helpful agent"
+        )
+        print(f"Created agent, agent ID {agent.id}")
 
-    # [START create_stream]
-    with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()) as stream:
-        for event_type, event_data, func_return in stream:
-            print(f"Received data.")
-            print(f"Streaming receive Event Type: {event_type}")
-            print(f"Event Data: {str(event_data)[:100]}...")
-            print(f"Event Function return: {func_return}\n")
-    # [END create_stream]
+        thread = agents_client.threads.create()
+        print(f"Created thread, thread ID {thread.id}")
 
-    agents_client.delete_agent(agent.id)
-    print("Deleted agent")
+        message = agents_client.messages.create(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+        print(f"Created message, message ID {message.id}")
 
-    messages = agents_client.messages.list(thread_id=thread.id)
-    for msg in messages:
-        if msg.text_messages:
-            last_text = msg.text_messages[-1]
-            print(f"{msg.role}: {last_text.text.value}")
+        # [START create_stream]
+        with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()) as stream:
+            for event_type, event_data, func_return in stream:
+                print(f"Received data.")
+                print(f"Streaming receive Event Type: {event_type}")
+                print(f"Event Data: {str(event_data)[:100]}...")
+                print(f"Event Function return: {func_return}\n")
+        # [END create_stream]
+
+        agents_client.delete_agent(agent.id)
+        print("Deleted agent")
+
+        messages = agents_client.messages.list(thread_id=thread.id)
+        for msg in messages:
+            if msg.text_messages:
+                last_text = msg.text_messages[-1]
+                print(f"{msg.role}: {last_text.text.value}")
