@@ -23,6 +23,17 @@ servicePreparerDeploymentsTests = functools.partial(
 
 class TestBase(AzureRecordedTestCase):
 
+    test_connections_params = {
+        "connection_name": "connection1",
+        "connection_type": ConnectionType.AZURE_OPEN_AI,
+    }
+
+    test_deployments_params = {
+        "model_publisher": "Cohere",
+        "model_name": "gpt-4o",
+        "model_deployment_name": "DeepSeek-V3",
+    }
+
     # Checks that a given dictionary has at least one non-empty (non-whitespace) string key-value pair.
     @classmethod
     def is_valid_dict(cls, d: dict[str, str]) -> bool:
