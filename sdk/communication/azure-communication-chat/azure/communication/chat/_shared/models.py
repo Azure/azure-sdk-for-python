@@ -393,21 +393,21 @@ class TeamsExtensionUserIdentifier:
         user_id: str,
         tenant_id: str,
         resource_id: str,
-        cloud: Optional[Union[CommunicationCloudEnvironment, str]] = None,
         **kwargs: Any
     ) -> None:
         """
         :param str user_id: Teams extension user id.
         :param str tenant_id: Tenant id associated with the user.
         :param str resource_id: Resource id associated with the user.
-        :param cloud: Cloud environment that the user belongs to. Default value is `PUBLIC`.
+        :keyword cloud: Cloud environment that the user belongs to. Default value is `PUBLIC`.
+        :paramtype cloud: str or ~azure.communication.chat.CommunicationCloudEnvironment.
         :keyword str raw_id: The raw ID of the identifier. If not specified, this value will be constructed from the other properties.
         """
         self.properties = TeamsExtensionUserProperties(
             user_id=user_id,
             tenant_id=tenant_id,
             resource_id=resource_id,
-            cloud=cloud or CommunicationCloudEnvironment.PUBLIC,
+            cloud=kwargs.get("cloud") or CommunicationCloudEnvironment.PUBLIC,
         )
         raw_id: Optional[str] = kwargs.get("raw_id")
         self.raw_id = raw_id if raw_id is not None else self._format_raw_id(self.properties)
