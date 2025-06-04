@@ -1379,10 +1379,6 @@ class _AIAgentsInstrumentorPreview:
         handler: "Optional[AgentEventHandler]" = None,
         span: "Optional[AbstractSpan]" = None,
     ) -> "Optional[AgentEventHandler]":
-        # Do not create a handler wrapper if we do not have handler in the first place.
-        if not handler:
-            return None
-
         if isinstance(handler, _AgentEventHandlerTraceWrapper):
             return handler
 
@@ -1975,22 +1971,32 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
                 response_iterator=response_iterator,
                 submit_tool_outputs=submit_tool_outputs,
             )
+        else:
+            super().initialize(
+                response_iterator=response_iterator,
+                submit_tool_outputs=submit_tool_outputs,
+            )
 
     def __next__(self) -> Any:
         if self.inner_handler:
             event_bytes = self.inner_handler.__next_impl__()
             return self._process_event(event_bytes.decode("utf-8"))
-        return None
+        else:
+            return super().__next__()
 
     # pylint: disable=R1710
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return self.inner_handler.on_message_delta(delta)  # type: ignore
+        else:
+            return super().on_message_delta(delta)
 
     def on_thread_message(self, message: "ThreadMessage") -> None:  # type: ignore[func-returns-value]
         retval = None
         if self.inner_handler:
             retval = self.inner_handler.on_thread_message(message)  # type: ignore
+        else:
+            retval = super().on_thread_message(message)
 
         if message.status in {"completed", "incomplete"}:
             self.last_message = message
@@ -2002,6 +2008,8 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
 
         if self.inner_handler:
             retval = self.inner_handler.on_thread_run(run)  # type: ignore
+        else:
+            retval = super().on_thread_run(run)
         self.last_run = run
 
         return retval  # type: ignore
@@ -2010,6 +2018,8 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         retval = None
         if self.inner_handler:
             retval = self.inner_handler.on_run_step(step)  # type: ignore
+        else:
+            retval = super().on_run_step(step)
 
         if (
             step.type == "tool_calls"
@@ -2035,20 +2045,27 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
     def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return self.inner_handler.on_run_step_delta(delta)  # type: ignore
+        else:
+            return super().on_run_step_delta(delta)
 
     def on_error(self, data: str) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return self.inner_handler.on_error(data)  # type: ignore
+        else:
+            return super().on_error(data)
 
     def on_done(self) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return self.inner_handler.on_done()  # type: ignore
+        else:
+            return super().on_done()
         # it could be called multiple tines (for each step) __exit__
 
     def on_unhandled_event(self, event_type: str, event_data: Any) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return self.inner_handler.on_unhandled_event(event_type, event_data)  # type: ignore
-
+        else:
+            return super().on_unhandled_event(event_type, event_data)
     # pylint: enable=R1710
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -2093,6 +2110,11 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
                 response_iterator=response_iterator,
                 submit_tool_outputs=submit_tool_outputs,
             )
+        else:
+            super().initialize(
+                response_iterator=response_iterator,
+                submit_tool_outputs=submit_tool_outputs,
+            )
 
     # cspell:disable-next-line
     async def __anext__(self) -> Any:
@@ -2100,16 +2122,23 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
             # cspell:disable-next-line
             event_bytes = await self.inner_handler.__anext_impl__()
             return await self._process_event(event_bytes.decode("utf-8"))
+        else:
+            # cspell:disable-next-line
+            return await super().__anext__()
 
     # pylint: disable=R1710
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return await self.inner_handler.on_message_delta(delta)  # type: ignore
+        else:
+            return await super().on_message_delta(delta)
 
     async def on_thread_message(self, message: "ThreadMessage") -> None:  # type: ignore[func-returns-value]
         retval = None
         if self.inner_handler:
             retval = await self.inner_handler.on_thread_message(message)  # type: ignore
+        else:
+            retval = await super().on_thread_message(message)
 
         if message.status in {"completed", "incomplete"}:
             self.last_message = message
@@ -2121,6 +2150,8 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
 
         if self.inner_handler:
             retval = await self.inner_handler.on_thread_run(run)  # type: ignore
+        else:
+            retval = await super().on_thread_run(run)
         self.last_run = run
 
         return retval  # type: ignore
@@ -2129,6 +2160,8 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
         retval = None
         if self.inner_handler:
             retval = await self.inner_handler.on_run_step(step)  # type: ignore
+        else:
+            retval = await super().on_run_step(step)
 
         if (
             step.type == "tool_calls"
@@ -2154,19 +2187,27 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
     async def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return await self.inner_handler.on_run_step_delta(delta)  # type: ignore
+        else:
+            return await super().on_run_step_delta(delta)
 
     async def on_error(self, data: str) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return await self.inner_handler.on_error(data)  # type: ignore
+        else:
+            return await super().on_error(data)
 
     async def on_done(self) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return await self.inner_handler.on_done()  # type: ignore
+        else:
+            return await super().on_done()
         # it could be called multiple tines (for each step) __exit__
 
     async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return await self.inner_handler.on_unhandled_event(event_type, event_data)  # type: ignore
+        else:
+            return await super().on_unhandled_event(event_type, event_data)
 
     # pylint: enable=R1710
 
