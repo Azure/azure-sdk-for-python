@@ -636,7 +636,8 @@ class BreakingChangesTracker:
         if bc == ignored:
             return True
         for b, i in zip(bc, ignored):
-            if i == "*":
+            if i == "*" or i is None:
+                # If the ignore rule is a wildcard or None, we skip this part of the check
                 continue
             if isinstance(i, RegexSuppression) and b is not None:
                 if i.match(b):
