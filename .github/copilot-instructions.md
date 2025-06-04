@@ -11,24 +11,6 @@
 **ALWAYS** reference the [Azure SDK Python Design Guidelines](https://azure.github.io/azure-sdk/python_design.html)
 - Link to specific pages when answering guidelines questions
 - Use this as the authoritative source for SDK development guidance
-
-### RULE 3: VERIFY ENVIRONMENT FIRST
-**BEFORE any commands:**
-1. Use `verify_setup` tool from azure-sdk-validation server
-2. Ensure Python virtual environment is active
-
-**Virtual Environment Setup:**
-```bash
-# Create new environment
-python -m venv <env_name>
-
-# Activate environment
-# Linux/macOS:
-source <env_name>/bin/activate
-# Windows:
-<env_name>\Scripts\activate
-```
-
 ---
 
 ## TYPESPEC SDK GENERATION - COMPLETE WORKFLOW
@@ -52,31 +34,7 @@ ELSE:
    git checkout -b <branch_name>
    ```
 
-### PHASE 3: TSP-CLIENT RULES
-
-**CRITICAL RULES:**
-- **LOCAL REPO:** Do NOT grab commit hash
-- **DIRECTORIES:** Let commands auto-create directories
-- **PACKAGE GENERATION:** Find tsp-location.yaml in azure-sdk-for-python repo
-- **URL REFERENCES:** Use commit hash (NOT branch name) for tspconfig.yaml URLs
-
-**Get latest commit hash:**
-```bash
-curl -s "https://api.github.com/repos/Azure/azure-rest-api-specs/commits?path=<path_to_tspconfig.yaml>&per_page=1"
-```
-
-**DEPENDENCIES:** Verify installation of: node, python, tox
-
----
-
 ## EXECUTION SEQUENCE - 7 MANDATORY STEPS
-
-**ESTIMATED TOTAL TIME: 10-15 minutes**
-- SDK Generation: 5-6 minutes
-- Static Validation: 3-5 minutes  
-- Documentation & Commit: 2-4 minutes
-
-**ALWAYS inform users of time expectations before starting any long-running operations.**
 
 ### STEP 1: ENVIRONMENT VERIFICATION
 ```
@@ -97,47 +55,7 @@ IF commands fail:
     DIRECT user to fix TypeSpec errors in source repo
 ```
 
-### STEP 3: STATIC VALIDATION (SEQUENTIAL)
-```
-TIMING: Inform user: "Static validation will take approximately 3-5 minutes for each step."
-FOR EACH validation step:
-    RUN validation
-    IF errors/warnings found:
-        FIX issues
-        RERUN same step
-    ONLY proceed to next step when current step passes
-```
-
-**Validation Commands:**
-```bash
-# Step 3a: Pylint
-tox -e pylint -c [path to tox.ini] --root .
-
-# Step 3b: MyPy  
-tox -e mypy -c [path to tox.ini] --root .
-
-# Step 3c: Pyright
-tox -e pyright -c [path to tox.ini] --root .
-
-# Step 3d: Verifytypes
-tox -e verifytypes -c [path to tox.ini] --root .
-```
-
-**REQUIREMENTS:**
-- Provide summary after each validation step
-- Edit ONLY files with validation errors/warnings
-- Fix each issue before proceeding
-
-### STEP 4: DOCUMENTATION UPDATE
-```
-REQUIRED ACTIONS:
-1. CREATE/UPDATE CHANGELOG.md with changes
-2. VERIFY package version matches API spec version
-3. IF version incorrect: UPDATE _version.py AND CHANGELOG
-4. SET CHANGELOG entry date to TODAY
-```
-
-### STEP 5: COMMIT AND PUSH
+### STEP 3: COMMIT AND PUSH
 ```
 ACTION: Show changed files (ignore .github, .vscode)
 IF user confirms:
@@ -150,7 +68,7 @@ IF user rejects:
     GUIDE to fix issues and revalidate
 ```
 
-### STEP 6: PULL REQUEST MANAGEMENT
+### STEP 4: PULL REQUEST MANAGEMENT
 ```
 CHECK: Does PR exist for current branch?
 IF PR exists:

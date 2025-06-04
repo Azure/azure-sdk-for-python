@@ -102,7 +102,8 @@ def verify_setup_tool() -> Dict[str, Any]:
 
     results = {
         "node": verify_installation(["node", "--version"], "Node.js"),
-        "python": verify_installation(["python", "--version"], "Python")
+        "python": verify_installation(["python", "--version"], "Python"),
+        "tsp-client": verify_installation(["tsp-client", "--version"], "TypeSpec Client Generator CLI"),
     }
 
     # Check if tox is installed
