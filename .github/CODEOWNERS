@@ -843,9 +843,9 @@
 
 /tools/                                                              @scbedd @mccoyp
 /scripts/                                                            @scbedd @mccoyp
+/scripts/breaking_changes_checker/                                   @catalinaperalta
 /doc/                                                                @scbedd @mccoyp
 /conda/                                                              @scbedd @xiangyan99 @lmazuel
-/breaking_changes_checker/                                           @catalinaperalta
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
