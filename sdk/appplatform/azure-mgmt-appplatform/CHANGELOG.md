@@ -1,6 +1,6 @@
 # Release History
 
-## 10.0.1 (TBD)
+## 10.0.1 (2025-06-04)
 
 ### Other Changes
 
