@@ -209,7 +209,7 @@ class LocalFileStorage:
             if os.name == "nt":
                 user = self._get_current_user()
                 if not user:
-                    logger.warning(
+                    logger.error(
                         "Failed to retrieve current user. Skipping folder permission setup."
                     )
                     return False
@@ -231,8 +231,9 @@ class LocalFileStorage:
             else:
                 os.chmod(self._path, 0o700)
                 return True
-        except Exception:
-            pass  # keep silent
+        except Exception as ex:
+            logger.warning(ex)
+            pass
         return False
 
     def _check_storage_size(self):
@@ -265,21 +266,18 @@ class LocalFileStorage:
         return True
 
     def _get_current_user(self):
-        try:
-            if os.name == "nt":
-                result = subprocess.run(
-                    [
-                        POWERSHELL_PATH,
-                        "-Command",
-                        "[System.Security.Principal.WindowsIdentity]::GetCurrent().Name",
-                    ],
-                    capture_output=True,
-                    text=True,
-                    check=True,
-                )
-                user = result.stdout.strip()
-                if user:
-                    return user
-        except Exception:
-            pass
+        if os.name == "nt":
+            result = subprocess.run(
+                [
+                    POWERSHELL_PATH,
+                    "-Command",
+                    "[System.Security.Principal.WindowsIdentity]::GetCurrent().Name",
+                ],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            user = result.stdout.strip()
+            if user:
+                return user
         return None
