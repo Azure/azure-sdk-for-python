@@ -552,6 +552,57 @@ class CallAutomationClient:
         await self._client.reject_call(reject_call_request=reject_call_request, **kwargs)
 
     @overload
+    def start_recording(
+        self,
+        *,
+        call_connection_id: str,
+        recording_state_callback_url: Optional[str] = None,
+        recording_content_type: Optional[Union[str, 'RecordingContent']] = None,
+        recording_channel_type: Optional[Union[str, 'RecordingChannel']] = None,
+        recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
+        audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
+        channel_affinity: Optional[List['ChannelAffinity']] = None,
+        recording_storage: Optional[Union['AzureCommunicationsRecordingStorage',
+                                          'AzureBlobContainerRecordingStorage']] = None,
+        pause_on_start: Optional[bool] = None,
+        **kwargs,
+    ) -> RecordingProperties:
+        """Start recording for a ongoing call. Locate the call with call connection id.
+
+        :keyword str call_connection_id: The call connection ID to locate ongoing call.
+        :keyword recording_state_callback_url: The url to send notifications to.
+        :paramtype recording_state_callback_url: str or None
+        :keyword recording_content_type: The content type of call recording.
+        :paramtype recording_content_type: str or ~azure.communication.callautomation.RecordingContent or None
+        :keyword recording_channel_type: The channel type of call recording.
+        :paramtype recording_channel_type: str or ~azure.communication.callautomation.RecordingChannel or None
+        :keyword recording_format_type: The format type of call recording.
+        :paramtype recording_format_type: str or ~azure.communication.callautomation.RecordingFormat or None
+        :keyword audio_channel_participant_ordering:
+         The sequential order in which audio channels are assigned to participants in the unmixed recording.
+         When 'recordingChannelType' is set to 'unmixed' and `audioChannelParticipantOrdering is not specified,
+         the audio channel to participant mapping will be automatically assigned based on the order in
+         which participant first audio was detected.
+         Channel to participant mapping details can be found in the metadata of the recording.
+        :paramtype audio_channel_participant_ordering:
+         list[~azure.communication.callautomation.CommunicationIdentifier] or None
+        :keyword channel_affinity: The channel affinity of call recording
+         When 'recordingChannelType' is set to 'unmixed', if channelAffinity is not specified,
+         'channel' will be automatically assigned.
+         Channel-Participant mapping details can be found in the metadata of the recording.
+        :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity] or None
+        :keyword recording_storage: Defines the kind of external storage. Known values are:
+         ``AzureCommunicationsRecordingStorage`` and ``AzureBlobContainerRecordingStorage``.
+         If no storage option is provided, the default is Azure Communications recording storage.
+        :paramtype recording_storage: AzureCommunicationsRecordingStorage or AzureBlobContainerRecordingStorage or None
+        :keyword pause_on_start: The state of the pause on start option.
+        :paramtype pause_on_start: bool or None
+        :return: RecordingProperties
+        :rtype: ~azure.communication.callautomation.RecordingProperties
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
     async def start_recording(
         self,
         *,
@@ -720,10 +771,14 @@ class CallAutomationClient:
             kwargs.pop("room_id", None),
             args
         )
+        call_connection_id = kwargs.pop("call_connection_id", None)
+        if not call_locator and not call_connection_id:
+            raise ValueError("Either a call locator or a call_connection_id must be provided to start recording.")
+
         external_storage = build_external_storage(kwargs.pop("recording_storage", None))
         start_recording_request = StartCallRecordingRequest(
             call_locator=call_locator if call_locator else None,
-            call_connection_id=kwargs.pop("call_connection_id", None),
+            call_connection_id=call_connection_id if call_connection_id else None,
             recording_state_callback_uri=kwargs.pop("recording_state_callback_url", None),
             recording_content_type=kwargs.pop("recording_content_type", None),
             recording_channel_type=kwargs.pop("recording_channel_type", None),
