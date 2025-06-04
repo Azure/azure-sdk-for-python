@@ -308,6 +308,7 @@ class AdversarialSimulator:
         *,
         conversation_history: List[ConversationTurn],
         template_parameters: Optional[Dict[str, Union[str, Dict[str, str]]]] = None,
+        conversation_id: Optional[str] = None,
     ):
         if template_parameters is None:
             template_parameters = {}
@@ -332,6 +333,8 @@ class AdversarialSimulator:
             template_parameters.pop(key, None)
         if conversation_category:
             template_parameters["category"] = conversation_category
+        if conversation_id:
+            template_parameters["conversation_id"] = conversation_id
         return {
             "template_parameters": template_parameters,
             "messages": messages,
@@ -375,7 +378,7 @@ class AdversarialSimulator:
                     retry_mode=RetryMode.Fixed,
                 )
             )
-        _, conversation_history = await simulate_conversation(
+        conversation_id, conversation_history = await simulate_conversation(
             bots=bots,
             session=session,
             turn_limit=max_conversation_turns,
@@ -386,6 +389,7 @@ class AdversarialSimulator:
         return self._to_chat_protocol(
             conversation_history=conversation_history,
             template_parameters=cast(Dict[str, Union[str, Dict[str, str]]], parameters),
+            conversation_id=conversation_id,
         )
 
     def _get_user_proxy_completion_model(

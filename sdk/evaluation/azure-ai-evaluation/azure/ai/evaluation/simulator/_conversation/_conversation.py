@@ -159,6 +159,9 @@ async def simulate_conversation(
             # check if conversation id is null, which means conversation starter was used. use id from next turn
             if conversation_id is None and "id" in response:
                 conversation_id = response["id"]
+            # check if target callback returns conversation id in session state
+            if "conversation_id" in session_state and session_state["conversation_id"] is not None:
+                conversation_id = session_state["conversation_id"]
             # add the generated response to the list of generated responses
             conversation_history.append(
                 ConversationTurn(

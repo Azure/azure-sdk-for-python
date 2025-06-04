@@ -43,6 +43,7 @@ from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfigurat
 from azure.core.credentials import TokenCredential
 import json
 from pathlib import Path
+import uuid
 
 logger = logging.getLogger(__name__)
 JAILBREAK_EXT = "_Jailbreak"
@@ -183,7 +184,13 @@ class _SafetyEvaluation:
         :type source_text: Optional[str]
         :param direct_attack: If True, the DirectAttackSimulator will be run.
         :type direct_attack: bool
+        :param randomization_seed: The seed for randomization in the simulation.
+        :type randomization_seed: Optional[int]
+        :param concurrent_async_tasks: The number of concurrent async tasks to run.
+        :type concurrent_async_tasks: Optional[int]
         """
+        # Analyze target function characteristics
+        target_info = self._analyze_target_function(target)
 
         ## Define callback
         async def callback(
@@ -197,18 +204,44 @@ class _SafetyEvaluation:
             application_input = latest_message["content"]
             context = latest_message.get("context", None)
             latest_context = None
+            latest_conv_id = None
+            
             try:
-                is_async = self._is_async_function(target)
-                if self._check_target_returns_context(target):
-                    if is_async:
+                # Analyze target function characteristics
+                target_info = self._analyze_target_function(target)
+                
+                # Call target function based on its characteristics
+                if target_info['returns_context'] and target_info['returns_conv_id']:
+                    # Target returns (response, context, conv_id) - 3-tuple
+                    if target_info['is_async']:
+                        response, latest_context, latest_conv_id = await target(query=application_input)
+                    else:
+                        response, latest_context, latest_conv_id = target(query=application_input)
+                elif target_info['returns_context']:
+                    # Target returns (response, context) - 2-tuple
+                    if target_info['is_async']:
                         response, latest_context = await target(query=application_input)
                     else:
                         response, latest_context = target(query=application_input)
+                elif target_info['returns_conv_id']:
+                    # Target returns (response, conv_id) - 2-tuple with UUID as second element
+                    if target_info['is_async']:
+                        response, latest_conv_id = await target(query=application_input)
+                    else:
+                        response, latest_conv_id = target(query=application_input)
                 else:
-                    if is_async:
+                    # Target returns only response
+                    if target_info['is_async']:
                         response = await target(query=application_input)
                     else:
                         response = target(query=application_input)
+
+                # This will only set the conversation_id on the first assistant turn of the conversation
+                if latest_conv_id and not session_state:
+                    session_state = {
+                        "conversation_id": latest_conv_id,
+                    }
+
             except Exception as e:
                 response = f"Something went wrong {e!s}"
 
@@ -218,6 +251,7 @@ class _SafetyEvaluation:
                 "role": "assistant",
                 "context": latest_context if latest_context else context,
             }
+                
             ## NOTE: In the future, instead of appending to messages we should just return `formatted_response`
             messages["messages"].append(formatted_response)  # type: ignore
             return {
@@ -330,6 +364,7 @@ class _SafetyEvaluation:
                         response = None
                         context = source_text
                         ground_truth = source_text
+                        conv_id = output.get("template_parameters", {}).get("conversation_id", None)
                         for message in output["messages"]:
                             if message["role"] == "user":
                                 query = message["content"]
@@ -343,6 +378,7 @@ class _SafetyEvaluation:
                                         "response": response,
                                         "context": context,
                                         "ground_truth": ground_truth,
+                                        "conversation_id": str(conv_id) if conv_id else None,
                                     }
                                 )
                                 + "\n"
@@ -355,7 +391,7 @@ class _SafetyEvaluation:
             else:
                 f.writelines(
                     [
-                        json.dumps({"conversation": {"messages": conversation["messages"]}}) + "\n"
+                        json.dumps({"conversation": {"messages": conversation["messages"], "conversation_id": str(conversation.get("template_parameters", {}).get("conversation_id", ""))}}) + "\n"
                         for conversation in simulator_outputs
                     ]
                 )
@@ -526,7 +562,7 @@ class _SafetyEvaluation:
     @staticmethod
     def _check_target_returns_str(target: Callable) -> bool:
         '''
-        Checks if the target function returns a string.
+        Checks if the target function returns a string or a tuple where the first value is a string.
 
         :param target: The target function to check.
         :type target: Callable
@@ -544,8 +580,18 @@ class _SafetyEvaluation:
                 # For async functions, check the actual return type inside the Coroutine
                 ret_type = args[-1]
                 
+        # Check if return type is a string
         if ret_type is str:
             return True
+            
+        # Check if return type is a tuple (including generic tuples like tuple[str, UUID])
+        origin = getattr(ret_type, "__origin__", None)
+        if ret_type is tuple or origin is tuple:
+            tuple_args = getattr(ret_type, "__args__", None)
+            if tuple_args and len(tuple_args) > 0:
+                first_type = tuple_args[0]
+                if first_type is str:
+                    return True
         return False
     
     @staticmethod
@@ -798,6 +844,7 @@ class _SafetyEvaluation:
                 source_text=source_text,
                 direct_attack=_SafetyEvaluator.DIRECT_ATTACK in evaluators,
                 randomization_seed=randomization_seed,
+                concurrent_async_tasks=concurrent_async_tasks,
             )
         elif data_path:
             data_paths = {Path(data_path).stem: data_path}
@@ -831,3 +878,60 @@ class _SafetyEvaluation:
                 category=ErrorCategory.MISSING_FIELD,
                 blame=ErrorBlame.USER_ERROR,
             )
+    
+    @staticmethod
+    def _analyze_target_function(target: Callable) -> Dict[str, bool]:
+        """
+        Analyzes the target function to determine its characteristics.
+        
+        :param target: The target function to analyze.
+        :type target: Callable
+        :return: A dictionary containing the target function's characteristics:
+                - 'is_async': Whether the function is async
+                - 'returns_context': Whether the function returns context (tuple with context as second element)
+                - 'returns_conv_id': Whether the function returns conversation ID (tuple with UUID as second element)
+        :rtype: Dict[str, bool]
+        """
+        is_async = asyncio.iscoroutinefunction(target)
+        
+        sig = inspect.signature(target)
+        ret_type = sig.return_annotation
+        
+        # Initialize characteristics
+        returns_context = False
+        returns_conv_id = False
+        
+        if ret_type != inspect.Signature.empty:
+            # Check for Coroutine/Awaitable return types for async functions
+            origin = getattr(ret_type, "__origin__", None)
+            if origin is not None and (origin is Coroutine or origin is Awaitable):
+                args = getattr(ret_type, "__args__", None)
+                if args and len(args) > 0:
+                    # For async functions, check the actual return type inside the Coroutine
+                    ret_type = args[-1]
+            
+            # Check if return type is a tuple
+            origin = getattr(ret_type, "__origin__", None)
+            if ret_type is tuple or origin is tuple:
+                
+                # Check if tuple has type annotations for conversation ID
+                tuple_args = getattr(ret_type, "__args__", None)
+                if tuple_args and len(tuple_args) >= 2:
+                    # Check if second element is UUID type (for conv_id)
+                    # Or if there are 3 elements, the third could be UUID (response, context, conv_id)
+                    second_type = tuple_args[1]
+                    if second_type is uuid.UUID:
+                        returns_conv_id = True
+                    elif len(tuple_args) >= 3:
+                        returns_context = True 
+                        third_type = tuple_args[2]
+                        if third_type is uuid.UUID:
+                            returns_conv_id = True
+                    else:
+                        returns_context = True 
+        
+        return {
+            'is_async': is_async,
+            'returns_context': returns_context,
+            'returns_conv_id': returns_conv_id
+        }

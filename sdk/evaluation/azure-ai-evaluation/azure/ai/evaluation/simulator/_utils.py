@@ -48,6 +48,7 @@ class JsonLineList(list):
             assistant_context = None
             template_parameters = item.get("template_parameters", {})
             category = template_parameters.get("category", None)
+            conversation_id = template_parameters.get("conversation_id", None)
             for message in item["messages"]:
                 if message["role"] == "user":
                     user_message = message["content"]
@@ -69,6 +70,7 @@ class JsonLineList(list):
                                         }
                                     ),
                                     "category": category,
+                                    "conversation_id": str(conversation_id),
                                 }
                             )
                             + "\n"
@@ -76,7 +78,7 @@ class JsonLineList(list):
                         user_message = assistant_message = None
                     else:
                         json_lines += (
-                            json.dumps({"query": user_message, "response": assistant_message, "category": category})
+                            json.dumps({"query": user_message, "response": assistant_message, "category": category, "conversation_id": str(conversation_id)})
                             + "\n"
                         )
                         user_message = assistant_message = None
