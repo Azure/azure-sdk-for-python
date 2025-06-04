@@ -225,6 +225,7 @@ tox -e pylint --c <path_to_tox.ini> --root .
 - Follow official fixing guidelines
 - Use tox mcp tool for running MyPy
 
+---
 
 ## Python SDK Health tool
 
