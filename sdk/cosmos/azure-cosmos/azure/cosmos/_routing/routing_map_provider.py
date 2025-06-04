@@ -94,7 +94,7 @@ class PartitionKeyRangeCache(object):
             **kwargs: Dict[str, Any]
     ) -> Optional[Dict[str, Any]]:
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
-        self.init_collection_routing_map_if_needed(collection_link, str(collection_id), **kwargs)
+        self.init_collection_routing_map_if_needed(collection_link, collection_id, **kwargs)
 
         return (self._collection_routing_map_by_item[collection_id]
                 .get_range_by_partition_key_range_id(partition_key_range_id))
