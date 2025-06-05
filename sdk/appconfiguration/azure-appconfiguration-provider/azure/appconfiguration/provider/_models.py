@@ -56,18 +56,24 @@ class SettingSelector:
     def __init__(
         self, *, key_filter: str, label_filter: Optional[str] = EMPTY_LABEL, tag_filters: Optional[List[str]] = None
     ):
-        self.key_filter = key_filter
-        self.label_filter = label_filter
-        self.tag_filters = tag_filters
-
         if tag_filters is not None:
             if not isinstance(tag_filters, list):
                 raise TypeError("tag_filters must be a list of strings.")
+            if len(tag_filters) > 5:
+                raise ValueError("tag_filters cannot be longer than 5 items.")
             for tag in tag_filters:
                 if not tag:
                     raise ValueError("Tag filter cannot be an empty string or None.")
                 if not isinstance(tag, str) or "=" not in tag or tag.startswith("="):
                     raise ValueError("Tag filter " + tag + ' does not follow the format "tagName=tagValue".')
+                forbidden_chars = {"*", "\\", ","}
+                if any(char in tag for char in forbidden_chars):
+                    raise ValueError("Tag filters cannot contain the '*', '\\', or ',' characters.")
+
+        self.key_filter = key_filter
+        self.label_filter = label_filter
+        self.tag_filters = tag_filters
+
 
 
 class WatchKey(NamedTuple):
