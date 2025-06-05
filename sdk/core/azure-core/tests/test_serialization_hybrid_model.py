@@ -4,12 +4,14 @@
 # ------------------------------------
 from azure.core.serialization import is_sdk_model
 
+
 def test_is_sdk_model_with_hybrid_model():
 
     class HybridModel(Model):
         pass
 
     assert is_sdk_model(HybridModel())
+
 
 def test_is_sdk_model_with_msrest_model():
     # Instead of importing msrest, we're just going to do a basic rendering of the msrest models
@@ -22,12 +24,14 @@ def test_is_sdk_model_with_msrest_model():
             self.additional_properties = {}
 
     assert is_sdk_model(MsrestModel())
-    class InstatiatedMsrestModel(MsrestModel):
+
+    class InstantiatedMsrestModel(MsrestModel):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             self.attr = "value"
 
-    assert is_sdk_model(InstatiatedMsrestModel())
+    assert is_sdk_model(InstantiatedMsrestModel())
+
 
 def test_is_sdk_model_with_non_models():
     assert not is_sdk_model({})
@@ -40,6 +44,7 @@ def test_is_sdk_model_with_non_models():
     class Model:
         def __init__(self):
             self.attr = "value"
+
     assert not is_sdk_model(Model())
 
 
@@ -79,6 +84,7 @@ _VALID_RFC7231 = re.compile(
     r"(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s\d{4}\s\d{2}:\d{2}:\d{2}\sGMT"
 )
 
+
 def _serialize_bytes(o, format: typing.Optional[str] = None) -> str:
     encoded = base64.b64encode(o).decode()
     if format == "base64url":
@@ -103,11 +109,13 @@ def _serialize_datetime(o, format: typing.Optional[str] = None):
     # Next try datetime.date or datetime.time
     return o.isoformat()
 
+
 def _is_readonly(p):
     try:
         return p._visibility == ["read"]
     except AttributeError:
         return False
+
 
 def _deserialize_datetime(attr: typing.Union[str, datetime]) -> datetime:
     """Deserialize ISO-8601 formatted string into Datetime object.

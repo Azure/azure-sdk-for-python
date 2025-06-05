@@ -129,7 +129,8 @@ class AzureJSONEncoder(JSONEncoder):
         except AttributeError:
             pass
         return super(AzureJSONEncoder, self).default(o)
-    
+
+
 def is_sdk_model(obj: Any) -> bool:
     """Check if the object is an SDK model.
 
