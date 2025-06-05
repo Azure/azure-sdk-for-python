@@ -1,5 +1,35 @@
 # Release History
 
+## 37.0.0 (2025-06-15)
+
+### Features Added
+
+  - Added operation group ManagedNamespacesOperations
+  - Model AgentPool has a new parameter gateway_profile
+  - Model AgentPool has a new parameter pod_ip_allocation_mode
+  - Model AgentPool has a new parameter status
+  - Model AgentPool has a new parameter virtual_machine_nodes_status
+  - Model AgentPool has a new parameter virtual_machines_profile
+  - Model ContainerServiceNetworkProfile has a new parameter static_egress_gateway_profile
+  - Model Machine has a new parameter zones
+  - Model ManagedCluster has a new parameter status
+  - Model ManagedClusterAgentPoolProfile has a new parameter gateway_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter pod_ip_allocation_mode
+  - Model ManagedClusterAgentPoolProfile has a new parameter status
+  - Model ManagedClusterAgentPoolProfile has a new parameter virtual_machine_nodes_status
+  - Model ManagedClusterAgentPoolProfile has a new parameter virtual_machines_profile
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter gateway_profile
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter pod_ip_allocation_mode
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter status
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter virtual_machine_nodes_status
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter virtual_machines_profile
+  - Model ManagedClusterNodeProvisioningProfile has a new parameter default_node_pools
+
+### Breaking Changes
+
+  - Model ScaleProfile no longer has parameter autoscale
+  - Removed operation group NamespacesOperations
+
 ## 36.0.0 (2025-05-15)
 
 ### Features Added

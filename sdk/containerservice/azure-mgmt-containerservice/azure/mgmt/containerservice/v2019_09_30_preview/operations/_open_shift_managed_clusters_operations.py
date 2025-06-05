@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -236,7 +236,7 @@ class OpenShiftManagedClustersOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: ContainerServiceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -245,7 +245,7 @@ class OpenShiftManagedClustersOperations:
         self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> Iterable["_models.OpenShiftManagedCluster"]:
+    def list(self, **kwargs: Any) -> ItemPaged["_models.OpenShiftManagedCluster"]:
         """Gets a list of OpenShift managed clusters in the specified subscription.
 
         Gets a list of OpenShift managed clusters in the specified subscription. The operation returns
@@ -328,7 +328,7 @@ class OpenShiftManagedClustersOperations:
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> Iterable["_models.OpenShiftManagedCluster"]:
+    ) -> ItemPaged["_models.OpenShiftManagedCluster"]:
         """Lists OpenShift managed clusters in the specified subscription and resource group.
 
         Lists OpenShift managed clusters in the specified subscription and resource group. The
