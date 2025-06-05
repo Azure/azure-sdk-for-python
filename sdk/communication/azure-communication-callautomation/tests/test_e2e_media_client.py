@@ -15,9 +15,10 @@ from azure.communication.callautomation import (
     PhoneNumberIdentifier,
     MediaStreamingOptions,
     MediaStreamingContentType,
-    StreamingTransportType,
+    MediaStreamingTransportType,
     MediaStreamingAudioChannelType,
     TranscriptionOptions,
+    TranscriptionTransportType,
     TextSource,
     RecognizeInputType,
     RecognitionChoice
@@ -214,7 +215,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
 
         media_streaming_options=MediaStreamingOptions(
             transport_url=self.transport_url,
-            transport_type=StreamingTransportType.WEBSOCKET,
+            transport_type=MediaStreamingTransportType.WEBSOCKET,
             content_type=MediaStreamingContentType.AUDIO,
             audio_channel_type=MediaStreamingAudioChannelType.MIXED,
             start_media_streaming=False)
@@ -276,7 +277,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
 
         transcription_options=TranscriptionOptions(
             transport_url=self.transport_url,
-            transport_type=StreamingTransportType.WEBSOCKET,
+            transport_type=TranscriptionTransportType.WEBSOCKET,
             locale="en-US",
             start_transcription=False)
 
