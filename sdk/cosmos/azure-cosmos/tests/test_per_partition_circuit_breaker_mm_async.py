@@ -262,8 +262,8 @@ class TestPerPartitionCircuitBreakerMMAsync:
 
         validate_unhealthy_partitions(global_endpoint_manager, 1)
         # remove faults and reduce initial recover time and perform a write
-        original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME
-        _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = 1
+        original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS
+        _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS = 1
         custom_transport.faults = []
         try:
             await perform_write_operation(write_operation,
@@ -273,7 +273,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
                                           PK_VALUE,
                                           uri_down)
         finally:
-            _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
+            _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS = original_unavailable_time
         validate_unhealthy_partitions(global_endpoint_manager, 0)
         await cleanup_method([custom_setup, setup])
 
@@ -332,8 +332,8 @@ class TestPerPartitionCircuitBreakerMMAsync:
             expected_unhealthy_partitions = 1
         validate_unhealthy_partitions(global_endpoint_manager, expected_unhealthy_partitions)
         # remove faults and reduce initial recover time and perform a read
-        original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME
-        _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = 1
+        original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS
+        _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS = 1
         custom_transport.faults = []
         try:
             await perform_read_operation(read_operation,
@@ -342,7 +342,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
                                          doc['pk'],
                                          uri_down)
         finally:
-            _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
+            _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS = original_unavailable_time
         validate_unhealthy_partitions(global_endpoint_manager, 0)
         await cleanup_method([custom_setup, setup])
 
@@ -502,8 +502,8 @@ class TestPerPartitionCircuitBreakerMMAsync:
 
         # recover partition
         # remove faults and reduce initial recover time and perform a read
-        original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME
-        _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = 1
+        original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS
+        _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS = 1
         custom_transport.faults = []
         try:
             await perform_read_operation(read_operation,
@@ -512,7 +512,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
                                           PK_VALUE,
                                           expected_uri)
         finally:
-            _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
+            _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS = original_unavailable_time
         validate_unhealthy_partitions(global_endpoint_manager, 0)
         # per partition circuit breaker should not regress connection timeouts marking the region as unavailable
         assert len(global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint) == 1
@@ -563,8 +563,8 @@ class TestPerPartitionCircuitBreakerMMAsync:
                 number_of_errors += 1
 
         # attempt to recover partition
-        original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME
-        _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = 1
+        original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS
+        _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS = 1
         try:
             tasks = []
             for i in range(15):
@@ -572,7 +572,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
             await asyncio.gather(*tasks)
             assert number_of_errors == 1
         finally:
-            _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
+            _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS = original_unavailable_time
             await cleanup_method([custom_setup, setup])
 
 if __name__ == '__main__':

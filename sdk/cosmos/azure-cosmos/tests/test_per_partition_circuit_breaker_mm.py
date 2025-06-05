@@ -155,8 +155,8 @@ class TestPerPartitionCircuitBreakerMM:
 
         validate_unhealthy_partitions(global_endpoint_manager, 1)
         # remove faults and reduce initial recover time and perform a write
-        original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME
-        _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = 1
+        original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS
+        _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS = 1
         custom_transport.faults = []
         try:
             perform_write_operation(write_operation,
@@ -166,7 +166,7 @@ class TestPerPartitionCircuitBreakerMM:
                                           PK_VALUE,
                                           uri_down)
         finally:
-            _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
+            _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS = original_unavailable_time
         validate_unhealthy_partitions(global_endpoint_manager, 0)
 
     @pytest.mark.cosmosCircuitBreakerMultiRegion
@@ -207,8 +207,8 @@ class TestPerPartitionCircuitBreakerMM:
             expected_unhealthy_partitions = 1
         validate_unhealthy_partitions(global_endpoint_manager, expected_unhealthy_partitions)
         # remove faults and reduce initial recover time and perform a read
-        original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME
-        _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = 1
+        original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS
+        _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS = 1
         custom_transport.faults = []
         try:
             perform_read_operation(read_operation,
@@ -217,7 +217,7 @@ class TestPerPartitionCircuitBreakerMM:
                                          doc['pk'],
                                          uri_down)
         finally:
-            _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
+            _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS = original_unavailable_time
         validate_unhealthy_partitions(global_endpoint_manager, 0)
 
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors())
@@ -382,8 +382,8 @@ class TestPerPartitionCircuitBreakerMM:
 
         # recover partition
         # remove faults and reduce initial recover time and perform a write
-        original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME
-        _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = 1
+        original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS
+        _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS = 1
         custom_transport.faults = []
         try:
             perform_read_operation(read_operation,
@@ -392,7 +392,7 @@ class TestPerPartitionCircuitBreakerMM:
                                           PK_VALUE,
                                           expected_uri)
         finally:
-            _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
+            _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS = original_unavailable_time
         validate_unhealthy_partitions(global_endpoint_manager, 0)
 
         custom_transport.add_fault(predicate,

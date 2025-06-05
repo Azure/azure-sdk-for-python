@@ -186,8 +186,8 @@ class TestPerPartitionCircuitBreakerSmMrr:
 
         # recover partition
         # remove faults and reduce initial recover time and perform a write
-        original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME
-        _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = 1
+        original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS
+        _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS = 1
         custom_transport.faults = []
         try:
             perform_read_operation(read_operation,
@@ -196,7 +196,7 @@ class TestPerPartitionCircuitBreakerSmMrr:
                                          PK_VALUE,
                                          expected_uri)
         finally:
-            _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
+            _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS = original_unavailable_time
         validate_unhealthy_partitions(global_endpoint_manager, 0)
 
         custom_transport.add_fault(predicate,
