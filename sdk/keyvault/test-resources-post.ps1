@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+# cSpell:ignore TEAMPROJECTID
 
 # IMPORTANT: Do not invoke this file directly. Please instead run eng/New-TestResources.ps1 from the repository root.
 
