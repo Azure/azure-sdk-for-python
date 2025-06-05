@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,62 +15,55 @@ from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import AIProjectClientConfiguration
-from ._serialization import Deserializer, Serializer
-from .operations import AgentsOperations, ConnectionsOperations, EvaluationsOperations, TelemetryOperations
+from ._utils.serialization import Deserializer, Serializer
+from .operations import (
+    ConnectionsOperations,
+    DatasetsOperations,
+    DeploymentsOperations,
+    EvaluationsOperations,
+    IndexesOperations,
+    RedTeamsOperations,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AIProjectClient:
+class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
 
-    :ivar agents: AgentsOperations operations
-    :vartype agents: azure.ai.projects.operations.AgentsOperations
     :ivar connections: ConnectionsOperations operations
     :vartype connections: azure.ai.projects.operations.ConnectionsOperations
-    :ivar telemetry: TelemetryOperations operations
-    :vartype telemetry: azure.ai.projects.operations.TelemetryOperations
     :ivar evaluations: EvaluationsOperations operations
     :vartype evaluations: azure.ai.projects.operations.EvaluationsOperations
-    :param endpoint: The Azure AI Foundry project endpoint, in the form
-     ``https://<azure-region>.api.azureml.ms`` or
-     ``https://<private-link-guid>.<azure-region>.api.azureml.ms``, where <azure-region> is the
-     Azure region where the project is deployed (e.g. westus) and <private-link-guid> is the GUID of
-     the Enterprise private link. Required.
+    :ivar datasets: DatasetsOperations operations
+    :vartype datasets: azure.ai.projects.operations.DatasetsOperations
+    :ivar indexes: IndexesOperations operations
+    :vartype indexes: azure.ai.projects.operations.IndexesOperations
+    :ivar deployments: DeploymentsOperations operations
+    :vartype deployments: azure.ai.projects.operations.DeploymentsOperations
+    :ivar red_teams: RedTeamsOperations operations
+    :vartype red_teams: azure.ai.projects.operations.RedTeamsOperations
+    :param endpoint: Project endpoint. In the form
+     "https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/_project"
+     if your Foundry Hub has only one Project, or to use the default Project in your Hub. Or in the
+     form
+     "https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>"
+     if you want to explicitly
+     specify the Foundry Project name. Required.
     :type endpoint: str
-    :param subscription_id: The Azure subscription ID. Required.
-    :type subscription_id: str
-    :param resource_group_name: The name of the Azure Resource Group. Required.
-    :type resource_group_name: str
-    :param project_name: The Azure AI Foundry project name. Required.
-    :type project_name: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2024-07-01-preview". Note that overriding this default value may result in unsupported
+     "2025-05-15-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(
-        self,
-        endpoint: str,
-        subscription_id: str,
-        resource_group_name: str,
-        project_name: str,
-        credential: "TokenCredential",
-        **kwargs: Any
-    ) -> None:
-        _endpoint = "{endpoint}/agents/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{projectName}"
-        self._config = AIProjectClientConfiguration(
-            endpoint=endpoint,
-            subscription_id=subscription_id,
-            resource_group_name=resource_group_name,
-            project_name=project_name,
-            credential=credential,
-            **kwargs
-        )
+    def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
+        _endpoint = "{endpoint}"
+        self._config = AIProjectClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -94,10 +86,12 @@ class AIProjectClient:
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.agents = AgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.telemetry = TelemetryOperations(self._client, self._config, self._serialize, self._deserialize)
         self.evaluations = EvaluationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.red_teams = RedTeamsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
@@ -120,15 +114,6 @@ class AIProjectClient:
         request_copy = deepcopy(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
-            ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

@@ -1,6 +1,19 @@
 # Release History
+## 1.28.0 (unreleased)
 
-## 1.27.0 (unreleased)
+### Features Added
+
+### Bugs Fixed
+
+## 1.27.1 (2025-05-13)
+
+### Bugs Fixed
+  - Handle key error for missing props in PAT url case.
+
+## 1.27.0 (2025-05-07)
+
+### Features Added
+- Added Target storage connection for capability host.
 
 ### Bugs Fixed
 - Fix for compute Instance, disableLocalAuth property should be depend on ssh public access enabled.
@@ -9,6 +22,7 @@
 
 ### Other Changes
 - Hub and Project are officially GA'd and no longer experimental.
+- PipelineComponentBatchDeployment, ModelBatchDeployment, ModelBatchDeploymentSettings are GA
 
 ## 1.26.4 (2025-04-23)
 

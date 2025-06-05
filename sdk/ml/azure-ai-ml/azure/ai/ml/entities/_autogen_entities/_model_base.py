@@ -6,23 +6,25 @@
 # --------------------------------------------------------------------------
 # pylint: disable=protected-access, broad-except, no-member
 
-import calendar
-import decimal
-import functools
-import sys
-import logging
 import base64
-import re
+import calendar
 import copy
-import typing
-import enum
+import decimal
 import email.utils
-from datetime import datetime, date, time, timedelta, timezone
+import enum
+import functools
+import logging
+import re
+import sys
+import typing
+from datetime import date, datetime, time, timedelta, timezone
 from json import JSONEncoder
-from typing_extensions import Self
+
 import isodate
-from azure.core.exceptions import DeserializationError
+from typing_extensions import Self
+
 from azure.core import CaseInsensitiveEnumMeta
+from azure.core.exceptions import DeserializationError
 from azure.core.pipeline import PipelineResponse
 from azure.core.serialization import NULL
 

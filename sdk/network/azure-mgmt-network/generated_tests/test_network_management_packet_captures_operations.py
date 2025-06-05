@@ -45,7 +45,7 @@ class TestNetworkManagementPacketCapturesOperations(AzureMgmtRecordedTestCase):
                 "timeLimitInSeconds": 18000,
                 "totalBytesPerSession": 1073741824,
             },
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -58,7 +58,7 @@ class TestNetworkManagementPacketCapturesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             packet_capture_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -71,7 +71,7 @@ class TestNetworkManagementPacketCapturesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             packet_capture_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -84,7 +84,7 @@ class TestNetworkManagementPacketCapturesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             packet_capture_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -97,7 +97,7 @@ class TestNetworkManagementPacketCapturesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             packet_capture_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -109,7 +109,7 @@ class TestNetworkManagementPacketCapturesOperations(AzureMgmtRecordedTestCase):
         response = self.client.packet_captures.list(
             resource_group_name=resource_group.name,
             network_watcher_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

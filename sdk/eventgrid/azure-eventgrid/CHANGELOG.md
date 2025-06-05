@@ -1,14 +1,10 @@
 # Release History
 
-## 4.21.1 (Unreleased)
+## 4.22.0 (2025-05-14)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added new enum values to `SystemEventNames` related to Azure Communication Services and Azure Edge.
 
 ## 4.21.0 (2024-11-19)
 

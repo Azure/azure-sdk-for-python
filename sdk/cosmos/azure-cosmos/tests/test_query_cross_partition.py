@@ -16,7 +16,7 @@ from azure.cosmos._execution_context.query_execution_info import _PartitionedQue
 from azure.cosmos.documents import _DistinctType
 from azure.cosmos.partition_key import PartitionKey
 
-
+@pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosQuery
 class TestCrossPartitionQuery(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
@@ -39,7 +39,10 @@ class TestCrossPartitionQuery(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        use_multiple_write_locations = False
+        if os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER", "False") == "True":
+            use_multiple_write_locations = True
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, multiple_write_locations=use_multiple_write_locations)
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         if cls.host == "https://localhost:8081/":
             os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "True"
@@ -477,6 +480,30 @@ class TestCrossPartitionQuery(unittest.TestCase):
 
         # verify a second time
         self.assertLessEqual(len(token.encode('utf-8')), 1024)
+
+    def test_cross_partition_query_response_hook(self):
+        created_collection = self.created_db.create_container_if_not_exists(
+            id="query_response_hook_test" + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=12000
+        )
+        items = [
+            {'id': str(uuid.uuid4()), 'pk': '0', 'val': 5},
+            {'id': str(uuid.uuid4()), 'pk': '1', 'val': 10},
+            {'id': str(uuid.uuid4()), 'pk': '0', 'val': 5},
+            {'id': str(uuid.uuid4()), 'pk': '1', 'val': 10},
+            {'id': str(uuid.uuid4()), 'pk': '0', 'val': 5},
+            {'id': str(uuid.uuid4()), 'pk': '1', 'val': 10}
+        ]
+
+        for item in items:
+            created_collection.create_item(body=item)
+
+        response_hook = test_config.ResponseHookCaller()
+        item_list = [item for item in created_collection.query_items("select * from c", enable_cross_partition_query=True, response_hook=response_hook)]
+        assert len(item_list) == 6
+        assert response_hook.count == 2
+        self.created_db.delete_container(created_collection.id)
 
     def _MockNextFunction(self):
         if self.count < len(self.payloads):

@@ -106,87 +106,15 @@ class TestHeaders(unittest.TestCase):
     def test_request_precedence_throughput_bucket(self):
         client = cosmos_client.CosmosClient(self.host, self.masterKey,
                                    throughput_bucket=client_throughput_bucket_number)
-        created_db = client.create_database(
-            "test_db" + str(uuid.uuid4()),
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
-        client.delete_database(created_db.id)
-
-    def test_create_db_if_not_exists_and_delete_db_throughput_bucket(self):
-        created_db = self.client.create_database_if_not_exists(
-           "test_db" + str(uuid.uuid4()),
-           throughput_bucket=request_throughput_bucket_number,
-           raw_response_hook=request_raw_response_hook)
-        self.client.delete_database(
-            created_db.id,
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
-
-    def test_list_db_throughput_bucket(self):
-        self.client.list_databases(
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
-
-    def test_query_db_throughput_bucket(self):
-        self.client.query_databases(
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
-
-    def test_db_read_throughput_bucket(self):
-        self.database.read(
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
-
-    def test_create_container_throughput_bucket(self):
-        created_collection = self.database.create_container(
-            str(uuid.uuid4()),
-            PartitionKey(path="/pk"),
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
-        self.database.delete_container(created_collection.id)
-
-    def test_create_container_if_not_exists_throughput_bucket(self):
-        created_collection = self.database.create_container_if_not_exists(
-            str(uuid.uuid4()),
-            PartitionKey(path="/pk"),
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
-        self.database.delete_container(created_collection.id)
-
-    def test_delete_container_throughput_bucket(self):
-        created_collection = self.database.create_container(
+        created_db = client.get_database_client(self.configs.TEST_DATABASE_ID)
+        created_container = created_db.create_container(
             str(uuid.uuid4()),
             PartitionKey(path="/pk"))
-        self.database.delete_container(
-            created_collection.id,
+        created_container.create_item(
+            body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
-
-    def test_list_containers_throughput_bucket(self):
-        self.database.list_containers(
-           throughput_bucket=request_throughput_bucket_number,
-           raw_response_hook=request_raw_response_hook)
-
-    def test_query_containers_throughput_bucket(self):
-        self.database.query_containers(
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
-
-    def test_replace_container_throughput_bucket(self):
-        created_collection = self.database.create_container(
-            str(uuid.uuid4()),
-            PartitionKey(path="/pk"))
-        replaced_collection = self.database.replace_container(
-            created_collection.id,
-            PartitionKey(path="/pk"),
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
-        self.database.delete_container(replaced_collection.id)
-
-    def test_container_read_throughput_bucket(self):
-        self.container.read(
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
+        created_db.delete_container(created_container.id)
 
     def test_container_read_item_throughput_bucket(self):
         created_document = self.container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})

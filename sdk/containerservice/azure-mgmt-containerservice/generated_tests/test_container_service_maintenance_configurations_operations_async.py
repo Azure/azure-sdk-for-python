@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerservice.aio import ContainerServiceClient
+from azure.mgmt.containerservice.v2025_03_01.aio import ContainerServiceClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -25,7 +25,7 @@ class TestContainerServiceMaintenanceConfigurationsOperationsAsync(AzureMgmtReco
         response = self.client.maintenance_configurations.list_by_managed_cluster(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2025-02-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestContainerServiceMaintenanceConfigurationsOperationsAsync(AzureMgmtReco
             resource_group_name=resource_group.name,
             resource_name="str",
             config_name="str",
-            api_version="2025-02-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -79,7 +79,7 @@ class TestContainerServiceMaintenanceConfigurationsOperationsAsync(AzureMgmtReco
                 "timeInWeek": [{"day": "str", "hourSlots": [0]}],
                 "type": "str",
             },
-            api_version="2025-02-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -92,7 +92,7 @@ class TestContainerServiceMaintenanceConfigurationsOperationsAsync(AzureMgmtReco
             resource_group_name=resource_group.name,
             resource_name="str",
             config_name="str",
-            api_version="2025-02-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself

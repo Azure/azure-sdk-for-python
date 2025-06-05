@@ -77,9 +77,11 @@ setup(
         "httpx>=0.25.1",
         # Dependencies added since Promptflow will soon be made optional
         "pandas>=2.1.2,<3.0.0",
-        "openai>=1.40.0",
+        "openai>=1.78.0",
         "ruamel.yaml>=0.17.10,<1.0.0",
         "msrest>=0.6.21",
+        "Jinja2>=3.1.6",
+        "aiohttp>=3.0",
     ],
     extras_require={
         "redteam": [

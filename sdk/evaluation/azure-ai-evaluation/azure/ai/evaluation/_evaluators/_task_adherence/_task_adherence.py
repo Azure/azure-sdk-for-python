@@ -42,6 +42,17 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :language: python
             :dedent: 8
             :caption: Initialize and call an TaskAdherenceEvaluator with a query and response.
+    
+    .. admonition:: Example using Azure AI Project URL:
+        
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START task_adherence_evaluator]
+            :end-before: [END task_adherence_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call TaskAdherenceEvaluator using Azure AI Project URL in the following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+
     """
 
     _PROMPTY_FILE = "task_adherence.prompty"

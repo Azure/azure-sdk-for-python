@@ -41,13 +41,14 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         cls.test_db = cls.client.create_database(str(uuid.uuid4()))
         cls.test_container = cls.test_db.create_container(
             id="FTS" + cls.TEST_CONTAINER_ID,
-            partition_key=PartitionKey(path="/id"),
-            offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_1_PARTITION,
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_2_PARTITIONS,
             indexing_policy=test_config.get_full_text_indexing_policy(path="/text"),
             full_text_policy=test_config.get_full_text_policy(path="/text"))
         data = hybrid_search_data.get_full_text_items()
         for index, item in enumerate(data.get("items")):
             item['id'] = str(index)
+            item['pk'] = str((index % 2) + 1)
             cls.test_container.create_item(item)
         # Need to give the container time to index all the recently added items - 10 minutes seems to work
         time.sleep(10 * 60)
@@ -74,7 +75,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
 
         try:
             query = "SELECT TOP 10 c.index FROM c WHERE FullTextContains(c.title, 'John')" \
-                    " ORDER BY RANK FullTextScore(c.title, ['John']) DESC"
+                    " ORDER BY RANK FullTextScore(c.title, 'John') DESC"
             results = self.test_container.query_items(query, enable_cross_partition_query=True)
             list(results)
             pytest.fail("Attempting to set an ordering direction in a full text score query should fail.")
@@ -85,7 +86,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
 
         try:
             query = "SELECT TOP 10 c.index FROM c WHERE FullTextContains(c.title, 'John')" \
-                    " ORDER BY RANK RRF(FullTextScore(c.title, ['John']), VectorDistance(c.vector, [1,2,3])) DESC"
+                    " ORDER BY RANK RRF(FullTextScore(c.title, 'John'), VectorDistance(c.vector, [1,2,3])) DESC"
             results = self.test_container.query_items(query, enable_cross_partition_query=True)
             list(results)
             pytest.fail("Attempting to set an ordering direction in a hybrid search query should fail.")
@@ -99,7 +100,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         os.environ["AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS"] = "0"
         try:
             query = "SELECT TOP 1 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \
-                    "FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, ['John'])"
+                    "FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, 'John')"
             results = self.test_container.query_items(query, enable_cross_partition_query=True)
             [item for item in results]
             pytest.fail("Config was not applied properly.")
@@ -111,7 +112,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
 
     def test_hybrid_search_queries(self):
         query = "SELECT TOP 10 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \
-                "FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, ['John'])"
+                "FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, 'John')"
         results = self.test_container.query_items(query, enable_cross_partition_query=True)
         result_list = list(results)
         assert len(result_list) == 3
@@ -119,7 +120,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
             assert res['index'] in [2, 85, 57]
 
         query = "SELECT TOP 10 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John')" \
-                " OR FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, ['John'])"
+                " OR FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, 'John')"
         results = self.test_container.query_items(query, enable_cross_partition_query=True)
         result_list = list(results)
         assert len(result_list) == 3
@@ -127,7 +128,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
             assert res['index'] in [2, 85, 57]
 
         query = "SELECT c.index, c.title FROM c WHERE FullTextContains(c.title, 'John')" \
-                " OR FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, ['John']) OFFSET 1 LIMIT 5"
+                " OR FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, 'John') OFFSET 1 LIMIT 5"
         results = self.test_container.query_items(query, enable_cross_partition_query=True)
         result_list = list(results)
         assert len(result_list) == 2
@@ -136,7 +137,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
 
         query = "SELECT TOP 20 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \
                 "FullTextContains(c.text, 'John') OR FullTextContains(c.text, 'United States') " \
-                "ORDER BY RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States']))"
+                "ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'))"
         results = self.test_container.query_items(query, enable_cross_partition_query=True)
         result_list = list(results)
         assert len(result_list) == 15
@@ -145,8 +146,8 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
 
         query = "SELECT TOP 10 c.index, c.title FROM c WHERE " \
                 "FullTextContains(c.title, 'John') OR FullTextContains(c.text, 'John') OR " \
-                "FullTextContains(c.text, 'United States') ORDER BY RANK RRF(FullTextScore(c.title, ['John'])," \
-                " FullTextScore(c.text, ['United States']))"
+                "FullTextContains(c.text, 'United States') ORDER BY RANK RRF(FullTextScore(c.title, 'John')," \
+                " FullTextScore(c.text, 'United States'))"
         results = self.test_container.query_items(query, enable_cross_partition_query=True)
         result_list = list(results)
         assert len(result_list) == 10
@@ -155,7 +156,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
 
         query = "SELECT c.index, c.title FROM c WHERE FullTextContains(c.title, 'John')" \
                 " OR FullTextContains(c.text, 'John') OR FullTextContains(c.text, 'United States') ORDER BY " \
-                "RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States'])) OFFSET 5 LIMIT 10"
+                "RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States')) OFFSET 5 LIMIT 10"
         results = self.test_container.query_items(query, enable_cross_partition_query=True)
         result_list = list(results)
         assert len(result_list) == 10
@@ -163,7 +164,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
             assert res['index'] in [24, 77, 76, 80, 25, 22, 2, 66, 57, 85]
 
         query = "SELECT TOP 10 c.index, c.title FROM c " \
-                "ORDER BY RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States']))"
+                "ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'))"
         results = self.test_container.query_items(query, enable_cross_partition_query=True)
         result_list = list(results)
         assert len(result_list) == 10
@@ -171,7 +172,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
             assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25]
 
         query = "SELECT c.index, c.title FROM c " \
-                "ORDER BY RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States'])) " \
+                "ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States')) " \
                 "OFFSET 0 LIMIT 13"
         results = self.test_container.query_items(query, enable_cross_partition_query=True)
         result_list = list(results)
@@ -179,9 +180,9 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         for res in result_list:
             assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66]
 
-        item_vector = self.test_container.read_item('50', '50')['vector']
+        item_vector = self.test_container.read_item('50', '1')['vector']
         query = "SELECT c.index, c.title FROM c " \
-                "ORDER BY RANK RRF(FullTextScore(c.text, ['United States']), VectorDistance(c.vector, {})) " \
+                "ORDER BY RANK RRF(FullTextScore(c.text, 'United States'), VectorDistance(c.vector, {})) " \
                 "OFFSET 0 LIMIT 10".format(item_vector)
         results = self.test_container.query_items(query, enable_cross_partition_query=True)
         result_list = list(results)
@@ -191,7 +192,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
 
     def test_hybrid_search_query_pagination(self):
         query = "SELECT c.index, c.title FROM c " \
-                "ORDER BY RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States'])) " \
+                "ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States')) " \
                 "OFFSET 0 LIMIT 13"
         query_iterable = self.test_container.query_items(query, enable_cross_partition_query=True, max_item_count=5)
         all_fetched_res = []
@@ -202,6 +203,173 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
             all_fetched_res.extend(list(items))
         assert count == 3
         assert len(all_fetched_res) == 13
+
+    def test_hybrid_search_cross_partition_query_response_hook(self):
+        item_vector = self.test_container.read_item('50', '1')['vector']
+        response_hook = test_config.ResponseHookCaller()
+        query = "SELECT c.index, c.title FROM c " \
+                "ORDER BY RANK RRF(FullTextScore(c.text, 'United States'), VectorDistance(c.vector, {})) " \
+                "OFFSET 0 LIMIT 10".format(item_vector)
+        results = self.test_container.query_items(query, enable_cross_partition_query=True, response_hook=response_hook)
+        result_list = list(results)
+        assert len(result_list) == 10
+        assert response_hook.count == 6 # one global stat query per partition, two queries per partition for each component query
+
+    def test_hybrid_search_partitioned_query_response_hook(self):
+        item_vector = self.test_container.read_item('50', '1')['vector']
+        response_hook = test_config.ResponseHookCaller()
+        query = "SELECT c.index, c.title FROM c " \
+                "ORDER BY RANK RRF(FullTextScore(c.text, 'United States'), VectorDistance(c.vector, {})) " \
+                "OFFSET 0 LIMIT 10".format(item_vector)
+        results = self.test_container.query_items(query, partition_key='1', response_hook=response_hook)
+        result_list = list(results)
+        assert len(result_list) == 10
+        assert response_hook.count == 1
+
+    def test_hybrid_search_weighted_reciprocal_rank_fusion(self):
+        # Test case 1
+        query = """
+                    SELECT TOP 15 c.index AS Index, c.title AS Title, c.text AS Text
+                    FROM c
+                    WHERE FullTextContains(c.title, 'John') OR FullTextContains(c.text, 'John') OR FullTextContains(c.text, 'United States')
+                    ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [1, 1])
+                """
+        results = self.test_container.query_items(query, enable_cross_partition_query=True)
+        result_list = [res['Index'] for res in results]
+        # If some scores rank the same the order of the results may change
+        assert result_list in [
+            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85],
+            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 85, 57]
+        ]
+
+        # Test case 2
+        query = """
+                    SELECT TOP 15 c.index AS Index, c.title AS Title, c.text AS Text
+                    FROM c
+                    WHERE FullTextContains(c.title, 'John') OR FullTextContains(c.text, 'John') OR FullTextContains(c.text, 'United States')
+                    ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [10, 10])
+                """
+        results = self.test_container.query_items(query, enable_cross_partition_query=True)
+        result_list = [res['Index'] for res in results]
+        # If some scores rank the same the order of the results may change
+        assert result_list in [
+            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85],
+            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 85, 57]
+        ]
+
+        # Test case 3
+        query = """
+                    SELECT TOP 10 c.index AS Index, c.title AS Title, c.text AS Text
+                    FROM c
+                    WHERE FullTextContains(c.title, 'John') OR FullTextContains(c.text, 'John') OR FullTextContains(c.text, 'United States')
+                    ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [0.1, 0.1])
+                """
+        results = self.test_container.query_items(query, enable_cross_partition_query=True)
+        result_list = [res['Index'] for res in results]
+        assert result_list == [61, 51, 49, 54, 75, 24, 77, 76, 80, 25]
+
+        # Test case 4
+        query = """
+                    SELECT TOP 15 c.index AS Index, c.title AS Title, c.text AS Text
+                    FROM c
+                    WHERE FullTextContains(c.title, 'John') OR FullTextContains(c.text, 'John') OR FullTextContains(c.text, 'United States')
+                    ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [-1, -1])
+                """
+        results = self.test_container.query_items(query, enable_cross_partition_query=True)
+        result_list = [res['Index'] for res in results]
+        # If some scores rank the same the order of the results may change
+        assert result_list in [
+            [85, 57, 66, 2, 22, 25, 77, 76, 80, 75, 24, 49, 54, 51, 81],
+            [57, 85, 2, 66, 22, 25, 80, 76, 77, 24, 75, 54, 49, 51, 61]
+        ]
+
+        # Test case 5
+        item_vector = self.test_container.read_item('50', '1')['vector']
+        query = "SELECT c.index, c.title FROM c " \
+                "ORDER BY RANK RRF(FullTextScore(c.text, 'United States'), VectorDistance(c.vector, {}), [1,1]) " \
+                "OFFSET 0 LIMIT 10".format(item_vector)
+        results = self.test_container.query_items(query, enable_cross_partition_query=True)
+        result_list = list(results)
+        assert len(result_list) == 10
+        result_list = [res['index'] for res in result_list]
+        assert result_list == [51, 54, 28, 70, 24, 61, 56, 26, 58, 77]
+
+    def test_invalid_hybrid_search_queries_weighted_reciprocal_rank_fusion(self):
+        try:
+            query = "SELECT c.index, RRF(VectorDistance(c.vector, [1,2,3]), FullTextScore(c.text, 'test') FROM c"
+            results = self.test_container.query_items(query, enable_cross_partition_query=True)
+            list(results)
+            pytest.fail("Attempting to project RRF in a query should fail.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
+
+    def test_weighted_vs_non_weighted_reciprocal_rank_fusion(self):
+        # Non-weighted RRF query
+        query_non_weighted = """
+            SELECT TOP 10 c.index, c.title FROM c
+            ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'))
+        """
+        results_non_weighted = self.test_container.query_items(query_non_weighted, enable_cross_partition_query=True)
+        result_list_non_weighted = [res['index'] for res in results_non_weighted]
+
+        # Weighted RRF query with equal weights
+        query_weighted_equal = """
+            SELECT TOP 10 c.index, c.title FROM c
+            ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [1, 1])
+        """
+        results_weighted_equal = self.test_container.query_items(query_weighted_equal,
+                                                                 enable_cross_partition_query=True)
+        result_list_weighted_equal = [res['index'] for res in results_weighted_equal]
+
+        # Weighted RRF query with different direction weights
+        query_weighted_different = """
+            SELECT TOP 10 c.index, c.title FROM c
+            ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [1, -0.5])
+        """
+        results_weighted_different = self.test_container.query_items(query_weighted_different,
+                                                                     enable_cross_partition_query=True)
+        result_list_weighted_different = [res['index'] for res in results_weighted_different]
+
+        # Assertions
+        assert result_list_non_weighted == result_list_weighted_equal, "Non-weighted and equally weighted RRF results should match."
+        assert result_list_non_weighted != result_list_weighted_different, "Non-weighted and differently weighted RRF results should not match."
+
+    def test_weighted_reciprocal_rank_fusion_with_missing_or_extra_weights(self):
+        try:
+            # Weighted RRF query with one weight missing
+            query_missing_weight = """
+                SELECT TOP 10 c.index, c.title FROM c
+                ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [1])
+            """
+            
+            res = self.test_container.query_items(query_missing_weight, enable_cross_partition_query=True)
+            list(res)
+            pytest.fail("Query with missing weights should fail.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
+        try:
+            # Weighted RRF query with an extra weight
+            query_extra_weight = """
+                    SELECT TOP 10 c.index, c.title FROM c
+                    ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [1, 1, 1])
+            """
+            list(self.test_container.query_items(query_extra_weight, enable_cross_partition_query=True))
+            pytest.fail("Query with extra weights should fail.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
+
+    def test_weighted_reciprocal_rank_fusion_with_response_hook(self):
+        response_hook = test_config.ResponseHookCaller()
+        query_weighted_rrf = """
+            SELECT TOP 10 c.index, c.title FROM c
+            ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [1, 0.5])
+        """
+        results = self.test_container.query_items(query_weighted_rrf, enable_cross_partition_query=True,
+                                                  response_hook=response_hook)
+        result_list = list(results)
+        assert len(result_list) == 10
+        assert response_hook.count > 0  # Ensure the response hook was called
+
 
 
 if __name__ == "__main__":

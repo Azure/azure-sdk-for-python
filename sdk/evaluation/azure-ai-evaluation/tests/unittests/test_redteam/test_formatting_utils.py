@@ -6,19 +6,12 @@ import pytest
 import math
 import json
 from unittest.mock import patch, MagicMock, mock_open
-try: 
-    import pyrit
-    has_pyrit = True
-except ImportError:
-    has_pyrit = False
-
-if has_pyrit:
-    from azure.ai.evaluation.red_team._utils.formatting_utils import (
-        message_to_dict, get_strategy_name, get_flattened_attack_strategies,
-        get_attack_success, format_scorecard, is_none_or_nan, list_mean_nan_safe
-    )
-    from azure.ai.evaluation.red_team._attack_strategy import AttackStrategy
-    from pyrit.models import ChatMessage
+from azure.ai.evaluation.red_team._utils.formatting_utils import (
+    message_to_dict, get_strategy_name, get_flattened_attack_strategies,
+    get_attack_success, format_scorecard, is_none_or_nan, list_mean_nan_safe
+)
+from azure.ai.evaluation.red_team._attack_strategy import AttackStrategy
+from pyrit.models import ChatMessage
 
 
 @pytest.fixture(scope="function")
@@ -31,7 +24,6 @@ def mock_chat_message():
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestMessageToDict:
     """Test message_to_dict function."""
 
@@ -45,7 +37,6 @@ class TestMessageToDict:
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestStrategyNameFunctions:
     """Test strategy name handling functions."""
 
@@ -66,7 +57,6 @@ class TestStrategyNameFunctions:
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestAttackStrategyFunctions:
     """Test attack strategy related functions."""
     
@@ -134,27 +124,26 @@ class TestAttackStrategyFunctions:
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestScorecardFormatting:
     """Test scorecard formatting functions."""
     
     def test_format_scorecard_empty(self):
         """Test scorecard formatting with empty data."""
-        redteam_result = {
-            "redteaming_scorecard": {
+        scan_result = {
+            "scorecard": {
                 "risk_category_summary": [],
                 "joint_risk_attack_summary": []
             }
         }
         
-        result = format_scorecard(redteam_result)
+        result = format_scorecard(scan_result)
         
         assert "Overall ASR: 0%" in result
 
     def test_format_scorecard_with_data(self):
         """Test scorecard formatting with actual data."""
-        redteam_result = {
-            "redteaming_scorecard": {
+        scan_result = {
+            "scorecard": {
                 "risk_category_summary": [{
                     "overall_asr": 25.5
                 }],
@@ -171,7 +160,7 @@ class TestScorecardFormatting:
             "studio_url": "https://example.com/studio"
         }
         
-        result = format_scorecard(redteam_result)
+        result = format_scorecard(scan_result)
         
         assert "Overall ASR: 25.5%" in result
         assert "Violence" in result  # Should show capitalized risk category
@@ -182,8 +171,8 @@ class TestScorecardFormatting:
 
     def test_format_scorecard_partial_data(self):
         """Test scorecard formatting with partial data."""
-        redteam_result = {
-            "redteaming_scorecard": {
+        scan_result = {
+            "scorecard": {
                 "risk_category_summary": [{
                     "overall_asr": 15.0
                 }],
@@ -198,7 +187,7 @@ class TestScorecardFormatting:
             }
         }
         
-        result = format_scorecard(redteam_result)
+        result = format_scorecard(scan_result)
         
         assert "Overall ASR: 15.0%" in result
         assert "Hate-unfairness" in result  # Should show formatted risk category
@@ -208,7 +197,6 @@ class TestScorecardFormatting:
 
 
 @pytest.mark.unittest
-@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestNumericalHelpers:
     """Test numerical helper functions."""
 

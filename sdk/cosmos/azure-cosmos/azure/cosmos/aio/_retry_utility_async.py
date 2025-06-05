@@ -40,11 +40,16 @@ from .._container_recreate_retry_policy import ContainerRecreateRetryPolicy
 from .._retry_utility import (_configure_timeout, _has_read_retryable_headers,
                               _handle_service_response_retries, _handle_service_request_retries,
                               _has_database_account_header)
+from ..exceptions import CosmosHttpResponseError
 from ..http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
 
 # pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements, disable=too-many-branches
 
+# args [0] is the request object
+# args [1] is the connection policy
+# args [2] is the pipeline client
+# args [3] is the http request
 async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwargs): # pylint: disable=too-many-locals
     """Executes the function with passed parameters applying all retry policies
 
@@ -58,6 +63,9 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
     :returns: the result of running the passed in function as a (result, headers) tuple
     :rtype: tuple of (dict, dict)
     """
+    pk_range_wrapper = None
+    if args and global_endpoint_manager.is_circuit_breaker_applicable(args[0]):
+        pk_range_wrapper = await global_endpoint_manager.create_pk_range_wrapper(args[0])
     # instantiate all retry policies here to be applied for each request execution
     endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(
         client.connection_policy, global_endpoint_manager, *args
@@ -73,17 +81,17 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
     defaultRetry_policy = _default_retry_policy.DefaultRetryPolicy(*args)
 
     sessionRetry_policy = _session_retry_policy._SessionRetryPolicy(
-        client.connection_policy.EnableEndpointDiscovery, global_endpoint_manager, *args
+        client.connection_policy.EnableEndpointDiscovery, global_endpoint_manager, pk_range_wrapper, *args
     )
     partition_key_range_gone_retry_policy = _gone_retry_policy.PartitionKeyRangeGoneRetryPolicy(client, *args)
     timeout_failover_retry_policy = _timeout_failover_retry_policy._TimeoutFailoverRetryPolicy(
-        client.connection_policy, global_endpoint_manager, *args
+        client.connection_policy, global_endpoint_manager, pk_range_wrapper, *args
     )
     service_response_retry_policy = _service_response_retry_policy.ServiceResponseRetryPolicy(
-        client.connection_policy, global_endpoint_manager, *args,
+        client.connection_policy, global_endpoint_manager, pk_range_wrapper, *args,
     )
     service_request_retry_policy = _service_request_retry_policy.ServiceRequestRetryPolicy(
-        client.connection_policy, global_endpoint_manager, *args,
+        client.connection_policy, global_endpoint_manager, pk_range_wrapper, *args,
     )
     # HttpRequest we would need to modify for Container Recreate Retry Policy
     request = None
@@ -102,6 +110,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
         try:
             if args:
                 result = await ExecuteFunctionAsync(function, global_endpoint_manager, *args, **kwargs)
+                await global_endpoint_manager.record_success(args[0])
             else:
                 result = await ExecuteFunctionAsync(function, *args, **kwargs)
             if not client.last_response_headers:
@@ -170,9 +179,10 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
 
                     retry_policy.container_rid = cached_container["_rid"]
                     request.headers[retry_policy._intended_headers] = retry_policy.container_rid
-            elif e.status_code == StatusCodes.REQUEST_TIMEOUT:
-                retry_policy = timeout_failover_retry_policy
-            elif e.status_code >= StatusCodes.INTERNAL_SERVER_ERROR:
+            elif e.status_code == StatusCodes.REQUEST_TIMEOUT or e.status_code >= StatusCodes.INTERNAL_SERVER_ERROR:
+                # record the failure for circuit breaker tracking
+                if args:
+                    await global_endpoint_manager.record_failure(args[0])
                 retry_policy = timeout_failover_retry_policy
             else:
                 retry_policy = defaultRetry_policy
@@ -219,9 +229,13 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     if isinstance(e.inner_exception, ClientConnectionError):
                         _handle_service_request_retries(client, service_request_retry_policy, e, *args)
                     else:
+                        if args:
+                            await global_endpoint_manager.record_failure(args[0])
                         _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
                 # in case customer is not using aiohttp
                 except ImportError:
+                    if args:
+                        await global_endpoint_manager.record_failure(args[0])
                     _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
 
 
@@ -255,6 +269,8 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
         """
         absolute_timeout = request.context.options.pop('timeout', None)
         per_request_timeout = request.context.options.pop('connection_timeout', 0)
+        request_params = request.context.options.pop('request_params', None)
+        global_endpoint_manager = request.context.options.pop('global_endpoint_manager', None)
         retry_error = None
         retry_active = True
         response = None
@@ -278,7 +294,8 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 retry_error = err
                 # the request ran into a socket timeout or failed to establish a new connection
                 # since request wasn't sent, raise exception immediately to be dealt with in client retry policies
-                if not _has_database_account_header(request.http_request.headers):
+                if (not _has_database_account_header(request.http_request.headers)
+                        and not request_params.healthy_tentative_location):
                     if retry_settings['connect'] > 0:
                         retry_active = self.increment(retry_settings, response=request, error=err)
                         if retry_active:
@@ -287,7 +304,8 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 raise err
             except ServiceResponseError as err:
                 retry_error = err
-                if _has_database_account_header(request.http_request.headers):
+                if (_has_database_account_header(request.http_request.headers) or
+                        request_params.healthy_tentative_location):
                     raise err
                 # Since this is ClientConnectionError, it is safe to be retried on both read and write requests
                 try:
@@ -298,6 +316,9 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                             or _has_read_retryable_headers(request.http_request.headers)):
                         # This logic is based on the _retry.py file from azure-core
                         if retry_settings['read'] > 0:
+                            # record the failure for circuit breaker tracking for retries in connection retry policy
+                            # retries in the execute function will mark those failures
+                            await global_endpoint_manager.record_failure(request_params)
                             retry_active = self.increment(retry_settings, response=request, error=err)
                             if retry_active:
                                 await self.sleep(retry_settings, request.context.transport)
@@ -305,11 +326,14 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 except ImportError:
                     raise err # pylint: disable=raise-missing-from
                 raise err
+            except CosmosHttpResponseError as err:
+                raise err
             except AzureError as err:
                 retry_error = err
-                if _has_database_account_header(request.http_request.headers):
+                if (_has_database_account_header(request.http_request.headers) or
+                        request_params.healthy_tentative_location):
                     raise err
-                if self._is_method_retryable(retry_settings, request.http_request):
+                if _has_read_retryable_headers(request.http_request.headers) and retry_settings['read'] > 0:
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         await self.sleep(retry_settings, request.context.transport)

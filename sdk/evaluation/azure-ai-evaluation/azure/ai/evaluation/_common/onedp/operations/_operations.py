@@ -260,7 +260,7 @@ def build_evaluations_operation_results_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("apiVersion", "2025-05-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -272,7 +272,7 @@ def build_evaluations_operation_results_request(  # pylint: disable=name-too-lon
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["apiVersion"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -455,7 +455,9 @@ def build_datasets_delete_version_request(name: str, version: str, **kwargs: Any
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_datasets_create_version_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+def build_datasets_create_or_update_version_request(  # pylint: disable=name-too-long
+    name: str, version: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -480,7 +482,7 @@ def build_datasets_create_version_request(name: str, version: str, **kwargs: Any
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_datasets_start_pending_upload_version_request(  # pylint: disable=name-too-long
@@ -664,7 +666,9 @@ def build_indexes_delete_version_request(name: str, version: str, **kwargs: Any)
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexes_create_version_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+def build_indexes_create_or_update_version_request(  # pylint: disable=name-too-long
+    name: str, version: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -689,7 +693,7 @@ def build_indexes_create_version_request(name: str, version: str, **kwargs: Any)
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_deployments_get_request(name: str, **kwargs: Any) -> HttpRequest:
@@ -1164,7 +1168,7 @@ def build_evaluation_results_delete_version_request(  # pylint: disable=name-too
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluation_results_create_version_request(  # pylint: disable=name-too-long
+def build_evaluation_results_create_or_update_version_request(  # pylint: disable=name-too-long
     name: str, version: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1191,7 +1195,7 @@ def build_evaluation_results_create_version_request(  # pylint: disable=name-too
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_evaluation_results_start_pending_upload_request(  # pylint: disable=name-too-long
@@ -2046,13 +2050,13 @@ class EvaluationsOperations:
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "operation_id", "accept"]},
     )
-    def operation_results(self, operation_id: str, **kwargs: Any) -> Dict[str, Any]:
+    def operation_results(self, operation_id: str, **kwargs: Any) -> List[Dict[str, Any]]:
         """Poll for the operation results.
 
         :param operation_id: Operation ID for the polling operation. Required.
         :type operation_id: str
-        :return: dict mapping str to any
-        :rtype: dict[str, any]
+        :return: list of dict mapping str to any
+        :rtype: list[dict[str, any]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2066,7 +2070,7 @@ class EvaluationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Dict[str, Any]] = kwargs.pop("cls", None)
+        cls: ClsType[List[Dict[str, Any]]] = kwargs.pop("cls", None)
 
         _request = build_evaluations_operation_results_request(
             operation_id=operation_id,
@@ -2086,7 +2090,7 @@ class EvaluationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
@@ -2097,7 +2101,9 @@ class EvaluationsOperations:
 
         if _stream:
             deserialized = response.iter_bytes()
-        else:
+        elif type(response.json()) == list:
+            deserialized = _deserialize(List[Dict[str, Any]], response.json())
+        else: 
             deserialized = _deserialize(Dict[str, Any], response.json())
 
         if cls:
@@ -2713,7 +2719,7 @@ class DatasetsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    def create_version(
+    def create_or_update_version(
         self,
         name: str,
         version: str,
@@ -2722,13 +2728,13 @@ class DatasetsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DatasetVersion:
-        """Create a new or replace an existing DatasetVersion with the given version id.
+        """Create a new or update an existing DatasetVersion with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the DatasetVersion to create or replace. Required.
         :type version: str
-        :param body: The definition of the DatasetVersion to create. Required.
+        :param body: The definition of the DatasetVersion to create or update. Required.
         :type body: ~azure.ai.projects.onedp.models.DatasetVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2739,16 +2745,16 @@ class DatasetsOperations:
         """
 
     @overload
-    def create_version(
+    def create_or_update_version(
         self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DatasetVersion:
-        """Create a new or replace an existing DatasetVersion with the given version id.
+        """Create a new or update an existing DatasetVersion with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the DatasetVersion to create or replace. Required.
         :type version: str
-        :param body: The definition of the DatasetVersion to create. Required.
+        :param body: The definition of the DatasetVersion to create or update. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2759,16 +2765,16 @@ class DatasetsOperations:
         """
 
     @overload
-    def create_version(
+    def create_or_update_version(
         self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DatasetVersion:
-        """Create a new or replace an existing DatasetVersion with the given version id.
+        """Create a new or update an existing DatasetVersion with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the DatasetVersion to create or replace. Required.
         :type version: str
-        :param body: The definition of the DatasetVersion to create. Required.
+        :param body: The definition of the DatasetVersion to create or update. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -2779,17 +2785,17 @@ class DatasetsOperations:
         """
 
     @distributed_trace
-    def create_version(
+    def create_or_update_version(
         self, name: str, version: str, body: Union[_models.DatasetVersion, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.DatasetVersion:
-        """Create a new or replace an existing DatasetVersion with the given version id.
+        """Create a new or update an existing DatasetVersion with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the DatasetVersion to create or replace. Required.
         :type version: str
-        :param body: The definition of the DatasetVersion to create. Is one of the following types:
-         DatasetVersion, JSON, IO[bytes] Required.
+        :param body: The definition of the DatasetVersion to create or update. Is one of the following
+         types: DatasetVersion, JSON, IO[bytes] Required.
         :type body: ~azure.ai.projects.onedp.models.DatasetVersion or JSON or IO[bytes]
         :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.onedp.models.DatasetVersion
@@ -2816,7 +2822,7 @@ class DatasetsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_datasets_create_version_request(
+        _request = build_datasets_create_or_update_version_request(
             name=name,
             version=version,
             content_type=content_type,
@@ -3421,16 +3427,16 @@ class IndexesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    def create_version(
+    def create_or_update_version(
         self, name: str, version: str, body: _models.Index, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Index:
-        """Create a new or replace an existing Index with the given version id.
+        """Create a new or update an existing Index with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the Index to create or replace. Required.
         :type version: str
-        :param body: The definition of the Index to create. Required.
+        :param body: The definition of the Index to create or update. Required.
         :type body: ~azure.ai.projects.onedp.models.Index
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -3441,16 +3447,16 @@ class IndexesOperations:
         """
 
     @overload
-    def create_version(
+    def create_or_update_version(
         self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Index:
-        """Create a new or replace an existing Index with the given version id.
+        """Create a new or update an existing Index with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the Index to create or replace. Required.
         :type version: str
-        :param body: The definition of the Index to create. Required.
+        :param body: The definition of the Index to create or update. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -3461,16 +3467,16 @@ class IndexesOperations:
         """
 
     @overload
-    def create_version(
+    def create_or_update_version(
         self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Index:
-        """Create a new or replace an existing Index with the given version id.
+        """Create a new or update an existing Index with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the Index to create or replace. Required.
         :type version: str
-        :param body: The definition of the Index to create. Required.
+        :param body: The definition of the Index to create or update. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -3481,17 +3487,17 @@ class IndexesOperations:
         """
 
     @distributed_trace
-    def create_version(
+    def create_or_update_version(
         self, name: str, version: str, body: Union[_models.Index, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Index:
-        """Create a new or replace an existing Index with the given version id.
+        """Create a new or update an existing Index with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the Index to create or replace. Required.
         :type version: str
-        :param body: The definition of the Index to create. Is one of the following types: Index, JSON,
-         IO[bytes] Required.
+        :param body: The definition of the Index to create or update. Is one of the following types:
+         Index, JSON, IO[bytes] Required.
         :type body: ~azure.ai.projects.onedp.models.Index or JSON or IO[bytes]
         :return: Index. The Index is compatible with MutableMapping
         :rtype: ~azure.ai.projects.onedp.models.Index
@@ -3518,7 +3524,7 @@ class IndexesOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_indexes_create_version_request(
+        _request = build_indexes_create_or_update_version_request(
             name=name,
             version=version,
             content_type=content_type,
@@ -4263,7 +4269,7 @@ class RedTeamsOperations:
         if isinstance(redteam, (IOBase, bytes)):
             _content = redteam
         else:
-            _content = json.dumps(redteam, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(redteam, cls=SdkJSONEncoder, exclude_readonly=False)  # type: ignore
 
         _request = build_red_teams_upload_update_run_request(
             name=name,
@@ -5189,7 +5195,7 @@ class EvaluationResultsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    def create_version(
+    def create_or_update_version(
         self,
         name: str,
         version: str,
@@ -5198,13 +5204,13 @@ class EvaluationResultsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EvaluationResult:
-        """Create a new or replace an existing EvaluationResult with the given version id.
+        """Create a new or update an existing EvaluationResult with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the EvaluationResult to create or replace. Required.
         :type version: str
-        :param body: The definition of the EvaluationResult to create. Required.
+        :param body: The definition of the EvaluationResult to create or update. Required.
         :type body: ~azure.ai.projects.onedp.models.EvaluationResult
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -5215,16 +5221,16 @@ class EvaluationResultsOperations:
         """
 
     @overload
-    def create_version(
+    def create_or_update_version(
         self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationResult:
-        """Create a new or replace an existing EvaluationResult with the given version id.
+        """Create a new or update an existing EvaluationResult with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the EvaluationResult to create or replace. Required.
         :type version: str
-        :param body: The definition of the EvaluationResult to create. Required.
+        :param body: The definition of the EvaluationResult to create or update. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -5235,16 +5241,16 @@ class EvaluationResultsOperations:
         """
 
     @overload
-    def create_version(
+    def create_or_update_version(
         self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationResult:
-        """Create a new or replace an existing EvaluationResult with the given version id.
+        """Create a new or update an existing EvaluationResult with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the EvaluationResult to create or replace. Required.
         :type version: str
-        :param body: The definition of the EvaluationResult to create. Required.
+        :param body: The definition of the EvaluationResult to create or update. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -5259,17 +5265,17 @@ class EvaluationResultsOperations:
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "content_type", "accept"]},
     )
-    def create_version(
+    def create_or_update_version(
         self, name: str, version: str, body: Union[_models.EvaluationResult, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationResult:
-        """Create a new or replace an existing EvaluationResult with the given version id.
+        """Create a new or update an existing EvaluationResult with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the EvaluationResult to create or replace. Required.
         :type version: str
-        :param body: The definition of the EvaluationResult to create. Is one of the following types:
-         EvaluationResult, JSON, IO[bytes] Required.
+        :param body: The definition of the EvaluationResult to create or update. Is one of the
+         following types: EvaluationResult, JSON, IO[bytes] Required.
         :type body: ~azure.ai.projects.onedp.models.EvaluationResult or JSON or IO[bytes]
         :return: EvaluationResult. The EvaluationResult is compatible with MutableMapping
         :rtype: ~azure.ai.projects.onedp.models.EvaluationResult
@@ -5296,7 +5302,7 @@ class EvaluationResultsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_evaluation_results_create_version_request(
+        _request = build_evaluation_results_create_or_update_version_request(
             name=name,
             version=version,
             content_type=content_type,

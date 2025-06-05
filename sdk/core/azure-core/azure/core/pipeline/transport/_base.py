@@ -507,6 +507,8 @@ class _HttpResponseBase:
 
 
 class HttpResponse(_HttpResponseBase):
+    """Represent a HTTP response."""
+
     def stream_download(self, pipeline: Pipeline[HttpRequest, "HttpResponse"], **kwargs: Any) -> Iterator[bytes]:
         """Generator for streaming request body data.
 
