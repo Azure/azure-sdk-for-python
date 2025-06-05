@@ -1392,10 +1392,6 @@ class _AIAgentsInstrumentorPreview:
         handler: "Optional[AsyncAgentEventHandler]" = None,
         span: "Optional[AbstractSpan]" = None,
     ) -> "Optional[AsyncAgentEventHandler]":
-        # Do not create a handler wrapper if we do not have handler in the first place.
-        if not handler:
-            return None
-
         if isinstance(handler, _AsyncAgentEventHandlerTraceWrapper):
             return handler
 
@@ -1981,15 +1977,13 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         if self.inner_handler:
             event_bytes = self.inner_handler.__next_impl__()
             return self._process_event(event_bytes.decode("utf-8"))
-        else:
-            return super().__next__()
+        return super().__next__()
 
     # pylint: disable=R1710
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return self.inner_handler.on_message_delta(delta)  # type: ignore
-        else:
-            return super().on_message_delta(delta)  # type: ignore
+        return super().on_message_delta(delta)  # type: ignore
 
     def on_thread_message(self, message: "ThreadMessage") -> None:  # type: ignore[func-returns-value]
         retval = None
@@ -2019,7 +2013,7 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         if self.inner_handler:
             retval = self.inner_handler.on_run_step(step)  # type: ignore
         else:
-            retval = super().on_run_step(step)
+            retval = super().on_run_step(step)  # type: ignore
 
         if (
             step.type == "tool_calls"
@@ -2045,27 +2039,23 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
     def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return self.inner_handler.on_run_step_delta(delta)  # type: ignore
-        else:
-            return super().on_run_step_delta(delta)  # type: ignore
+        return super().on_run_step_delta(delta)  # type: ignore
 
     def on_error(self, data: str) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return self.inner_handler.on_error(data)  # type: ignore
-        else:
-            return super().on_error(data)  # type: ignore
+        return super().on_error(data)  # type: ignore
 
     def on_done(self) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return self.inner_handler.on_done()  # type: ignore
-        else:
-            return super().on_done()  # type: ignore
+        return super().on_done()  # type: ignore
         # it could be called multiple tines (for each step) __exit__
 
     def on_unhandled_event(self, event_type: str, event_data: Any) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return self.inner_handler.on_unhandled_event(event_type, event_data)  # type: ignore
-        else:
-            return super().on_unhandled_event(event_type, event_data)  # type: ignore
+        return super().on_unhandled_event(event_type, event_data)  # type: ignore
     # pylint: enable=R1710
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -2122,16 +2112,14 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
             # cspell:disable-next-line
             event_bytes = await self.inner_handler.__anext_impl__()
             return await self._process_event(event_bytes.decode("utf-8"))
-        else:
-            # cspell:disable-next-line
-            return await super().__anext__()
+        # cspell:disable-next-line
+        return await super().__anext__()
 
     # pylint: disable=R1710
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return await self.inner_handler.on_message_delta(delta)  # type: ignore
-        else:
-            return await super().on_message_delta(delta)  # type: ignore
+        return await super().on_message_delta(delta)  # type: ignore
 
     async def on_thread_message(self, message: "ThreadMessage") -> None:  # type: ignore[func-returns-value]
         retval = None
@@ -2187,27 +2175,23 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
     async def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return await self.inner_handler.on_run_step_delta(delta)  # type: ignore
-        else:
-            return await super().on_run_step_delta(delta)  # type: ignore
+        return await super().on_run_step_delta(delta)  # type: ignore
 
     async def on_error(self, data: str) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return await self.inner_handler.on_error(data)  # type: ignore
-        else:
-            return await super().on_error(data)  # type: ignore
+        return await super().on_error(data)  # type: ignore
 
     async def on_done(self) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return await self.inner_handler.on_done()  # type: ignore
-        else:
-            return await super().on_done()  # type: ignore
+        return await super().on_done()  # type: ignore
         # it could be called multiple tines (for each step) __exit__
 
     async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return await self.inner_handler.on_unhandled_event(event_type, event_data)  # type: ignore
-        else:
-            return await super().on_unhandled_event(event_type, event_data)  # type: ignore
+        return await super().on_unhandled_event(event_type, event_data)  # type: ignore
 
     # pylint: enable=R1710
 
