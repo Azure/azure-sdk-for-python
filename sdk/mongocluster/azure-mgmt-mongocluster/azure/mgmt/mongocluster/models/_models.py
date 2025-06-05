@@ -319,7 +319,7 @@ class IdentityProvider(_Model):
 
 
 class EntraIdentityProvider(IdentityProvider, discriminator="MicrosoftEntraID"):
-    """Defines a Microsot Entra ID Mongo user.
+    """Defines a Microsoft Entra ID Mongo user.
 
     :ivar type: The type of identity provider that the user belongs to. Required. Microsoft Entra
      ID provider.
@@ -356,15 +356,15 @@ class EntraIdentityProvider(IdentityProvider, discriminator="MicrosoftEntraID"):
 class EntraIdentityProviderProperties(_Model):
     """Microsoft Entra ID provider properties.
 
-    :ivar principal_type: The principal type of the user. Required. Known values are: "User" and
-     "ServicePrincipal".
+    :ivar principal_type: The principal type of the user. Required. Known values are: "user" and
+     "servicePrincipal".
     :vartype principal_type: str or ~azure.mgmt.mongocluster.models.EntraPrincipalType
     """
 
     principal_type: Union[str, "_models.EntraPrincipalType"] = rest_field(
         name="principalType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The principal type of the user. Required. Known values are: \"User\" and \"ServicePrincipal\"."""
+    """The principal type of the user. Required. Known values are: \"user\" and \"servicePrincipal\"."""
 
     @overload
     def __init__(
