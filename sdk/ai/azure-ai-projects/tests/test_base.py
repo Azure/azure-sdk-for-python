@@ -14,6 +14,9 @@ from azure.ai.projects.models import (
     Deployment,
     DeploymentType,
     ModelDeployment,
+    Index,
+    IndexType,
+    AzureAISearchIndex,
 )
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 
@@ -46,6 +49,13 @@ class TestBase(AzureRecordedTestCase):
         "connection_name": "connection1",
         "model_deployment_name": "gpt-4o",
         "aoai_api_version": "2024-10-21",
+    }
+
+    test_indexes_params = {
+        "index_name": "test-index-name",
+        "index_version": "11",
+        "ai_search_connection_name": "my-ai-search-connection",
+        "ai_search_index_name": "my-ai-search-index",
     }
 
     # Regular expression describing the pattern of an Application Insights connection string.
@@ -126,3 +136,40 @@ class TestBase(AzureRecordedTestCase):
             assert deployment.model_publisher == expected_model_publisher
         else:
             assert deployment.model_publisher is not None
+
+    @classmethod
+    def validate_index(
+        cls,
+        index: Index,
+        *,
+        expected_index_type: Optional[IndexType] = None,
+        expected_index_name: Optional[str] = None,
+        expected_index_version: Optional[str] = None,
+        expected_ai_search_connection_name: Optional[str] = None,
+        expected_ai_search_index_name: Optional[str] = None,
+    ):
+        if expected_index_name:
+            assert index.name == expected_index_name
+        else:
+            assert index.name is not None
+
+        if expected_index_version:
+            assert index.version == expected_index_version
+        else:
+            assert index.version is not None
+
+        if expected_index_type == IndexType.AZURE_SEARCH:
+
+            assert type(index) == AzureAISearchIndex
+            assert index.type == IndexType.AZURE_SEARCH
+
+            if expected_ai_search_connection_name:
+                assert index.connection_name == expected_ai_search_connection_name
+            else:
+                assert index.connection_name is not None
+
+            if expected_ai_search_index_name:
+                assert index.index_name == expected_ai_search_index_name
+            else:
+                assert index.index_name is not None
+
