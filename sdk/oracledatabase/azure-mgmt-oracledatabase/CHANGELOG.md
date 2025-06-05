@@ -4,7 +4,6 @@
 
 ### Features Added
 
-  - Client `OracleDatabaseMgmtClient` added method `send_request`
   - Client `OracleDatabaseMgmtClient` added operation group `list_actions`
   - Client `OracleDatabaseMgmtClient` added operation group `gi_minor_versions`
   - Client `OracleDatabaseMgmtClient` added operation group `flex_components`
@@ -77,102 +76,15 @@
   - Model `GiVersionsOperations` added parameter `zone` in method `list_by_location`
   - Model `OracleSubscriptionsOperations` added method `begin_add_azure_subscriptions`
   - Model `VirtualNetworkAddressesOperations` added method `list_by_parent`
-  - Added model `ExadbVmClustersOperations`
-  - Added model `ExascaleDbNodesOperations`
-  - Added model `ExascaleDbStorageVaultsOperations`
-  - Added model `FlexComponentsOperations`
-  - Added model `GiMinorVersionsOperations`
-  - Added model `ListActionsOperations`
+  - Added operation group `ExadbVmClustersOperations`
+  - Added operation group `ExascaleDbNodesOperations`
+  - Added operation group `ExascaleDbStorageVaultsOperations`
+  - Added operation group `FlexComponentsOperations`
+  - Added operation group `GiMinorVersionsOperations`
+  - Added operation group `ListActionsOperations`
 
 ### Breaking Changes
 
-  - Model `ActivationLinks` deleted or renamed its instance variable `additional_properties`
-  - Model `AddRemoveDbNode` deleted or renamed its instance variable `additional_properties`
-  - Model `AllConnectionStringType` deleted or renamed its instance variable `additional_properties`
-  - Model `ApexDetailsType` deleted or renamed its instance variable `additional_properties`
-  - Model `AutonomousDatabase` deleted or renamed its instance variable `additional_properties`
-  - Model `AutonomousDatabaseBackup` deleted or renamed its instance variable `additional_properties`
-  - Model `AutonomousDatabaseBackupProperties` deleted or renamed its instance variable `additional_properties`
-  - Model `AutonomousDatabaseBackupUpdate` deleted or renamed its instance variable `additional_properties`
-  - Model `AutonomousDatabaseBackupUpdateProperties` deleted or renamed its instance variable `additional_properties`
-  - Model `AutonomousDatabaseBaseProperties` deleted or renamed its instance variable `additional_properties`
-  - Model `AutonomousDatabaseCharacterSet` deleted or renamed its instance variable `additional_properties`
-  - Model `AutonomousDatabaseCharacterSetProperties` deleted or renamed its instance variable `additional_properties`
-  - Model `AutonomousDatabaseCloneProperties` deleted or renamed its instance variable `additional_properties`
-  - Model `AutonomousDatabaseNationalCharacterSet` deleted or renamed its instance variable `additional_properties`
-  - Model `AutonomousDatabaseNationalCharacterSetProperties` deleted or renamed its instance variable `additional_properties`
-  - Model `AutonomousDatabaseProperties` deleted or renamed its instance variable `additional_properties`
-  - Model `AutonomousDatabaseStandbySummary` deleted or renamed its instance variable `additional_properties`
-  - Model `AutonomousDatabaseUpdate` deleted or renamed its instance variable `additional_properties`
-  - Model `AutonomousDatabaseUpdateProperties` deleted or renamed its instance variable `additional_properties`
-  - Model `AutonomousDatabaseWalletFile` deleted or renamed its instance variable `additional_properties`
-  - Model `AutonomousDbVersion` deleted or renamed its instance variable `additional_properties`
-  - Model `AutonomousDbVersionProperties` deleted or renamed its instance variable `additional_properties`
-  - Model `CloudAccountDetails` deleted or renamed its instance variable `additional_properties`
-  - Model `CloudExadataInfrastructure` deleted or renamed its instance variable `additional_properties`
-  - Model `CloudExadataInfrastructureProperties` deleted or renamed its instance variable `additional_properties`
-  - Model `CloudExadataInfrastructureUpdate` deleted or renamed its instance variable `additional_properties`
-  - Model `CloudExadataInfrastructureUpdateProperties` deleted or renamed its instance variable `additional_properties`
-  - Model `CloudVmCluster` deleted or renamed its instance variable `additional_properties`
-  - Model `CloudVmClusterProperties` deleted or renamed its instance variable `additional_properties`
-  - Model `CloudVmClusterUpdate` deleted or renamed its instance variable `additional_properties`
-  - Model `CloudVmClusterUpdateProperties` deleted or renamed its instance variable `additional_properties`
-  - Model `ConnectionStringType` deleted or renamed its instance variable `additional_properties`
-  - Model `ConnectionUrlType` deleted or renamed its instance variable `additional_properties`
-  - Model `CustomerContact` deleted or renamed its instance variable `additional_properties`
-  - Model `DataCollectionOptions` deleted or renamed its instance variable `additional_properties`
-  - Model `DayOfWeek` deleted or renamed its instance variable `additional_properties`
-  - Model `DayOfWeekUpdate` deleted or renamed its instance variable `additional_properties`
-  - Model `DbIormConfig` deleted or renamed its instance variable `additional_properties`
-  - Model `DbNode` deleted or renamed its instance variable `additional_properties`
-  - Model `DbNodeAction` deleted or renamed its instance variable `additional_properties`
-  - Model `DbNodeProperties` deleted or renamed its instance variable `additional_properties`
-  - Model `DbServer` deleted or renamed its instance variable `additional_properties`
-  - Model `DbServerPatchingDetails` deleted or renamed its instance variable `additional_properties`
-  - Model `DbServerProperties` deleted or renamed its instance variable `additional_properties`
-  - Model `DbSystemShape` deleted or renamed its instance variable `additional_properties`
-  - Model `DbSystemShapeProperties` deleted or renamed its instance variable `additional_properties`
-  - Model `DnsPrivateView` deleted or renamed its instance variable `additional_properties`
-  - Model `DnsPrivateViewProperties` deleted or renamed its instance variable `additional_properties`
-  - Model `DnsPrivateZone` deleted or renamed its instance variable `additional_properties`
-  - Model `DnsPrivateZoneProperties` deleted or renamed its instance variable `additional_properties`
-  - Model `ErrorAdditionalInfo` deleted or renamed its instance variable `additional_properties`
-  - Model `ErrorDetail` deleted or renamed its instance variable `additional_properties`
-  - Model `ErrorResponse` deleted or renamed its instance variable `additional_properties`
-  - Model `EstimatedPatchingTime` deleted or renamed its instance variable `additional_properties`
-  - Model `ExadataIormConfig` deleted or renamed its instance variable `additional_properties`
-  - Model `GenerateAutonomousDatabaseWalletDetails` deleted or renamed its instance variable `additional_properties`
-  - Model `GiVersion` deleted or renamed its instance variable `additional_properties`
-  - Model `GiVersionProperties` deleted or renamed its instance variable `additional_properties`
-  - Model `LongTermBackUpScheduleDetails` deleted or renamed its instance variable `additional_properties`
-  - Model `MaintenanceWindow` deleted or renamed its instance variable `additional_properties`
-  - Model `Month` deleted or renamed its instance variable `additional_properties`
-  - Model `NsgCidr` deleted or renamed its instance variable `additional_properties`
-  - Model `Operation` deleted or renamed its instance variable `additional_properties`
-  - Model `OperationDisplay` deleted or renamed its instance variable `additional_properties`
-  - Model `OracleSubscription` deleted or renamed its instance variable `additional_properties`
-  - Model `OracleSubscriptionProperties` deleted or renamed its instance variable `additional_properties`
-  - Model `OracleSubscriptionUpdate` deleted or renamed its instance variable `additional_properties`
-  - Model `OracleSubscriptionUpdateProperties` deleted or renamed its instance variable `additional_properties`
-  - Model `PeerDbDetails` deleted or renamed its instance variable `additional_properties`
-  - Model `Plan` deleted or renamed its instance variable `additional_properties`
-  - Model `PlanUpdate` deleted or renamed its instance variable `additional_properties`
-  - Model `PortRange` deleted or renamed its instance variable `additional_properties`
-  - Model `PrivateIpAddressProperties` deleted or renamed its instance variable `additional_properties`
-  - Model `PrivateIpAddressesFilter` deleted or renamed its instance variable `additional_properties`
-  - Model `ProfileType` deleted or renamed its instance variable `additional_properties`
-  - Model `ProxyResource` deleted or renamed its instance variable `additional_properties`
-  - Model `Resource` deleted or renamed its instance variable `additional_properties`
-  - Model `RestoreAutonomousDatabaseDetails` deleted or renamed its instance variable `additional_properties`
-  - Model `SaasSubscriptionDetails` deleted or renamed its instance variable `additional_properties`
-  - Model `ScheduledOperationsType` deleted or renamed its instance variable `additional_properties`
-  - Model `ScheduledOperationsTypeUpdate` deleted or renamed its instance variable `additional_properties`
-  - Model `SystemData` deleted or renamed its instance variable `additional_properties`
-  - Model `SystemVersion` deleted or renamed its instance variable `additional_properties`
-  - Model `SystemVersionProperties` deleted or renamed its instance variable `additional_properties`
-  - Model `TrackedResource` deleted or renamed its instance variable `additional_properties`
-  - Model `VirtualNetworkAddress` deleted or renamed its instance variable `additional_properties`
-  - Model `VirtualNetworkAddressProperties` deleted or renamed its instance variable `additional_properties`
   - Deleted or renamed model `SystemVersionsFilter`
   - Deleted or renamed model `UpdateAction`
   - Deleted or renamed model `ValidationError`
