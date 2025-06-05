@@ -11,7 +11,7 @@ from typing import List, Any, Optional
 
 from azure.core.exceptions import HttpResponseError
 
-from ._models import BatchPoolReplaceContent as BatchPoolReplaceContentGenerated
+from ._models import BatchPoolReplaceOptions as BatchPoolReplaceContentGenerated
 from .._model_base import rest_field
 
 __all__: List[str] = [
