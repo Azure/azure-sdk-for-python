@@ -86,19 +86,19 @@ class ResourceSku(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.resource_type = None
-        self.name = None
-        self.tier = None
-        self.size = None
-        self.family = None
-        self.kind = None
-        self.capacity = None
-        self.locations = None
-        self.location_info = None
-        self.api_versions = None
-        self.costs = None
-        self.capabilities = None
-        self.restrictions = None
+        self.resource_type: Optional[str] = None
+        self.name: Optional[str] = None
+        self.tier: Optional[str] = None
+        self.size: Optional[str] = None
+        self.family: Optional[str] = None
+        self.kind: Optional[str] = None
+        self.capacity: Optional["_models.ResourceSkuCapacity"] = None
+        self.locations: Optional[List[str]] = None
+        self.location_info: Optional[List["_models.ResourceSkuLocationInfo"]] = None
+        self.api_versions: Optional[List[str]] = None
+        self.costs: Optional[List["_models.ResourceSkuCosts"]] = None
+        self.capabilities: Optional[List["_models.ResourceSkuCapabilities"]] = None
+        self.restrictions: Optional[List["_models.ResourceSkuRestrictions"]] = None
 
 
 class ResourceSkuCapabilities(_serialization.Model):
@@ -125,8 +125,8 @@ class ResourceSkuCapabilities(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.value = None
+        self.name: Optional[str] = None
+        self.value: Optional[str] = None
 
 
 class ResourceSkuCapacity(_serialization.Model):
@@ -162,10 +162,10 @@ class ResourceSkuCapacity(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.minimum = None
-        self.maximum = None
-        self.default = None
-        self.scale_type = None
+        self.minimum: Optional[int] = None
+        self.maximum: Optional[int] = None
+        self.default: Optional[int] = None
+        self.scale_type: Optional[Union[str, "_models.ResourceSkuCapacityScaleType"]] = None
 
 
 class ResourceSkuCosts(_serialization.Model):
@@ -196,9 +196,9 @@ class ResourceSkuCosts(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.meter_id = None
-        self.quantity = None
-        self.extended_unit = None
+        self.meter_id: Optional[str] = None
+        self.quantity: Optional[int] = None
+        self.extended_unit: Optional[str] = None
 
 
 class ResourceSkuLocationInfo(_serialization.Model):
@@ -225,8 +225,8 @@ class ResourceSkuLocationInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.location = None
-        self.zones = None
+        self.location: Optional[str] = None
+        self.zones: Optional[List[str]] = None
 
 
 class ResourceSkuRestrictionInfo(_serialization.Model):
@@ -253,8 +253,8 @@ class ResourceSkuRestrictionInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.locations = None
-        self.zones = None
+        self.locations: Optional[List[str]] = None
+        self.zones: Optional[List[str]] = None
 
 
 class ResourceSkuRestrictions(_serialization.Model):
@@ -292,10 +292,10 @@ class ResourceSkuRestrictions(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.values = None
-        self.restriction_info = None
-        self.reason_code = None
+        self.type: Optional[Union[str, "_models.ResourceSkuRestrictionsType"]] = None
+        self.values: Optional[List[str]] = None
+        self.restriction_info: Optional["_models.ResourceSkuRestrictionInfo"] = None
+        self.reason_code: Optional[Union[str, "_models.ResourceSkuRestrictionsReasonCode"]] = None
 
 
 class ResourceSkusResult(_serialization.Model):

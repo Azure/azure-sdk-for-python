@@ -11,7 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AccessLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """AccessLevel."""
+    """The Access Level, accepted values include None, Read, Write."""
 
     NONE = "None"
     READ = "Read"
@@ -33,6 +33,15 @@ class CopyCompletionErrorReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COPY_SOURCE_NOT_FOUND = "CopySourceNotFound"
     """Indicates that the source snapshot was deleted while the background copy of the resource
     created via CopyStart operation was in progress."""
+
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
 
 
 class DataAccessAuthMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
