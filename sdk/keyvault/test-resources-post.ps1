@@ -18,6 +18,10 @@ param (
 
     [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
+    [string] $SubscriptionId,
+
+    [Parameter(Mandatory = $true)]
+    [ValidateNotNullOrEmpty()]
     [string] $TenantId,
 
     [Parameter(Mandatory = $true)]
