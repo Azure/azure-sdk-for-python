@@ -15,7 +15,7 @@ from azure.mgmt.computeschedule import ComputeScheduleMgmtClient
     pip install azure-identity
     pip install azure-mgmt-computeschedule
 # USAGE
-    python operations_list.py
+    python scheduled_actions_virtual_machines_cancel_operations_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,11 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.operations.list()
-    for item in response:
-        print(item)
+    response = client.scheduled_actions.virtual_machines_cancel_operations(
+        locationparameter="qk",
+        request_body={"correlationid": "lacjacfbxixdmg", "operationIds": ["rcudibq"]},
+    )
+    print(response)
 
 
-# x-ms-original-file: 2024-10-01/Operations_List.json
+# x-ms-original-file: 2025-05-01/ScheduledActions_VirtualMachinesCancelOperations_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
