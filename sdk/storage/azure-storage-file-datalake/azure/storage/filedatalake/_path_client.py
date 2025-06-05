@@ -148,10 +148,14 @@ class PathClient(StorageAccountHostsMixin):
         client._config.version = self._api_version  # type: ignore [assignment] # pylint: disable=protected-access
         return client
 
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+
     def __exit__(self, *args):
         self._blob_client.close()
         self._datalake_client_for_blob_operation.close()
-        super(PathClient, self).__exit__(*args)
+        self._client.__exit__(*args)
 
     def close(self) -> None:
         """

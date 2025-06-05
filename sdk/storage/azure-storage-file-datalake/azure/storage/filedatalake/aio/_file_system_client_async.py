@@ -153,10 +153,20 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
     def _format_url(self, hostname: str) -> str:
         return _format_url(self.scheme, hostname, self.file_system_name, self._query_str)
 
+    def __enter__(self):
+        raise TypeError("Async client only supports 'async with'.")
+
+    def __exit__(self, *args):
+        pass
+
+    async def __aenter__(self):
+        await self._client.__aenter__()
+        return self
+
     async def __aexit__(self, *args: Any) -> None:
         await self._container_client.close()
         await self._datalake_client_for_blob_operation.close()
-        await super(FileSystemClient, self).__aexit__(*args)
+        await self._client.__aexit__(*args)
 
     async def close(self) -> None:  # type: ignore
         """This method is to close the sockets opened by the client.

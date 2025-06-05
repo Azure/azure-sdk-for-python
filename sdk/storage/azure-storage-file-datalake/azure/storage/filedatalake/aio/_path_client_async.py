@@ -150,10 +150,20 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         client._config.version = self._api_version  # type: ignore [assignment] # pylint: disable=protected-access
         return client
 
+    def __enter__(self):
+        raise TypeError("Async client only supports 'async with'.")
+
+    def __exit__(self, *args):
+        pass
+
+    async def __aenter__(self):
+        await self._client.__aenter__()
+        return self
+
     async def __aexit__(self, *args: Any) -> None:
         await self._blob_client.close()
         await self._datalake_client_for_blob_operation.close()
-        await super(PathClient, self).__aexit__(*args)
+        await self._client.__aexit__(*args)
 
     async def close(self) -> None:  # type: ignore
         """

@@ -145,10 +145,14 @@ class FileSystemClient(StorageAccountHostsMixin):
     def _format_url(self, hostname: str) -> str:
         return _format_url(self.scheme, hostname, self.file_system_name, self._query_str)
 
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+
     def __exit__(self, *args: Any) -> None:
         self._container_client.close()
         self._datalake_client_for_blob_operation.close()
-        super(FileSystemClient, self).__exit__(*args)
+        self._client.__exit__(*args)
 
     def close(self) -> None:
         """This method is to close the sockets opened by the client.
