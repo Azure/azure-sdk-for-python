@@ -41,6 +41,7 @@ from . import exceptions
 from .documents import _OperationType
 from .exceptions import CosmosHttpResponseError
 from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes, ResourceType
+from ._cosmos_http_logging_policy import _log_diagnostics_error
 
 
 # pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements, disable=too-many-branches
@@ -133,12 +134,21 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                     not result[0]['Offers'] and request.method == 'POST':
                 # Grab the link used for getting throughput properties to add to message.
                 link = json.loads(request.body)["parameters"][0]["value"]
-                raise exceptions.CosmosResourceNotFoundError(
+                e_offer = exceptions.CosmosResourceNotFoundError(
                     status_code=StatusCodes.NOT_FOUND,
                     message="Could not find ThroughputProperties for container " + link,
                     sub_status_code=SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND)
+
+                _log_diagnostics_error(client._enable_diagnostics_logging, request, result[1], e_offer,
+                                           {}, global_endpoint_manager)
+                raise e_offer
             return result
         except exceptions.CosmosHttpResponseError as e:
+            logger_attributes = {
+                "duration": float(time.time() - start_time)
+            }
+            _log_diagnostics_error(client._enable_diagnostics_logging, request, None, e,
+                                       logger_attributes, global_endpoint_manager)
             if request and _has_database_account_header(request.headers):
                 retry_policy = database_account_retry_policy
             # Re-assign retry policy based on error code
@@ -214,6 +224,12 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
         except ServiceRequestError as e:
             if request and _has_database_account_header(request.headers):
                 if not database_account_retry_policy.ShouldRetry(e):
+                    # TODO : We need to get status code information from the exception.
+                    logger_attributes = {
+                        "duration": float(time.time() - start_time)
+                    }
+                    _log_diagnostics_error(client._enable_diagnostics_logging, request, None,
+                                           e, logger_attributes, global_endpoint_manager)
                     raise e
             else:
                 if args:
@@ -223,6 +239,12 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
         except ServiceResponseError as e:
             if request and _has_database_account_header(request.headers):
                 if not database_account_retry_policy.ShouldRetry(e):
+                    # TODO : We need to get status code information from the exception.
+                    logger_attributes = {
+                        "duration": float(time.time() - start_time)
+                    }
+                    _log_diagnostics_error(client._enable_diagnostics_logging, request, None, e,
+                                           logger_attributes, global_endpoint_manager)
                     raise e
             else:
                 if args:
@@ -260,9 +282,13 @@ def _handle_service_request_retries(
     if not retry_policy.ShouldRetry():
         if args and args[0].should_clear_session_token_on_session_read_failure and client.session:
             client.session.clear_session_token(client.last_response_headers)
+        _log_diagnostics_error(client._enable_diagnostics_logging, request, {}, exception,
+                               {}, client._global_endpoint_manager)
         raise exception
 
 def _handle_service_response_retries(request, client, response_retry_policy, exception, *args):
+    _log_diagnostics_error(client._enable_diagnostics_logging, request, {}, exception,
+                           {}, client._global_endpoint_manager)
     if request and _has_read_retryable_headers(request.headers):
         # we resolve the request endpoint to the next preferred region
         # once we are out of preferred regions we stop retrying
@@ -270,8 +296,12 @@ def _handle_service_response_retries(request, client, response_retry_policy, exc
         if not retry_policy.ShouldRetry():
             if args and args[0].should_clear_session_token_on_session_read_failure and client.session:
                 client.session.clear_session_token(client.last_response_headers)
+            _log_diagnostics_error(client._enable_diagnostics_logging, request, {}, exception,
+                                   {}, client._global_endpoint_manager)
             raise exception
     else:
+        _log_diagnostics_error(client._enable_diagnostics_logging, request, {}, exception,
+                               {}, client._global_endpoint_manager)
         raise exception
 
 def _configure_timeout(request: PipelineRequest, absolute: Optional[int], per_request: int) -> None:
