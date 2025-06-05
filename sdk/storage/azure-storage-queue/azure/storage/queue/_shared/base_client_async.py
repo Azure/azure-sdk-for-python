@@ -64,9 +64,12 @@ class AsyncStorageAccountHostsMixin(object):
     async def __aexit__(self, *args):
         await self._client.__aexit__(*args)
 
-    async def close(self):
+    async def close(self) -> None:
         """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
+
+        :return: None
+        :rtype: None
         """
         await self._client.close()
 
@@ -75,12 +78,12 @@ class AsyncStorageAccountHostsMixin(object):
         sas_token: Optional[str],
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", AsyncTokenCredential]
-        ],  # pylint: disable=line-too-long
+        ],
         snapshot: Optional[str] = None,
         share_snapshot: Optional[str] = None,
     ) -> Tuple[
         str, Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", AsyncTokenCredential]]
-    ]:  # pylint: disable=line-too-long
+    ]:
         query_str = "?"
         if snapshot:
             query_str += f"snapshot={snapshot}&"
@@ -101,7 +104,7 @@ class AsyncStorageAccountHostsMixin(object):
         self,
         credential: Optional[
             Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any,
     ) -> Tuple[StorageConfiguration, AsyncPipeline]:
         self._credential_policy: Optional[
@@ -162,7 +165,7 @@ class AsyncStorageAccountHostsMixin(object):
         """Given a series of request, do a Storage batch call.
 
         :param HttpRequest reqs: A collection of HttpRequest objects.
-        :returns: An AsyncList of HttpResponse objects.
+        :return: An AsyncList of HttpResponse objects.
         :rtype: AsyncList[HttpResponse]
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
@@ -214,7 +217,7 @@ def parse_connection_str(
     str,
     Optional[str],
     Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]],
-]:  # pylint: disable=line-too-long
+]:
     conn_str = conn_str.rstrip(";")
     conn_settings_list = [s.split("=", 1) for s in conn_str.split(";")]
     if any(len(tup) != 2 for tup in conn_settings_list):

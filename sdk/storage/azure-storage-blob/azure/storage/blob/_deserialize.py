@@ -194,7 +194,7 @@ def parse_tags(generated_tags: Optional["BlobTags"]) -> Optional[Dict[str, str]]
 
     :param Optional[BlobTags] generated_tags:
         A list containing the BlobTag objects from generated code.
-    :returns: A dictionary of the BlobTag objects.
+    :return: A dictionary of the BlobTag objects.
     :rtype: Optional[Dict[str, str]]
     """
     if generated_tags:
