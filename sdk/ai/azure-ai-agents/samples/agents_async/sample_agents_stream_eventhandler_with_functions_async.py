@@ -100,7 +100,7 @@ async def main() -> None:
 
     async with project_client:
         agents_client = project_client.agents
-        
+
         agent = await agents_client.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"],
             name="my-agent",

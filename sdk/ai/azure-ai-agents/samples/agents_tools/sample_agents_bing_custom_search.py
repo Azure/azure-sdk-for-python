@@ -37,7 +37,7 @@ from azure.ai.agents.models import BingCustomSearchTool
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-     credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential(),
 )
 
 conn_id = os.environ["BING_CUSTOM_CONNECTION_ID"]
@@ -48,7 +48,7 @@ bing_custom_tool = BingCustomSearchTool(connection_id=conn_id, instance_name="<c
 # Create Agent with the Bing Custom Search tool and process Agent run
 with project_client:
     agents_client = project_client.agents
-    
+
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",

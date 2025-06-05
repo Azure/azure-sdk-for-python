@@ -36,7 +36,7 @@ countries_asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file_
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-     credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential(),
 )
 # [START create_agent_with_openapi]
 

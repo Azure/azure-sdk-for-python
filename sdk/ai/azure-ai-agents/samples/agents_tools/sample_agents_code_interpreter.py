@@ -36,7 +36,7 @@ asset_file_path = os.path.abspath(
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-     credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential(),
 )
 
 with project_client:

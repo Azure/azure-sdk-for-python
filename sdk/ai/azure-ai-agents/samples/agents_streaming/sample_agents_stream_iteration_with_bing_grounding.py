@@ -42,12 +42,12 @@ from azure.identity import DefaultAzureCredential
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-     credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential(),
 )
 
 with project_client:
     agents_client = project_client.agents
-    
+
     bing_connection_id = os.environ["AZURE_BING_CONNECTION_ID"]
     bing = BingGroundingTool(connection_id=bing_connection_id)
     print(f"Bing Connection ID: {bing_connection_id}")

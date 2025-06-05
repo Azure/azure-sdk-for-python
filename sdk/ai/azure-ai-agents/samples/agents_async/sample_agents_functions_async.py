@@ -48,7 +48,7 @@ async def main() -> None:
 
     async with project_client:
         agents_client = project_client.agents
-        
+
         # Initialize agent functions
         functions = AsyncFunctionTool(functions=user_async_functions)
         toolset = AsyncToolSet()

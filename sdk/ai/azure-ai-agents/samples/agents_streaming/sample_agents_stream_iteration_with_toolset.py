@@ -43,7 +43,7 @@ from samples.utils.user_functions import user_functions
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-     credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential(),
 )
 
 functions = FunctionTool(user_functions)

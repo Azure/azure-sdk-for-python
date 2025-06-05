@@ -35,12 +35,12 @@ asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../as
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-     credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential(),
 )
 
 with project_client:
     agents_client = project_client.agents
-    
+
     # Upload file and create vector store
     # [START upload_file_create_vector_store_and_agent_with_file_search_tool]
     file = agents_client.files.upload_and_poll(file_path=asset_file_path, purpose=FilePurpose.AGENTS)

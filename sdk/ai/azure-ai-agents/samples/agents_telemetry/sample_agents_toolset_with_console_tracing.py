@@ -64,8 +64,9 @@ tracer = trace.get_tracer(__name__)
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-     credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential(),
 )
+
 
 # The trace_func decorator will trace the function call and enable adding additional attributes
 # to the span in the function implementation. Note that this will trace the function parameters and their values.
@@ -105,10 +106,10 @@ toolset.add(functions)
 with tracer.start_as_current_span(scenario):
     with project_client:
         agents_client = project_client.agents
-    
+
         # To enable tool calls executed automatically
         agents_client.enable_auto_function_calls(toolset)
-        
+
         # Create an agent and run user's request with function calls
         agent = agents_client.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"],

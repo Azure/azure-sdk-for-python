@@ -59,7 +59,7 @@ from utils.user_logic_apps import AzureLogicAppTool, create_send_email_function
 # Create the agents client
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-     credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential(),
 )
 
 # Extract subscription and resource group from the project scope
@@ -87,7 +87,7 @@ functions_to_use: Set = {
 
 with project_client:
     agents_client = project_client.agents
-    
+
     # Create an agent
     functions = FunctionTool(functions=functions_to_use)
     toolset = ToolSet()

@@ -51,7 +51,7 @@ async def main() -> None:
 
             async with project_client:
                 agents_client = project_client.agents
-                
+
                 # Enable Azure Monitor tracing
                 application_insights_connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
                 configure_azure_monitor(connection_string=application_insights_connection_string)

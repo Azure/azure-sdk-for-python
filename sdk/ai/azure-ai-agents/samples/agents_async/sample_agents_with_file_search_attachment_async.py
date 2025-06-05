@@ -41,7 +41,7 @@ async def main() -> None:
 
     async with project_client:
         agents_client = project_client.agents
-        
+
         # Upload a file and wait for it to be processed
         file = await agents_client.files.upload_and_poll(file_path=asset_file_path, purpose=FilePurpose.AGENTS)
 
@@ -67,9 +67,7 @@ async def main() -> None:
         )
         print(f"Created message, message ID: {message.id}")
 
-        run = await agents_client.runs.create_and_process(
-            thread_id=thread.id, agent_id=agent.id, polling_interval=4
-        )
+        run = await agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, polling_interval=4)
         print(f"Created run, run ID: {run.id}")
 
         print(f"Run completed with status: {run.status}")

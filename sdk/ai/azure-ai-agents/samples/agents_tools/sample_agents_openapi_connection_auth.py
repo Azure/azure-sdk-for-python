@@ -44,7 +44,7 @@ asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../as
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-     credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential(),
 )
 
 model_name = os.environ["MODEL_DEPLOYMENT_NAME"]
@@ -66,7 +66,7 @@ openapi = OpenApiTool(
 # Create an Agent with OpenApi tool and process Agent run
 with project_client:
     agents_client = project_client.agents
-    
+
     agent = agents_client.create_agent(
         model=model_name, name="my-agent", instructions="You are a helpful agent", tools=openapi.definitions
     )

@@ -84,7 +84,7 @@ async def main() -> None:
 
     async with project_client:
         agents_client = project_client.agents
-        
+
         agent = await agents_client.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"], name="my-agent", instructions="You are helpful agent"
         )
@@ -93,9 +93,7 @@ async def main() -> None:
         thread = await agents_client.threads.create()
         print(f"Created thread, thread ID {thread.id}")
 
-        message = await agents_client.messages.create(
-            thread_id=thread.id, role="user", content="Hello, tell me a joke"
-        )
+        message = await agents_client.messages.create(thread_id=thread.id, role="user", content="Hello, tell me a joke")
         print(f"Created message, message ID {message.id}")
 
         async with await agents_client.runs.stream(

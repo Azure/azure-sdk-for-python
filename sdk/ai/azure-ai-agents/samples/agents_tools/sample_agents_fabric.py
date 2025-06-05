@@ -33,7 +33,7 @@ from azure.ai.agents.models import FabricTool, ListSortOrder
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-     credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential(),
 )
 
 # [START create_agent_with_fabric_tool]
@@ -47,7 +47,7 @@ fabric = FabricTool(connection_id=conn_id)
 # Create an Agent with the Fabric tool and process an Agent run
 with project_client:
     agents_client = project_client.agents
-    
+
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",

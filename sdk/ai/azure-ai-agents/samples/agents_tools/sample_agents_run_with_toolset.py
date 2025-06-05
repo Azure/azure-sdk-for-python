@@ -35,13 +35,13 @@ from samples.utils.user_functions import user_functions
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-     credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential(),
 )
 
 # Create agent with toolset and process agent run
 with project_client:
     agents_client = project_client.agents
-    
+
     # Initialize agent toolset with user functions and code interpreter
     # [START create_agent_toolset]
     functions = FunctionTool(user_functions)

@@ -37,7 +37,7 @@ async def main() -> None:
 
     async with project_client:
         agents_client = project_client.agents
-        
+
         # Initialize agent toolset with user functions and code interpreter
         # [START create_agent_with_async_function_tool]
         functions = AsyncFunctionTool(user_async_functions)

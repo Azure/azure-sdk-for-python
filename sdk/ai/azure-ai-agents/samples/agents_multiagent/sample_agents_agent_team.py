@@ -41,12 +41,12 @@ from utils.agent_trace_configurator import AgentTraceConfigurator
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-     credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential(),
 )
 
 with project_client:
     agents_client = project_client.agents
-    
+
     agents_client.enable_auto_function_calls({_create_task})
 
     model_deployment_name = os.getenv("MODEL_DEPLOYMENT_NAME")

@@ -38,7 +38,7 @@ from azure.ai.agents.models import (
 # [START create_agents_client]
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-     credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential(),
 )
 # [END create_agents_client]
 
@@ -53,6 +53,7 @@ class Planets(str, Enum):
 class Planet(BaseModel):
     planet: Planets
     mass: float
+
 
 with project_client:
     agents_client = project_client.agents

@@ -38,8 +38,9 @@ from typing import Any, Optional
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-     credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential(),
 )
+
 
 # [START stream_event_handler]
 # With AgentEventHandler[str], the return type for each event functions is optional string.

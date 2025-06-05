@@ -41,7 +41,7 @@ from azure.ai.agents.models import AzureAISearchQueryType, AzureAISearchTool, Li
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-     credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential(),
 )
 
 # [START create_agent_with_azure_ai_search_tool]
@@ -57,12 +57,12 @@ ai_search = AzureAISearchTool(
 # Create agent with AI search tool and process agent run
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-     credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential(),
 )
 
 with project_client:
     agents_client = project_client.agents
-    
+
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",

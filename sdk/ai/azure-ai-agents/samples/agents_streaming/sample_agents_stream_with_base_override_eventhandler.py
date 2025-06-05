@@ -41,8 +41,9 @@ import os
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-     credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential(),
 )
+
 
 # Our goal is to parse the event data in a string and return the chunk in text for each iteration.
 # Because we want the iteration to be a string, we define str as the generic type for BaseAsyncAgentEventHandler
@@ -81,7 +82,7 @@ class MyEventHandler(BaseAgentEventHandler[Optional[str]]):
 
 with project_client:
     agents_client = project_client.agents
-    
+
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"], name="my-agent", instructions="You are helpful agent"
     )

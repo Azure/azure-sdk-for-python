@@ -33,7 +33,7 @@ from azure.identity import DefaultAzureCredential
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-     credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential(),
 )
 
 # [START create_agent_with_bing_grounding_tool]

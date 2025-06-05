@@ -47,7 +47,7 @@ async def main():
 
     async with project_client:
         agents_client = project_client.agents
-        
+
         agent = await agents_client.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"],
             name="my-agent",
@@ -58,9 +58,7 @@ async def main():
         thread = await agents_client.threads.create()
         print(f"Created thread, thread ID: {thread.id}")
 
-        image_file = await agents_client.files.upload_and_poll(
-            file_path=asset_file_path, purpose=FilePurpose.AGENTS
-        )
+        image_file = await agents_client.files.upload_and_poll(file_path=asset_file_path, purpose=FilePurpose.AGENTS)
         print(f"Uploaded file, file ID: {image_file.id}")
 
         input_message = "Hello, what is in the image ?"

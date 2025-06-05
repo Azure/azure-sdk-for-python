@@ -43,7 +43,7 @@ async def main():
 
     async with project_client:
         agents_client = project_client.agents
-        
+
         # We will upload the local file to Azure and will use it for vector store creation.
         asset_uri = os.environ["AZURE_BLOB_URI"]
         ds = VectorStoreDataSource(

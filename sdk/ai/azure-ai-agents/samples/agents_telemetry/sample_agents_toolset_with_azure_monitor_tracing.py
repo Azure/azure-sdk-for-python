@@ -44,7 +44,7 @@ from azure.ai.agents.telemetry import trace_function
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-     credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential(),
 )
 
 # Enable Azure Monitor tracing
@@ -97,7 +97,7 @@ with tracer.start_as_current_span(scenario):
 
         # To enable tool calls executed automatically
         agents_client.enable_auto_function_calls(toolset)
-    
+
         # Create an agent and run user's request with function calls
         agent = agents_client.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"],

@@ -55,7 +55,7 @@ AIAgentsInstrumentor().instrument()
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-     credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential(),
 )
 
 scenario = os.path.basename(__file__)

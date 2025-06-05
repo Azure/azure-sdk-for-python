@@ -39,7 +39,7 @@ async def main() -> None:
 
     async with project_client:
         agents_client = project_client.agents
-        
+
         # Upload a file and wait for it to be processed
         file = await agents_client.files.upload_and_poll(file_path=asset_file_path, purpose=FilePurpose.AGENTS)
         print(f"Uploaded file, file ID: {file.id}")

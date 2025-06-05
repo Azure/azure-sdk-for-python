@@ -37,15 +37,13 @@ async def main():
 
     async with project_client:
         agents_client = project_client.agents
-        
+
         # Upload a file and wait for it to be processed
         file = await agents_client.files.upload_and_poll(file_path=asset_file_path, purpose=FilePurpose.AGENTS)
         print(f"Uploaded file, file ID: {file.id}")
 
         # Create a vector store with no file and wait for it to be processed
-        vector_store = await agents_client.vector_stores.create_and_poll(
-            file_ids=[file.id], name="sample_vector_store"
-        )
+        vector_store = await agents_client.vector_stores.create_and_poll(file_ids=[file.id], name="sample_vector_store")
         print(f"Created vector store, vector store ID: {vector_store.id}")
 
         # Create a file search tool

@@ -54,7 +54,7 @@ from utils.agent_trace_configurator import AgentTraceConfigurator
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-     credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential(),
 )
 
 user_function_set_1: Set = {fetch_current_datetime, fetch_weather}
@@ -66,7 +66,7 @@ user_function_set_3: Set = {convert_temperature}
 
 with project_client:
     agents_client = project_client.agents
-    
+
     agents_client.enable_auto_function_calls(
         {
             _create_task,

@@ -31,7 +31,7 @@ from azure.ai.agents.models import FunctionTool, ToolSet
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-     credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential(),
 )
 
 model_deployment_name = os.getenv("MODEL_DEPLOYMENT_NAME")
@@ -69,7 +69,7 @@ default_function_tool = FunctionTool(functions=agent_team_default_functions)
 
 with project_client:
     agents_client = project_client.agents
-    
+
     agents_client.enable_auto_function_calls({create_task})
 
     if model_deployment_name is not None:

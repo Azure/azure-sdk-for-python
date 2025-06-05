@@ -46,8 +46,9 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-     credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential(),
 )
+
 
 class MyEventHandler(AgentEventHandler):
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
@@ -89,7 +90,7 @@ with tracer.start_as_current_span(scenario):
 
     with project_client:
         agents_client = project_client.agents
-        
+
         # Create an agent and run stream with event handler
         agent = agents_client.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"], name="my-agent", instructions="You are a helpful agent"
