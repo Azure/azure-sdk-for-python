@@ -203,10 +203,13 @@ Connection errors can occur due to network issues, firewall restrictions, or ser
 
 ```python
 from azure.servicebus import ServiceBusClient, TransportType
+from azure.identity import DefaultAzureCredential
 
-# Using connection string with WebSockets
-client = ServiceBusClient.from_connection_string(
-    "your_connection_string",
+# Using Azure Identity with WebSockets
+credential = DefaultAzureCredential()
+client = ServiceBusClient(
+    "your_namespace.servicebus.windows.net",
+    credential,
     transport_type=TransportType.AmqpOverWebsocket
 )
 ```
