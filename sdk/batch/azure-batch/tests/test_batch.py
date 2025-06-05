@@ -142,11 +142,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 elevation_level=models.ElevationLevel.ADMIN,
             ),
         ]
-        test_iaas_pool = models.BatchPoolCreateContent(
+        test_iaas_pool = models.BatchPoolCreateOptions(
             id=self.get_resource_name("batch_iaas_"),
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.ImageReference(
+                image_reference=models.BatchVmImageReference(
                     publisher="MicrosoftWindowsServer",
                     offer="WindowsServer",
                     sku="2016-Datacenter-smalldisk",
@@ -181,12 +181,12 @@ class TestBatch(AzureMgmtRecordedTestCase):
             "/virtualNetworks/vnet1"
             "/subnets/subnet1"
         )
-        test_network_pool = models.BatchPoolCreateContent(
+        test_network_pool = models.BatchPoolCreateOptions(
             id=self.get_resource_name("batch_network_"),
             vm_size=DEFAULT_VM_SIZE,
             network_configuration=network_config,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
+                image_reference=models.BatchVmImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
                 node_agent_sku_id="batch.node.ubuntu 18.04",
             ),
         )
@@ -197,11 +197,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
             timeout=45,
         )
 
-        test_image_pool = models.BatchPoolCreateContent(
+        test_image_pool = models.BatchPoolCreateOptions(
             id=self.get_resource_name("batch_image_"),
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.ImageReference(
+                image_reference=models.BatchVmImageReference(
                     virtual_machine_image_id="/subscriptions/00000000-0000-0000-0000-000000000000"
                     "/resourceGroups/test"
                     "/providers/Microsoft.Compute"
@@ -216,11 +216,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Create Pool with Data Disk
         data_disk = models.DataDisk(logical_unit_number=1, disk_size_gb=50)
-        test_disk_pool = models.BatchPoolCreateContent(
+        test_disk_pool = models.BatchPoolCreateOptions(
             id=self.get_resource_name("batch_disk_"),
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
+                image_reference=models.BatchVmImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
                 node_agent_sku_id="batch.node.ubuntu 18.04",
                 data_disks=[data_disk],
             ),
@@ -236,11 +236,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert disk_pool.target_node_communication_mode == models.BatchNodeCommunicationMode.CLASSIC
 
         # Test Create Pool with Azure Disk Encryption
-        test_ade_pool = models.BatchPoolCreateContent(
+        test_ade_pool = models.BatchPoolCreateOptions(
             id=self.get_resource_name("batch_ade_"),
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
+                image_reference=models.BatchVmImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
                 disk_encryption_configuration=models.DiskEncryptionConfiguration(
                     targets=[models.DiskEncryptionTarget.TEMPORARY_DISK]
                 ),
@@ -283,11 +283,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_batch_create_pool_with_blobfuse_mount(self, client: BatchClient, **kwargs):
         # Test Create Iaas Pool
-        test_iaas_pool = models.BatchPoolCreateContent(
+        test_iaas_pool = models.BatchPoolCreateOptions(
             id=self.get_resource_name("batch_iaas_"),
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.ImageReference(
+                image_reference=models.BatchVmImageReference(
                     publisher="MicrosoftWindowsServer",
                     offer="WindowsServer",
                     sku="2016-Datacenter-smalldisk",
@@ -322,12 +322,12 @@ class TestBatch(AzureMgmtRecordedTestCase):
     @client_setup
     @recorded_by_proxy_async
     async def test_batch_update_pools(self, client: BatchClient, **kwargs):
-        test_paas_pool = models.BatchPoolCreateContent(
+        test_paas_pool = models.BatchPoolCreateOptions(
             id=self.get_resource_name("batch_paas_"),
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
                 node_agent_sku_id="batch.node.ubuntu 18.04",
-                image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
+                image_reference=models.BatchVmImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
             ),
             start_task=models.BatchStartTask(
                 command_line='cmd.exe /c "echo hello world"',
@@ -342,17 +342,17 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert response is None
 
         # Test Update Pool Options
-        params = models.BatchPoolReplaceContent(
+        params = models.BatchPoolReplaceOptions(
             certificate_references=[],
             application_package_references=[],
-            metadata=[models.MetadataItem(name="foo", value="bar")],
+            metadata=[models.BatchMetadataItem(name="foo", value="bar")],
             target_node_communication_mode=models.BatchNodeCommunicationMode.CLASSIC,
         )
         response = await wrap_result(client.replace_pool_properties(test_paas_pool.id, params))
         assert response is None
 
         # Test Patch Pool Options
-        params = models.BatchPoolUpdateContent(metadata=[models.MetadataItem(name="foo2", value="bar2")])
+        params = models.BatchPoolUpdateOptions(metadata=[models.BatchMetadataItem(name="foo2", value="bar2")])
         response = await wrap_result(client.update_pool(test_paas_pool.id, params))
         assert response is None
 
@@ -399,7 +399,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         response = await wrap_result(
             client.enable_pool_auto_scale(
                 batch_pool.name,
-                models.BatchPoolEnableAutoScaleContent(
+                models.BatchPoolEnableAutoScaleOptions(
                     auto_scale_formula="$TargetDedicatedNodes=2",
                     auto_scale_evaluation_interval=interval,
                 ),
@@ -412,7 +412,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         result = await wrap_result(
             client.evaluate_pool_auto_scale(
                 batch_pool.name,
-                models.BatchPoolEvaluateAutoScaleContent(auto_scale_formula="$TargetDedicatedNodes=3"),
+                models.BatchPoolEvaluateAutoScaleOptions(auto_scale_formula="$TargetDedicatedNodes=3"),
             )
         )
         assert isinstance(result, models.AutoScaleRun)
@@ -431,7 +431,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         while self.is_live and pool.allocation_state != models.AllocationState.STEADY:
             time.sleep(5)
             pool = await wrap_result(client.get_pool(batch_pool.name))
-        params = models.BatchPoolResizeContent(target_dedicated_nodes=0, target_low_priority_nodes=2)
+        params = models.BatchPoolResizeOptions(target_dedicated_nodes=0, target_low_priority_nodes=2)
         response = await wrap_result(client.resize_pool(batch_pool.name, params))
         assert response is None
 
@@ -454,13 +454,13 @@ class TestBatch(AzureMgmtRecordedTestCase):
         job_spec = models.BatchJobSpecification(
             pool_info=models.BatchPoolInfo(pool_id="pool_id"),
             constraints=models.BatchJobConstraints(max_task_retry_count=2),
-            on_all_tasks_complete=models.OnAllBatchTasksComplete.TERMINATE_JOB,
+            all_tasks_complete_mode=models.BatchAllTasksCompleteMode.TERMINATE_JOB,
         )
         schedule = models.BatchJobScheduleConfiguration(
             start_window=datetime.timedelta(hours=1),
             recurrence_interval=datetime.timedelta(days=1),
         )
-        params = models.BatchJobScheduleCreateContent(id=schedule_id, schedule=schedule, job_specification=job_spec)
+        params = models.BatchJobScheduleCreateOptions(id=schedule_id, schedule=schedule, job_specification=job_spec)
         response = await wrap_result(client.create_job_schedule(params))
         assert response is None
 
@@ -499,7 +499,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Patch Job Schedule
         schedule = models.BatchJobScheduleConfiguration(recurrence_interval=datetime.timedelta(hours=5))
-        params = models.BatchJobScheduleUpdateContent(schedule=schedule)
+        params = models.BatchJobScheduleUpdateOptions(schedule=schedule)
         response = await wrap_result(client.update_job_schedule(schedule_id, params))
         assert response is None
 
@@ -521,7 +521,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         network_config = models.NetworkConfiguration(
             endpoint_configuration=models.BatchPoolEndpointConfiguration(
                 inbound_nat_pools=[
-                    models.InboundNatPool(
+                    models.BatchInboundNatPool(
                         name="TestEndpointConfig",
                         protocol=models.InboundEndpointProtocol.UDP,
                         backend_port=64444,
@@ -540,9 +540,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
         )
         virtual_machine_config = models.VirtualMachineConfiguration(
             node_agent_sku_id="batch.node.ubuntu 18.04",
-            image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
+            image_reference=models.BatchVmImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
         )
-        pool = models.BatchPoolCreateContent(
+        pool = models.BatchPoolCreateOptions(
             id=self.get_resource_name("batch_network_"),
             target_dedicated_nodes=1,
             vm_size=DEFAULT_VM_SIZE,
@@ -590,7 +590,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert node.node_agent_info.version is not None
 
         # Test Upload Log
-        config = models.UploadBatchServiceLogsContent(
+        config = models.UploadBatchServiceLogsOptions(
             container_url="https://computecontainer.blob.core.windows.net/",
             start_time=datetime.datetime.utcnow() - datetime.timedelta(minutes=6),
         )
@@ -609,8 +609,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
             client.disable_node_scheduling(
                 batch_pool.name,
                 nodes[0].id,
-                models.BatchNodeDisableSchedulingContent(
-                    node_disable_scheduling_option=models.BatchNodeDisableSchedulingOption.terminate
+                models.BatchNodeDisableSchedulingOptions(
+                    node_disable_scheduling_option=models.BatchNodeDisableSchedulingOption.TERMINATE
                 ),
             )
         )
@@ -625,7 +625,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             client.reboot_node(
                 batch_pool.name,
                 nodes[0].id,
-                models.BatchNodeRebootContent(node_reboot_option=models.BatchNodeRebootOption.TERMINATE),
+                models.BatchNodeRebootKinds(node_reboot_kind=models.BatchNodeRebootKind.TERMINATE),
             )
         )
         assert response is None
@@ -641,7 +641,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # )
 
         # Test Remove Nodes
-        options = models.BatchNodeRemoveContent(node_list=[n.id for n in nodes])
+        options = models.BatchNodeRemoveOptions(node_ids=[n.id for n in nodes])
         response = await wrap_result(client.remove_nodes(batch_pool.name, options))
         assert response is None
 
@@ -655,7 +655,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         network_config = models.NetworkConfiguration(
             endpoint_configuration=models.BatchPoolEndpointConfiguration(
                 inbound_nat_pools=[
-                    models.InboundNatPool(
+                    models.BatchInboundNatPool(
                         name="TestEndpointConfig",
                         protocol=models.InboundEndpointProtocol.UDP,
                         backend_port=64444,
@@ -682,9 +682,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
         virtual_machine_config = models.VirtualMachineConfiguration(
             node_agent_sku_id="batch.node.ubuntu 18.04",
             extensions=[extension],
-            image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
+            image_reference=models.BatchVmImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
         )
-        batch_pool = models.BatchPoolCreateContent(
+        batch_pool = models.BatchPoolCreateOptions(
             id=self.get_resource_name("batch_network_"),
             target_dedicated_nodes=1,
             vm_size=DEFAULT_VM_SIZE,
@@ -731,12 +731,13 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Add User
         user_name = "BatchPythonSDKUser"
         nodes = list(await wrap_list_result(client.list_nodes(batch_pool.name)))
-        user = models.BatchNodeUserCreateContent(name=user_name, password="secret", is_admin=False)
+        user = models.BatchNodeUserCreateOptions(name=user_name, password="secret", is_admin=False)
+        assert nodes[0].id is not None #TODO: get a better fix for this
         response = await wrap_result(client.create_node_user(batch_pool.name, nodes[0].id, user))
         assert response is None
 
         # Test Update User
-        user = models.BatchNodeUserUpdateContent(password="liilef#$DdRGSa_ewkjh")
+        user = models.BatchNodeUserUpdateOptions(password="liilef#$DdRGSa_ewkjh")
         response = await wrap_result(client.replace_node_user(batch_pool.name, nodes[0].id, user_name, user))
         assert response is None
 
@@ -795,7 +796,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         node = nodes[0].id
         assert node is not None
         task_id = "test_task"
-        task_param = models.BatchTaskCreateContent(id=task_id, command_line='cmd /c "echo hello world"')
+        task_param = models.BatchTaskCreateOptions(id=task_id, command_line='cmd /c "echo hello world"')
         response = await wrap_result(client.create_task(batch_job.id, task_param))
         assert response is None
         task = await wrap_result(client.get_task(batch_job.id, task_id))
@@ -859,7 +860,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
-    @JobPreparer(on_task_failure=models.OnBatchTaskFailure.PERFORM_EXIT_OPTIONS_JOB_ACTION)
+    @JobPreparer(task_failure_mode=models.BatchTaskFailureMode.PERFORM_EXIT_OPTIONS_JOB_ACTION)
     @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
     @client_setup
     @recorded_by_proxy_async
@@ -870,19 +871,19 @@ class TestBatch(AzureMgmtRecordedTestCase):
             exit_codes=[
                 models.ExitCodeMapping(
                     code=1,
-                    exit_options=models.ExitOptions(job_action=models.BatchJobAction.TERMINATE),
+                    exit_options=models.ExitOptions(job_action=models.BatchJobActionKind.TERMINATE),
                 )
             ],
             exit_code_ranges=[
                 models.ExitCodeRangeMapping(
                     start=2,
                     end=4,
-                    exit_options=models.ExitOptions(job_action=models.BatchJobAction.DISABLE),
+                    exit_options=models.ExitOptions(job_action=models.BatchJobActionKind.DISABLE),
                 )
             ],
-            default=models.ExitOptions(job_action=models.BatchJobAction.NONE),
+            default=models.ExitOptions(job_action=models.BatchJobActionKind.NONE),
         )
-        task_param = models.BatchTaskCreateContent(
+        task_param = models.BatchTaskCreateOptions(
             id=self.get_resource_name("batch_task1_"),
             command_line='cmd /c "echo hello world"',
             exit_conditions=exit_conditions,
@@ -898,10 +899,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert isinstance(task, models.BatchTask)
         assert task.exit_conditions is not None
         assert task.exit_conditions.default is not None
-        assert task.exit_conditions.default.job_action == models.BatchJobAction.NONE
+        assert task.exit_conditions.default.job_action == models.BatchJobActionKind.NONE
         assert task.exit_conditions.exit_codes is not None
         assert task.exit_conditions.exit_codes[0].code == 1
-        assert task.exit_conditions.exit_codes[0].exit_options.job_action == models.BatchJobAction.TERMINATE
+        assert task.exit_conditions.exit_codes[0].exit_options.job_action == models.BatchJobActionKind.TERMINATE
 
         # Test Create Task with Output Files
         container_url = "https://test.blob.core.windows.net:443/test-container"
@@ -929,7 +930,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 ),
             ),
         ]
-        task_param = models.BatchTaskCreateContent(
+        task_param = models.BatchTaskCreateOptions(
             id=self.get_resource_name("batch_task2_"),
             command_line='cmd /c "echo hello world"',
             output_files=outputs,
@@ -943,7 +944,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         auto_user = models.AutoUserSpecification(
             scope=models.AutoUserScope.TASK, elevation_level=models.ElevationLevel.ADMIN
         )
-        task_param = models.BatchTaskCreateContent(
+        task_param = models.BatchTaskCreateOptions(
             id=self.get_resource_name("batch_task3_"),
             command_line='cmd /c "echo hello world"',
             user_identity=models.UserIdentity(auto_user=auto_user),
@@ -955,7 +956,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert task.user_identity.auto_user.elevation_level == models.ElevationLevel.ADMIN
 
         # Test Create Task with Container Settings
-        task_param = models.BatchTaskCreateContent(
+        task_param = models.BatchTaskCreateOptions(
             id=self.get_resource_name("batch_task5_"),
             command_line='cmd /c "echo hello world"',
             container_settings=models.BatchTaskContainerSettings(
@@ -970,7 +971,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert task.container_settings.registry.username == "username"
 
         # Test Create Task with Run-As-User
-        task_param = models.BatchTaskCreateContent(
+        task_param = models.BatchTaskCreateOptions(
             id=self.get_resource_name("batch_task6_"),
             command_line='cmd /c "echo hello world"',
             user_identity=models.UserIdentity(username="task-user"),
@@ -984,13 +985,13 @@ class TestBatch(AzureMgmtRecordedTestCase):
         tasks = []
         for i in range(7, 10):
             tasks.append(
-                models.BatchTaskCreateContent(
+                models.BatchTaskCreateOptions(
                     id=self.get_resource_name("batch_task{}_".format(i)),
                     command_line='cmd /c "echo hello world"',
                 )
             )
         result = await wrap_result(client.create_tasks(batch_job.id, task_collection=tasks))
-        assert isinstance(result, models.BatchTaskAddCollectionResult)
+        assert isinstance(result, models.BatchCreateTaskCollectionResult)
         assert len(result.value) == 3
         assert result.value[0].status.lower() == models.BatchTaskAddStatus.SUCCESS
 
@@ -1045,7 +1046,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 file_path="resourceFile{}".format(str(i)),
             )
             resource_files.append(resource_file)
-        task = models.BatchTaskCreateContent(id=task_id, command_line="sleep 1", resource_files=resource_files)
+        task = models.BatchTaskCreateOptions(id=task_id, command_line="sleep 1", resource_files=resource_files)
         tasks_to_add.append(task)
         await self.assertCreateTasksError(
             "RequestBodyTooLarge",
@@ -1072,14 +1073,14 @@ class TestBatch(AzureMgmtRecordedTestCase):
             )
             resource_files.append(resource_file)
         for i in range(733):
-            task = models.BatchTaskCreateContent(
+            task = models.BatchTaskCreateOptions(
                 id=task_id + str(i),
                 command_line="sleep 1",
                 resource_files=resource_files,
             )
             tasks_to_add.append(task)
         result = await wrap_result(client.create_tasks(batch_job.id, tasks_to_add))
-        assert isinstance(result, models.BatchTaskAddCollectionResult)
+        assert isinstance(result, models.BatchCreateTaskCollectionResult)
         assert len(result.value) == 733
         assert result.value[0].status.lower() == models.BatchTaskAddStatus.SUCCESS
         assert all(t.status.lower() == models.BatchTaskAddStatus.SUCCESS for t in result.value)
@@ -1096,7 +1097,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             pool=models.BatchPoolSpecification(
                 vm_size=DEFAULT_VM_SIZE,
                 virtual_machine_configuration=models.VirtualMachineConfiguration(
-                    image_reference=models.ImageReference(
+                    image_reference=models.BatchVmImageReference(
                         publisher="Canonical",
                         offer="UbuntuServer",
                         sku="18.04-LTS",
@@ -1108,7 +1109,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         )
         job_prep = models.BatchJobPreparationTask(command_line='cmd /c "echo hello world"')
         job_release = models.BatchJobReleaseTask(command_line='cmd /c "echo goodbye world"')
-        job_param = models.BatchJobCreateContent(
+        job_param = models.BatchJobCreateOptions(
             id=self.get_resource_name("batch_job1_"),
             pool_info=models.BatchPoolInfo(auto_pool_specification=auto_pool),
             job_preparation_task=job_prep,
@@ -1131,7 +1132,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert response is None
 
         # Test Patch Job
-        options = models.BatchJobUpdateContent(priority=900)
+        options = models.BatchJobUpdateOptions(priority=900)
         response = await wrap_result(client.update_job(job_param.id, options))
         assert response is None
 
@@ -1142,18 +1143,18 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert job.priority == 900
 
         # Test Create Job with Auto Complete
-        job_auto_param = models.BatchJobCreateContent(
+        job_auto_param = models.BatchJobCreateOptions(
             id=self.get_resource_name("batch_job2_"),
-            on_all_tasks_complete=models.OnAllBatchTasksComplete.TERMINATE_JOB,
-            on_task_failure=models.OnBatchTaskFailure.PERFORM_EXIT_OPTIONS_JOB_ACTION,
+            all_tasks_complete_mode=models.BatchAllTasksCompleteMode.TERMINATE_JOB,
+            task_failure_mode=models.BatchTaskFailureMode.PERFORM_EXIT_OPTIONS_JOB_ACTION,
             pool_info=models.BatchPoolInfo(auto_pool_specification=auto_pool),
         )
         response = await wrap_result(client.create_job(job_auto_param))
         assert response is None
         job = await wrap_result(client.get_job(job_auto_param.id))
         assert isinstance(job, models.BatchJob)
-        assert job.on_all_tasks_complete == models.OnAllBatchTasksComplete.TERMINATE_JOB
-        assert job.on_task_failure == models.OnBatchTaskFailure.PERFORM_EXIT_OPTIONS_JOB_ACTION
+        assert job.all_tasks_complete_mode == models.BatchAllTasksCompleteMode.TERMINATE_JOB
+        assert job.task_failure_mode == models.BatchTaskFailureMode.PERFORM_EXIT_OPTIONS_JOB_ACTION
 
         # Test List Jobs
         jobs = await wrap_list_result(client.list_jobs())
@@ -1164,7 +1165,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         response = await wrap_result(
             client.disable_job(
                 job_id=job_param.id,
-                content=models.BatchJobDisableContent(disable_tasks="requeue"),
+                content=models.BatchJobDisableOptions(disable_tasks="requeue"),
             )
         )
         assert response is None

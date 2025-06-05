@@ -7,13 +7,14 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import datetime
-from typing import Any, Deque, List, Optional, Iterable, Iterator, overload
+from typing import Any, Deque, List, MutableMapping, Optional, Iterable, Iterator, overload
 import collections
 import logging
 import threading
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
+from azure.core.polling import LROPoller
 from azure.core.rest import HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 
@@ -29,22 +30,103 @@ __all__: List[str] = [
     "BatchClientOperationsMixin"
 ]  # Add all objects you want publicly available to users at this package level
 
-
 class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     """Customize generated code"""
+
+    # @distributed_trace
+    # def remove_nodes_LRO(
+    #     self,
+    #     pool_id: str,
+    #     content: _models.BatchNodeRemoveOptions,
+    #     *,
+    #     timeout: Optional[int] = None,
+    #     ocpdate: Optional[datetime.datetime] = None,
+    #     if_modified_since: Optional[datetime.datetime] = None,
+    #     if_unmodified_since: Optional[datetime.datetime] = None,
+    #     etag: Optional[str] = None,
+    #     match_condition: Optional[MatchConditions] = None,
+    #     **kwargs: Any
+    # ) -> LROPoller:
+    #     error_map: MutableMapping = {
+    #         401: ClientAuthenticationError,
+    #         404: ResourceNotFoundError,
+    #         409: ResourceExistsError,
+    #         304: ResourceNotModifiedError,
+    #     }
+    #     if match_condition == MatchConditions.IfNotModified:
+    #         error_map[412] = ResourceModifiedError
+    #     elif match_condition == MatchConditions.IfPresent:
+    #         error_map[412] = ResourceNotFoundError
+    #     elif match_condition == MatchConditions.IfMissing:
+    #         error_map[412] = ResourceExistsError
+    #     error_map.update(kwargs.pop("error_map", {}) or {})
+
+    #     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    #     _params = kwargs.pop("params", {}) or {}
+
+    #     content_type: str = kwargs.pop(
+    #         "content_type", _headers.pop("content-type", "application/json; odata=minimalmetadata")
+    #     )
+    #     cls: ClsType[None] = kwargs.pop("cls", None)
+
+    #     _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+    #     _request = build_batch_remove_nodes_request(
+    #         pool_id=pool_id,
+    #         timeout=timeout,
+    #         ocpdate=ocpdate,
+    #         if_modified_since=if_modified_since,
+    #         if_unmodified_since=if_unmodified_since,
+    #         etag=etag,
+    #         match_condition=match_condition,
+    #         content_type=content_type,
+    #         api_version=self._config.api_version,
+    #         content=_content,
+    #         headers=_headers,
+    #         params=_params,
+    #     )
+    #     path_format_arguments = {
+    #         "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+    #     }
+    #     _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+    #     _stream = False
+    #     pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+    #         _request, stream=_stream, **kwargs
+    #     )
+
+    #     response = pipeline_response.http_response
+
+    #     if response.status_code not in [202]:
+    #         map_error(status_code=response.status_code, response=response, error_map=error_map)
+    #         error = _failsafe_deserialize(_models.BatchError, response.json())
+    #         raise HttpResponseError(response=response, model=error)
+
+    #     response_headers = {}
+    #     response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+    #     response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+    #     response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+    #     response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+    #     response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+
+    #     if cls:
+    #         return cls(pipeline_response, None, response_headers)  # type: ignore
+        
+    #     # follow pool state (once stat is steady then finished)
+    #     return LROPoller(self._client, response, deserialization_callback=None, **kwargs)  # type: ignore
 
     # create_task_collection renamed
     @distributed_trace
     def create_tasks(
         self,
         job_id: str,
-        task_collection: List[_models.BatchTaskCreateContent],
+        task_collection: List[_models.BatchTaskCreateOptions],
         concurrencies: int = 0,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> _models.BatchTaskAddCollectionResult:
+    ) -> _models.BatchCreateTaskCollectionResult:
         """Adds a collection of Tasks to the specified Job.
 
         Note that each Task must have a unique ID. The Batch service may not return the
@@ -90,7 +172,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         kwargs.update({"timeout": timeout, "ocpdate": ocpdate})
 
         # deque operations(append/pop) are thread-safe
-        results_queue: Deque[_models.BatchTaskAddResult] = collections.deque()
+        results_queue: Deque[_models.BatchTaskCreateResult] = collections.deque()
         task_workflow_manager = _TaskWorkflowManager(self, job_id=job_id, task_collection=task_collection, **kwargs)
 
         # multi-threaded behavior
@@ -122,7 +204,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             )
         else:
             submitted_tasks = _handle_output(results_queue)
-            return _models.BatchTaskAddCollectionResult(value=submitted_tasks)
+            return _models.BatchCreateTaskCollectionResult(values_property=submitted_tasks)
 
     @distributed_trace
     def get_node_file(
@@ -416,12 +498,12 @@ class _TaskWorkflowManager:
         self,
         batch_client: BatchClientOperationsMixin,
         job_id: str,
-        task_collection: Iterable[_models.BatchTaskCreateContent],
+        task_collection: Iterable[_models.BatchTaskCreateOptions],
         **kwargs
     ):
         # Append operations thread safe - Only read once all threads have completed
         # List of tasks which failed to add due to a returned client error
-        self.failure_tasks: Deque[_models.BatchTaskAddResult] = collections.deque()
+        self.failure_tasks: Deque[_models.BatchTaskCreateResult] = collections.deque()
         # List of unknown exceptions which occurred during requests.
         self.errors: Deque[Any] = collections.deque()
 
@@ -438,7 +520,11 @@ class _TaskWorkflowManager:
 
         self._kwargs = kwargs
 
-    def _bulk_add_tasks(self, results_queue, chunk_tasks_to_add):
+    def _bulk_add_tasks(
+        self, 
+        results_queue: collections.deque, 
+        chunk_tasks_to_add: List[_models.BatchTaskCreateOptions],
+    ):
         """Adds a chunk of tasks to the job
 
         Retry chunk if body exceeds the maximum request size and retry tasks
@@ -451,10 +537,10 @@ class _TaskWorkflowManager:
         """
 
         try:
-            create_task_collection_response: _models.BatchTaskAddCollectionResult = (
+            create_task_collection_response: _models.BatchCreateTaskCollectionResult = (
                 self._batch_client.create_task_collection(
                     job_id=self._job_id,
-                    task_collection=_models.BatchTaskGroup(value=chunk_tasks_to_add),
+                    task_collection=_models.BatchTaskGroup(values_property=chunk_tasks_to_add),
                     **self._kwargs
                 )
             )
@@ -512,11 +598,11 @@ class _TaskWorkflowManager:
             self.errors.appendleft(e)
         else:
             try:
-                create_task_collection_response = create_task_collection_response.output
+                create_task_collection_response = create_task_collection_response.output 
             except AttributeError:
                 pass
-            if create_task_collection_response.value:
-                for task_result in create_task_collection_response.value:  # pylint: disable=no-member
+            if create_task_collection_response.values_property:
+                for task_result in create_task_collection_response.values_property:  # pylint: disable=no-member
                     if task_result.status == _models.BatchTaskAddStatus.SERVER_ERROR:
                         # Server error will be retried
                         with self._pending_queue_lock:
