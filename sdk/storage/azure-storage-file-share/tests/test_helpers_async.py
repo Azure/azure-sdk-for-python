@@ -69,7 +69,7 @@ class MockAioHttpClientResponse(ClientResponse):
         self._loop = None
         self.status = status
         self.reason = reason
-        self.content = StreamReader(ResponseHandler(asyncio.new_event_loop()), 65535)
+        self.content = StreamReader(ResponseHandler(asyncio.get_event_loop()), 65535)
         self.content.total_bytes = len(body_bytes)
         self.content._buffer = deque([body_bytes])
         self.content._eof = True
