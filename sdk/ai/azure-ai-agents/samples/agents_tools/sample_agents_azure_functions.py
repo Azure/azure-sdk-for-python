@@ -88,7 +88,6 @@ with agents_client:
 
     # Get messages from the thread
     messages = agents_client.messages.list(thread_id=thread.id)
-    print(f"Messages: {messages}")
 
     # Get the last message from agent
     last_msg = agents_client.messages.get_last_message_text_by_role(thread_id=thread.id, role=MessageRole.AGENT)
