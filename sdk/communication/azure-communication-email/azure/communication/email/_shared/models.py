@@ -400,7 +400,7 @@ class TeamsExtensionUserIdentifier:
         :param str tenant_id: Tenant id associated with the user.
         :param str resource_id: Resource id associated with the user.
         :keyword cloud: Cloud environment that the user belongs to. Default value is `PUBLIC`.
-        :paramtype cloud: str or ~azure.communication.email.CommunicationCloudEnvironment.
+        :paramtype cloud: str or ~azure.communication.email.CommunicationCloudEnvironment
         :keyword str raw_id: The raw ID of the identifier. If not specified, this value will be constructed from the other properties.
         """
         self.properties = TeamsExtensionUserProperties(
