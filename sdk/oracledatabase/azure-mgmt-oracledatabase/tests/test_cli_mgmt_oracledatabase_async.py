@@ -1,15 +1,16 @@
 # coding: utf-8
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 import pytest
 from azure.mgmt.oracledatabase.aio import OracleDatabaseMgmtClient
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = "eastus"
+
 
 class TestMgmtOracleDatabaseAsync(AzureMgmtRecordedTestCase):
 
