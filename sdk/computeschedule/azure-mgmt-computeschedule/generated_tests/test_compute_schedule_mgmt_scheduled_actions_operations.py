@@ -149,6 +149,48 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_scheduled_actions_virtual_machines_execute_create(self, resource_group):
+        response = self.client.scheduled_actions.virtual_machines_execute_create(
+            locationparameter="str",
+            request_body={
+                "executionParameters": {
+                    "optimizationPreference": "str",
+                    "retryPolicy": {"retryCount": 0, "retryWindowInMinutes": 0},
+                },
+                "resourceConfigParameters": {
+                    "resourceCount": 0,
+                    "baseProfile": {"str": {}},
+                    "resourceOverrides": [{"str": {}}],
+                    "resourcePrefix": "str",
+                },
+                "correlationid": "str",
+            },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_scheduled_actions_virtual_machines_execute_delete(self, resource_group):
+        response = self.client.scheduled_actions.virtual_machines_execute_delete(
+            locationparameter="str",
+            request_body={
+                "executionParameters": {
+                    "optimizationPreference": "str",
+                    "retryPolicy": {"retryCount": 0, "retryWindowInMinutes": 0},
+                },
+                "resources": {"ids": ["str"]},
+                "correlationid": "str",
+                "forceDeletion": bool,
+            },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_scheduled_actions_virtual_machines_get_operation_status(self, resource_group):
         response = self.client.scheduled_actions.virtual_machines_get_operation_status(
             locationparameter="str",
