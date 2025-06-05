@@ -25,7 +25,7 @@ import os
 
 from enum import Enum
 from pydantic import BaseModel, TypeAdapter
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import (
     MessageTextContent,
@@ -36,9 +36,9 @@ from azure.ai.agents.models import (
 )
 
 # [START create_agents_client]
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
+     credential=DefaultAzureCredential(),
 )
 # [END create_agents_client]
 
@@ -54,8 +54,8 @@ class Planet(BaseModel):
     planet: Planets
     mass: float
 
-
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
 
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
