@@ -24,7 +24,7 @@ USAGE:
 """
 
 import os
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import CodeInterpreterTool
 from azure.ai.agents.models import FilePurpose, MessageRole
 from azure.identity import DefaultAzureCredential
@@ -34,12 +34,13 @@ asset_file_path = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "../assets/synthetic_500_quarterly_results.csv")
 )
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
+     credential=DefaultAzureCredential(),
 )
 
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
 
     # Upload a file and wait for it to be processed
     # [START upload_file_and_create_agent_with_code_interpreter]

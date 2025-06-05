@@ -23,7 +23,7 @@ USAGE:
 """
 
 import os, sys
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import FunctionTool, ToolSet, CodeInterpreterTool
 
@@ -33,13 +33,15 @@ if root_path not in sys.path:
     sys.path.insert(0, root_path)
 from samples.utils.user_functions import user_functions
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
+     credential=DefaultAzureCredential(),
 )
 
 # Create agent with toolset and process agent run
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
+    
     # Initialize agent toolset with user functions and code interpreter
     # [START create_agent_toolset]
     functions = FunctionTool(user_functions)

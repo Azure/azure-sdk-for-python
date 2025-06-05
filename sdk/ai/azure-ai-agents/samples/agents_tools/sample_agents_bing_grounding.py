@@ -26,14 +26,14 @@ USAGE:
 """
 
 import os
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import MessageRole, BingGroundingTool
 from azure.identity import DefaultAzureCredential
 
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
+     credential=DefaultAzureCredential(),
 )
 
 # [START create_agent_with_bing_grounding_tool]
@@ -43,7 +43,8 @@ conn_id = os.environ["AZURE_BING_CONNECTION_ID"]
 bing = BingGroundingTool(connection_id=conn_id)
 
 # Create agent with the bing tool and process agent run
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",

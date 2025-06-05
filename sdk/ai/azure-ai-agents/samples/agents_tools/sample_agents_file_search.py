@@ -23,7 +23,7 @@ USAGE:
 """
 
 import os
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import (
     FileSearchTool,
     FilePurpose,
@@ -33,13 +33,14 @@ from azure.identity import DefaultAzureCredential
 
 asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/product_info_1.md"))
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
+     credential=DefaultAzureCredential(),
 )
 
-with agents_client:
-
+with project_client:
+    agents_client = project_client.agents
+    
     # Upload file and create vector store
     # [START upload_file_create_vector_store_and_agent_with_file_search_tool]
     file = agents_client.files.upload_and_poll(file_path=asset_file_path, purpose=FilePurpose.AGENTS)

@@ -35,13 +35,13 @@ USAGE:
 """
 
 import os
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import AzureAISearchQueryType, AzureAISearchTool, ListSortOrder, MessageRole
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
+     credential=DefaultAzureCredential(),
 )
 
 # [START create_agent_with_azure_ai_search_tool]
@@ -55,7 +55,14 @@ ai_search = AzureAISearchTool(
 )
 
 # Create agent with AI search tool and process agent run
-with agents_client:
+project_client = AIProjectClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
+     credential=DefaultAzureCredential(),
+)
+
+with project_client:
+    agents_client = project_client.agents
+    
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",

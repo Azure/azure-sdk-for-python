@@ -27,16 +27,17 @@ USAGE:
 """
 
 import os
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import AzureFunctionStorageQueue, AzureFunctionTool, MessageRole
 from azure.identity import DefaultAzureCredential
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
+     credential=DefaultAzureCredential(),
 )
 
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
 
     # [START create_agent_with_azure_function_tool]
     storage_service_endpoint = os.environ["STORAGE_SERVICE_ENDPONT"]

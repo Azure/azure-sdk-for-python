@@ -22,7 +22,7 @@ USAGE:
        the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 import os, time, sys
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import (
     FunctionTool,
@@ -38,15 +38,17 @@ if root_path not in sys.path:
     sys.path.insert(0, root_path)
 from samples.utils.user_functions import user_functions
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
+     credential=DefaultAzureCredential(),
 )
 
 # Initialize function tool with user functions
 functions = FunctionTool(functions=user_functions)
 
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
+    
     # Create an agent and run user's request with function calls
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],

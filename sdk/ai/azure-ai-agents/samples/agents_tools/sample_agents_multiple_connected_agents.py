@@ -24,45 +24,47 @@ USAGE:
 """
 
 import os
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import ConnectedAgentTool, MessageRole
 from azure.identity import DefaultAzureCredential
 
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
+     credential=DefaultAzureCredential(),
 )
 
-connected_agent_name = "stock_price_bot"
-weather_agent_name = "weather_bot"
+with project_client:
+    agents_client = project_client.agents
 
-stock_price_agent = agents_client.create_agent(
-    model=os.environ["MODEL_DEPLOYMENT_NAME"],
-    name=connected_agent_name,
-    instructions=(
-        "Your job is to get the stock price of a company. If asked for the Microsoft stock price, always return $350."
-    ),
-)
+    connected_agent_name = "stock_price_bot"
+    weather_agent_name = "weather_bot"
 
-weather_agent = agents_client.create_agent(
-    model=os.environ["MODEL_DEPLOYMENT_NAME"],
-    name=weather_agent_name,
-    instructions=(
-        "Your job is to get the weather for a given location. If asked for the weather in Seattle, always return 60 degrees and cloudy."
-    ),
-)
+    stock_price_agent = agents_client.create_agent(
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
+        name=connected_agent_name,
+        instructions=(
+            "Your job is to get the stock price of a company. If asked for the Microsoft stock price, always return $350."
+        ),
+    )
 
-# Initialize Connected Agent tools with the agent id, name, and description
-connected_agent = ConnectedAgentTool(
-    id=stock_price_agent.id, name=connected_agent_name, description="Gets the stock price of a company"
-)
-connected_weather_agent = ConnectedAgentTool(
-    id=weather_agent.id, name=weather_agent_name, description="Gets the weather for a given location"
-)
+    weather_agent = agents_client.create_agent(
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
+        name=weather_agent_name,
+        instructions=(
+            "Your job is to get the weather for a given location. If asked for the weather in Seattle, always return 60 degrees and cloudy."
+        ),
+    )
 
-# Create agent with the Connected Agent tool and process assistant run
-with agents_client:
+    # Initialize Connected Agent tools with the agent id, name, and description
+    connected_agent = ConnectedAgentTool(
+        id=stock_price_agent.id, name=connected_agent_name, description="Gets the stock price of a company"
+    )
+    connected_weather_agent = ConnectedAgentTool(
+        id=weather_agent.id, name=weather_agent_name, description="Gets the weather for a given location"
+    )
+
+    # Create agent with the Connected Agent tool and process assistant run
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-assistant",

@@ -29,7 +29,7 @@ USAGE:
 """
 
 import os
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import SharepointTool
 
@@ -38,9 +38,9 @@ from azure.ai.agents.models import SharepointTool
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
 # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
+     credential=DefaultAzureCredential(),
 )
 
 conn_id = os.environ["SHAREPOINT_CONNECTION_ID"]
@@ -49,7 +49,9 @@ conn_id = os.environ["SHAREPOINT_CONNECTION_ID"]
 sharepoint = SharepointTool(connection_id=conn_id)
 
 # Create agent with Sharepoint tool and process agent run
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
+    
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
