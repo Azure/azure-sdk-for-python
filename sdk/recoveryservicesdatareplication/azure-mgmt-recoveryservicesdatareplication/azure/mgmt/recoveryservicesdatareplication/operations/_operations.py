@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -1765,7 +1765,7 @@ class Operations:
         :attr:`operations` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -1775,7 +1775,7 @@ class Operations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> Iterable["_models.Operation"]:
+    def list(self, **kwargs: Any) -> ItemPaged["_models.Operation"]:
         """List the operations for the provider.
 
         :return: An iterator like instance of Operation
@@ -1869,7 +1869,7 @@ class EmailConfigurationOperations:
         :attr:`email_configuration` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -2132,7 +2132,7 @@ class EmailConfigurationOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, vault_name: str, **kwargs: Any
-    ) -> Iterable["_models.EmailConfigurationModel"]:
+    ) -> ItemPaged["_models.EmailConfigurationModel"]:
         """Gets the list of alert configuration settings for the given vault.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2234,7 +2234,7 @@ class VaultOperations:
         :attr:`vault` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -2896,7 +2896,7 @@ class VaultOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
-    ) -> Iterable["_models.VaultModel"]:
+    ) -> ItemPaged["_models.VaultModel"]:
         """Gets the list of vaults in the given subscription and resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2989,7 +2989,7 @@ class VaultOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> Iterable["_models.VaultModel"]:
+    def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.VaultModel"]:
         """Gets the list of vaults in the given subscription.
 
         :return: An iterator like instance of VaultModel
@@ -3084,7 +3084,7 @@ class EventOperations:
         :attr:`event` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -3172,7 +3172,7 @@ class EventOperations:
         continuation_token_parameter: Optional[str] = None,
         page_size: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable["_models.EventModel"]:
+    ) -> ItemPaged["_models.EventModel"]:
         """Gets the list of events in the given vault.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3283,7 +3283,7 @@ class FabricOperations:
         :attr:`fabric` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -3945,7 +3945,7 @@ class FabricOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
-    ) -> Iterable["_models.FabricModel"]:
+    ) -> ItemPaged["_models.FabricModel"]:
         """Gets the list of fabrics in the given subscription and resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4038,7 +4038,7 @@ class FabricOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> Iterable["_models.FabricModel"]:
+    def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.FabricModel"]:
         """Gets the list of fabrics in the given subscription.
 
         :return: An iterator like instance of FabricModel
@@ -4133,7 +4133,7 @@ class FabricAgentOperations:
         :attr:`fabric_agent` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -4586,7 +4586,7 @@ class FabricAgentOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list(self, resource_group_name: str, fabric_name: str, **kwargs: Any) -> Iterable["_models.FabricAgentModel"]:
+    def list(self, resource_group_name: str, fabric_name: str, **kwargs: Any) -> ItemPaged["_models.FabricAgentModel"]:
         """Gets the list of fabric agents in the given fabric.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4688,7 +4688,7 @@ class JobOperations:
         :attr:`job` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -4776,7 +4776,7 @@ class JobOperations:
         continuation_token_parameter: Optional[str] = None,
         page_size: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable["_models.JobModel"]:
+    ) -> ItemPaged["_models.JobModel"]:
         """Gets the list of jobs in the given vault.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4887,7 +4887,7 @@ class PolicyOperations:
         :attr:`policy` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -5338,7 +5338,7 @@ class PolicyOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list(self, resource_group_name: str, vault_name: str, **kwargs: Any) -> Iterable["_models.PolicyModel"]:
+    def list(self, resource_group_name: str, vault_name: str, **kwargs: Any) -> ItemPaged["_models.PolicyModel"]:
         """Gets the list of policies in the given vault.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -5440,7 +5440,7 @@ class PrivateEndpointConnectionsOperations:
         :attr:`private_endpoint_connections` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -5832,7 +5832,7 @@ class PrivateEndpointConnectionsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, vault_name: str, **kwargs: Any
-    ) -> Iterable["_models.PrivateEndpointConnection"]:
+    ) -> ItemPaged["_models.PrivateEndpointConnection"]:
         """Gets the all private endpoint connections configured on the vault.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -5934,7 +5934,7 @@ class PrivateEndpointConnectionProxiesOperations:  # pylint: disable=name-too-lo
         :attr:`private_endpoint_connection_proxies` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -6334,7 +6334,7 @@ class PrivateEndpointConnectionProxiesOperations:  # pylint: disable=name-too-lo
     @distributed_trace
     def list(
         self, resource_group_name: str, vault_name: str, **kwargs: Any
-    ) -> Iterable["_models.PrivateEndpointConnectionProxy"]:
+    ) -> ItemPaged["_models.PrivateEndpointConnectionProxy"]:
         """Gets the all private endpoint connections proxies.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -6624,7 +6624,7 @@ class PrivateLinkResourcesOperations:
         :attr:`private_link_resources` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -6705,7 +6705,9 @@ class PrivateLinkResourcesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, resource_group_name: str, vault_name: str, **kwargs: Any) -> Iterable["_models.PrivateLinkResource"]:
+    def list(
+        self, resource_group_name: str, vault_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.PrivateLinkResource"]:
         """Gets the list of private link resources.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -6807,7 +6809,7 @@ class ProtectedItemOperations:
         :attr:`protected_item` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -7536,7 +7538,7 @@ class ProtectedItemOperations:
         continuation_token_parameter: Optional[str] = None,
         page_size: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable["_models.ProtectedItemModel"]:
+    ) -> ItemPaged["_models.ProtectedItemModel"]:
         """Gets the list of protected items in the given vault.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -7901,7 +7903,7 @@ class RecoveryPointOperations:
         :attr:`recovery_point` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -7992,7 +7994,7 @@ class RecoveryPointOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, vault_name: str, protected_item_name: str, **kwargs: Any
-    ) -> Iterable["_models.RecoveryPointModel"]:
+    ) -> ItemPaged["_models.RecoveryPointModel"]:
         """Gets the list of recovery points of the given protected item.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -8097,7 +8099,7 @@ class ReplicationExtensionOperations:
         :attr:`replication_extension` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -8553,7 +8555,7 @@ class ReplicationExtensionOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, vault_name: str, **kwargs: Any
-    ) -> Iterable["_models.ReplicationExtensionModel"]:
+    ) -> ItemPaged["_models.ReplicationExtensionModel"]:
         """Gets the list of replication extensions in the given vault.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -8655,7 +8657,7 @@ class CheckNameAvailabilityOperations:
         :attr:`check_name_availability` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -8830,7 +8832,7 @@ class DeploymentPreflightOperations:
         :attr:`deployment_preflight` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -9032,7 +9034,7 @@ class OperationResultsOperations:
         :attr:`operation_results` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -9120,7 +9122,7 @@ class LocationBasedOperationResultsOperations:
         :attr:`location_based_operation_results` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
