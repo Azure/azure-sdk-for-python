@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerservice import ContainerServiceClient
+from azure.mgmt.containerservice.v2025_03_01 import ContainerServiceClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -24,7 +24,7 @@ class TestContainerServicePrivateEndpointConnectionsOperations(AzureMgmtRecorded
         response = self.client.private_endpoint_connections.list(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2025-02-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestContainerServicePrivateEndpointConnectionsOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             resource_name="str",
             private_endpoint_connection_name="str",
-            api_version="2025-02-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -58,7 +58,7 @@ class TestContainerServicePrivateEndpointConnectionsOperations(AzureMgmtRecorded
                 "provisioningState": "str",
                 "type": "str",
             },
-            api_version="2025-02-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -71,7 +71,7 @@ class TestContainerServicePrivateEndpointConnectionsOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             resource_name="str",
             private_endpoint_connection_name="str",
-            api_version="2025-02-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

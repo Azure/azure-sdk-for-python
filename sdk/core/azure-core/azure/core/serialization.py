@@ -116,6 +116,12 @@ class AzureJSONEncoder(JSONEncoder):
     """A JSON encoder that's capable of serializing datetime objects and bytes."""
 
     def default(self, o: Any) -> Any:
+        """Override the default method to handle datetime and bytes serialization.
+        :param o: The object to serialize.
+        :type o: any
+        :return: A JSON-serializable representation of the object.
+        :rtype: any
+        """
         if isinstance(o, (bytes, bytearray)):
             return base64.b64encode(o).decode()
         try:

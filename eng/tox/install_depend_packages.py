@@ -62,21 +62,23 @@ MINIMUM_VERSION_SPECIFIC_OVERRIDES = {
     "azure-storage-file-datalake": {"azure-storage-blob": "12.22.0"},
     "azure-cosmos": {"azure-core": "1.30.0"},
     "azure-appconfiguration-provider": {"azure-appconfiguration": "1.7.2"},
+    "azure-ai-evaluation": {"aiohttp": "3.8.6"}
 }
 
 MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {}
 
 # PLATFORM SPECIFIC OVERRIDES provide additional generic (EG not tied to the package whos dependencies are being processed)
-# filtering on a _per platform_ basis. Primarily used to limit certain packages due to platform compatbility
+# filtering on a _per platform_ basis. Primarily used to limit certain packages due to platform compat
 PLATFORM_SPECIFIC_MINIMUM_OVERRIDES = {
     ">=3.12.0": {
         "azure-core": "1.23.1",
-        "aiohttp": "3.8.6",
+        "aiohttp": "3.9.0",
         "six": "1.16.0",
         "requests": "2.30.0"
     },
     ">=3.13.0": {
         "typing-extensions": "4.12.0",
+        "aiohttp": "3.10.6"
     }
 }
 

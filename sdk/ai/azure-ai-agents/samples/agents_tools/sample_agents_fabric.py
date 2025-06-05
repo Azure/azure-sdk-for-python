@@ -18,7 +18,12 @@ USAGE:
     pip install azure-ai-agents azure-identity
 
     Set this environment variables with your own values:
-    PROJECT_ENDPOINT - the Azure AI Agents endpoint.
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+                          page of your Azure AI Foundry portal.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
+       the "Models + endpoints" tab in your Azure AI Foundry project.
+    3) FABRIC_CONNECTION_ID  - The ID of the Fabric connection, in the format of:
+       /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace-name}/connections/{connection-name}
 """
 
 import os

@@ -23,7 +23,7 @@ class TestNetAppManagementNetAppResourceUsagesOperations(AzureMgmtRecordedTestCa
     def test_net_app_resource_usages_list(self, resource_group):
         response = self.client.net_app_resource_usages.list(
             location="str",
-            api_version="2025-01-01",
+            api_version="2025-01-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -35,7 +35,7 @@ class TestNetAppManagementNetAppResourceUsagesOperations(AzureMgmtRecordedTestCa
         response = self.client.net_app_resource_usages.get(
             location="str",
             usage_type="str",
-            api_version="2025-01-01",
+            api_version="2025-01-01-preview",
         )
 
         # please add some check logic here by yourself

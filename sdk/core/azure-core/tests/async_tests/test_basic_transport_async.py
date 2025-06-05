@@ -14,10 +14,19 @@ from azure.core.pipeline.transport._aiohttp import AioHttpStreamDownloadGenerato
 from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl as RestAsyncHttpResponse
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import AsyncPipeline
-from azure.core.exceptions import HttpResponseError, ServiceResponseError
+from azure.core.exceptions import (
+    HttpResponseError,
+    ServiceResponseError,
+    ServiceRequestError,
+    ServiceRequestTimeoutError,
+    ServiceResponseTimeoutError,
+)
 from utils import HTTP_REQUESTS, request_and_responses_product
 import pytest
 import sys
+import asyncio
+from unittest.mock import Mock
+from pkg_resources import parse_version
 import aiohttp
 
 
@@ -1038,3 +1047,49 @@ async def test_close_too_soon_works_fine(caplog, port, http_request):
     result = await transport.send(request)
 
     assert result  # No exception is good enough here
+
+
+@pytest.mark.skipif(
+    parse_version(aiohttp.__version__) >= parse_version("3.10"),
+    reason="aiohttp 3.10 introduced separate connection timeout",
+)
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+@pytest.mark.asyncio
+async def test_aiohttp_timeout_response(http_request):
+    async with AioHttpTransport() as transport:
+        transport.session._connector.connect = Mock(side_effect=asyncio.TimeoutError("Too slow!"))
+
+        request = http_request("GET", f"http://localhost:12345/basic/string")
+
+        with pytest.raises(ServiceResponseTimeoutError) as err:
+            await transport.send(request)
+
+        with pytest.raises(ServiceResponseError) as err:
+            await transport.send(request)
+
+        stream_request = http_request("GET", f"http://localhost:12345/streams/basic")
+        with pytest.raises(ServiceResponseTimeoutError) as err:
+            await transport.send(stream_request, stream=True)
+
+
+@pytest.mark.skipif(
+    parse_version(aiohttp.__version__) < parse_version("3.10"),
+    reason="aiohttp 3.10 introduced separate connection timeout",
+)
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+@pytest.mark.asyncio
+async def test_aiohttp_timeout_request(http_request):
+    async with AioHttpTransport() as transport:
+        transport.session._connector.connect = Mock(side_effect=asyncio.TimeoutError("Too slow!"))
+
+        request = http_request("GET", f"http://localhost:12345/basic/string")
+
+        with pytest.raises(ServiceRequestTimeoutError) as err:
+            await transport.send(request)
+
+        with pytest.raises(ServiceRequestError) as err:
+            await transport.send(request)
+
+        stream_request = http_request("GET", f"http://localhost:12345/streams/basic")
+        with pytest.raises(ServiceRequestTimeoutError) as err:
+            await transport.send(stream_request, stream=True)

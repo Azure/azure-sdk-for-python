@@ -141,7 +141,6 @@ def _aggregate_content_safety_metrics(
             module = inspect.getmodule(evaluators[evaluator_name])
             if (
                 module
-                and module.__name__.startswith("azure.ai.evaluation.")
                 and metric_name.endswith("_score")
                 and metric_name.replace("_score", "") in content_safety_metrics
             ):
@@ -1134,8 +1133,8 @@ def _map_names_to_builtins(
     ) -> Dict[str, str]:
     """
     Construct a mapping from user-supplied evaluator names to which known, built-in
-    evaluator or grader they refer to. Custom or otherwise unknown evaluators are
-    mapped to the "unknown" value.
+    evaluator or grader they refer to. Custom evaluators are excluded from the mapping
+    as we only want to track built-in evaluators and graders.
 
     :param evaluators: The dictionary of evaluators.
     :type evaluators: Dict[str, Callable]
@@ -1157,8 +1156,8 @@ def _map_names_to_builtins(
                 found_eval = True
                 break
         if not found_eval:
-            # If not found, map to "unknown"
-            name_map[name] = "unknown"
+            # Skip custom evaluators - we only want to track built-in evaluators
+            pass
     
     for  name, grader in graders.items():
         name_map[name] = grader.id
