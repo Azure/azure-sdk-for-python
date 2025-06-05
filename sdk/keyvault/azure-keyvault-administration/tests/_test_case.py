@@ -23,7 +23,7 @@ class BaseClientPreparer(AzureRecordedTestCase):
             self.managed_hsm_url = hsm if hsm else None
             storage_url = os.environ.get("BLOB_STORAGE_URL")
             container_name = os.environ.get("BLOB_CONTAINER_NAME")
-            self.container_uri = f"{storage_url}/{container_name}"
+            self.container_uri = f"{storage_url.rstrip('/')}/{container_name}"
 
             self.sas_token = os.environ.get("BLOB_STORAGE_SAS_TOKEN")
 
@@ -72,10 +72,7 @@ class KeyVaultBackupClientPreparer(BaseClientPreparer):
     def create_backup_client(self, managed_identity_client_id, **kwargs):
         from azure.keyvault.administration import KeyVaultBackupClient
 
-        if self.is_live:
-            credential = ManagedIdentityCredential(client_id=managed_identity_client_id)
-        else:
-            credential = self.get_credential(KeyVaultBackupClient)
+        credential = self.get_credential(KeyVaultBackupClient)
         return self.create_client_from_credential(
             KeyVaultBackupClient, credential=credential, vault_url=self.managed_hsm_url, **kwargs
         )

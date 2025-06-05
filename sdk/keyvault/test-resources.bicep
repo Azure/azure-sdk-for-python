@@ -129,13 +129,13 @@ resource blobContainer 'Microsoft.Storage/storageAccounts/blobServices/container
 
 resource managedIdentityRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (enableHsm) {
   name: guid(resourceGroup().id, 'StorageBlobContributor', managedIdentityId)
+  scope: resourceGroup()
   properties: {
     roleDefinitionId: subscriptionResourceId(
       'Microsoft.Authorization/roleDefinitions',
       'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
     )
     principalId: managedIdentity.properties.principalId
-    scope: resourceGroup().id
     principalType: 'ServicePrincipal'
   }
 }

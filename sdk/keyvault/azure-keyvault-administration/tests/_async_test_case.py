@@ -22,10 +22,10 @@ class BaseClientPreparer(AzureRecordedTestCase):
             self.managed_hsm_url = hsm if hsm else None
             storage_url = os.environ.get("BLOB_STORAGE_URL")
             container_name = os.environ.get("BLOB_CONTAINER_NAME")
-            self.container_uri = f"{storage_url}/{container_name}"
+            self.container_uri = f"{storage_url.rstrip('/')}/{container_name}"
 
             self.sas_token = os.environ.get("BLOB_STORAGE_SAS_TOKEN")
-            
+
         else:
             self.managed_hsm_url = hsm_playback_url
             self.container_uri = container_playback_uri
@@ -39,7 +39,7 @@ class BaseClientPreparer(AzureRecordedTestCase):
         # Only set service principal credentials if user-based auth is not requested
         if use_pwsh == use_cli == use_vscode == use_azd == "false":
             self._set_mgmt_settings_real_values()
-    
+
     def _skip_if_not_configured(self, api_version, **kwargs):
         if self.is_live and api_version != DEFAULT_VERSION:
             pytest.skip("This test only uses the default API version for live tests")
@@ -68,10 +68,7 @@ class KeyVaultBackupClientPreparer(BaseClientPreparer):
     def create_backup_client(self, managed_identity_client_id, **kwargs):
         from azure.keyvault.administration.aio import KeyVaultBackupClient
 
-        if self.is_live:
-            credential = ManagedIdentityCredential(client_id=managed_identity_client_id)
-        else:
-            credential = self.get_credential(KeyVaultBackupClient, is_async=True)
+        credential = self.get_credential(KeyVaultBackupClient, is_async=True)
         return self.create_client_from_credential(
             KeyVaultBackupClient, credential=credential, vault_url=self.managed_hsm_url, **kwargs
         )

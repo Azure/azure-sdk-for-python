@@ -48,7 +48,7 @@ class TestAccessControl(KeyVaultTestCase):
         # create custom role definition
         role_name = self.get_resource_name("role-name")
         definition_name = self.get_replayable_uuid("definition-name")
-        add_general_regex_sanitizer(regex=definition_name, value = "definition-name")
+        add_general_regex_sanitizer(function_scoped=True, regex=definition_name, value="definition-name")
         permissions = [KeyVaultPermission(data_actions=[KeyVaultDataAction.READ_HSM_KEY])]
         created_definition = await client.set_role_definition(
             scope=scope,
@@ -115,9 +115,7 @@ class TestAccessControl(KeyVaultTestCase):
         definition = definitions[0]
         principal_id = self.get_service_principal_id()
         name = self.get_replayable_uuid("some-uuid")
-        add_general_regex_sanitizer(regex=name, value = "some-uuid")
-
-
+        add_general_regex_sanitizer(function_scoped=True, regex=name, value="some-uuid")
 
         created = await client.create_role_assignment(scope, definition.id, principal_id, name=name)
         assert created.name == name
