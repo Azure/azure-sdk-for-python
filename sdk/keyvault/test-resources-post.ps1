@@ -95,11 +95,15 @@ if (!$DeploymentOutputs['AZURE_MANAGEDHSM_URL']) {
 
 if ($CI) {
     Log "Refreshing login"
-    az cloud set -n $DeploymentOutputs['KEYVAULT_ENVIRONMENT']
-    az login --federated-token $env:ARM_OIDC_TOKEN --service-principal -t $TenantId -u $TestApplicationId
-    if ($LASTEXITCODE) { exit $LASTEXITCODE }
-    az account set --subscription $SubscriptionId
-    if ($LASTEXITCODE) { exit $LASTEXITCODE }
+
+    Connect-AzAccount -ServicePrincipal `
+                      -TenantId $TenantId `
+                      -ApplicationId $TestApplicationId `
+                      -FederatedToken $env:ARM_OIDC_TOKEN
+
+    Select-AzSubscription -Subscription $SubscriptionId
+
+    Log "Successfully logged in to service principal"
 }
 
 [Uri] $hsmUrl = $DeploymentOutputs['AZURE_MANAGEDHSM_URL']
