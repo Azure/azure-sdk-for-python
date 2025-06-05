@@ -108,40 +108,40 @@ class MyEventHandler(AgentEventHandler):
 
 
 with project_client:
-    with project_client.agents as agents_client:
+    agents_client = project_client.agents
 
-        # [START create_agent_with_function_tool]
-        functions = FunctionTool(user_functions)
+    # [START create_agent_with_function_tool]
+    functions = FunctionTool(user_functions)
 
-        agent = agents_client.create_agent(
-            model=os.environ["MODEL_DEPLOYMENT_NAME"],
-            name="my-agent",
-            instructions="You are a helpful agent",
-            tools=functions.definitions,
-        )
-        # [END create_agent_with_function_tool]
-        print(f"Created agent, ID: {agent.id}")
+    agent = agents_client.create_agent(
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
+        name="my-agent",
+        instructions="You are a helpful agent",
+        tools=functions.definitions,
+    )
+    # [END create_agent_with_function_tool]
+    print(f"Created agent, ID: {agent.id}")
 
-        thread = agents_client.threads.create()
-        print(f"Created thread, thread ID {thread.id}")
+    thread = agents_client.threads.create()
+    print(f"Created thread, thread ID {thread.id}")
 
-        message = agents_client.messages.create(
-            thread_id=thread.id,
-            role="user",
-            content="Hello, send an email with the datetime and weather information in New York? Also let me know the details.",
-        )
-        print(f"Created message, message ID {message.id}")
+    message = agents_client.messages.create(
+        thread_id=thread.id,
+        role="user",
+        content="Hello, send an email with the datetime and weather information in New York? Also let me know the details.",
+    )
+    print(f"Created message, message ID {message.id}")
 
-        with agents_client.runs.stream(
-            thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler(functions)
-        ) as stream:
-            stream.until_done()
+    with agents_client.runs.stream(
+        thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler(functions)
+    ) as stream:
+        stream.until_done()
 
-        agents_client.delete_agent(agent.id)
-        print("Deleted agent")
+    agents_client.delete_agent(agent.id)
+    print("Deleted agent")
 
-        messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
-        for msg in messages:
-            if msg.text_messages:
-                last_text = msg.text_messages[-1]
-                print(f"{msg.role}: {last_text.text.value}")
+    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+    for msg in messages:
+        if msg.text_messages:
+            last_text = msg.text_messages[-1]
+            print(f"{msg.role}: {last_text.text.value}")

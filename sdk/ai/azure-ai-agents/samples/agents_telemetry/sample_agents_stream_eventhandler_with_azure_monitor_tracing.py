@@ -30,7 +30,7 @@ USAGE:
 """
 
 import os
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import (
     AgentEventHandler,
@@ -44,11 +44,10 @@ from typing import Any
 from opentelemetry import trace
 from azure.monitor.opentelemetry import configure_azure_monitor
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
+     credential=DefaultAzureCredential(),
 )
-
 
 class MyEventHandler(AgentEventHandler):
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
@@ -87,7 +86,10 @@ scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
 with tracer.start_as_current_span(scenario):
-    with agents_client:
+
+    with project_client:
+        agents_client = project_client.agents
+        
         # Create an agent and run stream with event handler
         agent = agents_client.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"], name="my-agent", instructions="You are a helpful agent"

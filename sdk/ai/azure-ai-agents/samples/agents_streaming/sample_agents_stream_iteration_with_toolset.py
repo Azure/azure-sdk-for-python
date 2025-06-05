@@ -51,58 +51,59 @@ toolset = ToolSet()
 toolset.add(functions)
 
 with project_client:
-    with project_client.agents as agents_client:
-        agents_client.enable_auto_function_calls(toolset)
-        agent = agents_client.create_agent(
-            model=os.environ["MODEL_DEPLOYMENT_NAME"],
-            name="my-agent",
-            instructions="You are a helpful agent",
-            toolset=toolset,
-        )
-        print(f"Created agent, agent ID: {agent.id}")
+    agents_client = project_client.agents
 
-        thread = agents_client.threads.create()
-        print(f"Created thread, thread ID {thread.id}")
+    agents_client.enable_auto_function_calls(toolset)
+    agent = agents_client.create_agent(
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
+        name="my-agent",
+        instructions="You are a helpful agent",
+        toolset=toolset,
+    )
+    print(f"Created agent, agent ID: {agent.id}")
 
-        message = agents_client.messages.create(thread_id=thread.id, role="user", content="Hello, what's the time?")
-        print(f"Created message, message ID {message.id}")
+    thread = agents_client.threads.create()
+    print(f"Created thread, thread ID {thread.id}")
 
-        with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id) as stream:
+    message = agents_client.messages.create(thread_id=thread.id, role="user", content="Hello, what's the time?")
+    print(f"Created message, message ID {message.id}")
 
-            for event_type, event_data, _ in stream:
+    with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id) as stream:
 
-                if isinstance(event_data, MessageDeltaChunk):
-                    print(f"Text delta received: {event_data.text}")
+        for event_type, event_data, _ in stream:
 
-                elif isinstance(event_data, RunStepDeltaChunk):
-                    print(f"RunStepDeltaChunk received. ID: {event_data.id}.")
+            if isinstance(event_data, MessageDeltaChunk):
+                print(f"Text delta received: {event_data.text}")
 
-                elif isinstance(event_data, ThreadMessage):
-                    print(f"ThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")
+            elif isinstance(event_data, RunStepDeltaChunk):
+                print(f"RunStepDeltaChunk received. ID: {event_data.id}.")
 
-                elif isinstance(event_data, ThreadRun):
-                    print(f"ThreadRun status: {event_data.status}")
+            elif isinstance(event_data, ThreadMessage):
+                print(f"ThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")
 
-                    if event_data.status == "failed":
-                        print(f"Run failed. Error: {event_data.last_error}")
+            elif isinstance(event_data, ThreadRun):
+                print(f"ThreadRun status: {event_data.status}")
 
-                elif isinstance(event_data, RunStep):
-                    print(f"RunStep type: {event_data.type}, Status: {event_data.status}")
+                if event_data.status == "failed":
+                    print(f"Run failed. Error: {event_data.last_error}")
 
-                elif event_type == AgentStreamEvent.ERROR:
-                    print(f"An error occurred. Data: {event_data}")
+            elif isinstance(event_data, RunStep):
+                print(f"RunStep type: {event_data.type}, Status: {event_data.status}")
 
-                elif event_type == AgentStreamEvent.DONE:
-                    print("Stream completed.")
+            elif event_type == AgentStreamEvent.ERROR:
+                print(f"An error occurred. Data: {event_data}")
 
-                else:
-                    print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
+            elif event_type == AgentStreamEvent.DONE:
+                print("Stream completed.")
 
-        agents_client.delete_agent(agent.id)
-        print("Deleted agent")
+            else:
+                print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
-        messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
-        for msg in messages:
-            if msg.text_messages:
-                last_text = msg.text_messages[-1]
-                print(f"{msg.role}: {last_text.text.value}")
+    agents_client.delete_agent(agent.id)
+    print("Deleted agent")
+
+    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+    for msg in messages:
+        if msg.text_messages:
+            last_text = msg.text_messages[-1]
+            print(f"{msg.role}: {last_text.text.value}")

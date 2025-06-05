@@ -37,43 +37,43 @@ from azure.identity.aio import DefaultAzureCredential
 
 
 async def main() -> None:
-    async with DefaultAzureCredential() as creds:
-        async with AIProjectClient(
-            endpoint=os.environ["PROJECT_ENDPOINT"],
-            credential=creds,
-        ) as project_client:
+    project_client = AIProjectClient(
+        endpoint=os.environ["PROJECT_ENDPOINT"],
+        credential=DefaultAzureCredential(),
+    )
 
-            async with project_client.agents as agents_client:
+    async with project_client:
+        agents_client = project_client.agents
 
-                agent = await agents_client.create_agent(
-                    model=os.environ["MODEL_DEPLOYMENT_NAME"],
-                    name="sample-agent",
-                    instructions="You are a helpful assistant that tells jokes.",
-                )
-                print(f"Created agent, agent ID: {agent.id}")
+        agent = await agents_client.create_agent(
+            model=os.environ["MODEL_DEPLOYMENT_NAME"],
+            name="sample-agent",
+            instructions="You are a helpful assistant that tells jokes.",
+        )
+        print(f"Created agent, agent ID: {agent.id}")
 
-                run = await agents_client.create_thread_and_process_run(
-                    agent_id=agent.id,
-                    thread=AgentThreadCreationOptions(
-                        messages=[ThreadMessageOptions(role="user", content="Hi! Tell me your favorite programming joke.")]
-                    ),
-                )
+        run = await agents_client.create_thread_and_process_run(
+            agent_id=agent.id,
+            thread=AgentThreadCreationOptions(
+                messages=[ThreadMessageOptions(role="user", content="Hi! Tell me your favorite programming joke.")]
+            ),
+        )
 
-                if run.status == "failed":
-                    print(f"Run error: {run.last_error}")
+        if run.status == "failed":
+            print(f"Run error: {run.last_error}")
 
-                # List all messages in the thread, in ascending order of creation
-                messages = agents_client.messages.list(
-                    thread_id=run.thread_id,
-                    order=ListSortOrder.ASCENDING,
-                )
-                async for msg in messages:
-                    last_part = msg.content[-1]
-                    if isinstance(last_part, MessageTextContent):
-                        print(f"{msg.role}: {last_part.text.value}")
+        # List all messages in the thread, in ascending order of creation
+        messages = agents_client.messages.list(
+            thread_id=run.thread_id,
+            order=ListSortOrder.ASCENDING,
+        )
+        async for msg in messages:
+            last_part = msg.content[-1]
+            if isinstance(last_part, MessageTextContent):
+                print(f"{msg.role}: {last_part.text.value}")
 
-                await agents_client.delete_agent(agent.id)
-                print(f"Deleted agent {agent.id!r}")
+        await agents_client.delete_agent(agent.id)
+        print(f"Deleted agent {agent.id!r}")
 
 
 if __name__ == "__main__":

@@ -59,58 +59,59 @@ def image_to_base64(image_path: str) -> str:
 
 
 async def main():
-    async with DefaultAzureCredential() as creds:
-        async with AIProjectClient(
-            endpoint=os.environ["PROJECT_ENDPOINT"],
-            credential=creds,
-        ) as project_client:
+    project_client = AIProjectClient(
+        endpoint=os.environ["PROJECT_ENDPOINT"],
+        credential=DefaultAzureCredential(),
+    )
 
-            async with project_client.agents as agents_client:
-                agent = await agents_client.create_agent(
-                    model=os.environ["MODEL_DEPLOYMENT_NAME"],
-                    name="my-agent",
-                    instructions="You are helpful agent",
-                )
-                print(f"Created agent, agent ID: {agent.id}")
+    async with project_client:
+        agents_client = project_client.agents
+        
+        agent = await agents_client.create_agent(
+            model=os.environ["MODEL_DEPLOYMENT_NAME"],
+            name="my-agent",
+            instructions="You are helpful agent",
+        )
+        print(f"Created agent, agent ID: {agent.id}")
 
-                thread = await agents_client.threads.create()
-                print(f"Created thread, thread ID: {thread.id}")
+        thread = await agents_client.threads.create()
+        print(f"Created thread, thread ID: {thread.id}")
 
-                input_message = "Hello, what is in the image ?"
-                image_base64 = image_to_base64(asset_file_path)
-                img_url = f"data:image/png;base64,{image_base64}"
-                url_param = MessageImageUrlParam(url=img_url, detail="high")
-                content_blocks: List[MessageInputContentBlock] = [
-                    MessageInputTextBlock(text=input_message),
-                    MessageInputImageUrlBlock(image_url=url_param),
-                ]
-                message = await agents_client.messages.create(thread_id=thread.id, role="user", content=content_blocks)
-                print(f"Created message, message ID: {message.id}")
+        input_message = "Hello, what is in the image ?"
+        image_base64 = image_to_base64(asset_file_path)
+        img_url = f"data:image/png;base64,{image_base64}"
+        url_param = MessageImageUrlParam(url=img_url, detail="high")
+        content_blocks: List[MessageInputContentBlock] = [
+            MessageInputTextBlock(text=input_message),
+            MessageInputImageUrlBlock(image_url=url_param),
+        ]
+        message = await agents_client.messages.create(thread_id=thread.id, role="user", content=content_blocks)
+        print(f"Created message, message ID: {message.id}")
 
-                run = await agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
+        run = await agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
 
-                # Poll the run as long as run status is queued or in progress
-                while run.status in ["queued", "in_progress", "requires_action"]:
-                    # Wait for a second
-                    time.sleep(1)
-                    run = await agents_client.runs.get(thread_id=thread.id, run_id=run.id)
-                    print(f"Run status: {run.status}")
+        # Poll the run as long as run status is queued or in progress
+        while run.status in ["queued", "in_progress", "requires_action"]:
+            # Wait for a second
+            time.sleep(1)
+            run = await agents_client.runs.get(thread_id=thread.id, run_id=run.id)
+            print(f"Run status: {run.status}")
 
-                if run.status == "failed":
-                    print(f"Run failed: {run.last_error}")
+        if run.status == "failed":
+            print(f"Run failed: {run.last_error}")
 
-                await agents_client.delete_agent(agent.id)
-                print("Deleted agent")
+        await agents_client.delete_agent(agent.id)
+        print("Deleted agent")
 
-                messages = agents_client.messages.list(
-                    thread_id=thread.id,
-                    order=ListSortOrder.ASCENDING,
-                )
+        messages = agents_client.messages.list(
+            thread_id=thread.id,
+            order=ListSortOrder.ASCENDING,
+        )
 
-                async for msg in messages:
-                    last_part = msg.content[-1]
-                    if isinstance(last_part, MessageTextContent):
-                        print(f"{msg.role}: {last_part.text.value}")
+        async for msg in messages:
+            last_part = msg.content[-1]
+            if isinstance(last_part, MessageTextContent):
+                print(f"{msg.role}: {last_part.text.value}")
 
 
 if __name__ == "__main__":

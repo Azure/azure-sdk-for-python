@@ -30,13 +30,13 @@ USAGE:
 """
 
 import os
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import ListSortOrder
 from azure.identity import DefaultAzureCredential
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
+     credential=DefaultAzureCredential(),
 )
 
 # [START enable_tracing]
@@ -51,7 +51,9 @@ scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
 with tracer.start_as_current_span(scenario):
-    with agents_client:
+    with project_client:
+        agents_client = project_client.agents
+
         # [END enable_tracing]
         agent = agents_client.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"], name="my-agent", instructions="You are helpful agent"

@@ -39,7 +39,7 @@ settings.tracing_implementation = "opentelemetry"
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import (
     FunctionTool,
@@ -62,11 +62,10 @@ AIAgentsInstrumentor().instrument()
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
+     credential=DefaultAzureCredential(),
 )
-
 
 # The trace_func decorator will trace the function call and enable adding additional attributes
 # to the span in the function implementation. Note that this will trace the function parameters and their values.
@@ -102,11 +101,14 @@ functions = FunctionTool(functions=user_functions)
 toolset = ToolSet()
 toolset.add(functions)
 
-# To enable tool calls executed automatically
-agents_client.enable_auto_function_calls(toolset)
 
 with tracer.start_as_current_span(scenario):
-    with agents_client:
+    with project_client:
+        agents_client = project_client.agents
+    
+        # To enable tool calls executed automatically
+        agents_client.enable_auto_function_calls(toolset)
+        
         # Create an agent and run user's request with function calls
         agent = agents_client.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"],

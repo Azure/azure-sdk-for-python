@@ -40,7 +40,7 @@ settings.tracing_implementation = "opentelemetry"
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider, SpanProcessor, ReadableSpan, Span
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import ListSortOrder
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.telemetry import AIAgentsInstrumentor
@@ -75,9 +75,9 @@ tracer = trace.get_tracer(__name__)
 
 AIAgentsInstrumentor().instrument()
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
+     credential=DefaultAzureCredential(),
 )
 
 # Add the custom span processor to the global tracer provider
@@ -88,7 +88,10 @@ scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
 with tracer.start_as_current_span(scenario):
-    with agents_client:
+    
+    with project_client:
+        agents_client = project_client.agents
+        
         agent = agents_client.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"], name="my-agent", instructions="You are helpful agent"
         )

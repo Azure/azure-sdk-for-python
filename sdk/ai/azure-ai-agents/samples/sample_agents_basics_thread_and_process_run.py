@@ -35,35 +35,35 @@ project_client = AIProjectClient(
 )
 
 with project_client:
-    with project_client.agents as agents_client:
+    agents_client = project_client.agents
 
-        agent = agents_client.create_agent(
-            model=os.environ["MODEL_DEPLOYMENT_NAME"],
-            name="process-run-sample-agent",
-            instructions="You are a friendly assistant that generates jokes.",
-        )
-        print(f"Created agent: {agent.id}")
+    agent = agents_client.create_agent(
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
+        name="process-run-sample-agent",
+        instructions="You are a friendly assistant that generates jokes.",
+    )
+    print(f"Created agent: {agent.id}")
 
-        # [START create_thread_and_process_run]
-        run = agents_client.create_thread_and_process_run(
-            agent_id=agent.id,
-            thread=AgentThreadCreationOptions(
-                messages=[ThreadMessageOptions(role="user", content="Hi! Tell me your favorite programming joke.")]
-            ),
-        )
-        # [END create_thread_and_process_run]
-        print(f"Run completed with status: {run.status!r}")
+    # [START create_thread_and_process_run]
+    run = agents_client.create_thread_and_process_run(
+        agent_id=agent.id,
+        thread=AgentThreadCreationOptions(
+            messages=[ThreadMessageOptions(role="user", content="Hi! Tell me your favorite programming joke.")]
+        ),
+    )
+    # [END create_thread_and_process_run]
+    print(f"Run completed with status: {run.status!r}")
 
-        if run.status == "failed":
-            print("Run failed:", run.last_error)
+    if run.status == "failed":
+        print("Run failed:", run.last_error)
 
-        # List out all messages in the thread
-        messages = agents_client.messages.list(thread_id=run.thread_id, order=ListSortOrder.ASCENDING)
-        for msg in messages:
-            if msg.text_messages:
-                last_text = msg.text_messages[-1]
-                print(f"{msg.role}: {last_text.text.value}")
+    # List out all messages in the thread
+    messages = agents_client.messages.list(thread_id=run.thread_id, order=ListSortOrder.ASCENDING)
+    for msg in messages:
+        if msg.text_messages:
+            last_text = msg.text_messages[-1]
+            print(f"{msg.role}: {last_text.text.value}")
 
-        # clean up
-        agents_client.delete_agent(agent.id)
-        print(f"Deleted agent {agent.id}")
+    # clean up
+    agents_client.delete_agent(agent.id)
+    print(f"Deleted agent {agent.id}")

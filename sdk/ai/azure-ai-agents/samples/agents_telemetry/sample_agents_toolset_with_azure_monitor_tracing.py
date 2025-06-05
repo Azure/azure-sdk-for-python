@@ -31,7 +31,7 @@ USAGE:
 from typing import Any, Callable, Set
 
 import os, time, json
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import (
     FunctionTool,
@@ -42,9 +42,9 @@ from opentelemetry import trace
 from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.ai.agents.telemetry import trace_function
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
+     credential=DefaultAzureCredential(),
 )
 
 # Enable Azure Monitor tracing
@@ -89,11 +89,15 @@ functions = FunctionTool(functions=user_functions)
 toolset = ToolSet()
 toolset.add(functions)
 
-# To enable tool calls executed automatically
-agents_client.enable_auto_function_calls(toolset)
 
 with tracer.start_as_current_span(scenario):
-    with agents_client:
+
+    with project_client:
+        agents_client = project_client.agents
+
+        # To enable tool calls executed automatically
+        agents_client.enable_auto_function_calls(toolset)
+    
         # Create an agent and run user's request with function calls
         agent = agents_client.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"],
