@@ -23,7 +23,6 @@
 """
 import asyncio  # pylint: disable=do-not-import-asyncio
 import json
-import logging
 import time
 
 from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError, ServiceResponseError
@@ -40,9 +39,10 @@ from .. import exceptions
 from .._container_recreate_retry_policy import ContainerRecreateRetryPolicy
 from .._retry_utility import (_configure_timeout, _has_read_retryable_headers,
                               _handle_service_response_retries, _handle_service_request_retries,
-                              _has_database_account_header, _log_diagnostics_error)
+                              _has_database_account_header)
 from ..exceptions import CosmosHttpResponseError
 from ..http_constants import HttpHeaders, StatusCodes, SubStatusCodes
+from .._cosmos_http_logging_policy import _log_diagnostics_error
 
 
 # pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements, disable=too-many-branches
@@ -137,20 +137,17 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     status_code=StatusCodes.NOT_FOUND,
                     message="Could not find ThroughputProperties for container " + link,
                     sub_status_code=SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND)
-                if client._enable_diagnostics_logging:
-                    if client._enable_diagnostics_logging:
-                        _log_diagnostics_error(request, result[1], e_offer,
-                                               {}, global_endpoint_manager)
+                _log_diagnostics_error(client._enable_diagnostics_logging, request, result[1], e_offer,
+                                       {}, global_endpoint_manager)
                 raise e_offer
 
             return result
         except exceptions.CosmosHttpResponseError as e:
-            if client._enable_diagnostics_logging:
-                logger_attributes = {
-                    "duration": float(time.time() - start_time)
-                }
-                _log_diagnostics_error(request, None, e,
-                                       logger_attributes, global_endpoint_manager)
+            logger_attributes = {
+                "duration": float(time.time() - start_time)
+            }
+            _log_diagnostics_error(client._enable_diagnostics_logging, request, None, e,
+                                   logger_attributes, global_endpoint_manager)
             if request and _has_database_account_header(request.headers):
                 retry_policy = database_account_retry_policy
             elif e.status_code == StatusCodes.FORBIDDEN and e.sub_status in \
@@ -225,13 +222,12 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
         except ServiceRequestError as e:
             if request and _has_database_account_header(request.headers):
                 if not database_account_retry_policy.ShouldRetry(e):
-                    if client._enable_diagnostics_logging:
-                        # TODO : We need to get status code information from the exception.
-                        logger_attributes = {
-                            "duration": float(time.time() - start_time)
-                        }
-                        _log_diagnostics_error(request, None, e,
-                                               logger_attributes, global_endpoint_manager)
+                    # TODO : We need to get status code information from the exception.
+                    logger_attributes = {
+                        "duration": float(time.time() - start_time)
+                    }
+                    _log_diagnostics_error(request, None, e,
+                                           logger_attributes, global_endpoint_manager)
                     raise e
             else:
                 _handle_service_request_retries(request, client, service_request_retry_policy, e, *args)
@@ -239,13 +235,12 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
         except ServiceResponseError as e:
             if request and _has_database_account_header(request.headers):
                 if not database_account_retry_policy.ShouldRetry(e):
-                    if client._enable_diagnostics_logging:
-                        # TODO : We need to get status code information from the exception.
-                        logger_attributes = {
-                            "duration": float(time.time() - start_time)
-                        }
-                        _log_diagnostics_error(request, None, e,
-                                               logger_attributes, global_endpoint_manager)
+                    # TODO : We need to get status code information from the exception.
+                    logger_attributes = {
+                        "duration": float(time.time() - start_time)
+                    }
+                    _log_diagnostics_error(request, None, e,
+                                           logger_attributes, global_endpoint_manager)
                     raise e
             else:
                 try:
