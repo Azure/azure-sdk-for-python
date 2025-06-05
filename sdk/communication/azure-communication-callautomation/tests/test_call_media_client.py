@@ -30,8 +30,7 @@ from azure.communication.callautomation._generated.models import (
     HoldRequest,
     UnholdRequest,
     StartMediaStreamingRequest,
-    StopMediaStreamingRequest,
-    InterruptAudioAndAnnounceRequest
+    StopMediaStreamingRequest
 )
 from azure.communication.callautomation._generated.models._enums import RecognizeInputType, DtmfTone
 from unittest.mock import Mock
