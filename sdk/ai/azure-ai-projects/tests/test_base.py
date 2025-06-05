@@ -6,7 +6,15 @@
 import re
 import functools
 from typing import Optional
-from azure.ai.projects.models import Connection, ConnectionType, CredentialType, ApiKeyCredentials, Deployment, DeploymentType, ModelDeployment
+from azure.ai.projects.models import (
+    Connection,
+    ConnectionType,
+    CredentialType,
+    ApiKeyCredentials,
+    Deployment,
+    DeploymentType,
+    ModelDeployment,
+)
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 
 servicePreparer = functools.partial(
@@ -14,6 +22,7 @@ servicePreparer = functools.partial(
     "azure_ai_projects_tests",
     azure_ai_projects_tests_project_endpoint="https://sanitized.services.ai.azure.com/api/projects/sanitized-project-name",
 )
+
 
 class TestBase(AzureRecordedTestCase):
 
@@ -47,7 +56,9 @@ class TestBase(AzureRecordedTestCase):
     # Checks that a given dictionary has at least one non-empty (non-whitespace) string key-value pair.
     @classmethod
     def is_valid_dict(cls, d: dict[str, str]) -> bool:
-        return bool(d) and all(isinstance(k, str) and isinstance(v, str) and k.strip() and v.strip() for k, v in d.items())
+        return bool(d) and all(
+            isinstance(k, str) and isinstance(v, str) and k.strip() and v.strip() for k, v in d.items()
+        )
 
     @classmethod
     def validate_connection(
@@ -85,7 +96,6 @@ class TestBase(AzureRecordedTestCase):
                 assert connection.credentials.type == CredentialType.API_KEY
                 assert connection.credentials.api_key is not None
 
-
     @classmethod
     def validate_deployment(
         cls,
@@ -99,8 +109,8 @@ class TestBase(AzureRecordedTestCase):
         assert deployment.type == DeploymentType.MODEL_DEPLOYMENT
         assert deployment.model_version is not None
         # Comment out the below, since I see that `Cohere-embed-v3-english` has an empty capabilities dict.
-        #assert TestBase.is_valid_dict(deployment.capabilities)
-        assert bool(deployment.sku) # Check none-empty
+        # assert TestBase.is_valid_dict(deployment.capabilities)
+        assert bool(deployment.sku)  # Check none-empty
 
         if expected_model_name:
             assert deployment.model_name == expected_model_name

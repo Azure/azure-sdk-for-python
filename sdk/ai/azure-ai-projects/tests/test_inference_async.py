@@ -8,6 +8,7 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import is_live_and_not_recording
 from devtools_testutils.aio import recorded_by_proxy_async
 
+
 class TestInferenceAsync(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
@@ -27,7 +28,9 @@ class TestInferenceAsync(TestBase):
             credential=self.get_credential(AIProjectClient, is_async=True),
         ) as project_client:
 
-            print("[test_inference_async] Get an authenticated Azure OpenAI client for the parent AI Services resource, and perform a chat completion operation.")
+            print(
+                "[test_inference_async] Get an authenticated Azure OpenAI client for the parent AI Services resource, and perform a chat completion operation."
+            )
             if is_live_and_not_recording():
                 async with await project_client.inference.get_azure_openai_client(api_version=api_version) as client:
 
@@ -67,9 +70,13 @@ class TestInferenceAsync(TestBase):
             credential=self.get_credential(AIProjectClient, is_async=False),
         ) as project_client:
 
-            print("[test_inference_on_connection_async] Get an authenticated Azure OpenAI client for a connection AOAI service, and perform a chat completion operation.")
+            print(
+                "[test_inference_on_connection_async] Get an authenticated Azure OpenAI client for a connection AOAI service, and perform a chat completion operation."
+            )
             if is_live_and_not_recording():
-                async with await project_client.inference.get_azure_openai_client(api_version=api_version, connection_name=connection_name) as client:
+                async with await project_client.inference.get_azure_openai_client(
+                    api_version=api_version, connection_name=connection_name
+                ) as client:
 
                     response = await client.chat.completions.create(
                         model=model_deployment_name,

@@ -6,10 +6,12 @@
 import os
 import pytest
 from dotenv import load_dotenv, find_dotenv
-from devtools_testutils import (remove_batch_sanitizers, add_general_regex_sanitizer, add_body_key_sanitizer)
+from devtools_testutils import remove_batch_sanitizers, add_general_regex_sanitizer, add_body_key_sanitizer
 
 if not load_dotenv(find_dotenv(filename="azure_ai_projects_tests.env"), override=True):
-    print("Failed to apply environment variables for azure-ai-projects tests. This is expected if running in ADO pipeline.")
+    print(
+        "Failed to apply environment variables for azure-ai-projects tests. This is expected if running in ADO pipeline."
+    )
 
 
 def pytest_collection_modifyitems(items):

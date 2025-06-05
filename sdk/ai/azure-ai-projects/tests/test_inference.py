@@ -7,6 +7,7 @@ from azure.ai.projects import AIProjectClient
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, is_live_and_not_recording
 
+
 class TestInference(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
@@ -26,7 +27,9 @@ class TestInference(TestBase):
             credential=self.get_credential(AIProjectClient, is_async=False),
         ) as project_client:
 
-            print("[test_inference] Get an authenticated Azure OpenAI client for the parent AI Services resource, and perform a chat completion operation.")
+            print(
+                "[test_inference] Get an authenticated Azure OpenAI client for the parent AI Services resource, and perform a chat completion operation."
+            )
             if is_live_and_not_recording():
                 with project_client.inference.get_azure_openai_client(api_version=api_version) as client:
 
@@ -66,9 +69,13 @@ class TestInference(TestBase):
             credential=self.get_credential(AIProjectClient, is_async=False),
         ) as project_client:
 
-            print("[test_inference_on_connection] Get an authenticated Azure OpenAI client for a connection AOAI service, and perform a chat completion operation.")
+            print(
+                "[test_inference_on_connection] Get an authenticated Azure OpenAI client for a connection AOAI service, and perform a chat completion operation."
+            )
             if is_live_and_not_recording():
-                with project_client.inference.get_azure_openai_client(api_version=api_version, connection_name=connection_name) as client:
+                with project_client.inference.get_azure_openai_client(
+                    api_version=api_version, connection_name=connection_name
+                ) as client:
 
                     response = client.chat.completions.create(
                         model=model_deployment_name,

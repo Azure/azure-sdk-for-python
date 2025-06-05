@@ -21,6 +21,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 def _get_inference_url(input_url: str) -> str:
     """
     Converts an input URL in the format:
@@ -40,6 +41,7 @@ def _get_inference_url(input_url: str) -> str:
     new_url = f"https://{parsed.netloc}/models"
     return new_url
 
+
 def _get_aoai_inference_url(input_url: str) -> str:
     """
     Converts an input URL in the format:
@@ -58,6 +60,7 @@ def _get_aoai_inference_url(input_url: str) -> str:
         raise ValueError("Invalid endpoint URL format. Must be an https URL with a host.")
     new_url = f"https://{parsed.netloc}"
     return new_url
+
 
 class InferenceOperations:
     """

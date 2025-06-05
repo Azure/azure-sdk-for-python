@@ -11,6 +11,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 # You can find comprehensive Agent functionally tests here:
 # https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents/tests
 
+
 class TestAgentsAsync(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:

@@ -7,6 +7,7 @@ from azure.ai.projects import AIProjectClient
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, is_live
 
+
 class TestTelemetry(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
@@ -30,5 +31,5 @@ class TestTelemetry(TestBase):
                 assert bool(self.REGEX_APPINSIGHTS_CONNECTION_STRING.match(connection_string))
             else:
                 assert connection_string == "Sanitized-api-key"
-            assert connection_string == project_client.telemetry.get_connection_string() # Test cached value
+            assert connection_string == project_client.telemetry.get_connection_string()  # Test cached value
             print("Application Insights connection string = " + connection_string)

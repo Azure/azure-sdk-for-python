@@ -7,6 +7,7 @@ from azure.ai.projects.aio import AIProjectClient
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 
+
 class TestConnectionsAsync(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
@@ -39,9 +40,7 @@ class TestConnectionsAsync(TestBase):
                 connection_type=connection_type,
             ):
                 empty = False
-                TestBase.validate_connection(
-                    connection, False, expected_connection_type=connection_type
-                )
+                TestBase.validate_connection(connection, False, expected_connection_type=connection_type)
             assert not empty
 
             print("[test_connections_async] Get the default connection of a particular type, without its credentials")

@@ -7,6 +7,7 @@ from azure.ai.projects import AIProjectClient
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy
 
+
 class TestDeployments(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
