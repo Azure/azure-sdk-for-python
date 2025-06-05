@@ -4,21 +4,19 @@
 # ------------------------------------
 
 from azure.ai.projects import AIProjectClient
-from test_base import TestBase, servicePreparerDeploymentsTests
+from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy
 
 class TestDeployments(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
-    # cls & pytest tests\deployments\test_deployments.py::TestDeployments::test_deployments -s
-    @servicePreparerDeploymentsTests()
+    # cls & pytest tests\test_deployments.py::TestDeployments::test_deployments -s
+    @servicePreparer()
     @recorded_by_proxy
     def test_deployments(self, **kwargs):
 
-        endpoint = kwargs.pop("azure_ai_projects_deployments_tests_project_endpoint")
-
-        print("")
-        print("=====> Endpoint:", endpoint)
+        endpoint = kwargs.pop("azure_ai_projects_tests_project_endpoint")
+        print("\n=====> Endpoint:", endpoint)
 
         model_publisher = self.test_deployments_params["model_publisher"]
         model_name = self.test_deployments_params["model_name"]

@@ -8,7 +8,7 @@ import pytest
 from dotenv import load_dotenv, find_dotenv
 from devtools_testutils import (remove_batch_sanitizers, add_general_regex_sanitizer, add_body_key_sanitizer)
 
-if not load_dotenv(find_dotenv(filename="azure_ai_projects_tests.filled.env"), override=True):
+if not load_dotenv(find_dotenv(filename="azure_ai_projects_tests.env"), override=True):
     print("Failed to apply environment variables for azure-ai-projects tests. This is expected if running in ADO pipeline.")
 
 
@@ -29,9 +29,7 @@ class SanitizedValues:
     RESOURCE_GROUP_NAME = "sanitized-resource-group-name"
     ACCOUNT_NAME = "sanitized-account-name"
     PROJECT_NAME = "sanitized-project-name"
-    #DATASET_NAME = "sanitized-dataset-name"
     COMPONENT_NAME = "sanitized-component-name"
-    #API_KEY = "00000000000000000000000000000000000000000000000000000000000000000000"
 
 
 @pytest.fixture(scope="session")
@@ -85,18 +83,8 @@ def add_sanitizers(test_proxy, sanitized_values):
 
     sanitize_url_paths()
 
-    #add_general_regex_sanitizer(
-    #    regex=r"/data/([-\w\._\(\)]+)", value=mock_dataset_name["dataset_name"], group_for_replace="1"
-    #)
-
-    # Sanitize Application Insights connection string from service response
-    add_body_key_sanitizer(
-        json_path="properties.ConnectionString",
-        value="InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://region.applicationinsights.azure.com/;LiveEndpoint=https://region.livediagnostics.monitor.azure.com/;ApplicationId=00000000-0000-0000-0000-000000000000",
-    )
-
-    # Sanitize API key from service response 
-    add_body_key_sanitizer(json_path="properties.credentials.key", value="Sanitized-api-key")
+    # Sanitize API key from service response (this includes Application Insights connection string)
+    add_body_key_sanitizer(json_path="credentials.key", value="Sanitized-api-key")
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3493: $..name

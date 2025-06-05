@@ -4,21 +4,19 @@
 # ------------------------------------
 
 from azure.ai.projects import AIProjectClient
-from test_base import TestBase, servicePreparerConnectionsTests
+from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy
 
 class TestConnections(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
-    # cls & pytest tests\connections\test_connections.py::TestConnections::test_connections -s
-    @servicePreparerConnectionsTests()
+    # cls & pytest tests\test_connections.py::TestConnections::test_connections -s
+    @servicePreparer()
     @recorded_by_proxy
     def test_connections(self, **kwargs):
 
-        endpoint = kwargs.pop("azure_ai_projects_connections_tests_project_endpoint")
-
-        print("")
-        print("=====> Endpoint:", endpoint)
+        endpoint = kwargs.pop("azure_ai_projects_tests_project_endpoint")
+        print("\n=====> Endpoint:", endpoint)
 
         connection_name = self.test_connections_params["connection_name"]
         connection_type = self.test_connections_params["connection_type"]

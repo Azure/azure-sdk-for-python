@@ -3,22 +3,16 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
+import re
 import functools
 from typing import Optional
 from azure.ai.projects.models import Connection, ConnectionType, CredentialType, ApiKeyCredentials, Deployment, DeploymentType, ModelDeployment
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 
-servicePreparerConnectionsTests = functools.partial(
+servicePreparer = functools.partial(
     EnvironmentVariableLoader,
-    "azure_ai_projects_connections_tests",
-    azure_ai_projects_connections_tests_project_endpoint="https://sanitized.services.ai.azure.com/api/projects/sanitized-project-name",
-)
-
-servicePreparerDeploymentsTests = functools.partial(
-    EnvironmentVariableLoader,
-    "azure_ai_projects_deployments_tests",
-    azure_ai_projects_deployments_tests_project_endpoint="https://sanitized.services.ai.azure.com/api/projects/sanitized-project-name",
+    "azure_ai_projects_tests",
+    azure_ai_projects_tests_project_endpoint="https://sanitized.services.ai.azure.com/api/projects/sanitized-project-name",
 )
 
 class TestBase(AzureRecordedTestCase):
@@ -34,11 +28,26 @@ class TestBase(AzureRecordedTestCase):
         "model_deployment_name": "DeepSeek-V3",
     }
 
+    test_agents_params = {
+        "model_deployment_name": "gpt-4o",
+        "agent_name": "agent-for-python-projects-sdk-testing",
+    }
+
+    test_inference_params = {
+        "connection_name": "connection1",
+        "model_deployment_name": "gpt-4o",
+        "aoai_api_version": "2024-10-21",
+    }
+
+    # Regular expression describing the pattern of an Application Insights connection string.
+    REGEX_APPINSIGHTS_CONNECTION_STRING = re.compile(
+        r"^InstrumentationKey=[0-9a-fA-F-]{36};IngestionEndpoint=https://.+.applicationinsights.azure.com/;LiveEndpoint=https://.+.monitor.azure.com/;ApplicationId=[0-9a-fA-F-]{36}$"
+    )
+
     # Checks that a given dictionary has at least one non-empty (non-whitespace) string key-value pair.
     @classmethod
     def is_valid_dict(cls, d: dict[str, str]) -> bool:
         return bool(d) and all(isinstance(k, str) and isinstance(v, str) and k.strip() and v.strip() for k, v in d.items())
-
 
     @classmethod
     def validate_connection(
