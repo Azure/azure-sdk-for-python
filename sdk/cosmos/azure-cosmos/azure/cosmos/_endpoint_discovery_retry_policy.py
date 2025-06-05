@@ -91,6 +91,7 @@ class EndpointDiscoveryRetryPolicy(object):
         # set location-based routing directive based on retry count
         # simulating single master writes by ensuring usePreferredLocations
         # is set to false
+        # reasoning being that 403.3 is only expected for write region change in single writer account
         self.request.route_to_location_with_preferred_location_flag(self.failover_retry_count, False)
 
         return True
