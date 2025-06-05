@@ -17,7 +17,6 @@ from azure.communication.callautomation import (
     MediaStreamingContentType,
     MediaStreamingAudioChannelType,
     TranscriptionOptions,
-    TranscriptionTransportType,
     TextSource,
     RecognizeInputType,
     RecognitionChoice
@@ -275,7 +274,6 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
 
         transcription_options=TranscriptionOptions(
             transport_url=self.transport_url,
-            transport_type=TranscriptionTransportType.WEBSOCKET,
             locale="en-US",
             start_transcription=False)
 
