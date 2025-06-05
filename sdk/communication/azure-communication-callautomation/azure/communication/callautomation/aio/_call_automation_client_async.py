@@ -13,8 +13,6 @@ from ._call_connection_client_async import CallConnectionClient
 from .._generated.aio import AzureCommunicationCallAutomationService
 from .._shared.auth_policy_utils import get_authentication_policy
 from .._shared.utils import parse_connection_str
-from .._credential.call_automation_auth_policy_utils import get_call_automation_auth_policy
-from .._credential.credential_utils import get_custom_enabled, get_custom_url
 from .._generated.models import (
     CreateCallRequest,
     AnswerCallRequest,
@@ -108,28 +106,14 @@ class CallAutomationClient:
         if not parsed_url.netloc:
             raise ValueError(f"Invalid URL: {format(endpoint)}")
 
-        custom_enabled = get_custom_enabled()
-        custom_url = get_custom_url()
-        if custom_enabled and custom_url is not None:
-            self._client = AzureCommunicationCallAutomationService(
-                custom_url,
-                credential,
-                api_version=api_version or DEFAULT_VERSION,
-                authentication_policy=get_call_automation_auth_policy(
-                    custom_url, credential, acs_url=endpoint, is_async=True
-                ),
-                sdk_moniker=SDK_MONIKER,
-                **kwargs,
-            )
-        else:
-            self._client = AzureCommunicationCallAutomationService(
-                endpoint,
-                credential,
-                api_version=api_version or DEFAULT_VERSION,
-                authentication_policy=get_authentication_policy(endpoint, credential, is_async=True),
-                sdk_moniker=SDK_MONIKER,
-                **kwargs,
-            )
+        self._client = AzureCommunicationCallAutomationService(
+            endpoint,
+            credential,
+            api_version=api_version or DEFAULT_VERSION,
+            authentication_policy=get_authentication_policy(endpoint, credential, is_async=True),
+            sdk_moniker=SDK_MONIKER,
+            **kwargs,
+        )
 
         self._call_recording_client = self._client.call_recording
         self._downloader = ContentDownloader(self._call_recording_client)
