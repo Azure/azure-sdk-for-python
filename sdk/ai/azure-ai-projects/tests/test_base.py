@@ -172,4 +172,3 @@ class TestBase(AzureRecordedTestCase):
                 assert index.index_name == expected_ai_search_index_name
             else:
                 assert index.index_name is not None
-

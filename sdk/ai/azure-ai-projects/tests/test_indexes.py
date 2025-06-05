@@ -39,12 +39,26 @@ class TestIndexes(TestBase):
                 body=AzureAISearchIndex(connection_name=ai_search_connection_name, index_name=ai_search_index_name),
             )
             print(index)
-            TestBase.validate_index(index, expected_index_type=IndexType.AZURE_SEARCH, expected_index_name=index_name, expected_index_version=index_version, expected_ai_search_connection_name=ai_search_connection_name, expected_ai_search_index_name=ai_search_index_name)
+            TestBase.validate_index(
+                index,
+                expected_index_type=IndexType.AZURE_SEARCH,
+                expected_index_name=index_name,
+                expected_index_version=index_version,
+                expected_ai_search_connection_name=ai_search_connection_name,
+                expected_ai_search_index_name=ai_search_index_name,
+            )
 
             print(f"[test_indexes] Get Index `{index_name}` version `{index_version}`:")
             index = project_client.indexes.get(name=index_name, version=index_version)
             print(index)
-            TestBase.validate_index(index, expected_index_type=IndexType.AZURE_SEARCH, expected_index_name=index_name, expected_index_version=index_version, expected_ai_search_connection_name=ai_search_connection_name, expected_ai_search_index_name=ai_search_index_name)
+            TestBase.validate_index(
+                index,
+                expected_index_type=IndexType.AZURE_SEARCH,
+                expected_index_name=index_name,
+                expected_index_version=index_version,
+                expected_ai_search_connection_name=ai_search_connection_name,
+                expected_ai_search_index_name=ai_search_index_name,
+            )
 
             print("[test_indexes] List latest versions of all Indexes:")
             for index in project_client.indexes.list():
@@ -59,5 +73,7 @@ class TestIndexes(TestBase):
             print(f"[test_indexes] Delete Index `{index_name}` version `{index_version}`.")
             project_client.indexes.delete(name=index_name, version=index_version)
 
-            print(f"[test_indexes] Again delete Index `{index_name}` version `{index_version}`. Since it does not exist, the REST API should return 204 (No content). This call should NOT throw an exception.")
+            print(
+                f"[test_indexes] Again delete Index `{index_name}` version `{index_version}`. Since it does not exist, the REST API should return 204 (No content). This call should NOT throw an exception."
+            )
             project_client.indexes.delete(name=index_name, version=index_version)
