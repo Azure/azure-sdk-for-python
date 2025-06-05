@@ -1990,7 +1990,7 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         if self.inner_handler:
             retval = self.inner_handler.on_thread_message(message)  # type: ignore
         else:
-            retval = super().on_thread_message(message)  # type: ignore
+            retval = super().on_thread_message(message)  # pylint: disable=assignment-from-none # type: ignore
 
         if message.status in {"completed", "incomplete"}:
             self.last_message = message
@@ -2003,7 +2003,7 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         if self.inner_handler:
             retval = self.inner_handler.on_thread_run(run)  # type: ignore
         else:
-            retval = super().on_thread_run(run)  # type: ignore
+            retval = super().on_thread_run(run)  # pylint: disable=assignment-from-none # type: ignore
         self.last_run = run
 
         return retval  # type: ignore
@@ -2013,7 +2013,7 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         if self.inner_handler:
             retval = self.inner_handler.on_run_step(step)  # type: ignore
         else:
-            retval = super().on_run_step(step)  # type: ignore
+            retval = super().on_run_step(step)  # pylint: disable=assignment-from-none # type: ignore
 
         if (
             step.type == "tool_calls"
