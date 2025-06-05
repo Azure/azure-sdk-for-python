@@ -24,9 +24,21 @@ This troubleshooting guide contains instructions to diagnose frequently encounte
 * [Troubleshooting session handling issues](#troubleshooting-session-handling-issues)
   * [Session lock issues](#session-lock-issues)
   * [Session cannot be locked](#session-cannot-be-locked)
+* [Troubleshooting sender issues](#troubleshooting-sender-issues)
+  * [Cannot send batch with multiple partition keys](#cannot-send-batch-with-multiple-partition-keys)
+  * [Batch fails to send](#batch-fails-to-send)
+  * [Message encoding issues](#message-encoding-issues)
+* [Troubleshooting receiver issues](#troubleshooting-receiver-issues)
+  * [Number of messages returned doesn't match number requested](#number-of-messages-returned-doesnt-match-number-requested)
+  * [Message completion behavior](#message-completion-behavior)
+  * [Receive operation hangs](#receive-operation-hangs)
+  * [Messages not being received](#messages-not-being-received)
 * [Troubleshooting quota and capacity issues](#troubleshooting-quota-and-capacity-issues)
   * [Quota exceeded errors](#quota-exceeded-errors)
   * [Entity not found errors](#entity-not-found-errors)
+* [Threading and concurrency issues](#threading-and-concurrency-issues)
+  * [Thread safety limitations](#thread-safety-limitations)
+  * [Async/await best practices](#asyncawait-best-practices)
 * [Frequently asked questions](#frequently-asked-questions)
 * [Get additional help](#get-additional-help)
 
@@ -341,6 +353,406 @@ with receiver:
 2. Wait for the current session lock to expire before reconnecting
 3. Use a different session ID if specific session is not required
 
+## Troubleshooting sender issues
+
+### Cannot send batch with multiple partition keys
+
+When sending to a partition-enabled entity, all messages included in a single send operation must have the same `session_id` if the entity is session-enabled, or the same custom properties that determine partitioning.
+
+**Error symptoms:**
+- Messages are rejected or go to different partitions than expected
+- Inconsistent message ordering
+
+**Resolution:**
+1. **For session-enabled entities, ensure all messages in a batch have the same session ID:**
+```python
+from azure.servicebus import ServiceBusMessage
+
+# Correct: All messages have the same session_id
+messages = [
+    ServiceBusMessage("Message 1", session_id="session1"),
+    ServiceBusMessage("Message 2", session_id="session1"),
+    ServiceBusMessage("Message 3", session_id="session1")
+]
+
+with sender:
+    sender.send_messages(messages)
+```
+
+2. **For partitioned entities, group messages by partition key:**
+```python
+# Group messages by partition key before sending
+partition1_messages = [
+    ServiceBusMessage("Message 1", application_properties={"region": "east"}),
+    ServiceBusMessage("Message 2", application_properties={"region": "east"})
+]
+
+partition2_messages = [
+    ServiceBusMessage("Message 3", application_properties={"region": "west"}),
+    ServiceBusMessage("Message 4", application_properties={"region": "west"})
+]
+
+# Send each group separately
+with sender:
+    sender.send_messages(partition1_messages)
+    sender.send_messages(partition2_messages)
+```
+
+### Batch fails to send
+
+The Service Bus service has size limits for message batches and individual messages.
+
+**Error symptoms:**
+- `MessageSizeExceededError` when sending batches
+- Messages larger than expected failing to send
+
+**Resolution:**
+1. **Reduce batch size or message payload:**
+```python
+from azure.servicebus import ServiceBusMessage
+from azure.servicebus.exceptions import MessageSizeExceededError
+import json
+
+def send_large_dataset(sender, data_list, max_batch_size=100):
+    """Send large datasets in smaller batches"""
+    for i in range(0, len(data_list), max_batch_size):
+        batch = data_list[i:i + max_batch_size]
+        messages = [ServiceBusMessage(json.dumps(item)) for item in batch]
+        
+        try:
+            sender.send_messages(messages)
+        except MessageSizeExceededError:
+            # If batch is still too large, send individually
+            for message in messages:
+                sender.send_messages(message)
+```
+
+2. **Check message size limits:**
+   - Standard tier: 256 KB per message
+   - Premium tier: 1 MB per message
+   - Batch limit: 1 MB regardless of tier
+
+3. **Use message properties for metadata instead of body:**
+```python
+# Instead of including metadata in message body
+large_message = ServiceBusMessage(json.dumps({
+    "data": large_data_payload,
+    "metadata": {"source": "app1", "timestamp": "2023-01-01"}
+}))
+
+# Use application properties for metadata
+optimized_message = ServiceBusMessage(large_data_payload)
+optimized_message.application_properties = {
+    "source": "app1", 
+    "timestamp": "2023-01-01"
+}
+```
+
+### Message encoding issues
+
+Python string encoding can cause issues when sending messages with special characters.
+
+**Error symptoms:**
+- Messages appear corrupted on the receiver side
+- Encoding/decoding exceptions
+
+**Resolution:**
+1. **Explicitly handle string encoding:**
+```python
+import json
+from azure.servicebus import ServiceBusMessage
+
+# For text messages, ensure proper UTF-8 encoding
+text_data = "Message with special characters: ñáéíóú"
+message = ServiceBusMessage(text_data.encode('utf-8'))
+
+# For JSON data, use explicit encoding
+json_data = {"message": "Data with unicode: ñáéíóú"}
+json_string = json.dumps(json_data, ensure_ascii=False)
+message = ServiceBusMessage(json_string.encode('utf-8'))
+
+# Set content type to help receivers
+message.content_type = "application/json; charset=utf-8"
+```
+
+2. **Handle binary data correctly:**
+```python
+# For binary data, pass bytes directly
+binary_data = b"\x00\x01\x02\x03"
+message = ServiceBusMessage(binary_data)
+message.content_type = "application/octet-stream"
+```
+
+## Troubleshooting receiver issues
+
+### Number of messages returned doesn't match number requested
+
+When attempting to receive multiple messages using `receive_messages()` with `max_message_count` greater than 1, you're not guaranteed to receive the exact number requested.
+
+**Why this happens:**
+- Service Bus optimizes for throughput and latency
+- After the first message is received, the receiver waits only a short time (typically 20ms) for additional messages
+- The `max_wait_time` controls how long to wait for the **first** message, not subsequent ones
+
+**Resolution:**
+1. **Don't assume all available messages will be received in one call:**
+```python
+import time
+from azure.servicebus.exceptions import MessagingEntityNotFoundError, MessagingEntityDisabledError
+
+def receive_all_available_messages(receiver, total_expected=None):
+    """Receive all available messages from a queue/subscription"""
+    all_messages = []
+    
+    while True:
+        # Receive in batches
+        messages = receiver.receive_messages(max_message_count=10, max_wait_time=5)
+        
+        if not messages:
+            break  # No more messages available
+            
+        all_messages.extend(messages)
+        
+        # Process messages immediately to avoid lock expiration
+        for message in messages:
+            try:
+                # Process message logic here
+                print(f"Processing: {message}")
+                receiver.complete_message(message)
+            except Exception as e:
+                print(f"Error processing message: {e}")
+                receiver.abandon_message(message)
+    
+    return all_messages
+```
+
+2. **Use continuous receiving for stream processing:**
+```python
+import time
+
+def continuous_message_processing(receiver):
+    """Continuously process messages as they arrive"""
+    while True:
+        try:
+            messages = receiver.receive_messages(max_message_count=1, max_wait_time=60)
+            
+            for message in messages:
+                # Process immediately
+                try:
+                    process_message(message)
+                    receiver.complete_message(message)
+                except Exception as e:
+                    print(f"Processing failed: {e}")
+                    receiver.abandon_message(message)
+                    
+        except KeyboardInterrupt:
+            break
+        except Exception as e:
+            print(f"Receive error: {e}")
+            time.sleep(5)  # Brief pause before retry
+```
+
+### Message completion behavior
+
+**Important limitation:** The Pure Python AMQP implementation used by the Azure Service Bus Python SDK does not currently wait for dispositions from the service to acknowledge message completion operations.
+
+**What this means:**
+- When you call `complete_message()`, `abandon_message()`, or `dead_letter_message()`, the operation returns immediately
+- The SDK does not wait for confirmation from the Service Bus service that the message was actually settled
+- This can lead to scenarios where the local operation succeeds but the service operation fails
+
+**Implications:**
+1. **Message state uncertainty:**
+```python
+# This operation may succeed locally but fail on the service
+try:
+    receiver.complete_message(message)
+    print("Message completed successfully")  # This may be misleading
+except Exception as e:
+    print(f"Local completion failed: {e}")
+    # But even if no exception, service operation might have failed
+```
+
+2. **Potential message redelivery:**
+- If the service doesn't receive the completion acknowledgment, the message may be redelivered
+- This can lead to duplicate processing if not handled properly
+
+**Mitigation strategies:**
+1. **Implement idempotent message processing:**
+```python
+import hashlib
+
+processed_messages = set()
+
+def process_message_idempotently(receiver, message):
+    """Process messages in an idempotent manner"""
+    # Create a unique identifier for the message
+    message_id = message.message_id or hashlib.md5(str(message.body).encode()).hexdigest()
+    
+    if message_id in processed_messages:
+        print(f"Message {message_id} already processed, skipping")
+        receiver.complete_message(message)
+        return
+    
+    try:
+        # Your message processing logic here
+        result = process_business_logic(message)
+        
+        # Record successful processing before completing
+        processed_messages.add(message_id)
+        receiver.complete_message(message)
+        
+        return result
+    except Exception as e:
+        print(f"Processing failed for message {message_id}: {e}")
+        receiver.abandon_message(message)
+        raise
+```
+
+2. **Use external tracking for critical operations:**
+```python
+import logging
+
+def track_message_completion(receiver, message, tracking_store):
+    """Track message completion in external store"""
+    message_id = message.message_id
+    
+    try:
+        # Process the message
+        result = process_message(message)
+        
+        # Store completion in external tracking system
+        tracking_store.mark_completed(message_id, result)
+        
+        # Complete the message in Service Bus
+        receiver.complete_message(message)
+        
+        logging.info(f"Message {message_id} processed and completed successfully")
+        
+    except Exception as e:
+        logging.error(f"Failed to process message {message_id}: {e}")
+        
+        # Check if we should retry or dead letter
+        if should_retry(message, e):
+            receiver.abandon_message(message)
+        else:
+            receiver.dead_letter_message(message, reason="ProcessingFailed", error_description=str(e))
+```
+
+3. **Monitor for redelivered messages:**
+```python
+def handle_potential_redelivery(receiver, message):
+    """Handle messages that might be redelivered due to completion uncertainty"""
+    delivery_count = message.delivery_count
+    
+    if delivery_count > 1:
+        logging.warning(f"Message has been delivered {delivery_count} times. "
+                       f"This might indicate completion acknowledgment issues.")
+    
+    # Process with extra caution for high delivery count messages
+    if delivery_count > 3:
+        # Consider different processing logic or dead lettering
+        logging.error(f"Message delivery count too high ({delivery_count}), dead lettering")
+        receiver.dead_letter_message(message, 
+                                   reason="HighDeliveryCount",
+                                   error_description=f"Delivered {delivery_count} times")
+        return
+    
+    # Normal processing
+    process_message_idempotently(receiver, message)
+```
+
+### Receive operation hangs
+
+Receive operations may appear to hang when no messages are available.
+
+**Symptoms:**
+- `receive_messages()` doesn't return for extended periods
+- Application appears unresponsive
+
+**Resolution:**
+1. **Set appropriate timeouts:**
+```python
+# Don't wait indefinitely for messages
+messages = receiver.receive_messages(max_message_count=5, max_wait_time=30)
+
+# For polling scenarios, use shorter timeouts
+def poll_for_messages(receiver):
+    while True:
+        messages = receiver.receive_messages(max_message_count=10, max_wait_time=5)
+        
+        if messages:
+            for message in messages:
+                process_message(message)
+                receiver.complete_message(message)
+        else:
+            print("No messages available, waiting...")
+            time.sleep(1)
+```
+
+2. **Use async operations with proper cancellation:**
+```python
+import asyncio
+
+async def receive_with_cancellation(receiver):
+    try:
+        # Use asyncio timeout for better control
+        messages = await asyncio.wait_for(
+            receiver.receive_messages(max_message_count=10, max_wait_time=30),
+            timeout=35  # Slightly longer than max_wait_time
+        )
+        return messages
+    except asyncio.TimeoutError:
+        print("Receive operation timed out")
+        return []
+```
+
+### Messages not being received
+
+Messages might not be received due to various configuration or state issues.
+
+**Common causes and resolutions:**
+
+1. **Check entity state:**
+```python
+# Verify the queue/subscription exists and is active
+try:
+    # This will fail if entity doesn't exist
+    receiver = client.get_queue_receiver(queue_name)
+    messages = receiver.receive_messages(max_message_count=1, max_wait_time=5)
+    
+    if not messages:
+        print("No messages available - check if messages are being sent")
+    
+except MessagingEntityNotFoundError:
+    print("Queue/subscription does not exist")
+except MessagingEntityDisabledError:
+    print("Queue/subscription is disabled")
+```
+
+2. **Verify message filters (for subscriptions):**
+```python
+# For topic subscriptions, check if messages match subscription filters
+from azure.servicebus.management import ServiceBusAdministrationClient
+
+admin_client = ServiceBusAdministrationClient.from_connection_string(connection_string)
+
+# Check subscription rules
+rules = admin_client.list_rules(topic_name, subscription_name)
+for rule in rules:
+    print(f"Rule: {rule.name}, Filter: {rule.filter}")
+```
+
+3. **Check for competing consumers:**
+```python
+# Multiple receivers on the same queue will compete for messages
+# Ensure this is intended behavior or use topic/subscription pattern
+
+# For debugging, temporarily use peek to see if messages exist
+messages = receiver.peek_messages(max_message_count=10)
+print(f"Found {len(messages)} messages in queue without receiving them")
+```
+
 ## Troubleshooting quota and capacity issues
 
 ### Quota exceeded errors
@@ -357,6 +769,143 @@ with receiver:
 2. Ensure the entity exists in the Service Bus namespace
 3. Check if the entity was deleted and needs to be recreated
 4. Verify you're connecting to the correct namespace
+
+## Threading and concurrency issues
+
+### Thread safety limitations
+
+**Important:** The Azure Service Bus Python SDK is **not thread-safe or coroutine-safe**. Using the same client instances across multiple threads or tasks without proper synchronization can lead to:
+
+- Connection errors and unexpected exceptions
+- Message corruption or loss
+- Deadlocks and race conditions
+- Unpredictable behavior
+
+**Best practices:**
+
+1. **Use separate client instances per thread/task:**
+```python
+import threading
+from azure.servicebus import ServiceBusClient
+
+def worker_thread(connection_string, queue_name):
+    # Create a separate client instance for each thread
+    client = ServiceBusClient.from_connection_string(connection_string)
+    with client:
+        sender = client.get_queue_sender(queue_name)
+        with sender:
+            # Perform operations...
+            pass
+
+# Start multiple threads with separate clients
+threads = []
+for i in range(5):
+    t = threading.Thread(target=worker_thread, args=(connection_string, queue_name))
+    threads.append(t)
+    t.start()
+
+for t in threads:
+    t.join()
+```
+
+2. **Use connection pooling patterns when needed:**
+```python
+# For high-throughput scenarios, consider using a thread-safe queue
+# to manage client instances
+import queue
+import threading
+
+client_pool = queue.Queue()
+
+def get_client():
+    try:
+        return client_pool.get_nowait()
+    except queue.Empty:
+        return ServiceBusClient.from_connection_string(connection_string)
+
+def return_client(client):
+    try:
+        client_pool.put_nowait(client)
+    except queue.Full:
+        client.close()
+```
+
+3. **Avoid sharing clients across async tasks:**
+```python
+# DON'T DO THIS
+client = ServiceBusClient.from_connection_string(connection_string)
+
+async def bad_async_pattern():
+    # Multiple tasks sharing the same client can cause issues
+    sender = client.get_queue_sender(queue_name)
+    # This can lead to race conditions
+
+# DO THIS INSTEAD
+async def good_async_pattern():
+    # Each async function should use its own client
+    async with ServiceBusClient.from_connection_string(connection_string) as client:
+        sender = client.get_queue_sender(queue_name)
+        async with sender:
+            # Perform operations safely
+            pass
+```
+
+### Async/await best practices
+
+When using the async APIs in the Python Service Bus SDK:
+
+1. **Always use async context managers properly:**
+```python
+async def proper_async_usage():
+    async with ServiceBusClient.from_connection_string(connection_string) as client:
+        async with client.get_queue_sender(queue_name) as sender:
+            message = ServiceBusMessage("Hello World")
+            await sender.send_messages(message)
+        
+        async with client.get_queue_receiver(queue_name) as receiver:
+            messages = await receiver.receive_messages(max_message_count=10)
+            for message in messages:
+                await receiver.complete_message(message)
+```
+
+2. **Don't mix sync and async code without proper handling:**
+```python
+# Avoid mixing sync and async incorrectly
+async def mixed_code_example():
+    # Don't call synchronous methods from async context without wrapping
+    # client = ServiceBusClient.from_connection_string(conn_str)  # This is sync
+    
+    # Instead, create clients within async context or use proper wrapping
+    async with ServiceBusClient.from_connection_string(conn_str) as client:
+        pass
+```
+
+3. **Handle async exceptions properly:**
+```python
+import asyncio
+from azure.servicebus import ServiceBusError
+
+async def handle_async_errors():
+    try:
+        async with ServiceBusClient.from_connection_string(connection_string) as client:
+            async with client.get_queue_receiver(queue_name) as receiver:
+                messages = await receiver.receive_messages(max_message_count=1, max_wait_time=5)
+                # Process messages...
+    except ServiceBusError as e:
+        print(f"Service Bus error: {e}")
+    except asyncio.TimeoutError:
+        print("Operation timed out")
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+```
+
+**Common threading/concurrency mistakes to avoid:**
+
+- Sharing `ServiceBusClient`, `ServiceBusSender`, or `ServiceBusReceiver` instances across threads
+- Not properly closing clients and their resources in multi-threaded scenarios
+- Using the same connection string with too many concurrent clients (can hit connection limits)
+- Mixing blocking and non-blocking operations incorrectly
+- Not handling connection failures in multi-threaded scenarios
 
 ## Frequently asked questions
 
