@@ -20,7 +20,7 @@ class TestHybridComputeManagementMachineExtensionsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_machine_extensions_begin_create_or_update(self, resource_group):
         response = self.client.machine_extensions.begin_create_or_update(
             resource_group_name=resource_group.name,
             machine_name="str",
@@ -63,7 +63,7 @@ class TestHybridComputeManagementMachineExtensionsOperations(AzureMgmtRecordedTe
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-07-31-preview",
+            api_version="2025-02-19-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -71,7 +71,7 @@ class TestHybridComputeManagementMachineExtensionsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_machine_extensions_begin_update(self, resource_group):
         response = self.client.machine_extensions.begin_update(
             resource_group_name=resource_group.name,
             machine_name="str",
@@ -87,7 +87,7 @@ class TestHybridComputeManagementMachineExtensionsOperations(AzureMgmtRecordedTe
                 "type": "str",
                 "typeHandlerVersion": "str",
             },
-            api_version="2024-07-31-preview",
+            api_version="2025-02-19-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -95,12 +95,12 @@ class TestHybridComputeManagementMachineExtensionsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_machine_extensions_begin_delete(self, resource_group):
         response = self.client.machine_extensions.begin_delete(
             resource_group_name=resource_group.name,
             machine_name="str",
             extension_name="str",
-            api_version="2024-07-31-preview",
+            api_version="2025-02-19-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -108,12 +108,12 @@ class TestHybridComputeManagementMachineExtensionsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_machine_extensions_get(self, resource_group):
         response = self.client.machine_extensions.get(
             resource_group_name=resource_group.name,
             machine_name="str",
             extension_name="str",
-            api_version="2024-07-31-preview",
+            api_version="2025-02-19-preview",
         )
 
         # please add some check logic here by yourself
@@ -121,11 +121,11 @@ class TestHybridComputeManagementMachineExtensionsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_machine_extensions_list(self, resource_group):
         response = self.client.machine_extensions.list(
             resource_group_name=resource_group.name,
             machine_name="str",
-            api_version="2024-07-31-preview",
+            api_version="2025-02-19-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
