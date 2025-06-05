@@ -37,13 +37,13 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     async def create_tasks(
         self,
         job_id: str,
-        task_collection: List[_models.BatchTaskCreateContent],
+        task_collection: List[_models.BatchTaskCreateOptions],
         concurrencies: int = 0,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> _models.BatchTaskAddCollectionResult:
+    ) -> _models.BatchCreateTaskCollectionResult:
         """Adds a collection of Tasks to the specified Job.
 
         Note that each Task must have a unique ID. The Batch service may not return the
@@ -83,7 +83,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         kwargs.update({"timeout": timeout, "ocpdate": ocpdate})
 
-        results_queue: Deque[_models.BatchTaskAddResult] = collections.deque()
+        results_queue: Deque[_models.BatchTaskCreateResult] = collections.deque()
         task_workflow_manager = _TaskWorkflowManager(self, job_id=job_id, task_collection=task_collection, **kwargs)
 
         if concurrencies:
@@ -105,7 +105,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 task_workflow_manager.errors,
             )
         submitted_tasks = _handle_output(results_queue)
-        return _models.BatchTaskAddCollectionResult(value=submitted_tasks)
+        return _models.BatchCreateTaskCollectionResult(values_property=submitted_tasks)
 
     @distributed_trace
     async def get_node_file(
@@ -388,11 +388,11 @@ class _TaskWorkflowManager:
         self,
         batch_client: BatchClientOperationsMixin,
         job_id: str,
-        task_collection: Iterable[_models.BatchTaskCreateContent],
+        task_collection: Iterable[_models.BatchTaskCreateOptions],
         **kwargs
     ):
         # List of tasks which failed to add due to a returned client error
-        self.failure_tasks: Deque[_models.BatchTaskAddResult] = collections.deque()
+        self.failure_tasks: Deque[_models.BatchTaskCreateResult] = collections.deque()
         # List of unknown exceptions which occurred during requests.
         self.errors: Deque[Any] = collections.deque()
 
@@ -409,7 +409,7 @@ class _TaskWorkflowManager:
     async def _bulk_add_tasks(
         self,
         results_queue: collections.deque,
-        chunk_tasks_to_add: List[_models.BatchTaskCreateContent],
+        chunk_tasks_to_add: List[_models.BatchTaskCreateOptions],
     ):
         """Adds a chunk of tasks to the job
 
@@ -423,10 +423,10 @@ class _TaskWorkflowManager:
         """
 
         try:
-            create_task_collection_response: _models.BatchTaskAddCollectionResult = (
+            create_task_collection_response: _models.BatchCreateTaskCollectionResult = (
                 await self._batch_client.create_task_collection(
                     job_id=self._job_id,
-                    task_collection=_models.BatchTaskGroup(value=chunk_tasks_to_add),
+                    task_collection=_models.BatchTaskGroup(values_property=chunk_tasks_to_add),
                     **self._kwargs
                 )
             )
@@ -480,8 +480,8 @@ class _TaskWorkflowManager:
             # Unknown State - don't know if tasks failed to add or were successful
             self.errors.appendleft(e)
         else:
-            if create_task_collection_response.value:
-                for task_result in create_task_collection_response.value:
+            if create_task_collection_response.values_property:
+                for task_result in create_task_collection_response.values_property:
                     if task_result.status == _models.BatchTaskAddStatus.SERVER_ERROR:
                         # Server error will be retried
                         for task in chunk_tasks_to_add:
