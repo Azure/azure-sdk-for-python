@@ -131,7 +131,7 @@ class AzureJSONEncoder(JSONEncoder):
         return super(AzureJSONEncoder, self).default(o)
 
 
-def is_sdk_model(obj: Any) -> bool:
+def is_generated_model(obj: Any) -> bool:
     """Check if the object is an SDK model.
 
     :param obj: The object to check.

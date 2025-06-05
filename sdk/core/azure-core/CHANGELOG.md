@@ -5,7 +5,7 @@
 ### Features Added
 
 - Added a `start_time` keyword argument to the `start_span` and `start_as_current_span` methods in the `OpenTelemetryTracer` class. This allows users to specify a custom start time for created spans. #41106
-- Added `is_sdk_model` method to `azure.core.serialization`. Returns whether a given input is a model from one of our generated sdks. #41445
+- Added `is_generated_model` method to `azure.core.serialization`. Returns whether a given input is a model from one of our generated sdks. #41445
 
 ### Breaking Changes
 
