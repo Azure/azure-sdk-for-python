@@ -25,7 +25,7 @@ USAGE:
 
     Save that connection name as the PROJECT_OPENAPI_CONNECTION_NAME environment variable
 
-    pip install azure-ai-agents azure-identity jsonref
+    pip install azure-ai-projects azure-ai-agents azure-identity jsonref
 
     Set this environment variables with your own values:
     PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview

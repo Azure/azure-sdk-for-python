@@ -15,7 +15,7 @@ USAGE:
 
     Before running:
 
-        pip install azure-ai-agents azure-identity aiohttp
+        pip install azure-ai-projects azure-ai-agents azure-identity aiohttp
 
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview

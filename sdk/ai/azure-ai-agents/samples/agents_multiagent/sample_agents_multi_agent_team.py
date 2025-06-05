@@ -27,7 +27,7 @@ USAGE:
 
     Before running the sample:
 
-    1. pip install azure-ai-agents azure-identity
+    1. pip install azure-ai-projects azure-ai-agents azure-identity
     2. Ensure `utils/agent_team_config.yaml` is present and TEAM_LEADER_MODEL points
        to a valid model deployment.
     3. Set these environment variables with your own values:

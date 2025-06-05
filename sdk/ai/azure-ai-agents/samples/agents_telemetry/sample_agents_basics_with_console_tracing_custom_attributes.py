@@ -14,13 +14,13 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-agents azure-identity opentelemetry-sdk azure-core-tracing-opentelemetry
+    pip install azure-ai-projects azure-ai-agents azure-identity opentelemetry-sdk azure-core-tracing-opentelemetry
 
     If you want to export telemetry to OTLP endpoint (such as Aspire dashboard
     https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/standalone?tabs=bash)
     install:
 
-    pip install opentelemetry-exporter-otlp-proto-grpc
+    pip install azure-ai-projects opentelemetry-exporter-otlp-proto-grpc
 
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -36,7 +36,7 @@ from typing import cast
 from azure.core.settings import settings
 
 settings.tracing_implementation = "opentelemetry"
-# Install opentelemetry with command "pip install opentelemetry-sdk".
+# Install opentelemetry with command "pip install azure-ai-projects opentelemetry-sdk".
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider, SpanProcessor, ReadableSpan, Span
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter

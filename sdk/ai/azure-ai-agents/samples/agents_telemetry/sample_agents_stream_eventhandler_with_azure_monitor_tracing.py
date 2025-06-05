@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-agents azure-identity opentelemetry-sdk azure-monitor-opentelemetry
+    pip install azure-ai-projects azure-ai-agents azure-identity opentelemetry-sdk azure-monitor-opentelemetry
 
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
