@@ -121,25 +121,26 @@ class TestTagFilters(AppConfigTestCase):
         )
 
         # Should only include settings with both tags "a=b" AND "c=d"
-        assert "multi_tagged" in config_client        # Should not include settings with only one of the tags
+        assert "multi_tagged" in config_client
+
+        # Should not include settings with only one of the tags
         assert "tagged_config" not in config_client
         assert "different_tag" not in config_client
         assert "no_tags" not in config_client
-        
+
     def test_tag_filter_wildcard(self):
-        """Test that forbidden characters are not allowed in tag filters."""
+        """Test that unescaped reserved characters are not allowed in tag filters."""
         # Test wildcard character '*' should raise ValueError
-        with pytest.raises(ValueError, match=r"Tag filters cannot contain the '\*', '\\', or ',' characters\."):
+        with pytest.raises(ValueError, match=r"contains unescaped reserved character '\*'"):
             SettingSelector(key_filter="*", tag_filters=["a=b*"])
 
-        # Test backslash character '\' should raise ValueError
-        with pytest.raises(ValueError, match=r"Tag filters cannot contain the '\*', '\\', or ',' characters\."):
+        # Test backslash at end should raise ValueError for incomplete escape sequence
+        with pytest.raises(ValueError, match=r"ends with incomplete escape sequence"):
             SettingSelector(key_filter="*", tag_filters=["a=b\\"])
 
         # Test comma character ',' should raise ValueError
-        with pytest.raises(ValueError, match=r"Tag filters cannot contain the '\*', '\\', or ',' characters\."):
+        with pytest.raises(ValueError, match=r"contains unescaped reserved character ','"):
             SettingSelector(key_filter="*", tag_filters=["a=b,c"])
-
 
     @recorded_by_proxy
     @app_config_decorator
@@ -250,20 +251,118 @@ class TestTagFilters(AppConfigTestCase):
     def test_tag_filter_max_limit(self):
         """Test that more than 5 tag filters raises ValueError."""
         # Create 6 valid tag filters to test the limit
-        six_tag_filters = [
-            "tag1=value1",
-            "tag2=value2", 
-            "tag3=value3",
-            "tag4=value4",
-            "tag5=value5",
-            "tag6=value6"
-        ]
-        
+        six_tag_filters = ["tag1=value1", "tag2=value2", "tag3=value3", "tag4=value4", "tag5=value5", "tag6=value6"]
+
         # Should raise ValueError for more than 5 tag filters
         with pytest.raises(ValueError, match=r"tag_filters cannot be longer than 5 items\."):
             SettingSelector(key_filter="*", tag_filters=six_tag_filters)
-        
         # Test that exactly 5 tag filters is allowed
         five_tag_filters = six_tag_filters[:5]
         selector = SettingSelector(key_filter="*", tag_filters=five_tag_filters)
         assert selector.tag_filters == five_tag_filters
+
+    def test_escaped_reserved_characters_valid(self):
+        """Test that properly escaped reserved characters are accepted."""
+        valid_escaped_tags = [
+            "tag=value\\*with\\*asterisks",  # Escaped asterisks
+            "tag=value\\,with\\,commas",  # Escaped commas
+            "tag=value\\\\with\\\\backslashes",  # Escaped backslashes
+            "tag=value\\*\\,\\\\mixed",  # Mixed escaped characters
+            "normal=\\*escaped\\*normal",  # Normal char with escaped asterisk
+            "tag=\\\\\\*\\,all\\*\\,\\\\",  # All reserved chars escaped
+            "tag=\\a\\b\\c",  # Non-reserved chars can be escaped
+        ]
+
+        for tag in valid_escaped_tags:
+            try:
+                # Should not raise an exception
+                SettingSelector(key_filter="*", tag_filters=[tag])
+            except ValueError as e:
+                pytest.fail(f"Valid escaped tag '{tag}' should not raise ValueError: {e}")
+
+    def test_unescaped_reserved_characters_invalid(self):
+        """Test that unescaped reserved characters are rejected."""
+        invalid_tags = [
+            "tag=value*with*asterisk",  # Unescaped asterisk
+            "tag=value,with,comma",  # Unescaped comma
+            "tag=value\\with\\backslash",  # Unescaped backslash (this is actually escaped!)
+            "tag=*unescaped",  # Asterisk at start
+            "tag=unescaped*",  # Asterisk at end
+            "tag=,unescaped",  # Comma at start
+            "tag=unescaped,",  # Comma at end
+            "tag=mix*ed,values",  # Mixed unescaped
+        ]
+
+        # Note: "tag=value\\with\\backslash" is actually valid because \\ is an escaped backslash
+        # Let's correct the test cases
+        invalid_tags = [
+            "tag=value*with*asterisk",  # Unescaped asterisk            "tag=value,with,comma",  # Unescaped comma
+            "tag=*unescaped",  # Asterisk at start
+            "tag=unescaped*",  # Asterisk at end
+            "tag=,unescaped",  # Comma at start
+            "tag=unescaped,",  # Comma at end
+            "tag=mix*ed,values",  # Mixed unescaped
+        ]
+
+        for tag in invalid_tags:
+            with pytest.raises(ValueError, match="contains unescaped reserved character"):
+                SettingSelector(key_filter="*", tag_filters=[tag])
+
+    def test_incomplete_escape_sequences(self):
+        """Test that incomplete escape sequences are rejected."""
+        invalid_tags = [
+            "tag=value\\",  # Trailing backslash
+            "tag=incomplete\\",  # Trailing backslash at end
+        ]
+
+        for tag in invalid_tags:
+            with pytest.raises(ValueError, match="ends with incomplete escape sequence"):
+                SettingSelector(key_filter="*", tag_filters=[tag])
+
+    def test_double_escaped_characters(self):
+        """Test handling of double-escaped characters."""
+        valid_tags = [
+            "tag=value\\\\\\*escaped",  # Escaped backslash followed by escaped asterisk
+            "tag=\\\\\\*value",  # Escaped backslash, then escaped asterisk
+            "tag=\\\\\\\\value",  # Double escaped backslash
+        ]
+
+        for tag in valid_tags:
+            try:
+                # Should not raise an exception
+                SettingSelector(key_filter="*", tag_filters=[tag])
+            except ValueError as e:
+                pytest.fail(f"Valid double-escaped tag '{tag}' should not raise ValueError: {e}")
+
+    def test_escaped_non_reserved_characters(self):
+        """Test that non-reserved characters can be escaped without error."""
+        valid_tags = [
+            "tag=\\a\\b\\c",  # Escaped normal letters
+            "tag=\\1\\2\\3",  # Escaped numbers
+            "tag=\\@\\#\\$",  # Escaped special symbols
+            "tag=\\n\\t\\r",  # Escaped whitespace chars (as literals)
+        ]
+
+        for tag in valid_tags:
+            try:
+                # Should not raise an exception
+                SettingSelector(key_filter="*", tag_filters=[tag])
+            except ValueError as e:
+                pytest.fail(f"Valid escaped non-reserved tag '{tag}' should not raise ValueError: {e}")
+
+    def test_edge_cases_escaping(self):
+        """Test edge cases for escaping logic."""
+        # Empty tag name or value with escapes
+        valid_edge_cases = [
+            "\\*=value",  # Escaped asterisk in tag name
+            "tag=\\*",  # Just escaped asterisk as value
+            "\\,=\\,",  # Escaped comma in both name and value
+        ]
+
+        for tag in valid_edge_cases:
+            try:
+                SettingSelector(key_filter="*", tag_filters=[tag])
+            except ValueError as e:
+                # Only check if it's an escaping error, not other validation errors
+                if "unescaped reserved character" in str(e) or "incomplete escape sequence" in str(e):
+                    pytest.fail(f"Edge case tag '{tag}' should not raise escaping ValueError: {e}")
