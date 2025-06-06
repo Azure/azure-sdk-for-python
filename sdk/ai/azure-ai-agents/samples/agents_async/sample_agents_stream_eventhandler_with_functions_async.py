@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-agents azure-identity aiohttp
+    pip install azure-ai-projects azure-ai-agents azure-identity aiohttp
 
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -25,6 +25,7 @@ import asyncio
 from typing import Any
 
 import os
+from azure.ai.projects.aio import AIProjectClient
 from azure.ai.agents.aio import AgentsClient
 from azure.ai.agents.models import (
     AsyncAgentEventHandler,
@@ -92,45 +93,47 @@ class MyEventHandler(AsyncAgentEventHandler[str]):
 
 
 async def main() -> None:
-    async with DefaultAzureCredential() as creds:
-        async with AgentsClient(
-            endpoint=os.environ["PROJECT_ENDPOINT"],
-            credential=creds,
-        ) as agents_client:
+    project_client = AIProjectClient(
+        endpoint=os.environ["PROJECT_ENDPOINT"],
+        credential=DefaultAzureCredential(),
+    )
 
-            agent = await agents_client.create_agent(
-                model=os.environ["MODEL_DEPLOYMENT_NAME"],
-                name="my-agent",
-                instructions="You are a helpful agent",
-                tools=functions.definitions,
-            )
-            print(f"Created agent, ID: {agent.id}")
+    async with project_client:
+        agents_client = project_client.agents
 
-            thread = await agents_client.threads.create()
-            print(f"Created thread, thread ID {thread.id}")
+        agent = await agents_client.create_agent(
+            model=os.environ["MODEL_DEPLOYMENT_NAME"],
+            name="my-agent",
+            instructions="You are a helpful agent",
+            tools=functions.definitions,
+        )
+        print(f"Created agent, ID: {agent.id}")
 
-            message = await agents_client.messages.create(
-                thread_id=thread.id,
-                role="user",
-                content="Hello, send an email with the datetime and weather information in New York? Also let me know the details.",
-            )
-            print(f"Created message, message ID {message.id}")
+        thread = await agents_client.threads.create()
+        print(f"Created thread, thread ID {thread.id}")
 
-            async with await agents_client.runs.stream(
-                thread_id=thread.id,
-                agent_id=agent.id,
-                event_handler=MyEventHandler(functions, agents_client),
-            ) as stream:
-                await stream.until_done()
+        message = await agents_client.messages.create(
+            thread_id=thread.id,
+            role="user",
+            content="Hello, send an email with the datetime and weather information in New York? Also let me know the details.",
+        )
+        print(f"Created message, message ID {message.id}")
 
-            await agents_client.delete_agent(agent.id)
-            print("Deleted agent")
+        async with await agents_client.runs.stream(
+            thread_id=thread.id,
+            agent_id=agent.id,
+            event_handler=MyEventHandler(functions, agents_client),
+        ) as stream:
+            await stream.until_done()
 
-            messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
-            async for msg in messages:
-                last_part = msg.content[-1]
-                if isinstance(last_part, MessageTextContent):
-                    print(f"{msg.role}: {last_part.text.value}")
+        await agents_client.delete_agent(agent.id)
+        print("Deleted agent")
+
+        messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+        async for msg in messages:
+            last_part = msg.content[-1]
+            if isinstance(last_part, MessageTextContent):
+                print(f"{msg.role}: {last_part.text.value}")
 
 
 if __name__ == "__main__":

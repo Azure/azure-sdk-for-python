@@ -10,6 +10,9 @@
 - Adding instrumentation for create_thread_and_run.
 - Fixed a tracing related bug that caused process_thread_run span to not appear when streaming is used without event handler.
 
+### Sample updates
+- Changed all samples to use `AIProjectClient` which is recommended to specify endpoint and credential.
+
 ## 1.1.0b1 (2025-05-20)
 
 ### Features Added

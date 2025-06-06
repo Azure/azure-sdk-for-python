@@ -2056,6 +2056,7 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         if self.inner_handler:
             return self.inner_handler.on_unhandled_event(event_type, event_data)  # type: ignore
         return super().on_unhandled_event(event_type, event_data)  # type: ignore
+
     # pylint: enable=R1710
 
     def __exit__(self, exc_type, exc_val, exc_tb):

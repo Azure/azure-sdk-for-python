@@ -684,7 +684,9 @@ print(conn_id)
 fabric = FabricTool(connection_id=conn_id)
 
 # Create an Agent with the Fabric tool and process an Agent run
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
+
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
