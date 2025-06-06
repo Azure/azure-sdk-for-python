@@ -16,6 +16,10 @@ class TestInference(TestBase):
     @recorded_by_proxy
     def test_inference(self, **kwargs):
 
+        if not is_live_and_not_recording():
+            print("Skipped because we cannot record chat completions call with AOAI client.")
+            return
+
         endpoint = kwargs.pop("azure_ai_projects_tests_project_endpoint")
         print("\n=====> Endpoint:", endpoint)
 
@@ -30,32 +34,33 @@ class TestInference(TestBase):
             print(
                 "[test_inference] Get an authenticated Azure OpenAI client for the parent AI Services resource, and perform a chat completion operation."
             )
-            if is_live_and_not_recording():
-                with project_client.inference.get_azure_openai_client(api_version=api_version) as client:
+            with project_client.inference.get_azure_openai_client(api_version=api_version) as client:
 
-                    response = client.chat.completions.create(
-                        model=model_deployment_name,
-                        messages=[
-                            {
-                                "role": "user",
-                                "content": "How many feet are in a mile?",
-                            },
-                        ],
-                    )
+                response = client.chat.completions.create(
+                    model=model_deployment_name,
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": "How many feet are in a mile?",
+                        },
+                    ],
+                )
 
-                    print("Raw dump of response object: ")
-                    pprint.pprint(response)
-                    print("Response message: ", response.choices[0].message.content)
-                    contains = ["5280", "5,280"]
-                    assert any(item in response.choices[0].message.content for item in contains)
-            else:
-                print("Skipped because we cannot record chat completions call with AOAI client.")
+                print("Raw dump of response object: ")
+                pprint.pprint(response)
+                print("Response message: ", response.choices[0].message.content)
+                contains = ["5280", "5,280"]
+                assert any(item in response.choices[0].message.content for item in contains)
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
     # cls & pytest tests\test_inference.py::TestInference::test_inference_on_connection -s
     @servicePreparer()
     @recorded_by_proxy
     def test_inference_on_connection(self, **kwargs):
+
+        if not is_live_and_not_recording():
+            print("Skipped because we cannot record chat completions call with AOAI client.")
+            return
 
         endpoint = kwargs.pop("azure_ai_projects_tests_project_endpoint")
         print("\n=====> Endpoint:", endpoint)
@@ -72,25 +77,22 @@ class TestInference(TestBase):
             print(
                 "[test_inference_on_connection] Get an authenticated Azure OpenAI client for a connection AOAI service, and perform a chat completion operation."
             )
-            if is_live_and_not_recording():
-                with project_client.inference.get_azure_openai_client(
-                    api_version=api_version, connection_name=connection_name
-                ) as client:
+            with project_client.inference.get_azure_openai_client(
+                api_version=api_version, connection_name=connection_name
+            ) as client:
 
-                    response = client.chat.completions.create(
-                        model=model_deployment_name,
-                        messages=[
-                            {
-                                "role": "user",
-                                "content": "How many feet are in a mile?",
-                            },
-                        ],
-                    )
+                response = client.chat.completions.create(
+                    model=model_deployment_name,
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": "How many feet are in a mile?",
+                        },
+                    ],
+                )
 
-                    print("Raw dump of response object: ")
-                    pprint.pprint(response)
-                    print("Response message: ", response.choices[0].message.content)
-                    contains = ["5280", "5,280"]
-                    assert any(item in response.choices[0].message.content for item in contains)
-            else:
-                print("Skipped because we cannot record chat completions call with AOAI client.")
+                print("Raw dump of response object: ")
+                pprint.pprint(response)
+                print("Response message: ", response.choices[0].message.content)
+                contains = ["5280", "5,280"]
+                assert any(item in response.choices[0].message.content for item in contains)

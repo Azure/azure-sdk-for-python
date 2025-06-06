@@ -9,13 +9,14 @@ from azure.ai.projects.models import DatasetVersion, DatasetType
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import HttpResponseError
- 
+
 
 # Construct the paths to the data folder and data file used in this test
 script_dir = os.path.dirname(os.path.abspath(__file__))
 data_folder = os.environ.get("DATA_FOLDER", os.path.join(script_dir, "test_data/datasets"))
 data_file1 = os.path.join(data_folder, "data_file1.txt")
 data_file2 = os.path.join(data_folder, "data_file2.txt")
+
 
 class TestDatasetsAsync(TestBase):
 
@@ -37,7 +38,9 @@ class TestDatasetsAsync(TestBase):
             credential=self.get_credential(AIProjectClient, is_async=True),
         ) as project_client:
 
-            print(f"[test_datasets_upload_file] Upload a single file and create a new Dataset `{dataset_name}`, version `{dataset_version}`, to reference the file.")
+            print(
+                f"[test_datasets_upload_file] Upload a single file and create a new Dataset `{dataset_name}`, version `{dataset_version}`, to reference the file."
+            )
             dataset: DatasetVersion = await project_client.datasets.upload_file(
                 name=dataset_name,
                 version=str(dataset_version),
@@ -45,26 +48,44 @@ class TestDatasetsAsync(TestBase):
                 connection_name=connection_name,
             )
             print(dataset)
-            TestBase.validate_dataset(dataset, expected_dataset_type=DatasetType.URI_FILE, expected_dataset_name=dataset_name, expected_dataset_version=str(dataset_version))
+            TestBase.validate_dataset(
+                dataset,
+                expected_dataset_type=DatasetType.URI_FILE,
+                expected_dataset_name=dataset_name,
+                expected_dataset_version=str(dataset_version),
+            )
 
             print(f"[test_datasets_upload_file] Get an existing Dataset version `{dataset_version}`:")
             dataset = await project_client.datasets.get(name=dataset_name, version=dataset_version)
             print(dataset)
-            TestBase.validate_dataset(dataset, expected_dataset_type=DatasetType.URI_FILE, expected_dataset_name=dataset_name, expected_dataset_version=str(dataset_version))
+            TestBase.validate_dataset(
+                dataset,
+                expected_dataset_type=DatasetType.URI_FILE,
+                expected_dataset_name=dataset_name,
+                expected_dataset_version=str(dataset_version),
+            )
 
-
-            print(f"[test_datasets_upload_file] Upload a single file and create a new version in existing Dataset `{dataset_name}`, to reference the file.")
+            print(
+                f"[test_datasets_upload_file] Upload a single file and create a new version in existing Dataset `{dataset_name}`, to reference the file."
+            )
             dataset: DatasetVersion = await project_client.datasets.upload_file(
                 name=dataset_name,
-                version=str(dataset_version+1),
+                version=str(dataset_version + 1),
                 file_path=data_file2,
                 connection_name=connection_name,
             )
             print(dataset)
-            TestBase.validate_dataset(dataset, expected_dataset_type=DatasetType.URI_FILE, expected_dataset_name=dataset_name, expected_dataset_version=str(dataset_version+1))
+            TestBase.validate_dataset(
+                dataset,
+                expected_dataset_type=DatasetType.URI_FILE,
+                expected_dataset_name=dataset_name,
+                expected_dataset_version=str(dataset_version + 1),
+            )
 
             print(f"[test_datasets_upload_file] Get credentials of an existing Dataset version `{dataset_version}`:")
-            asset_credential = await project_client.datasets.get_credentials(name=dataset_name, version=str(dataset_version))
+            asset_credential = await project_client.datasets.get_credentials(
+                name=dataset_name, version=str(dataset_version)
+            )
             print(asset_credential)
             TestBase.validate_asset_credential(asset_credential)
 
@@ -86,14 +107,20 @@ class TestDatasetsAsync(TestBase):
             assert not empty
             """
 
-            print(f"[test_datasets_upload_file] Delete Dataset `{dataset_name}`, version `{dataset_version}` that was created above.")
+            print(
+                f"[test_datasets_upload_file] Delete Dataset `{dataset_name}`, version `{dataset_version}` that was created above."
+            )
             await project_client.datasets.delete(name=dataset_name, version=str(dataset_version))
-            await project_client.datasets.delete(name=dataset_name, version=str(dataset_version+1))
+            await project_client.datasets.delete(name=dataset_name, version=str(dataset_version + 1))
 
-            print("[test_datasets_upload_file] Delete the same (now non-existing) Dataset. REST API call should return 204 (No content). This call should NOT throw an exception.")
+            print(
+                "[test_datasets_upload_file] Delete the same (now non-existing) Dataset. REST API call should return 204 (No content). This call should NOT throw an exception."
+            )
             await project_client.datasets.delete(name=dataset_name, version=str(dataset_version))
 
-            print(f"[test_datasets_upload_file] Try to get a non-existing Dataset `{dataset_name}`, version `{dataset_version}`. This should throw an exception.")
+            print(
+                f"[test_datasets_upload_file] Try to get a non-existing Dataset `{dataset_name}`, version `{dataset_version}`. This should throw an exception."
+            )
             try:
                 exception_thrown = False
                 dataset = await project_client.datasets.get(name=dataset_name, version=str(dataset_version))
@@ -102,7 +129,6 @@ class TestDatasetsAsync(TestBase):
                 print(f"Expected exception occurred: {e}")
                 assert "Could not find asset with ID" in e.message
             assert exception_thrown
-
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
     # cls & pytest tests\test_datasets_async.py::TestDatasetsAsync::test_datasets_upload_folder_async -s
@@ -122,7 +148,9 @@ class TestDatasetsAsync(TestBase):
             credential=self.get_credential(AIProjectClient, is_async=True),
         ) as project_client:
 
-            print(f"[test_datasets_upload_folder] Upload files in a folder (including sub-folders) and create a new version `{dataset_version}` in the same Dataset, to reference the files.")
+            print(
+                f"[test_datasets_upload_folder] Upload files in a folder (including sub-folders) and create a new version `{dataset_version}` in the same Dataset, to reference the files."
+            )
             dataset = await project_client.datasets.upload_folder(
                 name=dataset_name,
                 version=str(dataset_version),
@@ -131,17 +159,31 @@ class TestDatasetsAsync(TestBase):
                 file_pattern=re.compile(r"\.(txt|csv|md)$", re.IGNORECASE),
             )
             print(dataset)
-            TestBase.validate_dataset(dataset, expected_dataset_type=DatasetType.URI_FOLDER, expected_dataset_name=dataset_name, expected_dataset_version=str(dataset_version))
+            TestBase.validate_dataset(
+                dataset,
+                expected_dataset_type=DatasetType.URI_FOLDER,
+                expected_dataset_name=dataset_name,
+                expected_dataset_version=str(dataset_version),
+            )
 
             print(f"[test_datasets_upload_file] Get an existing Dataset version `{dataset_version}`:")
             dataset = await project_client.datasets.get(name=dataset_name, version=str(dataset_version))
             print(dataset)
-            TestBase.validate_dataset(dataset, expected_dataset_type=DatasetType.URI_FOLDER, expected_dataset_name=dataset_name, expected_dataset_version=str(dataset_version))
+            TestBase.validate_dataset(
+                dataset,
+                expected_dataset_type=DatasetType.URI_FOLDER,
+                expected_dataset_name=dataset_name,
+                expected_dataset_version=str(dataset_version),
+            )
 
             print(f"[test_datasets_upload_file] Get credentials of an existing Dataset version `{dataset_version}`:")
-            asset_credential = await project_client.datasets.get_credentials(name=dataset_name, version=str(dataset_version))
+            asset_credential = await project_client.datasets.get_credentials(
+                name=dataset_name, version=str(dataset_version)
+            )
             print(asset_credential)
             TestBase.validate_asset_credential(asset_credential)
 
-            print(f"[test_datasets_upload_file] Delete Dataset `{dataset_name}`, version `{dataset_version}` that was created above.")
+            print(
+                f"[test_datasets_upload_file] Delete Dataset `{dataset_name}`, version `{dataset_version}` that was created above."
+            )
             await project_client.datasets.delete(name=dataset_name, version=str(dataset_version))

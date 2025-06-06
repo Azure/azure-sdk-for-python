@@ -22,7 +22,8 @@ from azure.ai.projects.models import (
     DatasetType,
     AssetCredentialResponse,
 )
-from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, is_live_and_not_recording
+
 
 servicePreparer = functools.partial(
     EnvironmentVariableLoader,
@@ -56,8 +57,8 @@ class TestBase(AzureRecordedTestCase):
     }
 
     test_indexes_params = {
-        "index_name": f"test-index-name-{random.randint(0, 99999):05d}",
-        "index_version": "11",
+        "index_name": f"test-index-name",
+        "index_version": "1",
         "ai_search_connection_name": "my-ai-search-connection",
         "ai_search_index_name": "my-ai-search-index",
     }
@@ -224,8 +225,7 @@ class TestBase(AzureRecordedTestCase):
         assert asset_credential.blob_reference.storage_account_arm_id
 
         assert asset_credential.blob_reference.credential is not None
-        assert asset_credential.blob_reference.credential.type == "SAS" # Why is this not of type CredentialType.SAS as defined for Connections?
+        assert (
+            asset_credential.blob_reference.credential.type == "SAS"
+        )  # Why is this not of type CredentialType.SAS as defined for Connections?
         assert asset_credential.blob_reference.credential.sas_uri
-
-
-
