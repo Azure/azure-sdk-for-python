@@ -221,7 +221,7 @@ class TestCallConnectionClient(unittest.TestCase):
             kwargs.pop("stream", None)
             body = json.loads(request.content)
             assert body["fromCall"] == from_call_id, "Parameter value not as expected"
-            assert len(body["targetParticipants"]) == 2, "Expected 2 participants to move"
+            assert len(body["targetParticipants"]) == 1, "Expected 1 participant to move"
             if kwargs:
                 raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
             return mock_response(
@@ -240,10 +240,9 @@ class TestCallConnectionClient(unittest.TestCase):
             transport=Mock(send=mock_send),
         )
         user1 = CommunicationUserIdentifier(self.communication_user_id)
-        user2 = CommunicationUserIdentifier(self.transferee_user_id)
 
         response = call_connection.move_participants(
-            target_participants=[user1, user2],
+            target_participants=[user1],
             from_call=from_call_id,
             operation_context=self.operation_context,
         )
@@ -264,13 +263,13 @@ class TestCallConnectionClient(unittest.TestCase):
         call_connection.move_participants = mock_move
 
         expected_move_request = MoveParticipantsRequest(
-            target_participants=[serialize_identifier(user1), serialize_identifier(user2)],
+            target_participants=[serialize_identifier(user1)],
             from_call=from_call_id,
             operation_context=self.operation_context,
         )
 
         call_connection.move_participants(
-            target_participants=[user1, user2],
+            target_participants=[user1],
             from_call=from_call_id,
             operation_context=self.operation_context,
         )
