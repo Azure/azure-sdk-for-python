@@ -1,5 +1,13 @@
 # Release History
 
+## 1.0.1 (2025-06-06)
+
+### Bugs Fixed
+
+- `asyncio.gather` is used to make function tool calls in parallel for `async` scenario.
+- Adding instrumentation for create_thread_and_run.
+- Fixed a tracing related bug that caused process_thread_run span to not appear when streaming is used without event handler.
+
 ## 1.0.0 (2025-05-15)
 
 ### Features Added
