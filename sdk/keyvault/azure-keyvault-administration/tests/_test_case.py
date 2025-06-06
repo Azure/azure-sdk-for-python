@@ -32,7 +32,6 @@ class BaseClientPreparer(AzureRecordedTestCase):
             self.container_uri = container_playback_uri
             self.sas_token = playback_sas_token
 
-        self.managed_identity_client_id = os.environ.get("MANAGED_IDENTITY_CLIENT_ID")
         use_pwsh = os.environ.get("AZURE_TEST_USE_PWSH_AUTH", "false")
         use_cli = os.environ.get("AZURE_TEST_USE_CLI_AUTH", "false")
         use_vscode = os.environ.get("AZURE_TEST_USE_VSCODE_AUTH", "false")
@@ -63,13 +62,13 @@ class KeyVaultBackupClientPreparer(BaseClientPreparer):
             self._skip_if_not_configured(api_version)
             kwargs["container_uri"] = self.container_uri
             kwargs["managed_hsm_url"] = self.managed_hsm_url
-            client = self.create_backup_client(self.managed_identity_client_id, api_version=api_version, **kwargs)
+            client = self.create_backup_client(api_version=api_version, **kwargs)
 
             with client:
                 fn(test_class, client, **kwargs)
         return _preparer
 
-    def create_backup_client(self, managed_identity_client_id, **kwargs):
+    def create_backup_client(self, **kwargs):
         from azure.keyvault.administration import KeyVaultBackupClient
 
         credential = self.get_credential(KeyVaultBackupClient)
