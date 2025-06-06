@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import pprint
+# import pytest
 from azure.ai.projects.aio import AIProjectClient
 from test_base import TestBase, servicePreparer
 from devtools_testutils import is_live_and_not_recording
@@ -15,8 +16,10 @@ class TestInferenceAsync(TestBase):
     # cls & pytest tests\test_inference_async.py::TestInferenceAsync::test_inference_async -s
     @servicePreparer()
     @recorded_by_proxy_async
+    # TODO: Why doesn't this work? @pytest.mark.skipif(not is_live_and_not_recording(), reason="Skipped because we cannot record chat completions call with AOAI client")
     async def test_inference_async(self, **kwargs):
 
+        # Alternative to the above @pytest.mark.skipif
         if not is_live_and_not_recording():
             print("Skipped because we cannot record chat completions call with AOAI client.")
             return
@@ -57,8 +60,10 @@ class TestInferenceAsync(TestBase):
     # cls & pytest tests\test_inference_async.py::TestInferenceAsync::test_inference_on_connection_async -s
     @servicePreparer()
     @recorded_by_proxy_async
+    # TODO: Why doesn't this work? @pytest.mark.skipif(not is_live_and_not_recording(), reason="Skipped because we cannot record chat completions call with AOAI client")
     async def test_inference_on_connection_async(self, **kwargs):
 
+        # Alternative to the above @pytest.mark.skipif
         if not is_live_and_not_recording():
             print("Skipped because we cannot record chat completions call with AOAI client.")
             return

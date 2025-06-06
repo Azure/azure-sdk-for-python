@@ -4,10 +4,11 @@
 # ------------------------------------
 import os
 import re
+import pytest
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import DatasetVersion, DatasetType
 from test_base import TestBase, servicePreparer
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, is_live_and_not_recording
 from azure.core.exceptions import HttpResponseError
 
 
@@ -24,7 +25,13 @@ class TestDatasets(TestBase):
     # cls & pytest tests\test_datasets.py::TestDatasets::test_datasets_upload_file -s
     @servicePreparer()
     @recorded_by_proxy
+    # TODO: Why doesn't this work? @pytest.mark.skipif(not is_live_and_not_recording(), reason="Skipped because this test involves network calls from another client (azure.storage.blob) that is not recorded.")
     def test_datasets_upload_file(self, **kwargs):
+
+        # Alternative to the above @pytest.mark.skipif
+        if not is_live_and_not_recording():
+            print("Skipped because this test involves network calls from another client (azure.storage.blob) that is not recorded.")
+            return
 
         endpoint = kwargs.pop("azure_ai_projects_tests_project_endpoint")
         print("\n=====> Endpoint:", endpoint)
@@ -132,7 +139,13 @@ class TestDatasets(TestBase):
     # cls & pytest tests\test_datasets.py::TestDatasets::test_datasets_upload_folder -s
     @servicePreparer()
     @recorded_by_proxy
+    # TODO: Why doesn't this work? @pytest.mark.skipif(not is_live_and_not_recording(), reason="Skipped because this test involves network calls from another client (azure.storage.blob) that is not recorded.")
     def test_datasets_upload_folder(self, **kwargs):
+
+        # Alternative to the above @pytest.mark.skipif
+        if not is_live_and_not_recording():
+            print("Skipped because this test involves network calls from another client (azure.storage.blob) that is not recorded.")
+            return
 
         endpoint = kwargs.pop("azure_ai_projects_tests_project_endpoint")
         print("\n=====> Endpoint:", endpoint)
