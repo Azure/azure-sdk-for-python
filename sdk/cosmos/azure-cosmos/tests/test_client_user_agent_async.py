@@ -11,7 +11,7 @@ from test_config import TestConfig
 
 
 @pytest.mark.cosmosEmulator
-class TestClientUserAgent(unittest.IsolatedAsyncioTestCase):
+class TestClientUserAgentAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_client_user_agent(self):
         async with async_client(url=TestConfig.host, credential=TestConfig.masterKey) as client_async:
