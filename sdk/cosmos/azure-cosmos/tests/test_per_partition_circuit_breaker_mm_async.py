@@ -19,7 +19,7 @@ from test_per_partition_circuit_breaker_mm import create_doc, read_operations_an
     write_operations_and_errors, operations, REGION_1, REGION_2, CHANGE_FEED, CHANGE_FEED_PK, CHANGE_FEED_EPK, READ, \
     CREATE, READ_ALL_ITEMS, DELETE_ALL_ITEMS_BY_PARTITION_KEY, QUERY, QUERY_PK, BATCH, UPSERT, REPLACE, PATCH, DELETE, \
     PK_VALUE, validate_unhealthy_partitions, validate_response_uri
-from tests.test_per_partition_circuit_breaker_mm import validate_stats
+from test_per_partition_circuit_breaker_mm import validate_stats
 
 COLLECTION = "created_collection"
 
