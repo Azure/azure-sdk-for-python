@@ -8,9 +8,8 @@
 """
 Examples to show sending events with different options to an Event Hub partition.
 
-WARNING: EventHubProducerClient and EventDataBatch are not thread-safe!
-Do not share these instances across threads. If you need to send from multiple threads,
-create separate client instances for each thread or use proper synchronization mechanisms.
+WARNING: EventHubProducerClient and EventDataBatch are not thread-safe.
+Do not share these instances between threads without proper thread-safe management using mechanisms like threading.Lock.
 """
 
 import time
@@ -95,39 +94,11 @@ def send_event_data_list(producer):
         print("Sending error: ", eh_err)
 
 
-def send_concurrent_with_threads_safe(credentials):
-    """
-    Example showing thread-safe concurrent sending using separate producers per thread.
-    WARNING: Do NOT share EventHubProducerClient instances across threads!
-    """
-    def send_from_thread(thread_id):
-        # Create a separate producer for each thread - clients are NOT thread-safe
-        producer = EventHubProducerClient(
-            fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
-            eventhub_name=EVENTHUB_NAME,
-            credential=credentials,
-        )
-        try:
-            with producer:
-                batch = producer.create_batch()
-                batch.add(EventData(f"Message from thread {thread_id}"))
-                producer.send_batch(batch)
-                print(f"Thread {thread_id} sent message successfully")
-        except Exception as e:
-            print(f"Thread {thread_id} failed: {e}")
-
-    # Use ThreadPoolExecutor to manage threads
-    with ThreadPoolExecutor(max_workers=3) as executor:
-        futures = [executor.submit(send_from_thread, i) for i in range(3)]
-        # Wait for all threads to complete
-        for future in futures:
-            future.result()
 
 
 def send_concurrent_with_shared_client_and_lock():
     """
-    Example showing concurrent sending with a shared client using locks.
-    This is less efficient than separate clients but demonstrates thread synchronization.
+    Example showing concurrent sending with a shared client using threading.Lock.
     """
     send_lock = threading.Lock()
     
@@ -173,9 +144,7 @@ with producer:
 
 print("Send messages in {} seconds.".format(time.time() - start_time))
 
-# Demonstrate concurrent sending
-print("\nDemonstrating concurrent sending with separate producers...")
-send_concurrent_with_threads_safe(DefaultAzureCredential())
+
 
 print("\nDemonstrating concurrent sending with shared client and locks...")
 send_concurrent_with_shared_client_and_lock()

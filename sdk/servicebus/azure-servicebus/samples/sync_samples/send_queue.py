@@ -8,9 +8,8 @@
 """
 Example to show sending message(s) to a Service Bus Queue.
 
-WARNING: ServiceBusClient, ServiceBusSender, and ServiceBusMessageBatch are not thread-safe!
-Do not share these instances across threads. If you need to send from multiple threads,
-create separate client instances for each thread or use proper synchronization mechanisms.
+WARNING: ServiceBusClient, ServiceBusSender, and ServiceBusMessageBatch are not thread-safe.
+Do not share these instances between threads without proper thread-safe management using mechanisms like threading.Lock.
 """
 
 import os
@@ -47,36 +46,12 @@ def send_batch_message(sender):
     sender.send_messages(batch_message)
 
 
-def send_concurrent_with_threads_safe(credentials):
-    """
-    Example showing thread-safe concurrent sending using separate clients per thread.
-    WARNING: Do NOT share ServiceBusClient instances across threads!
-    """
-    def send_from_thread(thread_id):
-        # Create a separate client for each thread - clients are NOT thread-safe
-        servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credentials)
-        try:
-            with servicebus_client:
-                sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
-                with sender:
-                    message = ServiceBusMessage(f"Message from thread {thread_id}")
-                    sender.send_messages(message)
-                    print(f"Thread {thread_id} sent message successfully")
-        except Exception as e:
-            print(f"Thread {thread_id} failed: {e}")
 
-    # Use ThreadPoolExecutor to manage threads
-    with ThreadPoolExecutor(max_workers=3) as executor:
-        futures = [executor.submit(send_from_thread, i) for i in range(3)]
-        # Wait for all threads to complete
-        for future in futures:
-            future.result()
 
 
 def send_concurrent_with_shared_client_and_lock():
     """
-    Example showing concurrent sending with a shared client using locks.
-    This is less efficient than separate clients but demonstrates thread synchronization.
+    Example showing concurrent sending with a shared client using threading.Lock.
     """
     send_lock = threading.Lock()
     
@@ -139,9 +114,7 @@ with servicebus_client:
 
 print("Send message is done.")
 
-# Demonstrate concurrent sending
-print("\nDemonstrating concurrent sending with separate clients...")
-send_concurrent_with_threads_safe(DefaultAzureCredential())
+
 
 print("\nDemonstrating concurrent sending with shared client and locks...")
 send_concurrent_with_shared_client_and_lock()

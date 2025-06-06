@@ -100,37 +100,78 @@ We do not guarantee that the EventHubProducerClient or EventHubConsumerClient ar
 
 The data model type, `EventDataBatch` is not thread-safe or coroutine-safe. It should not be shared across threads nor used concurrently with client methods.
 
-For scenarios requiring concurrent sending from multiple threads:
+For scenarios requiring concurrent sending from multiple threads, ensure proper thread-safety management using mechanisms like threading.Lock()
 ```python
-import threading
+from concurrent.futures import ThreadPoolExecutor
 from azure.eventhub import EventHubProducerClient, EventData
+from azure.identity import DefaultAzureCredential
+import threading
 
-# Use a lock to ensure only one thread sends at a time
-send_lock = threading.Lock()
+EVENTHUB_NAMESPACE = "<your-namespace>.servicebus.windows.net"
+EVENTHUB_NAME = "<your-eventhub-name>"
 
-def send_events_thread_safe(producer, events):
-    with send_lock:
-        batch = producer.create_batch()
-        for event in events:
-            batch.add(event)
-        producer.send_batch(batch)
+# Create a global lock
+producer_lock = threading.Lock()
+
+def send_batch(producer_id, producer):
+    with producer_lock:
+        event_data_batch = producer.create_batch()
+        for i in range(10):
+            event_data_batch.add(EventData(f"Message {i} from producer {producer_id}"))
+        producer.send_batch(event_data_batch)
+        print(f"Producer {producer_id} sent batch.")
+
+def main():
+    credential = DefaultAzureCredential()
+    producer = EventHubProducerClient(
+        fully_qualified_namespace=EVENTHUB_NAMESPACE,
+        eventhub_name=EVENTHUB_NAME,
+        credential=credential
+    )
+
+    with producer:
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            for i in range(5):  # Launch 5 threads
+                executor.submit(send_batch, i, producer)
+
+if __name__ == "__main__":
+    main()
 ```
 
-For scenarios requiring concurrent sending in asyncio applications:
+For scenarios requiring concurrent sending in asyncio applications, ensure proper coroutine-safety management using mechanisms like asyncio.Lock()
 ```python
 import asyncio
 from azure.eventhub.aio import EventHubProducerClient
 from azure.eventhub import EventData
+from azure.identity.aio import DefaultAzureCredential
 
-# Use a lock to ensure only one coroutine sends at a time
-send_lock = asyncio.Lock()
+EVENTHUB_NAMESPACE = "<your-namespace>.servicebus.windows.net"
+EVENTHUB_NAME = "<your-eventhub-name>"
 
-async def send_events_coroutine_safe(producer, events):
-    async with send_lock:
-        batch = await producer.create_batch()
-        for event in events:
-            batch.add(event)
-        await producer.send_batch(batch)
+# Shared lock for coroutine-safe access
+producer_lock = asyncio.Lock()
+
+async def send_batch(producer_id, producer):
+    async with producer_lock:
+        event_data_batch = await producer.create_batch()
+        for i in range(10):
+            event_data_batch.add(EventData(f"Message {i} from producer {producer_id}"))
+        await producer.send_batch(event_data_batch)
+        print(f"Producer {producer_id} sent batch.")
+
+async def main():
+    credential = DefaultAzureCredential()
+    producer = EventHubProducerClient(
+        fully_qualified_namespace=EVENTHUB_NAMESPACE,
+        eventhub_name=EVENTHUB_NAME,
+        credential=credential
+    )
+
+    async with producer:
+        await asyncio.gather(*(send_batch(i, producer) for i in range(5)))
+
+if __name__ == "__main__":
+    asyncio.run(main())
 ```
 
 ## Examples

@@ -8,10 +8,8 @@
 """
 Examples to show sending events with different options to an Event Hub asynchronously.
 
-WARNING: EventHubProducerClient and EventDataBatch are not coroutine-safe!
-Do not share these instances between coroutines without proper synchronization.
-If you need to send from multiple coroutines, create separate client instances
-or use proper synchronization mechanisms like asyncio.Lock.
+WARNING: EventHubProducerClient and EventDataBatch are not coroutine-safe.
+Do not share these instances between coroutines without proper coroutine-safe management using mechanisms like asyncio.Lock.
 """
 
 import time
@@ -93,35 +91,10 @@ async def send_event_data_list(producer):
         print("Sending error: ", eh_err)
 
 
-async def send_concurrent_with_separate_producers():
-    """
-    Example showing coroutine-safe concurrent sending using separate producers.
-    WARNING: Do NOT share EventHubProducerClient instances between coroutines!
-    """
-    async def send_from_coroutine(task_id):
-        # Create a separate producer for each coroutine - clients are NOT coroutine-safe
-        producer = EventHubProducerClient(
-            fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
-            eventhub_name=EVENTHUB_NAME,
-            credential=DefaultAzureCredential(),
-        )
-        try:
-            async with producer:
-                batch = await producer.create_batch()
-                batch.add(EventData(f"Message from coroutine {task_id}"))
-                await producer.send_batch(batch)
-                print(f"Coroutine {task_id} sent message successfully")
-        except Exception as e:
-            print(f"Coroutine {task_id} failed: {e}")
-
-    # Use asyncio.gather to run coroutines concurrently
-    await asyncio.gather(*[send_from_coroutine(i) for i in range(3)])
-
 
 async def send_concurrent_with_shared_client_and_lock():
     """
     Example showing concurrent sending with a shared client using asyncio.Lock.
-    This is less efficient than separate clients but demonstrates coroutine synchronization.
     """
     send_lock = asyncio.Lock()
     
@@ -168,9 +141,6 @@ async def main():
     await run()
     print("Send messages in {} seconds.".format(time.time() - start_time))
 
-    # Demonstrate concurrent sending
-    print("\nDemonstrating concurrent sending with separate producers...")
-    await send_concurrent_with_separate_producers()
 
     print("\nDemonstrating concurrent sending with shared client and locks...")
     await send_concurrent_with_shared_client_and_lock()

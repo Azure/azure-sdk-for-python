@@ -99,37 +99,68 @@ We do not guarantee that the ServiceBusClient, ServiceBusSender, and ServiceBusR
 
 The data model type, `ServiceBusMessageBatch` is not thread-safe or coroutine-safe. It should not be shared across threads nor used concurrently with client methods.
 
-For scenarios requiring concurrent sending from multiple threads:
+For scenarios requiring concurrent sending from multiple threads, ensure proper thread-safety management using mechanisms like threading.Lock():
 ```python
-import threading
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
+from azure.identity import DefaultAzureCredential
+from concurrent.futures import ThreadPoolExecutor
+import threading
 
-# Use a lock to ensure only one thread sends at a time
-send_lock = threading.Lock()
+SERVICE_BUS_NAMESPACE = "<your-namespace>.servicebus.windows.net"
+QUEUE_NAME = "<your-queue-name>"
 
-def send_messages_thread_safe(sender, messages):
-    with send_lock:
-        batch = sender.create_message_batch()
-        for message in messages:
-            batch.add_message(message)
-        sender.send_messages(batch)
+lock = threading.Lock()
+
+def send_batch(sender_id, sender):
+    with lock:
+        messages = [ServiceBusMessage(f"Message {i} from sender {sender_id}") for i in range(10)]
+        sender.send_messages(messages)
+        print(f"Sender {sender_id} sent batch.")
+
+def main():
+    credential = DefaultAzureCredential()
+    client = ServiceBusClient(fully_qualified_namespace=SERVICE_BUS_NAMESPACE, credential=credential)
+
+    with client:
+        sender = client.get_queue_sender(queue_name=QUEUE_NAME)
+        with sender:
+            with ThreadPoolExecutor(max_workers=5) as executor:
+                for i in range(5):
+                    executor.submit(send_batch, i, sender)
+
+if __name__ == "__main__":
+    main()
 ```
 
-For scenarios requiring concurrent sending in asyncio applications:
+For scenarios requiring concurrent sending in asyncio applications, ensure proper coroutine-safety management using mechanisms like asyncio.Lock()
 ```python
 import asyncio
 from azure.servicebus.aio import ServiceBusClient
 from azure.servicebus import ServiceBusMessage
+from azure.identity.aio import DefaultAzureCredential
 
-# Use a lock to ensure only one coroutine sends at a time
-send_lock = asyncio.Lock()
+SERVICE_BUS_NAMESPACE = "<your-namespace>.servicebus.windows.net"
+QUEUE_NAME = "<your-queue-name>"
 
-async def send_messages_coroutine_safe(sender, messages):
-    async with send_lock:
-        batch = await sender.create_message_batch()
-        for message in messages:
-            batch.add_message(message)
-        await sender.send_messages(batch)
+lock = asyncio.Lock()
+
+async def send_batch(sender_id, sender):
+    async with lock:
+        messages = [ServiceBusMessage(f"Message {i} from sender {sender_id}") for i in range(10)]
+        await sender.send_messages(messages)
+        print(f"Sender {sender_id} sent batch.")
+
+async def main():
+    credential = DefaultAzureCredential()
+    client = ServiceBusClient(fully_qualified_namespace=SERVICE_BUS_NAMESPACE, credential=credential)
+
+    async with client:
+        sender = client.get_queue_sender(queue_name=QUEUE_NAME)
+        async with sender:
+            await asyncio.gather(*(send_batch(i, sender) for i in range(5)))
+
+if __name__ == "__main__":
+    asyncio.run(main())
 ```
 
 ## Examples
