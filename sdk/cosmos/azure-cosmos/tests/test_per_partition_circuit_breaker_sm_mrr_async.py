@@ -17,7 +17,7 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport_async import FaultInjectionTransportAsync
 from test_per_partition_circuit_breaker_mm_async import perform_write_operation, cleanup_method, perform_read_operation
 from test_per_partition_circuit_breaker_mm import create_doc, write_operations_and_errors, operations, REGION_1, \
-    REGION_2, PK_VALUE
+    REGION_2, PK_VALUE, READ, validate_stats, CREATE
 from test_per_partition_circuit_breaker_sm_mrr import validate_unhealthy_partitions
 
 COLLECTION = "created_collection"
