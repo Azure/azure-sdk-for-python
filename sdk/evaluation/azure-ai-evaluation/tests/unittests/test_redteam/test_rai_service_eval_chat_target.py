@@ -70,7 +70,7 @@ async def test_send_prompt_async_success(mock_evaluate, mock_prompt_request, moc
     response = await target.send_prompt_async(prompt_request=mock_prompt_request)
     
     mock_evaluate.assert_called_once_with(
-        {"query": "", "response": "Test prompt"},
+        {"query": "query", "response": "Test prompt"},
         metric_name="hate_fairness",
         project_scope=mock_azure_ai_project,
         credential=MockCredential
