@@ -11,6 +11,7 @@ import sys
 from azure.core.serialization import AzureJSONEncoder, NULL
 import pytest
 from modeltest._utils.model_base import Model as HybridModel, rest_field
+from modeltest import models
 
 
 def _expand_value(obj):
@@ -489,3 +490,24 @@ def test_json_roundtrip():
     )
     assert json.loads(json.dumps(dict(model))) == model == dict_response
 
+def test_flattened_model():
+    def _flattened_model_assertions(model):
+        assert model.name == "walle"
+        assert model.description == "a dog"
+        assert model.age == 2
+        assert model.properties.description == "a dog"
+        assert model.properties.age == 2
+    model = models.FlattenModel(name="walle", description="a dog", age=2)
+    _flattened_model_assertions(model)
+    model = models.FlattenModel({"name": "walle", "properties": {"description": "a dog", "age": 2}})
+    _flattened_model_assertions(model)
+
+def test_client_name_model():
+    model = models.ClientNamedPropertyModel(prop_client_name="walle")
+    assert model.prop_client_name == "walle"
+
+def test_readonly():
+    model = models.ReadonlyModel({"id": 1})
+    assert model.id == 1
+    assert model.as_dict() == {"id": 1}
+    assert model.as_dict(exclude_readonly=True) == {}
