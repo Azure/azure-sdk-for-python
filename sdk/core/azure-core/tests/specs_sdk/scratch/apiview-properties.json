@@ -1,8 +1,6 @@
 {
-    "CrossLanguagePackageId": "ModelTest",
+    "CrossLanguagePackageId": "",
     "CrossLanguageDefinitionId": {
-        "modeltest.models.Scratch": "ModelTest.Scratch",
-        "modeltest.ModelTestClient.main": "ModelTest.main",
-        "modeltest.aio.ModelTestClient.main": "ModelTest.main"
+        "modeltest.models.Scratch": "ModelTest.Scratch"
     }
 }
