@@ -1734,7 +1734,6 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
     def on_thread_message(
         self, message: "ThreadMessage"  # pylint: disable=unused-argument
     ) -> Optional[EventFunctionReturnT]:
-        message.status
         """Handle thread message events.
 
         :param ThreadMessage message: The thread message.
@@ -1756,7 +1755,6 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
         :param RunStep step: The run step.
         :rtype: Optional[EventFunctionReturnT]
         """
-        step.status
         return None
 
     def on_run_step_delta(
