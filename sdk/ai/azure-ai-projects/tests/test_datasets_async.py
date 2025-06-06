@@ -4,7 +4,8 @@
 # ------------------------------------
 import os
 import re
-#import pytest
+
+# import pytest
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import DatasetVersion, DatasetType
 from test_base import TestBase, servicePreparer
@@ -30,7 +31,9 @@ class TestDatasetsAsync(TestBase):
     async def test_datasets_upload_file(self, **kwargs):
 
         if not is_live_and_not_recording():
-            print("Skipped because this test involves network calls from another client (azure.storage.blob) that is not recorded.")
+            print(
+                "Skipped because this test involves network calls from another client (azure.storage.blob) that is not recorded."
+            )
             return
 
         endpoint = kwargs.pop("azure_ai_projects_tests_project_endpoint")
@@ -145,7 +148,9 @@ class TestDatasetsAsync(TestBase):
     async def test_datasets_upload_folder_async(self, **kwargs):
 
         if not is_live_and_not_recording():
-            print("Skipped because this test involves network calls from another client (azure.storage.blob) that is not recorded.")
+            print(
+                "Skipped because this test involves network calls from another client (azure.storage.blob) that is not recorded."
+            )
             return
 
         endpoint = kwargs.pop("azure_ai_projects_tests_project_endpoint")

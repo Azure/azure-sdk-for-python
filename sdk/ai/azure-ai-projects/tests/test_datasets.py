@@ -30,7 +30,9 @@ class TestDatasets(TestBase):
 
         # Alternative to the above @pytest.mark.skipif
         if not is_live_and_not_recording():
-            print("Skipped because this test involves network calls from another client (azure.storage.blob) that is not recorded.")
+            print(
+                "Skipped because this test involves network calls from another client (azure.storage.blob) that is not recorded."
+            )
             return
 
         endpoint = kwargs.pop("azure_ai_projects_tests_project_endpoint")
@@ -144,7 +146,9 @@ class TestDatasets(TestBase):
 
         # Alternative to the above @pytest.mark.skipif
         if not is_live_and_not_recording():
-            print("Skipped because this test involves network calls from another client (azure.storage.blob) that is not recorded.")
+            print(
+                "Skipped because this test involves network calls from another client (azure.storage.blob) that is not recorded."
+            )
             return
 
         endpoint = kwargs.pop("azure_ai_projects_tests_project_endpoint")
