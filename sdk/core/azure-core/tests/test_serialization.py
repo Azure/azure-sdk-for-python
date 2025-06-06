@@ -10,6 +10,7 @@ import sys
 
 from azure.core.serialization import AzureJSONEncoder, NULL
 import pytest
+from modeltest._utils.model_base import Model as HybridModel, rest_field
 
 
 def _expand_value(obj):
@@ -462,3 +463,29 @@ def test_model_recursion(json_dumps_with_encoder):
         ],
     }
     assert json.loads(json_dumps_with_encoder(expected.to_dict())) == expected_dict
+    
+
+def test_json_roundtrip():
+    class Pet(HybridModel):
+        name: str = rest_field()  # my name
+        species: str = rest_field()  # my species
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    dict_response = {
+        "name": "walle",
+        "species": "dog",
+    }
+    model = Pet(
+        name="walle",
+        species="dog",
+    )
+    with pytest.raises(TypeError):
+        json.dumps(model)
+    assert (
+        json.dumps(dict(model))
+        == '{"name": "walle", "species": "dog"}'
+    )
+    assert json.loads(json.dumps(dict(model))) == model == dict_response
+
