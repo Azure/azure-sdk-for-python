@@ -11,6 +11,8 @@ This guide describes migration from hub-based to Endpoint-based projects. To cre
 
 ## Class structure changes
 
+Agents Operations
+
 | Hub-based | Endpoint-based |
 |-|-|
 | `project_client.agents.create_agent` | `project_client.agents.create_agent` |
@@ -20,46 +22,85 @@ This guide describes migration from hub-based to Endpoint-based projects. To cre
 | `project_client.agents.delete_agents` | `project_client.agents.delete_agent` |
 | `project_client.agents.create_thread_and_run` | `project_client.agents.create_thread_and_run` |
 | `project_client.agents.enable_auto_function_calls` | `project_client.agents.enable_auto_function_calls` |
+| The new method was added in new SDK version. | `project_client.agents.create_thread_and_process_run` |
+
+Threads Operations
+
+| Hub-based | Endpoint-based |
+|-|-|
 | `project_client.agents.create_thread` | `project_client.agents.threads.create` |
 | `project_client.agents.get_thread` | `project_client.agents.threads.get` |
 | `project_client.agents.update_thread` | `project_client.agents.threads.update` |
 | `project_client.agents.list_threads` | `project_client.agents.threads.list` |
 | `project_client.agents.delete_thread` | `project_client.agents.threads.delete` |
+
+Messages Operations
+
+| Hub-based | Endpoint-based |
+|-|-|
 | `project_client.agents.create_message` | `project_client.agents.messages.create` |
 | `project_client.agents.list_messages` | `project_client.agents.messages.list` |
 | `project_client.agents.get_message` | `project_client.agents.messages.get` |
 | `project_client.agents.update_message` | `project_client.agents.messages.update` |
 | `OpenAIPageableListOfThreadMessage.get_last_message_by_role` | `project_client.agents.messages.get_last_message_by_role` |
 | `OpenAIPageableListOfThreadMessage.get_last_text_message_by_role` | `project_client.agents.messages.get_last_message_text_by_role` |
+
+Runs Operations
+
+| Hub-based | Endpoint-based |
+|-|-|
 | `project_client.agents.create_run` | `project_client.agents.runs.create` |
 | `project_client.agents.get_run` | `project_client.agents.runs.get` |
 | `project_client.agents.list_run` | `project_client.agents.runs.list` |
 | `project_client.agents.update_run` | `project_client.agents.runs.update` |
-| `project_client.agents.create_and_process_run` | `project_client.agents.runs.` |
+| `project_client.agents.create_and_process_run` | `project_client.agents.runs.create_and_process` |
 | `project_client.agents.create_stream` | `project_client.agents.runs.stream` |
 | `project_client.agents.submit_tool_outputs_to_run` | `project_client.agents.runs.submit_tool_outputs` |
 | `project_client.agents.submit_tool_outputs_to_run` | `project_client.agents.runs.submit_tool_outputs_stream` |
 | `project_client.agents.cancel_run` | `project_client.agents.runs.cancel` |
-| `project_client.agents.create_thread_and_run` | `project_client.agents.create_thread_and_run` |
-| The new method was added in new SDK version. | `project_client.agents.create_thread_and_process_run` |
+
+Run Steps Operations
+
+| Hub-based | Endpoint-based |
+|-|-|
 | `project_client.agents.get_run_step` | `project_client.agents.run_steps.get` |
 | `project_client.agents.list_run_steps` | `project_client.agents.run_steps.list` |
+
+Vector Stores Operations
+
+| Hub-based | Endpoint-based |
+|-|-|
 | `project_client.agents.create_vector_store_and_poll` | `project_client.agents.vector_stores.create_and_poll |
 | `project_client.agents.create_vector_store` | `project_client.agents.vector_stores.create |
 | `project_client.agents.list_vector_stores` | `project_client.agents.vector_stores.list |
 | `project_client.agents.get_vector_store` | `project_client.agents.vector_stores.get |
-| `project_client.agents.mofify_vector_store` | `project_client.agents.vector_stores.mofify |
+| `project_client.agents.modify_vector_store` | `project_client.agents.vector_stores.modify |
 | `project_client.agents.delete_vector_store` | `project_client.agents.vector_stores.delete |
+
+Vector Store Files Operations
+
+| Hub-based | Endpoint-based |
+|-|-|
 | `project_client.agents.create_vector_store_file_and_poll` | `project_client.agents.vector_store_files.create_and_poll` |
 | `project_client.agents.list_vector_store_files` | `project_client.agents.vector_store_files.list` |
 | `project_client.agents.create_vector_store_file` | `project_client.agents.vector_store_files.create` |
 | `project_client.agents.get_vector_store_file` | `project_client.agents.vector_store_files.get` |
 | `project_client.agents.delete_vector_store_file` | `project_client.agents.vector_store_files.delete` |
+
+Vector Store File Batches Operations
+
+| Hub-based | Endpoint-based |
+|-|-|
 | `project_client.agents.create_vector_store_file_and_poll` | `project_client.agents.vector_store_file_batches.create_and_poll`|
 | `project_client.agents.create_vector_store_file_batch` | `project_client.agents.vector_store_file_batches.create`|
 | `project_client.agents.get_vector_store_file_batch` | `project_client.agents.vector_store_file_batches.get`|
 | `project_client.agents.list_vector_store_file_batch_files` | `project_client.agents.vector_store_file_batches.list_files`|
 | `project_client.agents.cancel_vector_store_file_batch` | `project_client.agents.vector_store_file_batches.cancel`|
+
+Files Operations
+
+| Hub-based | Endpoint-based |
+|-|-|
 | `project_client.agents.upload_file_and_poll` | `project_client.agents.files.upload_and_poll` |
 | `project_client.agents.upload_file` | `project_client.agents.files.upload` |
 | `project_client.agents.save_file` | `project_client.agents.files.save` |
@@ -68,7 +109,7 @@ This guide describes migration from hub-based to Endpoint-based projects. To cre
 | `project_client.agents.delete_file` | `project_client.agents.files.delete` |
 
 ## API changes
-1. Create project. The connection string is replaced by the endpoint. The project endpoint URL has the form https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>. It can be found in your Azure AI Foundry Project overview page.
+1. Create project. The connection string is replaced by the endpoint. The project endpoint URL has the form https://\<your-ai-services-account-name\>.services.ai.azure.com/api/projects/\<your-project-name\>. It can be found in your Azure AI Foundry Project overview page.
 
     **Hub-based**
     ```python
