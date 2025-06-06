@@ -6,10 +6,19 @@ import json
 import logging
 import os
 import random
+import subprocess
 
 from azure.monitor.opentelemetry.exporter._utils import PeriodicTask
 
 logger = logging.getLogger(__name__)
+
+ICACLS_PATH = os.path.join(
+    os.environ.get("SYSTEMDRIVE", "C:"), r"\Windows\System32\icacls.exe"
+)
+POWERSHELL_PATH = os.path.join(
+    os.environ.get("SYSTEMDRIVE", "C:"),
+    r"\Windows\System32\WindowsPowerShell\v1.0\powershell.exe",
+)
 
 
 def _fmt(timestamp):
@@ -92,19 +101,25 @@ class LocalFileStorage:
         self._max_size = max_size
         self._retention_period = retention_period
         self._write_timeout = write_timeout
-        self._maintenance_routine()
-        self._maintenance_task = PeriodicTask(
-            interval=maintenance_period,
-            function=self._maintenance_routine,
-            name=name,
-        )
-        self._lease_period = lease_period
-        self._maintenance_task.daemon = True
-        self._maintenance_task.start()
+
+        self._enabled = self._check_and_set_folder_permissions()
+        if self._enabled:
+            self._maintenance_routine()
+            self._maintenance_task = PeriodicTask(
+                interval=maintenance_period,
+                function=self._maintenance_routine,
+                name=name,
+            )
+            self._lease_period = lease_period
+            self._maintenance_task.daemon = True
+            self._maintenance_task.start()
+        else:
+            logger.error("Could not set secure permissions on storage folder.") 
 
     def close(self):
-        self._maintenance_task.cancel()
-        self._maintenance_task.join()
+        if self._enabled:
+            self._maintenance_task.cancel()
+            self._maintenance_task.join()
 
     def __enter__(self):
         return self
@@ -122,6 +137,8 @@ class LocalFileStorage:
             pass  # keep silent
 
     def gets(self):
+        if not self._enabled:
+            return None
         now = _now()
         lease_deadline = _fmt(now)
         retention_deadline = _fmt(now - _seconds(self._retention_period))
@@ -156,8 +173,11 @@ class LocalFileStorage:
                         yield LocalFileBlob(path)
         except Exception:
             pass  # keep silent
+        return None
 
     def get(self):
+        if not self._enabled:
+            return None
         cursor = self.gets()
         try:
             return next(cursor)
@@ -166,12 +186,8 @@ class LocalFileStorage:
         return None
 
     def put(self, data, lease_period=None):
-        # Create path if it doesn't exist
-        try:
-            if not os.path.isdir(self._path):
-                os.makedirs(self._path, exist_ok=True)
-        except Exception:
-            pass  # keep silent
+        if not self._enabled:
+            return None
         if not self._check_storage_size():
             return None
         blob = LocalFileBlob(
@@ -186,6 +202,47 @@ class LocalFileStorage:
         if lease_period is None:
             lease_period = self._lease_period
         return blob.put(data, lease_period=lease_period)
+
+    # 
+    # to ensure secure access to the storage folder.
+    def _check_and_set_folder_permissions(self):
+        """
+        Validate and set folder permissions where the telemetry data will be stored.
+
+        :return: True if folder was created and permissions set successfully, False otherwise.
+        :rtype: bool
+        """
+        try:
+            # Create path if it doesn't exist
+            os.makedirs(self._path, exist_ok=True)
+            # Windows
+            if os.name == "nt":
+                user = self._get_current_user()
+                if not user:
+                    logger.warning(
+                        "Failed to retrieve current user. Skipping folder permission setup."
+                    )
+                    return False
+                result = subprocess.run(
+                    [
+                        ICACLS_PATH,
+                        self._path,
+                        "/grant",
+                        "*S-1-5-32-544:(OI)(CI)F",  # Full permission for Administrators
+                        f"{user}:(OI)(CI)F",
+                        "/inheritance:r",
+                    ],
+                    check=False,
+                )
+                if result.returncode == 0:
+                    return True
+            # Unix
+            else:
+                os.chmod(self._path, 0o700)
+                return True
+        except Exception:
+            pass  # keep silent
+        return False
 
     def _check_storage_size(self):
         size = 0
@@ -209,7 +266,29 @@ class LocalFileStorage:
                             "Persistent storage max capacity has been "
                             "reached. Currently at {}KB. Telemetry will be "
                             "lost. Please consider increasing the value of "
-                            "'storage_max_size' in exporter config.".format(str(size / 1024))
+                            "'storage_max_size' in exporter config.".format(
+                                str(size / 1024)
+                            )
                         )
                         return False
         return True
+
+    def _get_current_user(self):
+        try:
+            if os.name == "nt":
+                result = subprocess.run(
+                    [
+                        POWERSHELL_PATH,
+                        "-Command",
+                        "[System.Security.Principal.WindowsIdentity]::GetCurrent().Name",
+                    ],
+                    capture_output=True,
+                    text=True,
+                    check=True,
+                )
+                user = result.stdout.strip()
+                if user:
+                    return user
+        except Exception:
+            pass
+        return None
