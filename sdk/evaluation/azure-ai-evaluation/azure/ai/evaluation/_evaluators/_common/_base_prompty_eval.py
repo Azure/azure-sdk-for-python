@@ -24,6 +24,8 @@ try:
 except ImportError:
     USER_AGENT = "None"
 
+from ..._context import get_current_user_agent
+
 T = TypeVar("T")
 
 
@@ -60,7 +62,9 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         super().__init__(eval_last_turn=eval_last_turn, threshold=threshold, _higher_is_better=_higher_is_better)
 
         subclass_name = self.__class__.__name__
-        user_agent = f"{USER_AGENT} (type=evaluator subtype={subclass_name})"
+        base_user_agent = f"{USER_AGENT} (type=evaluator; subtype={subclass_name})"
+        custom_user_agent = get_current_user_agent()
+        user_agent = f"{base_user_agent} {custom_user_agent}" if custom_user_agent else base_user_agent
         prompty_model_config = construct_prompty_model_config(
             validate_model_config(model_config),
             self._DEFAULT_OPEN_API_VERSION,
