@@ -31,6 +31,7 @@ from .._constants import (
 )
 from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig
 from .._user_agent import USER_AGENT
+from .._context import set_current_user_agent
 from ._batch_run import (
     EvalRunContext,
     CodeClient,
@@ -54,7 +55,6 @@ from ._evaluate_aoai import (
     OAIEvalRunCreationInfo
 )
 LOGGER = logging.getLogger(__name__)
-
 # For metrics (aggregates) whose metric names intentionally differ from their
 # originating column name, usually because the aggregation of the original value
 # means something sufficiently different.
@@ -697,6 +697,7 @@ def evaluate(
     azure_ai_project: Optional[Union[str, AzureAIProject]] = None,
     output_path: Optional[Union[str, os.PathLike]] = None,
     fail_on_evaluator_errors: bool = False,
+    user_agent: Optional[str] = None,
     **kwargs,
 ) -> EvaluationResult:
     """Evaluates target or data with built-in or custom evaluators. If both target and data are provided,
@@ -728,6 +729,9 @@ def evaluate(
         Defaults to false, which means that evaluations will continue regardless of failures.
         If such failures occur, metrics may be missing, and evidence of failures can be found in the evaluation's logs.
     :paramtype fail_on_evaluator_errors: bool
+    :keyword user_agent: Custom user agent string to append to the default user agent for HTTP requests.
+        If provided, the final user agent will be: 'azure-ai-evaluation/<version> <user_agent>'.
+    :paramtype user_agent: Optional[str]
     :return: Evaluation results.
     :rtype: ~azure.ai.evaluation.EvaluationResult
 
@@ -749,6 +753,23 @@ def evaluate(
             :dedent: 8
             :caption: Run an evaluation on local data with one or more evaluators using Azure AI Project URL in following format 
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+
+    .. admonition:: Example with custom user agent:
+
+        .. code-block:: python
+
+            from azure.ai.evaluation import evaluate
+            from azure.identity import DefaultAzureCredential
+
+            # Run evaluation with custom user agent
+            result = evaluate(
+                data="path/to/data.jsonl",
+                evaluators={
+                    "groundedness": GroundednessEvaluator(azure_ai_project=azure_ai_project, credential=credential)
+                },
+                azure_ai_project=azure_ai_project,
+                user_agent="MyApp/1.0.0"  # Custom user agent to append to default
+            )
     """
     try:
         return _evaluate(
@@ -760,6 +781,7 @@ def evaluate(
             azure_ai_project=azure_ai_project,
             output_path=output_path,
             fail_on_evaluator_errors=fail_on_evaluator_errors,
+            user_agent=user_agent,
             **kwargs,
         )
     except Exception as e:
@@ -828,10 +850,14 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     azure_ai_project: Optional[Union[str, AzureAIProject]] = None,
     output_path: Optional[Union[str, os.PathLike]] = None,
     fail_on_evaluator_errors: bool = False,
+    user_agent: Optional[str] = None,
     **kwargs,
 ) -> EvaluationResult:
     if fail_on_evaluator_errors:
         _print_fail_flag_warning()
+    
+    # Set the user_agent in context for evaluators to access
+    set_current_user_agent(user_agent)
     
     # Turn inputted mess of data into a dataframe, apply targets if needed
     # split graders and evaluators, and verify that column mappings are sensible.

@@ -964,3 +964,66 @@ class TestEvaluate:
         result = _convert_name_map_into_property_entries(test_map, segment_length=10, max_segments = 1)
         assert result[EvaluationRunProperties.NAME_MAP_LENGTH] == -1
         assert len(result) == 1
+
+
+def test_evaluate_user_agent_parameter():
+    """Test that the user_agent parameter is accepted by the evaluate function."""
+    import tempfile
+    import json
+    from unittest.mock import patch, MagicMock
+    from azure.ai.evaluation._context import get_current_user_agent
+    
+    # Create test data
+    test_data = [
+        {"query": "What is the capital of France?", "response": "Paris"}
+    ]
+    
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.jsonl', delete=False) as f:
+        for item in test_data:
+            f.write(json.dumps(item) + '\n')
+        temp_file = f.name
+    
+    try:
+        # Mock evaluator
+        def mock_evaluator(query, response):
+            # Check that user agent is available in context
+            user_agent = get_current_user_agent()
+            return {"score": 1.0, "user_agent_in_context": user_agent}
+        
+        # Test with custom user agent
+        with patch('azure.ai.evaluation._evaluate._evaluate._preprocess_data') as mock_preprocess, \
+             patch('azure.ai.evaluation._evaluate._evaluate._run_callable_evaluators') as mock_run_evaluators:
+            
+            mock_preprocess.return_value = {
+                "evaluators": {"test_evaluator": mock_evaluator},
+                "graders": {},
+                "input_data_df": pd.DataFrame(test_data),
+                "column_mapping": {},
+                "target_run": None,
+                "batch_run_client": MagicMock(),
+                "batch_run_data": temp_file
+            }
+            
+            mock_run_evaluators.return_value = (
+                pd.DataFrame([{"test_evaluator.score": 1.0}]),
+                {"test_evaluator.score": 1.0},
+                {}
+            )
+            
+            # Test that user_agent parameter is accepted and doesn't cause errors
+            result = evaluate(
+                data=temp_file,
+                evaluators={"test_evaluator": mock_evaluator},
+                user_agent="TestApp/1.0.0"
+            )
+            
+            # Verify the function was called
+            assert mock_preprocess.called
+            assert mock_run_evaluators.called
+            assert result is not None
+            
+    finally:
+        # Clean up
+        import os
+        if os.path.exists(temp_file):
+            os.unlink(temp_file)
