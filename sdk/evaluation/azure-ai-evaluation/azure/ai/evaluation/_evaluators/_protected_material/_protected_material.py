@@ -25,10 +25,10 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
 
     :param credential: The credential required for connecting to the Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param azure_ai_project: The scope of the Azure AI project, containing the subscription ID,
-        resource group, and project name.
-    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
-
+    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint 
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :type azure_ai_project: Union[str, ~azure.ai.evaluation.AzureAIProject]
+    
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/evaluation_samples_evaluate.py
