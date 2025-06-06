@@ -966,8 +966,8 @@ class TestEvaluate:
         assert len(result) == 1
 
 
-def test_evaluate_user_agent_parameter():
-    """Test that the user_agent parameter is accepted by the evaluate function."""
+def test_evaluate_user_agent_via_kwargs():
+    """Test that the user_agent parameter is accepted via kwargs by the evaluate function."""
     import tempfile
     import json
     from unittest.mock import patch, MagicMock
@@ -1010,7 +1010,7 @@ def test_evaluate_user_agent_parameter():
                 {}
             )
             
-            # Test that user_agent parameter is accepted and doesn't cause errors
+            # Test that user_agent parameter is accepted via kwargs and doesn't cause errors
             result = evaluate(
                 data=temp_file,
                 evaluators={"test_evaluator": mock_evaluator},

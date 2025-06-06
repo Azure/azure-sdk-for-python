@@ -697,7 +697,6 @@ def evaluate(
     azure_ai_project: Optional[Union[str, AzureAIProject]] = None,
     output_path: Optional[Union[str, os.PathLike]] = None,
     fail_on_evaluator_errors: bool = False,
-    user_agent: Optional[str] = None,
     **kwargs,
 ) -> EvaluationResult:
     """Evaluates target or data with built-in or custom evaluators. If both target and data are provided,
@@ -729,9 +728,6 @@ def evaluate(
         Defaults to false, which means that evaluations will continue regardless of failures.
         If such failures occur, metrics may be missing, and evidence of failures can be found in the evaluation's logs.
     :paramtype fail_on_evaluator_errors: bool
-    :keyword user_agent: Custom user agent string to append to the default user agent for HTTP requests.
-        If provided, the final user agent will be: 'azure-ai-evaluation/<version> <user_agent>'.
-    :paramtype user_agent: Optional[str]
     :return: Evaluation results.
     :rtype: ~azure.ai.evaluation.EvaluationResult
 
@@ -753,24 +749,10 @@ def evaluate(
             :dedent: 8
             :caption: Run an evaluation on local data with one or more evaluators using Azure AI Project URL in following format 
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
-
-    .. admonition:: Example with custom user agent:
-
-        .. code-block:: python
-
-            from azure.ai.evaluation import evaluate
-            from azure.identity import DefaultAzureCredential
-
-            # Run evaluation with custom user agent
-            result = evaluate(
-                data="path/to/data.jsonl",
-                evaluators={
-                    "groundedness": GroundednessEvaluator(azure_ai_project=azure_ai_project, credential=credential)
-                },
-                azure_ai_project=azure_ai_project,
-                user_agent="MyApp/1.0.0"  # Custom user agent to append to default
-            )
     """
+    # Extract user_agent from kwargs if provided
+    user_agent = kwargs.pop('user_agent', None)
+    
     try:
         return _evaluate(
             evaluation_name=evaluation_name,
