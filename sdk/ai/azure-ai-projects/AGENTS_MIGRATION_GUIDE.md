@@ -1,6 +1,74 @@
-# 1DP migration guide.
-This guide describes migration from hub-based to 1DP projects. To create a 1DP project, please use one of the deployment scripts on [foundry samples repository](https://github.com/azure-ai-foundry/foundry-samples/tree/main/samples/microsoft/infrastructure-setup) appropriate for your scenario. The support of hub-based projects was dropped in `azure-ai-projects` version `1.0.0b11`. In this document, we show the operation implementation of before `1.0.0b11` in **Hub-based** secion, followed by code for `azure-ai-projects` version `1.0.0b11` or later -n **1DP**.
-1. Create project. The connection string is replaced by the endpoint, which can be taken from the Azure foundry.
+# Agents migration guide from Hub-based projects to Endpoint-based projects.
+This guide describes migration from hub-based to Endpoint-based projects. To create a Endpoint-based project, please use one of the deployment scripts on [foundry samples repository](https://github.com/azure-ai-foundry/foundry-samples/tree/main/samples/microsoft/infrastructure-setup) appropriate for your scenario, also you can use Azure AI Foundry UI. The support of hub-based projects was dropped in `azure-ai-projects` version `1.0.0b11`. In this document, we show the operation implementation of before `1.0.0b11` in **Hub-based** secion, followed by code for `azure-ai-projects` version `1.0.0b11` or later in **Endpoint-based**.
+
+## Import changes
+
+| Hub-based | Endpoint-based |
+|-|-|
+| `azure.ai.projects` | `azure.ai.projects` |
+| `azure.ai.projects.models` | `azure.ai.agents.models` |
+| Agents were moved to a new package. | `azure.ai.agents` |
+
+## Class structure changes
+
+| Hub-based | Endpoint-based |
+|-|-|
+| `project_client.agents.create_agent` | `project_client.agents.create_agent` |
+| `project_client.agents.list_agents` | `project_client.agents.list_agents` |
+| `project_client.agents.get_agent` | `project_client.agents.get_agent` |
+| `project_client.agents.update_agent` | `project_client.agents.update_agent` |
+| `project_client.agents.delete_agents` | `project_client.agents.delete_agent` |
+| `project_client.agents.create_thread_and_run` | `project_client.agents.create_thread_and_run` |
+| `project_client.agents.enable_auto_function_calls` | `project_client.agents.enable_auto_function_calls` |
+| `project_client.agents.create_thread` | `project_client.agents.threads.create` |
+| `project_client.agents.get_thread` | `project_client.agents.threads.get` |
+| `project_client.agents.update_thread` | `project_client.agents.threads.update` |
+| `project_client.agents.list_threads` | `project_client.agents.threads.list` |
+| `project_client.agents.delete_thread` | `project_client.agents.threads.delete` |
+| `project_client.agents.create_message` | `project_client.agents.messages.create` |
+| `project_client.agents.list_messages` | `project_client.agents.messages.list` |
+| `project_client.agents.get_message` | `project_client.agents.messages.get` |
+| `project_client.agents.update_message` | `project_client.agents.messages.update` |
+| `OpenAIPageableListOfThreadMessage.get_last_message_by_role` | `project_client.agents.messages.get_last_message_by_role` |
+| `OpenAIPageableListOfThreadMessage.get_last_text_message_by_role` | `project_client.agents.messages.get_last_message_text_by_role` |
+| `project_client.agents.create_run` | `project_client.agents.runs.create` |
+| `project_client.agents.get_run` | `project_client.agents.runs.get` |
+| `project_client.agents.list_run` | `project_client.agents.runs.list` |
+| `project_client.agents.update_run` | `project_client.agents.runs.update` |
+| `project_client.agents.create_and_process_run` | `project_client.agents.runs.` |
+| `project_client.agents.create_stream` | `project_client.agents.runs.stream` |
+| `project_client.agents.submit_tool_outputs_to_run` | `project_client.agents.runs.submit_tool_outputs` |
+| `project_client.agents.submit_tool_outputs_to_run` | `project_client.agents.runs.submit_tool_outputs_stream` |
+| `project_client.agents.cancel_run` | `project_client.agents.runs.cancel` |
+| `project_client.agents.create_thread_and_run` | `project_client.agents.create_thread_and_run` |
+| The new method was added in new SDK version. | `project_client.agents.create_thread_and_process_run` |
+| `project_client.agents.get_run_step` | `project_client.agents.run_steps.get` |
+| `project_client.agents.list_run_steps` | `project_client.agents.run_steps.list` |
+| `project_client.agents.create_vector_store_and_poll` | `project_client.agents.vector_stores.create_and_poll |
+| `project_client.agents.create_vector_store` | `project_client.agents.vector_stores.create |
+| `project_client.agents.list_vector_stores` | `project_client.agents.vector_stores.list |
+| `project_client.agents.get_vector_store` | `project_client.agents.vector_stores.get |
+| `project_client.agents.mofify_vector_store` | `project_client.agents.vector_stores.mofify |
+| `project_client.agents.delete_vector_store` | `project_client.agents.vector_stores.delete |
+| `project_client.agents.create_vector_store_file_and_poll` | `project_client.agents.vector_store_files.create_and_poll` |
+| `project_client.agents.list_vector_store_files` | `project_client.agents.vector_store_files.list` |
+| `project_client.agents.create_vector_store_file` | `project_client.agents.vector_store_files.create` |
+| `project_client.agents.get_vector_store_file` | `project_client.agents.vector_store_files.get` |
+| `project_client.agents.delete_vector_store_file` | `project_client.agents.vector_store_files.delete` |
+| `project_client.agents.create_vector_store_file_and_poll` | `project_client.agents.vector_store_file_batches.create_and_poll`|
+| `project_client.agents.create_vector_store_file_batch` | `project_client.agents.vector_store_file_batches.create`|
+| `project_client.agents.get_vector_store_file_batch` | `project_client.agents.vector_store_file_batches.get`|
+| `project_client.agents.list_vector_store_file_batch_files` | `project_client.agents.vector_store_file_batches.list_files`|
+| `project_client.agents.cancel_vector_store_file_batch` | `project_client.agents.vector_store_file_batches.cancel`|
+| `project_client.agents.upload_file_and_poll` | `project_client.agents.files.upload_and_poll` |
+| `project_client.agents.upload_file` | `project_client.agents.files.upload` |
+| `project_client.agents.save_file` | `project_client.agents.files.save` |
+| `project_client.agents.get_file` | `project_client.agents.files.get` |
+| `project_client.agents.list_files` | `project_client.agents.files.list` |
+| `project_client.agents.delete_file` | `project_client.agents.files.delete` |
+
+## API changes
+1. Create project. The connection string is replaced by the endpoint. The project endpoint URL has the form https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>. It can be found in your Azure AI Foundry Project overview page.
 
     **Hub-based**
     ```python
@@ -10,7 +78,7 @@ This guide describes migration from hub-based to 1DP projects. To create a 1DP p
     )
     ```
 
-    **1DP**
+    **Endpoint-based**
     ```python
     project_client = AIProjectClient(endpoint=endpoint, credential=DefaultAzureCredential())
     ```
@@ -24,7 +92,7 @@ This guide describes migration from hub-based to 1DP projects. To create a 1DP p
         instructions="You are helpful assistant",
     )
     ```
-    **1DP** 
+    **Endpoint-based** 
 
     Agent is instantiated using `AIProjectClient `
     ```python
@@ -63,7 +131,7 @@ This guide describes migration from hub-based to 1DP projects. To create a 1DP p
         last_id = agents_list.last_id
     ```
 
-    **1DP**
+    **Endpoint-based**
     ```python
     agents = project_client.agents.list_agents(limit=2)
      # Iterate items by page. Each page will be limited by two items.
@@ -86,7 +154,7 @@ This guide describes migration from hub-based to 1DP projects. To create a 1DP p
     print(deletion_status.deleted)
     ```
 
-    **1DP**
+    **Endpoint-based**
     ```python
     project_client.agents.delete_agent(agent.id)
     ```
@@ -97,7 +165,7 @@ This guide describes migration from hub-based to 1DP projects. To create a 1DP p
     ```python
     thread = project_client.agents.create_thread()
     ```
-    **1DP**
+    **Endpoint-based**
     ```python
     thread = project_client.agents.threads.create()
     ```
@@ -119,7 +187,7 @@ This guide describes migration from hub-based to 1DP projects. To create a 1DP p
             page += 1
     ```
 
-    **1DP**
+    **Endpoint-based**
     ```python
     threads = project_client.agents.threads.list(limit=2)
     # Iterate items by page. Each page will be limited by two items.
@@ -142,7 +210,7 @@ This guide describes migration from hub-based to 1DP projects. To create a 1DP p
     print(delete_status.deleted)
     ```
 
-    **1DP**
+    **Endpoint-based**
     ```python
     project_client.agents.threads.delete(tread_id)
     ```
@@ -153,7 +221,7 @@ This guide describes migration from hub-based to 1DP projects. To create a 1DP p
     message = project_client.agents.create_message(thread_id=thread.id, role="user", content="The message text.")
     ```
 
-    **1DP**
+    **Endpoint-based**
     ```python
     message = agents_client.messages.create(thread_id=thread.id, role="user", content=" The message text."")
     ```
@@ -165,7 +233,7 @@ This guide describes migration from hub-based to 1DP projects. To create a 1DP p
     run = project_client.agents.get_run(thread_id=thread.id, run_id=run.id)
     ```
 
-    **1DP**
+    **Endpoint-based**
     ```python
     run = project_client.agents.runs.create(thread_id=thread.id, agent_id=agent.id)
     run = project_client.agents.runs.get(thread_id=thread.id, run_id=run.id)
@@ -184,7 +252,7 @@ This guide describes migration from hub-based to 1DP projects. To create a 1DP p
         last_id = runs_list.last_id
     ```
 
-    **1DP**
+    **Endpoint-based**
     ```python
     runs = project_client.agents.runs.list(thread.id)
     for one_run in runs:
@@ -205,7 +273,7 @@ This guide describes migration from hub-based to 1DP projects. To create a 1DP p
         last_id = runs_step_list.last_id
     ```
 
-    **1DP**
+    **Endpoint-based**
     ```python
     run_steps = project_client.agents.run_steps.list(thread.id, run.id)
     for one_run_step in run_steps:
@@ -224,7 +292,7 @@ This guide describes migration from hub-based to 1DP projects. To create a 1DP p
                 print(f"Event Function return: {func_return}\n")
     ```
 
-    **1DP**
+    **Endpoint-based**
     ```python
     with project_client.agents.runs.stream(thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()) as stream:
             for event_type, event_data, func_return in stream:
@@ -246,7 +314,7 @@ This guide describes migration from hub-based to 1DP projects. To create a 1DP p
                 print(f"{data_point.role}: {last_message_content.text.value}")
     ```
 
-    **1DP**
+    **Endpoint-based**
     ```python
     messages = project_client.agents.messages.list(thread_id=thread.id)
         for msg in messages:
@@ -269,7 +337,7 @@ This guide describes migration from hub-based to 1DP projects. To create a 1DP p
     print(delete_status.deleted)
     ```
 
-    **1DP**
+    **Endpoint-based**
     ```python
     # Create file
     file = project_client.agents.files.upload_and_poll(file_path=asset_file_path, purpose=FilePurpose.AGENTS)
@@ -311,7 +379,7 @@ This guide describes migration from hub-based to 1DP projects. To create a 1DP p
     print(deletion_status.deleted)
     ```
 
-    **1DP**
+    **Endpoint-based**
     ```python
     # Create a vector store with no file and wait for it to be processed
     vector_store = project_client.agents.vector_stores.create_and_poll(file_ids=[file.id], name="my_vectorstore")
@@ -350,7 +418,7 @@ This guide describes migration from hub-based to 1DP projects. To create a 1DP p
     vector_store_file_batch = project_client.agents.cancel_vector_store_file_batch(vector_store.id, vector_store_file_batch.id)
     ```
 
-    **1DP**
+    **Endpoint-based**
     ```python
     # Batch upload files
     vector_store_file_batch = project_client.agents.vector_store_file_batches.create_and_poll(
