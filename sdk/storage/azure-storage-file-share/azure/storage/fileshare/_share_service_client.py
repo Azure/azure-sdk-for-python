@@ -127,6 +127,19 @@ class ShareServiceClient(StorageAccountHostsMixin):
                                         file_request_intent=self.file_request_intent)
         self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
 
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._client.__exit__(*args)
+
+    def close(self) -> None:
+        """This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+        """
+        self._client.close()
+
     def _format_url(self, hostname: str) -> str:
         """Format the endpoint URL according to the current location mode hostname.
 

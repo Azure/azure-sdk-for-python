@@ -138,6 +138,22 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
                                         file_request_intent=self.file_request_intent)
         self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
 
+    async def __aenter__(self):
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *args):
+        await self._client.__aexit__(*args)
+
+    async def close(self) -> None:
+        """This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+
+        :return: None
+        :rtype: None
+        """
+        await self._client.close()
+
     @classmethod
     def from_share_url(
         cls, share_url: str,
