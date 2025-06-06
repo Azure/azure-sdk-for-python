@@ -212,26 +212,28 @@ class IdentifierRawIdTest(unittest.TestCase):
             "28:gcch:45ab2481-1c1c-4005-be24-0ffb879b1130",
             MicrosoftTeamsAppIdentifier(app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="GCCH"),
         )
-        _assert_communication_identifier("4:+112345556789", PhoneNumberIdentifier(value="+112345556789"))
-        _assert_communication_identifier("4:112345556789", PhoneNumberIdentifier(value="112345556789"))
-        _assert_communication_identifier("4:otherFormat", PhoneNumberIdentifier(value="otherFormat"))
-        _assert_communication_identifier(
+        _assert_phonenumber_identifier("4:+112345556789", PhoneNumberIdentifier(value="+112345556789"), withadditionalprops=False)
+        _assert_phonenumber_identifier("4:112345556789", PhoneNumberIdentifier(value="112345556789"), withadditionalprops=False)
+        _assert_phonenumber_identifier("4:otherFormat", PhoneNumberIdentifier(value="otherFormat"), withadditionalprops=False)
+        _assert_phonenumber_identifier(
             "4:207ffef6-9444-41fb-92ab-20eacaae2768",
-            PhoneNumberIdentifier(value="207ffef6-9444-41fb-92ab-20eacaae2768"),
+            PhoneNumberIdentifier(value="207ffef6-9444-41fb-92ab-20eacaae2768"), withadditionalprops=False
         )
         # cspell:disable
-        _assert_communication_identifier(
+        _assert_phonenumber_identifier(
             "4:207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768",
             PhoneNumberIdentifier(value="207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768",
                                   raw_id="4:207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768"),
+            withadditionalprops=True
         )
-        _assert_communication_identifier(
+        _assert_phonenumber_identifier(
             "4:anonymous",
             PhoneNumberIdentifier(value="anonymous", raw_id="4:anonymous"),
+            withadditionalprops=True
         )
-        _assert_communication_identifier(
+        _assert_phonenumber_identifier(
             "4:+112345556789",
-            PhoneNumberIdentifier(value="+112345556789"),
+            PhoneNumberIdentifier(value="+112345556789"), withadditionalprops=False
         )
         _assert_communication_identifier(
             "8:acs:resource123_tenant123_45ab2481-1c1c-4005-be24-0ffb879b1130",
@@ -511,6 +513,23 @@ def _assert_communication_identifier(raw_id, want):
     for key in want.properties:
         assert key in got.properties
         assert got.properties[key] == want.properties[key]
+
+def _assert_phonenumber_identifier(raw_id, want, withadditionalprops=None):
+    # type: (str, PhoneNumberIdentifier, Optional[dict]) -> None
+    got = identifier_from_raw_id(raw_id)
+    assert got.raw_id == want.raw_id
+    assert got.kind == want.kind
+    for key in want.properties:
+        assert key in got.properties
+        assert got.properties[key] == want.properties[key]
+    if withadditionalprops:
+        # Check if both want and got have 'is_anonymous' and 'asserted_id'properties
+        assert "is_anonymous" in want.properties
+        assert "is_anonymous" in got.properties
+        assert got.properties["is_anonymous"] == want.properties["is_anonymous"]
+        assert "asserted_id" in want.properties
+        assert "asserted_id" in got.properties
+        assert got.properties["asserted_id"] == want.properties["asserted_id"]
 
 
 def _assert_roundtrip(raw_id):
