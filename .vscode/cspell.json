@@ -156,6 +156,8 @@
     "spinup",
     "cibuildwheel",
     "aoai",
+    "aiotest",
+    "aiotests",
     "pyprojects",
     "certifi",
     "cffi",
