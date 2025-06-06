@@ -132,11 +132,11 @@ class AzureJSONEncoder(JSONEncoder):
 
 
 def is_generated_model(obj: Any) -> bool:
-    """Check if the object is an SDK model.
+    """Check if the object is a generated SDK model.
 
     :param obj: The object to check.
     :type obj: any
-    :return: True if the object is an SDK model, False otherwise.
+    :return: True if the object is a generated SDK model, False otherwise.
     :rtype: bool
     """
     return bool(getattr(obj, "_is_model", False) or hasattr(obj, "_attribute_map"))
