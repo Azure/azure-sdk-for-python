@@ -862,7 +862,7 @@ class ConnectionTool(Tool[ToolDefinitionT]):
         :param connection_id: Connection ID used by tool. All connection tools allow only one connection.
         :raises ValueError: If the connection id is invalid.
         """
-        if not is_valid_connection_id(connection_id):
+        if not _is_valid_connection_id(connection_id):
             raise ValueError(
                 "Connection ID '"
                 + connection_id
@@ -906,7 +906,7 @@ class BingGroundingTool(Tool[BingGroundingToolDefinition]):
            `Bing Web Search API Query Parameters <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters>`_
         """
 
-        if not is_valid_connection_id(connection_id):
+        if not _is_valid_connection_id(connection_id):
             raise ValueError(
                 "Connection ID '"
                 + connection_id
@@ -1734,6 +1734,7 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
     def on_thread_message(
         self, message: "ThreadMessage"  # pylint: disable=unused-argument
     ) -> Optional[EventFunctionReturnT]:
+        message.status
         """Handle thread message events.
 
         :param ThreadMessage message: The thread message.
@@ -1755,6 +1756,7 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
         :param RunStep step: The run step.
         :rtype: Optional[EventFunctionReturnT]
         """
+        step.status
         return None
 
     def on_run_step_delta(
@@ -1842,7 +1844,7 @@ class AgentRunStream(Generic[BaseAgentEventHandlerT]):
             close_method()
 
 
-def is_valid_connection_id(connection_id: str) -> bool:
+def _is_valid_connection_id(connection_id: str) -> bool:
     """
     Validates if a string matches the Azure connection resource ID format.
 
