@@ -1,15 +1,21 @@
 # Release History
 
-## 4.11.0b2 (Unreleased)
+## 4.11.0 (2025-06-10)
 
 ### Features Added
 
-### Breaking Changes
+- Added support for service API version `7.6`
+- (From 4.11.0b1) `KeyClient` has a `get_key_attestation` method that can be used to retrieve a key along with its
+  attestation blob (stored in a new `KeyProperties.attestation` property) from a managed HSM
+  [#37507](https://github.com/Azure/azure-sdk-for-python/pull/37507)
 
 ### Bugs Fixed
 - Fixed a bug where `KeyVaultRSAPublicKey` and `KeyVaultRSAPrivateKey` were not correctly implementing the `cryptography` library's `RSAPublicKey` and `RSAPrivateKey` interfaces, causing instantiation errors. ([#41205](https://github.com/Azure/azure-sdk-for-python/pull/41205))
 
 ### Other Changes
+
+- Key Vault API version `7.6` is now the default
+- (From 4.11.0b1) Updated minimum `typing-extensions` version to 4.6.0
 
 ## 4.11.0b1 (2025-03-20)
 

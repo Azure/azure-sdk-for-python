@@ -1,14 +1,26 @@
-# cSpell:disable
-
 # Release History
 
-## 1.0.0b37 (Unreleased)
+## 1.0.0b38 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b37 (2025-05-29)
+
+### Features Added
+
+- Implement spec for k8s attribute logic.
+  ([#41130](https://github.com/Azure/azure-sdk-for-python/pull/41130))
+
+### Bugs Fixed
+
+- Do not count Functions as App Service
+  ([#41327](https://github.com/Azure/azure-sdk-for-python/pull/41327))
 
 ### Other Changes
 

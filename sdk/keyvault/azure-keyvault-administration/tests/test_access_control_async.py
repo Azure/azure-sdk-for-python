@@ -28,10 +28,10 @@ class TestAccessControl(KeyVaultTestCase):
     def get_service_principal_id(self):
         replay_value = "service-principal-id"
         if self.is_live:
-            value = os.environ["AZURE_CLIENT_ID"]
+            value = os.environ.get("MANAGED_IDENTITY_CLIENT_ID")
             return value
         return replay_value
-    
+
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version", all_api_versions)
     @KeyVaultAccessControlClientPreparer()
@@ -48,7 +48,7 @@ class TestAccessControl(KeyVaultTestCase):
         # create custom role definition
         role_name = self.get_resource_name("role-name")
         definition_name = self.get_replayable_uuid("definition-name")
-        add_general_regex_sanitizer(regex=definition_name, value = "definition-name")
+        add_general_regex_sanitizer(function_scoped=True, regex=definition_name, value="definition-name")
         permissions = [KeyVaultPermission(data_actions=[KeyVaultDataAction.READ_HSM_KEY])]
         created_definition = await client.set_role_definition(
             scope=scope,
@@ -69,10 +69,11 @@ class TestAccessControl(KeyVaultTestCase):
         permissions = [
             KeyVaultPermission(data_actions=[], not_data_actions=[KeyVaultDataAction.READ_HSM_KEY])
         ]
+        role_name2 = self.get_resource_name("role-name2")
         updated_definition = await client.set_role_definition(
-            scope=scope, name=definition_name, permissions=permissions
+            scope=scope, name=definition_name, role_name=role_name2, permissions=permissions
         )
-        assert updated_definition.role_name == ""
+        assert updated_definition.role_name == role_name2
         assert updated_definition.description == ""
         assert len(updated_definition.permissions) == 1
         assert len(updated_definition.permissions[0].data_actions) == 0
@@ -114,9 +115,7 @@ class TestAccessControl(KeyVaultTestCase):
         definition = definitions[0]
         principal_id = self.get_service_principal_id()
         name = self.get_replayable_uuid("some-uuid")
-        add_general_regex_sanitizer(regex=name, value = "some-uuid")
-        
-        
+        add_general_regex_sanitizer(function_scoped=True, regex=name, value="some-uuid")
 
         created = await client.create_role_assignment(scope, definition.id, principal_id, name=name)
         assert created.name == name

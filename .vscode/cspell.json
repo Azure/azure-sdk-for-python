@@ -253,6 +253,7 @@
     "entra",
     "envname",
     "evals",
+    "fastmcp",
     "fileno",
     "fqdns",
     "fstat",
@@ -1086,6 +1087,7 @@
         "otlp",
         "speced",
         "pkgutils",
+        "psutil",
         "psycopg",
         "uninstrument",
         "uninstrumented"

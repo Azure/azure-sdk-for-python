@@ -32,6 +32,18 @@ class PhoneNumberAssignmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     APPLICATION = "application"
 
 
+class PhoneNumberAvailabilityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represents the status of the phone number. Possible values include: 'available', 'reserved',
+    'expired', 'error', 'purchased'.
+    """
+
+    AVAILABLE = "available"
+    RESERVED = "reserved"
+    EXPIRED = "expired"
+    ERROR = "error"
+    PURCHASED = "purchased"
+
+
 class PhoneNumberCapabilityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Capability value for calling."""
 
@@ -57,6 +69,7 @@ class PhoneNumberOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RELEASE_PHONE_NUMBER = "releasePhoneNumber"
     SEARCH = "search"
     UPDATE_PHONE_NUMBER_CAPABILITIES = "updatePhoneNumberCapabilities"
+    RESERVATION_PURCHASE = "reservationPurchase"
 
 
 class PhoneNumberSearchResultError(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -86,3 +99,14 @@ class PhoneNumberType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     GEOGRAPHIC = "geographic"
     TOLL_FREE = "tollFree"
+
+
+class ReservationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represents the status of the reservation. Possible values include: 'active', 'submitted',
+    'completed', 'expired'.
+    """
+
+    ACTIVE = "active"
+    SUBMITTED = "submitted"
+    COMPLETED = "completed"
+    EXPIRED = "expired"

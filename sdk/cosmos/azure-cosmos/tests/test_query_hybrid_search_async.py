@@ -295,7 +295,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         query = "SELECT c.index, c.title FROM c " \
                 "ORDER BY RANK RRF(FullTextScore(c.text, 'United States'), VectorDistance(c.vector, {}), [1,1]) " \
                 "OFFSET 0 LIMIT 10".format(item_vector)
-        results = self.test_container.query_items(query, enable_cross_partition_query=True)
+        results = self.test_container.query_items(query)
         result_list = [res async for res in results]
         assert len(result_list) == 10
         result_list = [res['index'] for res in result_list]

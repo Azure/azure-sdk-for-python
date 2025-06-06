@@ -13,6 +13,8 @@ import base64
 import math
 
 import pandas as pd
+from tqdm import tqdm
+
 from azure.ai.evaluation._legacy._adapters.entities import Run
 
 from azure.ai.evaluation._constants import (
@@ -321,7 +323,8 @@ def _write_output(path: Union[str, os.PathLike], data_dict: Any) -> None:
     with open(p, "w", encoding=DefaultOpenEncoding.WRITE) as f:
         json.dump(data_dict, f, ensure_ascii=False)
 
-    print(f'Evaluation results saved to "{p.resolve()}".\n')
+    # Use tqdm.write to print message without interfering with any current progress bar
+    tqdm.write(f'Evaluation results saved to "{p.resolve()}".\n')
 
 
 def _apply_column_mapping(
