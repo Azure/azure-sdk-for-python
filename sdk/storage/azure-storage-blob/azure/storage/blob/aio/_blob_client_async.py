@@ -196,12 +196,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
         self._configure_encryption(kwargs)
 
-    def __enter__(self):
-        raise TypeError("Async client only supports 'async with'.")
-
-    def __exit__(self, *args):
-        pass
-
     async def __aenter__(self):
         await self._client.__aenter__()
         return self

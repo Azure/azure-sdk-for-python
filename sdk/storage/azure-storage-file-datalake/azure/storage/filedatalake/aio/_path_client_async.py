@@ -139,23 +139,6 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         self._datalake_client_for_blob_operation = self._build_generated_client(self._blob_client.url)
         self._loop = kwargs.get('loop', None)
 
-    def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
-        client = AzureDataLakeStorageRESTAPI(
-            url,
-            base_url=url,
-            file_system=self.file_system_name,
-            path=self.path_name,
-            pipeline=self._pipeline
-        )
-        client._config.version = self._api_version  # type: ignore [assignment] # pylint: disable=protected-access
-        return client
-
-    def __enter__(self):
-        raise TypeError("Async client only supports 'async with'.")
-
-    def __exit__(self, *args):
-        pass
-
     async def __aenter__(self):
         await self._client.__aenter__()
         return self
@@ -174,6 +157,17 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         :rtype: None
         """
         await self.__aexit__()
+
+    def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
+        client = AzureDataLakeStorageRESTAPI(
+            url,
+            base_url=url,
+            file_system=self.file_system_name,
+            path=self.path_name,
+            pipeline=self._pipeline
+        )
+        client._config.version = self._api_version  # type: ignore [assignment] # pylint: disable=protected-access
+        return client
 
     def _format_url(self, hostname: str) -> str:
         return _format_url(self.scheme, hostname, self.file_system_name, self.path_name, self._query_str)

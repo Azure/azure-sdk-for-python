@@ -132,19 +132,6 @@ class FileSystemClient(StorageAccountHostsMixin):
         self._client = self._build_generated_client(self.url)
         self._datalake_client_for_blob_operation = self._build_generated_client(self._container_client.url)
 
-    def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
-        client = AzureDataLakeStorageRESTAPI(
-            url,
-            base_url=url,
-            file_system=self.file_system_name,
-            pipeline=self._pipeline
-        )
-        client._config.version = self._api_version  # type: ignore [assignment] # pylint: disable=protected-access
-        return client
-
-    def _format_url(self, hostname: str) -> str:
-        return _format_url(self.scheme, hostname, self.file_system_name, self._query_str)
-
     def __enter__(self):
         self._client.__enter__()
         return self
@@ -159,6 +146,19 @@ class FileSystemClient(StorageAccountHostsMixin):
         It need not be used when using with a context manager.
         """
         self.__exit__()
+
+    def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
+        client = AzureDataLakeStorageRESTAPI(
+            url,
+            base_url=url,
+            file_system=self.file_system_name,
+            pipeline=self._pipeline
+        )
+        client._config.version = self._api_version  # type: ignore [assignment] # pylint: disable=protected-access
+        return client
+
+    def _format_url(self, hostname: str) -> str:
+        return _format_url(self.scheme, hostname, self.file_system_name, self._query_str)
 
     @classmethod
     def from_connection_string(

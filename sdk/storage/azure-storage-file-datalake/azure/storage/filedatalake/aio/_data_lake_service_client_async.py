@@ -125,12 +125,6 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
         self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
         self._loop = kwargs.get('loop', None)
 
-    def __enter__(self):
-        raise TypeError("Async client only supports 'async with'.")
-
-    def __exit__(self, *args):
-        pass
-
     async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         await self._blob_service_client.__aenter__()
