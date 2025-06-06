@@ -29,14 +29,17 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
     master_key = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
-    TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
+    TEST_CONTAINER_MULTI_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
     async def setup_method_with_custom_transport(self, custom_transport: AioHttpTransport, default_endpoint=host, **kwargs):
+        container_id = kwargs.pop("container_id", None)
+        if not container_id:
+            container_id = self.TEST_CONTAINER_MULTI_PARTITION_ID
         client = CosmosClient(default_endpoint, self.master_key, consistency_level="Session",
                               preferred_locations=[REGION_1, REGION_2],
                               transport=custom_transport, **kwargs)
         db = client.get_database_client(self.TEST_DATABASE_ID)
-        container = db.get_container_client(self.TEST_CONTAINER_SINGLE_PARTITION_ID)
+        container = db.get_container_client(container_id)
         return {"client": client, "db": db, "col": container}
 
     @staticmethod
@@ -44,7 +47,7 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
         method_client: CosmosClient = initialized_objects["client"]
         await method_client.close()
 
-    async def setup_info(self, error):
+    async def setup_info(self, error, **kwargs):
         expected_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
         custom_transport = FaultInjectionTransportAsync()
@@ -54,8 +57,8 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
                                FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
         custom_transport.add_fault(predicate,
                                    error)
-        custom_setup = await self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host)
-        setup = await self.setup_method_with_custom_transport(None, default_endpoint=self.host)
+        custom_setup = await self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host, **kwargs)
+        setup = await self.setup_method_with_custom_transport(None, default_endpoint=self.host, **kwargs)
         return setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate
 
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors())
@@ -131,6 +134,54 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
             _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
         await cleanup_method([custom_setup, setup])
 
+    async def test_stat_reset_async(self):
+        error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
+            0,
+            CosmosHttpResponseError(
+                status_code=503,
+                message="Some injected error.")
+        ))
+        setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = \
+            await self.setup_info(error_lambda, container_id=test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
+        container = setup['col']
+        fault_injection_container = custom_setup['col']
+        await container.upsert_item(body=doc)
+        await asyncio.sleep(1)
+        global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
+        # lower refresh interval for testing
+        _partition_health_tracker.REFRESH_INTERVAL_MS = 10 * 1000
+        try:
+            for i in range(2):
+                validate_unhealthy_partitions(global_endpoint_manager, 0)
+                # read will fail and retry in other region
+                await perform_read_operation(READ,
+                                             fault_injection_container,
+                                             doc['id'],
+                                             PK_VALUE,
+                                             expected_uri)
+                try:
+                    await perform_write_operation(CREATE,
+                                                  container,
+                                                  fault_injection_container,
+                                                  str(uuid.uuid4()),
+                                                  PK_VALUE,
+                                                  expected_uri)
+                except CosmosHttpResponseError as e:
+                    assert e.status_code == 503
+            validate_unhealthy_partitions(global_endpoint_manager, 0)
+            validate_stats(global_endpoint_manager, 0,  2, 2, 0, 0, 0)
+            await asyncio.sleep(25)
+            await perform_read_operation(READ,
+                                         fault_injection_container,
+                                         doc['id'],
+                                         PK_VALUE,
+                                         expected_uri)
+
+            validate_stats(global_endpoint_manager, 0, 3, 1, 0, 0, 0)
+        finally:
+            _partition_health_tracker.REFRESH_INTERVAL_MS = 60 * 1000
+            await cleanup_method([custom_setup, setup])
+
     @pytest.mark.parametrize("read_operation, write_operation", operations())
     async def test_service_request_error_async(self, read_operation, write_operation):
         # the region should be tried 4 times before failing over and mark the partition as unavailable
@@ -153,8 +204,8 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
 
         # recover partition
         # remove faults and reduce initial recover time and perform a write
-        original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME
-        _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = 1
+        original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS
+        _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS = 1
         custom_transport.faults = []
         try:
             await perform_read_operation(read_operation,
@@ -163,7 +214,7 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
                                          PK_VALUE,
                                          expected_uri)
         finally:
-            _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
+            _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS = original_unavailable_time
         validate_unhealthy_partitions(global_endpoint_manager, 0)
 
         custom_transport.add_fault(predicate,

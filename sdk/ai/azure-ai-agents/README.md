@@ -483,30 +483,35 @@ import json
 
 app = func.FunctionApp()
 
-@app.function_name(name="GetWeather")
-@app.queue_trigger(arg_name="inputQueue",
-                   queue_name="input",
-                   connection="DEPLOYMENT_STORAGE_CONNECTION_STRING")
-@app.queue_output(arg_name="outputQueue",
-                  queue_name="output",
-                  connection="DEPLOYMENT_STORAGE_CONNECTION_STRING")
-def queue_trigger(inputQueue: func.QueueMessage, outputQueue: func.Out[str]):
+
+@app.function_name(name="Foo")
+@app.queue_trigger(
+    arg_name="arguments",
+    queue_name="azure-function-foo-input",
+    connection="AzureWebJobsStorage")
+@app.queue_output(
+    arg_name="outputQueue",
+    queue_name="azure-function-tool-output",
+    connection="AzureWebJobsStorage")
+def foo(arguments: func.QueueMessage, outputQueue: func.Out[str]) -> None:
+    """
+    The function, answering question.
+
+    :param arguments: The arguments, containing json serialized request.
+    :param outputQueue: The output queue to write messages to.
+    """
+    
+    parsed_args = json.loads(arguments.get_body().decode('utf-8'))
     try:
-        messagepayload = json.loads(inputQueue.get_body().decode("utf-8"))
-        location = messagepayload["location"]
-        weather_result = f"Weather is 82 degrees and sunny in {location}."
-
-        response_message = {
-            "Value": weather_result,
-            "CorrelationId": messagepayload["CorrelationId"]
+        response = {
+            "Value": "Bar",
+            "CorrelationId": parsed_args['CorrelationId']
         }
-
-        outputQueue.set(json.dumps(response_message))
-
-        logger.info(f"Sent message to output queue with message {response_message}")
+        outputQueue.set(json.dumps(response))
+        logging.info(f'The function returns the following message: {json.dumps(response)}')
     except Exception as e:
         logging.error(f"Error processing message: {e}")
-        return
+        raise
 ```
 
 > **Important:** Both input and output payloads must contain the `CorrelationId`, which must match in request and response.
@@ -522,8 +527,6 @@ To deploy your function to Azure properly, follow Microsoft's official documenta
 **Summary of required steps:**
 
 - Use the Azure CLI or Azure Portal to create an Azure Function App.
-- Enable System Managed Identity for your Azure Function App.
-- Assign appropriate permissions to your Azure Function App identity as outlined in the Role Assignments section below
 - Create input and output queues in Azure Storage.
 - Deploy your Function code.
 
@@ -536,30 +539,19 @@ To ensure that your Azure Function deployment functions correctly:
 1. Place the following style message manually into the input queue (`input`):
 
 {
-  "location": "Seattle",
   "CorrelationId": "42"
 }
 
 Check the output queue (`output`) and validate the structured message response:
 
 {
-  "Value": "The weather in Seattle is sunny and warm.",
+  "Value": "Bar",
   "CorrelationId": "42"
 }
 
 ---
 
 **Required Role Assignments (IAM Configuration)**
-
-Clearly assign the following Azure IAM roles to ensure correct permissions:
-
-1. **Azure Function App's identity:**
-   - Enable system managed identity through Azure Function App > Settings > Identity.
-   - Add permission to storage account:
-     - Go to **Storage Account > Access control (IAM)** and add role assignment:
-       - `Storage Queue Data Contributor` assigned to Azure Function managed identity
-
-2. **Azure AI Project Identity:**
 
 Ensure your Azure AI Project identity has the following storage account permissions:
 - `Storage Account Contributor`
