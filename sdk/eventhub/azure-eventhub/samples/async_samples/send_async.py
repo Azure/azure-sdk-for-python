@@ -7,6 +7,11 @@
 
 """
 Examples to show sending events with different options to an Event Hub asynchronously.
+
+WARNING: EventHubProducerClient and EventDataBatch are NOT coroutine-safe!
+- Do NOT share EventHubProducerClient instances between coroutines
+- Do NOT share EventDataBatch instances between coroutines
+- Use proper async locking mechanisms when accessing clients from multiple coroutines
 """
 
 import time
@@ -88,6 +93,56 @@ async def send_event_data_list(producer):
         print("Sending error: ", eh_err)
 
 
+# [START concurrent_sending_with_asyncio]
+async def send_events_concurrently_with_gather():
+    """
+    Example of concurrent sending using asyncio.gather with separate producers.
+    RECOMMENDED: Use separate EventHubProducerClient instances for each coroutine.
+    """
+    async def send_events_from_coroutine(coroutine_id):
+        # Create a separate producer for each coroutine (recommended approach)
+        coroutine_producer = EventHubProducerClient(
+            fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
+            eventhub_name=EVENTHUB_NAME,
+            credential=DefaultAzureCredential(),
+        )
+        async with coroutine_producer:
+            for i in range(5):
+                batch = await coroutine_producer.create_batch()
+                batch.add(EventData(f"Message {i} from coroutine {coroutine_id}"))
+                await coroutine_producer.send_batch(batch)
+        print(f"Coroutine {coroutine_id} completed sending")
+
+    # Launch multiple coroutines concurrently
+    await asyncio.gather(*[send_events_from_coroutine(i) for i in range(3)])
+
+
+async def send_events_with_shared_producer_and_lock():
+    """
+    Example of using a shared producer with proper async locking.
+    NOT RECOMMENDED: Better to use separate producers per coroutine.
+    """
+    lock = asyncio.Lock()
+    shared_producer = EventHubProducerClient(
+        fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
+        eventhub_name=EVENTHUB_NAME,
+        credential=DefaultAzureCredential(),
+    )
+
+    async def send_with_lock(coroutine_id):
+        async with lock:
+            # Only one coroutine can use the producer at a time
+            batch = await shared_producer.create_batch()
+            batch.add(EventData(f"Locked message from coroutine {coroutine_id}"))
+            await shared_producer.send_batch(batch)
+        print(f"Coroutine {coroutine_id} sent message with lock")
+
+    async with shared_producer:
+        await asyncio.gather(*[send_with_lock(i) for i in range(3)])
+
+# [END concurrent_sending_with_asyncio]
+
+
 async def run():
 
     producer = EventHubProducerClient(
@@ -104,6 +159,16 @@ async def run():
         await send_event_data_list(producer)
 
 
+async def run_concurrent_examples():
+    """Run concurrent sending examples (uncomment calls in main to run)"""
+    print("Running concurrent sending examples...")
+    await send_events_concurrently_with_gather()
+    await send_events_with_shared_producer_and_lock()
+
+
 start_time = time.time()
 asyncio.run(run())
 print("Send messages in {} seconds.".format(time.time() - start_time))
+
+# Example of concurrent sending (uncomment to run)
+# asyncio.run(run_concurrent_examples())
