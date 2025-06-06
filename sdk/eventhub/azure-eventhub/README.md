@@ -96,9 +96,43 @@ Also, the concepts for AMQP are well documented in [OASIS Advanced Messaging Que
 
 ### Thread safety
 
-We do not guarantee that the EventHubProducerClient or EventHubConsumerClient are thread-safe. We do not recommend reusing these instances across threads. It is up to the running application to use these classes in a thread-safe manner.
+We do not guarantee that the EventHubProducerClient or EventHubConsumerClient are thread-safe or coroutine-safe. We do not recommend reusing these instances across threads or sharing them between coroutines. It is up to the running application to use these classes in a thread-safe or coroutine-safe manner.
 
-The data model type, `EventDataBatch` is not thread-safe. It should not be shared across threads nor used concurrently with client methods.
+The data model type, `EventDataBatch` is not thread-safe or coroutine-safe. It should not be shared across threads or between coroutines nor used concurrently with client methods.
+
+**For thread safety, use locks:**
+
+```python
+import threading
+from azure.eventhub import EventHubProducerClient
+
+lock = threading.Lock()
+producer = EventHubProducerClient(...)
+
+def send_events_safely():
+    with lock:
+        # Use producer safely within the lock
+        batch = producer.create_batch()
+        # ... add events to batch
+        producer.send_batch(batch)
+```
+
+**For coroutine safety with asyncio, use locks:**
+
+```python
+import asyncio
+from azure.eventhub.aio import EventHubProducerClient
+
+lock = asyncio.Lock()
+producer = EventHubProducerClient(...)
+
+async def send_events_safely():
+    async with lock:
+        # Use producer safely within the async lock
+        batch = await producer.create_batch()
+        # ... add events to batch
+        await producer.send_batch(batch)
+```
 
 ## Examples
 

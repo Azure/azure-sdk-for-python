@@ -95,7 +95,45 @@ To interact with these resources, one should be familiar with the following SDK 
 
 ### Thread safety
 
-We do not guarantee that the ServiceBusClient, ServiceBusSender, and ServiceBusReceiver are thread-safe. We do not recommend reusing these instances across threads. It is up to the running application to use these classes in a thread-safe manner.
+We do not guarantee that the ServiceBusClient, ServiceBusSender, and ServiceBusReceiver are thread-safe or coroutine-safe. We do not recommend reusing these instances across threads or sharing them between coroutines. It is up to the running application to use these classes in a thread-safe or coroutine-safe manner.
+
+The data model type, `ServiceBusMessageBatch` is not thread-safe or coroutine-safe. It should not be shared across threads or between coroutines nor used concurrently with client methods.
+
+**For thread safety, use locks:**
+
+```python
+import threading
+from azure.servicebus import ServiceBusClient
+
+lock = threading.Lock()
+servicebus_client = ServiceBusClient(...)
+
+def send_messages_safely():
+    with lock:
+        with servicebus_client.get_queue_sender("myqueue") as sender:
+            # Use sender safely within the lock
+            batch = sender.create_message_batch()
+            # ... add messages to batch
+            sender.send_messages(batch)
+```
+
+**For coroutine safety with asyncio, use locks:**
+
+```python
+import asyncio
+from azure.servicebus.aio import ServiceBusClient
+
+lock = asyncio.Lock()
+servicebus_client = ServiceBusClient(...)
+
+async def send_messages_safely():
+    async with lock:
+        async with servicebus_client.get_queue_sender("myqueue") as sender:
+            # Use sender safely within the async lock
+            batch = sender.create_message_batch()
+            # ... add messages to batch
+            await sender.send_messages(batch)
+```
 
 ## Examples
 

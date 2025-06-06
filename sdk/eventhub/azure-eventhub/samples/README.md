@@ -24,6 +24,7 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
     - Send event data batch to a specific partition determined by partition key
     - Send event data batch to a specific partition by partition id
     - Send event data batch with customized properties
+    - **Concurrent sending examples with proper thread/coroutine safety**
 
 - [send_stream.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/sync_samples/send_stream.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/async_samples/send_stream_async.py)) - Examples to do streaming sending:
     - Send in a stream
@@ -96,6 +97,10 @@ for [creating an Event Hub using the Azure portal](https://learn.microsoft.com/a
 There, you can also find detailed instructions for using the Azure CLI, Azure PowerShell, or Azure Resource Manager (ARM) templates to create an Event Hub.
 
 - **Azure Storage Account (Optional)**: To run receiving samples with blob checkpoint store for persist checkpoint, you need to [create an Azure Storage account](https://learn.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal) and a [Blob Container](https://learn.microsoft.com/azure/storage/blobs/storage-quickstart-blobs-portal#create-a-container).
+
+## Thread and Coroutine Safety
+
+⚠️ **Important**: EventHub clients (`EventHubProducerClient`, `EventHubConsumerClient`) and `EventDataBatch` objects are **NOT thread-safe or coroutine-safe**. Do not share these instances between threads or coroutines without proper synchronization mechanisms (locks). See the send samples for examples of safe concurrent usage patterns.
 
 ## Setup
 

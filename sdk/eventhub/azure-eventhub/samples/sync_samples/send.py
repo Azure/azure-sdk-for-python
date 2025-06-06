@@ -7,10 +7,17 @@
 
 """
 Examples to show sending events with different options to an Event Hub partition.
+
+WARNING: EventHubProducerClient and EventDataBatch are NOT thread-safe!
+- Do NOT share EventHubProducerClient instances between threads
+- Do NOT share EventDataBatch instances between threads  
+- Use proper locking mechanisms when accessing clients from multiple threads
 """
 
 import time
 import os
+import threading
+from concurrent.futures import ThreadPoolExecutor
 from azure.eventhub import EventHubProducerClient, EventData
 from azure.eventhub.exceptions import EventHubError
 from azure.identity import DefaultAzureCredential
@@ -89,6 +96,63 @@ def send_event_data_list(producer):
         print("Sending error: ", eh_err)
 
 
+# [START concurrent_sending_with_threading]
+def send_events_concurrently_with_threads():
+    """
+    Example of concurrent sending using multiple threads with proper locking.
+    WARNING: This requires separate EventHubProducerClient instances per thread
+    or proper synchronization with locks.
+    """
+    def send_events_from_thread(thread_id):
+        # Create a separate producer for each thread (recommended approach)
+        thread_producer = EventHubProducerClient(
+            fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
+            eventhub_name=EVENTHUB_NAME,
+            credential=DefaultAzureCredential(),
+        )
+        with thread_producer:
+            for i in range(5):
+                batch = thread_producer.create_batch()
+                batch.add(EventData(f"Message {i} from thread {thread_id}"))
+                thread_producer.send_batch(batch)
+        print(f"Thread {thread_id} completed sending")
+
+    # Launch multiple threads
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        futures = [executor.submit(send_events_from_thread, i) for i in range(3)]
+        for future in futures:
+            future.result()
+
+
+def send_events_with_shared_producer_and_lock():
+    """
+    Example of using a shared producer with proper locking.
+    NOT RECOMMENDED: Better to use separate producers per thread.
+    """
+    lock = threading.Lock()
+    shared_producer = EventHubProducerClient(
+        fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
+        eventhub_name=EVENTHUB_NAME,
+        credential=DefaultAzureCredential(),
+    )
+
+    def send_with_lock(thread_id):
+        with lock:
+            # Only one thread can use the producer at a time
+            batch = shared_producer.create_batch()
+            batch.add(EventData(f"Locked message from thread {thread_id}"))
+            shared_producer.send_batch(batch)
+        print(f"Thread {thread_id} sent message with lock")
+
+    with shared_producer:
+        with ThreadPoolExecutor(max_workers=3) as executor:
+            futures = [executor.submit(send_with_lock, i) for i in range(3)]
+            for future in futures:
+                future.result()
+
+# [END concurrent_sending_with_threading]
+
+
 producer = EventHubProducerClient(
     fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
     eventhub_name=EVENTHUB_NAME,
@@ -105,3 +169,8 @@ with producer:
     send_event_data_list(producer)
 
 print("Send messages in {} seconds.".format(time.time() - start_time))
+
+# Example of concurrent sending (uncomment to run)
+# print("Running concurrent sending examples...")
+# send_events_concurrently_with_threads()
+# send_events_with_shared_producer_and_lock()

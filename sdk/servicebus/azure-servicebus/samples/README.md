@@ -19,9 +19,11 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
 - [send_queue.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/sync_samples/send_queue.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/async_samples/send_queue_async.py)) - Examples to send messages to a service bus queue:
     - From a connection string
     - Enabling Logging
+    - **Concurrent sending examples with proper thread/coroutine safety**
 - [send_topic.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/sync_samples/send_topic.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/async_samples/send_topic_async.py)) - Examples to send messages to a service bus topic:
     - From a connection string
     - Enabling Logging
+    - **Concurrent sending examples with proper thread/coroutine safety**
 - [receive_queue.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_queue.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/async_samples/receive_queue_async.py)) - Examples to receive messages from a service bus queue:
     - Receive messages
 - [receive_subscription.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_subscription.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/async_samples/receive_subscription_async.py)) - Examples to receive messages from a service bus subscription:
@@ -101,6 +103,10 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
 - Python 3.8 or later.
 - **Microsoft Azure Subscription:**  To use Azure services, including Azure Service Bus, you'll need a subscription.
 If you do not have an existing Azure account, you may sign up for a free trial or use your MSDN subscriber benefits when you [create an account](https://account.windowsazure.com/Home/Index).
+
+## Thread and Coroutine Safety
+
+⚠️ **Important**: Service Bus clients (`ServiceBusClient`, `ServiceBusSender`, `ServiceBusReceiver`) and `ServiceBusMessageBatch` objects are **NOT thread-safe or coroutine-safe**. Do not share these instances between threads or coroutines without proper synchronization mechanisms (locks). See the send samples for examples of safe concurrent usage patterns.
 
 ## Setup
 
