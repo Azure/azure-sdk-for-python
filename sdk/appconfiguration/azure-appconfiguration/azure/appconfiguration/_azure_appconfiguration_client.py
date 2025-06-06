@@ -24,6 +24,8 @@ from ._generated.models import (
     LabelFields,
     ConfigurationSettingFields,
     SnapshotUpdateParameters,
+    FeatureFlag,
+    FeatureFlagFields
 )
 from ._models import (
     ConfigurationSetting,
@@ -34,6 +36,7 @@ from ._models import (
 )
 from ._utils import (
     get_key_filter,
+    get_name_filter,
     get_label_filter,
     parse_connection_string,
 )
@@ -772,3 +775,287 @@ class AzureAppConfigurationClient:
 
     def __exit__(self, *args: Any) -> None:
         self._impl.__exit__(*args)
+
+    @overload
+    def list_feature_flags(
+        self,
+        *,
+        name_filter: Optional[str] = None,
+        label_filter: Optional[str] = None,
+        tags_filter: Optional[List[str]] = None,
+        accept_datetime: Optional[Union[datetime, str]] = None,
+        fields: Optional[List[Union[str, FeatureFlagFields]]] = None,
+        **kwargs: Any,
+    ) -> ItemPaged[FeatureFlagFields]:
+        """List the feature flags stored in the configuration service, optionally filtered by
+        key, label, tags and accept_datetime. For more information about supported filters, see
+        https://learn.microsoft.com/azure/azure-app-configuration/rest-api-key-value?pivots=v23-11#supported-filters.
+
+        :keyword name_filter: Filter results based on their names. '*' can be used as wildcard in the beginning or end
+            of the filter.
+        :paramtype name_filter: str or None
+        :keyword label_filter: Filter results based on their labels. '*' can be used as wildcard in the beginning or end
+            of the filter.
+        :paramtype label_filter: str or None
+        :keyword tags_filter: Filter results based on their tags.
+        :paramtype tags_filter: list[str] or None
+        :keyword accept_datetime: Retrieve FeatureFlag that existed at this datetime
+        :paramtype accept_datetime: ~datetime.datetime or str or None
+        :keyword fields: Specify which fields to include in the results. If not specified, will include all fields.
+            Available fields see :class:`~azure.appconfiguration.FeatureFlagFields`.
+        :paramtype fields: list[str] or list[~azure.appconfiguration.FeatureFlagFields] or None
+        :return: An iterator of :class:`~azure.appconfiguration.FeatureFlag`
+        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.FeatureFlag]
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
+            :class:`~azure.core.exceptions.ClientAuthenticationError`
+
+        Example
+
+        .. code-block:: python
+
+            from datetime import datetime, timedelta
+
+            accept_datetime = datetime.utcnow() + timedelta(days=-1)
+
+            all_listed = client.list_feature_flags()
+            for item in all_listed:
+                pass  # do something
+
+            filtered_listed = client.list_feature_flags(
+                label_filter="Labe*", name_filter="Na*", accept_datetime=str(accept_datetime)
+            )
+            for item in filtered_listed:
+                pass  # do something
+        """
+
+    @overload
+    def list_feature_flags(
+        self,
+        *,
+        label: Optional[str] = None,
+        tags: Optional[List[str]] = None,
+        select: Optional[List[Union[str, FeatureFlagFields]]] = None,
+        name: Optional[str] = None,
+        after: Optional[str] = None,
+        sync_token: Optional[str] = None,
+        accept_datetime: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> ItemPaged[FeatureFlag]:
+        """List feature flags.
+
+        :param label: Filter results based on their label.
+        :type label: Optional[str] 
+        :param tags: Filter results based on their tags.
+        :type tags: Optional[List[str]]
+        :param select: Fields to include in the results.
+        :type select: Optional[List[Union[str, ~azure.appconfiguration.models.FeatureFlagFields]]]
+        :param name: Filter results based on their name.
+        :type name: Optional[str]
+        :param after: Identifier of the last item in previous results.
+        :type after: Optional[str]
+        :param sync_token: Used to guarantee real-time consistency between requests.
+        :type sync_token: Optional[str]
+        :param accept_datetime: Get values as they existed at specified time.
+        :type accept_datetime: Optional[str]
+        :param etag: For optimistic concurrency control.
+        :type etag: Optional[str]
+        :param match_condition: Match condition for etag.
+        :type match_condition: Optional[~azure.core.MatchConditions]
+        :return: An iterator of FeatureFlag objects.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.models.FeatureFlag]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+    
+    @distributed_trace
+    def list_feature_flags(self, *args: Optional[str], **kwargs: Any) -> ItemPaged[FeatureFlag]:
+        accept_datetime = kwargs.pop("accept_datetime", None)
+        if isinstance(accept_datetime, datetime):
+            accept_datetime = str(accept_datetime)
+        select = kwargs.pop("fields", None)
+        if select:
+            select = ["locked" if x == "read_only" else x for x in select]
+
+        tags = kwargs.pop("tags_filter", None)
+        name_filter, kwargs = get_name_filter(*args, **kwargs)
+        label_filter, kwargs = get_label_filter(*args, **kwargs)
+
+        return self._impl.get_feature_flags(  # type: ignore[return-value]
+                name=name_filter,
+                label=label_filter,
+                tags=tags,
+                accept_datetime=accept_datetime,
+                select=select,
+                **kwargs)
+
+    @distributed_trace
+    def get_feature_flag(
+        self,
+        name: str,
+        *,
+        label: Optional[str] = None,
+        accept_datetime: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> Union[None, FeatureFlag]:
+        """Get a feature flag.
+
+        :param name: Name of the feature flag.
+        :type name: str
+        :param label: Feature flag's label.
+        :type label: Optional[str]
+        :param tags: Filter by tags.
+        :type tags: Optional[List[str]]
+        :param select: Fields to include in results.
+        :type select: Optional[List[Union[str, ~azure.appconfiguration.models.FeatureFlagFields]]]
+        :param sync_token: For consistency between requests.
+        :type sync_token: Optional[str]
+        :param accept_datetime: Get value as it existed at specified time.
+        :type accept_datetime: Optional[str]
+        :param etag: For optimistic concurrency control.
+        :type etag: Optional[str]
+        :param match_condition: Match condition for etag.
+        :type match_condition: Optional[~azure.core.MatchConditions]
+        :return: The requested feature flag.
+        :rtype: ~azure.appconfiguration.models.FeatureFlag
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        if isinstance(accept_datetime, datetime):
+            accept_datetime = str(accept_datetime)
+        try:
+            return self._impl.get_feature_flag(
+                name=name,
+                label=label,
+                accept_datetime=accept_datetime,
+                etag=etag,
+                match_condition=match_condition,
+                **kwargs,
+            )
+        except ResourceNotModifiedError:
+            return None
+
+    @distributed_trace
+    def add_feature_flag(
+        self,
+        feature_flag: FeatureFlag,
+        **kwargs: Any
+    ) -> FeatureFlag:
+        """Create or update a feature flag.
+
+        :param name: Name of the feature flag.
+        :type name: str
+        :param resource: The feature flag to create or update.
+        :type resource: Union[~azure.appconfiguration.models.FeatureFlag, dict, IO[bytes]]
+        :param label: Feature flag's label.
+        :type label: Optional[str]
+        :param sync_token: For consistency between requests.
+        :type sync_token: Optional[str]
+        :param etag: For optimistic concurrency control.
+        :type etag: Optional[str]
+        :param match_condition: Match condition for etag.
+        :type match_condition: Optional[~azure.core.MatchConditions]
+        :return: The created or updated feature flag.
+        :rtype: ~azure.appconfiguration.models.FeatureFlag
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        return self._impl.put_feature_flag(
+            name=feature_flag.name,
+            resource=feature_flag,
+            label=feature_flag.label,
+            match_condition=MatchConditions.IfMissing,
+            **kwargs,
+        )
+    
+    @distributed_trace
+    def set_feature_flag(
+        self,
+        feature_flag: FeatureFlag,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        *,
+        etag: Optional[str] = None,
+        **kwargs: Any,
+    ) -> FeatureFlag:
+        """Add or update a FeatureFlag.
+        If the feature flag identified by name and label does not exist, this is a create.
+        Otherwise this is an update.
+
+        :param feature_flag: The FeatureFlag to be added (if not exists) \
+            or updated (if exists) to the service
+        :type feature_flag: ~azure.appconfiguration.FeatureFlag
+        :param match_condition: The match condition to use upon the etag
+        :type match_condition: ~azure.core.MatchConditions
+        :keyword etag: Check if the FeatureFlag is changed. \
+            Will use the value from param feature_flag if not set.
+        :paramtype etag: str or None
+        :return: The FeatureFlag returned from the service
+        :rtype: ~azure.appconfiguration.FeatureFlag
+        :raises: :class:`~azure.appconfiguration.ResourceReadOnlyError`, \
+            :class:`~azure.core.exceptions.HttpResponseError`, \
+            :class:`~azure.core.exceptions.ClientAuthenticationError`, \
+            :class:`~azure.core.exceptions.ResourceModifiedError`, \
+            :class:`~azure.core.exceptions.ResourceNotModifiedError`, \
+            :class:`~azure.core.exceptions.ResourceNotFoundError`, \
+            :class:`~azure.core.exceptions.ResourceExistsError`
+
+        Example
+
+        .. code-block:: python
+
+            feature_flag = FeatureFlag(
+                name="MyName",
+                label="MyLabel",
+                enabled=true,
+                tags={"my set tag": "my set tag value"}
+            )
+            returned_feature_flag = client.set_Feature_flag(feature_flag)
+        """
+        error_map: Dict[int, Any] = {409: ResourceReadOnlyError}
+        
+        return self._impl.put_feature_flag(
+            name=feature_flag.name,
+            resource=feature_flag,
+            label=feature_flag.label,
+            match_condition=match_condition,
+            error_map=error_map,
+            **kwargs,
+        )
+
+    @distributed_trace
+    def delete_feature_flag( # pylint:disable=delete-operation-wrong-return-type
+        self,
+        name: str,
+        label: Optional[str] = None,
+        *,
+        etag: Optional[str] = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any,
+    ) -> Union[None, FeatureFlag]:
+        """Delete a feature flag.
+
+        :param name: Name of the feature flag.
+        :type name: str
+        :param label: Feature flag's label.
+        :type label: Optional[str]
+        :param tags: Filter by tags.
+        :type tags: Optional[List[str]]
+        :param sync_token: For consistency between requests.
+        :type sync_token: Optional[str]
+        :param etag: For optimistic concurrency control.
+        :type etag: Optional[str]
+        :param match_condition: Match condition for etag.
+        :type match_condition: Optional[~azure.core.MatchConditions]
+        :return: The deleted feature flag or None if it didn't exist.
+        :rtype: Union[~azure.appconfiguration.models.FeatureFlag, None]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        error_map: Dict[int, Any] = {409: ResourceReadOnlyError}
+        return self._impl.delete_feature_flag(
+            name=name,
+            label=label,
+            etag=etag,
+            match_condition=match_condition,
+            error_map=error_map,
+            **kwargs,
+        )
