@@ -48,7 +48,7 @@ if TYPE_CHECKING:
     from ._models import AccessPolicy, DirectoryProperties, FileProperties, ShareProperties
 
 
-class ShareClient(StorageAccountHostsMixin):
+class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-methods
     """A client to interact with a specific share, although that share may not yet exist.
 
     For operations relating to a specific directory or file in this share, the clients for
