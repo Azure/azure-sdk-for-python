@@ -14,6 +14,10 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
+    ClientNamedPropertyModel,
+    FlattenModel,
+    PropertiesModel,
+    ReadonlyModel,
     Scratch,
 )
 from ._patch import __all__ as _patch_all
@@ -21,6 +25,10 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "ClientNamedPropertyModel",
+    "FlattenModel",
+    "PropertiesModel",
+    "ReadonlyModel",
     "Scratch",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

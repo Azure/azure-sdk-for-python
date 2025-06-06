@@ -1,6 +1,10 @@
 {
     "CrossLanguagePackageId": "",
     "CrossLanguageDefinitionId": {
+        "modeltest.models.ClientNamedPropertyModel": "ModelTest.ClientNamedPropertyModel",
+        "modeltest.models.FlattenModel": "ModelTest.FlattenModel",
+        "modeltest.models.PropertiesModel": "ModelTest.PropertiesModel",
+        "modeltest.models.ReadonlyModel": "ModelTest.ReadonlyModel",
         "modeltest.models.Scratch": "ModelTest.Scratch"
     }
 }
