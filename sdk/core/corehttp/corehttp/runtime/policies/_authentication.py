@@ -39,7 +39,7 @@ class _BearerTokenCredentialPolicyBase:
     # pylint: disable=unused-argument
     def __init__(
         self,
-        credential: Optional["TokenCredential"],
+        credential: "TokenCredential",
         *scopes: str,
         auth_flows: Optional[list[dict[str, Union[str, list[dict[str, str]]]]]] = None,
         **kwargs: Any,
@@ -113,8 +113,6 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         # If auth_flows is an empty list, we should not attempt to authorize the request.
         if auth_flows is not None and len(auth_flows) == 0:
             return
-        if not self._credential:
-            raise ValueError("Authentication is required for this operation. Please provide a credential.")
         self._enforce_https(request)
 
         if self._token is None or self._need_new_token:
@@ -131,8 +129,6 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         :param ~corehttp.runtime.pipeline.PipelineRequest request: the request
         :param str scopes: required scopes of authentication
         """
-        if not self._credential:
-            raise ValueError("Authentication is required for this operation. Please provide a credential.")
         options: TokenRequestOptions = {}
         # Loop through all the keyword arguments and check if they are part of the TokenRequestOptions.
         for key in list(kwargs.keys()):

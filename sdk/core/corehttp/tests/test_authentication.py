@@ -418,17 +418,27 @@ def test_need_new_token():
 
 
 def test_send_with_auth_flows():
-    auth_flows = [{"type": "flow1"}, {"type": "flow2"}]
+    auth_flows = [
+        {
+            "tokenUrl": "https://login.microsoftonline.com/common/oauth2/token",
+            "type": "client_credentials",
+            "scopes": [
+                {"value": "https://test.microsoft.com/.default"},
+            ],
+        }
+    ]
     credential = Mock(
         spec_set=["get_token_info"],
         get_token_info=Mock(return_value=AccessTokenInfo("***", int(time.time()) + 3600)),
     )
-    policy = BearerTokenCredentialPolicy(credential, "scope", auth_flows=auth_flows)
+    policy = BearerTokenCredentialPolicy(credential, "https://test.microsoft.com/.default", auth_flows=auth_flows)
     transport = Mock(send=Mock(return_value=Mock(status_code=200)))
 
     pipeline = Pipeline(transport=transport, policies=[policy])
     pipeline.run(HttpRequest("GET", "https://localhost"))
-    policy._credential.get_token_info.assert_called_with("scope", options={"auth_flows": auth_flows})
+    policy._credential.get_token_info.assert_called_with(
+        "https://test.microsoft.com/.default", options={"auth_flows": auth_flows}
+    )
 
 
 def test_disable_authorization_header():
@@ -437,7 +447,7 @@ def test_disable_authorization_header():
         spec_set=["get_token_info"],
         get_token_info=Mock(return_value=AccessTokenInfo("***", int(time.time()) + 3600)),
     )
-    policy = BearerTokenCredentialPolicy(credential, "scope")
+    policy = BearerTokenCredentialPolicy(credential, "scope", auth_flows={"foo": "bar"})
     transport = Mock(send=Mock(return_value=Mock(status_code=200)))
 
     pipeline = Pipeline(transport=transport, policies=[policy])
@@ -446,16 +456,32 @@ def test_disable_authorization_header():
     assert "Authorization" not in request.headers
 
 
-def test_bearer_token_policy_no_credential():
-    """Tests that we can create a BearerTokenCredentialPolicy without a credential"""
-    credential = None
-    policy = BearerTokenCredentialPolicy(credential, "scope")
+def test_auth_flow_operation_override():
+    """Tests that the operation level auth_flow is passed to the credential's get_token_info method."""
+    auth_flows = [
+        {
+            "tokenUrl": "https://login.microsoftonline.com/common/oauth2/token",
+            "type": "client_credentials",
+            "scopes": [{"value": "https://graph.microsoft.com/.default"}],
+        }
+    ]
+    credential = Mock(
+        spec_set=["get_token_info"],
+        get_token_info=Mock(return_value=AccessTokenInfo("***", int(time.time()) + 3600)),
+    )
+    policy = BearerTokenCredentialPolicy(credential, "https://graph.microsoft.com/.default", auth_flows=auth_flows)
     transport = Mock(send=Mock(return_value=Mock(status_code=200)))
 
-    pipeline = Pipeline(transport=transport, policies=[policy])
-    request = HttpRequest("GET", "https://localhost")
-    with pytest.raises(ValueError):
-        pipeline.run(request)
+    op_auth_flow = [
+        {
+            "tokenUrl": "https://login.microsoftonline.com/common/oauth2/token",
+            "type": "client_credentials",
+            "scopes": [{"value": "https://foo.microsoft.com/.default"}],
+        }
+    ]
 
-    pipeline.run(request, auth_flows=[])
-    assert "Authorization" not in request.headers
+    pipeline = Pipeline(transport=transport, policies=[policy])
+    pipeline.run(HttpRequest("GET", "https://localhost"), auth_flows=op_auth_flow)
+    policy._credential.get_token_info.assert_called_with(
+        "https://graph.microsoft.com/.default", options={"auth_flows": op_auth_flow}
+    )
