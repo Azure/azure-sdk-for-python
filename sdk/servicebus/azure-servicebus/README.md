@@ -95,7 +95,42 @@ To interact with these resources, one should be familiar with the following SDK 
 
 ### Thread safety
 
-We do not guarantee that the ServiceBusClient, ServiceBusSender, and ServiceBusReceiver are thread-safe. We do not recommend reusing these instances across threads. It is up to the running application to use these classes in a thread-safe manner.
+We do not guarantee that the ServiceBusClient, ServiceBusSender, and ServiceBusReceiver are thread-safe or coroutine-safe. We do not recommend reusing these instances across threads or sharing them between coroutines. It is up to the running application to use these classes in a thread-safe manner.
+
+The data model type, `ServiceBusMessageBatch` is not thread-safe or coroutine-safe. It should not be shared across threads nor used concurrently with client methods.
+
+For scenarios requiring concurrent sending from multiple threads:
+```python
+import threading
+from azure.servicebus import ServiceBusClient, ServiceBusMessage
+
+# Use a lock to ensure only one thread sends at a time
+send_lock = threading.Lock()
+
+def send_messages_thread_safe(sender, messages):
+    with send_lock:
+        batch = sender.create_message_batch()
+        for message in messages:
+            batch.add_message(message)
+        sender.send_messages(batch)
+```
+
+For scenarios requiring concurrent sending in asyncio applications:
+```python
+import asyncio
+from azure.servicebus.aio import ServiceBusClient
+from azure.servicebus import ServiceBusMessage
+
+# Use a lock to ensure only one coroutine sends at a time
+send_lock = asyncio.Lock()
+
+async def send_messages_coroutine_safe(sender, messages):
+    async with send_lock:
+        batch = await sender.create_message_batch()
+        for message in messages:
+            batch.add_message(message)
+        await sender.send_messages(batch)
+```
 
 ## Examples
 

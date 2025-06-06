@@ -7,9 +7,16 @@
 
 """
 Example to show sending message(s) to a Service Bus Topic.
+
+WARNING: ServiceBusClient, ServiceBusSender, and ServiceBusMessageBatch are not thread-safe!
+Do not share these instances across threads. If you need to send from multiple threads,
+create separate client instances for each thread or use proper synchronization mechanisms.
 """
 
 import os
+import threading
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
 from azure.identity import DefaultAzureCredential
 
@@ -39,6 +46,87 @@ def send_batch_message(sender):
     sender.send_messages(batch_message)
 
 
+def send_concurrent_with_threads_safe(credentials):
+    """
+    Example showing thread-safe concurrent sending using separate clients per thread.
+    WARNING: Do NOT share ServiceBusClient instances across threads!
+    """
+    def send_from_thread(thread_id):
+        # Create a separate client for each thread - clients are NOT thread-safe
+        servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credentials)
+        try:
+            with servicebus_client:
+                sender = servicebus_client.get_topic_sender(topic_name=TOPIC_NAME)
+                with sender:
+                    message = ServiceBusMessage(f"Message from thread {thread_id}")
+                    sender.send_messages(message)
+                    print(f"Thread {thread_id} sent message successfully")
+        except Exception as e:
+            print(f"Thread {thread_id} failed: {e}")
+
+    # Use ThreadPoolExecutor to manage threads
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        futures = [executor.submit(send_from_thread, i) for i in range(3)]
+        # Wait for all threads to complete
+        for future in futures:
+            future.result()
+
+
+def send_concurrent_with_shared_client_and_lock():
+    """
+    Example showing concurrent sending with a shared client using locks.
+    This is less efficient than separate clients but demonstrates thread synchronization.
+    """
+    send_lock = threading.Lock()
+    
+    credential = DefaultAzureCredential()
+    servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential)
+
+    def send_with_lock(thread_id):
+        try:
+            # Use lock to ensure thread-safe sending
+            with send_lock:
+                sender = servicebus_client.get_topic_sender(topic_name=TOPIC_NAME)
+                with sender:
+                    message = ServiceBusMessage(f"Synchronized message from thread {thread_id}")
+                    sender.send_messages(message)
+                    print(f"Thread {thread_id} sent synchronized message successfully")
+        except Exception as e:
+            print(f"Thread {thread_id} failed: {e}")
+
+    with servicebus_client:
+        with ThreadPoolExecutor(max_workers=3) as executor:
+            futures = [executor.submit(send_with_lock, i) for i in range(3)]
+            # Wait for all threads to complete
+            for future in futures:
+                future.result()
+
+
+def send_with_run_in_executor():
+    """
+    Example showing how to use asyncio.run_in_executor for sync operations in async context.
+    This is useful when you need to call sync Service Bus operations from async code.
+    """
+    async def async_main():
+        loop = asyncio.get_event_loop()
+        
+        def sync_send_operation():
+            credential = DefaultAzureCredential()
+            servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential)
+            with servicebus_client:
+                sender = servicebus_client.get_topic_sender(topic_name=TOPIC_NAME)
+                with sender:
+                    message = ServiceBusMessage("Message sent via run_in_executor")
+                    sender.send_messages(message)
+                    return "Message sent successfully"
+        
+        # Run the synchronous operation in an executor
+        result = await loop.run_in_executor(None, sync_send_operation)
+        print(f"run_in_executor result: {result}")
+    
+    asyncio.run(async_main())
+
+
 credential = DefaultAzureCredential()
 servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential, logging_enable=True)
 with servicebus_client:
@@ -49,3 +137,13 @@ with servicebus_client:
         send_batch_message(sender)
 
 print("Send message is done.")
+
+# Demonstrate concurrent sending
+print("\nDemonstrating concurrent sending with separate clients...")
+send_concurrent_with_threads_safe(DefaultAzureCredential())
+
+print("\nDemonstrating concurrent sending with shared client and locks...")
+send_concurrent_with_shared_client_and_lock()
+
+print("\nDemonstrating run_in_executor pattern...")
+send_with_run_in_executor()
