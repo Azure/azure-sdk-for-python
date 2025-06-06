@@ -1,0 +1,71 @@
+trigger: none
+
+pr:
+  paths:
+    include:
+    - eng/emitter-package.json
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - name: PR_BRANCH
+    value: ''
+
+steps:
+- task: Checkout@2
+  displayName: 'Check out repository'
+  inputs:
+    fetchDepth: 0
+
+- task: UsePythonVersion@0
+  displayName: 'Set up Python'
+  inputs:
+    versionSpec: '3.10'
+    addToPath: true
+
+- script: |
+    npm install -g @azure-tools/typespec-client-generator-cli@latest
+  displayName: 'Install tsp-client'
+
+- script: |
+    git config --global user.name "ADO Pipeline"
+    git config --global user.email "ado_pipeline@microsoft.com"
+  displayName: 'Configure Git'
+
+- script: |
+    tsp-client update --local-spec-repo ../../specs/scratch/
+  displayName: 'Run TSP Client Update'
+  workingDirectory: ./sdk/core/azure-core/tests/specs_sdk/scratch
+
+- script: |
+    changes=$(git status --porcelain)
+    if [ -n "$changes" ]; then
+      echo "##vso[task.setvariable variable=hasChanges]true"
+    else
+      echo "##vso[task.setvariable variable=hasChanges]false"
+    fi
+  displayName: 'Check for changes'
+
+- script: |
+    PR_BRANCH="automated/tsp-update-$(date +%Y%m%d%H%M%S)"
+    git checkout -b $PR_BRANCH
+    git add .
+    git commit -m "Auto-update TSP client generated code"
+    git push --set-upstream origin $PR_BRANCH
+    echo "##vso[task.setvariable variable=PR_BRANCH]$PR_BRANCH"
+  displayName: 'Create PR branch'
+  condition: eq(variables['hasChanges'], 'true')
+
+- template: /eng/common/pipelines/templates/steps/create-pull-request.yml
+  parameters:
+    PRBranchName: "automated/tsp-update-$(date +%Y%m%d%H%M%S)"
+    PRTitle: 'Auto-update TSP client generated code'
+    PRBody: |
+      This PR was automatically created in response to changes in `emitter-package.json`.
+      
+      It updates the TSP client generated code. Tests should run automatically as part of the PR validation.
+      
+      Generated from workflow triggered by PR #$(System.PullRequest.PullRequestNumber).
+    CommitMsg: 'Auto-update TSP client generated code'
+  condition: eq(variables['hasChanges'], 'true')
