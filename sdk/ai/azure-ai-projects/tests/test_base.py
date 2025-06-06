@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import random
 import re
 import functools
 from typing import Optional
@@ -17,6 +18,9 @@ from azure.ai.projects.models import (
     Index,
     IndexType,
     AzureAISearchIndex,
+    DatasetVersion,
+    DatasetType,
+    AssetCredentialResponse,
 )
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 
@@ -52,10 +56,19 @@ class TestBase(AzureRecordedTestCase):
     }
 
     test_indexes_params = {
-        "index_name": "test-index-name",
+        "index_name": f"test-index-name-{random.randint(0, 99999):05d}",
         "index_version": "11",
         "ai_search_connection_name": "my-ai-search-connection",
         "ai_search_index_name": "my-ai-search-index",
+    }
+
+    test_datasets_params = {
+        "dataset_name_1": f"test-dataset-name-{random.randint(0, 99999):05d}",
+        "dataset_name_2": f"test-dataset-name-{random.randint(0, 99999):05d}",
+        "dataset_name_3": f"test-dataset-name-{random.randint(0, 99999):05d}",
+        "dataset_name_4": f"test-dataset-name-{random.randint(0, 99999):05d}",
+        "dataset_version": 1,
+        "connection_name": "balapvbyostoragecanary",
     }
 
     # Regular expression describing the pattern of an Application Insights connection string.
@@ -172,3 +185,47 @@ class TestBase(AzureRecordedTestCase):
                 assert index.index_name == expected_ai_search_index_name
             else:
                 assert index.index_name is not None
+
+    @classmethod
+    def validate_dataset(
+        cls,
+        dataset: DatasetVersion,
+        *,
+        expected_dataset_type: Optional[DatasetType] = None,
+        expected_dataset_name: Optional[str] = None,
+        expected_dataset_version: Optional[str] = None,
+        expected_connection_name: Optional[str] = None,
+    ):
+        assert dataset.data_uri is not None
+
+        if expected_dataset_type:
+            assert dataset.type == expected_dataset_type
+        else:
+            assert dataset.type == DatasetType.URI_FILE or dataset.type == DatasetType.URI_FOLDER
+
+        if expected_dataset_name:
+            assert dataset.name == expected_dataset_name
+        else:
+            assert dataset.name is not None
+
+        if expected_dataset_version:
+            assert dataset.version == expected_dataset_version
+        else:
+            assert dataset.version is not None
+
+        if expected_connection_name:
+            assert dataset.connection_name == expected_connection_name
+
+    @classmethod
+    def validate_asset_credential(cls, asset_credential: AssetCredentialResponse):
+
+        assert asset_credential.blob_reference is not None
+        assert asset_credential.blob_reference.blob_uri
+        assert asset_credential.blob_reference.storage_account_arm_id
+
+        assert asset_credential.blob_reference.credential is not None
+        assert asset_credential.blob_reference.credential.type == "SAS" # Why is this not of type CredentialType.SAS as defined for Connections?
+        assert asset_credential.blob_reference.credential.sas_uri
+
+
+

@@ -61,14 +61,20 @@ class TestIndexes(TestBase):
             )
 
             print("[test_indexes] List latest versions of all Indexes:")
+            empty = True
             for index in project_client.indexes.list():
+                empty = False
                 print(index)
                 TestBase.validate_index(index)
+            assert not empty
 
             print(f"[test_indexes] Listing all versions of the Index named `{index_name}`:")
+            empty = True
             for index in project_client.indexes.list_versions(name=index_name):
+                empty = False
                 print(index)
                 TestBase.validate_index(index)
+            assert not empty
 
             print(f"[test_indexes] Delete Index `{index_name}` version `{index_version}`.")
             project_client.indexes.delete(name=index_name, version=index_version)
