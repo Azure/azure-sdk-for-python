@@ -132,7 +132,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         self._client = self._build_generated_client(self.url)
         self._datalake_client_for_blob_operation = self._build_generated_client(self._container_client.url)
 
-    def __enter__(self):
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

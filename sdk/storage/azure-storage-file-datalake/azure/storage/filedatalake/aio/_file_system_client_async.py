@@ -140,7 +140,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
         self._datalake_client_for_blob_operation = self._build_generated_client(self._container_client.url)
         self._loop = kwargs.get('loop', None)
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 

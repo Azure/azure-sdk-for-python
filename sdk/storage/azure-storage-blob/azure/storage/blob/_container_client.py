@@ -150,11 +150,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         self._client = self._build_generated_client()
         self._configure_encryption(kwargs)
 
-    def __enter__(self):
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args) -> None:
         self._client.__exit__(*args)
 
     def close(self) -> None:

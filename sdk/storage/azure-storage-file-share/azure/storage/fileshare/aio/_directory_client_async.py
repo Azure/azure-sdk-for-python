@@ -143,11 +143,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                                         file_request_intent=self.file_request_intent)
         self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args) -> None:
         await self._client.__aexit__(*args)
 
     async def close(self) -> None:

@@ -137,11 +137,11 @@ class PathClient(StorageAccountHostsMixin):
         self._client = self._build_generated_client(self.url)
         self._datalake_client_for_blob_operation = self._build_generated_client(self._blob_client.url)
 
-    def __enter__(self):
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args) -> None:
         self._blob_client.close()
         self._datalake_client_for_blob_operation.close()
         self._client.__exit__(*args)

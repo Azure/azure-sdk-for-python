@@ -132,11 +132,11 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
                                         file_request_intent=self.file_request_intent)
         self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
 
-    def __enter__(self):
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args) -> None:
         self._client.__exit__(*args)
 
     def close(self) -> None:

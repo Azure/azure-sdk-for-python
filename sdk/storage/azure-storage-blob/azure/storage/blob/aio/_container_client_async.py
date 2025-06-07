@@ -143,11 +143,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         self._client = self._build_generated_client()
         self._configure_encryption(kwargs)
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args) -> None:
         await self._client.__aexit__(*args)
 
     async def close(self) -> None:
