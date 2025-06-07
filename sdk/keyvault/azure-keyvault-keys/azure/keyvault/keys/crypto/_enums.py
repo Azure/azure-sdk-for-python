@@ -21,6 +21,8 @@ class KeyWrapAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     # Microsoft does *not* recommend RSA_1_5, which is included solely for backwards compatibility.
     # Cryptographic standards no longer consider RSA with the PKCS#1 v1.5 padding scheme secure for encryption.
     rsa1_5 = "RSA1_5"
+    ckm_aes_key_wrap = "CKM_AES_KEY_WRAP"
+    ckm_aes_key_wrap_pad = "CKM_AES_KEY_WRAP_PAD"
 
 
 class EncryptionAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -44,8 +46,6 @@ class EncryptionAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     a128_cbcpad = "A128CBCPAD"
     a192_cbcpad = "A192CBCPAD"
     a256_cbcpad = "A256CBCPAD"
-    ckm_aes_key_wrap = "CKM_AES_KEY_WRAP"
-    ckm_aes_key_wrap_pad = "CKM_AES_KEY_WRAP_PAD"
 
 
 class SignatureAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
