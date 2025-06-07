@@ -77,6 +77,12 @@ class TestBase(AzureRecordedTestCase):
         r"^InstrumentationKey=[0-9a-fA-F-]{36};IngestionEndpoint=https://.+.applicationinsights.azure.com/;LiveEndpoint=https://.+.monitor.azure.com/;ApplicationId=[0-9a-fA-F-]{36}$"
     )
 
+    @staticmethod
+    def assert_equal_or_not_none(actual, expected=None):
+        assert actual is not None
+        if expected is not None:
+            assert actual == expected
+
     # Checks that a given dictionary has at least one non-empty (non-whitespace) string key-value pair.
     @classmethod
     def is_valid_dict(cls, d: dict[str, str]) -> bool:
@@ -97,20 +103,9 @@ class TestBase(AzureRecordedTestCase):
     ):
         assert connection.id is not None
 
-        if expected_connection_name:
-            assert connection.name == expected_connection_name
-        else:
-            assert connection.name is not None
-
-        if expected_connection_type:
-            assert connection.type == expected_connection_type
-        else:
-            assert connection.type is not None
-
-        if expected_authentication_type:
-            assert connection.credentials.type == expected_authentication_type
-        else:
-            assert connection.credentials.type is not None
+        TestBase.assert_equal_or_not_none(connection.name, expected_connection_name)
+        TestBase.assert_equal_or_not_none(connection.type, expected_connection_type)
+        TestBase.assert_equal_or_not_none(connection.credentials.type, expected_authentication_type)
 
         if expected_is_default is not None:
             assert connection.is_default == expected_is_default
@@ -136,20 +131,9 @@ class TestBase(AzureRecordedTestCase):
         # assert TestBase.is_valid_dict(deployment.capabilities)
         assert bool(deployment.sku)  # Check none-empty
 
-        if expected_model_name:
-            assert deployment.model_name == expected_model_name
-        else:
-            assert deployment.model_name is not None
-
-        if expected_model_deployment_name:
-            assert deployment.name == expected_model_deployment_name
-        else:
-            assert deployment.name is not None
-
-        if expected_model_publisher:
-            assert deployment.model_publisher == expected_model_publisher
-        else:
-            assert deployment.model_publisher is not None
+        TestBase.assert_equal_or_not_none(deployment.model_name, expected_model_name)
+        TestBase.assert_equal_or_not_none(deployment.name, expected_model_deployment_name)
+        TestBase.assert_equal_or_not_none(deployment.model_publisher, expected_model_publisher)
 
     @classmethod
     def validate_index(
@@ -162,30 +146,15 @@ class TestBase(AzureRecordedTestCase):
         expected_ai_search_connection_name: Optional[str] = None,
         expected_ai_search_index_name: Optional[str] = None,
     ):
-        if expected_index_name:
-            assert index.name == expected_index_name
-        else:
-            assert index.name is not None
 
-        if expected_index_version:
-            assert index.version == expected_index_version
-        else:
-            assert index.version is not None
+        TestBase.assert_equal_or_not_none(index.name, expected_index_name)
+        TestBase.assert_equal_or_not_none(index.version, expected_index_version)
 
         if expected_index_type == IndexType.AZURE_SEARCH:
-
             assert type(index) == AzureAISearchIndex
             assert index.type == IndexType.AZURE_SEARCH
-
-            if expected_ai_search_connection_name:
-                assert index.connection_name == expected_ai_search_connection_name
-            else:
-                assert index.connection_name is not None
-
-            if expected_ai_search_index_name:
-                assert index.index_name == expected_ai_search_index_name
-            else:
-                assert index.index_name is not None
+            TestBase.assert_equal_or_not_none(index.connection_name, expected_ai_search_connection_name)
+            TestBase.assert_equal_or_not_none(index.index_name, expected_ai_search_index_name)
 
     @classmethod
     def validate_dataset(
@@ -204,16 +173,8 @@ class TestBase(AzureRecordedTestCase):
         else:
             assert dataset.type == DatasetType.URI_FILE or dataset.type == DatasetType.URI_FOLDER
 
-        if expected_dataset_name:
-            assert dataset.name == expected_dataset_name
-        else:
-            assert dataset.name is not None
-
-        if expected_dataset_version:
-            assert dataset.version == expected_dataset_version
-        else:
-            assert dataset.version is not None
-
+        TestBase.assert_equal_or_not_none(dataset.name, expected_dataset_name)
+        TestBase.assert_equal_or_not_none(dataset.version, expected_dataset_version)
         if expected_connection_name:
             assert dataset.connection_name == expected_connection_name
 

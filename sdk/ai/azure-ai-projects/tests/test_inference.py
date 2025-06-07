@@ -15,7 +15,10 @@ class TestInference(TestBase):
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
     # cls & pytest tests\test_inference.py::TestInference::test_inference -s
     @servicePreparer()
-    @pytest.mark.skipif(condition=(not is_live_and_not_recording()), reason="Skipped because we cannot record chat completions call with AOAI client")
+    @pytest.mark.skipif(
+        condition=(not is_live_and_not_recording()),
+        reason="Skipped because we cannot record chat completions call with AOAI client",
+    )
     @recorded_by_proxy
     def test_inference(self, **kwargs):
 
@@ -54,7 +57,10 @@ class TestInference(TestBase):
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
     # cls & pytest tests\test_inference.py::TestInference::test_inference_on_connection -s
     @servicePreparer()
-    @pytest.mark.skipif(condition=(not is_live_and_not_recording()), reason="Skipped because we cannot record chat completions call with AOAI client")
+    @pytest.mark.skipif(
+        condition=(not is_live_and_not_recording()),
+        reason="Skipped because we cannot record chat completions call with AOAI client",
+    )
     @recorded_by_proxy
     def test_inference_on_connection(self, **kwargs):
 
