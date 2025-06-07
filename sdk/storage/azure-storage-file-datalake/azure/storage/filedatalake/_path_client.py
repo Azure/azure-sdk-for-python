@@ -147,9 +147,11 @@ class PathClient(StorageAccountHostsMixin):
         self._client.__exit__(*args)
 
     def close(self) -> None:
-        """
-        This method is to close the sockets opened by the client.
+        """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
+
+        :return: None
+        :rtype: None
         """
         self.__exit__()
 

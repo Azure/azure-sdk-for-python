@@ -141,6 +141,9 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     def close(self) -> None:
         """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
+
+        :return: None
+        :rtype: None
         """
         self._client.close()
 
