@@ -13,7 +13,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-agents azure-identity
+    pip install azure-ai-projects azure-ai-agents azure-identity
 
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -23,21 +23,19 @@ USAGE:
 """
 
 import os, time
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import ListSortOrder
 
-# [START create_agents_client]
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
-# [END create_agents_client]
 
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
 
     # [START create_agent]
-
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
