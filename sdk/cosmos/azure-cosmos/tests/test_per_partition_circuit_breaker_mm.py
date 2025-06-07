@@ -11,15 +11,92 @@ from azure.core.exceptions import ServiceResponseError
 import test_config
 from azure.cosmos import _location_cache, _partition_health_tracker
 from azure.cosmos import CosmosClient
+from azure.cosmos._partition_health_tracker import HEALTH_STATUS, UNHEALTHY_TENTATIVE, UNHEALTHY
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport import FaultInjectionTransport
-from test_per_partition_circuit_breaker_mm_async import DELETE, CREATE, UPSERT, REPLACE, PATCH, BATCH, \
-    validate_response_uri, READ, \
-    QUERY_PK, QUERY, CHANGE_FEED, CHANGE_FEED_PK, CHANGE_FEED_EPK, READ_ALL_ITEMS, REGION_1, REGION_2, \
-    write_operations_and_errors, validate_unhealthy_partitions, read_operations_and_errors, PK_VALUE, operations, \
-    create_doc, validate_stats
-from test_per_partition_circuit_breaker_mm_async import DELETE_ALL_ITEMS_BY_PARTITION_KEY
 
+REGION_1 = "West US 3"
+REGION_2 = "West US"
+CHANGE_FEED = "changefeed"
+CHANGE_FEED_PK = "changefeed_pk"
+CHANGE_FEED_EPK = "changefeed_epk"
+READ = "read"
+CREATE = "create"
+READ_ALL_ITEMS = "read_all_items"
+DELETE_ALL_ITEMS_BY_PARTITION_KEY = "delete_all_items_by_partition_key"
+QUERY = "query"
+QUERY_PK = "query_pk"
+BATCH = "batch"
+UPSERT = "upsert"
+REPLACE = "replace"
+PATCH = "patch"
+DELETE = "delete"
+PK_VALUE = "pk1"
+
+def create_doc():
+    return {'id': str(uuid.uuid4()),
+            'pk': PK_VALUE,
+            'name': 'sample document',
+            'key': 'value'}
+
+
+def read_operations_and_errors():
+    read_operations = [READ, QUERY_PK, CHANGE_FEED, CHANGE_FEED_PK, CHANGE_FEED_EPK]
+    errors = create_errors()
+    params = []
+    for read_operation in read_operations:
+        for error in errors:
+            params.append((read_operation, error))
+
+    return params
+
+def write_operations_and_errors():
+    write_operations = [CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH]
+    errors = create_errors()
+    params = []
+    for write_operation in write_operations:
+        for error in errors:
+            params.append((write_operation, error))
+
+    return params
+
+def operations():
+    write_operations = [CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH]
+    read_operations = [READ, QUERY_PK, CHANGE_FEED_PK, CHANGE_FEED_EPK]
+    operations = []
+    for i, write_operation in enumerate(write_operations):
+        operations.append((read_operations[i % len(read_operations)], write_operation))
+
+    return operations
+
+def create_errors():
+    errors = []
+    error_codes = [408, 500, 502, 503]
+    for error_code in error_codes:
+        errors.append(CosmosHttpResponseError(
+            status_code=error_code,
+            message="Some injected error."))
+    errors.append(ServiceResponseError(message="Injected Service Response Error."))
+    return errors
+
+def validate_unhealthy_partitions(global_endpoint_manager,
+                                  expected_unhealthy_partitions):
+    health_info_map = global_endpoint_manager.global_partition_endpoint_manager_core.partition_health_tracker.pk_range_wrapper_to_health_info
+    unhealthy_partitions = 0
+    for pk_range_wrapper, location_to_health_info in health_info_map.items():
+        for location, health_info in location_to_health_info.items():
+            health_status = health_info.unavailability_info.get(HEALTH_STATUS)
+            if health_status == UNHEALTHY_TENTATIVE or health_status == UNHEALTHY:
+                unhealthy_partitions += 1
+            else:
+                assert health_info.read_consecutive_failure_count < 10
+                assert health_info.write_consecutive_failure_count < 5
+
+    assert unhealthy_partitions == expected_unhealthy_partitions
+
+def validate_response_uri(response, expected_uri):
+    request = response.get_response_headers()["_request"]
+    assert request.url.startswith(expected_uri)
 def perform_write_operation(operation, container, fault_injection_container, doc_id, pk, expected_uri):
     doc = {'id': doc_id,
            'pk': pk,
@@ -414,3 +491,21 @@ class TestPerPartitionCircuitBreakerMM:
 
 if __name__ == '__main__':
     unittest.main()
+
+
+def validate_stats(global_endpoint_manager,
+                   expected_write_consecutive_failure_count,
+                   expected_read_consecutive_failure_count,
+                   expected_read_failure_count,
+                   expected_write_failure_count,
+                   expected_write_success_count,
+                   expected_read_success_count):
+    health_info_map = global_endpoint_manager.global_partition_endpoint_manager_core.partition_health_tracker.pk_range_wrapper_to_health_info
+    for pk_range_wrapper, location_to_health_info in health_info_map.items():
+        health_info = location_to_health_info[REGION_1]
+        assert health_info.read_consecutive_failure_count == expected_read_consecutive_failure_count
+        assert health_info.write_consecutive_failure_count == expected_write_consecutive_failure_count
+        assert health_info.read_failure_count == expected_read_failure_count
+        assert health_info.write_failure_count == expected_write_failure_count
+        assert health_info.read_success_count == expected_read_success_count
+        assert health_info.write_success_count == expected_write_success_count
