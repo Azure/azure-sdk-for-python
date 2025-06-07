@@ -3962,7 +3962,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         await file_client.delete_file()
 
     @FileSharePreparer()
-    async def test_mock_transport_no_content_validation(self, **kwargs):
+    async def test_legacy_transport(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -3993,7 +3993,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         assert file_data == b"Hello Async World!"  # data is fixed by mock transport
 
     @FileSharePreparer()
-    async def test_mock_transport_with_content_validation(self, **kwargs):
+    async def test_legacy_transport_with_content_validation(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
