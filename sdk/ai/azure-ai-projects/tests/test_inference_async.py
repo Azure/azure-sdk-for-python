@@ -3,8 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import pprint
-
-# import pytest
+import pytest
 from azure.ai.projects.aio import AIProjectClient
 from test_base import TestBase, servicePreparer
 from devtools_testutils import is_live_and_not_recording
@@ -16,14 +15,9 @@ class TestInferenceAsync(TestBase):
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
     # cls & pytest tests\test_inference_async.py::TestInferenceAsync::test_inference_async -s
     @servicePreparer()
+    @pytest.mark.skipif(not is_live_and_not_recording(), reason="Skipped because we cannot record chat completions call with AOAI client")
     @recorded_by_proxy_async
-    # TODO: Why doesn't this work? @pytest.mark.skipif(not is_live_and_not_recording(), reason="Skipped because we cannot record chat completions call with AOAI client")
     async def test_inference_async(self, **kwargs):
-
-        # Alternative to the above @pytest.mark.skipif
-        if not is_live_and_not_recording():
-            print("Skipped because we cannot record chat completions call with AOAI client.")
-            return
 
         endpoint = kwargs.pop("azure_ai_projects_tests_project_endpoint")
         print("\n=====> Endpoint:", endpoint)
@@ -60,14 +54,9 @@ class TestInferenceAsync(TestBase):
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
     # cls & pytest tests\test_inference_async.py::TestInferenceAsync::test_inference_on_connection_async -s
     @servicePreparer()
+    @pytest.mark.skipif(not is_live_and_not_recording(), reason="Skipped because we cannot record chat completions call with AOAI client")
     @recorded_by_proxy_async
-    # TODO: Why doesn't this work? @pytest.mark.skipif(not is_live_and_not_recording(), reason="Skipped because we cannot record chat completions call with AOAI client")
     async def test_inference_on_connection_async(self, **kwargs):
-
-        # Alternative to the above @pytest.mark.skipif
-        if not is_live_and_not_recording():
-            print("Skipped because we cannot record chat completions call with AOAI client.")
-            return
 
         endpoint = kwargs.pop("azure_ai_projects_tests_project_endpoint")
         print("\n=====> Endpoint:", endpoint)

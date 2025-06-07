@@ -4,8 +4,7 @@
 # ------------------------------------
 import os
 import re
-
-# import pytest
+import pytest
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import DatasetVersion, DatasetType
 from test_base import TestBase, servicePreparer
@@ -26,15 +25,9 @@ class TestDatasetsAsync(TestBase):
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
     # cls & pytest tests\test_datasets_async.py::TestDatasetsAsync::test_datasets_upload_file_async -s
     @servicePreparer()
+    @pytest.mark.skipif(not is_live_and_not_recording(), reason="Skipped because this test involves network calls from another client (azure.storage.blob) that is not recorded.")
     @recorded_by_proxy_async
-    # TODO: Why doesn't this work? @pytest.mark.skipif(not is_live_and_not_recording(), reason="Skipped because this test involves network calls from another client (azure.storage.blob) that is not recorded.")
     async def test_datasets_upload_file(self, **kwargs):
-
-        if not is_live_and_not_recording():
-            print(
-                "Skipped because this test involves network calls from another client (azure.storage.blob) that is not recorded."
-            )
-            return
 
         endpoint = kwargs.pop("azure_ai_projects_tests_project_endpoint")
         print("\n=====> Endpoint:", endpoint)
@@ -143,15 +136,9 @@ class TestDatasetsAsync(TestBase):
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
     # cls & pytest tests\test_datasets_async.py::TestDatasetsAsync::test_datasets_upload_folder_async -s
     @servicePreparer()
+    @pytest.mark.skipif(not is_live_and_not_recording(), reason="Skipped because this test involves network calls from another client (azure.storage.blob) that is not recorded.")
     @recorded_by_proxy_async
-    # TODO: Why doesn't this work? @pytest.mark.skipif(not is_live_and_not_recording(), reason="Skipped because this test involves network calls from another client (azure.storage.blob) that is not recorded.")
     async def test_datasets_upload_folder_async(self, **kwargs):
-
-        if not is_live_and_not_recording():
-            print(
-                "Skipped because this test involves network calls from another client (azure.storage.blob) that is not recorded."
-            )
-            return
 
         endpoint = kwargs.pop("azure_ai_projects_tests_project_endpoint")
         print("\n=====> Endpoint:", endpoint)

@@ -4,7 +4,7 @@
 # ------------------------------------
 import pprint
 
-# import pytest
+import pytest
 from azure.ai.projects import AIProjectClient
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, is_live_and_not_recording
@@ -15,14 +15,9 @@ class TestInference(TestBase):
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
     # cls & pytest tests\test_inference.py::TestInference::test_inference -s
     @servicePreparer()
+    @pytest.mark.skipif(condition=(not is_live_and_not_recording()), reason="Skipped because we cannot record chat completions call with AOAI client")
     @recorded_by_proxy
-    # TODO: Why doesn't this work? @pytest.mark.skipif(condition=(not is_live_and_not_recording()), reason="Skipped because we cannot record chat completions call with AOAI client")
     def test_inference(self, **kwargs):
-
-        # Alternative to the above @pytest.mark.skipif
-        if not is_live_and_not_recording():
-            print("Skipped because we cannot record chat completions call with AOAI client.")
-            return
 
         endpoint = kwargs.pop("azure_ai_projects_tests_project_endpoint")
         print("\n=====> Endpoint:", endpoint)
@@ -59,14 +54,9 @@ class TestInference(TestBase):
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
     # cls & pytest tests\test_inference.py::TestInference::test_inference_on_connection -s
     @servicePreparer()
+    @pytest.mark.skipif(condition=(not is_live_and_not_recording()), reason="Skipped because we cannot record chat completions call with AOAI client")
     @recorded_by_proxy
-    # TODO: Why doesn't this work? @pytest.mark.skipif(condition=(not is_live_and_not_recording()), reason="Skipped because we cannot record chat completions call with AOAI client")
     def test_inference_on_connection(self, **kwargs):
-
-        # Alternative to the above @pytest.mark.skipif
-        if not is_live_and_not_recording():
-            print("Skipped because we cannot record chat completions call with AOAI client.")
-            return
 
         endpoint = kwargs.pop("azure_ai_projects_tests_project_endpoint")
         print("\n=====> Endpoint:", endpoint)
