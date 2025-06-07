@@ -9,7 +9,6 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import logging
 from typing import Optional, TYPE_CHECKING, Any
-from urllib.parse import urlparse
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 
