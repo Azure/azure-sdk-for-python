@@ -134,6 +134,22 @@ class QueueClient(  # type: ignore [misc]
         self._loop = loop
         self._configure_encryption(kwargs)
 
+    async def __aenter__(self) -> Self:
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *args) -> None:
+        await self._client.__aexit__(*args)
+
+    async def close(self) -> None:
+        """This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+
+        :return: None
+        :rtype: None
+        """
+        await self._client.close()
+
     def _format_url(self, hostname: str) -> str:
         """Format the endpoint URL according to the current location
         mode hostname.

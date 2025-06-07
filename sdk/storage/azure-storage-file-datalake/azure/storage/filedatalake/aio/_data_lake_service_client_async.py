@@ -126,13 +126,13 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
         self._loop = kwargs.get('loop', None)
 
     async def __aenter__(self) -> Self:
-        await super(DataLakeServiceClient, self).__aenter__()
+        await self._client.__aenter__()
         await self._blob_service_client.__aenter__()
         return self
 
     async def __aexit__(self, *args: Any) -> None:
         await self._blob_service_client.close()
-        await super(DataLakeServiceClient, self).__aexit__(*args)
+        await self._client.__aexit__(*args)
 
     async def close(self) -> None:  # type: ignore
         """ This method is to close the sockets opened by the client.

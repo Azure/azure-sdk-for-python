@@ -137,6 +137,24 @@ class PathClient(StorageAccountHostsMixin):
         self._client = self._build_generated_client(self.url)
         self._datalake_client_for_blob_operation = self._build_generated_client(self._blob_client.url)
 
+    def __enter__(self) -> Self:
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *args) -> None:
+        self._blob_client.close()
+        self._datalake_client_for_blob_operation.close()
+        self._client.__exit__(*args)
+
+    def close(self) -> None:
+        """This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+
+        :return: None
+        :rtype: None
+        """
+        self.__exit__()
+
     def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
         client = AzureDataLakeStorageRESTAPI(
             url,
@@ -147,18 +165,6 @@ class PathClient(StorageAccountHostsMixin):
         )
         client._config.version = self._api_version  # type: ignore [assignment] # pylint: disable=protected-access
         return client
-
-    def __exit__(self, *args):
-        self._blob_client.close()
-        self._datalake_client_for_blob_operation.close()
-        super(PathClient, self).__exit__(*args)
-
-    def close(self) -> None:
-        """
-        This method is to close the sockets opened by the client.
-        It need not be used when using with a context manager.
-        """
-        self.__exit__()
 
     def _format_url(self, hostname: str) -> str:
         return _format_url(self.scheme, hostname, self.file_system_name, self.path_name, self._query_str)
