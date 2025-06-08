@@ -15,6 +15,8 @@
 
 ### Breaking Changes
 
+- Removed `tenant_id` from `TokenRequestOptions`. [#40731](https://github.com/Azure/azure-sdk-for-python/pull/40731)
+
 ### Bugs Fixed
 
 ### Other Changes
