@@ -3,14 +3,17 @@ trigger: none
 extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      BuildTargetingString: 'azure-communication-email'
-      JobName: email
+      BuildTargetingString: 'azure-communication-messages'
+      JobName: messages
       ServiceDirectory: communication
+      MatrixReplace:
+        - TestSamples=.*/true
       CloudConfig:
         Public:
           SubscriptionConfigurations:
             - $(sub-config-communication-services-cloud-test-resources-common)
             - $(sub-config-communication-services-cloud-test-resources-python)
+      Clouds: Public
       EnvVars:
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
