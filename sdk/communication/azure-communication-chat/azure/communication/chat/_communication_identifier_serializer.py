@@ -19,7 +19,6 @@ if TYPE_CHECKING:
 
 
 def serialize_identifier(identifier):
-    # type: (CommunicationIdentifier) -> Dict[str, Any]
     """Serialize the Communication identifier into CommunicationIdentifierModel
 
     :param identifier: Identifier object
@@ -40,7 +39,6 @@ def serialize_identifier(identifier):
 
 
 def deserialize_identifier(identifier_model):
-    # type: (CommunicationIdentifierModel) -> CommunicationIdentifier
     """
     Deserialize the CommunicationIdentifierModel into Communication Identifier
 
