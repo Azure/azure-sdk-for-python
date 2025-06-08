@@ -55,7 +55,7 @@ extends:
                   displayName: 'Build ${{ parameters.PackageName }}'
                   workingDirectory: $(Build.SourcesDirectory)/${{ parameters.PackagePath }}
 
-              - $ {{ else }}:
+              - ${{ else }}:
                 - pwsh: |
                     Write-Host "Building python tool artifacts using setup.py"
                     python setup.py bdist_wheel --universal --dist-dir $(Build.ArtifactStagingDirectory)
