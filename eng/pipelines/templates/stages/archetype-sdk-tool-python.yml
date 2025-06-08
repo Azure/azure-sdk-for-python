@@ -34,7 +34,7 @@ extends:
           - job: 'Build'
 
             pool:
-              name: $(LINUXNEXTPOOL)
+              name: $(LINUXPOOL)
               image: $(LINUXNEXTVMIMAGE)
               os: linux
 
@@ -74,7 +74,7 @@ extends:
                 - 'Build'
 
               pool:
-                name: $(LINUXNEXTPOOL)
+                name: $(LINUXPOOL)
                 image: $(LINUXNEXTVMIMAGE)
                 os: linux
 
@@ -96,7 +96,7 @@ extends:
           - job: PublishPackage
             displayName: 'Publish ${{ parameters.PackageName }} package to devops feed'
             pool:
-              name: $(LINUXNEXTPOOL)
+              name: $(LINUXPOOL)
               image: $(LINUXNEXTVMIMAGE)
               os: linux
             steps:
