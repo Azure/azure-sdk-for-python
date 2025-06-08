@@ -1,7 +1,7 @@
 [project]
 name = "azure-sdk-python-mcp"
-version = "0.1.0"
-description = "Add your description here"
+version = "0.1.1"
+description = "MCP server to help developing Azure SDK for Python"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
@@ -15,3 +15,11 @@ dependencies = [
     "tox>=4.26.0",
     "httpx>=0.24.0",
 ]
+
+[project.scripts]
+azure-sdk-mcp-python = "main:main"
+
+[[tool.uv.index]]
+name = "azure-sdk-python-mcp"
+url = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+publish-url = "https://pkgs.dev.azure.com/azure-sdk/public/_artifacts/feed/azure-sdk-for-python/pypi/upload/"

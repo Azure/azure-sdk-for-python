@@ -292,5 +292,5 @@ def check_library_health(library_name: str) -> Dict[str, Any]:
 
 
 # Run the MCP server
-if __name__ == "__main__":
+def main():
     mcp.run(transport='stdio')
