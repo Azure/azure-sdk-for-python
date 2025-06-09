@@ -20,12 +20,12 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
     - From a connection string
     - Enabling Logging
     - Send messages concurrently with proper thread/coroutine safety practices
-    - **Note**: ServiceBusClient, ServiceBusSender, and ServiceBusReceiver are not thread-safe or coroutine-safe
+      - **Note**: ServiceBusClient, ServiceBusSender, and ServiceBusReceiver are not thread-safe or coroutine-safe
 - [send_topic.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/sync_samples/send_topic.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/async_samples/send_topic_async.py)) - Examples to send messages to a service bus topic:
     - From a connection string
     - Enabling Logging
     - Send messages concurrently with proper thread/coroutine safety practices
-    - **Note**: ServiceBusClient, ServiceBusSender, and ServiceBusReceiver are not thread-safe or coroutine-safe
+      - **Note**: ServiceBusClient, ServiceBusSender, and ServiceBusReceiver are not thread-safe or coroutine-safe
 - [receive_queue.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_queue.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/async_samples/receive_queue_async.py)) - Examples to receive messages from a service bus queue:
     - Receive messages
 - [receive_subscription.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_subscription.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/async_samples/receive_subscription_async.py)) - Examples to receive messages from a service bus subscription:
