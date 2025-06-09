@@ -72,20 +72,21 @@ class JsonWebKeyEncryptionAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta
 
     RSA_OAEP = "RSA-OAEP"
     """[Not recommended] RSAES using Optimal Asymmetric Encryption Padding (OAEP), as described in
-    https://tools.ietf.org/html/rfc3447, with the default parameters specified by RFC 3447 in
-    Section A.2.1. Those default parameters are using a hash function of SHA-1 and a mask
-    generation function of MGF1 with SHA-1. Microsoft recommends using RSA_OAEP_256 or stronger
-    algorithms for enhanced security. Microsoft does *not* recommend RSA_OAEP, which is included
-    solely for backwards compatibility. RSA_OAEP utilizes SHA1, which has known collision problems."""
+    `https://tools.ietf.org/html/rfc3447 <https://tools.ietf.org/html/rfc3447>`_, with the default
+    parameters specified by RFC 3447 in Section A.2.1. Those default parameters are using a hash
+    function of SHA-1 and a mask generation function of MGF1 with SHA-1. Microsoft recommends using
+    RSA_OAEP_256 or stronger algorithms for enhanced security. Microsoft does *not* recommend
+    RSA_OAEP, which is included solely for backwards compatibility. RSA_OAEP utilizes SHA1, which
+    has known collision problems."""
     RSA_OAEP256 = "RSA-OAEP-256"
     """RSAES using Optimal Asymmetric Encryption Padding with a hash function of SHA-256 and a mask
     generation function of MGF1 with SHA-256."""
     RSA1_5 = "RSA1_5"
     """[Not recommended] RSAES-PKCS1-V1_5 key encryption, as described in
-    https://tools.ietf.org/html/rfc3447. Microsoft recommends using RSA_OAEP_256 or stronger
-    algorithms for enhanced security. Microsoft does *not* recommend RSA_1_5, which is included
-    solely for backwards compatibility. Cryptographic standards no longer consider RSA with the
-    PKCS#1 v1.5 padding scheme secure for encryption."""
+    `https://tools.ietf.org/html/rfc3447 <https://tools.ietf.org/html/rfc3447>`_. Microsoft
+    recommends using RSA_OAEP_256 or stronger algorithms for enhanced security. Microsoft does
+    *not* recommend RSA_1_5, which is included solely for backwards compatibility. Cryptographic
+    standards no longer consider RSA with the PKCS#1 v1.5 padding scheme secure for encryption."""
     A128_GCM = "A128GCM"
     """128-bit AES-GCM."""
     A192_GCM = "A192GCM"
@@ -144,40 +145,51 @@ class JsonWebKeySignatureAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta)
 
     PS256 = "PS256"
     """RSASSA-PSS using SHA-256 and MGF1 with SHA-256, as described in
-    https://tools.ietf.org/html/rfc7518"""
+    `https://tools.ietf.org/html/rfc7518 <https://tools.ietf.org/html/rfc7518>`_"""
     PS384 = "PS384"
     """RSASSA-PSS using SHA-384 and MGF1 with SHA-384, as described in
-    https://tools.ietf.org/html/rfc7518"""
+    `https://tools.ietf.org/html/rfc7518 <https://tools.ietf.org/html/rfc7518>`_"""
     PS512 = "PS512"
     """RSASSA-PSS using SHA-512 and MGF1 with SHA-512, as described in
-    https://tools.ietf.org/html/rfc7518"""
+    `https://tools.ietf.org/html/rfc7518 <https://tools.ietf.org/html/rfc7518>`_"""
     RS256 = "RS256"
-    """RSASSA-PKCS1-v1_5 using SHA-256, as described in https://tools.ietf.org/html/rfc7518"""
+    """RSASSA-PKCS1-v1_5 using SHA-256, as described in `https://tools.ietf.org/html/rfc7518
+    <https://tools.ietf.org/html/rfc7518>`_"""
     RS384 = "RS384"
-    """RSASSA-PKCS1-v1_5 using SHA-384, as described in https://tools.ietf.org/html/rfc7518"""
+    """RSASSA-PKCS1-v1_5 using SHA-384, as described in `https://tools.ietf.org/html/rfc7518
+    <https://tools.ietf.org/html/rfc7518>`_"""
     RS512 = "RS512"
-    """RSASSA-PKCS1-v1_5 using SHA-512, as described in https://tools.ietf.org/html/rfc7518"""
+    """RSASSA-PKCS1-v1_5 using SHA-512, as described in `https://tools.ietf.org/html/rfc7518
+    <https://tools.ietf.org/html/rfc7518>`_"""
     HS256 = "HS256"
-    """HMAC using SHA-256, as described in  https://tools.ietf.org/html/rfc7518"""
+    """HMAC using SHA-256, as described in  `https://tools.ietf.org/html/rfc7518
+    <https://tools.ietf.org/html/rfc7518>`_"""
     HS384 = "HS384"
-    """HMAC using SHA-384, as described in https://tools.ietf.org/html/rfc7518"""
+    """HMAC using SHA-384, as described in `https://tools.ietf.org/html/rfc7518
+    <https://tools.ietf.org/html/rfc7518>`_"""
     HS512 = "HS512"
-    """HMAC using SHA-512, as described in https://tools.ietf.org/html/rfc7518"""
+    """HMAC using SHA-512, as described in `https://tools.ietf.org/html/rfc7518
+    <https://tools.ietf.org/html/rfc7518>`_"""
     RSNULL = "RSNULL"
     """Reserved"""
     ES256 = "ES256"
-    """ECDSA using P-256 and SHA-256, as described in https://tools.ietf.org/html/rfc7518."""
+    """ECDSA using P-256 and SHA-256, as described in `https://tools.ietf.org/html/rfc7518
+    <https://tools.ietf.org/html/rfc7518>`_."""
     ES384 = "ES384"
-    """ECDSA using P-384 and SHA-384, as described in https://tools.ietf.org/html/rfc7518"""
+    """ECDSA using P-384 and SHA-384, as described in `https://tools.ietf.org/html/rfc7518
+    <https://tools.ietf.org/html/rfc7518>`_"""
     ES512 = "ES512"
-    """ECDSA using P-521 and SHA-512, as described in https://tools.ietf.org/html/rfc7518"""
+    """ECDSA using P-521 and SHA-512, as described in `https://tools.ietf.org/html/rfc7518
+    <https://tools.ietf.org/html/rfc7518>`_"""
     ES256_K = "ES256K"
-    """ECDSA using P-256K and SHA-256, as described in https://tools.ietf.org/html/rfc7518"""
+    """ECDSA using P-256K and SHA-256, as described in `https://tools.ietf.org/html/rfc7518
+    <https://tools.ietf.org/html/rfc7518>`_"""
 
 
 class JsonWebKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """JsonWebKey Key Type (kty), as defined in
-    https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40.
+    `https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40
+    <https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40>`_.
     """
 
     EC = "EC"
@@ -185,7 +197,7 @@ class JsonWebKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EC_HSM = "EC-HSM"
     """Elliptic Curve with a private key which is stored in the HSM."""
     RSA = "RSA"
-    """RSA (https://tools.ietf.org/html/rfc3447)"""
+    """RSA (`https://tools.ietf.org/html/rfc3447 <https://tools.ietf.org/html/rfc3447>`_)"""
     RSA_HSM = "RSA-HSM"
     """RSA with a private key which is stored in the HSM."""
     OCT = "oct"
