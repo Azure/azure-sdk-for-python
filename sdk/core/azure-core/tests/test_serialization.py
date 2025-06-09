@@ -475,36 +475,36 @@ def test_json_roundtrip():
             super().__init__(*args, **kwargs)
 
     dict_response = {
-        "name": "walle",
+        "name": "wall-e",
         "species": "dog",
     }
     model = Pet(
-        name="walle",
+        name="wall-e",
         species="dog",
     )
     with pytest.raises(TypeError):
         json.dumps(model)
     assert (
         json.dumps(dict(model))
-        == '{"name": "walle", "species": "dog"}'
+        == '{"name": "wall-e", "species": "dog"}'
     )
     assert json.loads(json.dumps(dict(model))) == model == dict_response
 
 def test_flattened_model():
     def _flattened_model_assertions(model):
-        assert model.name == "walle"
+        assert model.name == "wall-e"
         assert model.description == "a dog"
         assert model.age == 2
         assert model.properties.description == "a dog"
         assert model.properties.age == 2
-    model = models.FlattenModel(name="walle", description="a dog", age=2)
+    model = models.FlattenModel(name="wall-e", description="a dog", age=2)
     _flattened_model_assertions(model)
-    model = models.FlattenModel({"name": "walle", "properties": {"description": "a dog", "age": 2}})
+    model = models.FlattenModel({"name": "wall-e", "properties": {"description": "a dog", "age": 2}})
     _flattened_model_assertions(model)
 
 def test_client_name_model():
-    model = models.ClientNamedPropertyModel(prop_client_name="walle")
-    assert model.prop_client_name == "walle"
+    model = models.ClientNamedPropertyModel(prop_client_name="wall-e")
+    assert model.prop_client_name == "wall-e"
 
 def test_readonly():
     model = models.ReadonlyModel({"id": 1})
