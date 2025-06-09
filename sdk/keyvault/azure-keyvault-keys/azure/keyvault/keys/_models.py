@@ -42,6 +42,24 @@ class JsonWebKey(object):
 
     _FIELDS = ("kid", "kty", "key_ops", "n", "e", "d", "dp", "dq", "qi", "p", "q", "k", "t", "crv", "x", "y")
 
+    # Add type annotations for mypy
+    kid: Optional[str]
+    kty: Optional[str]
+    key_ops: Optional[Any]
+    n: Optional[bytes]
+    e: Optional[bytes]
+    d: Optional[bytes]
+    dp: Optional[bytes]
+    dq: Optional[bytes]
+    qi: Optional[bytes]
+    p: Optional[bytes]
+    q: Optional[bytes]
+    k: Optional[bytes]
+    t: Optional[bytes]
+    crv: Optional[str]
+    x: Optional[bytes]
+    y: Optional[bytes]
+
     def __init__(self, **kwargs: Any) -> None:
         for field in self._FIELDS:
             setattr(self, field, kwargs.get(field))
@@ -524,7 +542,10 @@ class KeyVaultKey(object):
         :rtype: ~azure.keyvault.keys.KeyType or str
         """
         # pylint:disable=no-member
-        return self._key_material.kty  # type: ignore[attr-defined]
+        kty = self._key_material.kty  # type: ignore[attr-defined]
+        if kty is None:
+            raise ValueError("Key type not available")
+        return kty
 
     @property
     def key_operations(self) -> List[Union[str, KeyOperation]]:
@@ -534,7 +555,8 @@ class KeyVaultKey(object):
         :rtype: List[~azure.keyvault.keys.KeyOperation or str]
         """
         # pylint:disable=no-member
-        return self._key_material.key_ops  # type: ignore[attr-defined]
+        key_ops = self._key_material.key_ops  # type: ignore[attr-defined]
+        return key_ops or []
 
 
 class KeyVaultKeyIdentifier(object):
