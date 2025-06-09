@@ -100,7 +100,7 @@ We do not guarantee that the EventHubProducerClient or EventHubConsumerClient ar
 
 The data model type, `EventDataBatch` is not thread-safe or coroutine-safe. It should not be shared across threads nor used concurrently with client methods.
 
-For scenarios requiring concurrent sending from multiple threads, ensure proper thread-safety management using mechanisms like threading.Lock()
+For scenarios requiring concurrent sending from multiple threads, ensure proper thread-safety management using mechanisms like threading.Lock(). **Note:** Native async APIs should be used instead of running in a ThreadPoolExecutor, if possible.
 ```python
 import threading
 from concurrent.futures import ThreadPoolExecutor

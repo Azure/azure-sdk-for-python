@@ -100,6 +100,7 @@ def send_event_data_list(producer):
 def send_concurrent_with_shared_client_and_lock():
     """
     Example showing concurrent sending with a shared client using threading.Lock.
+    Note: Native async APIs should be used instead of running in a ThreadPoolExecutor, if possible.
     """
     send_lock = threading.Lock()
     
