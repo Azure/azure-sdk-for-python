@@ -35,3 +35,5 @@ extends:
       safeName: azuremgmtresourcegraph
     - name: azure-mgmt-msi
       safeName: azuremgmtmsi
+    - name: azure-mgmt-resource-deploymentstacks
+      safeName: azuremgmtresourcedeploymentstacks
