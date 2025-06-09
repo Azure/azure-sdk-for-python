@@ -146,7 +146,7 @@ For detailed usage and examples, see the [Avro Encoder README](https://github.co
 
 2. Set required environment variables (or create a `.env` file):
 
-   The following need to be set to run live tests locally and authenticate with AzureCliCredential:
+   The following need to be set to run live tests locally:
    ```
    SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE
    SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE
@@ -179,7 +179,7 @@ For detailed usage and examples, see the [Avro Encoder README](https://github.co
    pip install -e .
    ```
 
-   **Note**: If the azure-schemaregistry-avroencoder package is installed, you may encounter import errors due to issues identifying separate packages with shared namespace. To workaround this, you will need to install the client library in non-editable mode:
+   **Note**: If the azure-schemaregistry-avroencoder package is installed, you may encounter import errors due to issues identifying separate packages with shared namespace. To work around this, you will need to install the client library in non-editable mode:
    ```bash
    pip install .
    ```
@@ -191,7 +191,7 @@ For detailed usage and examples, see the [Avro Encoder README](https://github.co
    pytest tests
 
    # Run specific test
-   pytest tests/livetest/synctests/test_queue_client.py::test_specific_function
+   pytest tests/test_specific_test.py::test_specific_function
    ```
 
 5. Updating recordings:
