@@ -38,6 +38,21 @@ AZURE_WORKSPACE_REGEX_FORMAT = (
 )
 
 
+def construct_user_agent_string(base_user_agent: str = USER_AGENT) -> str:
+    """Construct a user agent string with custom user agent from context if available.
+    
+    :param base_user_agent: The base user agent string to use. Defaults to USER_AGENT.
+    :type base_user_agent: str
+    :return: The constructed user agent string.
+    :rtype: str
+    """
+    custom_user_agent = get_current_user_agent()
+    if custom_user_agent:
+        return f"{base_user_agent} {custom_user_agent}"
+    else:
+        return base_user_agent
+
+
 class AzureMLWorkspace(NamedTuple):
     subscription_id: str
     resource_group_name: str
@@ -150,12 +165,11 @@ def _log_metrics_and_instance_results_onedp(
     )
     
     # Use custom user agent from context if available
-    custom_user_agent = get_current_user_agent()
     client_kwargs = {}
-    if custom_user_agent:
+    user_agent = construct_user_agent_string()
+    if user_agent != USER_AGENT:  # Only add custom policy if user agent is different from default
         # Create a user agent policy with the custom user agent
         from azure.core.pipeline.policies import UserAgentPolicy
-        user_agent = f"{USER_AGENT} {custom_user_agent}"
         client_kwargs["user_agent_policy"] = UserAgentPolicy(base_user_agent=user_agent)
     
     client = EvaluationServiceOneDPClient(
