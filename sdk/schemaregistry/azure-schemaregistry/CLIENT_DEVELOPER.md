@@ -137,45 +137,74 @@ For detailed usage and examples, see the [Avro Encoder README](https://github.co
 
 ## Running Tests
 
-### Unit and Integration Tests
-
-1. Set up test resources following the patterns in `conftest.py`
-2. Run tests using pytest:
-   ```bash
-   # Run all tests
-   pytest tests/
-
-   # Run specific test files
-   pytest tests/test_schema_registry.py
-   pytest tests/test_json_encoder.py
-
-   # Run async tests
-   pytest tests/async_tests/
-   ```
-
 ### Live Tests
 
-Live tests require an Azure Schema Registry namespace. Set the following environment variables:
+1. Login to Azure:
+   ```bash
+   az login
+   ```
 
-```bash
-# Required for live tests
-AZURE_SUBSCRIPTION_ID=<your-subscription-id>
-SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE=<your-namespace>.servicebus.windows.net
-SCHEMAREGISTRY_GROUP=<your-schema-group>
-AZURE_TEST_RUN_LIVE=true
+2. Set required environment variables (or create a `.env` file):
 
-# Authentication (choose one)
-AZURE_TEST_USE_CLI_AUTH=true  # Use Azure CLI authentication
-# OR
-AZURE_CLIENT_ID=<service-principal-id>
-AZURE_CLIENT_SECRET=<service-principal-secret>
-AZURE_TENANT_ID=<tenant-id>
-```
+   The following need to be set to run live tests locally and authenticate with AzureCliCredential:
+   ```
+   SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE
+   SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE
+   SCHEMAREGISTRY_CUSTOM_FULLY_QUALIFIED_NAMESPACE
+   SCHEMAREGISTRY_GROUP
+   AZURE_TEST_RUN_LIVE=true
+   ```
+  * Each namespace is Standard tier. Each namespace has one schema group, with schema type set as per namespace.
+  * The schema group name is the same across namespaces. 
+  
+   If using CLI:
+   ```
+   AZURE_TEST_USE_CLI_AUTH=true
+   ```
 
-Run live tests:
-```bash
-pytest tests/ --live
-```
+   OR
+
+   If using pwsh:
+   ```
+   AZURE_TEST_USE_PWSH_AUTH=true
+   ```
+
+   Note: To run tests in playback mode instead of live mode, set:
+   ```
+   AZURE_TEST_RUN_LIVE=false
+   ```
+3. Install test dependencies and the package in editable mode:
+   ```bash
+   pip install -r dev_requirements.txt
+   pip install -e .
+   ```
+
+   **Note**: If the azure-schemaregistry-avroencoder package is installed, you may encounter import errors due to issues identifying separate packages with shared namespace. To workaround this, you will need to install the client library in non-editable mode:
+   ```bash
+   pip install .
+   ```
+   Note: You'll need to rerun this command after making changes to the package.
+
+4. Run tests:
+   ```bash
+   # Run all tests
+   pytest tests
+
+   # Run specific test
+   pytest tests/livetest/synctests/test_queue_client.py::test_specific_function
+   ```
+
+5. Updating recordings:
+
+   To pull test recordings from assets repo:
+   ```bash
+   python azure-sdk-for-python/scripts/manage_recordings.py restore -p sdk/schemaregistry/azure-schemaregistry/assets.json
+   ```
+
+   To push after recording tests in live mode:
+   ```bash
+   python scripts/manage_recordings.py push -p sdk/schemaregistry/azure-schemaregistry/assets.json
+   ```
 
 ### Common Test Issues
 
