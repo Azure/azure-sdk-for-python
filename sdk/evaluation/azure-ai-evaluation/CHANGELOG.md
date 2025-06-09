@@ -1,10 +1,20 @@
 # Release History
 
+## 1.9.0 (unreleased)
+
+### Features Added
+
+- Enhanced `_SafetyEvaluation` to support both callback-style and simple target functions seamlessly. Callback-style targets with parameters `(messages, stream, session_state, context)` are now automatically detected and used directly, while simple targets with `(query: str) -> str` signature continue to work as before.
+
+### Bugs Fixed
+
+- Improved error messages for invalid target functions in `_SafetyEvaluation` with clear examples of both supported target function patterns.
+
 ## 1.8.0 (2025-05-29)
 
 ### Features Added
 
-- Introduces `AttackStrategy.MultiTurn` and `AttackStrategy.Crescendo` to `RedTeam`. These strategies attack the target of a `RedTeam` scan over the course of multi-turn conversations. 
+- Introduces `AttackStrategy.MultiTurn` and `AttackStrategy.Crescendo` to `RedTeam`. These strategies attack the target of a `RedTeam` scan over the course of multi-turn conversations.
 
 ### Bugs Fixed
 - AdversarialSimulator in `ADVERSARIAL_CONVERSATION` mode was broken. It is now fixed.
