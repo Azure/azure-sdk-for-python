@@ -180,131 +180,69 @@ There are various timeouts a user should be aware of within the library:
 - Deadlocks and race conditions
 - Unpredictable behavior
 
-**Best practices:**
+It is up to the running application to use these classes in a thread-safe and coroutine-safe manner. Note: If sending concurrently, ensure that locks are used.
 
-1. **Use separate client instances per thread/task:**
+**Synchronous concurrent sending with locks:**
 ```python
 import threading
-from azure.servicebus import ServiceBusClient
+from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
-def worker_thread(connection_string, queue_name):
-    # Create a separate client instance for each thread
-    client = ServiceBusClient.from_connection_string(connection_string)
-    with client:
-        sender = client.get_queue_sender(queue_name)
-        with sender:
-            # Perform operations...
-            pass
+FULLY_QUALIFIED_NAMESPACE = "your-namespace.servicebus.windows.net"
+QUEUE_NAME = "your-queue"
+CONNECTION_STRING = "your-connection-string"
 
-# Start multiple threads with separate clients
+# Lock for thread-safe operations
+lock = threading.Lock()
+
+def send_messages_sync(connection_string, queue_name):
+    """Send messages using synchronous API with locks"""
+    with lock:
+        with ServiceBusClient.from_connection_string(connection_string) as client:
+            with client.get_queue_sender(queue_name) as sender:
+                messages = [ServiceBusMessage(f"Message {i}") for i in range(10)]
+                sender.send_messages(messages)
+
+# Create and start multiple threads
 threads = []
-for i in range(5):
-    t = threading.Thread(target=worker_thread, args=(connection_string, queue_name))
+for i in range(3):
+    t = threading.Thread(target=send_messages_sync, args=(CONNECTION_STRING, QUEUE_NAME))
     threads.append(t)
     t.start()
 
+# Wait for all threads to complete
 for t in threads:
     t.join()
 ```
 
-2. **Use connection pooling patterns when needed:**
-```python
-# For high-throughput scenarios, consider using a thread-safe queue
-# to manage client instances
-import queue
-import threading
-
-client_pool = queue.Queue()
-
-def get_client():
-    try:
-        return client_pool.get_nowait()
-    except queue.Empty:
-        return ServiceBusClient.from_connection_string(connection_string)
-
-def return_client(client):
-    try:
-        client_pool.put_nowait(client)
-    except queue.Full:
-        client.close()
-```
-
-3. **Avoid sharing clients across async tasks:**
-```python
-# DON'T DO THIS
-client = ServiceBusClient.from_connection_string(connection_string)
-
-async def bad_async_pattern():
-    # Multiple tasks sharing the same client can cause issues
-    sender = client.get_queue_sender(queue_name)
-    # This can lead to race conditions
-
-# DO THIS INSTEAD
-async def good_async_pattern():
-    # Each async function should use its own client
-    async with ServiceBusClient.from_connection_string(connection_string) as client:
-        sender = client.get_queue_sender(queue_name)
-        async with sender:
-            # Perform operations safely
-            pass
-```
-
-### Async/await best practices
-
-When using the async APIs in the Python Service Bus SDK:
-
-1. **Always use async context managers properly:**
-```python
-async def proper_async_usage():
-    async with ServiceBusClient.from_connection_string(connection_string) as client:
-        async with client.get_queue_sender(queue_name) as sender:
-            message = ServiceBusMessage("Hello World")
-            await sender.send_messages(message)
-        
-        async with client.get_queue_receiver(queue_name) as receiver:
-            messages = await receiver.receive_messages(max_message_count=10)
-            for message in messages:
-                await receiver.complete_message(message)
-```
-
-2. **Don't mix sync and async code without proper handling:**
-```python
-# Avoid mixing sync and async incorrectly
-async def mixed_code_example():
-    # Don't call synchronous methods from async context without wrapping
-    # client = ServiceBusClient.from_connection_string(conn_str)  # This is sync
-    
-    # Instead, create clients within async context or use proper wrapping
-    async with ServiceBusClient.from_connection_string(conn_str) as client:
-        pass
-```
-
-3. **Handle async exceptions properly:**
+**Asynchronous concurrent sending with locks:**
 ```python
 import asyncio
-from azure.servicebus import ServiceBusError
+from azure.identity.aio import DefaultAzureCredential
+from azure.servicebus import ServiceBusMessage
+from azure.servicebus.aio import ServiceBusClient
 
-async def handle_async_errors():
-    try:
-        async with ServiceBusClient.from_connection_string(connection_string) as client:
-            async with client.get_queue_receiver(queue_name) as receiver:
-                messages = await receiver.receive_messages(max_message_count=1, max_wait_time=5)
-                # Process messages...
-    except ServiceBusError as e:
-        print(f"Service Bus error: {e}")
-    except asyncio.TimeoutError:
-        print("Operation timed out")
-    except Exception as e:
-        print(f"Unexpected error: {e}")
+FULLY_QUALIFIED_NAMESPACE = "your-namespace.servicebus.windows.net"
+QUEUE_NAME = "your-queue"
+
+lock = asyncio.Lock()
+
+async def send_messages_async(client, queue_name):
+    """Send messages using async API with locks"""
+    async with lock:
+        async with client.get_queue_sender(queue_name) as sender:
+            messages = [ServiceBusMessage(f"Hello {i}") for i in range(10)]
+            await sender.send_messages(messages)
+
+async def main():
+    credential = DefaultAzureCredential()
+    async with ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential) as client:
+        # Use asyncio.gather for concurrent execution
+        tasks = [send_messages_async(client, QUEUE_NAME) for _ in range(3)]
+        await asyncio.gather(*tasks)
+
+if __name__ == "__main__":
+    asyncio.run(main())
 ```
-
-**Common threading/concurrency mistakes to avoid:**
-
-- Sharing `ServiceBusClient`, `ServiceBusSender`, or `ServiceBusReceiver` instances across threads
-- Not properly closing clients and their resources in multi-threaded scenarios
-- Using the same connection string with too many concurrent clients (can hit connection limits)
-- Mixing blocking and non-blocking operations incorrectly
-- Not handling connection failures in multi-threaded scenarios
 
 ## Troubleshooting authentication issues
 
@@ -639,6 +577,10 @@ with dlq_receiver:
         print(f"Dead letter description: {message.dead_letter_error_description}")
 ```
 
+### Mixing sync and async code
+
+Mixing synchronous and asynchronous Service Bus operations can cause issues such as async operations hanging indefinitely due to the event loop being blocked. Ensure that blocking calls are not made when receiving and message processing.
+
 ## Troubleshooting quota and capacity issues
 
 ### Quota exceeded errors
@@ -655,249 +597,6 @@ with dlq_receiver:
 2. Ensure the entity exists in the Service Bus namespace
 3. Check if the entity was deleted and needs to be recreated
 4. Verify you're connecting to the correct namespace
-
-## Troubleshooting async operations
-
-### Event loop issues
-
-Python's asyncio event loop can cause issues when not properly managed in Service Bus async operations.
-
-**Common symptoms:**
-- `RuntimeError: no running event loop`
-- `RuntimeError: cannot be called from a running event loop`
-- Async operations hanging indefinitely
-
-**Resolution:**
-
-1. **Proper event loop management:**
-```python
-import asyncio
-from azure.servicebus.aio import ServiceBusClient
-
-async def main():
-    async with ServiceBusClient.from_connection_string(connection_string) as client:
-        async with client.get_queue_sender(queue_name) as sender:
-            message = ServiceBusMessage("Hello async world")
-            await sender.send_messages(message)
-
-# Correct way to run async Service Bus code
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
-2. **Handling existing event loops (e.g., in Jupyter notebooks):**
-```python
-import asyncio
-import nest_asyncio
-
-# In environments like Jupyter where an event loop is already running
-nest_asyncio.apply()
-
-async def notebook_friendly_function():
-    async with ServiceBusClient.from_connection_string(connection_string) as client:
-        # Your async Service Bus operations
-        pass
-
-# Can be called directly in Jupyter
-await notebook_friendly_function()
-```
-
-3. **Event loop in multi-threaded applications:**
-```python
-import asyncio
-import threading
-from concurrent.futures import ThreadPoolExecutor
-
-def run_async_in_thread(connection_string, queue_name):
-    """Run async Service Bus operations in a separate thread"""
-    async def async_operations():
-        async with ServiceBusClient.from_connection_string(connection_string) as client:
-            async with client.get_queue_receiver(queue_name) as receiver:
-                messages = await receiver.receive_messages(max_message_count=10)
-                for message in messages:
-                    print(f"Received: {message}")
-                    await receiver.complete_message(message)
-    
-    # Create new event loop for this thread
-    asyncio.run(async_operations())
-
-# Use ThreadPoolExecutor for better management
-with ThreadPoolExecutor(max_workers=3) as executor:
-    futures = [
-        executor.submit(run_async_in_thread, connection_string, f"queue_{i}")
-        for i in range(3)
-    ]
-    
-    for future in futures:
-        future.result()  # Wait for completion
-```
-
-### Async context manager problems
-
-Improper use of async context managers can lead to resource leaks and connection issues.
-
-**Common mistakes:**
-
-1. **Not using async context managers:**
-```python
-# DON'T DO THIS
-client = ServiceBusClient.from_connection_string(connection_string)
-sender = client.get_queue_sender(queue_name)
-await sender.send_messages(message)
-# Resources not properly closed
-
-# DO THIS INSTEAD
-async with ServiceBusClient.from_connection_string(connection_string) as client:
-    async with client.get_queue_sender(queue_name) as sender:
-        await sender.send_messages(message)
-```
-
-2. **Improper exception handling in async context:**
-```python
-async def proper_exception_handling():
-    """Handle exceptions properly in async context managers"""
-    try:
-        async with ServiceBusClient.from_connection_string(connection_string) as client:
-            async with client.get_queue_receiver(queue_name) as receiver:
-                messages = await receiver.receive_messages(max_message_count=10)
-                
-                for message in messages:
-                    try:
-                        # Process message
-                        await process_message_async(message)
-                        await receiver.complete_message(message)
-                    except Exception as processing_error:
-                        print(f"Processing failed: {processing_error}")
-                        await receiver.abandon_message(message)
-                        
-    except ServiceBusError as sb_error:
-        print(f"Service Bus error: {sb_error}")
-    except Exception as general_error:
-        print(f"Unexpected error: {general_error}")
-```
-
-3. **Resource cleanup in long-running async operations:**
-```python
-import asyncio
-from contextlib import AsyncExitStack
-
-async def long_running_processor():
-    """Properly manage resources in long-running async operations"""
-    async with AsyncExitStack() as stack:
-        client = await stack.enter_async_context(
-            ServiceBusClient.from_connection_string(connection_string)
-        )
-        receiver = await stack.enter_async_context(
-            client.get_queue_receiver(queue_name)
-        )
-        
-        # Long-running processing loop
-        while True:
-            try:
-                messages = await receiver.receive_messages(
-                    max_message_count=10, 
-                    max_wait_time=30
-                )
-                
-                if not messages:
-                    await asyncio.sleep(1)
-                    continue
-                
-                # Process messages with proper error handling
-                await process_messages_batch(receiver, messages)
-                
-            except KeyboardInterrupt:
-                print("Shutting down gracefully...")
-                break
-            except Exception as e:
-                print(f"Error in processing loop: {e}")
-                await asyncio.sleep(5)  # Brief pause before retry
-
-async def process_messages_batch(receiver, messages):
-    """Process a batch of messages with individual error handling"""
-    for message in messages:
-        try:
-            await process_single_message(message)
-            await receiver.complete_message(message)
-        except Exception as e:
-            print(f"Failed to process message {message.message_id}: {e}")
-            await receiver.abandon_message(message)
-```
-
-### Mixing sync and async code
-
-Mixing synchronous and asynchronous Service Bus operations can cause issues.
-
-**Common problems:**
-
-1. **Calling async methods without await:**
-```python
-# WRONG - This returns a coroutine, doesn't actually send
-client = ServiceBusClient.from_connection_string(connection_string)
-sender = client.get_queue_sender(queue_name)
-sender.send_messages(message)  # Missing 'await'
-
-# CORRECT
-async with ServiceBusClient.from_connection_string(connection_string) as client:
-    async with client.get_queue_sender(queue_name) as sender:
-        await sender.send_messages(message)
-```
-
-2. **Using sync and async clients together:**
-```python
-# Avoid mixing sync and async clients in the same application
-# Choose one pattern and stick with it
-
-# Option 1: Pure async
-async def async_pattern():
-    async with ServiceBusClient.from_connection_string(connection_string) as client:
-        # All operations are async
-        pass
-
-# Option 2: Pure sync  
-def sync_pattern():
-    with ServiceBusClient.from_connection_string(connection_string) as client:
-        # All operations are sync
-        pass
-```
-
-3. **Proper integration with async frameworks (FastAPI, aiohttp, etc.):**
-```python
-# Example with FastAPI
-from fastapi import FastAPI, BackgroundTasks
-from azure.servicebus.aio import ServiceBusClient
-
-app = FastAPI()
-
-# Global client for reuse (properly managed)
-class ServiceBusManager:
-    def __init__(self):
-        self.client = None
-    
-    async def start(self):
-        self.client = ServiceBusClient.from_connection_string(connection_string)
-    
-    async def stop(self):
-        if self.client:
-            await self.client.close()
-
-sb_manager = ServiceBusManager()
-
-@app.on_event("startup")
-async def startup_event():
-    await sb_manager.start()
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    await sb_manager.stop()
-
-@app.post("/send-message")
-async def send_message(message_content: str):
-    async with sb_manager.client.get_queue_sender(queue_name) as sender:
-        message = ServiceBusMessage(message_content)
-        await sender.send_messages(message)
-    return {"status": "sent"}
-```
 
 ## Frequently asked questions
 
