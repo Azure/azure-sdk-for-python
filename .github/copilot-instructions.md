@@ -14,8 +14,9 @@
 
 ### RULE 3: VERIFY ENVIRONMENT FIRST
 **BEFORE any commands:**
-1. Use `verify_setup` tool from azure-sdk-validation server
-2. Ensure Python virtual environment is active
+1. Get path to azure-sdk-for-python repo root, and path to tox.ini file
+2. Use `verify_setup` tool from azure-sdk-python-mcp server
+3. Ensure Python virtual environment is active
 
 **Virtual Environment Setup:**
 ```bash
@@ -80,7 +81,7 @@ curl -s "https://api.github.com/repos/Azure/azure-rest-api-specs/commits?path=<p
 
 ### STEP 1: ENVIRONMENT VERIFICATION
 ```
-ACTION: Run verify_setup tool
+ACTION: Run verify_setup mcp tool
 IF missing dependencies:
     STOP and install missing dependencies
     THEN proceed to Step 2
@@ -88,7 +89,7 @@ IF missing dependencies:
 
 ### STEP 2: SDK GENERATION
 ```
-ACTION: Use typespec-python mcp server tools
+ACTION: Use azure-sdk-python-mcp sdk generation server tools (init, init_local)
 TIMING: ALWAYS inform user before starting: "This SDK generation step will take approximately 5-6 minutes to complete."
 IF local path provided:
     USE local mcp tools with tspconfig.yaml path
@@ -101,7 +102,7 @@ IF commands fail:
 ```
 TIMING: Inform user: "Static validation will take approximately 3-5 minutes for each step."
 FOR EACH validation step:
-    RUN validation
+    RUN validation (tox mcp tool)
     IF errors/warnings found:
         FIX issues
         RERUN same step
@@ -222,3 +223,42 @@ tox -e pylint --c <path_to_tox.ini> --root .
 **REQUIREMENTS:**
 - Use Python 3.9 compatible environment
 - Follow official fixing guidelines
+- Use tox mcp tool for running MyPy
+
+---
+
+## Python SDK Health tool
+
+- Use the azure-sdk-python-mcp mcp tool to lookup a library's health status.
+- Always include the date of last update based on the Last Refresh date.
+- Explanation of statuses can be found here: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/repo_health_status.md
+- Release blocking checks are MyPy, Pylint, Sphinx, and Tests - CI. These checks should all PASS. If not PASS, mention that the library is blocked for release.
+- If links are available in the table, make the statuses (e.g. PASS, WARNING, etc) you report linked. Avoid telling the user to check the links in the report themselves.
+- Don't share information like SDK Owned
+
+### Example
+
+As of <Last Refresh date>, here is the health status for azure-ai-projects:
+
+Overall Status: ⚠️ NEEDS_ACTION
+
+✅ Passing Checks:
+
+Pyright: PASS
+Sphinx: PASS
+Type Checked Samples: ENABLED
+SLA Questions and Bugs: 0
+
+⚠️ Areas Needing Attention:
+
+Pylint: WARNING
+Tests - Live: ❓ UNKNOWN
+Tests - Samples: ❌ DISABLED
+Customer-reported issues: 🔴 5 open issues
+
+❌ Release blocking
+
+Mypy: FAIL
+Tests - CI: FAIL
+
+This library is failing two release blocking checks - Mypy and Tests - CI. The library needs attention primarily due to Pylint warnings, disabled sample tests, and open customer-reported issues.
