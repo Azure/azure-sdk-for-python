@@ -336,24 +336,51 @@ class CheckFile:
     @return_origin_path
     def check_pyproject_toml(self):
         os.chdir(Path("sdk") / self.sdk_folder / self.whole_package_name)
-        # add `breaking = false` in pyproject.toml
-        toml = Path("pyproject.toml")
-        if not toml.exists():
-            with open(toml, "w") as file:
-                file.write("[tool.azure-sdk-build]\nbreaking = false\n")
-                _LOGGER.info("create pyproject.toml")
-
+        # Configure and ensure pyproject.toml exists with required settings
+        toml_path = Path("pyproject.toml")
+        
+        # Default configurations to enforce
+        default_configs = {
+            "breaking": "false",
+            "pyright": "false"
+        }
+        
+        # Create new pyproject.toml if it doesn't exist
+        if not toml_path.exists():
+            with open(toml_path, "w") as file:
+                file.write("[tool.azure-sdk-build]\n")
+                for key, value in default_configs.items():
+                    file.write(f"{key} = {value}\n")
+                _LOGGER.info("Created pyproject.toml with default configurations")
+            return
+            
+        # If file exists, ensure all required configurations are present
         def edit_toml(content: List[str]):
-            has_breaking = False
-            for line in content:
-                if "breaking = false" in line:
-                    has_breaking = True
-                    break
-            if not has_breaking:
-                _LOGGER.info("add breaking = false to pyproject.toml")
-                content.append("breaking = false\n")
+            # Track if we have the [tool.azure-sdk-build] section
+            has_section = False
+            config_exists = {key: False for key in default_configs}
+            
+            # Check for existing configurations and section
+            for i, line in enumerate(content):
+                if "[tool.azure-sdk-build]" in line:
+                    has_section = True
+                
+                # Check for each configuration
+                for key in default_configs:
+                    if f"{key} = " in line:
+                        config_exists[key] = True
+            
+            # Add section if it doesn't exist
+            if not has_section:
+                content.append("\n[tool.azure-sdk-build]\n")
+                
+            # Add missing configurations
+            for key, value in default_configs.items():
+                if not config_exists[key]:
+                    _LOGGER.info(f"Adding {key} = {value} to pyproject.toml")
+                    content.append(f"{key} = {value}\n")
 
-        modify_file(str(toml), edit_toml)
+        modify_file(str(toml_path), edit_toml)
 
     def run(self):
         self.check_file_with_packaging_tool()
