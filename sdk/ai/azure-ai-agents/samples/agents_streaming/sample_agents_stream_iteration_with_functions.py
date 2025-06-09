@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -5,11 +6,11 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to use agent operations with toolset and iteration in streaming from
+    This sample demonstrates how to use agent operations with iteration and functions from
     the Azure Agents service using a synchronous client.
 
 USAGE:
-    python sample_agents_stream_iteration_with_toolset.py
+    python sample_agents_stream_iteration_with_functions.py
 
     Before running the sample:
 
@@ -21,18 +22,23 @@ USAGE:
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
 """
+from typing import Any
 
 import os, sys
 from azure.ai.projects import AIProjectClient
-from azure.ai.agents.models import AgentStreamEvent, RunStepDeltaChunk
 from azure.ai.agents.models import (
-    MessageDeltaChunk,
+    FunctionTool,
     ListSortOrder,
+    MessageDeltaChunk,
+    RequiredFunctionToolCall,
     RunStep,
+    SubmitToolOutputsAction,
     ThreadMessage,
     ThreadRun,
+    ToolOutput,
+    AgentStreamEvent,
+    RunStepDeltaChunk,
 )
-from azure.ai.agents.models import FunctionTool, ToolSet
 from azure.identity import DefaultAzureCredential
 
 current_path = os.path.dirname(__file__)
@@ -46,26 +52,29 @@ project_client = AIProjectClient(
     credential=DefaultAzureCredential(),
 )
 
-functions = FunctionTool(user_functions)
-toolset = ToolSet()
-toolset.add(functions)
-
 with project_client:
     agents_client = project_client.agents
 
-    agents_client.enable_auto_function_calls(toolset)
+    # [START create_agent_with_function_tool]
+    functions = FunctionTool(user_functions)
+
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
         instructions="You are a helpful agent",
-        toolset=toolset,
+        tools=functions.definitions,
     )
-    print(f"Created agent, agent ID: {agent.id}")
+    # [END create_agent_with_function_tool]
+    print(f"Created agent, ID: {agent.id}")
 
     thread = agents_client.threads.create()
     print(f"Created thread, thread ID {thread.id}")
 
-    message = agents_client.messages.create(thread_id=thread.id, role="user", content="Hello, what's the time?")
+    message = agents_client.messages.create(
+        thread_id=thread.id,
+        role="user",
+        content="Hello, send an email with the datetime and weather information in New York? Also let me know the details.",
+    )
     print(f"Created message, message ID {message.id}")
 
     with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id) as stream:
@@ -86,6 +95,36 @@ with project_client:
 
                 if event_data.status == "failed":
                     print(f"Run failed. Error: {event_data.last_error}")
+
+                if event_data.status == "requires_action" and isinstance(
+                    event_data.required_action, SubmitToolOutputsAction
+                ):
+                    tool_calls = event_data.required_action.submit_tool_outputs.tool_calls
+
+                    tool_outputs = []
+                    for tool_call in tool_calls:
+                        if isinstance(tool_call, RequiredFunctionToolCall):
+                            try:
+                                output = functions.execute(tool_call)
+                                tool_outputs.append(
+                                    ToolOutput(
+                                        tool_call_id=tool_call.id,
+                                        output=output,
+                                    )
+                                )
+                            except Exception as e:
+                                print(f"Error executing tool_call {tool_call.id}: {e}")
+
+                    print(f"Tool outputs: {tool_outputs}")
+                    if tool_outputs:
+                        # Once we receive 'requires_action' status, the next event will be DONE.
+                        # Here we associate our existing event handler to the next stream.
+                        agents_client.runs.submit_tool_outputs_stream(
+                            thread_id=event_data.thread_id,
+                            run_id=event_data.id,
+                            tool_outputs=tool_outputs,
+                            event_handler=stream,
+                        )
 
             elif isinstance(event_data, RunStep):
                 print(f"RunStep type: {event_data.type}, Status: {event_data.status}")
