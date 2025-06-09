@@ -17,6 +17,7 @@ from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation._common.utils import validate_conversation
 from azure.ai.evaluation._constants import _AggregationType
 from azure.core.credentials import TokenCredential
+from azure.ai.evaluation._context import get_current_user_agent
 
 from . import EvaluatorBase
 
@@ -122,6 +123,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
             metric_name=self._eval_metric,
             project_scope=self._azure_ai_project,
             credential=self._credential,
+            user_agent=get_current_user_agent(),
         )
         return result
 
@@ -157,6 +159,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
             credential=self._credential,
             annotation_task=self._get_task(),
             evaluator_name=self.__class__.__name__,
+            user_agent=get_current_user_agent(),
         )
 
     def _get_task(self):
