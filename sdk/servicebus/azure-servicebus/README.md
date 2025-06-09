@@ -115,7 +115,7 @@ def send_batch(sender_id, sender):
     with lock:
         messages = [ServiceBusMessage(f"Message {i} from sender {sender_id}") for i in range(10)]
         sender.send_messages(messages)
-        print(f"Sender {sender_id} sent batch.")
+        print(f"Sender {sender_id} sent messages.")
 
 def main():
     credential = DefaultAzureCredential()
@@ -148,7 +148,7 @@ async def send_batch(sender_id, sender):
     async with lock:
         messages = [ServiceBusMessage(f"Message {i} from sender {sender_id}") for i in range(10)]
         await sender.send_messages(messages)
-        print(f"Sender {sender_id} sent batch.")
+        print(f"Sender {sender_id} sent messages.")
 
 async def main():
     credential = DefaultAzureCredential()

@@ -96,7 +96,7 @@ Also, the concepts for AMQP are well documented in [OASIS Advanced Messaging Que
 
 ### Thread safety
 
-We do not guarantee that the EventHubProducerClient or EventHubConsumerClient are thread-safe or coroutine-safe. We do not recommend reusing these instances across threads or sharing them between coroutines. It is up to the running application to use these classes in a thread-safe manner.
+We do not guarantee that the EventHubProducerClient or EventHubConsumerClient are thread-safe or coroutine-safe. We do not recommend reusing these instances across threads or sharing them between coroutines. It is up to the running application to use these classes in a concurrency-safe manner.
 
 The data model type, `EventDataBatch` is not thread-safe or coroutine-safe. It should not be shared across threads nor used concurrently with client methods.
 
@@ -121,21 +121,17 @@ def send_batch(producer_id, producer):
         producer.send_batch(event_data_batch)
         print(f"Producer {producer_id} sent batch.")
 
-def main():
-    credential = DefaultAzureCredential()
-    producer = EventHubProducerClient(
-        fully_qualified_namespace=EVENTHUB_NAMESPACE,
-        eventhub_name=EVENTHUB_NAME,
-        credential=credential
-    )
+credential = DefaultAzureCredential()
+producer = EventHubProducerClient(
+    fully_qualified_namespace=EVENTHUB_NAMESPACE,
+    eventhub_name=EVENTHUB_NAME,
+    credential=credential
+)
 
-    with producer:
-        with ThreadPoolExecutor(max_workers=5) as executor:
-            for i in range(5):  # Launch 5 threads
-                executor.submit(send_batch, i, producer)
-
-if __name__ == "__main__":
-    main()
+with producer:
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        for i in range(5):  # Launch 5 threads
+            executor.submit(send_batch, i, producer)
 ```
 
 For scenarios requiring concurrent sending in asyncio applications, ensure proper coroutine-safety management using mechanisms like asyncio.Lock()
@@ -159,19 +155,15 @@ async def send_batch(producer_id, producer):
         await producer.send_batch(event_data_batch)
         print(f"Producer {producer_id} sent batch.")
 
-async def main():
-    credential = DefaultAzureCredential()
-    producer = EventHubProducerClient(
-        fully_qualified_namespace=EVENTHUB_NAMESPACE,
-        eventhub_name=EVENTHUB_NAME,
-        credential=credential
-    )
+credential = DefaultAzureCredential()
+producer = EventHubProducerClient(
+    fully_qualified_namespace=EVENTHUB_NAMESPACE,
+    eventhub_name=EVENTHUB_NAME,
+    credential=credential
+)
 
-    async with producer:
-        await asyncio.gather(*(send_batch(i, producer) for i in range(5)))
-
-if __name__ == "__main__":
-    asyncio.run(main())
+async with producer:
+    await asyncio.gather(*(send_batch(i, producer) for i in range(5)))
 ```
 
 ## Examples
