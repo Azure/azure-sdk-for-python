@@ -17,7 +17,7 @@ dependencies = [
 ]
 
 [project.scripts]
-azure-sdk-mcp-python = "main:main"
+azure-sdk-python-mcp = "main:main"
 
 [[tool.uv.index]]
 name = "azure-sdk-python-mcp"
