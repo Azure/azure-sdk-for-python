@@ -10,6 +10,7 @@ from typing import (
     Any, Callable, cast, Dict, Optional, Union,
     TYPE_CHECKING
 )
+from typing_extensions import Self
 
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
