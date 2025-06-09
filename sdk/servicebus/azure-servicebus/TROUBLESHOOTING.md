@@ -25,18 +25,18 @@ This troubleshooting guide contains instructions to diagnose frequently encounte
   * [Session lock issues](#session-lock-issues)
   * [Session cannot be locked](#session-cannot-be-locked)
 * [Troubleshooting sender issues](#troubleshooting-sender-issues)
-  * [Cannot send batch with multiple partition keys](#cannot-send-batch-with-multiple-partition-keys)
+
   * [Batch fails to send](#batch-fails-to-send)
-  * [Message encoding issues](#message-encoding-issues)
+
 * [Troubleshooting receiver issues](#troubleshooting-receiver-issues)
-  * [Number of messages returned doesn't match number requested](#number-of-messages-returned-doesnt-match-number-requested)
+
   * [Message completion behavior](#message-completion-behavior)
   * [Receive operation hangs](#receive-operation-hangs)
   * [Messages not being received](#messages-not-being-received)
 * [Troubleshooting quota and capacity issues](#troubleshooting-quota-and-capacity-issues)
   * [Quota exceeded errors](#quota-exceeded-errors)
   * [Entity not found errors](#entity-not-found-errors)
-* [Frequently asked questions](#frequently-asked-questions)
+
 * [Get additional help](#get-additional-help)
 
 ## General troubleshooting
@@ -124,33 +124,7 @@ The Service Bus APIs generate the following exceptions in `azure.servicebus.exce
 
 - **AutoLockRenewTimeout:** The time allocated to renew the message or session lock has elapsed. You could re-register the object that wants be auto lock renewed or extend the timeout in advance.
 
-#### Python-Specific Considerations
 
-- **ImportError/ModuleNotFoundError:** Common when Azure Service Bus dependencies are not properly installed. Ensure you have installed the correct package version:
-```bash
-pip install azure-servicebus
-```
-
-- **TypeError:** Often occurs when passing incorrect data types to Service Bus methods:
-```python
-# Incorrect: passing string instead of ServiceBusMessage
-sender.send_messages("Hello World")  # This will fail
-
-# Correct: create ServiceBusMessage objects
-from azure.servicebus import ServiceBusMessage
-message = ServiceBusMessage("Hello World")
-sender.send_messages(message)
-```
-
-- **ConnectionError/socket.gaierror:** Network-level errors that may require checking DNS resolution and network connectivity:
-```python
-import socket
-try:
-    # Test DNS resolution
-    socket.gethostbyname("your-namespace.servicebus.windows.net")
-except socket.gaierror as e:
-    print(f"DNS resolution failed: {e}")
-```
 
 ### Timeouts
 
@@ -380,13 +354,7 @@ with receiver:
 
 ## Troubleshooting sender issues
 
-### Cannot send batch with multiple partition keys
 
-When sending to a partition-enabled entity, all messages included in a single send operation must have the same `session_id` if the entity is session-enabled, or the same custom properties that determine partitioning.
-
-**Resolution:**
-1. For session-enabled entities, ensure all messages in a batch have the same session ID
-2. For partitioned entities, group messages by partition key before sending them in separate batches
 
 ### Batch fails to send
 
@@ -395,26 +363,10 @@ When sending to a partition-enabled entity, all messages included in a single se
 2. Check message size limits: Standard tier (256 KB), Premium tier (1 MB), Batch limit (1 MB regardless of tier)
 3. Use message properties for metadata instead of including everything in the message body
 
-### Message encoding issues
-
-**Resolution:**
-1. Explicitly handle string encoding using UTF-8
-2. For JSON data, use `json.dumps()` with proper encoding
-3. For binary data, pass bytes directly and set appropriate content type
 
 ## Troubleshooting receiver issues
 
-### Number of messages returned doesn't match number requested
 
-When using `receive_messages()` with `max_message_count` > 1, you may not receive the exact number requested.
-
-**Why this happens:**
-- Service Bus optimizes for throughput and latency
-- After the first message, the receiver waits only briefly for additional messages
-- `max_wait_time` controls how long to wait for the **first** message, not subsequent ones
-
-**Resolution:**
-Don't assume all available messages will be received in one call. Use loops to receive all available messages or implement continuous receiving patterns.
 
 ### Message completion behavior
 
@@ -435,7 +387,6 @@ Don't assume all available messages will be received in one call. Use loops to r
 **Resolution:**
 1. Set appropriate timeouts: `max_wait_time=30` instead of None
 2. For polling scenarios, use shorter timeouts with retry loops
-3. Use async operations with proper cancellation for better control
 
 ### Messages not being received
 
@@ -464,62 +415,7 @@ Don't assume all available messages will be received in one call. Use loops to r
 
 
 
-## Frequently asked questions
 
-### Q: Why am I getting connection timeout errors?
-
-**A:** Connection timeouts can occur due to:
-- Network connectivity issues
-- Firewall blocking AMQP ports (5671-5672)
-- DNS resolution problems
-
-Try using AMQP over WebSockets (port 443) or check your network configuration.
-
-### Q: How do I handle transient errors?
-
-**A:** Implement retry logic with exponential backoff for transient errors like:
-- `ServiceBusConnectionError`
-- `OperationTimeoutError`
-- `ServiceBusServerBusyError`
-
-### Q: Why are my messages going to the dead letter queue?
-
-**A:** Common reasons include:
-- Message TTL expiration
-- Maximum delivery count exceeded
-- Explicit dead lettering in message processing logic
-- Poison message detection
-
-Check the `dead_letter_reason` and `dead_letter_error_description` properties on dead lettered messages.
-
-### Q: How do I process messages faster?
-
-**A:** Consider:
-- Using concurrent message processing (with separate client instances per thread/task)
-- Optimizing your message processing logic
-- Using `prefetch_count` to pre-fetch messages (use with caution - see note below)
-- Scaling out with multiple receivers (on different clients)
-
-**Note on prefetch_count:** Be careful when using `prefetch_count` as it can cause message lock expiration if processing takes too long. The client cannot extend locks for prefetched messages.
-
-### Q: What's the difference between `complete_message()` and `abandon_message()`?
-
-**A:** 
-- `complete_message()`: Removes the message from the queue/subscription (successful processing)
-- `abandon_message()`: Returns the message to the queue/subscription for reprocessing
-
-**Important:** Due to Python AMQP implementation limitations, these operations return immediately without waiting for service acknowledgment. Implement idempotent processing to handle potential redelivery.
-
-### Q: How do I handle message ordering?
-
-**A:** 
-- Use **sessions** for guaranteed message ordering within a session
-- For partitioned entities, messages with the same partition key maintain order
-- Regular queues do not guarantee strict FIFO ordering
-
-### Q: How do I implement retry logic for transient failures?
-
-**A:** Implement exponential backoff retry for Service Bus operations. Check if errors are retryable (ServiceTimeout, ServerBusy, ServiceCommunicationProblem) before retrying with increasing delays.
 
 ## Get additional help
 
