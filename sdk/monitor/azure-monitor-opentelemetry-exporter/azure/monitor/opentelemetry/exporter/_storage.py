@@ -136,9 +136,6 @@ class LocalFileStorage:
         except Exception:
             pass  # keep silent
 
-    def is_enabled(self):
-        return self._enabled
-
     def gets(self):
         if not self._enabled:
             return None
