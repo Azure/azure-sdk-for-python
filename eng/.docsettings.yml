@@ -74,7 +74,6 @@ known_content_issues:
   - ['sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/README.md', '#4554']
   - ['sdk/cognitiveservices/azure-cognitiveservices-vision-face/README.md', '#4554']
   - ['sdk/core/azure/README.md', '#4554']
-  - ['sdk/core/azure-core/sdk/core/azure-core/tests/specs_sdk/scratch/README.md', '#4554']
   - ['sdk/core/azure-common/README.md', '#4554']
   - ['sdk/core/azure-servicemanagement-legacy/README.md', '#4554']
   - ['sdk/eventgrid/azure-eventgrid/README.md', '#4554']
