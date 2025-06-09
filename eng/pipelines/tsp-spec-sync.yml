@@ -53,4 +53,4 @@ extends:
 
                     Generated from workflow triggered by PR #$(System.PullRequest.PullRequestNumber).
                   CommitMsg: 'Auto-update TSP client generated code'
-                condition: eq(variables['hasChanges'], 'true')
+
