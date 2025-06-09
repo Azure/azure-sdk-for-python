@@ -124,12 +124,11 @@ Here is an example of how to create an Agent:
 <!-- SNIPPET:sample_agents_basics.create_agent -->
 
 ```python
-
-    agent = agents_client.create_agent(
-        model=os.environ["MODEL_DEPLOYMENT_NAME"],
-        name="my-agent",
-        instructions="You are helpful agent",
-    )
+agent = agents_client.create_agent(
+    model=os.environ["MODEL_DEPLOYMENT_NAME"],
+    name="my-agent",
+    instructions="You are helpful agent",
+)
 ```
 
 <!-- END SNIPPET -->
@@ -300,7 +299,8 @@ conn_id = os.environ["AZURE_BING_CONNECTION_ID"]
 bing = BingGroundingTool(connection_id=conn_id)
 
 # Create agent with the bing tool and process agent run
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
@@ -330,7 +330,14 @@ ai_search = AzureAISearchTool(
 )
 
 # Create agent with AI search tool and process agent run
-with agents_client:
+project_client = AIProjectClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
+    credential=DefaultAzureCredential(),
+)
+
+with project_client:
+    agents_client = project_client.agents
+
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
@@ -594,7 +601,7 @@ Below is an example of how to create an Azure Logic App utility tool and registe
 ```python
 
 # Create the agents client
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
@@ -655,7 +662,9 @@ openapi_tool.add_definition(
 )
 
 # Create agent with OpenApi tool and process agent run
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
+
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
@@ -1191,7 +1200,8 @@ scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
 with tracer.start_as_current_span(scenario):
-    with agents_client:
+    with project_client:
+        agents_client = project_client.agents
 ```
 
 <!-- END SNIPPET -->
