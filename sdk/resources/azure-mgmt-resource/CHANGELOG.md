@@ -1,5 +1,17 @@
 # Release History
 
+## 23.5.0 (2025-06-16)
+
+### Features Added
+
+  - Model Deployment has a new parameter identity
+  - Model DeploymentParameter has a new parameter expression
+  - Model DeploymentProperties has a new parameter external_input_definitions
+  - Model DeploymentProperties has a new parameter external_inputs
+  - Model DeploymentWhatIfProperties has a new parameter external_input_definitions
+  - Model DeploymentWhatIfProperties has a new parameter external_inputs
+  - Model WhatIfChange has a new parameter extension
+
 ## 23.4.0 (2025-05-19)
 
 ### Features Added
