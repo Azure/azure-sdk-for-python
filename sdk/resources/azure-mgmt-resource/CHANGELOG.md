@@ -1,6 +1,6 @@
 # Release History
 
-## 23.5.0 (2025-06-16)
+## 24.0.0 (2025-06-16)
 
 ### Features Added
 
@@ -11,6 +11,13 @@
   - Model DeploymentWhatIfProperties has a new parameter external_input_definitions
   - Model DeploymentWhatIfProperties has a new parameter external_inputs
   - Model WhatIfChange has a new parameter extension
+
+### Breaking Changes
+
+  - The `deploymentstacks` module has been separated from the `azure-mgmt-resource` package into independent package `azure-mgmt-resource-deploymentstacks`
+  - The `deploymentscripts` module has been separated from the `azure-mgmt-resource` package into independent package `azure-mgmt-resource-deploymentscripts` 
+  - The `templatespecs` module has been separated from the `azure-mgmt-resource` package into independent package `azure-mgmt-resource-templatespecs`
+  - If you previously imported these modules using statements like `from azure.mgmt.resource import DeploymentStacksClient`, you'll need to update your code to `from azure.mgmt.resource.deploymentstacks import DeploymentStacksClient`. If you were already using the fully qualified import path, no changes are required. This applies to all three modules: `deploymentstacks`, `deploymentscripts`, and `templatespecs`.
 
 ## 23.4.0 (2025-05-19)
 

@@ -28,7 +28,7 @@ __all__ = [
 
 
 def _build_compat_message(client_name: str, package_name: str) -> str:
-   return f"""
+    return f"""
 {client_name} is no longer available in azure-mgmt-resource. Please use {package_name} instead.
 You can import the client using `from {package_name.replace('-', '.')} import {client_name}
 """
@@ -41,4 +41,4 @@ def __getattr__(name: str):
     }
     if name in new_packages:
         raise ImportError(_build_compat_message(name, new_packages[name]))
-    raise AttributeError(f"module 'azure.mgmt.resources' has no attribute {name}")
+    raise AttributeError(f"module 'azure.mgmt.resource' has no attribute {name}")
