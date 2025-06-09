@@ -81,9 +81,41 @@ Live tests require an Azure Service Bus namespace. The test framework uses `Serv
 
 ### Common Test Issues
 
-- **Authentication errors**: If you see "The access token is invalid" errors, run `az login` to refresh your authentication.
-- **Resource Not Found**: Ensure your environment variables are correctly set and don't include unnecessary parts (e.g., don't include the `.servicebus.windows.net` suffix in namespace names).
-- **ImportError**: If you see errors importing library components, try reinstalling with `pip install .` instead of development mode.
+- **Missing environment variables**: If you see a warning like:
+  ```log
+  sdk/servicebus/azure-servicebus/tests/livetest/asynctests/test_auth_async.py::test_client_token_credential_async[pyamqp]
+    /.../tests/conftest.py:195: UserWarning: SERVICEBUS_RESOURCE_GROUP undefined - skipping test
+      warnings.warn(UserWarning("SERVICEBUS_RESOURCE_GROUP undefined - skipping test"))
+  ```
+  Create an `.env` file with the named variable or set it in your environment.
+
+- **Authentication errors**: If you see:
+  ```log
+  ERROR tests/unittest/test_partition_resolver.py::TestPartitionResolver::test_basic_round_robin[1] - azure.core.exceptions.ClientAuthenticationError: (InvalidAuthenticationToken) The access token is invalid.
+  ```
+  Run `az login` to refresh your authentication.
+
+- **Resource Not Found**: If you see:
+  ```log
+  ERROR tests/unittest/test_partition_resolver.py::TestPartitionResolver::test_basic_round_robin[1] - azure.core.exceptions.ResourceNotFoundError: (ParentResourceNotFound) Failed to perform 'action' on resource(s) of type 'namespaces/authorizationrules', be...
+  ```
+  This probably means you included the suffix in SERVICEBUS_NAMESPACE. Only use the name, and strip out the ".servicebus.windows.net".
+
+- **PytestUnknownMarkWarning**: You can ignore warnings like:
+  ```log
+    PytestUnknownMarkWarning: Unknown pytest.mark.livetest - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+      @pytest.mark.livetest
+  ```
+  These are not part of pytest, but are part of the azure-sdk-for-python test framework.
+
+- **asyncio_default_fixture_loop_scope warnings**: These warnings from pytest-asyncio can be ignored. For example:
+  ```log
+  /.../.venv/lib/python3.10/site-packages/pytest_asyncio/plugin.py:217: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+  The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+    warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
+  ```
+
+If you want to see pytest's output, even if the test succeeds, use `pytest -s <test>`
 
 ## Stress Testing
 
