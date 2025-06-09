@@ -108,7 +108,7 @@ Live tests require an Azure Event Hubs namespace. Resources are created dynamica
 
 - **Authentication errors**: If you see "The access token is invalid" errors, run `az login` to refresh your authentication.
 - **Resource Not Found**: Ensure your environment variables are correctly set. For `EVENTHUB_NAMESPACE`, only use the name part (without the `.servicebus.windows.net` suffix).
-- **ImportError**: If you see errors like "cannot import name 'EventHubProducerClient' from 'azure.eventhub'", use `pip install .` instead of `pip install -e .`.
+- **ImportError**: If you see errors like "cannot import name 'EventHubProducerClient' from 'azure.eventhub'", use `pip install .` instead of `pip install -e .` to install azure-eventhub.
 - **PytestUnknownMarkWarning**: You can ignore warnings about "Unknown pytest.mark.livetest" as they're related to the Azure SDK test framework.
 - **asyncio_default_fixture_loop_scope warnings**: These warnings from pytest-asyncio can be ignored.
 
