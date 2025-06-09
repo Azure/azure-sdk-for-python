@@ -31,7 +31,7 @@ extends:
               - script: |
                   tsp-client update --local-spec-repo ../../specs/scratch/
                 displayName: 'Run TSP Client Update'
-                workingDirectory: ./sdk/core/azure-core/tests/specs_sdk/scratch
+                workingDirectory: /sdk/core/azure-core/tests/specs_sdk/scratch
 
               - script: |
                   changes=$(git status --porcelain)
