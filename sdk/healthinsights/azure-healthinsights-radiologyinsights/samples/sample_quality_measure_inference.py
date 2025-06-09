@@ -174,15 +174,15 @@ def display_quality_measure(radiology_insights_result):
                 print(f"Quality Measure {counter} Inference found")
 
                 # Print Quality Measure Denominator
-                if hasattr(ri_inference, "quality_measure_denominator"):
+                if ri_inference.quality_measure_denominator:
                     print(f"Quality Measure Denominator: {ri_inference.quality_measure_denominator}")
 
                 # Print Compliance Type
-                if hasattr(ri_inference, "compliance_type"):
+                if ri_inference.compliance_type:
                     print(f"Compliance Type: {ri_inference.compliance_type}")
 
                 # Print Quality Criteria
-                if hasattr(ri_inference, "quality_criteria") and ri_inference.quality_criteria:
+                if ri_inference.quality_criteria:
                     for criteria in ri_inference.quality_criteria:
                         print(f"Quality Criterium: {criteria}")
     # [END display_quality_measure]
