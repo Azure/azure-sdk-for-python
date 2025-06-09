@@ -64,7 +64,7 @@ jobs:
             export PATH=~/.local/bin:$PATH
             curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
             python3 get-pip.py
-            python3 -m pip install setuptools==74.1.3 wheel
+            python3 -m pip install setuptools==80.7.1 wheel
             python3 -m pip install tox packaging twine beautifulsoup4
             python3 --version
             cd $(Build.SourcesDirectory)
