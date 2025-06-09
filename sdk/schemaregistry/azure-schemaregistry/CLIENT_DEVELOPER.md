@@ -62,39 +62,21 @@ The Azure Schema Registry client library follows a hybrid approach with both gen
 
 ### Generated Code
 
-The following files are automatically generated from TypeSpec and should **not** be manually edited:
-- `_client.py` - Main client implementation
-- `_configuration.py` - Client configuration
-- `_model_base.py` - Base classes for models
-- `_operations/` - Generated operation classes
-- `_serialization.py` - Serialization utilities
-- `_vendor.py` - Vendored dependencies
-- `models/*.py` (except `_patch.py`) - Data models
-- `aio/_client.py` - Async client implementation
-- `aio/_configuration.py` - Async client configuration
+All files under `azure/` are automatically generated from TypeSpec and should **not** be manually edited, except for the handwritten code described below.
 
 ### Handwritten Code
 
-The following files contain handwritten customizations and extensions:
+The following contain handwritten customizations and extensions:
 
 #### `_patch.py` Files
-- `azure/schemaregistry/_patch.py` - Sync client customizations
-- `azure/schemaregistry/aio/_patch.py` - Async client customizations
-- `azure/schemaregistry/models/_patch.py` - Model customizations
-
-These files allow you to:
+Any files with the name `_patch.py` contain handwritten code that allows you to:
 - Add custom methods to generated classes
 - Override generated method implementations
 - Add custom models and enums
 - Extend functionality while preserving generated code
 
 #### Encoder Implementation
-- `azure/schemaregistry/encoder/jsonencoder/` - Complete handwritten JSON Schema encoder implementation
-  - `_json_encoder.py` - Main encoder/decoder logic
-  - `_exceptions.py` - Custom exceptions
-  - `__init__.py` - Public API
-
-The encoder directory contains entirely handwritten code that provides schema-based encoding and decoding capabilities using the Schema Registry client.
+All files under `encoder/jsonencoder/` contain handwritten code that provides schema-based encoding and decoding capabilities using the Schema Registry client.
 
 ### Code Customization Guidelines
 
@@ -254,5 +236,4 @@ For detailed performance testing setup and resource requirements, see the [Perfo
 - [Azure SDK Design Guidelines](https://azure.github.io/azure-sdk/python_design.html)
 - [TypeSpec Documentation](https://typespec.io/)
 - [Schema Registry Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry/samples)
-- [Azure Schema Registry REST API Reference](https://docs.microsoft.com/rest/api/schemaregistry/)
 - [Event Hubs and Schema Registry Quickstart](https://learn.microsoft.com/azure/event-hubs/create-schema-registry)
