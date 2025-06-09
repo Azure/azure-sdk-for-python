@@ -102,7 +102,7 @@ async def main():
     # Receive
     consumer = EventHubConsumerClient(
         fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
-        credential=AzureCliCredential(),
+        credential=DefaultAzureCredential(),
         consumer_group="$Default",
         eventhub_name=EVENTHUB_NAME,
         transport_type=TransportType.AmqpOverWebsocket,
