@@ -107,7 +107,8 @@ class TestLocalFileStorage(unittest.TestCase):
 
     def test_put(self):
         test_input = (1, 2, 3)
-        with LocalFileStorage(os.path.join(TEST_FOLDER, "bar")) as stor:
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "bar123")) as stor:
+            self.assertEqual(stor.is_enabled(), True)
             stor.put(test_input, 0)
             self.assertEqual(stor.get().get(), test_input)
         with LocalFileStorage(os.path.join(TEST_FOLDER, "bar")) as stor:
@@ -126,7 +127,8 @@ class TestLocalFileStorage(unittest.TestCase):
 
     def test_check_storage_size_full(self):
         test_input = (1, 2, 3)
-        with LocalFileStorage(os.path.join(TEST_FOLDER, "asd2"), 1) as stor:
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "asd2123123"), 1) as stor:
+            self.assertEqual(stor.is_enabled(), True)
             stor.put(test_input)
             self.assertFalse(stor._check_storage_size())
 

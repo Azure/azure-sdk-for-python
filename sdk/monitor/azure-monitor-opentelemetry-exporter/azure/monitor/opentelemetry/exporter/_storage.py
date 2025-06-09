@@ -115,7 +115,7 @@ class LocalFileStorage:
             self._maintenance_task.start()
         else:
             logger.error("Could not set secure permissions on storage folder.")
-            
+
     def close(self):
         if self._enabled:
             self._maintenance_task.cancel()
@@ -135,6 +135,9 @@ class LocalFileStorage:
                 pass  # keep silent
         except Exception:
             pass  # keep silent
+
+    def is_enabled(self):
+        return self._enabled
 
     def gets(self):
         if not self._enabled:
