@@ -319,7 +319,7 @@ for patient_result in radiology_insights_result.patient_results:
 ### Get Quality Measure Inference information
 <!-- SNIPPET:sample_quality_measure_inference_async.display_quality_measure-->
  ```Python
-   for patient_result in radiology_insights_result.patient_results:
+    for patient_result in radiology_insights_result.patient_results:
         counter = 0
         for ri_inference in patient_result.inferences:
             if ri_inference.kind == models.RadiologyInsightsInferenceType.QUALITY_MEASURE:
@@ -327,15 +327,15 @@ for patient_result in radiology_insights_result.patient_results:
                 print(f"Quality Measure {counter} Inference found")
 
                 # Print Quality Measure Denominator
-                if hasattr(ri_inference, "quality_measure_denominator"):
+                if ri_inference.quality_measure_denominator:
                     print(f"Quality Measure Denominator: {ri_inference.quality_measure_denominator}")
 
                 # Print Compliance Type
-                if hasattr(ri_inference, "compliance_type"):
+                if ri_inference.compliance_type:
                     print(f"Compliance Type: {ri_inference.compliance_type}")
 
                 # Print Quality Criteria
-                if hasattr(ri_inference, "quality_criteria") and ri_inference.quality_criteria:
+                if ri_inference.quality_criteria:
                     for criteria in ri_inference.quality_criteria:
                         print(f"Quality Criterium: {criteria}")
 ```
@@ -352,19 +352,19 @@ for patient_result in radiology_insights_result.patient_results:
                 print(f"Scoring and assesment {counter} Inference found")
 
                 # Print Category
-                if hasattr(ri_inference, "category"):
+                if ri_inference.category:
                     print(f"Category : {ri_inference.category}")
 
                 # Print Compliance Type
-                if hasattr(ri_inference, "category_description"):
+                if ri_inference.category_description:
                     print(f"Category Description: {ri_inference.category_description}")
 
                 # Print Quality Criteria
-                if hasattr(ri_inference, "single_value"):
+                if ri_inference.single_value:
                     print(f"Single Value: {ri_inference.single_value}")
 
                 # Print Range Value
-                if hasattr(ri_inference, "range_value") and ri_inference.range_value is not None:
+                if ri_inference.range_value:
                     display_range_value(ri_inference.range_value)
 
 ```
