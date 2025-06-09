@@ -8,6 +8,7 @@ from typing import Any, Dict, MutableMapping, Optional, TypedDict, cast
 from typing_extensions import Self, Unpack
 
 from azure.ai.evaluation._user_agent import USER_AGENT
+from azure.ai.evaluation._context import get_current_user_agent
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline, Pipeline
 from azure.core.pipeline.policies import (
@@ -454,7 +455,14 @@ def get_http_client(**kwargs: Any) -> HttpPipeline:
     :returns: An HttpPipeline with a set of applied policies:
     :rtype: HttpPipeline
     """
-    kwargs.setdefault("user_agent_policy", UserAgentPolicy(base_user_agent=USER_AGENT))
+    # Use custom user agent from context if available, otherwise use default
+    custom_user_agent = get_current_user_agent()
+    if custom_user_agent:
+        user_agent = f"{USER_AGENT} {custom_user_agent}"
+    else:
+        user_agent = USER_AGENT
+    
+    kwargs.setdefault("user_agent_policy", UserAgentPolicy(base_user_agent=user_agent))
     return HttpPipeline(**kwargs)
 
 
@@ -464,5 +472,12 @@ def get_async_http_client(**kwargs: Any) -> AsyncHttpPipeline:
     :returns: An AsyncHttpPipeline with a set of applied policies:
     :rtype: AsyncHttpPipeline
     """
-    kwargs.setdefault("user_agent_policy", UserAgentPolicy(base_user_agent=USER_AGENT))
+    # Use custom user agent from context if available, otherwise use default
+    custom_user_agent = get_current_user_agent()
+    if custom_user_agent:
+        user_agent = f"{USER_AGENT} {custom_user_agent}"
+    else:
+        user_agent = USER_AGENT
+    
+    kwargs.setdefault("user_agent_policy", UserAgentPolicy(base_user_agent=user_agent))
     return AsyncHttpPipeline(**kwargs)

@@ -16,6 +16,8 @@ import pandas as pd
 from tqdm import tqdm
 
 from azure.ai.evaluation._legacy._adapters.entities import Run
+from azure.ai.evaluation._context import get_current_user_agent
+from azure.ai.evaluation._user_agent import USER_AGENT
 
 from azure.ai.evaluation._constants import (
     DEFAULT_EVALUATION_RESULTS_FILE_NAME,
@@ -146,9 +148,20 @@ def _log_metrics_and_instance_results_onedp(
     credentials = AzureMLTokenManager(
         TokenScope.COGNITIVE_SERVICES_MANAGEMENT.value, LOGGER, credential=kwargs.get("credential")
     )
+    
+    # Use custom user agent from context if available
+    custom_user_agent = get_current_user_agent()
+    client_kwargs = {}
+    if custom_user_agent:
+        # Create a user agent policy with the custom user agent
+        from azure.core.pipeline.policies import UserAgentPolicy
+        user_agent = f"{USER_AGENT} {custom_user_agent}"
+        client_kwargs["user_agent_policy"] = UserAgentPolicy(base_user_agent=user_agent)
+    
     client = EvaluationServiceOneDPClient(
         endpoint=project_url,
-        credential=credentials
+        credential=credentials,
+        **client_kwargs
     )
 
     # Massaging before artifacts are put on disk
