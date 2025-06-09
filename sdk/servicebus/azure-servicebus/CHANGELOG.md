@@ -4,18 +4,25 @@
 
 ### Features Added
 
+- Added support for native OpenTelemetry tracing without the need for a tracing plugin to be installed. To enable this:
+   1. Ensure that your `azure-core` version is at least `1.33.0`.
+   2. Import `settings` from `azure.core.settings` and set `settings.tracing_enabled` to `True`
+   3. Ensure that `settings.tracing_implementation` is not set.
+
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
 
+- Tracing: On `PUBLISH` and `RECEIVE` spans, attributes `peer.address` and `message_bus.destination` are now renamed to `net.peer.name` and `messaging.destination.name`, respectively. The OpenTelemetry tracing plugin has already been remapping these values, so this change will not affect users of the plugin.
+
 ## 7.14.2 (2025-04-09)
 
 ### Bugs Fixed
 
 - Fixed a bug where max number of messages was not being requested when receiving from the service due to an incorrect link credit calculation. ([#40156](https://github.com/Azure/azure-sdk-for-python/issues/40156))
-- 
+-
 ### Other Changes
 
 - Added support for handling a C# DateTime.MinValue timestamp, which is returned by the service as a sentinel for time which is not set.
