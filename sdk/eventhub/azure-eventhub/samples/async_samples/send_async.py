@@ -19,9 +19,8 @@ import os
 from azure.eventhub.aio import EventHubProducerClient
 from azure.eventhub.exceptions import EventHubError
 from azure.eventhub import EventData
-from azure.identity.aio import DefaultAzureCredential
 
-FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
+CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
 
 
@@ -98,10 +97,9 @@ async def send_concurrent_with_shared_client_and_lock():
     """
     send_lock = asyncio.Lock()
     
-    producer = EventHubProducerClient(
-        fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
+    producer = EventHubProducerClient.from_connection_string(
+        conn_str=CONNECTION_STR,
         eventhub_name=EVENTHUB_NAME,
-        credential=DefaultAzureCredential(),
     )
 
     async def send_with_lock(task_id):
@@ -122,10 +120,9 @@ async def send_concurrent_with_shared_client_and_lock():
 
 async def run():
 
-    producer = EventHubProducerClient(
-        fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
+    producer = EventHubProducerClient.from_connection_string(
+        conn_str=CONNECTION_STR,
         eventhub_name=EVENTHUB_NAME,
-        credential=DefaultAzureCredential(),
     )
     async with producer:
         await send_event_data_batch(producer)
