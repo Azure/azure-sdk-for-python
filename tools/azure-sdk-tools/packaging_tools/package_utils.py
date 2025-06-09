@@ -342,7 +342,8 @@ class CheckFile:
         # Default configurations to enforce
         default_configs = {
             "breaking": "false",
-            "pyright": "false"
+            "pyright": "false",
+            "mypy": "false",
         }
         
         # Create new pyproject.toml if it doesn't exist
