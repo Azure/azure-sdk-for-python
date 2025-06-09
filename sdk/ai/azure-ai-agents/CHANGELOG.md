@@ -12,6 +12,7 @@
 
 ### Sample updates
 - Changed all samples to use `AIProjectClient` which is recommended to specify endpoint and credential.
+- Added `sample_agents_stream_iteration_with_functions.py`
 
 ## 1.1.0b1 (2025-05-20)
 
