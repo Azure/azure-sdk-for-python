@@ -38,15 +38,15 @@ This troubleshooting guide contains instructions to diagnose frequently encounte
 
 ## General troubleshooting
 
-Azure Service Bus client library will raise exceptions defined in [Azure Core](https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions) and [azure.servicebus.exceptions](https://docs.microsoft.com/python/api/azure-servicebus/azure.servicebus.exceptions).
+Azure Service Bus client library will raise exceptions defined in [Azure Core](https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions) and Service Bus-specific exceptions in `azure.servicebus.exceptions`.
 
 ### Enable client logging
 
 This library uses the standard [logging](https://docs.python.org/3/library/logging.html) library for logging.
 
-Basic information about HTTP sessions (URLs, headers, etc.) is logged at `INFO` level.
+Basic information about AMQP operations (connections, links, etc.) is logged at `INFO` level.
 
-Detailed `DEBUG` level logging, including request/response bodies and **unredacted** headers, can be enabled on the client or per-operation with the `logging_enable` keyword argument.
+Detailed `DEBUG` level logging, including AMQP frame tracing and **unredacted** headers, can be enabled on the client or per-operation with the `logging_enable` keyword argument.
 
 To enable client logging and AMQP frame level trace:
 
@@ -73,81 +73,42 @@ See full Python SDK logging documentation with examples [here](https://learn.mic
 
 ### Common exceptions
 
-The Service Bus APIs generate the following exceptions in `azure.servicebus.exceptions`:
+The Service Bus client library raises the following exceptions defined in `azure.servicebus.exceptions`:
 
 #### Connection and Authentication Exceptions
 
-- **ServiceBusConnectionError:** An error occurred in the connection to the service. This may have been caused by a transient network issue or service problem. It is recommended to retry.
-
-- **ServiceBusAuthenticationError:** An error occurred when authenticating the connection to the service. This may have been caused by the credentials being incorrect. It is recommended to check the credentials.
-
-- **ServiceBusAuthorizationError:** An error occurred when authorizing the connection to the service. This may have been caused by the credentials not having the right permission to perform the operation. It is recommended to check the permission of the credentials.
+- **ServiceBusConnectionError:** Connection to the service failed. Check network connectivity and retry.
+- **ServiceBusAuthenticationError:** Authentication failed. Verify credentials are correct.
+- **ServiceBusAuthorizationError:** Authorization failed. Check that credentials have the required permissions.
 
 #### Operation and Timeout Exceptions
 
-- **OperationTimeoutError:** This indicates that the service did not respond to an operation within the expected amount of time. This may have been caused by a transient network issue or service problem. The service may or may not have successfully completed the request; the status is not known. It is recommended to attempt to verify the current state and retry if necessary.
-
-- **ServiceBusCommunicationError:** Client isn't able to establish a connection to Service Bus. Make sure the supplied host name is correct and the host is reachable. If your code runs in an environment with a firewall/proxy, ensure that the traffic to the Service Bus domain/IP address and ports isn't blocked. For information about required ports, see [What ports do I need to open on the firewall?](https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-faq#what-ports-do-i-need-to-open-on-the-firewall--).
+- **OperationTimeoutError:** Service did not respond within the expected time. Retry the operation.
+- **ServiceBusCommunicationError:** Unable to establish connection to Service Bus. Check network connectivity and firewall settings. For firewall configuration, see [What ports do I need to open on the firewall?](https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-faq#what-ports-do-i-need-to-open-on-the-firewall--).
 
 #### Message Handling Exceptions
 
-- **MessageSizeExceededError:** This indicates that the message content is larger than the service bus frame size. This could happen when too many service bus messages are sent in a batch or the content passed into the body of a `Message` is too large. It is recommended to reduce the count of messages being sent in a batch or the size of content being passed into a single `ServiceBusMessage`.
-
-- **MessageAlreadySettled:** This indicates failure to settle the message. This could happen when trying to settle an already-settled message.
-
-- **MessageLockLostError:** The lock on the message has expired and it has been released back to the queue. It will need to be received again in order to settle it. You should be aware of the lock duration of a message and keep renewing the lock before expiration in case of long processing time. `AutoLockRenewer` could help on keeping the lock of the message automatically renewed.
-
-- **MessageNotFoundError:** Attempt to receive a message with a particular sequence number. This message isn't found. Make sure the message hasn't been received already. Check the deadletter queue to see if the message has been deadlettered.
+- **MessageSizeExceededError:** Message content exceeds size limits. Reduce message size or batch count.
+- **MessageAlreadySettled:** Attempt to settle an already-settled message.
+- **MessageLockLostError:** Message lock expired. Use `AutoLockRenewer` or process messages faster.
+- **MessageNotFoundError:** Message with specified sequence number not found. Check if message was already processed.
 
 #### Session Handling Exceptions
 
-- **SessionLockLostError:** The lock on the session has expired. All unsettled messages that have been received can no longer be settled. It is recommended to reconnect to the session if receive messages again if necessary. You should be aware of the lock duration of a session and keep renewing the lock before expiration in case of long processing time. `AutoLockRenewer` could help on keeping the lock of the session automatically renewed.
-
-- **SessionCannotBeLockedError:** Attempt to connect to a session with a specific session ID, but the session is currently locked by another client. Make sure the session is unlocked by other clients.
+- **SessionLockLostError:** Session lock expired. Reconnect to the session or use `AutoLockRenewer`.
+- **SessionCannotBeLockedError:** Session is locked by another client. Wait for lock to expire.
 
 #### Service and Entity Exceptions
 
-- **ServiceBusQuotaExceededError:** The messaging entity has reached its maximum allowable size, or the maximum number of connections to a namespace has been exceeded. Create space in the entity by receiving messages from the entity or its subqueues.
-
-- **ServiceBusServerBusyError:** Service isn't able to process the request at this time. Client can wait for a period of time, then retry the operation.
-
-- **MessagingEntityNotFoundError:** Entity associated with the operation doesn't exist or it has been deleted. Please make sure the entity exists.
-
-- **MessagingEntityDisabledError:** Request for a runtime operation on a disabled entity. Please activate the entity.
+- **ServiceBusQuotaExceededError:** Entity has reached maximum size or connection limit. Create space by receiving messages.
+- **ServiceBusServerBusyError:** Service is temporarily overloaded. Implement exponential backoff retry.
+- **MessagingEntityNotFoundError:** Entity does not exist or has been deleted.
+- **MessagingEntityDisabledError:** Entity is disabled. Enable the entity to perform operations.
 
 #### Auto Lock Renewal Exceptions
 
-- **AutoLockRenewFailed:** An attempt to renew a lock on a message or session in the background has failed. This could happen when the receiver used by `AutoLockRenewer` is closed or the lock of the renewable has expired. It is recommended to re-register the renewable message or session by receiving the message or connect to the sessionful entity again.
-
-- **AutoLockRenewTimeout:** The time allocated to renew the message or session lock has elapsed. You could re-register the object that wants be auto lock renewed or extend the timeout in advance.
-
-#### Python-Specific Considerations
-
-- **ImportError/ModuleNotFoundError:** Common when Azure Service Bus dependencies are not properly installed. Ensure you have installed the correct package version:
-```bash
-pip install azure-servicebus
-```
-
-- **TypeError:** Often occurs when passing incorrect data types to Service Bus methods:
-```python
-# Incorrect: passing string instead of ServiceBusMessage
-sender.send_messages("Hello World")  # This will fail
-
-# Correct: create ServiceBusMessage objects
-from azure.servicebus import ServiceBusMessage
-message = ServiceBusMessage("Hello World")
-sender.send_messages(message)
-```
-
-- **ConnectionError/socket.gaierror:** Network-level errors that may require checking DNS resolution and network connectivity:
-```python
-import socket
-try:
-    # Test DNS resolution
-    socket.gethostbyname("your-namespace.servicebus.windows.net")
-except socket.gaierror as e:
-    print(f"DNS resolution failed: {e}")
-```
+- **AutoLockRenewFailed:** Lock renewal failed. Re-register the renewable message or session.
+- **AutoLockRenewTimeout:** Lock renewal timeout exceeded. Extend timeout or re-register the object.
 
 ### Timeouts
 
@@ -425,140 +386,53 @@ with receiver:
 
 ### Number of messages returned doesn't match number requested
 
-When attempting to receive multiple messages using `receive_messages()` with `max_message_count` greater than 1, you're not guaranteed to receive the exact number requested.
+When calling `receive_messages()` with `max_message_count` > 1, you may receive fewer messages than requested.
 
-**Why this happens:**
-- Service Bus optimizes for throughput and latency
-- After the first message is received, the receiver waits only a short time (typically 20ms) for additional messages
-- The `max_wait_time` controls how long to wait for the **first** message, not subsequent ones
+**Cause:** Service Bus waits briefly (20ms) for additional messages after the first. `max_wait_time` only applies to the first message.
 
-**Resolution:**
-1. **Don't assume all available messages will be received in one call:**
+**Resolution:** Call `receive_messages()` in a loop to get all available messages:
+
 ```python
-import time
-from azure.servicebus.exceptions import MessagingEntityNotFoundError, MessagingEntityDisabledError
-
-def receive_all_available_messages(receiver, total_expected=None):
-    """Receive all available messages from a queue/subscription"""
-    all_messages = []
-    
-    while True:
-        # Receive in batches
-        messages = receiver.receive_messages(max_message_count=10, max_wait_time=5)
-        
-        if not messages:
-            break  # No more messages available
-            
-        all_messages.extend(messages)
-        
-        # Process messages immediately to avoid lock expiration
-        for message in messages:
-            try:
-                # Process message logic here
-                print(f"Processing: {message}")
-                receiver.complete_message(message)
-            except Exception as e:
-                print(f"Error processing message: {e}")
-                receiver.abandon_message(message)
-    
-    return all_messages
-```
-
-2. **Use continuous receiving for stream processing:**
-```python
-import time
-
-def continuous_message_processing(receiver):
-    """Continuously process messages as they arrive"""
-    while True:
-        try:
-            messages = receiver.receive_messages(max_message_count=1, max_wait_time=60)
-            
-            for message in messages:
-                # Process immediately
-                try:
-                    process_message(message)
-                    receiver.complete_message(message)
-                except Exception as e:
-                    print(f"Processing failed: {e}")
-                    receiver.abandon_message(message)
-                    
-        except KeyboardInterrupt:
-            break
-        except Exception as e:
-            print(f"Receive error: {e}")
-            time.sleep(5)  # Brief pause before retry
+all_messages = []
+while True:
+    messages = receiver.receive_messages(max_message_count=10, max_wait_time=5)
+    if not messages:
+        break
+    all_messages.extend(messages)
+    for message in messages:
+        receiver.complete_message(message)
 ```
 
 ### Messages not being received
 
-Messages might not be received due to various configuration or state issues.
+**Common causes:**
+- Entity doesn't exist or is disabled
+- No messages in the queue/subscription
+- Message filters excluding messages (subscriptions)
+- Lock duration too short
 
-**Common causes and resolutions:**
-
-1. **Check entity state:**
-```python
-# Verify the queue/subscription exists and is active
-try:
-    # This will fail if entity doesn't exist
-    receiver = client.get_queue_receiver(queue_name)
-    messages = receiver.receive_messages(max_message_count=1, max_wait_time=5)
-    
-    if not messages:
-        print("No messages available - check if messages are being sent")
-    
-except MessagingEntityNotFoundError:
-    print("Queue/subscription does not exist")
-except MessagingEntityDisabledError:
-    print("Queue/subscription is disabled")
-```
-
-2. **Verify message filters (for subscriptions):**
-```python
-# For topic subscriptions, check if messages match subscription filters
-from azure.servicebus.management import ServiceBusAdministrationClient
-
-admin_client = ServiceBusAdministrationClient.from_connection_string(connection_string)
-
-# Check subscription rules
-rules = admin_client.list_rules(topic_name, subscription_name)
-for rule in rules:
-    print(f"Rule: {rule.name}, Filter: {rule.filter}")
-```
-
-3. **Check for competing consumers:**
-```python
-# Multiple receivers on the same queue will compete for messages
-# Ensure this is intended behavior or use topic/subscription pattern
-
-# For debugging, temporarily use peek to see if messages exist
-messages = receiver.peek_messages(max_message_count=10)
-print(f"Found {len(messages)} messages in queue without receiving them")
-```
+**Resolution:**
+1. Verify entity exists: `ServiceBusAdministrationClient.get_queue()` or `get_subscription()`
+2. Check entity is enabled
+3. For subscriptions, verify filter rules allow your messages
+4. Increase `max_wait_time` or check message count
 
 ### Dead letter queue issues
 
-Messages can be moved to the dead letter queue for various reasons:
+Messages move to the dead letter queue due to TTL expiration, max delivery count exceeded, or explicit dead lettering.
 
-**Common reasons:**
-- Message TTL expired
-- Max delivery count exceeded
-- Message was explicitly dead lettered
-- Message processing failed repeatedly
-
-**Debugging dead letter messages:**
+**Resolution:**
 ```python
-# Receive from dead letter queue
-dlq_receiver = servicebus_client.get_queue_receiver(
+# Access dead letter queue to inspect messages
+dlq_receiver = client.get_queue_receiver(
     queue_name="your_queue", 
     sub_queue=ServiceBusSubQueue.DEAD_LETTER
 )
 
-with dlq_receiver:
-    messages = dlq_receiver.receive_messages(max_message_count=10)
-    for message in messages:
-        print(f"Dead letter reason: {message.dead_letter_reason}")
-        print(f"Dead letter description: {message.dead_letter_error_description}")
+messages = dlq_receiver.receive_messages(max_message_count=10)
+for message in messages:
+    print(f"Reason: {message.dead_letter_reason}")
+    print(f"Description: {message.dead_letter_error_description}")
 ```
 
 ### Mixing sync and async code
@@ -731,5 +605,3 @@ When filing GitHub issues for Service Bus, please include:
 5. **Error details:** Complete exception stack trace and error messages
 
 The more information provided, the faster we can help resolve your issue.
-
-Please view the [exceptions reference docs](https://docs.microsoft.com/python/api/azure-servicebus/azure.servicebus.exceptions) for detailed descriptions of our common Exception types.
