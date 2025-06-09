@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -93,7 +93,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         administrative_division: Optional[str] = None,
         accept_language: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.PhoneNumberAreaCode"]:
+    ) -> AsyncItemPaged["_models.PhoneNumberAreaCode"]:
         """Gets the list of available area codes.
 
         Gets the list of available area codes.
@@ -215,7 +215,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_available_countries(
         self, *, skip: int = 0, max_page_size: int = 100, accept_language: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.PhoneNumberCountry"]:
+    ) -> AsyncItemPaged["_models.PhoneNumberCountry"]:
         """Gets the list of supported countries.
 
         Gets the list of supported countries.
@@ -462,7 +462,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         administrative_division: Optional[str] = None,
         accept_language: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.PhoneNumberLocality"]:
+    ) -> AsyncItemPaged["_models.PhoneNumberLocality"]:
         """Gets the list of cities or towns with available phone numbers.
 
         Gets the list of cities or towns with available phone numbers.
@@ -579,7 +579,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         assignment_type: Optional[Union[str, _models.PhoneNumberAssignmentType]] = None,
         accept_language: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.PhoneNumberOffering"]:
+    ) -> AsyncItemPaged["_models.PhoneNumberOffering"]:
         """List available offerings of capabilities with rates for the given country.
 
         List available offerings of capabilities with rates for the given country.
@@ -693,7 +693,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_reservations(
         self, *, max_page_size: int = 100, **kwargs: Any
-    ) -> AsyncIterable["_models.PhoneNumbersReservation"]:
+    ) -> AsyncItemPaged["_models.PhoneNumbersReservation"]:
         """Lists all reservations.
 
         Retrieves a paginated list of all phone number reservations. Note that the reservations will
@@ -2147,7 +2147,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_phone_numbers(
         self, *, skip: int = 0, top: int = 100, **kwargs: Any
-    ) -> AsyncIterable["_models.PurchasedPhoneNumber"]:
+    ) -> AsyncItemPaged["_models.PurchasedPhoneNumber"]:
         """Gets the list of all purchased phone numbers.
 
         Gets the list of all purchased phone numbers.
