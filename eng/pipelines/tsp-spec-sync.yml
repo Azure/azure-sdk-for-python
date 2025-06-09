@@ -3,7 +3,6 @@ trigger: none
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
   parameters:
-    oneESTemplateTag: ${{ parameters.oneESTemplateTag }}
     stages:
       - stage: TspSpecSync
         jobs:
