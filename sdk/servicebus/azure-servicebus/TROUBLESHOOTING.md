@@ -25,18 +25,14 @@ This troubleshooting guide contains instructions to diagnose frequently encounte
   * [Session lock issues](#session-lock-issues)
   * [Session cannot be locked](#session-cannot-be-locked)
 * [Troubleshooting sender issues](#troubleshooting-sender-issues)
-
   * [Batch fails to send](#batch-fails-to-send)
-
 * [Troubleshooting receiver issues](#troubleshooting-receiver-issues)
-
   * [Message completion behavior](#message-completion-behavior)
   * [Receive operation hangs](#receive-operation-hangs)
   * [Messages not being received](#messages-not-being-received)
 * [Troubleshooting quota and capacity issues](#troubleshooting-quota-and-capacity-issues)
   * [Quota exceeded errors](#quota-exceeded-errors)
   * [Entity not found errors](#entity-not-found-errors)
-
 * [Get additional help](#get-additional-help)
 
 ## General troubleshooting
@@ -124,8 +120,6 @@ The Service Bus APIs generate the following exceptions in `azure.servicebus.exce
 
 - **AutoLockRenewTimeout:** The time allocated to renew the message or session lock has elapsed. You could re-register the object that wants be auto lock renewed or extend the timeout in advance.
 
-
-
 ### Timeouts
 
 There are various timeouts a user should be aware of within the library:
@@ -173,7 +167,7 @@ Authorization errors occur when the authenticated identity doesn't have sufficie
 
 **Required permissions for Service Bus operations:**
 - **Send:** Required to send messages to queues/topics
-- **Listen:** Required to receive messages from queues/subscriptions  
+- **Listen:** Required to receive messages from queues/subscriptions
 - **Manage:** Required for management operations (create/delete entities)
 
 **Resolution:**
@@ -313,7 +307,7 @@ Messages can be moved to the dead letter queue for various reasons:
 ```python
 # Receive from dead letter queue
 dlq_receiver = servicebus_client.get_queue_receiver(
-    queue_name="your_queue", 
+    queue_name="your_queue",
     sub_queue=ServiceBusSubQueue.DEAD_LETTER
 )
 
@@ -354,8 +348,6 @@ with receiver:
 
 ## Troubleshooting sender issues
 
-
-
 ### Batch fails to send
 
 **MessageSizeExceededError resolution:**
@@ -365,8 +357,6 @@ with receiver:
 
 
 ## Troubleshooting receiver issues
-
-
 
 ### Message completion behavior
 
@@ -412,10 +402,6 @@ with receiver:
 2. Ensure the entity exists in the Service Bus namespace
 3. Check if the entity was deleted and needs to be recreated
 4. Verify you're connecting to the correct namespace
-
-
-
-
 
 ## Get additional help
 
