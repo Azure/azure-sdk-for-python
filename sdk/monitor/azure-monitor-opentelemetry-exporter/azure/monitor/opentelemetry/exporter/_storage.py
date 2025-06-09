@@ -114,8 +114,8 @@ class LocalFileStorage:
             self._maintenance_task.daemon = True
             self._maintenance_task.start()
         else:
-            logger.error("Could not set secure permissions on storage folder.") 
-
+            logger.error("Could not set secure permissions on storage folder.")
+            
     def close(self):
         if self._enabled:
             self._maintenance_task.cancel()
@@ -208,7 +208,6 @@ class LocalFileStorage:
     def _check_and_set_folder_permissions(self):
         """
         Validate and set folder permissions where the telemetry data will be stored.
-
         :return: True if folder was created and permissions set successfully, False otherwise.
         :rtype: bool
         """
