@@ -37,8 +37,9 @@ def main():
             "location": "westus2",
             "properties": {
                 "administrator": {"password": "password", "userName": "mongoAdmin"},
+                "authConfig": {"allowedModes": ["NativeAuth"]},
                 "compute": {"tier": "M30"},
-                "highAvailability": {"targetMode": "SameZone"},
+                "highAvailability": {"targetMode": "ZoneRedundantPreferred"},
                 "serverVersion": "5.0",
                 "sharding": {"shardCount": 1},
                 "storage": {"sizeGb": 128},
@@ -48,6 +49,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-07-01/MongoClusters_Create.json
+# x-ms-original-file: 2025-04-01-preview/MongoClusters_Create.json
 if __name__ == "__main__":
     main()

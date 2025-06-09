@@ -1,10 +1,10 @@
 # coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 import unittest
 import azure.mgmt.recoveryservices
@@ -12,20 +12,20 @@ import azure.mgmt.resource.resources.models
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 from recoveryservices_testcase import MgmtRecoveryServicesTestDefinition, MgmtRecoveryServicesTestHelper
 
+
 class MgmtRecoveryServicesTests(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtRecoveryServicesTests, self).setUp()
-        self.client = self.create_mgmt_client(
-            azure.mgmt.recoveryservices.RecoveryServicesClient
-        )
+        self.client = self.create_mgmt_client(azure.mgmt.recoveryservices.RecoveryServicesClient)
         self.resource_name = "PythonSDKTestResource"
 
-    @unittest.skip('hard to test')
+    @unittest.skip("hard to test")
     @ResourceGroupPreparer()
     def test_can_create_get_list_delete_vault(self, resource_group, location):
-        self.test_definition = MgmtRecoveryServicesTestDefinition(self.settings.SUBSCRIPTION_ID, self.resource_name,
-                                                                  resource_group.name, location)
+        self.test_definition = MgmtRecoveryServicesTestDefinition(
+            self.settings.SUBSCRIPTION_ID, self.resource_name, resource_group.name, location
+        )
         self.test_helper = MgmtRecoveryServicesTestHelper(self)
 
         vault_name = self.test_definition.get_vault_name
@@ -42,11 +42,12 @@ class MgmtRecoveryServicesTests(AzureMgmtTestCase):
 
         self.test_helper.delete_vaults(vault_name2)
 
-    @unittest.skip('hard to test')
+    @unittest.skip("hard to test")
     @ResourceGroupPreparer()
     def test_can_create_get_list_delete_vault_extended_info(self, resource_group, location):
-        self.test_definition = MgmtRecoveryServicesTestDefinition(self.settings.SUBSCRIPTION_ID, self.resource_name,
-                                                                  resource_group.name, location)
+        self.test_definition = MgmtRecoveryServicesTestDefinition(
+            self.settings.SUBSCRIPTION_ID, self.resource_name, resource_group.name, location
+        )
         self.test_helper = MgmtRecoveryServicesTestHelper(self)
 
         vault_name = self.test_definition.get_vault_name
@@ -58,11 +59,12 @@ class MgmtRecoveryServicesTests(AzureMgmtTestCase):
 
         self.assertIsNotNone(extended_info.integrity_key)
 
-    @unittest.skip('hard to test')
+    @unittest.skip("hard to test")
     @ResourceGroupPreparer()
     def test_retrieve_vault_usages(self, resource_group, location):
-        self.test_definition = MgmtRecoveryServicesTestDefinition(self.settings.SUBSCRIPTION_ID, self.resource_name,
-                                                                  resource_group.name, location)
+        self.test_definition = MgmtRecoveryServicesTestDefinition(
+            self.settings.SUBSCRIPTION_ID, self.resource_name, resource_group.name, location
+        )
         self.test_helper = MgmtRecoveryServicesTestHelper(self)
 
         vault_name = self.test_definition.get_vault_name
@@ -78,4 +80,3 @@ class MgmtRecoveryServicesTests(AzureMgmtTestCase):
 
         # self.assertIsNotNone(replication_usages)
         # self.assertEqual(len(replication_usages),0)
-
