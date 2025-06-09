@@ -102,8 +102,6 @@ IGNORED_SAMPLES = {
         "proxy_async.py",
         "send_stream.py",
         "send_stream_async.py",
-        "send.py",
-        "send_async.py",
         "send_buffered_mode.py",
         "send_buffered_mode_async.py",
         "send_and_receive_amqp_annotated_message.py",
