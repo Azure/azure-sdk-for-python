@@ -8,6 +8,8 @@ This troubleshooting guide contains instructions to diagnose frequently encounte
   * [Enable client logging](#enable-client-logging)
   * [Common exceptions](#common-exceptions)
   * [Timeouts](#timeouts)
+* [Threading and concurrency issues](#threading-and-concurrency-issues)
+  * [Thread safety limitations](#thread-safety-limitations)
 * [Troubleshooting authentication issues](#troubleshooting-authentication-issues)
   * [Authentication errors](#authentication-errors)
   * [Authorization errors](#authorization-errors)
@@ -20,29 +22,17 @@ This troubleshooting guide contains instructions to diagnose frequently encounte
   * [Message lock issues](#message-lock-issues)
   * [Message size issues](#message-size-issues)
   * [Message settlement issues](#message-settlement-issues)
-  * [Dead letter queue issues](#dead-letter-queue-issues)
 * [Troubleshooting session handling issues](#troubleshooting-session-handling-issues)
   * [Session lock issues](#session-lock-issues)
   * [Session cannot be locked](#session-cannot-be-locked)
-* [Troubleshooting sender issues](#troubleshooting-sender-issues)
-  * [Cannot send batch with multiple partition keys](#cannot-send-batch-with-multiple-partition-keys)
-  * [Batch fails to send](#batch-fails-to-send)
-  * [Message encoding issues](#message-encoding-issues)
 * [Troubleshooting receiver issues](#troubleshooting-receiver-issues)
   * [Number of messages returned doesn't match number requested](#number-of-messages-returned-doesnt-match-number-requested)
-  * [Message completion behavior](#message-completion-behavior)
-  * [Receive operation hangs](#receive-operation-hangs)
   * [Messages not being received](#messages-not-being-received)
+  * [Dead letter queue issues](#dead-letter-queue-issues)
+  * [Mixing sync and async code](#mixing-sync-and-async-code)
 * [Troubleshooting quota and capacity issues](#troubleshooting-quota-and-capacity-issues)
   * [Quota exceeded errors](#quota-exceeded-errors)
   * [Entity not found errors](#entity-not-found-errors)
-* [Threading and concurrency issues](#threading-and-concurrency-issues)
-  * [Thread safety limitations](#thread-safety-limitations)
-  * [Async/await best practices](#asyncawait-best-practices)
-* [Troubleshooting async operations](#troubleshooting-async-operations)
-  * [Event loop issues](#event-loop-issues)
-  * [Async context manager problems](#async-context-manager-problems)
-  * [Mixing sync and async code](#mixing-sync-and-async-code)
 * [Frequently asked questions](#frequently-asked-questions)
 * [Get additional help](#get-additional-help)
 
@@ -434,8 +424,6 @@ with receiver:
 1. Ensure no other clients are already connected to the same session
 2. Wait for the current session lock to expire before reconnecting
 3. Use a different session ID if specific session is not required
-
-## Troubleshooting sender issues
 
 ## Troubleshooting receiver issues
 
