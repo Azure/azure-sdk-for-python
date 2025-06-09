@@ -211,24 +211,20 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.servicebus import ServiceBusMessage
 from azure.servicebus.aio import ServiceBusClient
 
-FULLY_QUALIFIED_NAMESPACE = "your-namespace.servicebus.windows.net"
-QUEUE_NAME = "your-queue"
+FULLY_QUALIFIED_NAMESPACE = ".servicebus.windows.net"
+QUEUE_NAME = "<queue name>"
 
 lock = asyncio.Lock()
 
-async def send_messages_async(client, queue_name):
-    """Send messages using async API with locks"""
+async def send_messages(client):
     async with lock:
-        async with client.get_queue_sender(queue_name) as sender:
-            messages = [ServiceBusMessage(f"Hello {i}") for i in range(10)]
-            await sender.send_messages(messages)
+        async with client.get_queue_sender(QUEUE_NAME) as sender:
+            await asyncio.gather(*(sender.send_messages(ServiceBusMessage("hello")) for _ in range(10)))
 
 async def main():
     credential = DefaultAzureCredential()
     async with ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential) as client:
-        # Use asyncio.gather for concurrent execution
-        tasks = [send_messages_async(client, QUEUE_NAME) for _ in range(3)]
-        await asyncio.gather(*tasks)
+        await send_messages(client)
 
 if __name__ == "__main__":
     asyncio.run(main())
