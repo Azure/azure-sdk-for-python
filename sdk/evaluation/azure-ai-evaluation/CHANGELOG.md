@@ -14,7 +14,7 @@
 
 ### Features Added
 
-- Introduces `AttackStrategy.MultiTurn` and `AttackStrategy.Crescendo` to `RedTeam`. These strategies attack the target of a `RedTeam` scan over the course of multi-turn conversations.
+- Introduces `AttackStrategy.MultiTurn` and `AttackStrategy.Crescendo` to `RedTeam`. These strategies attack the target of a `RedTeam` scan over the course of multi-turn conversations. 
 
 ### Bugs Fixed
 - AdversarialSimulator in `ADVERSARIAL_CONVERSATION` mode was broken. It is now fixed.
