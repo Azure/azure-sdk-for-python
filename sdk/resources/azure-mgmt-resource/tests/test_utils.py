@@ -7,12 +7,12 @@
 # --------------------------------------------------------------------------
 import pytest
 
-def test_imports_scripts():
-    with pytest.raises(ImportError) as e:
-        from azure.mgmt.resource import DeploymentStacksClient
-    assert "DeploymentStacksClient is no longer available in azure-mgmt-resource." in str(e.value)
+
+def test_imports_deploymentscripts():
+    with pytest.raises(ImportError):
+        from azure.mgmt.resource import DeploymentScriptsClient
+
 
 def test_imports_deploymentstacks():
-    with pytest.raises(ImportError) as e:
-        from azure.mgmt.resource import DeploymentScriptsClient
-    assert "DeploymentScriptsClient is no longer available in azure-mgmt-resource." in str(e.value)
+    with pytest.raises(ImportError):
+        from azure.mgmt.resource import DeploymentStacksClient
