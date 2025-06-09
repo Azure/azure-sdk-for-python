@@ -95,7 +95,7 @@ To interact with these resources, one should be familiar with the following SDK 
 
 ### Thread safety
 
-We do not guarantee that the ServiceBusClient, ServiceBusSender, and ServiceBusReceiver are thread-safe or coroutine-safe. We do not recommend reusing these instances across threads or sharing them between coroutines. It is up to the running application to use these classes in a thread-safe manner.
+We do not guarantee that the ServiceBusClient, ServiceBusSender, and ServiceBusReceiver are thread-safe or coroutine-safe. We do not recommend reusing these instances across threads or sharing them between coroutines. It is up to the running application to use these classes in a concurrency-safe manner.
 
 The data model type, `ServiceBusMessageBatch` is not thread-safe or coroutine-safe. It should not be shared across threads nor used concurrently with client methods.
 
@@ -117,19 +117,15 @@ def send_batch(sender_id, sender):
         sender.send_messages(messages)
         print(f"Sender {sender_id} sent messages.")
 
-def main():
-    credential = DefaultAzureCredential()
-    client = ServiceBusClient(fully_qualified_namespace=SERVICE_BUS_NAMESPACE, credential=credential)
+credential = DefaultAzureCredential()
+client = ServiceBusClient(fully_qualified_namespace=SERVICE_BUS_NAMESPACE, credential=credential)
 
-    with client:
-        sender = client.get_queue_sender(queue_name=QUEUE_NAME)
-        with sender:
-            with ThreadPoolExecutor(max_workers=5) as executor:
-                for i in range(5):
-                    executor.submit(send_batch, i, sender)
-
-if __name__ == "__main__":
-    main()
+with client:
+    sender = client.get_queue_sender(queue_name=QUEUE_NAME)
+    with sender:
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            for i in range(5):
+                executor.submit(send_batch, i, sender)
 ```
 
 For scenarios requiring concurrent sending in asyncio applications, ensure proper coroutine-safety management using mechanisms like asyncio.Lock()
@@ -150,17 +146,13 @@ async def send_batch(sender_id, sender):
         await sender.send_messages(messages)
         print(f"Sender {sender_id} sent messages.")
 
-async def main():
-    credential = DefaultAzureCredential()
-    client = ServiceBusClient(fully_qualified_namespace=SERVICE_BUS_NAMESPACE, credential=credential)
+credential = DefaultAzureCredential()
+client = ServiceBusClient(fully_qualified_namespace=SERVICE_BUS_NAMESPACE, credential=credential)
 
-    async with client:
-        sender = client.get_queue_sender(queue_name=QUEUE_NAME)
-        async with sender:
-            await asyncio.gather(*(send_batch(i, sender) for i in range(5)))
-
-if __name__ == "__main__":
-    asyncio.run(main())
+async with client:
+    sender = client.get_queue_sender(queue_name=QUEUE_NAME)
+    async with sender:
+        await asyncio.gather(*(send_batch(i, sender) for i in range(5)))
 ```
 
 ## Examples
