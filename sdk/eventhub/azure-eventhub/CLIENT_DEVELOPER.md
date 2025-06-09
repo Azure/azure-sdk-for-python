@@ -70,24 +70,65 @@ Live tests require an Azure Event Hubs namespace. Resources are created dynamica
    ```
 
 3. Run tests:
-   ```bash
-   # Run a specific test to check if your environment is set up correctly
-   pytest tests/livetest/synctests/test_consumer_client.py::test_receive_partition
-   
-   # Run all live tests
-   pytest tests/livetest
-   
-   # Run with output visible even if tests pass
-   pytest -s tests/livetest/synctests/test_specific_file.py::test_specific_function
+   - Make sure you're in your venv
+   `pip install -e .`
+   - If you see im`port errors (see below), use:
+   `pip install .`
+   - Run a s`pecific test to check if your environment is set up properly
+   `pytest tests/livetest/synctests/test_consumer_client.py::test_receive_partition`
+   - Run all live tests
+   `pytest tests/livetest`
+   - Run with out`put visible even if tests pass
+   `pytest -s tests/livetest/synctests/test_specific_file.py::test_specific_function`
    ```
 
 ### Common Test Issues
 
-- **Authentication errors**: If you see "The access token is invalid" errors, run `az login` to refresh your authentication.
-- **Resource Not Found**: Ensure your environment variables are correctly set. For `EVENTHUB_NAMESPACE`, only use the name part (without the `.servicebus.windows.net` suffix).
-- **ImportError**: If you see errors like "cannot import name 'EventHubProducerClient' from 'azure.eventhub'", use `pip install .` instead of `pip install -e .`.
-- **PytestUnknownMarkWarning**: You can ignore warnings about "Unknown pytest.mark.livetest" as they're related to the Azure SDK test framework.
-- **asyncio_default_fixture_loop_scope warnings**: These warnings from pytest-asyncio can be ignored.
+- **ImportError while loading conftest**: If you see an error like when installing azure-eventhub and the checkpointstore packages are installed:
+  ```log
+  ImportError while loading conftest '<azure-sdk-for-python>/sdk/eventhub/azure-eventhub/tests/conftest.py'.
+  tests/conftest.py:25: in <module>
+      from azure.eventhub import EventHubProducerClient, TransportType
+  E   ImportError: cannot import name 'EventHubProducerClient' from 'azure.eventhub' (unknown location)
+  ```
+  Use `pip install .` to install `azure-eventhub` instead of `pip install -e .` and rerun this command after every package change.
+
+- **Missing environment variables**: If you see a warning like:
+  ```log
+  sdk/eventhub/azure-eventhub/tests/livetest/asynctests/test_auth_async.py::test_client_token_credential_async[pyamqp]
+    /.../tests/conftest.py:195: UserWarning: EVENTHUB_RESOURCE_GROUP undefined - skipping test
+      warnings.warn(UserWarning("EVENTHUB_RESOURCE_GROUP undefined - skipping test"))
+  ```
+  Create an `.env` file with the named variable or set it in your environment.
+
+- **Authentication errors**: If you see:
+  ```log
+  ERROR tests/unittest/test_partition_resolver.py::TestPartitionResolver::test_basic_round_robin[1] - azure.core.exceptions.ClientAuthenticationError: (InvalidAuthenticationToken) The access token is invalid.
+  ```
+  Run `az login` to refresh your authentication.
+
+- **Resource Not Found**: If you see:
+  ```log
+  ERROR tests/unittest/test_partition_resolver.py::TestPartitionResolver::test_basic_round_robin[1] - azure.core.exceptions.ResourceNotFoundError: (ParentResourceNotFound) Failed to perform 'action' on resource(s) of type 'namespaces/authorizationrules', be...
+  ```
+  This probably means you included the suffix in EVENTHUB_NAMESPACE. Only use the name, and strip out the "servicebus.windows.net".
+
+- **PytestUnknownMarkWarning**: You can ignore warnings like:
+  ```log
+  tests/pyamqp_tests/synctests/test_mgmt_pyamqp.py:48
+    /.../tests/pyamqp_tests/synctests/test_mgmt_pyamqp.py:48: PytestUnknownMarkWarning: Unknown pytest.mark.livetest - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+      @pytest.mark.livetest
+  ```
+  These are not part of pytest, but are part of the azure-sdk-for-python test framework.
+
+- **asyncio_default_fixture_loop_scope warnings**: These warnings from pytest-asyncio can be ignored. For example:
+  ```log
+  /.../.venv/lib/python3.10/site-packages/pytest_asyncio/plugin.py:217: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+  The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+    warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
+  ```
+
+If you want to see pytest's output, even if the test succeeds, use `pytest -s <test>`
 
 ## Stress Testing
 
