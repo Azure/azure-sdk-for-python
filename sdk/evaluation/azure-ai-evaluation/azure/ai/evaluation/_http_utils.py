@@ -7,8 +7,7 @@ from typing import Any, Dict, MutableMapping, Optional, TypedDict, cast
 
 from typing_extensions import Self, Unpack
 
-from azure.ai.evaluation._user_agent import USER_AGENT
-from azure.ai.evaluation._evaluate._utils import construct_user_agent_string
+from azure.ai.evaluation._user_agent import USER_AGENT, construct_user_agent_string
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline, Pipeline
 from azure.core.pipeline.policies import (

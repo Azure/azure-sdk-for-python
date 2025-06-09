@@ -17,13 +17,8 @@ from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from ..._common.utils import construct_prompty_model_config, validate_model_config, parse_quality_evaluator_reason_score
-from ..._evaluate._utils import construct_user_agent_string
+from ..._user_agent import USER_AGENT, construct_user_agent_string
 from . import EvaluatorBase
-
-try:
-    from ..._user_agent import USER_AGENT
-except ImportError:
-    USER_AGENT = "None"
 
 T = TypeVar("T")
 
