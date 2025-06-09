@@ -96,22 +96,22 @@ class TestLocalFileStorage(unittest.TestCase):
         with LocalFileStorage(os.path.join(TEST_FOLDER, "test")) as stor:
             self.assertIsNone(stor.get())
 
-    # def test_get(self):
-    #     now = _now()
-    #     with LocalFileStorage(os.path.join(TEST_FOLDER, "foo")) as stor:
-    #         stor.put((1, 2, 3), lease_period=10)
-    #         with mock.patch("azure.monitor.opentelemetry.exporter._storage._now") as m:
-    #             m.return_value = now - _seconds(30 * 24 * 60 * 60)
-    #             stor.put((1, 2, 3))
-    #             stor.put((1, 2, 3), lease_period=10)
-    #             with mock.patch("os.rename"):
-    #                 stor.put((1, 2, 3))
-    #         with mock.patch("os.rename"):
-    #             stor.put((1, 2, 3))
-    #         with mock.patch("os.remove", side_effect=throw(Exception)):
-    #             with mock.patch("os.rename", side_effect=throw(Exception)):
-    #                 self.assertIsNone(stor.get())
-    #         self.assertIsNone(stor.get())
+    def test_get(self):
+        now = _now()
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "foo")) as stor:
+            stor.put((1, 2, 3), lease_period=10)
+            with mock.patch("azure.monitor.opentelemetry.exporter._storage._now") as m:
+                m.return_value = now - _seconds(30 * 24 * 60 * 60)
+                stor.put((1, 2, 3))
+                stor.put((1, 2, 3), lease_period=10)
+                with mock.patch("os.rename"):
+                    stor.put((1, 2, 3))
+            with mock.patch("os.rename"):
+                stor.put((1, 2, 3))
+            with mock.patch("os.remove", side_effect=throw(Exception)):
+                with mock.patch("os.rename", side_effect=throw(Exception)):
+                    self.assertIsNone(stor.get())
+            self.assertIsNone(stor.get())
 
     def test_put(self):
         test_input = (1, 2, 3)
@@ -134,7 +134,7 @@ class TestLocalFileStorage(unittest.TestCase):
 
     def test_check_storage_size_full(self):
         test_input = (1, 2, 3)
-        with LocalFileStorage(os.path.join(TEST_FOLDER, "asd2"), 1) as stor:
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "asd2")) as stor:
             stor.put(test_input)
             self.assertFalse(stor._check_storage_size())
 
