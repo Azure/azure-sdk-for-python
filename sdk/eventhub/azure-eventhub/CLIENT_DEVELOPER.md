@@ -6,7 +6,7 @@ This guide is intended for developers contributing to the Azure Event Hubs Pytho
 
 ### Prerequisites
 
-- Python version supported by the client library
+- Python version [supported by the client library](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy)
 - Git
 - pip and setuptools
 - Azure subscription to create Event Hubs resources
