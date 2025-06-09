@@ -129,3 +129,8 @@ class AzureJSONEncoder(JSONEncoder):
         except AttributeError:
             pass
         return super(AzureJSONEncoder, self).default(o)
+
+def as_attribute_dict(obj: Any) -> dict:
+    """Convert an object to a dictionary of its attributes."""
+    if not is_generated_model(obj):
+        
