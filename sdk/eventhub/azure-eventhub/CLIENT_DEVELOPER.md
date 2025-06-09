@@ -33,6 +33,12 @@ This guide is intended for developers contributing to the Azure Event Hubs Pytho
    pip install -e .
    ```
 
+   **Note**: If the editable install fails or you encounter import errors, you may need to remove checkpoint store packages first:
+   ```bash
+   pip uninstall azure-eventhub-checkpointstoreblob azure-eventhub-checkpointstoreblob-aio -y
+   pip install -e .
+   ```
+
    If you encounter import errors when running tests, use the standard installation:
    ```bash
    pip install .
