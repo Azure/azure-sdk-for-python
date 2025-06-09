@@ -54,25 +54,7 @@ The client regeneration is controlled by the `tsp-location.yaml` file in the roo
 - The specific commit hash to use
 - The directory path (`specification/schemaregistry/SchemaRegistry`)
 
-To regenerate the client:
-
-1. Update the commit hash in `tsp-location.yaml` if needed to point to the latest TypeSpec definitions
-2. Run the TypeSpec client generation tool:
-   ```bash
-   tsp-client update
-   ```
-
-3. Review the generated changes and ensure handwritten code in `_patch.py` files remains intact
-
-### tsp-client Usage
-
-The `tsp-client` tool will:
-- Download the TypeSpec definitions from the specified commit
-- Generate Python client code based on the TypeSpec specifications
-- Preserve handwritten customizations in `_patch.py` files
-- Update generated models, operations, and client classes
-
-For more information on tsp-client usage, see the [tsp-client documentation](https://github.com/Azure/azure-sdk-tools/tree/main/tools/tsp-client/README.md).
+To regenerate the client, follow the [`tsp-client` docs](https://github.com/Azure/azure-sdk-tools/tree/main/tools/tsp-client/README.md).
 
 ## Code Structure
 
