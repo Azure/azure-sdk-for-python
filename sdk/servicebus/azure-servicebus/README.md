@@ -101,10 +101,10 @@ The data model type, `ServiceBusMessageBatch` is not thread-safe or coroutine-sa
 
 For scenarios requiring concurrent sending from multiple threads, ensure proper thread-safety management using mechanisms like threading.Lock():
 ```python
+import threading
+from concurrent.futures import ThreadPoolExecutor
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
 from azure.identity import DefaultAzureCredential
-from concurrent.futures import ThreadPoolExecutor
-import threading
 
 SERVICE_BUS_NAMESPACE = "<your-namespace>.servicebus.windows.net"
 QUEUE_NAME = "<your-queue-name>"

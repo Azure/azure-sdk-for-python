@@ -16,6 +16,7 @@ import time
 import os
 import threading
 from concurrent.futures import ThreadPoolExecutor
+
 from azure.eventhub import EventHubProducerClient, EventData
 from azure.eventhub.exceptions import EventHubError
 from azure.identity import DefaultAzureCredential

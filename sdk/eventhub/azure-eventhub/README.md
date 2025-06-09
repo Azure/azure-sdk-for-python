@@ -102,10 +102,10 @@ The data model type, `EventDataBatch` is not thread-safe or coroutine-safe. It s
 
 For scenarios requiring concurrent sending from multiple threads, ensure proper thread-safety management using mechanisms like threading.Lock()
 ```python
+import threading
 from concurrent.futures import ThreadPoolExecutor
 from azure.eventhub import EventHubProducerClient, EventData
 from azure.identity import DefaultAzureCredential
-import threading
 
 EVENTHUB_NAMESPACE = "<your-namespace>.servicebus.windows.net"
 EVENTHUB_NAME = "<your-eventhub-name>"
