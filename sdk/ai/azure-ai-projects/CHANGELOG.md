@@ -15,7 +15,7 @@ Please see new samples and package README.md file.
 
 * Azure AI Foundry Project endpoint is now required to construct the `AIProjectClient`. It has the form
 `https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>`. Find it in your AI Foundry Project
-Overview page. The factory method `from_connection_string` was removed.
+Overview page. The factory method `from_connection_string` was removed. Support for project connection string and hub-based projects has been discontinued. We recommend creating a new Azure AI Foundry resource utilizing project endpoint. If this is not possible, please pin the version of or pin the version of `azure-ai-projects` to `1.0.0b10` or earlier.
 * Agents are now implemented in a separate package `azure-ai-agents`. Continue using the ".agents" operations on the
 `AIProjectsClient` to create, run and delete agents, as before. However there have been some breaking changes in these operations.
 See [Agents package document and samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents) for more details.
@@ -29,6 +29,7 @@ AI models deployed to the Project's AI Services. This is in addition to the exis
 * Evaluator Ids are available using the Enum `EvaluatorIds` and no longer require `azure-ai-evaluation` package to be installed.
 * Property `scope` on `AIProjectClient` is removed, use AI Foundry Project endpoint instead.
 * Property `id` on Evaluation is replaced with `name`.
+* Please see the [agents migration guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/AGENTS_MIGRATION_GUIDE.md) on how to use the new `azure-ai-projects` with `azure-ai-agents` package.
 
 ### Sample updates
 

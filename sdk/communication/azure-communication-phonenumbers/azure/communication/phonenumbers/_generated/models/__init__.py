@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
+    AvailablePhoneNumber,
+    AvailablePhoneNumberError,
     CommunicationError,
     CommunicationErrorResponse,
     OperatorDetails,
@@ -23,6 +25,7 @@ from ._models import (  # type: ignore
     OperatorInformationResult,
     PhoneNumberAdministrativeDivision,
     PhoneNumberAreaCode,
+    PhoneNumberBrowseCapabilitiesRequest,
     PhoneNumberCapabilities,
     PhoneNumberCapabilitiesRequest,
     PhoneNumberCost,
@@ -33,6 +36,10 @@ from ._models import (  # type: ignore
     PhoneNumberPurchaseRequest,
     PhoneNumberSearchRequest,
     PhoneNumberSearchResult,
+    PhoneNumbersBrowseRequest,
+    PhoneNumbersBrowseResult,
+    PhoneNumbersReservation,
+    PhoneNumbersReservationPurchaseRequest,
     PurchasedPhoneNumber,
 )
 
@@ -40,17 +47,21 @@ from ._enums import (  # type: ignore
     BillingFrequency,
     OperatorNumberType,
     PhoneNumberAssignmentType,
+    PhoneNumberAvailabilityStatus,
     PhoneNumberCapabilityType,
     PhoneNumberOperationStatus,
     PhoneNumberOperationType,
     PhoneNumberSearchResultError,
     PhoneNumberType,
+    ReservationStatus,
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AvailablePhoneNumber",
+    "AvailablePhoneNumberError",
     "CommunicationError",
     "CommunicationErrorResponse",
     "OperatorDetails",
@@ -60,6 +71,7 @@ __all__ = [
     "OperatorInformationResult",
     "PhoneNumberAdministrativeDivision",
     "PhoneNumberAreaCode",
+    "PhoneNumberBrowseCapabilitiesRequest",
     "PhoneNumberCapabilities",
     "PhoneNumberCapabilitiesRequest",
     "PhoneNumberCost",
@@ -70,15 +82,21 @@ __all__ = [
     "PhoneNumberPurchaseRequest",
     "PhoneNumberSearchRequest",
     "PhoneNumberSearchResult",
+    "PhoneNumbersBrowseRequest",
+    "PhoneNumbersBrowseResult",
+    "PhoneNumbersReservation",
+    "PhoneNumbersReservationPurchaseRequest",
     "PurchasedPhoneNumber",
     "BillingFrequency",
     "OperatorNumberType",
     "PhoneNumberAssignmentType",
+    "PhoneNumberAvailabilityStatus",
     "PhoneNumberCapabilityType",
     "PhoneNumberOperationStatus",
     "PhoneNumberOperationType",
     "PhoneNumberSearchResultError",
     "PhoneNumberType",
+    "ReservationStatus",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

@@ -16,18 +16,18 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-agents azure-identity
+    pip install azure-ai-projects azure-ai-agents azure-identity
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview 
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
                           page of your Azure AI Foundry portal.
-    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 import json
 from typing import Generator, Optional
 
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import (
     MessageDeltaChunk,
     MessageDeltaTextContent,
@@ -37,6 +37,12 @@ from azure.ai.agents.models import AgentStreamEvent, BaseAgentEventHandler
 from azure.identity import DefaultAzureCredential
 
 import os
+
+
+project_client = AIProjectClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
+    credential=DefaultAzureCredential(),
+)
 
 
 # Our goal is to parse the event data in a string and return the chunk in text for each iteration.
@@ -74,12 +80,9 @@ class MyEventHandler(BaseAgentEventHandler[Optional[str]]):
                 yield chunk
 
 
-agents_client = AgentsClient(
-    endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+with project_client:
+    agents_client = project_client.agents
 
-with agents_client:
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"], name="my-agent", instructions="You are helpful agent"
     )

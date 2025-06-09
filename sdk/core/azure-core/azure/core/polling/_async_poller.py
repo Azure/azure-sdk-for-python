@@ -45,27 +45,72 @@ class AsyncPollingMethod(Generic[PollingReturnType_co]):
         initial_response: Any,
         deserialization_callback: DeserializationCallbackType,
     ) -> None:
+        """Initialize the polling method with the client, initial response, and deserialization callback.
+
+        :param client: A pipeline service client.
+        :type client: ~azure.core.PipelineClient
+        :param initial_response: The initial call response.
+        :type initial_response: ~azure.core.pipeline.PipelineResponse
+        :param deserialization_callback: A callback that takes a Response and returns a deserialized object.
+                                         If a subclass of Model is given, this passes "deserialize" as callback.
+        :type deserialization_callback: callable or msrest.serialization.Model
+        :return: None
+        :rtype: None
+        """
         raise NotImplementedError("This method needs to be implemented")
 
     async def run(self) -> None:
+        """Run the polling method.
+        This method should be overridden to implement the polling logic.
+
+        :return: None
+        :rtype: None
+        """
         raise NotImplementedError("This method needs to be implemented")
 
     def status(self) -> str:
+        """Return the current status of the polling operation.
+
+        :returns: The current status string.
+        :rtype: str
+        """
         raise NotImplementedError("This method needs to be implemented")
 
     def finished(self) -> bool:
+        """Check if the polling operation is finished.
+
+        :returns: True if the polling operation is finished, False otherwise.
+        :rtype: bool
+        """
         raise NotImplementedError("This method needs to be implemented")
 
     def resource(self) -> PollingReturnType_co:
+        """Return the resource of the long running operation.
+
+        :returns: The deserialized resource of the long running operation, if one is available.
+        :rtype: any
+        """
         raise NotImplementedError("This method needs to be implemented")
 
     def get_continuation_token(self) -> str:
+        """Return a continuation token that allows to restart the poller later.
+
+        :returns: An opaque continuation token
+        :rtype: str
+        """
         raise TypeError("Polling method '{}' doesn't support get_continuation_token".format(self.__class__.__name__))
 
     @classmethod
     def from_continuation_token(
         cls, continuation_token: str, **kwargs: Any
     ) -> Tuple[Any, Any, DeserializationCallbackType]:
+        """Create a poller from a continuation token.
+
+        :param continuation_token: An opaque continuation token
+        :type continuation_token: str
+        :return: A tuple containing the client, initial response, and deserialization callback.
+        :rtype: Tuple[Any, Any, DeserializationCallbackType]
+        """
         raise TypeError("Polling method '{}' doesn't support from_continuation_token".format(cls.__name__))
 
 
@@ -157,6 +202,16 @@ class AsyncLROPoller(Generic[PollingReturnType_co], Awaitable[PollingReturnType_
     def from_continuation_token(
         cls, polling_method: AsyncPollingMethod[PollingReturnType_co], continuation_token: str, **kwargs: Any
     ) -> "AsyncLROPoller[PollingReturnType_co]":
+        """Create a poller from a continuation token.
+
+        :param polling_method: The polling strategy to adopt
+        :type polling_method: ~azure.core.polling.AsyncPollingMethod
+        :param continuation_token: An opaque continuation token
+        :type continuation_token: str
+        :return: An instance of AsyncLROPoller
+        :rtype: ~azure.core.polling.AsyncLROPoller
+        :raises ~azure.core.exceptions.HttpResponseError: If the continuation token is invalid.
+        """
         (
             client,
             initial_response,
@@ -196,8 +251,8 @@ class AsyncLROPoller(Generic[PollingReturnType_co], Awaitable[PollingReturnType_
             if not error.continuation_token:
                 try:
                     error.continuation_token = self.continuation_token()
-                except Exception as err:  # pylint: disable=broad-except
-                    _LOGGER.warning("Unable to retrieve continuation token: %s", err)
+                except Exception:  # pylint: disable=broad-except
+                    _LOGGER.warning("Unable to retrieve continuation token.")
                     error.continuation_token = None
             raise
         self._done = True
