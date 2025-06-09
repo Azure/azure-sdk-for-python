@@ -1,8 +1,10 @@
 # Release History
 
-## 12.27.0b1 (Unreleased)
+## 12.27.0b1 (2025-06-10)
 
 ### Features Added
+- Added support for service version 2025-11-05.
+- Added support for better error handling for copy operations.
 
 ## 12.26.0 (Unreleased)
 
