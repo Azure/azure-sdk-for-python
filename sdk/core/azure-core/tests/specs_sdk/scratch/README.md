@@ -1,4 +1,5 @@
-# Test client library for Python
+# Azure Smoke Test for Python
+
 <!-- write necessary description of service -->
 
 ## Getting started
@@ -15,6 +16,21 @@ python -m pip install test
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing Test instance.
 
+## Key concepts
+
+Used for testing our module-level methods with hybrid and msrest models
+
+## Examples
+
+N/A
+
+## Troubleshooting
+
+N/A
+
+## Next steps
+
+Add more tests
 
 ## Contributing
 
@@ -34,6 +50,7 @@ see the Code of Conduct FAQ or contact opencode@microsoft.com with any
 additional questions or comments.
 
 <!-- LINKS -->
+
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [authenticate_with_token]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
