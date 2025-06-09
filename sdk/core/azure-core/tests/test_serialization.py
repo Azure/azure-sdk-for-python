@@ -466,6 +466,54 @@ def test_model_recursion(json_dumps_with_encoder):
     assert json.loads(json_dumps_with_encoder(expected.to_dict())) == expected_dict
 
 
+def test_json_roundtrip():
+    class Pet(HybridModel):
+        name: str = rest_field()  # my name
+        species: str = rest_field()  # my species
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    dict_response = {
+        "name": "wall-e",
+        "species": "dog",
+    }
+    model = Pet(
+        name="wall-e",
+        species="dog",
+    )
+    with pytest.raises(TypeError):
+        json.dumps(model)
+    assert json.dumps(dict(model)) == '{"name": "wall-e", "species": "dog"}'
+    assert json.loads(json.dumps(dict(model))) == model == dict_response
+
+
+def test_flattened_model():
+    def _flattened_model_assertions(model):
+        assert model.name == "wall-e"
+        assert model.description == "a dog"
+        assert model.age == 2
+        assert model.properties.description == "a dog"
+        assert model.properties.age == 2
+
+    model = models.FlattenModel(name="wall-e", description="a dog", age=2)
+    _flattened_model_assertions(model)
+    model = models.FlattenModel({"name": "wall-e", "properties": {"description": "a dog", "age": 2}})
+    _flattened_model_assertions(model)
+
+
+def test_client_name_model():
+    model = models.ClientNamedPropertyModel(prop_client_name="wall-e")
+    assert model.prop_client_name == "wall-e"
+
+
+def test_readonly():
+    model = models.ReadonlyModel({"id": 1})
+    assert model.id == 1
+    assert model.as_dict() == {"id": 1}
+    assert model.as_dict(exclude_readonly=True) == {}
+
+
 def test_is_generated_model_with_hybrid_model():
     assert is_generated_model(HybridModel())
     assert is_generated_model(models.FlattenModel({"name": "wall-e", "properties": {"description": "a dog", "age": 2}}))

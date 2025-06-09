@@ -11,14 +11,31 @@ from azure.core.exceptions import ServiceResponseError
 import test_config
 from azure.cosmos import _partition_health_tracker, _location_cache
 from azure.cosmos import CosmosClient
+from azure.cosmos._partition_health_tracker import HEALTH_STATUS, UNHEALTHY_TENTATIVE, UNHEALTHY
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport import FaultInjectionTransport
-from test_per_partition_circuit_breaker_mm import perform_write_operation, perform_read_operation
-from test_per_partition_circuit_breaker_mm_async import create_doc, PK_VALUE, write_operations_and_errors, \
-    operations, REGION_2, REGION_1, READ, CREATE, validate_stats
-from test_per_partition_circuit_breaker_sm_mrr_async import validate_unhealthy_partitions
+from test_per_partition_circuit_breaker_mm import create_doc, write_operations_and_errors, operations, REGION_1, \
+    REGION_2, PK_VALUE, perform_write_operation, perform_read_operation
 
 COLLECTION = "created_collection"
+
+def validate_unhealthy_partitions(global_endpoint_manager,
+                                  expected_unhealthy_partitions):
+    health_info_map = global_endpoint_manager.global_partition_endpoint_manager_core.partition_health_tracker.pk_range_wrapper_to_health_info
+    unhealthy_partitions = 0
+    for pk_range_wrapper, location_to_health_info in health_info_map.items():
+        for location, health_info in location_to_health_info.items():
+            health_status = health_info.unavailability_info.get(HEALTH_STATUS)
+            if health_status == UNHEALTHY_TENTATIVE or health_status == UNHEALTHY:
+                unhealthy_partitions += 1
+
+            else:
+                assert health_info.read_consecutive_failure_count < 10
+            # single region write account should never track write failures
+            assert health_info.write_failure_count == 0
+            assert health_info.write_consecutive_failure_count == 0
+
+    assert unhealthy_partitions == expected_unhealthy_partitions
 
 @pytest.mark.cosmosCircuitBreakerMultiRegion
 class TestPerPartitionCircuitBreakerSmMrr:
@@ -220,3 +237,4 @@ class TestPerPartitionCircuitBreakerSmMrr:
 
 if __name__ == '__main__':
     unittest.main()
+
