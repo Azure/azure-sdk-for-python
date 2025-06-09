@@ -54,8 +54,6 @@ TIMEOUT_SAMPLES = {
         "recv_with_checkpoint_store_async.py": (10),
         "recv_with_custom_starting_position_async.py": (10),
         "sample_code_eventhub_async.py": (10),
-        "send_and_receive_amqp_annotated_message.py": (10),
-        "send_and_receive_amqp_annotated_message_async.py": (10),
     },
     "azure-eventhub-checkpointstoreblob": {
         "receive_events_using_checkpoint_store.py": (10),
@@ -95,14 +93,21 @@ IGNORED_SAMPLES = {
         "sample_publish_events_to_a_topic_using_sas_credential_async.py"
     ],
     "azure-eventhub": [
-        "client_identity_authentication.py",    # TODO: remove after fixing issue #29177
-        "client_identity_authentication_async.py",    # TODO: remove after fixing issue #29177
+        "client_identity_authentication.py",
+        "client_identity_authentication_async.py",
         "connection_to_custom_endpoint_address.py",
         "proxy.py",
         "connection_to_custom_endpoint_address_async.py",
         "iot_hub_connection_string_receive_async.py",
         "proxy_async.py",
-        "send_stream.py",    # TODO: remove after fixing issue #29177
+        "send_stream.py",
+        "send_stream_async.py",
+        "send.py",
+        "send_async.py",
+        "send_buffered_mode.py",
+        "send_buffered_mode_async.py",
+        "send_and_receive_amqp_annotated_message.py",
+        "send_and_receive_amqp_annotated_message_async.py",
     ],
     "azure-eventhub-checkpointstoretable": ["receive_events_using_checkpoint_store.py"],
     "azure-servicebus": [
