@@ -18,7 +18,7 @@ def fetch_dependencies_from_setup(file_path):
 
 
 # Path to the setup.py file of azure-ai-ml
-setup_file_path = "C:/Projects/azure-sdk-for-python/sdk/ml/azure-ai-ml/setup.py"
+setup_file_path = "sdk/ml/azure-ai-ml/setup.py"
 
 # Fetch dependencies
 deps_list = fetch_dependencies_from_setup(setup_file_path)
@@ -29,7 +29,7 @@ print(deps_list)
 from packaging.requirements import Requirement
 
 deps = [
-    Requirement(line) for line in deps_list if line.strip() and not line.startswith("#")
+    Requirement(line) for line in deps_list if line.strip() and not line.strip().startswith("#")
 ]
 import requests
 
