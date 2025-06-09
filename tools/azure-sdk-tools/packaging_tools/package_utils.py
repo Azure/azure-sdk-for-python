@@ -165,6 +165,10 @@ class CheckFile:
         self.version_suggestion = ""
 
     @property
+    def pprint_name(self) -> str:
+        return " ".join([word.capitalize() for word in self.package_name.split("-")])
+
+    @property
     def next_version(self) -> str:
         if self._next_version is None:
             self._next_version = self.calculate_next_version()
@@ -186,7 +190,7 @@ class CheckFile:
         os.chdir(Path(f"sdk/{self.sdk_folder}"))
         # add `title` and update `is_stable` in sdk_packaging.toml
         toml = Path(self.whole_package_name) / "sdk_packaging.toml"
-        stable_config = "is_stable = " + ("true" if self.tag_is_stable else "false") + "\n"
+        stable_config = f'is_stable = {"true" if self.tag_is_stable and self.next_version != "1.0.0b1" else "false"}'
         if toml.exists():
 
             def edit_toml(content: List[str]):
@@ -214,17 +218,16 @@ class CheckFile:
         return str(Path(f"sdk/{self.sdk_folder}/{self.whole_package_name}"))
 
     def check_pprint_name(self):
-        pprint_name = self.package_name.capitalize()
 
         def edit_file_for_pprint_name(content: List[str]):
             for i in range(0, len(content)):
-                content[i] = content[i].replace("MyService", pprint_name)
+                content[i] = content[i].replace("MyService", self.pprint_name)
 
         for file in os.listdir(self.sdk_code_path()):
             file_path = str(Path(self.sdk_code_path()) / file)
             if os.path.isfile(file_path):
                 modify_file(file_path, edit_file_for_pprint_name)
-        _LOGGER.info(f' replace "MyService" with "{pprint_name}" successfully ')
+        _LOGGER.info(f' replace "MyService" with "{self.pprint_name}" successfully ')
 
     def check_sdk_readme(self):
         sdk_readme = str(Path(f"sdk/{self.sdk_folder}/{self.whole_package_name}/README.md"))
@@ -232,7 +235,7 @@ class CheckFile:
         def edit_sdk_readme(content: List[str]):
             for i in range(0, len(content)):
                 if content[i].find("MyService") > 0:
-                    content[i] = content[i].replace("MyService", self.package_name.capitalize())
+                    content[i] = content[i].replace("MyService", self.pprint_name)
 
         modify_file(sdk_readme, edit_sdk_readme)
 
