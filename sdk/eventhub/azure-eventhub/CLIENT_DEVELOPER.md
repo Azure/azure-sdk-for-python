@@ -39,11 +39,13 @@ This guide is intended for developers contributing to the Azure Event Hubs Pytho
    pip install -e .
    ```
 
-   If you encounter import errors when running tests, use the standard installation:
+   Alternatively, you can install the checkpointstoreblob packages, but will need to install the client library in non-editable mode:
    ```bash
    pip install .
    ```
    Note: You'll need to rerun this command after making changes to the package.
+
+   If you encounter import errors when running tests, use the standard installation approach above.
 
 ## Running Tests
 
