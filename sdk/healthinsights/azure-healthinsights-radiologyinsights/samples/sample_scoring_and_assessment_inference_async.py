@@ -163,25 +163,25 @@ def display_quality_measure(radiology_insights_result):
                 print(f"Scoring and assesment {counter} Inference found")
 
                 # Print Category
-                if hasattr(ri_inference, "category"):
+                if ri_inference.category:
                     print(f"Category : {ri_inference.category}")
 
                 # Print Compliance Type
-                if hasattr(ri_inference, "category_description"):
+                if ri_inference.category_description:
                     print(f"Category Description: {ri_inference.category_description}")
 
                 # Print Quality Criteria
-                if hasattr(ri_inference, "single_value"):
+                if ri_inference.single_value:
                     print(f"Single Value: {ri_inference.single_value}")
 
                 # Print Range Value
-                if hasattr(ri_inference, "range_value") and ri_inference.range_value is not None:
+                if ri_inference.range_value:
                     display_range_value(ri_inference.range_value)
     # [END display_scoring_and_assessment]
 
 
 def display_range_value(range_value):
-    if hasattr(range_value, "minimum") and hasattr(range_value, "maximum"):
+    if range_value.minimum and range_value.maximum:
         print(f"Range Value: Low = {range_value.minimum}, High = {range_value.maximum}")
     else:
         print("Range Value: Not available")
