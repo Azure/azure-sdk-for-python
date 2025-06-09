@@ -190,7 +190,7 @@ class CheckFile:
         os.chdir(Path(f"sdk/{self.sdk_folder}"))
         # add `title` and update `is_stable` in sdk_packaging.toml
         toml = Path(self.whole_package_name) / "sdk_packaging.toml"
-        stable_config = f'is_stable = {"true" if self.tag_is_stable and self.next_version != "1.0.0b1" else "false"}'
+        stable_config = f'is_stable = {"true" if self.tag_is_stable and self.next_version != "1.0.0b1" else "false"}\n'
         if toml.exists():
 
             def edit_toml(content: List[str]):
