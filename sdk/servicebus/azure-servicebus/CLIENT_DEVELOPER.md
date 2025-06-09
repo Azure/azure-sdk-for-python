@@ -33,29 +33,13 @@ This guide is intended for developers contributing to the Azure Service Bus Pyth
    pip install -e .
    ```
 
-   If you encounter import errors when running tests, use the standard installation:
-   ```bash
-   pip install .
-   ```
-   Note: You'll need to rerun this command after making changes to the package.
-
 ## Running Tests
-
-### Unit Tests
-
-Unit tests don't require any Azure resources:
-
-```bash
-# Run all unit tests
-pytest tests/unittest
-
-# Run specific unit test
-pytest tests/unittest/test_specific_file.py::test_specific_test
-```
 
 ### Live Tests
 
-Live tests require an Azure Service Bus namespace. The test framework uses `ServiceBusPreparer` to create the necessary resources.
+Live tests require an Azure Service Bus namespace. The test framework uses `ServiceBusPreparer` to create the necessary resources for AMQP tests.
+
+The tests/mgmt_tests run tests for `azure.servicebus.management` and are HTTP-based. These use the [test proxy](https://github.com/Azure/azure-sdk-for-python/blob/2e7b619b1540319aeaef2c08f3898dcc2e4ddf5c/doc/dev/tests.md#start-the-test-proxy-server).
 
 1. Login to Azure:
    ```bash
@@ -63,8 +47,29 @@ Live tests require an Azure Service Bus namespace. The test framework uses `Serv
    ```
 
 2. Set required environment variables (or create a `.env` file):
+   
+   The following need to be set to run live tests locally and authenticate with AzureCliCredential:
    ```
-   SERVICEBUS_CONNECTION_STRING=<your-connection-string>
+   AZURE_SUBSCRIPTION_ID=<your-subscription-id>
+   SERVICEBUS_RESOURCE_GROUP=<your-resource-group>
+   AZURE_TEST_RUN_LIVE=true
+   ```
+   
+   If using CLI:
+   ```
+   AZURE_TEST_USE_CLI_AUTH=true
+   ```
+   
+   OR
+   
+   If using pwsh:
+   ```
+   AZURE_TEST_USE_PWSH_AUTH=true
+   ```
+   
+   Note: To run mgmt tests in playback mode instead of live mode, set:
+   ```
+   AZURE_TEST_RUN_LIVE=false
    ```
 
 3. Run tests:
@@ -77,6 +82,22 @@ Live tests require an Azure Service Bus namespace. The test framework uses `Serv
    
    # Show output during test run
    pytest -s tests/livetest/synctests/test_queue_client.py::test_specific_function
+   ```
+
+4. Run mgmt tests only:
+   ```bash
+   # Review the README file for specific test setup and instructions on running tests
+   pytest tests/mgmt_tests
+   ```
+
+   To pull mgmt test recordings:
+   ```bash
+   python azure-sdk-for-python/scripts/manage_recordings.py restore -p sdk/servicebus/azure-servicebus/assets.json
+   ```
+   
+   To push after recording mgmt tests in live mode:
+   ```bash
+   python scripts/manage_recordings.py push -p sdk/servicebus/azure-servicebus/assets.json
    ```
 
 ### Common Test Issues
@@ -159,18 +180,9 @@ The Performance framework helps measure performance metrics for the client libra
    cd tests/perfstress
    ```
 
-2. Review the README file for specific test setup:
+2. Review the README file for specific test setup and instructions on running tests:
    ```bash
    cat README.md
-   ```
-
-3. Run performance tests:
-   ```bash
-   # Run with default options
-   python servicebus_perf.py
-
-   # View available options
-   python servicebus_perf.py --help
    ```
 
 ### Running Performance Tests in Pipelines

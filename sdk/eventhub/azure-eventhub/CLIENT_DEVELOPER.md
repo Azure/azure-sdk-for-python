@@ -63,10 +63,25 @@ Live tests require an Azure Event Hubs namespace. Resources are created dynamica
    ```
 
 2. Set required environment variables (or create a `.env` file):
+   
+   The following need to be set to run live tests locally and authenticate with AzureCliCredential:
    ```
+   AZURE_SUBSCRIPTION_ID=<your-subscription-id>
    EVENTHUB_RESOURCE_GROUP=<your-resource-group>
    EVENTHUB_NAMESPACE=<your-namespace>  # Only the name, not the full URL
-   EVENTHUB_NAME=<your-eventhub-name>
+   AZURE_TEST_RUN_LIVE=true
+   ```
+   
+   If using CLI:
+   ```
+   AZURE_TEST_USE_CLI_AUTH=true
+   ```
+   
+   OR
+   
+   If using pwsh:
+   ```
+   AZURE_TEST_USE_PWSH_AUTH=true
    ```
 
 3. Run tests:
