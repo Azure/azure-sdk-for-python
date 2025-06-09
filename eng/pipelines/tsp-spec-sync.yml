@@ -1,16 +1,7 @@
 trigger: none
 
-pr:
-  paths:
-    include:
-      - eng/emitter-package.json
-
 pool:
   vmImage: 'ubuntu-latest'
-
-variables:
-  - name: PR_BRANCH
-    value: ''
 
 steps:
   - task: UsePythonVersion@0
