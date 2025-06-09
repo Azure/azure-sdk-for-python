@@ -1,2 +1,3 @@
 [tool.azure-sdk-build]
 breaking = false
+pyright = false
