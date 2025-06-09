@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- Improved error messages for invalid target functions in `_SafetyEvaluation` with clear examples of both supported target function patterns.
+- Improved error messages for invalid target functions in `_SafetyEvaluation` with clear examples of both supported target function patterns. 
 
 ## 1.8.0 (2025-05-29)
 
