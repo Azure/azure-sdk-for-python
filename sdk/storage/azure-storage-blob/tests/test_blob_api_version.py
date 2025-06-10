@@ -13,13 +13,14 @@ from azure.storage.blob import (
     BlobClient,
     BlobServiceClient,
 )
-from azure.storage.blob._shared.constants import INVALID_X_MS_VERSION, X_MS_VERSION
+from azure.storage.blob._shared.constants import X_MS_VERSION
 from azure.storage.blob._shared.response_handlers import SV_DOCS_URL
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
+INVALID_X_MS_VERSION = "2099-11-05"
 TEST_BLOB_PREFIX = 'blob'
 
 
