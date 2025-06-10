@@ -2178,7 +2178,6 @@ class RedTeam:
             # This 'finally' block is new and will execute after try or except,
             # but before any return statement in try/except takes effect.
             async with progress_bar_lock: # progress_bar_lock is an argument to _process_attack
-                progress_bar.update(1)    # progress_bar is an argument to _process_attack
                 
                 current_task_info = "Task finished" # Default postfix message part
                 try:
