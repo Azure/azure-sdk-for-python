@@ -1,13 +1,10 @@
-import random
-from collections import OrderedDict
 from typing import List
 
 import pytest
 import test_config
 from azure.cosmos import DatabaseAccount, _location_cache, CosmosClient, _global_endpoint_manager, \
     _cosmos_client_connection
-
-from azure.cosmos._location_cache import RegionalEndpoint, LocationCache
+from azure.cosmos._location_cache import RegionalRoutingContext
 
 COLLECTION = "created_collection"
 REGION_1 = "East US"
@@ -47,50 +44,12 @@ def preferred_locations():
         ([REGION_1, REGION_2, REGION_3], locational_endpoint)
     ]
 
-def create_account_endpoints_by_location(global_endpoint: str):
-    locational_endpoints = []
-    for region in ACCOUNT_REGIONS:
-        locational_endpoints.append(_location_cache.LocationCache.GetLocationalEndpoint(global_endpoint, region))
-        _location_cache.LocationCache.GetLocationalEndpoint(global_endpoint, REGION_1)
-    account_endpoints_by_location = OrderedDict()
-    for i, region in enumerate(ACCOUNT_REGIONS):
-        # should create some with the global endpoint sometimes
-        if random.random() < 0.5:
-            account_endpoints_by_location[region] = RegionalEndpoint(locational_endpoints[i], global_endpoint)
-        else:
-            account_endpoints_by_location[region] = RegionalEndpoint(global_endpoint, locational_endpoints[i])
-
-
-    return locational_endpoints, account_endpoints_by_location
-
-def is_global_endpoint_inputs():
-    global_endpoint = test_config.TestConfig.host
-    locational_endpoints, account_endpoints_by_location = create_account_endpoints_by_location(global_endpoint)
-
-    # testing if customers account name includes a region ex. contoso-eastus
-    global_endpoint_2 = _location_cache.LocationCache.GetLocationalEndpoint(global_endpoint, REGION_1)
-    locational_endpoints_2, account_endpoints_by_location_2 = create_account_endpoints_by_location(global_endpoint_2)
-
-    # endpoint, locations, account_endpoints_by_location, result
-    return [
-        (global_endpoint, ACCOUNT_REGIONS, account_endpoints_by_location, True),
-        (locational_endpoints[0], ACCOUNT_REGIONS, account_endpoints_by_location, False),
-        (locational_endpoints[1], ACCOUNT_REGIONS, account_endpoints_by_location, False),
-        (locational_endpoints[2], ACCOUNT_REGIONS, account_endpoints_by_location, False),
-        (global_endpoint_2, ACCOUNT_REGIONS, account_endpoints_by_location_2, True),
-        (locational_endpoints_2[0], ACCOUNT_REGIONS, account_endpoints_by_location_2, False),
-        (locational_endpoints_2[1], ACCOUNT_REGIONS, account_endpoints_by_location_2, False),
-        (locational_endpoints_2[2], ACCOUNT_REGIONS, account_endpoints_by_location_2, False)
-    ]
-
-
 @pytest.mark.cosmosEmulator
 @pytest.mark.unittest
 @pytest.mark.usefixtures("setup")
 class TestPreferredLocations:
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
-    connectionPolicy = test_config.TestConfig.connectionPolicy
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
 
@@ -104,7 +63,7 @@ class TestPreferredLocations:
         try:
             client = CosmosClient(default_endpoint, self.masterKey, preferred_locations=preferred_location)
             # this will setup the location cache
-            client.client_connection._global_endpoint_manager.force_refresh(None)
+            client.client_connection._global_endpoint_manager.force_refresh_on_startup(None)
         finally:
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
             _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck = self.original_getDatabaseAccountCheck
@@ -123,17 +82,12 @@ class TestPreferredLocations:
         for location in expected_locations:
             locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, location)
             if default_endpoint == self.host or preferred_location:
-                expected_dual_endpoints.append(RegionalEndpoint(locational_endpoint, locational_endpoint))
+                expected_dual_endpoints.append(RegionalRoutingContext(locational_endpoint, locational_endpoint))
             else:
-                expected_dual_endpoints.append(RegionalEndpoint(locational_endpoint, default_endpoint))
+                expected_dual_endpoints.append(RegionalRoutingContext(locational_endpoint, default_endpoint))
 
-        read_dual_endpoints = client.client_connection._global_endpoint_manager.location_cache.read_regional_endpoints
+        read_dual_endpoints = client.client_connection._global_endpoint_manager.location_cache.read_regional_routing_contexts
         assert read_dual_endpoints == expected_dual_endpoints
-
-
-    @pytest.mark.parametrize("default_endpoint, read_locations, account_endpoints_by_location, result", is_global_endpoint_inputs())
-    def test_is_global_endpoint(self, default_endpoint, read_locations, account_endpoints_by_location, result):
-        assert result == LocationCache.is_global_endpoint(default_endpoint, account_endpoints_by_location, read_locations)
 
 
     class MockGetDatabaseAccount(object):

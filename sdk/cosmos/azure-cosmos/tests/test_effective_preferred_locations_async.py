@@ -5,15 +5,12 @@ import pytest_asyncio
 
 import test_config
 from azure.cosmos import DatabaseAccount, _location_cache
+from azure.cosmos._location_cache import RegionalRoutingContext
 
-from azure.cosmos._location_cache import RegionalEndpoint
 from azure.cosmos.aio import _global_endpoint_manager_async, _cosmos_client_connection_async, CosmosClient
+from tests.test_circuit_breaker_emulator import COLLECTION
+from tests.test_effective_preferred_locations import REGION_1, REGION_2, REGION_3, ACCOUNT_REGIONS
 
-COLLECTION = "created_collection"
-REGION_1 = "East US"
-REGION_2 = "West US"
-REGION_3 = "West US 2"
-ACCOUNT_REGIONS = [REGION_1, REGION_2, REGION_3]
 
 @pytest_asyncio.fixture()
 async def setup():
@@ -48,13 +45,13 @@ def preferred_locations():
         ([REGION_1, REGION_2, REGION_3], locational_endpoint)
     ]
 
+
 @pytest.mark.cosmosEmulator
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup")
 class TestPreferredLocationsAsync:
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
-    connectionPolicy = test_config.TestConfig.connectionPolicy
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
 
@@ -68,7 +65,7 @@ class TestPreferredLocationsAsync:
         try:
             client = CosmosClient(default_endpoint, self.masterKey, preferred_locations=preferred_location)
             # this will setup the location cache
-            await client.client_connection._global_endpoint_manager.force_refresh(None)
+            await client.client_connection._global_endpoint_manager.force_refresh_on_startup(None)
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
             _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = self.original_getDatabaseAccountCheck
@@ -87,12 +84,15 @@ class TestPreferredLocationsAsync:
         for location in expected_locations:
             locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, location)
             if default_endpoint == self.host or preferred_location:
-                expected_dual_endpoints.append(RegionalEndpoint(locational_endpoint, locational_endpoint))
+                expected_dual_endpoints.append(RegionalRoutingContext(locational_endpoint, locational_endpoint))
             else:
-                expected_dual_endpoints.append(RegionalEndpoint(locational_endpoint, default_endpoint))
+                expected_dual_endpoints.append(RegionalRoutingContext(locational_endpoint, default_endpoint))
 
-        read_dual_endpoints = client.client_connection._global_endpoint_manager.location_cache.read_regional_endpoints
+        read_dual_endpoints = client.client_connection._global_endpoint_manager.location_cache.read_regional_routing_contexts
         assert read_dual_endpoints == expected_dual_endpoints
+
+    # def test_no_preferred_locations_with_errors_async(self, setup):
+
 
     class MockGetDatabaseAccount(object):
         def __init__(
