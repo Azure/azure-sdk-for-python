@@ -1,6 +1,7 @@
 import ast
 import sys
 
+
 def fetch_dependencies_from_setup(file_path):
     with open(file_path, "r") as file:
         tree = ast.parse(file.read(), filename=file_path)
@@ -29,7 +30,9 @@ print(deps_list)
 from packaging.requirements import Requirement
 
 deps = [
-    Requirement(line) for line in deps_list if line.strip() and not line.strip().startswith("#")
+    Requirement(line)
+    for line in deps_list
+    if line.strip() and not line.strip().startswith("#")
 ]
 import requests
 
@@ -50,7 +53,6 @@ from packaging.version import Version
 
 def is_major_update(previous, latest):
     return Version(latest).major > Version(previous).major
-
 
 
 def check_for_major_updates():
