@@ -346,7 +346,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     return headers
 
 
-def GetResourceIdOrFullNameFromLink(resource_link: str) -> Optional[str]:
+def GetResourceIdOrFullNameFromLink(resource_link: str) -> str:
     """Gets resource id or full name from resource link.
 
     :param str resource_link:
@@ -379,7 +379,7 @@ def GetResourceIdOrFullNameFromLink(resource_link: str) -> Optional[str]:
         # request in form
         # /[resourceType]/[resourceId]/ .... /[resourceType]/[resourceId]/.
         return str(path_parts[-2])
-    return None
+    raise ValueError("Failed Parsing ResourceID from link: {0}".format(resource_link))
 
 
 def GenerateGuidId() -> str:
