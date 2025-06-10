@@ -25,12 +25,12 @@ extends:
     MatrixConfigs:
       - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
         - Name: Python_cosmos_emulator
-          Path: sdk/cosmos/cosmos-emulator-matrix.json
+          Path: sdk/cosmos/cosmos-emulator-public-matrix.json
           Selection: all
           GenerateVMJobs: true
       - ${{ else }}:
         - Name: Python_cosmos_emulator
-          Path: sdk/cosmos/cosmos-emulator-split-matrix.json
+          Path: sdk/cosmos/cosmos-emulator-internal-matrix.json
           Selection: all
           GenerateVMJobs: true
     Artifacts: ${{ parameters.Artifacts }}
