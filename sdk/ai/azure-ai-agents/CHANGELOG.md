@@ -48,6 +48,7 @@
 ### Breaking Changes
 
 - enable_auto_function_calls supports positional arguments instead of keyword arguments.
+- Please see the [agents migration guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/AGENTS_MIGRATION_GUIDE.md) on how to use `azure-ai-projects` with `azure-ai-agents` package.
   
 ### Features Added
 
