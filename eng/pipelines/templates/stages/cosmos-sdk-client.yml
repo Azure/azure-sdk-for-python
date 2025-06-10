@@ -23,7 +23,7 @@ extends:
         parameters:
           StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Session'
     MatrixConfigs:
-      - ${{ if and(eq(variables['Build.Reason'], 'PullRequest') }}:
+      - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
         - Name: Python_cosmos_emulator
           Path: sdk/cosmos/cosmos-emulator-matrix.json
           Selection: all
