@@ -9,6 +9,8 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fix for issue #41470. Added back exception message, removed earlier due to linting errors
+  ([#41512] https://github.com/Azure/azure-sdk-for-python/pull/41512)
 
 ### Other Changes
 
