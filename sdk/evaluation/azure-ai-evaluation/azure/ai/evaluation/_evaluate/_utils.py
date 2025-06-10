@@ -181,7 +181,7 @@ def _log_metrics_and_instance_results_onedp(
         properties.update(_convert_name_map_into_property_entries(name_map))
 
         create_evaluation_result_response = client.create_evaluation_result(
-            name=uuid.uuid4(),
+            name=evaluation_name or str(uuid.uuid4()),
             path=tmpdir,
             metrics=metrics
         )
