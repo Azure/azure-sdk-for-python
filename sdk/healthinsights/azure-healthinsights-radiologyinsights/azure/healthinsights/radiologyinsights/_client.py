@@ -17,7 +17,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import RadiologyInsightsClientConfiguration
 from ._operations import RadiologyInsightsClientOperationsMixin
-from ._serialization import Deserializer, Serializer
+from ._utils.serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -44,6 +44,7 @@ class RadiologyInsightsClient(RadiologyInsightsClientOperationsMixin):
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
         _endpoint = "{endpoint}/health-insights"
         self._config = RadiologyInsightsClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [

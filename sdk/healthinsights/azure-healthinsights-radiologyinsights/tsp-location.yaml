@@ -3,4 +3,4 @@ additionalDirectories:
 - specification/ai/HealthInsights/HealthInsights.Common/
 - specification/ai/HealthInsights/HealthInsights.OpenAPI/
 repo: Azure/azure-rest-api-specs
-commit: b68d39ecc5e48bad1ddcc80957907bc164d7bd47
+commit: 69eadf978055e646bc6b0ef1fa92fdac394eaab2

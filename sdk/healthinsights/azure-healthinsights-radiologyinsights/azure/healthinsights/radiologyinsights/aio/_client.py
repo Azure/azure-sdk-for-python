@@ -15,7 +15,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import RadiologyInsightsClientConfiguration
 from ._operations import RadiologyInsightsClientOperationsMixin
 
@@ -46,6 +46,7 @@ class RadiologyInsightsClient(RadiologyInsightsClientOperationsMixin):
     ) -> None:
         _endpoint = "{endpoint}/health-insights"
         self._config = RadiologyInsightsClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [

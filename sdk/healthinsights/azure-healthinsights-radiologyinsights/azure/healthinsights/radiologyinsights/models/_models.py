@@ -13,15 +13,14 @@ from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, U
 
 from azure.core.exceptions import ODataV4Format
 
-from .. import _model_base
-from .._model_base import rest_discriminator, rest_field
+from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import RadiologyInsightsInferenceType
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class RadiologyInsightsInference(_model_base.Model):
+class RadiologyInsightsInference(_Model):
     """An inference made by the Radiology Insights model regarding a patient.
 
     * AgeMismatch
@@ -53,7 +52,7 @@ class RadiologyInsightsInference(_model_base.Model):
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: Dict[str, _Model] = {}
     kind: str = rest_discriminator(name="kind")
     """Discriminator property for RadiologyInsightsInference. Required. Known values are:
      \"ageMismatch\", \"lateralityDiscrepancy\", \"sexMismatch\", \"completeOrderDiscrepancy\",
@@ -115,7 +114,7 @@ class AgeMismatchInference(RadiologyInsightsInference, discriminator="ageMismatc
         super().__init__(*args, kind=RadiologyInsightsInferenceType.AGE_MISMATCH, **kwargs)
 
 
-class Element(_model_base.Model):
+class Element(_Model):
     """The base definition for all elements contained inside a resource.
     Based on `FHIR Element <https://www.hl7.org/fhir/R4/element.html>`_.
 
@@ -198,7 +197,7 @@ class Annotation(Element):
         super().__init__(*args, **kwargs)
 
 
-class AssessmentValueRange(_model_base.Model):
+class AssessmentValueRange(_Model):
     """A range of values.
 
     :ivar minimum: The minimum value. Required.
@@ -373,7 +372,7 @@ class CompleteOrderDiscrepancyInference(RadiologyInsightsInference, discriminato
         super().__init__(*args, kind=RadiologyInsightsInferenceType.COMPLETE_ORDER_DISCREPANCY, **kwargs)
 
 
-class CriticalResult(_model_base.Model):
+class CriticalResult(_Model):
     """Critical Result consists of two properties.
 
     :ivar description: Description : medical problem. Required.
@@ -444,7 +443,7 @@ class CriticalResultInference(RadiologyInsightsInference, discriminator="critica
         super().__init__(*args, kind=RadiologyInsightsInferenceType.CRITICAL_RESULT, **kwargs)
 
 
-class DocumentAdministrativeMetadata(_model_base.Model):
+class DocumentAdministrativeMetadata(_Model):
     """Document administrative metadata.
 
     :ivar ordered_procedures: List of procedure information associated with the document.
@@ -482,7 +481,7 @@ class DocumentAdministrativeMetadata(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentAuthor(_model_base.Model):
+class DocumentAuthor(_Model):
     """Document author.
 
     :ivar id: author id.
@@ -515,7 +514,7 @@ class DocumentAuthor(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentContent(_model_base.Model):
+class DocumentContent(_Model):
     """The content of the patient document.
 
     :ivar source_type: The type of the content's source.
@@ -559,7 +558,7 @@ class DocumentContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Resource(_model_base.Model):
+class Resource(_Model):
     """Resource is the ancestor of DomainResource from which most resources are derived. Bundle,
     Parameters, and Binary extend Resource directly.
     Based on [FHIR Resource](`https://www.hl7.org/fhir/r4/resource.html
@@ -640,7 +639,7 @@ class DomainResource(Resource):
     :vartype modifier_extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: Dict[str, _Model] = {}
     resource_type: str = rest_discriminator(name="resourceType")
     """Discriminator property for DomainResource. Required. Default value is None."""
     text: Optional["_models.Narrative"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -834,7 +833,7 @@ class FindingInference(RadiologyInsightsInference, discriminator="finding"):
         super().__init__(*args, kind=RadiologyInsightsInferenceType.FINDING, **kwargs)
 
 
-class FindingOptions(_model_base.Model):
+class FindingOptions(_Model):
     """Finding options.
 
     :ivar provide_focused_sentence_evidence: If this is true, provide the sentence that contains
@@ -1018,7 +1017,7 @@ class FollowupRecommendationInference(RadiologyInsightsInference, discriminator=
         super().__init__(*args, kind=RadiologyInsightsInferenceType.FOLLOWUP_RECOMMENDATION, **kwargs)
 
 
-class FollowupRecommendationOptions(_model_base.Model):
+class FollowupRecommendationOptions(_Model):
     """Follow-up recommendation options.
 
     :ivar include_recommendations_with_no_specified_modality: Include/Exclude follow-up
@@ -1070,7 +1069,7 @@ class FollowupRecommendationOptions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ProcedureRecommendation(_model_base.Model):
+class ProcedureRecommendation(_Model):
     """The procedure recommendation can be a generic procedure or an imaging procedure.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1083,7 +1082,7 @@ class ProcedureRecommendation(_model_base.Model):
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: Dict[str, _Model] = {}
     kind: str = rest_discriminator(name="kind")
     """Discriminator property for ProcedureRecommendation. Required. Default value is None."""
     extension: Optional[List["_models.Extension"]] = rest_field(
@@ -1231,7 +1230,7 @@ class GuidanceInference(RadiologyInsightsInference, discriminator="guidance"):
         super().__init__(*args, kind=RadiologyInsightsInferenceType.GUIDANCE, **kwargs)
 
 
-class GuidanceOptions(_model_base.Model):
+class GuidanceOptions(_Model):
     """Guidance options.
 
     :ivar show_guidance_in_history: If this is true, also show guidances from a clinical history
@@ -1264,7 +1263,7 @@ class GuidanceOptions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class HealthInsightsErrorResponse(_model_base.Model):
+class HealthInsightsErrorResponse(_Model):
     """A response containing error details.
 
     :ivar error: The error object. Required.
@@ -1346,7 +1345,7 @@ class Identifier(Element):
         super().__init__(*args, **kwargs)
 
 
-class ImagingProcedure(_model_base.Model):
+class ImagingProcedure(_Model):
     """Imaging procedure.
 
     :ivar modality: Modality : SNOMED CT code. Required.
@@ -1555,7 +1554,7 @@ class LimitedOrderDiscrepancyInference(RadiologyInsightsInference, discriminator
         super().__init__(*args, kind=RadiologyInsightsInferenceType.LIMITED_ORDER_DISCREPANCY, **kwargs)
 
 
-class Meta(_model_base.Model):
+class Meta(_Model):
     """Metadata about a resource
     Based on `FHIR Meta <https://www.hl7.org/fhir/R4/resource.html#Meta>`_.
 
@@ -2069,7 +2068,7 @@ class ObservationComponent(Element):
         super().__init__(*args, **kwargs)
 
 
-class ObservationReferenceRange(_model_base.Model):
+class ObservationReferenceRange(_Model):
     """Provides guide for interpretation of component result
     Based on `FHIR Observation.referenceRange <https://www.hl7.org/fhir/R4/observation.html>`_.
 
@@ -2125,7 +2124,7 @@ class ObservationReferenceRange(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OrderedProcedure(_model_base.Model):
+class OrderedProcedure(_Model):
     """Procedure information.
 
     :ivar code: Procedure code.
@@ -2165,7 +2164,7 @@ class OrderedProcedure(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PatientDetails(_model_base.Model):
+class PatientDetails(_Model):
     """Patient structured information, including demographics and known structured clinical
     information.
 
@@ -2210,7 +2209,7 @@ class PatientDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PatientDocument(_model_base.Model):
+class PatientDocument(_Model):
     """A clinical document related to a patient. Document here is in the wide sense - not just a text
     document (note).
 
@@ -2302,7 +2301,7 @@ class PatientDocument(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PatientEncounter(_model_base.Model):
+class PatientEncounter(_Model):
     """visit/encounter information.
 
     :ivar id: The id of the visit. Required.
@@ -2348,7 +2347,7 @@ class PatientEncounter(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PatientRecord(_model_base.Model):
+class PatientRecord(_Model):
     """A patient record, including their clinical information and data.
 
     :ivar id: A given identifier for the patient. Has to be unique across all patients in a single
@@ -2434,7 +2433,7 @@ class Period(Element):
         super().__init__(*args, **kwargs)
 
 
-class PresentGuidanceInformation(_model_base.Model):
+class PresentGuidanceInformation(_Model):
     """An item of the structured information (e.g. laterality or size) and one or more corresponding
     details (e.g. left or size-value).
 
@@ -2552,7 +2551,7 @@ class QualityMeasureInference(RadiologyInsightsInference, discriminator="quality
         super().__init__(*args, kind=RadiologyInsightsInferenceType.QUALITY_MEASURE, **kwargs)
 
 
-class QualityMeasureOptions(_model_base.Model):
+class QualityMeasureOptions(_Model):
     """Quality Measure Options.
 
     :ivar measure_types: Id(s) of the MIPS measures that need to be evaluated in the document.
@@ -2633,7 +2632,7 @@ class Quantity(Element):
         super().__init__(*args, **kwargs)
 
 
-class RadiologyCodeWithTypes(_model_base.Model):
+class RadiologyCodeWithTypes(_Model):
     """Radiology code with types : used in imaging procedure recommendation for contrast and view.
 
     :ivar code: The SNOMED CT code indicates whether imaging was conducted with or without contrast
@@ -2672,7 +2671,7 @@ class RadiologyCodeWithTypes(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RadiologyInsightsData(_model_base.Model):
+class RadiologyInsightsData(_Model):
     """Contains the list of patients, and configuration data.
 
     :ivar patients: The list of patients, including their clinical information and data. Required.
@@ -2708,7 +2707,7 @@ class RadiologyInsightsData(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RadiologyInsightsInferenceOptions(_model_base.Model):
+class RadiologyInsightsInferenceOptions(_Model):
     """Options regarding follow up recommendation inferences and finding inferences.
 
     :ivar followup_recommendation_options: Follow-up recommendation options.
@@ -2761,7 +2760,7 @@ class RadiologyInsightsInferenceOptions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RadiologyInsightsInferenceResult(_model_base.Model):
+class RadiologyInsightsInferenceResult(_Model):
     """The inference results for the Radiology Insights request. If field 'status' has value
     'succeeded', then field 'result' will contain an instance of RadiologyInsightsInferenceResult.
 
@@ -2799,7 +2798,7 @@ class RadiologyInsightsInferenceResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RadiologyInsightsJob(_model_base.Model):
+class RadiologyInsightsJob(_Model):
     """Response for the Radiology Insights request.
 
     :ivar job_data: The request data for the operation.
@@ -2858,7 +2857,7 @@ class RadiologyInsightsJob(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RadiologyInsightsModelConfiguration(_model_base.Model):
+class RadiologyInsightsModelConfiguration(_Model):
     """Configuration affecting the Radiology Insights model's inference.
 
     :ivar verbose: An indication whether the model should produce verbose output.
@@ -2921,7 +2920,7 @@ class RadiologyInsightsModelConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RadiologyInsightsPatientResult(_model_base.Model):
+class RadiologyInsightsPatientResult(_Model):
     """Results of the model's work for a single patient.
 
     :ivar patient_id: Identifier given for the patient in the request. Required.
@@ -3079,7 +3078,7 @@ class Ratio(Element):
         super().__init__(*args, **kwargs)
 
 
-class RecommendationFinding(_model_base.Model):
+class RecommendationFinding(_Model):
     """Finding reference for recommendation.
 
     :ivar finding: Finding linked to a recommendation.
@@ -3260,7 +3259,7 @@ class ScoringAndAssessmentInference(RadiologyInsightsInference, discriminator="s
     :ivar category_description: The expansion of the category (which is an abbreviation.).
      Required.
     :vartype category_description: str
-    :ivar single_value: The value. If the value is a range, use field valueRange.
+    :ivar single_value: The value. If the value is a range, use field rangeValue.
     :vartype single_value: str
     :ivar range_value: The range.
     :vartype range_value: ~azure.healthinsights.radiologyinsights.models.AssessmentValueRange
@@ -3288,7 +3287,7 @@ class ScoringAndAssessmentInference(RadiologyInsightsInference, discriminator="s
     single_value: Optional[str] = rest_field(
         name="singleValue", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The value. If the value is a range, use field valueRange."""
+    """The value. If the value is a range, use field rangeValue."""
     range_value: Optional["_models.AssessmentValueRange"] = rest_field(
         name="rangeValue", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3356,7 +3355,7 @@ class SexMismatchInference(RadiologyInsightsInference, discriminator="sexMismatc
         super().__init__(*args, kind=RadiologyInsightsInferenceType.SEX_MISMATCH, **kwargs)
 
 
-class TimePeriod(_model_base.Model):
+class TimePeriod(_Model):
     """A duration of time during which an event is happening.
 
     :ivar start: Starting time with inclusive boundary.
