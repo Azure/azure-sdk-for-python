@@ -7,31 +7,32 @@ This troubleshooting guide contains instructions to diagnose frequently encounte
 * [General troubleshooting](#general-troubleshooting)
   * [Enable client logging](#enable-client-logging)
   * [Common exceptions](#common-exceptions)
+    * [Authentication Exceptions](#authentication-exceptions)
+    * [Connection and Timeout Exceptions](#connection-and-timeout-exceptions)
+    * [Message and Session Handling Exceptions](#message-and-session-handling-exceptions)
+    * [Service and Entity Exceptions](#service-and-entity-exceptions)
+    * [Auto Lock Renewal Exceptions](#auto-lock-renewal-exceptions)
 * [Threading and concurrency issues](#threading-and-concurrency-issues)
   * [Thread safety limitations](#thread-safety-limitations)
-  * [Async/await best practices](#asyncawait-best-practices)
-* [Authentication issues](#authentication-issues)
-  * [Authentication errors](#authentication-errors)
-  * [Authorization errors](#authorization-errors)
-  * [Connection string issues](#connection-string-issues)
-* [Connectivity issues](#troubleshooting-connectivity-issues)
-  * [Connection errors](#connection-errors)
-  * [Firewall and proxy issues](#firewall-and-proxy-issues)
-  * [Service busy errors](#service-busy-errors)
+* [Troubleshooting Authentication issues](#troubleshooting-authentication-issues)
+* [Troubleshooting Connectivity issues](#troubleshooting-connectivity-issues)
+  * [Timeout when connecting to service](#timeout-when-connecting-to-service)
+  * [SSL handshake failures](#ssl-handshake-failures)
+  * [Adding components to the connection string does not work](#adding-components-to-the-connection-string-does-not-work)
+    * ["TransportType.AmqpOverWebSocket" Alternative](#transporttypeamqpoverwebsocket-alternative)
+    * [Azure Identity Authentication Alternative](#azure-identity-authentication-alternative)
 * [Troubleshooting message handling issues](#troubleshooting-message-handling-issues)
-  * [Message lock issues](#message-lock-issues)
+  * [Message and session lock issues](#message-and-session-lock-issues)
   * [Message size issues](#message-size-issues)
-  * [Message settlement issues](#message-settlement-issues)
-* [Troubleshooting session handling issues](#troubleshooting-session-handling-issues)
-  * [Session lock issues](#session-lock-issues)
-  * [Session cannot be locked](#session-cannot-be-locked)
 * [Troubleshooting receiver issues](#troubleshooting-receiver-issues)
   * [Number of messages returned doesn't match number requested](#number-of-messages-returned-doesnt-match-number-requested)
   * [Mixing sync and async code](#mixing-sync-and-async-code)
   * [Dead letter queue issues](#dead-letter-queue-issues)
 * [Quotas](#quotas)
+  * [Entity not found errors](#entity-not-found-errors)
 * [Troubleshooting async operations](#troubleshooting-async-operations)
 * [Get additional help](#get-additional-help)
+  * [Filing GitHub issues](#filing-github-issues)
 
 ## General troubleshooting
 
@@ -76,37 +77,39 @@ ServiceBusErrors often have an underlying AMQP error code which specifies whethe
 * `retry_mode`: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential'
 When an exception is surfaced to the application, either all retries were applied unsuccessfully, or the exception was considered non-transient.
 
-#### Connection and Authentication Exceptions
-
-- **ServiceBusConnectionError:** An error occurred in the connection to the se
-rvice. This may have been caused by a transient network issue or service proble
-m. It is recommended to retry.
+#### Authentication Exceptions
 
 - **ServiceBusAuthenticationError:** An error occurred when authenticating the connection to the service. This may have been caused by the credentials being incorrect. It is recommended to check the credentials.
 
 - **ServiceBusAuthorizationError:** An error occurred when authorizing the connection to the service. This may have been caused by the credentials not having the right permission to perform the operation. It is recommended to check the permission of the credentials.
 
-#### Operation and Timeout Exceptions
+See the [Troubleshooting Authentication issues](#troubleshooting-authentication-issues) section to troubleshoot authentication/permission issues.
+
+#### Connection and Timeout Exceptions
+
+- **ServiceBusConnectionError:** An error occurred in the connection to the service. This may have been caused by a transient network issue or service problem. It is recommended to retry.
 
 - **OperationTimeoutError:** This indicates that the service did not respond to an operation within the expected amount of time. This may have been caused by a transient network issue or service problem. The service may or may not have successfully completed the request; the status is not known. It is recommended to attempt to verify the current state and retry if necessary.
 
 - **ServiceBusCommunicationError:** Client isn't able to establish a connection to Service Bus. Make sure the supplied host name is correct and the host is reachable. If your code runs in an environment with a firewall/proxy, ensure that the traffic to the Service Bus domain/IP address and ports isn't blocked. For details on which ports need to be open, see the [Azure Service Bus FAQ: What ports do I need to open on the firewall?](https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-faq#what-ports-do-i-need-to-open-on-the-firewall--).
 
-#### Message Handling Exceptions
+See the [Troubleshooting Connectivity issues](#troubleshooting-connectivity-issues) section to troubleshoot connection and timeout issues. More information on AMQP errors in Azure Service Bus can be found [here](https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-amqp-troubleshoot).
+
+#### Message and Session Handling Exceptions
 
 - **MessageSizeExceededError:** This indicates that the max message size has been exceeded. The message size includes the body of the message, as well as any associated metadata and system overhead. The best approach for resolving this error is to reduce the number of messages being sent in a batch or the size of the body included in the message. Because size limits are subject to change, please refer to [Service Bus quotas](https://learn.microsoft.com/azure/service-bus-messaging/service-bus-quotas) for specifics.
 
 - **MessageAlreadySettled:** This indicates failure to settle the message. This could happen when trying to settle an already-settled message.
 
-- **MessageLockLostError:** Indicates that the lock on the message is lost. Callers should attempt to receive and process the message again. This exception only applies to entities that don't use sessions. This error occurs if processing takes longer than the lock duration and the message lock isn't renewed. This error can also occur when the link is detached due to a transient network issue or when the link is idle for 10 minutes, as enforced by the service. `AutoLockRenewer` could help on keeping the lock of the message automatically renewed.
-
 - **MessageNotFoundError:** This occurs when attempting to receive a deferred message by sequence number for a message that either doesn't exist in the entity, or is currently locked.
 
-#### Session Handling Exceptions
+- **MessageLockLostError:** Indicates that the lock on the message is lost. Callers should attempt to receive and process the message again. This exception only applies to entities that don't use sessions. This error occurs if processing takes longer than the lock duration and the message lock isn't renewed. This error can also occur when the link is detached due to a transient network issue or when the link is idle for 10 minutes, as enforced by the service. `AutoLockRenewer` could help on keeping the lock of the message automatically renewed.
 
 - **SessionLockLostError:** The lock on the session has expired. All unsettled messages that have been received can no longer be settled. It is recommended to reconnect to the session if receive messages again if necessary. You should be aware of the lock duration of a session and keep renewing the lock before expiration in case of long processing time. `AutoLockRenewer` could help on keeping the lock of the session automatically renewed.
 
 - **SessionCannotBeLockedError:** Attempt to connect to a session with a specific session ID, but the session is currently locked by another client. Make sure the session is unlocked by other clients.
+
+See the [Troubleshooting message handling issues](#troubleshooting-message-handling-issues) section to troubleshoot message and session lock issues.
 
 #### Service and Entity Exceptions
 
@@ -123,6 +126,8 @@ m. It is recommended to retry.
 - **AutoLockRenewFailed:** An attempt to renew a lock on a message or session in the background has failed. This could happen when the receiver used by `AutoLockRenewer` is closed or the lock of the renewable has expired. It is recommended to re-register the renewable message or session by receiving the message or connect to the sessionful entity again.
 
 - **AutoLockRenewTimeout:** The time allocated to renew the message or session lock has elapsed. You could re-register the object that wants be auto lock renewed or extend the timeout in advance.
+
+See the [Troubleshooting message handling issues](#troubleshooting-message-handling-issues) to help troubleshoot AutoLockRenewer errors.
 
 ## Threading and concurrency issues
 
@@ -199,7 +204,7 @@ with client:
                 executor.submit(send_batch, i, sender)
 ```
 
-## Authentication issues
+## Troubleshooting Authentication issues
 
 Authentication errors typically occur when the credentials provided are incorrect or have expired. Authorization errors occur when the authenticated identity doesn't have sufficient permissions.
 
@@ -211,7 +216,7 @@ The following verification steps are recommended, depending on the type of autho
 
 - [Verify the correct RBAC roles were granted](https://learn.microsoft.com/azure/service-bus-messaging/service-bus-managed-service-identity) - Indicated by errors: `Send/Listen claim(s) are required to perform this operation.` In this case, ensure that the appropriate roles were assigned: `Azure Service Bus Data Owner`, `Azure Service Bus Data Sender`, or `Azure Service Bus Data Receiver`.
 
-## Connectivity issues
+## Troubleshooting Connectivity issues
 
 ### Timeout when connecting to service
 
@@ -251,11 +256,11 @@ For more information about the `azure-identity` library, see: [Azure Identity cl
 
 ## Troubleshooting message handling issues
 
-### Message lock issues
+### Message and session lock issues
 
-Messages in Service Bus have a lock duration during which they must be settled (completed, abandoned, etc.).
+Messages, sessionful and non-sessionful, in Service Bus have a lock duration during which they must be settled (completed, abandoned, etc.).
 
-**MessageLockLostError resolution:**
+**MessageLockLostError and SessionLockLostError resolution:**
 1. Process messages faster or increase lock duration
 2. If setting `prefetch_count` to a large number, consider setting it lower as it can cause message lock expiration if processing takes too long. The client cannot extend locks for prefetched messages.
 3. Use `AutoLockRenewer` for long-running processing.
@@ -272,8 +277,6 @@ with receiver:
         # Process message
         receiver.complete_message(message)
 ```
-
-3. Handle lock lost errors gracefully by catching the exception and potentially re-receiving the message
 
 ### Message size issues
 
@@ -359,8 +362,7 @@ def continuous_message_processing(receiver):
 
 ### Mixing sync and async code
 
-Mixing synchronous and asynchronous Service Bus operations can cause issues such as async operations hanging indefinitely due to the event loop being blocked. Ensure that blocking calls are not made when receiving and message processing.
-
+Mixing synchronous and asynchronous Service Bus operations can cause issues such as async operations, such as the `AutoLockRenewer`, hanging indefinitely due to the event loop being blocked. Ensure that blocking calls are not made when receiving and message processing.
 
 ### Dead letter queue issues
 
