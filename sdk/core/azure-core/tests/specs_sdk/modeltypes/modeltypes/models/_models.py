@@ -48,7 +48,7 @@ class Element(_Model):
     """Element.
 
     :ivar recursive_element:
-    :vartype recursive_element: list[~modeltest.models.RecursiveElement]
+    :vartype recursive_element: list[~modeltypes.models.RecursiveElement]
     """
 
     recursive_element: Optional[List["_models.RecursiveElement"]] = rest_field(
@@ -116,7 +116,7 @@ class FlattenModel(_Model):
     :ivar name: Required.
     :vartype name: str
     :ivar properties: Required.
-    :vartype properties: ~modeltest.models.PropertiesModel
+    :vartype properties: ~modeltypes.models.PropertiesModel
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -317,11 +317,11 @@ class Salmon(Fish, discriminator="salmon"):
     :ivar kind: Required. Default value is "salmon".
     :vartype kind: str
     :ivar friends:
-    :vartype friends: list[~modeltest.models.Fish]
+    :vartype friends: list[~modeltypes.models.Fish]
     :ivar hate:
-    :vartype hate: dict[str, ~modeltest.models.Fish]
+    :vartype hate: dict[str, ~modeltypes.models.Fish]
     :ivar life_partner:
-    :vartype life_partner: ~modeltest.models.Fish
+    :vartype life_partner: ~modeltypes.models.Fish
     """
 
     kind: Literal["salmon"] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore

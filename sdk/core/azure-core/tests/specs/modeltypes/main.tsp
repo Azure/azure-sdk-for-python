@@ -3,7 +3,7 @@ import "@azure-tools/typespec-client-generator-core";
 using Azure.ClientGenerator.Core;
 
 @usage(Usage.input)
-namespace ModelTest;
+namespace ModelTypes;
 /** A scratch model for testing purposes */
 
 model Scratch {

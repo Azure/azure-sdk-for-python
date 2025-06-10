@@ -10,8 +10,8 @@ import sys
 
 from azure.core.serialization import AzureJSONEncoder, NULL, as_attribute_dict
 import pytest
-from modeltest._utils.model_base import Model as HybridModel, rest_field
-from modeltest import models
+from modeltypes._utils.model_base import Model as HybridModel, rest_field
+from modeltypes import models
 
 
 def _expand_value(obj):
