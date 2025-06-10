@@ -129,14 +129,16 @@ class AzureJSONEncoder(JSONEncoder):
         except AttributeError:
             pass
         return super(AzureJSONEncoder, self).default(o)
-    
+
+
 def _is_readonly(p: Any) -> bool:
     """Check if an attribute is readonly."""
     try:
         return p._visibility == ["read"]
     except AttributeError:
         return False
-    
+
+
 def _as_attribute_dict_value(v: Any, *, exclude_readonly: bool = False) -> Any:
     if v is None or isinstance(v, _Null):
         return None
@@ -146,6 +148,7 @@ def _as_attribute_dict_value(v: Any, *, exclude_readonly: bool = False) -> Any:
         return {dk: _as_attribute_dict_value(dv, exclude_readonly=exclude_readonly) for dk, dv in v.items()}
     # TODO: switch to is_generated_model once pr is merged
     return as_attribute_dict(v, exclude_readonly=exclude_readonly) if hasattr(v, "as_dict") else v
+
 
 def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, Any]:
     """Convert an object to a dictionary of its attributes."""
@@ -175,7 +178,7 @@ def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, 
             )._is_multipart_file_input
         except StopIteration:
             pass
-        result[rest_to_attr.get(k, k)] = v if is_multipart_file_input else _as_attribute_dict_value(v, exclude_readonly=exclude_readonly)
+        result[rest_to_attr.get(k, k)] = (
+            v if is_multipart_file_input else _as_attribute_dict_value(v, exclude_readonly=exclude_readonly)
+        )
     return result
-
-        

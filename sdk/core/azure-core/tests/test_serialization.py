@@ -520,14 +520,17 @@ def test_readonly():
     assert model.as_dict() == {"id": 1}
     assert model.as_dict(exclude_readonly=True) == {}
 
+
 def test_as_attribute_dict_scratch():
     model = models.Scratch(prop="test")
     assert as_attribute_dict(model) == {"prop": "test"}
+
 
 def test_as_attribute_dict_client_name():
     model = models.ClientNameAndJsonEncodedNameModel(client_name="wall-e")
     assert model.as_dict() == {"wireName": "wall-e"}
     assert as_attribute_dict(model) == {"client_name": "wall-e"}
+
 
 def test_as_attribute_dict_nested_models():
     def _test(result):
@@ -543,7 +546,7 @@ def test_as_attribute_dict_nested_models():
         street: str = rest_field()
         city: str = rest_field()
         zip_code: str = rest_field(name="zipCode")
-        
+
     class HybridPerson(HybridModel):
         name: str = rest_field()
         home_address: HybridAddress = rest_field(name="homeAddress")
@@ -555,6 +558,7 @@ def test_as_attribute_dict_nested_models():
             "city": {"key": "city", "type": "str"},
             "zip_code": {"key": "zipCode", "type": "str"},
         }
+
         def __init__(self, *, street: str, city: str, zip_code: str, **kwargs):
             super().__init__(**kwargs)
             self.street = street
@@ -567,12 +571,13 @@ def test_as_attribute_dict_nested_models():
             "home_address": {"key": "homeAddress", "type": "MsrestAddress"},
             "work_address": {"key": "workAddress", "type": "MsrestAddress"},
         }
+
         def __init__(self, *, name: str, home_address: MsrestAddress, work_address: MsrestAddress, **kwargs):
             super().__init__(**kwargs)
             self.name = name
             self.home_address = home_address
             self.work_address = work_address
-        
+
     hybrid_home = HybridAddress(street="123 Home St", city="Hometown", zip_code="12345")
     hybrid_work = HybridAddress(street="456 Work Ave", city="Workville", zip_code="67890")
     hybrid_person = HybridPerson(name="Jane Doe", home_address=hybrid_home, work_address=hybrid_work)
@@ -604,25 +609,16 @@ def test_as_attribute_dict_wire_name_differences():
         assert result["unit_price"] == 19.99
         assert result["stock_count"] == 42
 
-    hybrid_product = HybridProduct(
-        product_id="p123",
-        product_name="Widget",
-        unit_price=19.99,
-        stock_count=42
-    )
+    hybrid_product = HybridProduct(product_id="p123", product_name="Widget", unit_price=19.99, stock_count=42)
     assert hybrid_product["productId"] == "p123"
     assert hybrid_product["ProductName"] == "Widget"
     assert hybrid_product["unit-price"] == 19.99
     assert hybrid_product["stock_count"] == 42
     _test(as_attribute_dict(hybrid_product))
 
-    msrest_product = MsrestProduct(
-        product_id="p123",
-        product_name="Widget",
-        unit_price=19.99,
-        stock_count=42
-    )
+    msrest_product = MsrestProduct(product_id="p123", product_name="Widget", unit_price=19.99, stock_count=42)
     _test(as_attribute_dict(msrest_product))
+
 
 def test_as_attribute_dict_datetime_serialization():
     class HybridEvent(HybridModel):
@@ -642,8 +638,18 @@ def test_as_attribute_dict_datetime_serialization():
             "reminder_time": {"key": "reminderTime", "type": "time"},
             "duration": {"key": "duration", "type": "duration"},
         }
-        def __init__(self, *, event_id: str, start_time: datetime, end_time: datetime,
-                     created_date: date, reminder_time: time, duration: timedelta, **kwargs):
+
+        def __init__(
+            self,
+            *,
+            event_id: str,
+            start_time: datetime,
+            end_time: datetime,
+            created_date: date,
+            reminder_time: time,
+            duration: timedelta,
+            **kwargs
+        ):
             super().__init__(**kwargs)
             self.event_id = event_id
             self.start_time = start_time
@@ -667,7 +673,7 @@ def test_as_attribute_dict_datetime_serialization():
         end_time=datetime(2023, 5, 15, 10, 30, 0),
         created_date=date(2023, 5, 1),
         reminder_time=time(8, 45, 0),
-        duration=timedelta(hours=1, minutes=30)
+        duration=timedelta(hours=1, minutes=30),
     )
     _test(as_attribute_dict(hybrid_event))
     msrest_event = MsrestEvent(
@@ -676,9 +682,10 @@ def test_as_attribute_dict_datetime_serialization():
         end_time=datetime(2023, 5, 15, 10, 30, 0),
         created_date=date(2023, 5, 1),
         reminder_time=time(8, 45, 0),
-        duration=timedelta(hours=1, minutes=30)
+        duration=timedelta(hours=1, minutes=30),
     )
-    _test(as_attribute_dict(msrest_event)) 
+    _test(as_attribute_dict(msrest_event))
+
 
 def test_as_attribute_dict_readonly():
     class HybridResource(HybridModel):
@@ -712,32 +719,26 @@ def test_as_attribute_dict_readonly():
         assert result["name"] == "My Resource"
         assert result["description"] == "A test resource"
 
-    hybrid_resource = HybridResource(
-        id="r456",
-        name="My Resource",
-        description="A test resource"
-    )
-    
+    hybrid_resource = HybridResource(id="r456", name="My Resource", description="A test resource")
+
     # Should include all properties
     _test_all(as_attribute_dict(hybrid_resource))
     # Should exclude readonly properties
     _test_exclude_readonly(as_attribute_dict(hybrid_resource, exclude_readonly=True))
 
-    msrest_resource = MsrestResource(
-        name="My Resource",
-        description="A test resource"
-    )
+    msrest_resource = MsrestResource(name="My Resource", description="A test resource")
     msrest_resource.id = "r456"  # Manually set the readonly property for testing
     # Should include all properties
     _test_all(as_attribute_dict(msrest_resource))
     # Should exclude readonly properties
     _test_exclude_readonly(as_attribute_dict(msrest_resource, exclude_readonly=True))
 
+
 def test_as_attribute_dict_collections():
     class HybridTag(HybridModel):
         key: str = rest_field()
         value: str = rest_field()
-        
+
     class HybridTaggedResource(HybridModel):
         name: str = rest_field()
         tags: list[HybridTag] = rest_field()
@@ -750,6 +751,7 @@ def test_as_attribute_dict_collections():
             "key": {"key": "key", "type": "str"},
             "value": {"key": "value", "type": "str"},
         }
+
         def __init__(self, *, key: str, value: str, **kwargs):
             super().__init__(**kwargs)
             self.key = key
@@ -764,8 +766,16 @@ def test_as_attribute_dict_collections():
             "int_list": {"key": "intList", "type": "[int]"},
         }
 
-        def __init__(self, *, name: str, tags: List[MsrestTag], metadata: Dict[str, str],
-                     string_list: List[str], int_list: List[int], **kwargs):
+        def __init__(
+            self,
+            *,
+            name: str,
+            tags: List[MsrestTag],
+            metadata: Dict[str, str],
+            string_list: List[str],
+            int_list: List[int],
+            **kwargs
+        ):
             super().__init__(**kwargs)
             self.name = name
             self.tags = tags
@@ -791,7 +801,7 @@ def test_as_attribute_dict_collections():
         tags=hybrid_tags,
         metadata={"created_by": "admin", "priority": "high"},
         string_list=["a", "b", "c"],
-        int_list=[1, 2, 3]
+        int_list=[1, 2, 3],
     )
     _test(as_attribute_dict(hybrid_resource))
 
@@ -801,7 +811,7 @@ def test_as_attribute_dict_collections():
         tags=msrest_tags,
         metadata={"created_by": "admin", "priority": "high"},
         string_list=["a", "b", "c"],
-        int_list=[1, 2, 3]
+        int_list=[1, 2, 3],
     )
     _test(as_attribute_dict(msrest_resource))
 
@@ -866,53 +876,37 @@ def test_as_attribute_dict_inheritance():
         assert result["breed"] == "Pitbull"
         assert result["is_best_boy"] is True
 
-    hybrid_dog = HybridDog(
-        id="d123",
-        type="dog",
-        name="Wall-E",
-        age=2,
-        breed="Pitbull",
-        is_best_boy=True
-    )
+    hybrid_dog = HybridDog(id="d123", type="dog", name="Wall-E", age=2, breed="Pitbull", is_best_boy=True)
 
     _test(as_attribute_dict(hybrid_dog))
 
-    msrest_dog = MsrestDog(
-        id="d123",
-        type="dog",
-        name="Wall-E",
-        age=2,
-        breed="Pitbull",
-        is_best_boy=True
-    )
+    msrest_dog = MsrestDog(id="d123", type="dog", name="Wall-E", age=2, breed="Pitbull", is_best_boy=True)
     _test(as_attribute_dict(msrest_dog))
+
 
 def test_as_attribute_dict_multipart_file():
     from typing import BinaryIO
     from io import BytesIO
-    
+
     class FileUpload(HybridModel):
         name: str = rest_field()
         content: BinaryIO = rest_field(is_multipart_file_input=True)
         content_type: str = rest_field(name="contentType")
-        
+
     file_data = BytesIO(b"This is test file content")
-    upload = FileUpload(
-        name="test.txt",
-        content=file_data,
-        content_type="text/plain"
-    )
-    
+    upload = FileUpload(name="test.txt", content=file_data, content_type="text/plain")
+
     attr_dict = as_attribute_dict(upload)
     assert attr_dict["name"] == "test.txt"
     assert attr_dict["content"] is file_data  # Should be preserved as-is for multipart files
     assert attr_dict["content_type"] == "text/plain"
 
+
 def test_as_attribute_dict_with_null_object():
     class HybridOptionalProps(HybridModel):
         required_prop: str = rest_field()
         optional_prop: Optional[str] = rest_field(name="optionalProp")
-        optional_model: Optional['HybridOptionalProps'] = rest_field(name="optionalModel")
+        optional_model: Optional["HybridOptionalProps"] = rest_field(name="optionalModel")
 
     class MsrestOptionalProps(MsrestModel):
         _attribute_map = {
@@ -921,8 +915,14 @@ def test_as_attribute_dict_with_null_object():
             "optional_model": {"key": "optionalModel", "type": "HybridOptionalProps"},
         }
 
-        def __init__(self, *, required_prop: str, optional_prop: Optional[str] = None,
-                     optional_model: Optional['HybridOptionalProps'] = None, **kwargs):
+        def __init__(
+            self,
+            *,
+            required_prop: str,
+            optional_prop: Optional[str] = None,
+            optional_model: Optional["HybridOptionalProps"] = None,
+            **kwargs
+        ):
             super().__init__(**kwargs)
             self.required_prop = required_prop
             self.optional_prop = optional_prop
@@ -940,46 +940,23 @@ def test_as_attribute_dict_with_null_object():
         assert result["optional_model"]["optional_prop"] == "present"
         assert "optional_model" not in result["optional_model"]
 
-    hybrid_model = HybridOptionalProps(
-        required_prop="always here",
-        optional_prop=None,
-        optional_model=None
-    )
+    hybrid_model = HybridOptionalProps(required_prop="always here", optional_prop=None, optional_model=None)
 
     _test_non_nested(as_attribute_dict(hybrid_model))
 
-    msrest_model = MsrestOptionalProps(
-        required_prop="always here",
-        optional_prop=None,
-        optional_model=None
-    )
+    msrest_model = MsrestOptionalProps(required_prop="always here", optional_prop=None, optional_model=None)
     _test_non_nested(as_attribute_dict(msrest_model))
 
     # Test with a nested model that has a null property
-    hybrid_nested = HybridOptionalProps(
-        required_prop="nested",
-        optional_prop="present", 
-        optional_model=None
-    )
-    hybrid_model = HybridOptionalProps(
-        required_prop="outer",
-        optional_prop=None,
-        optional_model=hybrid_nested
-    )
+    hybrid_nested = HybridOptionalProps(required_prop="nested", optional_prop="present", optional_model=None)
+    hybrid_model = HybridOptionalProps(required_prop="outer", optional_prop=None, optional_model=hybrid_nested)
 
     _test_nested(as_attribute_dict(hybrid_model))
 
-    msrest_nested = MsrestOptionalProps(
-        required_prop="nested",
-        optional_prop="present",
-        optional_model=None
-    )
-    msrest_model = MsrestOptionalProps(
-        required_prop="outer",
-        optional_prop=None,
-        optional_model=msrest_nested
-    )
+    msrest_nested = MsrestOptionalProps(required_prop="nested", optional_prop="present", optional_model=None)
+    msrest_model = MsrestOptionalProps(required_prop="outer", optional_prop=None, optional_model=msrest_nested)
     _test_nested(as_attribute_dict(msrest_model))
+
 
 def test_as_attribute_dict_nested_discriminators():
     salmon = models.Salmon(
@@ -1030,12 +1007,13 @@ def test_as_attribute_dict_nested_discriminators():
     assert attr_dict["friends"][0]["hate"]["key2"]["kind"] == "shark"
     assert attr_dict["friends"][0]["hate"]["key2"]["shark_type"] == "goblin"
 
+
 def test_as_attribute_dict_complex_scenario():
     class HybridAddress(HybridModel):
         street: str = rest_field(name="streetAddress")
         city: str = rest_field()
         postal_code: str = rest_field(name="postalCode")
-        
+
     class HybridContactInfo(HybridModel):
         email: str = rest_field()
         phone: str = rest_field()
@@ -1044,7 +1022,7 @@ def test_as_attribute_dict_complex_scenario():
     class HybridDepartment(HybridModel):
         name: str = rest_field()
         cost_center: str = rest_field(name="costCenter")
-        
+
     class HybridEmployee(HybridModel):
         employee_id: str = rest_field(name="employeeId", visibility=["read"])
         first_name: str = rest_field(name="firstName")
@@ -1108,30 +1086,40 @@ def test_as_attribute_dict_complex_scenario():
             "performance_ratings": {"key": "performanceRatings", "type": "{str: float}"},
         }
 
-        def __init__(self, *, employee_id: str, first_name: str, last_name: str, hire_date: date,
-                        contact: MsrestContactInfo, department: MsrestDepartment,
-                        skills: List[str], performance_ratings: Dict[str, float], **kwargs):
-                super().__init__(**kwargs)
-                self.employee_id = employee_id
-                self.first_name = first_name
-                self.last_name = last_name
-                self.hire_date = hire_date
-                self.contact = contact
-                self.department = department
-                self.skills = skills
-                self.performance_ratings = performance_ratings
+        def __init__(
+            self,
+            *,
+            employee_id: str,
+            first_name: str,
+            last_name: str,
+            hire_date: date,
+            contact: MsrestContactInfo,
+            department: MsrestDepartment,
+            skills: List[str],
+            performance_ratings: Dict[str, float],
+            **kwargs
+        ):
+            super().__init__(**kwargs)
+            self.employee_id = employee_id
+            self.first_name = first_name
+            self.last_name = last_name
+            self.hire_date = hire_date
+            self.contact = contact
+            self.department = department
+            self.skills = skills
+            self.performance_ratings = performance_ratings
 
     def _test(result):
         # Verify top-level properties
         assert result["employee_id"] == "E12345"
         assert result["first_name"] == "Jane"
         assert result["last_name"] == "Doe"
-        assert result["hire_date"] == '2020-03-15'
+        assert result["hire_date"] == "2020-03-15"
 
         # Verify nested contact info
         assert result["contact"]["email"] == "jane.doe@example.com"
         assert result["contact"]["phone"] == "555-123-4567"
-        
+
         # Verify list of address objects
         assert len(result["contact"]["addresses"]) == 2
         assert result["contact"]["addresses"][0]["street"] == "123 Home St"
@@ -1157,21 +1145,14 @@ def test_as_attribute_dict_complex_scenario():
             phone="555-123-4567",
             addresses=[
                 HybridAddress(street="123 Home St", city="Hometown", postal_code="12345"),
-                HybridAddress(street="456 Work Ave", city="Workville", postal_code="67890")
-            ]
+                HybridAddress(street="456 Work Ave", city="Workville", postal_code="67890"),
+            ],
         ),
-        department=HybridDepartment(
-            name="Engineering",
-            cost_center="CC-ENG-123"
-        ),
+        department=HybridDepartment(name="Engineering", cost_center="CC-ENG-123"),
         skills=["Python", "TypeScript", "Azure"],
-        performance_ratings={
-            "2020": 4.5,
-            "2021": 4.7, 
-            "2022": 4.8
-        }
+        performance_ratings={"2020": 4.5, "2021": 4.7, "2022": 4.8},
     )
-    
+
     # Get full attribute dictionary
     _test(as_attribute_dict(hybrid_employee))
 
@@ -1190,19 +1171,12 @@ def test_as_attribute_dict_complex_scenario():
             phone="555-123-4567",
             addresses=[
                 MsrestAddress(street="123 Home St", city="Hometown", postal_code="12345"),
-                MsrestAddress(street="456 Work Ave", city="Workville", postal_code="67890")
-            ]
+                MsrestAddress(street="456 Work Ave", city="Workville", postal_code="67890"),
+            ],
         ),
-        department=MsrestDepartment(
-            name="Engineering",
-            cost_center="CC-ENG-123"
-        ),
+        department=MsrestDepartment(name="Engineering", cost_center="CC-ENG-123"),
         skills=["Python", "TypeScript", "Azure"],
-        performance_ratings={
-            "2020": 4.5,
-            "2021": 4.7,
-            "2022": 4.8
-        }
+        performance_ratings={"2020": 4.5, "2021": 4.7, "2022": 4.8},
     )
 
     _test(as_attribute_dict(msrest_employee))
