@@ -4,7 +4,7 @@
 
 ### Bugs Fixed
 - Fixed MeteorScoreEvaluator and other threshold-based evaluators returning incorrect binary results due to integer conversion of decimal scores. Previously, decimal scores like 0.9375 were incorrectly converted to integers (0) before threshold comparison, causing them to fail even when above the threshold. [#41415](https://github.com/Azure/azure-sdk-for-python/issues/41415)
-- Fixed the `scan_name` when FDP projects were used in AI RedTeam agent scans. The scan name now correctly reflects the name instead of the default uuid. 
+- Fixed the `scan_name` when FDP projects were used in AI RedTeam agent scans. The scan name now correctly reflects the name instead of the default UUID. 
 
 ## 1.8.0 (2025-05-29)
 
