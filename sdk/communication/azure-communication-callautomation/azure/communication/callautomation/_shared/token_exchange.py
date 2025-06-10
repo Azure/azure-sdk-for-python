@@ -38,7 +38,7 @@ class TokenExchangeClient:
         self._pipeline = self._create_pipeline_from_options(token_credential, scopes, pipeline_transport)
 
     def _create_pipeline_from_options(self, token_credential, scopes, pipeline_transport):
-        auth_policy = BearerTokenCredentialPolicy(token_credential, scopes)
+        auth_policy = BearerTokenCredentialPolicy(token_credential, *scopes)
         entra_token_guard_policy = EntraTokenGuardPolicy()
         policies = [auth_policy, entra_token_guard_policy]
         if pipeline_transport:
@@ -87,7 +87,7 @@ class AsyncTokenExchangeClient:
         self._pipeline = self._create_pipeline_from_options(token_credential, scopes, pipeline_transport)
 
     def _create_pipeline_from_options(self, token_credential, scopes, pipeline_transport):
-        auth_policy = AsyncBearerTokenCredentialPolicy(token_credential, scopes)
+        auth_policy = AsyncBearerTokenCredentialPolicy(token_credential, *scopes)
         entra_token_guard_policy = AsyncEntraTokenGuardPolicy()
         policies = [auth_policy, entra_token_guard_policy]
         if pipeline_transport:
