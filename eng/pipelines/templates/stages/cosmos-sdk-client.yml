@@ -18,16 +18,19 @@ extends:
     # Run only emulator tests in Emulator CI
     TestMarkArgument: cosmosEmulator
     ServiceDirectory: cosmos
-    # The cosmos emulator hits limits running too many parallel tests on internal pipelines
-    ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-      ToxEnvParallel: '3'
     BeforeTestSteps:
       - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
         parameters:
           StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Session'
     MatrixConfigs:
-      - Name: Python_cosmos_emulator
-        Path: sdk/cosmos/cosmos-emulator-matrix.json
-        Selection: all
-        GenerateVMJobs: true
+      - ${{ if and(eq(variables['Build.Reason'], 'PullRequest') }}:
+        - Name: Python_cosmos_emulator
+          Path: sdk/cosmos/cosmos-emulator-matrix.json
+          Selection: all
+          GenerateVMJobs: true
+      - ${{ else }}:
+        - Name: Python_cosmos_emulator
+          Path: sdk/cosmos/cosmos-emulator-matrix_full.json
+          Selection: all
+          GenerateVMJobs: true
     Artifacts: ${{ parameters.Artifacts }}
