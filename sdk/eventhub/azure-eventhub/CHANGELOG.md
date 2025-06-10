@@ -4,11 +4,18 @@
 
 ### Features Added
 
+- Added support for native OpenTelemetry tracing without the need for a tracing plugin to be installed ([#41504](https://github.com/Azure/azure-sdk-for-python/pull/41504)). To enable this:
+   1. Ensure that your `azure-core` version is at least `1.33.0`.
+   2. Import `settings` from `azure.core.settings` and set `settings.tracing_enabled` to `True`
+   3. Ensure that `settings.tracing_implementation` is not set.
+
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+- Tracing: On `PUBLISH` and `PROCESS` spans, attributes `peer.address` and `message_bus.destination` are now renamed to `net.peer.name` and `messaging.destination.name`, respectively. The OpenTelemetry tracing plugin has already been remapping these values, so this change will not affect users of the plugin. ([#41504](https://github.com/Azure/azure-sdk-for-python/pull/41504))
 
 ## 5.15.0 (2025-04-15)
 

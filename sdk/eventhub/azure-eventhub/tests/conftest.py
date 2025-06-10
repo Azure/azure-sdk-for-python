@@ -3,30 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-from typing import List, TypedDict, Union, cast
-from typing import Dict, Any
-from tracing_common import FakeSpan
-from devtools_testutils import (
-    get_region_override,
-    get_credential as get_devtools_credential,
-)
-from azure.eventhub.extensions.checkpointstoreblobaio import (
-    BlobCheckpointStore as BlobCheckpointStoreAsync,
-)
-from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
-from azure.eventhub._pyamqp.authentication import SASTokenAuth
-from azure.eventhub._pyamqp import ReceiveClient
-from azure.eventhub import EventHubProducerClient, TransportType
-from azure.mgmt.eventhub import EventHubManagementClient
-from azure.core.settings import settings
 from logging.handlers import RotatingFileHandler
 from functools import partial
-from typing import Callable, Literal
 import sys
 import os
-import tempfile
-import pytest
 import logging
 import uuid
 import warnings
@@ -34,7 +14,29 @@ import subprocess
 import time
 import signal
 import ssl
-import functools
+from typing import List, cast, Generator
+
+from devtools_testutils import (
+    get_region_override,
+    get_credential as get_devtools_credential,
+)
+from azure.core.settings import settings
+from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
+from azure.eventhub.extensions.checkpointstoreblobaio import (
+    BlobCheckpointStore as BlobCheckpointStoreAsync,
+)
+from azure.eventhub._pyamqp.authentication import SASTokenAuth
+from azure.eventhub._pyamqp import ReceiveClient
+from azure.eventhub import EventHubProducerClient, TransportType
+from azure.mgmt.eventhub import EventHubManagementClient
+from azure.core.settings import settings
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+import pytest
+
+from tracing_common import FakeSpan
 
 # Load environment variables from .env file automatically for all tests
 from dotenv import load_dotenv
@@ -740,3 +742,34 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "no_amqpproxy: mark test to opt out of amqp proxy recording"
     )
+
+
+class TracingTestHelper:
+    def __init__(self, tracer, exporter):
+        self.tracer = tracer
+        self.exporter = exporter
+
+
+@pytest.fixture(scope="session", autouse=True)
+def enable_otel_tracing():
+    provider = TracerProvider()
+    trace.set_tracer_provider(provider)
+
+
+@pytest.fixture(scope="function")
+def tracing_helper() -> Generator[TracingTestHelper, None, None]:
+    settings.tracing_enabled = True
+    settings.tracing_implementation = None
+    span_exporter = InMemorySpanExporter()
+    processor = SimpleSpanProcessor(span_exporter)
+    trace.get_tracer_provider().add_span_processor(processor)
+    yield TracingTestHelper(trace.get_tracer(__name__), span_exporter)
+    settings.tracing_enabled = None
+
+
+@pytest.fixture(scope="session")
+def test_resources_config():
+    return {
+        "eventhub_connection_string": os.environ.get("EVENT_HUB_CONN_STR"),
+        "eventhub_name": os.environ.get("EVENT_HUB_NAME"),
+    }

@@ -7,3 +7,4 @@ aiohttp>=3.11.0
 websocket-client
 ../azure-eventhub-checkpointstoreblob-aio
 ../azure-eventhub-checkpointstoreblob
+opentelemetry-sdk~=1.26
