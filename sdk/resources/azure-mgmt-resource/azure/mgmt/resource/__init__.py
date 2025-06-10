@@ -25,20 +25,3 @@ __all__ = [
     "SubscriptionClient",
     "DataBoundaryMgmtClient",
 ]
-
-
-def _build_compat_message(client_name: str, package_name: str) -> str:
-    return f"""
-{client_name} is no longer available in azure-mgmt-resource. Please use {package_name} instead.
-You can import the client using `from {package_name.replace('-', '.')} import {client_name}
-"""
-
-
-def __getattr__(name: str):
-    new_packages = {
-        "DeploymentScriptsClient": "azure-mgmt-resource-deploymentscripts",
-        "DeploymentStacksClient": "azure-mgmt-resource-deploymentstacks",
-    }
-    if name in new_packages:
-        raise ImportError(_build_compat_message(name, new_packages[name]))
-    raise AttributeError(f"module 'azure.mgmt.resource' has no attribute {name}")
