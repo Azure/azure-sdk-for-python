@@ -157,28 +157,32 @@ def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, 
     if hasattr(obj, "_attribute_map"):
         # msrest generated model
         return obj.as_dict(keep_readonly=not exclude_readonly)
-    # now we're a typespec generated model
-    result = {}
-    readonly_props = []
+    try:
+        # now we're a typespec generated model
+        result = {}
+        readonly_props = []
 
-    # create a reverse mapping from rest field name to attribute name
-    rest_to_attr = {}
-    for attr_name, rest_field in obj._attr_to_rest_field.items():
-        rest_to_attr[rest_field._rest_name] = attr_name
-        if exclude_readonly and _is_readonly(rest_field):
-            # if we're excluding readonly properties, we need to track them
-            readonly_props.append(rest_field._rest_name)
-    for k, v in obj.items():
-        if exclude_readonly and k in readonly_props:  # pyright: ignore
-            continue
-        is_multipart_file_input = False
-        try:
-            is_multipart_file_input = next(
-                rf for rf in obj._attr_to_rest_field.values() if rf._rest_name == k
-            )._is_multipart_file_input
-        except StopIteration:
-            pass
-        result[rest_to_attr.get(k, k)] = (
-            v if is_multipart_file_input else _as_attribute_dict_value(v, exclude_readonly=exclude_readonly)
-        )
-    return result
+        # create a reverse mapping from rest field name to attribute name
+        rest_to_attr = {}
+        for attr_name, rest_field in obj._attr_to_rest_field.items():
+            rest_to_attr[rest_field._rest_name] = attr_name
+            if exclude_readonly and _is_readonly(rest_field):
+                # if we're excluding readonly properties, we need to track them
+                readonly_props.append(rest_field._rest_name)
+        for k, v in obj.items():
+            if exclude_readonly and k in readonly_props:  # pyright: ignore
+                continue
+            is_multipart_file_input = False
+            try:
+                is_multipart_file_input = next(
+                    rf for rf in obj._attr_to_rest_field.values() if rf._rest_name == k
+                )._is_multipart_file_input
+            except StopIteration:
+                pass
+            result[rest_to_attr.get(k, k)] = (
+                v if is_multipart_file_input else _as_attribute_dict_value(v, exclude_readonly=exclude_readonly)
+            )
+        return result
+    except AttributeError:
+        # not a typespec generated model
+        raise TypeError("Object must be a generated model instance.")
