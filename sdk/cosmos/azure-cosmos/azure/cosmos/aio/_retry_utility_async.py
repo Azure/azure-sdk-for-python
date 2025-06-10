@@ -24,6 +24,7 @@
 import asyncio  # pylint: disable=do-not-import-asyncio
 import json
 import time
+import logging
 
 from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
@@ -94,6 +95,8 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
     service_request_retry_policy = _service_request_retry_policy.ServiceRequestRetryPolicy(
         client.connection_policy, global_endpoint_manager, pk_range_wrapper, *args,
     )
+    # Get Logger
+    logger = kwargs.get("logger", logging.getLogger("azure.cosmos._retry_utility_async"))
     # HttpRequest we would need to modify for Container Recreate Retry Policy
     request = None
     if args and len(args) > 3:
@@ -138,16 +141,11 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     message="Could not find ThroughputProperties for container " + link,
                     sub_status_code=SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND)
                 _log_diagnostics_error(client._enable_diagnostics_logging, request, result[1], e_offer,
-                                       {}, global_endpoint_manager)
+                                       {}, global_endpoint_manager, logger=logger)
                 raise e_offer
 
             return result
         except exceptions.CosmosHttpResponseError as e:
-            logger_attributes = {
-                "duration": float(time.time() - start_time)
-            }
-            _log_diagnostics_error(client._enable_diagnostics_logging, request, None, e,
-                                   logger_attributes, global_endpoint_manager)
             if request and _has_database_account_header(request.headers):
                 retry_policy = database_account_retry_policy
             elif e.status_code == StatusCodes.FORBIDDEN and e.sub_status in \
@@ -222,12 +220,6 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
         except ServiceRequestError as e:
             if request and _has_database_account_header(request.headers):
                 if not database_account_retry_policy.ShouldRetry(e):
-                    # TODO : We need to get status code information from the exception.
-                    logger_attributes = {
-                        "duration": float(time.time() - start_time)
-                    }
-                    _log_diagnostics_error(request, None, e,
-                                           logger_attributes, global_endpoint_manager)
                     raise e
             else:
                 _handle_service_request_retries(request, client, service_request_retry_policy, e, *args)
@@ -235,12 +227,6 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
         except ServiceResponseError as e:
             if request and _has_database_account_header(request.headers):
                 if not database_account_retry_policy.ShouldRetry(e):
-                    # TODO : We need to get status code information from the exception.
-                    logger_attributes = {
-                        "duration": float(time.time() - start_time)
-                    }
-                    _log_diagnostics_error(request, None, e,
-                                           logger_attributes, global_endpoint_manager)
                     raise e
             else:
                 try:
