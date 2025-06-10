@@ -227,6 +227,9 @@ class CodegenTestPR:
             "azure-mgmt-kubernetesconfiguration-extensions",
             "azure-mgmt-kubernetesconfiguration-fluxconfigurations",
             "azure-mgmt-kubernetesconfiguration-privatelinkscopes",
+            "azure-mgmt-resource-deploymentstacks",
+            "azure-mgmt-resource-templatespecs",
+            "azure-mgmt-resource-deploymentscripts",
         ]:
             return
         if self.from_swagger:

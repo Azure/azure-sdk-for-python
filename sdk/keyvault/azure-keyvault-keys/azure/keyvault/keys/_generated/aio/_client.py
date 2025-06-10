@@ -14,7 +14,7 @@ from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import KeyVaultClientConfiguration
 from ._operations import KeyVaultClientOperationsMixin
 
@@ -30,14 +30,15 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):
     :type vault_base_url: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "7.6-preview.2". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Default value is "7.6". Note
+     that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, vault_base_url: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         _endpoint = "{vaultBaseUrl}"
         self._config = KeyVaultClientConfiguration(vault_base_url=vault_base_url, credential=credential, **kwargs)
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
