@@ -663,8 +663,6 @@ class BreakingChangesTracker:
             function_name = args[1] if len(args) > 1 else None
             parameter_name = args[2] if len(args) > 2 else None
 
-            if bc_type == "AddedMethodOverload":
-                (f"Skipping AddedMethodOverload: {bc}")
             for rule in ignored:
                 suppression = Suppression(*rule)
 
