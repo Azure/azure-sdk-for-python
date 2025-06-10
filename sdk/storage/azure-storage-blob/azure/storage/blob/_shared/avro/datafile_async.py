@@ -129,7 +129,7 @@ class AsyncDataFileReader(object):  # pylint: disable=too-many-instance-attribut
         """Reports the value of a given metadata key.
 
         :param str key: Metadata key to report the value of.
-        :returns: Value associated to the metadata key, as bytes.
+        :return: Value associated to the metadata key, as bytes.
         :rtype: bytes
         """
         return self._meta.get(key)

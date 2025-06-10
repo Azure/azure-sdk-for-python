@@ -220,13 +220,25 @@ def main(generate_input, generate_output):
     result = {}
     python_tag = data.get("python_tag")
     package_total = set()
-    readme_and_tsp = data.get("relatedReadmeMdFiles", []) + data.get("relatedTypeSpecProjectFolder", [])
+    readme_and_tsp = [("relatedReadmeMdFiles", item) for item in data.get("relatedReadmeMdFiles", [])] + [
+        ("relatedTypeSpecProjectFolder", item) for item in data.get("relatedTypeSpecProjectFolder", [])
+    ]
     run_in_pipeline = data.get("runMode") is not None
-    for readme_or_tsp in readme_and_tsp:
+    for input_type, readme_or_tsp in readme_and_tsp:
         _LOGGER.info(f"[CODEGEN]({readme_or_tsp})codegen begin")
         try:
             code_generation_start_time = time.time()
-            if "resource-manager" in readme_or_tsp:
+            if input_type == "relatedTypeSpecProjectFolder":
+                del_outdated_generated_files(str(Path(spec_folder, readme_or_tsp)))
+                config = gen_typespec(
+                    readme_or_tsp,
+                    spec_folder,
+                    data["headSha"],
+                    data["repoHttpsUrl"],
+                    run_in_pipeline,
+                    data.get("apiVersion"),
+                )
+            elif "resource-manager" in readme_or_tsp:
                 relative_path_readme = str(Path(spec_folder, readme_or_tsp))
                 del_outdated_files(relative_path_readme)
                 generate_mgmt = partial(
@@ -242,11 +254,8 @@ def main(generate_input, generate_output):
                 config = generate_mgmt()
                 if need_regen_for_multiapi_package(spec_folder, readme_or_tsp):
                     generate_mgmt()
-            elif "data-plane" in readme_or_tsp:
-                config = gen_dpg(readme_or_tsp, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
             else:
-                del_outdated_generated_files(str(Path(spec_folder, readme_or_tsp)))
-                config = gen_typespec(readme_or_tsp, spec_folder, data["headSha"], data["repoHttpsUrl"], run_in_pipeline)
+                config = gen_dpg(readme_or_tsp, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
             _LOGGER.info(f"code generation cost time: {int(time.time() - code_generation_start_time)} seconds")
         except Exception as e:
             _LOGGER.error(f"fail to generate sdk for {readme_or_tsp}: {str(e)}")

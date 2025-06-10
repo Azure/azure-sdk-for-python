@@ -28,7 +28,7 @@ class TestNetworkManagementExpressRouteCircuitConnectionsOperationsAsync(AzureMg
                 circuit_name="str",
                 peering_name="str",
                 connection_name="str",
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -43,7 +43,7 @@ class TestNetworkManagementExpressRouteCircuitConnectionsOperationsAsync(AzureMg
             circuit_name="str",
             peering_name="str",
             connection_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -71,7 +71,7 @@ class TestNetworkManagementExpressRouteCircuitConnectionsOperationsAsync(AzureMg
                     "provisioningState": "str",
                     "type": "str",
                 },
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -85,7 +85,7 @@ class TestNetworkManagementExpressRouteCircuitConnectionsOperationsAsync(AzureMg
             resource_group_name=resource_group.name,
             circuit_name="str",
             peering_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

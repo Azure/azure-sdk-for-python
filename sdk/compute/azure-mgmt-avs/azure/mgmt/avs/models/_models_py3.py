@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,21 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-import sys
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class Resource(_serialization.Model):
@@ -30,7 +24,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -59,10 +53,10 @@ class Resource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class ProxyResource(Resource):
@@ -72,7 +66,7 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -91,7 +85,7 @@ class Addon(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -169,7 +163,7 @@ class AddonProperties(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.addon_type: Optional[str] = None
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.AddonProvisioningState"]] = None
 
 
 class AddonArcProperties(AddonProperties):
@@ -223,6 +217,10 @@ class AddonHcxProperties(AddonProperties):
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.AddonProvisioningState
     :ivar offer: The HCX offer, example VMware MaaS Cloud Provider (Enterprise). Required.
     :vartype offer: str
+    :ivar management_network: HCX management network.
+    :vartype management_network: str
+    :ivar uplink_network: HCX uplink network.
+    :vartype uplink_network: str
     """
 
     _validation = {
@@ -235,16 +233,31 @@ class AddonHcxProperties(AddonProperties):
         "addon_type": {"key": "addonType", "type": "str"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "offer": {"key": "offer", "type": "str"},
+        "management_network": {"key": "managementNetwork", "type": "str"},
+        "uplink_network": {"key": "uplinkNetwork", "type": "str"},
     }
 
-    def __init__(self, *, offer: str, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        offer: str,
+        management_network: Optional[str] = None,
+        uplink_network: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword offer: The HCX offer, example VMware MaaS Cloud Provider (Enterprise). Required.
         :paramtype offer: str
+        :keyword management_network: HCX management network.
+        :paramtype management_network: str
+        :keyword uplink_network: HCX uplink network.
+        :paramtype uplink_network: str
         """
         super().__init__(**kwargs)
         self.addon_type: str = "HCX"
         self.offer = offer
+        self.management_network = management_network
+        self.uplink_network = uplink_network
 
 
 class AddonList(_serialization.Model):
@@ -386,10 +399,10 @@ class AdminCredentials(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.nsxt_username = None
-        self.nsxt_password = None
-        self.vcenter_username = None
-        self.vcenter_password = None
+        self.nsxt_username: Optional[str] = None
+        self.nsxt_password: Optional[str] = None
+        self.vcenter_username: Optional[str] = None
+        self.vcenter_password: Optional[str] = None
 
 
 class AvailabilityProperties(_serialization.Model):
@@ -465,10 +478,10 @@ class Circuit(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.primary_subnet = None
-        self.secondary_subnet = None
-        self.express_route_id = None
-        self.express_route_private_peering_id = None
+        self.primary_subnet: Optional[str] = None
+        self.secondary_subnet: Optional[str] = None
+        self.express_route_id: Optional[str] = None
+        self.express_route_private_peering_id: Optional[str] = None
 
 
 class CloudLink(ProxyResource):
@@ -477,7 +490,7 @@ class CloudLink(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -522,8 +535,8 @@ class CloudLink(ProxyResource):
         :paramtype linked_cloud: str
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
-        self.status = None
+        self.provisioning_state: Optional[Union[str, "_models.CloudLinkProvisioningState"]] = None
+        self.status: Optional[Union[str, "_models.CloudLinkStatus"]] = None
         self.linked_cloud = linked_cloud
 
 
@@ -567,7 +580,7 @@ class Cluster(ProxyResource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -637,8 +650,8 @@ class Cluster(ProxyResource):
         super().__init__(**kwargs)
         self.sku = sku
         self.cluster_size = cluster_size
-        self.provisioning_state = None
-        self.cluster_id = None
+        self.provisioning_state: Optional[Union[str, "_models.ClusterProvisioningState"]] = None
+        self.cluster_id: Optional[int] = None
         self.hosts = hosts
         self.vsan_datastore_name = vsan_datastore_name
 
@@ -738,8 +751,8 @@ class ClusterZone(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.hosts = None
-        self.zone = None
+        self.hosts: Optional[List[str]] = None
+        self.zone: Optional[str] = None
 
 
 class ClusterZoneList(_serialization.Model):
@@ -768,7 +781,7 @@ class Datastore(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -788,6 +801,8 @@ class Datastore(ProxyResource):
     :vartype disk_pool_volume: ~azure.mgmt.avs.models.DiskPoolVolume
     :ivar elastic_san_volume: An Elastic SAN volume.
     :vartype elastic_san_volume: ~azure.mgmt.avs.models.ElasticSanVolume
+    :ivar pure_storage_volume: A Pure Storage volume.
+    :vartype pure_storage_volume: ~azure.mgmt.avs.models.PureStorageVolume
     :ivar status: The operational status of the datastore. Known values are: "Unknown",
      "Accessible", "Inaccessible", "Attached", "Detached", "LostCommunication", and "DeadOrError".
     :vartype status: str or ~azure.mgmt.avs.models.DatastoreStatus
@@ -811,6 +826,7 @@ class Datastore(ProxyResource):
         "net_app_volume": {"key": "properties.netAppVolume", "type": "NetAppVolume"},
         "disk_pool_volume": {"key": "properties.diskPoolVolume", "type": "DiskPoolVolume"},
         "elastic_san_volume": {"key": "properties.elasticSanVolume", "type": "ElasticSanVolume"},
+        "pure_storage_volume": {"key": "properties.pureStorageVolume", "type": "PureStorageVolume"},
         "status": {"key": "properties.status", "type": "str"},
     }
 
@@ -820,6 +836,7 @@ class Datastore(ProxyResource):
         net_app_volume: Optional["_models.NetAppVolume"] = None,
         disk_pool_volume: Optional["_models.DiskPoolVolume"] = None,
         elastic_san_volume: Optional["_models.ElasticSanVolume"] = None,
+        pure_storage_volume: Optional["_models.PureStorageVolume"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -829,13 +846,16 @@ class Datastore(ProxyResource):
         :paramtype disk_pool_volume: ~azure.mgmt.avs.models.DiskPoolVolume
         :keyword elastic_san_volume: An Elastic SAN volume.
         :paramtype elastic_san_volume: ~azure.mgmt.avs.models.ElasticSanVolume
+        :keyword pure_storage_volume: A Pure Storage volume.
+        :paramtype pure_storage_volume: ~azure.mgmt.avs.models.PureStorageVolume
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.DatastoreProvisioningState"]] = None
         self.net_app_volume = net_app_volume
         self.disk_pool_volume = disk_pool_volume
         self.elastic_san_volume = elastic_san_volume
-        self.status = None
+        self.pure_storage_volume = pure_storage_volume
+        self.status: Optional[Union[str, "_models.DatastoreStatus"]] = None
 
 
 class DatastoreList(_serialization.Model):
@@ -922,7 +942,7 @@ class DiskPoolVolume(_serialization.Model):
         self.target_id = target_id
         self.lun_name = lun_name
         self.mount_option = mount_option
-        self.path = None
+        self.path: Optional[str] = None
 
 
 class ElasticSanVolume(_serialization.Model):
@@ -1040,10 +1060,10 @@ class EncryptionKeyVaultProperties(_serialization.Model):
         super().__init__(**kwargs)
         self.key_name = key_name
         self.key_version = key_version
-        self.auto_detected_key_version = None
+        self.auto_detected_key_version: Optional[str] = None
         self.key_vault_url = key_vault_url
-        self.key_state = None
-        self.version_type = None
+        self.key_state: Optional[Union[str, "_models.EncryptionKeyStatus"]] = None
+        self.version_type: Optional[Union[str, "_models.EncryptionVersionType"]] = None
 
 
 class Endpoints(_serialization.Model):
@@ -1086,12 +1106,12 @@ class Endpoints(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.nsxt_manager = None
-        self.vcsa = None
-        self.hcx_cloud_manager = None
-        self.nsxt_manager_ip = None
-        self.vcenter_ip = None
-        self.hcx_cloud_manager_ip = None
+        self.nsxt_manager: Optional[str] = None
+        self.vcsa: Optional[str] = None
+        self.hcx_cloud_manager: Optional[str] = None
+        self.nsxt_manager_ip: Optional[str] = None
+        self.vcenter_ip: Optional[str] = None
+        self.hcx_cloud_manager_ip: Optional[str] = None
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -1118,8 +1138,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorDetail(_serialization.Model):
@@ -1158,11 +1178,11 @@ class ErrorDetail(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -1192,7 +1212,7 @@ class ExpressRouteAuthorization(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1241,9 +1261,9 @@ class ExpressRouteAuthorization(ProxyResource):
         :paramtype express_route_id: str
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
-        self.express_route_authorization_id = None
-        self.express_route_authorization_key = None
+        self.provisioning_state: Optional[Union[str, "_models.ExpressRouteAuthorizationProvisioningState"]] = None
+        self.express_route_authorization_id: Optional[str] = None
+        self.express_route_authorization_key: Optional[str] = None
         self.express_route_id = express_route_id
 
 
@@ -1281,13 +1301,146 @@ class ExpressRouteAuthorizationList(_serialization.Model):
         self.next_link = next_link
 
 
+class HostProperties(_serialization.Model):
+    """The properties of a host.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    GeneralHostProperties, SpecializedHostProperties
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar kind: The kind of host. Required. Known values are: "General" and "Specialized".
+    :vartype kind: str or ~azure.mgmt.avs.models.HostKind
+    :ivar provisioning_state: The state of the host provisioning. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.avs.models.HostProvisioningState
+    :ivar display_name: Display name of the host in VMware vCenter.
+    :vartype display_name: str
+    :ivar mo_ref_id: vCenter managed object reference ID of the host.
+    :vartype mo_ref_id: str
+    :ivar fqdn: Fully qualified domain name of the host.
+    :vartype fqdn: str
+    :ivar maintenance: If provided, the host is in maintenance. The value is the reason for
+     maintenance. Known values are: "Replacement" and "Upgrade".
+    :vartype maintenance: str or ~azure.mgmt.avs.models.HostMaintenance
+    :ivar fault_domain:
+    :vartype fault_domain: str
+    """
+
+    _validation = {
+        "kind": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "mo_ref_id": {"readonly": True},
+        "fqdn": {"readonly": True, "max_length": 255, "min_length": 1},
+        "fault_domain": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "mo_ref_id": {"key": "moRefId", "type": "str"},
+        "fqdn": {"key": "fqdn", "type": "str"},
+        "maintenance": {"key": "maintenance", "type": "str"},
+        "fault_domain": {"key": "faultDomain", "type": "str"},
+    }
+
+    _subtype_map = {"kind": {"General": "GeneralHostProperties", "Specialized": "SpecializedHostProperties"}}
+
+    def __init__(
+        self,
+        *,
+        display_name: Optional[str] = None,
+        maintenance: Optional[Union[str, "_models.HostMaintenance"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword display_name: Display name of the host in VMware vCenter.
+        :paramtype display_name: str
+        :keyword maintenance: If provided, the host is in maintenance. The value is the reason for
+         maintenance. Known values are: "Replacement" and "Upgrade".
+        :paramtype maintenance: str or ~azure.mgmt.avs.models.HostMaintenance
+        """
+        super().__init__(**kwargs)
+        self.kind: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.HostProvisioningState"]] = None
+        self.display_name = display_name
+        self.mo_ref_id: Optional[str] = None
+        self.fqdn: Optional[str] = None
+        self.maintenance = maintenance
+        self.fault_domain: Optional[str] = None
+
+
+class GeneralHostProperties(HostProperties):
+    """The properties of a general host.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar kind: The kind of host. Required. Known values are: "General" and "Specialized".
+    :vartype kind: str or ~azure.mgmt.avs.models.HostKind
+    :ivar provisioning_state: The state of the host provisioning. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.avs.models.HostProvisioningState
+    :ivar display_name: Display name of the host in VMware vCenter.
+    :vartype display_name: str
+    :ivar mo_ref_id: vCenter managed object reference ID of the host.
+    :vartype mo_ref_id: str
+    :ivar fqdn: Fully qualified domain name of the host.
+    :vartype fqdn: str
+    :ivar maintenance: If provided, the host is in maintenance. The value is the reason for
+     maintenance. Known values are: "Replacement" and "Upgrade".
+    :vartype maintenance: str or ~azure.mgmt.avs.models.HostMaintenance
+    :ivar fault_domain:
+    :vartype fault_domain: str
+    """
+
+    _validation = {
+        "kind": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "mo_ref_id": {"readonly": True},
+        "fqdn": {"readonly": True, "max_length": 255, "min_length": 1},
+        "fault_domain": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "mo_ref_id": {"key": "moRefId", "type": "str"},
+        "fqdn": {"key": "fqdn", "type": "str"},
+        "maintenance": {"key": "maintenance", "type": "str"},
+        "fault_domain": {"key": "faultDomain", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        display_name: Optional[str] = None,
+        maintenance: Optional[Union[str, "_models.HostMaintenance"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword display_name: Display name of the host in VMware vCenter.
+        :paramtype display_name: str
+        :keyword maintenance: If provided, the host is in maintenance. The value is the reason for
+         maintenance. Known values are: "Replacement" and "Upgrade".
+        :paramtype maintenance: str or ~azure.mgmt.avs.models.HostMaintenance
+        """
+        super().__init__(display_name=display_name, maintenance=maintenance, **kwargs)
+        self.kind: str = "General"
+
+
 class GlobalReachConnection(ProxyResource):
     """A global reach connection resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1368,10 +1521,10 @@ class GlobalReachConnection(ProxyResource):
         :paramtype express_route_id: str
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
-        self.address_prefix = None
+        self.provisioning_state: Optional[Union[str, "_models.GlobalReachConnectionProvisioningState"]] = None
+        self.address_prefix: Optional[str] = None
         self.authorization_key = authorization_key
-        self.circuit_connection_status = None
+        self.circuit_connection_status: Optional[Union[str, "_models.GlobalReachConnectionStatus"]] = None
         self.peer_express_route_circuit = peer_express_route_circuit
         self.express_route_id = express_route_id
 
@@ -1416,7 +1569,7 @@ class HcxEnterpriseSite(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1459,9 +1612,9 @@ class HcxEnterpriseSite(ProxyResource):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.provisioning_state = None
-        self.activation_key = None
-        self.status = None
+        self.provisioning_state: Optional[Union[str, "_models.HcxEnterpriseSiteProvisioningState"]] = None
+        self.activation_key: Optional[str] = None
+        self.status: Optional[Union[str, "_models.HcxEnterpriseSiteStatus"]] = None
 
 
 class HcxEnterpriseSiteList(_serialization.Model):
@@ -1498,6 +1651,135 @@ class HcxEnterpriseSiteList(_serialization.Model):
         self.next_link = next_link
 
 
+class Host(ProxyResource):
+    """A host resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.avs.models.SystemData
+    :ivar zones: The availability zones.
+    :vartype zones: list[str]
+    :ivar sku: The SKU (Stock Keeping Unit) assigned to this resource.
+    :vartype sku: ~azure.mgmt.avs.models.Sku
+    :ivar kind: The kind of host. Known values are: "General" and "Specialized".
+    :vartype kind: str or ~azure.mgmt.avs.models.HostKind
+    :ivar provisioning_state: The state of the host provisioning. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.avs.models.HostProvisioningState
+    :ivar display_name: Display name of the host in VMware vCenter.
+    :vartype display_name: str
+    :ivar mo_ref_id: vCenter managed object reference ID of the host.
+    :vartype mo_ref_id: str
+    :ivar fqdn: Fully qualified domain name of the host.
+    :vartype fqdn: str
+    :ivar maintenance: If provided, the host is in maintenance. The value is the reason for
+     maintenance. Known values are: "Replacement" and "Upgrade".
+    :vartype maintenance: str or ~azure.mgmt.avs.models.HostMaintenance
+    :ivar fault_domain:
+    :vartype fault_domain: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "mo_ref_id": {"readonly": True},
+        "fqdn": {"readonly": True, "max_length": 255, "min_length": 1},
+        "fault_domain": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "kind": {"key": "properties.kind", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "mo_ref_id": {"key": "properties.moRefId", "type": "str"},
+        "fqdn": {"key": "properties.fqdn", "type": "str"},
+        "maintenance": {"key": "properties.maintenance", "type": "str"},
+        "fault_domain": {"key": "properties.faultDomain", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        zones: Optional[List[str]] = None,
+        sku: Optional["_models.Sku"] = None,
+        display_name: Optional[str] = None,
+        maintenance: Optional[Union[str, "_models.HostMaintenance"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword zones: The availability zones.
+        :paramtype zones: list[str]
+        :keyword sku: The SKU (Stock Keeping Unit) assigned to this resource.
+        :paramtype sku: ~azure.mgmt.avs.models.Sku
+        :keyword display_name: Display name of the host in VMware vCenter.
+        :paramtype display_name: str
+        :keyword maintenance: If provided, the host is in maintenance. The value is the reason for
+         maintenance. Known values are: "Replacement" and "Upgrade".
+        :paramtype maintenance: str or ~azure.mgmt.avs.models.HostMaintenance
+        """
+        super().__init__(**kwargs)
+        self.zones = zones
+        self.sku = sku
+        self.kind: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.HostProvisioningState"]] = None
+        self.display_name = display_name
+        self.mo_ref_id: Optional[str] = None
+        self.fqdn: Optional[str] = None
+        self.maintenance = maintenance
+        self.fault_domain: Optional[str] = None
+
+
+class HostListResult(_serialization.Model):
+    """The response of a Host list operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The Host items on this page. Required.
+    :vartype value: list[~azure.mgmt.avs.models.Host]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Host]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: List["_models.Host"], next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: The Host items on this page. Required.
+        :paramtype value: list[~azure.mgmt.avs.models.Host]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
 class IdentitySource(_serialization.Model):
     """vCenter Single Sign On Identity Source.
 
@@ -1505,7 +1787,7 @@ class IdentitySource(_serialization.Model):
     :vartype name: str
     :ivar alias: The domain's NetBIOS name.
     :vartype alias: str
-    :ivar domain: The domain's dns name.
+    :ivar domain: The domain's DNS name.
     :vartype domain: str
     :ivar base_user_dn: The base distinguished name for users.
     :vartype base_user_dn: str
@@ -1559,7 +1841,7 @@ class IdentitySource(_serialization.Model):
         :paramtype name: str
         :keyword alias: The domain's NetBIOS name.
         :paramtype alias: str
-        :keyword domain: The domain's dns name.
+        :keyword domain: The domain's DNS name.
         :paramtype domain: str
         :keyword base_user_dn: The base distinguished name for users.
         :paramtype base_user_dn: str
@@ -1600,7 +1882,7 @@ class IscsiPath(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1640,7 +1922,7 @@ class IscsiPath(ProxyResource):
         :paramtype network_block: str
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.IscsiPathProvisioningState"]] = None
         self.network_block = network_block
 
 
@@ -1725,8 +2007,8 @@ class ManagementCluster(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.cluster_size = cluster_size
-        self.provisioning_state = None
-        self.cluster_id = None
+        self.provisioning_state: Optional[Union[str, "_models.ClusterProvisioningState"]] = None
+        self.cluster_id: Optional[int] = None
         self.hosts = hosts
         self.vsan_datastore_name = vsan_datastore_name
 
@@ -1800,11 +2082,11 @@ class Operation(_serialization.Model):
         :paramtype display: ~azure.mgmt.avs.models.OperationDisplay
         """
         super().__init__(**kwargs)
-        self.name = None
-        self.is_data_action = None
+        self.name: Optional[str] = None
+        self.is_data_action: Optional[bool] = None
         self.display = display
-        self.origin = None
-        self.action_type = None
+        self.origin: Optional[Union[str, "_models.Origin"]] = None
+        self.action_type: Optional[Union[str, "_models.ActionType"]] = None
 
 
 class OperationDisplay(_serialization.Model):
@@ -1843,10 +2125,10 @@ class OperationDisplay(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.provider = None
-        self.resource = None
-        self.operation = None
-        self.description = None
+        self.provider: Optional[str] = None
+        self.resource: Optional[str] = None
+        self.operation: Optional[str] = None
+        self.description: Optional[str] = None
 
 
 class OperationListResult(_serialization.Model):
@@ -1874,8 +2156,40 @@ class OperationListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.Operation"]] = None
+        self.next_link: Optional[str] = None
+
+
+class PagedResourceSku(_serialization.Model):
+    """Paged collection of ResourceSku items.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The ResourceSku items on this page. Required.
+    :vartype value: list[~azure.mgmt.avs.models.ResourceSku]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ResourceSku]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: List["_models.ResourceSku"], next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: The ResourceSku items on this page. Required.
+        :paramtype value: list[~azure.mgmt.avs.models.ResourceSku]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
 class PlacementPoliciesList(_serialization.Model):
@@ -1918,7 +2232,7 @@ class PlacementPolicy(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2010,7 +2324,7 @@ class PlacementPolicyProperties(_serialization.Model):
         self.type: Optional[str] = None
         self.state = state
         self.display_name = display_name
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.PlacementPolicyProvisioningState"]] = None
 
 
 class PlacementPolicyUpdate(_serialization.Model):
@@ -2081,7 +2395,7 @@ class TrackedResource(Resource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2126,7 +2440,7 @@ class TrackedResource(Resource):
         self.location = location
 
 
-class PrivateCloud(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class PrivateCloud(TrackedResource):
     """A private cloud resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2134,7 +2448,7 @@ class PrivateCloud(TrackedResource):  # pylint: disable=too-many-instance-attrib
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2152,6 +2466,8 @@ class PrivateCloud(TrackedResource):  # pylint: disable=too-many-instance-attrib
     :vartype sku: ~azure.mgmt.avs.models.Sku
     :ivar identity: The managed service identities assigned to this resource.
     :vartype identity: ~azure.mgmt.avs.models.PrivateCloudIdentity
+    :ivar zones: The availability zones.
+    :vartype zones: list[str]
     :ivar management_cluster: The default cluster used for management.
     :vartype management_cluster: ~azure.mgmt.avs.models.ManagementCluster
     :ivar internet: Connectivity to internet is enabled or disabled. Known values are: "Enabled"
@@ -2241,6 +2557,7 @@ class PrivateCloud(TrackedResource):  # pylint: disable=too-many-instance-attrib
         "location": {"key": "location", "type": "str"},
         "sku": {"key": "sku", "type": "Sku"},
         "identity": {"key": "identity", "type": "PrivateCloudIdentity"},
+        "zones": {"key": "zones", "type": "[str]"},
         "management_cluster": {"key": "properties.managementCluster", "type": "ManagementCluster"},
         "internet": {"key": "properties.internet", "type": "str"},
         "identity_sources": {"key": "properties.identitySources", "type": "[IdentitySource]"},
@@ -2272,6 +2589,7 @@ class PrivateCloud(TrackedResource):  # pylint: disable=too-many-instance-attrib
         sku: "_models.Sku",
         tags: Optional[Dict[str, str]] = None,
         identity: Optional["_models.PrivateCloudIdentity"] = None,
+        zones: Optional[List[str]] = None,
         management_cluster: Optional["_models.ManagementCluster"] = None,
         internet: Optional[Union[str, "_models.InternetEnum"]] = None,
         identity_sources: Optional[List["_models.IdentitySource"]] = None,
@@ -2296,6 +2614,8 @@ class PrivateCloud(TrackedResource):  # pylint: disable=too-many-instance-attrib
         :paramtype sku: ~azure.mgmt.avs.models.Sku
         :keyword identity: The managed service identities assigned to this resource.
         :paramtype identity: ~azure.mgmt.avs.models.PrivateCloudIdentity
+        :keyword zones: The availability zones.
+        :paramtype zones: list[str]
         :keyword management_cluster: The default cluster used for management.
         :paramtype management_cluster: ~azure.mgmt.avs.models.ManagementCluster
         :keyword internet: Connectivity to internet is enabled or disabled. Known values are: "Enabled"
@@ -2339,26 +2659,27 @@ class PrivateCloud(TrackedResource):  # pylint: disable=too-many-instance-attrib
         super().__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
         self.identity = identity
+        self.zones = zones
         self.management_cluster = management_cluster
         self.internet = internet
         self.identity_sources = identity_sources
         self.availability = availability
         self.encryption = encryption
         self.extended_network_blocks = extended_network_blocks
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.PrivateCloudProvisioningState"]] = None
         self.circuit = circuit
-        self.endpoints = None
+        self.endpoints: Optional["_models.Endpoints"] = None
         self.network_block = network_block
-        self.management_network = None
-        self.provisioning_network = None
-        self.vmotion_network = None
+        self.management_network: Optional[str] = None
+        self.provisioning_network: Optional[str] = None
+        self.vmotion_network: Optional[str] = None
         self.vcenter_password = vcenter_password
         self.nsxt_password = nsxt_password
-        self.vcenter_certificate_thumbprint = None
-        self.nsxt_certificate_thumbprint = None
-        self.external_cloud_links = None
+        self.vcenter_certificate_thumbprint: Optional[str] = None
+        self.nsxt_certificate_thumbprint: Optional[str] = None
+        self.external_cloud_links: Optional[List[str]] = None
         self.secondary_circuit = secondary_circuit
-        self.nsx_public_ip_quota_raised = None
+        self.nsx_public_ip_quota_raised: Optional[Union[str, "_models.NsxPublicIpQuotaRaisedEnum"]] = None
         self.virtual_network_id = virtual_network_id
         self.dns_zone_type = dns_zone_type
 
@@ -2400,8 +2721,8 @@ class PrivateCloudIdentity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.avs.models.ResourceIdentityType
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
 
 
@@ -2537,6 +2858,94 @@ class PrivateCloudUpdate(_serialization.Model):
         self.dns_zone_type = dns_zone_type
 
 
+class ProvisionedNetwork(ProxyResource):
+    """A provisioned network resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.avs.models.SystemData
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.avs.models.ProvisionedNetworkProvisioningState
+    :ivar address_prefix: The address prefixes of the provisioned network in CIDR notation.
+    :vartype address_prefix: str
+    :ivar network_type: The type of network provisioned. Known values are: "esxManagement",
+     "esxReplication", "hcxManagement", "hcxUplink", "vcenterManagement", "vmotion", and "vsan".
+    :vartype network_type: str or ~azure.mgmt.avs.models.ProvisionedNetworkTypes
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "address_prefix": {"readonly": True},
+        "network_type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "address_prefix": {"key": "properties.addressPrefix", "type": "str"},
+        "network_type": {"key": "properties.networkType", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.provisioning_state: Optional[Union[str, "_models.ProvisionedNetworkProvisioningState"]] = None
+        self.address_prefix: Optional[str] = None
+        self.network_type: Optional[Union[str, "_models.ProvisionedNetworkTypes"]] = None
+
+
+class ProvisionedNetworkListResult(_serialization.Model):
+    """The response of a ProvisionedNetwork list operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The ProvisionedNetwork items on this page. Required.
+    :vartype value: list[~azure.mgmt.avs.models.ProvisionedNetwork]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ProvisionedNetwork]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: List["_models.ProvisionedNetwork"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The ProvisionedNetwork items on this page. Required.
+        :paramtype value: list[~azure.mgmt.avs.models.ProvisionedNetwork]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
 class ScriptExecutionParameter(_serialization.Model):
     """The arguments passed in to the execution.
 
@@ -2626,6 +3035,135 @@ class PSCredentialExecutionParameter(ScriptExecutionParameter):
         self.password = password
 
 
+class PureStoragePolicy(ProxyResource):
+    """An instance describing a Pure Storage Policy Based Management policy.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.avs.models.SystemData
+    :ivar storage_policy_definition: Definition of a Pure Storage Policy Based Management policy.
+    :vartype storage_policy_definition: str
+    :ivar storage_pool_id: Azure resource ID of the Pure Storage Pool associated with the storage
+     policy.
+    :vartype storage_pool_id: str
+    :ivar provisioning_state: The state of the Pure Storage Policy Based Management policy
+     provisioning. Known values are: "Succeeded", "Failed", "Canceled", "Deleting", and "Updating".
+    :vartype provisioning_state: str or ~azure.mgmt.avs.models.PureStoragePolicyProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "storage_policy_definition": {"key": "properties.storagePolicyDefinition", "type": "str"},
+        "storage_pool_id": {"key": "properties.storagePoolId", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self, *, storage_policy_definition: Optional[str] = None, storage_pool_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword storage_policy_definition: Definition of a Pure Storage Policy Based Management
+         policy.
+        :paramtype storage_policy_definition: str
+        :keyword storage_pool_id: Azure resource ID of the Pure Storage Pool associated with the
+         storage policy.
+        :paramtype storage_pool_id: str
+        """
+        super().__init__(**kwargs)
+        self.storage_policy_definition = storage_policy_definition
+        self.storage_pool_id = storage_pool_id
+        self.provisioning_state: Optional[Union[str, "_models.PureStoragePolicyProvisioningState"]] = None
+
+
+class PureStoragePolicyListResult(_serialization.Model):
+    """The response of a PureStoragePolicy list operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The PureStoragePolicy items on this page. Required.
+    :vartype value: list[~azure.mgmt.avs.models.PureStoragePolicy]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[PureStoragePolicy]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: List["_models.PureStoragePolicy"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The PureStoragePolicy items on this page. Required.
+        :paramtype value: list[~azure.mgmt.avs.models.PureStoragePolicy]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class PureStorageVolume(_serialization.Model):
+    """A Pure Storage volume from PureStorage.Block provider.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar storage_pool_id: Azure resource ID of the Pure Storage Pool. Required.
+    :vartype storage_pool_id: str
+    :ivar size_gb: Volume size to be used to create a Virtual Volumes (vVols) datastore. Required.
+    :vartype size_gb: int
+    """
+
+    _validation = {
+        "storage_pool_id": {"required": True},
+        "size_gb": {"required": True},
+    }
+
+    _attribute_map = {
+        "storage_pool_id": {"key": "storagePoolId", "type": "str"},
+        "size_gb": {"key": "sizeGb", "type": "int"},
+    }
+
+    def __init__(self, *, storage_pool_id: str, size_gb: int, **kwargs: Any) -> None:
+        """
+        :keyword storage_pool_id: Azure resource ID of the Pure Storage Pool. Required.
+        :paramtype storage_pool_id: str
+        :keyword size_gb: Volume size to be used to create a Virtual Volumes (vVols) datastore.
+         Required.
+        :paramtype size_gb: int
+        """
+        super().__init__(**kwargs)
+        self.storage_pool_id = storage_pool_id
+        self.size_gb = size_gb
+
+
 class Quota(_serialization.Model):
     """Subscription quotas.
 
@@ -2651,8 +3189,306 @@ class Quota(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.hosts_remaining = None
-        self.quota_enabled = None
+        self.hosts_remaining: Optional[Dict[str, int]] = None
+        self.quota_enabled: Optional[Union[str, "_models.QuotaEnabled"]] = None
+
+
+class ResourceSku(_serialization.Model):
+    """A SKU for a resource.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar resource_type: The type of resource the SKU applies to. Required. Known values are:
+     "privateClouds" and "privateClouds/clusters".
+    :vartype resource_type: str or ~azure.mgmt.avs.models.ResourceSkuResourceType
+    :ivar name: The name of the SKU. Required.
+    :vartype name: str
+    :ivar tier: The tier of virtual machines in a scale set.
+    :vartype tier: str
+    :ivar size: The size of the SKU.
+    :vartype size: str
+    :ivar family: The family of the SKU.
+    :vartype family: str
+    :ivar locations: The set of locations that the SKU is available. Required.
+    :vartype locations: list[str]
+    :ivar location_info: A list of locations and availability zones in those locations where the
+     SKU is available. Required.
+    :vartype location_info: list[~azure.mgmt.avs.models.ResourceSkuLocationInfo]
+    :ivar capabilities: Name value pairs to describe the capability.
+    :vartype capabilities: list[~azure.mgmt.avs.models.ResourceSkuCapabilities]
+    :ivar restrictions: The restrictions of the SKU. Required.
+    :vartype restrictions: list[~azure.mgmt.avs.models.ResourceSkuRestrictions]
+    """
+
+    _validation = {
+        "resource_type": {"required": True},
+        "name": {"required": True},
+        "locations": {"required": True},
+        "location_info": {"required": True},
+        "restrictions": {"required": True},
+    }
+
+    _attribute_map = {
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "size": {"key": "size", "type": "str"},
+        "family": {"key": "family", "type": "str"},
+        "locations": {"key": "locations", "type": "[str]"},
+        "location_info": {"key": "locationInfo", "type": "[ResourceSkuLocationInfo]"},
+        "capabilities": {"key": "capabilities", "type": "[ResourceSkuCapabilities]"},
+        "restrictions": {"key": "restrictions", "type": "[ResourceSkuRestrictions]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource_type: Union[str, "_models.ResourceSkuResourceType"],
+        name: str,
+        locations: List[str],
+        location_info: List["_models.ResourceSkuLocationInfo"],
+        restrictions: List["_models.ResourceSkuRestrictions"],
+        tier: Optional[str] = None,
+        size: Optional[str] = None,
+        family: Optional[str] = None,
+        capabilities: Optional[List["_models.ResourceSkuCapabilities"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword resource_type: The type of resource the SKU applies to. Required. Known values are:
+         "privateClouds" and "privateClouds/clusters".
+        :paramtype resource_type: str or ~azure.mgmt.avs.models.ResourceSkuResourceType
+        :keyword name: The name of the SKU. Required.
+        :paramtype name: str
+        :keyword tier: The tier of virtual machines in a scale set.
+        :paramtype tier: str
+        :keyword size: The size of the SKU.
+        :paramtype size: str
+        :keyword family: The family of the SKU.
+        :paramtype family: str
+        :keyword locations: The set of locations that the SKU is available. Required.
+        :paramtype locations: list[str]
+        :keyword location_info: A list of locations and availability zones in those locations where the
+         SKU is available. Required.
+        :paramtype location_info: list[~azure.mgmt.avs.models.ResourceSkuLocationInfo]
+        :keyword capabilities: Name value pairs to describe the capability.
+        :paramtype capabilities: list[~azure.mgmt.avs.models.ResourceSkuCapabilities]
+        :keyword restrictions: The restrictions of the SKU. Required.
+        :paramtype restrictions: list[~azure.mgmt.avs.models.ResourceSkuRestrictions]
+        """
+        super().__init__(**kwargs)
+        self.resource_type = resource_type
+        self.name = name
+        self.tier = tier
+        self.size = size
+        self.family = family
+        self.locations = locations
+        self.location_info = location_info
+        self.capabilities = capabilities
+        self.restrictions = restrictions
+
+
+class ResourceSkuCapabilities(_serialization.Model):
+    """Describes The SKU capabilities object.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: The name of the SKU capability. Required.
+    :vartype name: str
+    :ivar value: The value of the SKU capability. Required.
+    :vartype value: str
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+    }
+
+    def __init__(self, *, name: str, value: str, **kwargs: Any) -> None:
+        """
+        :keyword name: The name of the SKU capability. Required.
+        :paramtype name: str
+        :keyword value: The value of the SKU capability. Required.
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.value = value
+
+
+class ResourceSkuLocationInfo(_serialization.Model):
+    """Describes an available Compute SKU Location Information.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar location: Location of the SKU. Required.
+    :vartype location: str
+    :ivar zones: List of availability zones where the SKU is supported. Required.
+    :vartype zones: list[str]
+    :ivar zone_details: Gets details of capabilities available to a SKU in specific zones.
+     Required.
+    :vartype zone_details: list[~azure.mgmt.avs.models.ResourceSkuZoneDetails]
+    """
+
+    _validation = {
+        "location": {"required": True},
+        "zones": {"required": True},
+        "zone_details": {"required": True},
+    }
+
+    _attribute_map = {
+        "location": {"key": "location", "type": "str"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "zone_details": {"key": "zoneDetails", "type": "[ResourceSkuZoneDetails]"},
+    }
+
+    def __init__(
+        self, *, location: str, zones: List[str], zone_details: List["_models.ResourceSkuZoneDetails"], **kwargs: Any
+    ) -> None:
+        """
+        :keyword location: Location of the SKU. Required.
+        :paramtype location: str
+        :keyword zones: List of availability zones where the SKU is supported. Required.
+        :paramtype zones: list[str]
+        :keyword zone_details: Gets details of capabilities available to a SKU in specific zones.
+         Required.
+        :paramtype zone_details: list[~azure.mgmt.avs.models.ResourceSkuZoneDetails]
+        """
+        super().__init__(**kwargs)
+        self.location = location
+        self.zones = zones
+        self.zone_details = zone_details
+
+
+class ResourceSkuRestrictionInfo(_serialization.Model):
+    """Describes an available Compute SKU Restriction Information.
+
+    :ivar locations: Locations where the SKU is restricted.
+    :vartype locations: list[str]
+    :ivar zones: List of availability zones where the SKU is restricted.
+    :vartype zones: list[str]
+    """
+
+    _attribute_map = {
+        "locations": {"key": "locations", "type": "[str]"},
+        "zones": {"key": "zones", "type": "[str]"},
+    }
+
+    def __init__(
+        self, *, locations: Optional[List[str]] = None, zones: Optional[List[str]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword locations: Locations where the SKU is restricted.
+        :paramtype locations: list[str]
+        :keyword zones: List of availability zones where the SKU is restricted.
+        :paramtype zones: list[str]
+        """
+        super().__init__(**kwargs)
+        self.locations = locations
+        self.zones = zones
+
+
+class ResourceSkuRestrictions(_serialization.Model):
+    """The restrictions of the SKU.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: the type of restrictions. Known values are: "Location" and "Zone".
+    :vartype type: str or ~azure.mgmt.avs.models.ResourceSkuRestrictionsType
+    :ivar values: The value of restrictions. If the restriction type is set to location. This would
+     be different locations where the SKU is restricted. Required.
+    :vartype values: list[str]
+    :ivar restriction_info: The information about the restriction where the SKU cannot be used.
+     Required.
+    :vartype restriction_info: ~azure.mgmt.avs.models.ResourceSkuRestrictionInfo
+    :ivar reason_code: the reason for restriction. Known values are: "QuotaId" and
+     "NotAvailableForSubscription".
+    :vartype reason_code: str or ~azure.mgmt.avs.models.ResourceSkuRestrictionsReasonCode
+    """
+
+    _validation = {
+        "values": {"required": True},
+        "restriction_info": {"required": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "values": {"key": "values", "type": "[str]"},
+        "restriction_info": {"key": "restrictionInfo", "type": "ResourceSkuRestrictionInfo"},
+        "reason_code": {"key": "reasonCode", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        values: List[str],
+        restriction_info: "_models.ResourceSkuRestrictionInfo",
+        type: Optional[Union[str, "_models.ResourceSkuRestrictionsType"]] = None,
+        reason_code: Optional[Union[str, "_models.ResourceSkuRestrictionsReasonCode"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: the type of restrictions. Known values are: "Location" and "Zone".
+        :paramtype type: str or ~azure.mgmt.avs.models.ResourceSkuRestrictionsType
+        :keyword values: The value of restrictions. If the restriction type is set to location. This
+         would be different locations where the SKU is restricted. Required.
+        :paramtype values: list[str]
+        :keyword restriction_info: The information about the restriction where the SKU cannot be used.
+         Required.
+        :paramtype restriction_info: ~azure.mgmt.avs.models.ResourceSkuRestrictionInfo
+        :keyword reason_code: the reason for restriction. Known values are: "QuotaId" and
+         "NotAvailableForSubscription".
+        :paramtype reason_code: str or ~azure.mgmt.avs.models.ResourceSkuRestrictionsReasonCode
+        """
+        super().__init__(**kwargs)
+        self.type = type
+        self.values = values
+        self.restriction_info = restriction_info
+        self.reason_code = reason_code
+
+
+class ResourceSkuZoneDetails(_serialization.Model):
+    """Describes The zonal capabilities of a SKU.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: Gets the set of zones that the SKU is available in with the specified capabilities.
+     Required.
+    :vartype name: list[str]
+    :ivar capabilities: A list of capabilities that are available for the SKU in the specified list
+     of zones. Required.
+    :vartype capabilities: list[~azure.mgmt.avs.models.ResourceSkuCapabilities]
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "capabilities": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "[str]"},
+        "capabilities": {"key": "capabilities", "type": "[ResourceSkuCapabilities]"},
+    }
+
+    def __init__(
+        self, *, name: List[str], capabilities: List["_models.ResourceSkuCapabilities"], **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Gets the set of zones that the SKU is available in with the specified
+         capabilities. Required.
+        :paramtype name: list[str]
+        :keyword capabilities: A list of capabilities that are available for the SKU in the specified
+         list of zones. Required.
+        :paramtype capabilities: list[~azure.mgmt.avs.models.ResourceSkuCapabilities]
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.capabilities = capabilities
 
 
 class ScriptCmdlet(ProxyResource):
@@ -2661,7 +3497,7 @@ class ScriptCmdlet(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2712,11 +3548,11 @@ class ScriptCmdlet(ProxyResource):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.provisioning_state = None
-        self.description = None
-        self.timeout = None
-        self.audience = None
-        self.parameters = None
+        self.provisioning_state: Optional[Union[str, "_models.ScriptCmdletProvisioningState"]] = None
+        self.description: Optional[str] = None
+        self.timeout: Optional[str] = None
+        self.audience: Optional[Union[str, "_models.ScriptCmdletAudience"]] = None
+        self.parameters: Optional[List["_models.ScriptParameter"]] = None
 
 
 class ScriptCmdletsList(_serialization.Model):
@@ -2751,13 +3587,13 @@ class ScriptCmdletsList(_serialization.Model):
         self.next_link = next_link
 
 
-class ScriptExecution(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class ScriptExecution(ProxyResource):
     """An instance of a script executed by a user - custom or AVS.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2885,15 +3721,15 @@ class ScriptExecution(ProxyResource):  # pylint: disable=too-many-instance-attri
         self.failure_reason = failure_reason
         self.timeout = timeout
         self.retention = retention
-        self.submitted_at = None
-        self.started_at = None
-        self.finished_at = None
-        self.provisioning_state = None
+        self.submitted_at: Optional[datetime.datetime] = None
+        self.started_at: Optional[datetime.datetime] = None
+        self.finished_at: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[Union[str, "_models.ScriptExecutionProvisioningState"]] = None
         self.output = output
         self.named_outputs = named_outputs
-        self.information = None
-        self.warnings = None
-        self.errors = None
+        self.information: Optional[List[str]] = None
+        self.warnings: Optional[List[str]] = None
+        self.errors: Optional[List[str]] = None
 
 
 class ScriptExecutionsList(_serialization.Model):
@@ -2936,7 +3772,7 @@ class ScriptPackage(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2986,11 +3822,11 @@ class ScriptPackage(ProxyResource):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.provisioning_state = None
-        self.description = None
-        self.version = None
-        self.company = None
-        self.uri = None
+        self.provisioning_state: Optional[Union[str, "_models.ScriptPackageProvisioningState"]] = None
+        self.description: Optional[str] = None
+        self.version: Optional[str] = None
+        self.company: Optional[str] = None
+        self.uri: Optional[str] = None
 
 
 class ScriptPackagesList(_serialization.Model):
@@ -3067,11 +3903,11 @@ class ScriptParameter(_serialization.Model):
         :paramtype name: str
         """
         super().__init__(**kwargs)
-        self.type = None
+        self.type: Optional[Union[str, "_models.ScriptParameterTypes"]] = None
         self.name = name
-        self.description = None
-        self.visibility = None
-        self.optional = None
+        self.description: Optional[str] = None
+        self.visibility: Optional[Union[str, "_models.VisibilityParameterEnum"]] = None
+        self.optional: Optional[Union[str, "_models.OptionalParamEnum"]] = None
 
 
 class ScriptSecureStringExecutionParameter(ScriptExecutionParameter):
@@ -3217,6 +4053,67 @@ class Sku(_serialization.Model):
         self.capacity = capacity
 
 
+class SpecializedHostProperties(HostProperties):
+    """The properties of a specialized host.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar kind: The kind of host. Required. Known values are: "General" and "Specialized".
+    :vartype kind: str or ~azure.mgmt.avs.models.HostKind
+    :ivar provisioning_state: The state of the host provisioning. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.avs.models.HostProvisioningState
+    :ivar display_name: Display name of the host in VMware vCenter.
+    :vartype display_name: str
+    :ivar mo_ref_id: vCenter managed object reference ID of the host.
+    :vartype mo_ref_id: str
+    :ivar fqdn: Fully qualified domain name of the host.
+    :vartype fqdn: str
+    :ivar maintenance: If provided, the host is in maintenance. The value is the reason for
+     maintenance. Known values are: "Replacement" and "Upgrade".
+    :vartype maintenance: str or ~azure.mgmt.avs.models.HostMaintenance
+    :ivar fault_domain:
+    :vartype fault_domain: str
+    """
+
+    _validation = {
+        "kind": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "mo_ref_id": {"readonly": True},
+        "fqdn": {"readonly": True, "max_length": 255, "min_length": 1},
+        "fault_domain": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "mo_ref_id": {"key": "moRefId", "type": "str"},
+        "fqdn": {"key": "fqdn", "type": "str"},
+        "maintenance": {"key": "maintenance", "type": "str"},
+        "fault_domain": {"key": "faultDomain", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        display_name: Optional[str] = None,
+        maintenance: Optional[Union[str, "_models.HostMaintenance"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword display_name: Display name of the host in VMware vCenter.
+        :paramtype display_name: str
+        :keyword maintenance: If provided, the host is in maintenance. The value is the reason for
+         maintenance. Known values are: "Replacement" and "Upgrade".
+        :paramtype maintenance: str or ~azure.mgmt.avs.models.HostMaintenance
+        """
+        super().__init__(display_name=display_name, maintenance=maintenance, **kwargs)
+        self.kind: str = "Specialized"
+
+
 class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
@@ -3306,8 +4203,8 @@ class Trial(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.status = None
-        self.available_hosts = None
+        self.status: Optional[Union[str, "_models.TrialStatus"]] = None
+        self.available_hosts: Optional[int] = None
 
 
 class VirtualMachine(ProxyResource):
@@ -3316,7 +4213,7 @@ class VirtualMachine(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3331,7 +4228,7 @@ class VirtualMachine(ProxyResource):
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.VirtualMachineProvisioningState
     :ivar display_name: Display name of the VM.
     :vartype display_name: str
-    :ivar mo_ref_id: Virtual machine managed object reference id.
+    :ivar mo_ref_id: vCenter managed object reference ID of the virtual machine.
     :vartype mo_ref_id: str
     :ivar folder_path: Path to virtual machine's folder starting from datacenter virtual machine
      folder.
@@ -3368,11 +4265,11 @@ class VirtualMachine(ProxyResource):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.provisioning_state = None
-        self.display_name = None
-        self.mo_ref_id = None
-        self.folder_path = None
-        self.restrict_movement = None
+        self.provisioning_state: Optional[Union[str, "_models.VirtualMachineProvisioningState"]] = None
+        self.display_name: Optional[str] = None
+        self.mo_ref_id: Optional[str] = None
+        self.folder_path: Optional[str] = None
+        self.restrict_movement: Optional[Union[str, "_models.VirtualMachineRestrictMovementState"]] = None
 
 
 class VirtualMachineRestrictMovement(_serialization.Model):
@@ -3602,7 +4499,7 @@ class WorkloadNetwork(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3636,7 +4533,7 @@ class WorkloadNetwork(ProxyResource):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.WorkloadNetworkProvisioningState"]] = None
 
 
 class WorkloadNetworkDhcp(ProxyResource):
@@ -3645,7 +4542,7 @@ class WorkloadNetworkDhcp(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3734,8 +4631,8 @@ class WorkloadNetworkDhcpEntity(_serialization.Model):
         super().__init__(**kwargs)
         self.dhcp_type: Optional[str] = None
         self.display_name = display_name
-        self.segments = None
-        self.provisioning_state = None
+        self.segments: Optional[List[str]] = None
+        self.provisioning_state: Optional[Union[str, "_models.WorkloadNetworkDhcpProvisioningState"]] = None
         self.revision = revision
 
 
@@ -3899,13 +4796,13 @@ class WorkloadNetworkDhcpServer(WorkloadNetworkDhcpEntity):
         self.lease_time = lease_time
 
 
-class WorkloadNetworkDnsService(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class WorkloadNetworkDnsService(ProxyResource):
     """NSX DNS Service.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3992,8 +4889,8 @@ class WorkloadNetworkDnsService(ProxyResource):  # pylint: disable=too-many-inst
         self.default_dns_zone = default_dns_zone
         self.fqdn_zones = fqdn_zones
         self.log_level = log_level
-        self.status = None
-        self.provisioning_state = None
+        self.status: Optional[Union[str, "_models.DnsServiceStatusEnum"]] = None
+        self.provisioning_state: Optional[Union[str, "_models.WorkloadNetworkDnsServiceProvisioningState"]] = None
         self.revision = revision
 
 
@@ -4031,13 +4928,13 @@ class WorkloadNetworkDnsServicesList(_serialization.Model):
         self.next_link = next_link
 
 
-class WorkloadNetworkDnsZone(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class WorkloadNetworkDnsZone(ProxyResource):
     """NSX DNS Zone.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4118,7 +5015,7 @@ class WorkloadNetworkDnsZone(ProxyResource):  # pylint: disable=too-many-instanc
         self.dns_server_ips = dns_server_ips
         self.source_ip = source_ip
         self.dns_services = dns_services
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.WorkloadNetworkDnsZoneProvisioningState"]] = None
         self.revision = revision
 
 
@@ -4162,7 +5059,7 @@ class WorkloadNetworkGateway(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4206,9 +5103,9 @@ class WorkloadNetworkGateway(ProxyResource):
         :paramtype display_name: str
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.WorkloadNetworkProvisioningState"]] = None
         self.display_name = display_name
-        self.path = None
+        self.path: Optional[str] = None
 
 
 class WorkloadNetworkGatewayList(_serialization.Model):
@@ -4279,13 +5176,13 @@ class WorkloadNetworkList(_serialization.Model):
         self.next_link = next_link
 
 
-class WorkloadNetworkPortMirroring(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class WorkloadNetworkPortMirroring(ProxyResource):
     """NSX Port Mirroring.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4365,8 +5262,8 @@ class WorkloadNetworkPortMirroring(ProxyResource):  # pylint: disable=too-many-i
         self.direction = direction
         self.source = source
         self.destination = destination
-        self.status = None
-        self.provisioning_state = None
+        self.status: Optional[Union[str, "_models.PortMirroringStatusEnum"]] = None
+        self.provisioning_state: Optional[Union[str, "_models.WorkloadNetworkPortMirroringProvisioningState"]] = None
         self.revision = revision
 
 
@@ -4410,7 +5307,7 @@ class WorkloadNetworkPublicIP(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4464,8 +5361,8 @@ class WorkloadNetworkPublicIP(ProxyResource):
         super().__init__(**kwargs)
         self.display_name = display_name
         self.number_of_public_i_ps = number_of_public_i_ps
-        self.public_ip_block = None
-        self.provisioning_state = None
+        self.public_ip_block: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.WorkloadNetworkPublicIPProvisioningState"]] = None
 
 
 class WorkloadNetworkPublicIPsList(_serialization.Model):
@@ -4502,13 +5399,13 @@ class WorkloadNetworkPublicIPsList(_serialization.Model):
         self.next_link = next_link
 
 
-class WorkloadNetworkSegment(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class WorkloadNetworkSegment(ProxyResource):
     """NSX Segment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4583,9 +5480,9 @@ class WorkloadNetworkSegment(ProxyResource):  # pylint: disable=too-many-instanc
         self.display_name = display_name
         self.connected_gateway = connected_gateway
         self.subnet = subnet
-        self.port_vif = None
-        self.status = None
-        self.provisioning_state = None
+        self.port_vif: Optional[List["_models.WorkloadNetworkSegmentPortVif"]] = None
+        self.status: Optional[Union[str, "_models.SegmentStatusEnum"]] = None
+        self.provisioning_state: Optional[Union[str, "_models.WorkloadNetworkSegmentProvisioningState"]] = None
         self.revision = revision
 
 
@@ -4677,7 +5574,7 @@ class WorkloadNetworkVirtualMachine(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4721,9 +5618,9 @@ class WorkloadNetworkVirtualMachine(ProxyResource):
         :paramtype display_name: str
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.WorkloadNetworkProvisioningState"]] = None
         self.display_name = display_name
-        self.vm_type = None
+        self.vm_type: Optional[Union[str, "_models.VMTypeEnum"]] = None
 
 
 class WorkloadNetworkVirtualMachinesList(_serialization.Model):
@@ -4766,7 +5663,7 @@ class WorkloadNetworkVMGroup(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4830,8 +5727,8 @@ class WorkloadNetworkVMGroup(ProxyResource):
         super().__init__(**kwargs)
         self.display_name = display_name
         self.members = members
-        self.status = None
-        self.provisioning_state = None
+        self.status: Optional[Union[str, "_models.VMGroupStatusEnum"]] = None
+        self.provisioning_state: Optional[Union[str, "_models.WorkloadNetworkVMGroupProvisioningState"]] = None
         self.revision = revision
 
 
