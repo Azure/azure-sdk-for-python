@@ -8,6 +8,12 @@
       "Agent": {
         "windows-2022": { "OSVmImage": "env:WINDOWSVMIMAGE", "Pool": "env:WINDOWSPOOL" }
       },
+      "Account": {
+        "_": {
+          "ACCOUNT_HOST": "https://localhost:8081/",
+          "ACCOUNT_KEY": "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+        }
+      },
       "EmulatorConfig": {
         "Emulator Tests Python 3.9 Standard": {
             "PythonVersion": "3.9",
