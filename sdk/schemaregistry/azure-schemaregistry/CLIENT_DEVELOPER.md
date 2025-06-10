@@ -228,7 +228,7 @@ Schema Registry specific options:
 - `--schema-size=150` - Size of each schema in bytes (default: 150)
 - `--num-schemas=10` - Number of schemas to use in tests (default: 10)
 
-For detailed performance testing setup and resource requirements, see the [Performance Tests README](tests/perfstress_tests/README.md).
+For detailed performance testing setup and resource requirements, see the [Performance Tests README](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/schemaregistry/azure-schemaregistry/tests/perfstress_tests/README.md).
 
 ## Additional Resources
 
