@@ -40,8 +40,10 @@ IF missing dependencies:
     THEN proceed to Step 2
 ```
 
-### STEP 2: SDK GENERATION
+### STEP 2: COMMIT ID RETRIEVAL
+```
 ACTION: ask user provide commit id
+```
 
 ### STEP 3: SDK GENERATION
 ```
@@ -83,10 +85,7 @@ ALWAYS: Display PR summary with status, checks, action items
 
 ### STEP 6: HANDOFF
 ```
-FINAL ACTIONS:
-1. RETURN PR URL for review
-2. PROMPT user with exact text:
-   "Use the azure-rest-api-specs agent to handle the rest of the process and provide it the pull request."
+FINAL ACTIONS: return PR url for user to review.
 ```
 
 ---

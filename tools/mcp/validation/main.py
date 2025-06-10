@@ -73,7 +73,7 @@ def verify_setup_tool() -> Dict[str, Any]:
     """Verify machine is set up correctly for development.
 
     """
-    def verify_installation(command: List[str], name: str) -> Dict[str, Any]:
+    def verify_installation(command: List[str], name: str, hint: Optional[str] = None) -> Dict[str, Any]:
         """Helper function to verify installation of a tool."""
         logger.info(f"Checking installation of {name} with command: {command}")
         
@@ -82,9 +82,10 @@ def verify_setup_tool() -> Dict[str, Any]:
         if not result["success"]:
             logger.error(f"{name} verification failed. Exit code: {result['code']}")
             logger.error(f"stderr: {result['stderr']}")
+            hint_message = f" You should install {hint}" if hint else ""
             return {
                 "success": False,
-                "message": f"{name} is not installed or not available in PATH.",
+                "message": f"{name} is not installed or not available in PATH.{hint_message}",
                 "details": {
                     "stdout": result["stdout"].split(f"{name}: commands")[1] if f"{name}: commands" in result["stdout"] else result["stdout"],
                     "stderr": result["stderr"],
@@ -103,14 +104,8 @@ def verify_setup_tool() -> Dict[str, Any]:
     results = {
         "node": verify_installation(["node", "--version"], "Node.js"),
         "python": verify_installation(["python", "--version"], "Python"),
-        "tsp-client": verify_installation(["tsp-client", "--version"], "TypeSpec Client Generator CLI"),
+        "tsp-client": verify_installation(["tsp-client", "--version"], "TypeSpec Client Generator CLI", "via 'npm install -g @azure-tools/typespec-client-generator-cli'"),
     }
-
-    # Check if tox is installed
-    logger.info("Checking tox installation...")
-    
-    tox_command = ["tox", "--version", "-c", _TOX_INI_PATH]
-    results["tox"] = verify_installation(tox_command, "tox")
 
     return results
 
