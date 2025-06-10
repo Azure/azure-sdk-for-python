@@ -1,12 +1,13 @@
 # Release History
 
-## 1.9.0 (unreleased)
+## 1.9.0 (Unreleased)
 
 ### Features Added
 
 - Enhanced `_SafetyEvaluation` to support both callback-style and simple target functions seamlessly. Callback-style targets with parameters `(messages, stream, session_state, context)` are now automatically detected and used directly, while simple targets with `(query: str) -> str` signature continue to work as before.
 
 ### Bugs Fixed
+- Fixed MeteorScoreEvaluator and other threshold-based evaluators returning incorrect binary results due to integer conversion of decimal scores. Previously, decimal scores like 0.9375 were incorrectly converted to integers (0) before threshold comparison, causing them to fail even when above the threshold. [#41415](https://github.com/Azure/azure-sdk-for-python/issues/41415)
 
 - Improved error messages for invalid target functions in `_SafetyEvaluation` with clear examples of both supported target function patterns. 
 
