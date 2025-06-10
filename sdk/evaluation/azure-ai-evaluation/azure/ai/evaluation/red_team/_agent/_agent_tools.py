@@ -13,9 +13,10 @@ import random
 import uuid
 
 from azure.core.credentials import TokenCredential
+from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation.red_team._attack_objective_generator import RiskCategory
-from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager, TokenScope
+from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager
 from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
 from ._agent_utils import AgentUtils
 
@@ -29,9 +30,9 @@ class RedTeamToolProvider:
     
     This class provides tools that can be registered with Azure AI Agents
     to enable red teaming capabilities.
-    
-    :param azure_ai_project: The Azure AI project configuration for accessing red team services
-    :type azure_ai_project: Dict[str, Any]
+
+    :param azure_ai_project_endpoint: The Azure AI project endpoint (e.g., 'https://your-resource-name.services.ai.azure.com/api/projects/your-project-name')
+    :type azure_ai_project_endpoint: str
     :param credential: The credential to authenticate with Azure services
     :type credential: TokenCredential
     :param application_scenario: Optional application scenario context for generating relevant prompts
@@ -40,12 +41,12 @@ class RedTeamToolProvider:
     
     def __init__(
         self,
-        azure_ai_project: Dict[str, Any],
+        azure_ai_project_endpoint: str,
         credential: TokenCredential,
         *,
         application_scenario: Optional[str] = None,
     ):
-        self.azure_ai_project = azure_ai_project
+        self.azure_ai_project_endpoint = azure_ai_project_endpoint
         self.credential = credential
         self.application_scenario = application_scenario
         
@@ -58,7 +59,7 @@ class RedTeamToolProvider:
         
         # Create the generated RAI client for fetching attack objectives
         self.generated_rai_client = GeneratedRAIClient(
-            azure_ai_project=self.azure_ai_project, 
+            azure_ai_project=self.azure_ai_project_endpoint, 
             token_manager=self.token_manager.get_aad_credential()
         )
         

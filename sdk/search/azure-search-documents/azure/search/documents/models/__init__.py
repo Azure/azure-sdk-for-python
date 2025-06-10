@@ -26,6 +26,7 @@
 
 from .._generated.models import (
     AutocompleteMode,
+    DebugInfo,
     HybridCountAndFacetMode,
     HybridSearch,
     IndexAction,
@@ -33,6 +34,7 @@ from .._generated.models import (
     QueryAnswerResult,
     QueryAnswerType,
     QueryCaptionResult,
+    QueryResultDocumentInnerHit,
     QueryCaptionType,
     QueryDebugMode,
     QueryLanguage,
@@ -59,6 +61,7 @@ from .._generated.models import (
 
 __all__ = (
     "AutocompleteMode",
+    "DebugInfo",
     "HybridCountAndFacetMode",
     "HybridSearch",
     "IndexAction",
@@ -66,6 +69,7 @@ __all__ = (
     "QueryAnswerResult",
     "QueryAnswerType",
     "QueryCaptionResult",
+    "QueryResultDocumentInnerHit",
     "QueryCaptionType",
     "QueryDebugMode",
     "QueryLanguage",

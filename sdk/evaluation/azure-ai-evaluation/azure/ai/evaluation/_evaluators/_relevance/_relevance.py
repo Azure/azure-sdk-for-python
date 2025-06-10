@@ -39,6 +39,16 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
             :dedent: 8
             :caption: Initialize and call a RelevanceEvaluator with a query, response, and context.
 
+    .. admonition:: Example using Azure AI Project URL:
+        
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START relevance_evaluator]
+            :end-before: [END relevance_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call RelevanceEvaluator using Azure AI Project URL in the following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+
     .. admonition:: Example with Threshold:
 
         .. literalinclude:: ../samples/evaluation_samples_threshold.py

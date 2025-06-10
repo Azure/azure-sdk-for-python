@@ -122,7 +122,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
                 resource = tracer_provider.resource  # type: ignore
                 envelopes.append(self._get_otel_resource_envelope(resource))
             except AttributeError as e:
-                _logger.exception("Failed to derive Resource from Tracer Provider: %s", e)
+                _logger.exception("Failed to derive Resource from Tracer Provider: %s", e)  # pylint: disable=C4769
         for span in spans:
             envelopes.append(self._span_to_envelope(span))
             envelopes.extend(self._span_events_to_envelopes(span))
@@ -131,7 +131,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
             self._handle_transmit_from_storage(envelopes, result)
             return _get_trace_export_result(result)
         except Exception:  # pylint: disable=broad-except
-            _logger.exception("Exception occurred while exporting the data.")
+            _logger.exception("Exception occurred while exporting the data.")  # pylint: disable=C4769
             return _get_trace_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 
     def shutdown(self) -> None:

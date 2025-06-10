@@ -270,7 +270,7 @@ def _download_blob_options(
         The string representing the SDK package version.
     :param AzureBlobStorage client:
         The generated Blob Storage client.
-    :returns: A dictionary containing the download blob options.
+    :return: A dictionary containing the download blob options.
     :rtype: Dict[str, Any]
     """
     if length is not None:
@@ -658,19 +658,20 @@ def _start_copy_from_url_options(  # pylint:disable=too-many-statements
 
     options = {
         'copy_source': source_url,
-        'seal_blob': kwargs.pop('seal_destination_blob', None),
         'timeout': timeout,
         'modified_access_conditions': dest_mod_conditions,
-        'blob_tags_string': blob_tags_string,
         'headers': headers,
         'cls': return_response_headers,
     }
+
     if not incremental_copy:
         source_mod_conditions = get_source_conditions(kwargs)
         dest_access_conditions = get_access_conditions(kwargs.pop('destination_lease', None))
         options['source_modified_access_conditions'] = source_mod_conditions
         options['lease_access_conditions'] = dest_access_conditions
         options['tier'] = tier.value if tier else None
+        options['seal_blob'] = kwargs.pop('seal_destination_blob', None)
+        options['blob_tags_string'] = blob_tags_string
     options.update(kwargs)
     return options
 

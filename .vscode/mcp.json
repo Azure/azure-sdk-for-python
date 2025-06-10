@@ -1,0 +1,13 @@
+{
+    "servers": {
+        "azure-sdk-python-mcp": {
+            "command": "uv",
+            "args": [
+                "--directory",
+                "${workspaceFolder}/tools/mcp/azure-sdk-python-mcp/",
+                "run",
+                "main.py"
+            ],
+        }
+    }
+}

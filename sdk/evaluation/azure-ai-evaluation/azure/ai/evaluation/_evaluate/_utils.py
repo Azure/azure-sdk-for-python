@@ -10,8 +10,11 @@ from pathlib import Path
 from typing import Any, Dict, NamedTuple, Optional, Union, cast
 import uuid
 import base64
+import math
 
 import pandas as pd
+from tqdm import tqdm
+
 from azure.ai.evaluation._legacy._adapters.entities import Run
 
 from azure.ai.evaluation._constants import (
@@ -141,7 +144,7 @@ def _log_metrics_and_instance_results_onedp(
     from azure.ai.evaluation._common import EvaluationServiceOneDPClient, EvaluationUpload
 
     credentials = AzureMLTokenManager(
-        TokenScope.COGNITIVE_SERVICES.value, LOGGER, credential=kwargs.get("credential")
+        TokenScope.COGNITIVE_SERVICES_MANAGEMENT.value, LOGGER, credential=kwargs.get("credential")
     )
     client = EvaluationServiceOneDPClient(
         endpoint=project_url,
@@ -173,13 +176,13 @@ def _log_metrics_and_instance_results_onedp(
             EvaluationRunProperties.RUN_TYPE: "eval_run",
             EvaluationRunProperties.EVALUATION_RUN: "promptflow.BatchRun",
             EvaluationRunProperties.EVALUATION_SDK: f"azure-ai-evaluation:{VERSION}",
-            EvaluationRunProperties.NAME_MAP: json.dumps(name_map),
             "_azureml.evaluate_artifacts": json.dumps([{"path": artifact_name, "type": "table"}]),
-        }
+        }               
+        properties.update(_convert_name_map_into_property_entries(name_map))
 
         create_evaluation_result_response = client.create_evaluation_result(
             name=uuid.uuid4(),
-            path=tmp_path,
+            path=tmpdir,
             metrics=metrics
         )
 
@@ -264,15 +267,14 @@ def _log_metrics_and_instance_results(
             # adding these properties to avoid showing traces if a dummy run is created.
             # We are doing that only for the pure evaluation runs.
             if run is None:
-                ev_run.write_properties_to_run_history(
-                    properties={
+                properties = {
                         EvaluationRunProperties.RUN_TYPE: "eval_run",
                         EvaluationRunProperties.EVALUATION_RUN: "promptflow.BatchRun",
                         EvaluationRunProperties.EVALUATION_SDK: f"azure-ai-evaluation:{VERSION}",
-                        EvaluationRunProperties.NAME_MAP: json.dumps(name_map),
                         "_azureml.evaluate_artifacts": json.dumps([{"path": artifact_name, "type": "table"}]),
                     }
-                )
+                properties.update(_convert_name_map_into_property_entries(name_map))
+                ev_run.write_properties_to_run_history(properties=properties)
             else:
                 ev_run.write_properties_to_run_history(
                     properties={
@@ -321,7 +323,8 @@ def _write_output(path: Union[str, os.PathLike], data_dict: Any) -> None:
     with open(p, "w", encoding=DefaultOpenEncoding.WRITE) as f:
         json.dump(data_dict, f, ensure_ascii=False)
 
-    print(f'Evaluation results saved to "{p.resolve()}".\n')
+    # Use tqdm.write to print message without interfering with any current progress bar
+    tqdm.write(f'Evaluation results saved to "{p.resolve()}".\n')
 
 
 def _apply_column_mapping(
@@ -407,6 +410,41 @@ def set_event_loop_policy() -> None:
         # On Windows seems to be a problem with EventLoopPolicy, use this snippet to work around it
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())  # type: ignore[attr-defined]
 
+# textwrap.wrap tries to do fancy nonsense that we don't want
+def _wrap(s, w):
+    return [s[i:i + w] for i in range(0, len(s), w)]
+
+def _convert_name_map_into_property_entries(
+    name_map: Dict[str, str], segment_length: int = 950, max_segments: int = 10
+) -> Dict[str, Any]:
+    """
+    Convert the name map into property entries.
+
+    :param name_map: The name map to be converted.
+    :type name_map: Dict[str, str]
+    :param segment_length: The max length of each individual segment,
+        which will each have their own dictionary entry
+    :type segment_length: str
+    :param max_segments: The max number of segments we can have. If the stringified
+        name map is too long, we just return a length entry with a value
+        of -1 to indicate that the map was too long.
+    :type max_segments: str
+    :return: The converted name map.
+    :rtype: Dict[str, Any]
+    """
+    name_map_string = json.dumps(name_map)
+    num_segments = math.ceil(len(name_map_string) / segment_length)
+    # Property map is somehow still too long to encode within the space
+    # we allow, so give up, but make sure the service knows we gave up
+    if (num_segments > max_segments):
+        return {EvaluationRunProperties.NAME_MAP_LENGTH: -1}
+
+    result: Dict[str, Any] = {EvaluationRunProperties.NAME_MAP_LENGTH: num_segments}
+    segments_list = _wrap(name_map_string, segment_length)
+    for i in range(0, num_segments):
+        segment_key = f"{EvaluationRunProperties.NAME_MAP}_{i}"
+        result[segment_key] = segments_list[i]
+    return result
 
 class JSONLDataFileLoader:
     def __init__(self, filename: Union[os.PathLike, str]):
