@@ -58,7 +58,7 @@ IF commands fail:
 
 ### STEP 4: COMMIT AND PUSH
 ```
-ACTION: Show changed files (ignore .github, .vscode)
+ACTION: Show changed files in sdk repo (ignore .github, .vscode)
 IF user confirms:
     git add <changed_files>
     git commit -m "<commit_message>"
