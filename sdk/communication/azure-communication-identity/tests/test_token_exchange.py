@@ -4,17 +4,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
 import pytest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from unittest.mock import MagicMock, AsyncMock
 
-# coding: utf-8
-# -------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for
-# license information.
-# --------------------------------------------------------------------------
 from azure.communication.identity._shared.token_exchange import (
     TokenExchangeClient,
     AsyncTokenExchangeClient,
@@ -145,6 +140,6 @@ class TestTokenExchangeUtils:
             _TokenExchangeUtils.parse_expires_on(None, MagicMock())
 
     def test_parse_expires_on_invalid_string(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(HttpResponseError):
             _TokenExchangeUtils.parse_expires_on("invalid-date", MagicMock())
 
