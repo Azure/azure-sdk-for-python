@@ -365,9 +365,20 @@ class AdversarialSimulator:
         )
         bots = [user_bot, system_bot]
         
+        async def run_simulation(session_obj):
+            async with semaphore:
+                _, conversation_history = await simulate_conversation(
+                    bots=bots,
+                    session=session_obj,
+                    turn_limit=max_conversation_turns,
+                    api_call_delay_sec=api_call_delay_sec,
+                    language=language,
+                )
+            return conversation_history
+
         if isinstance(self.rai_client, AIProjectClient):
             session = self.rai_client
-        else:    
+        else:
             session = get_async_http_client().with_policies(
                 retry_policy=AsyncRetryPolicy(
                     retry_total=api_call_retry_limit,
@@ -375,14 +386,7 @@ class AdversarialSimulator:
                     retry_mode=RetryMode.Fixed,
                 )
             )
-        async with semaphore, session:
-            _, conversation_history = await simulate_conversation(
-                bots=bots,
-                session=session,
-                turn_limit=max_conversation_turns,
-                api_call_delay_sec=api_call_delay_sec,
-                language=language,
-            )
+        conversation_history = await run_simulation(session)
 
         return self._to_chat_protocol(
             conversation_history=conversation_history,
