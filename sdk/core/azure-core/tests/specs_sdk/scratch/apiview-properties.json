@@ -1,10 +1,17 @@
 {
     "CrossLanguagePackageId": "",
     "CrossLanguageDefinitionId": {
-        "modeltest.models.ClientNamedPropertyModel": "ModelTest.ClientNamedPropertyModel",
+        "modeltest.models.ClientNameAndJsonEncodedNameModel": "ModelTest.ClientNameAndJsonEncodedNameModel",
+        "modeltest.models.Element": "ModelTest.Element",
+        "modeltest.models.Fish": "ModelTest.Fish",
         "modeltest.models.FlattenModel": "ModelTest.FlattenModel",
+        "modeltest.models.Shark": "ModelTest.Shark",
+        "modeltest.models.GoblinShark": "ModelTest.GoblinShark",
         "modeltest.models.PropertiesModel": "ModelTest.PropertiesModel",
         "modeltest.models.ReadonlyModel": "ModelTest.ReadonlyModel",
+        "modeltest.models.RecursiveElement": "ModelTest.RecursiveElement",
+        "modeltest.models.Salmon": "ModelTest.Salmon",
+        "modeltest.models.SawShark": "ModelTest.SawShark",
         "modeltest.models.Scratch": "ModelTest.Scratch"
     }
 }

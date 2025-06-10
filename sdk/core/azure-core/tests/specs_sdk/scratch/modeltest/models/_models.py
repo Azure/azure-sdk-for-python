@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,31 +8,95 @@
 # --------------------------------------------------------------------------
 # pylint: disable=useless-super-delegation
 
-from typing import Any, Mapping, TYPE_CHECKING, overload
+from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, overload
 
-from .._utils.model_base import Model as _Model, rest_field
+from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class ClientNamedPropertyModel(_Model):
+class ClientNameAndJsonEncodedNameModel(_Model):
     """Model with a property that has a client name.
 
-    :ivar prop_client_name: Required.
-    :vartype prop_client_name: str
+    :ivar client_name: Pass in true. Required.
+    :vartype client_name: str
     """
 
-    prop_client_name: str = rest_field(
-        name="propClientName", visibility=["read", "create", "update", "delete", "query"]
+    client_name: str = rest_field(name="wireName", visibility=["read", "create", "update", "delete", "query"])
+    """Pass in true. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        client_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Element(_Model):
+    """Element.
+
+    :ivar recursive_element:
+    :vartype recursive_element: list[~modeltest.models.RecursiveElement]
+    """
+
+    recursive_element: Optional[List["_models.RecursiveElement"]] = rest_field(
+        name="recursiveElement", visibility=["read", "create", "update", "delete", "query"]
     )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        recursive_element: Optional[List["_models.RecursiveElement"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Fish(_Model):
+    """This is base model for polymorphic multiple levels inheritance with a discriminator.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    Salmon, Shark
+
+    :ivar kind: Discriminator property for Fish. Required. Default value is None.
+    :vartype kind: str
+    :ivar age: Required.
+    :vartype age: int
+    """
+
+    __mapping__: Dict[str, _Model] = {}
+    kind: str = rest_discriminator(name="kind")
+    """Discriminator property for Fish. Required. Default value is None."""
+    age: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
 
     @overload
     def __init__(
         self,
         *,
-        prop_client_name: str,
+        kind: str,
+        age: int,
     ) -> None: ...
 
     @overload
@@ -98,6 +163,79 @@ class FlattenModel(_Model):
             super().__setattr__(key, value)
 
 
+class Shark(Fish, discriminator="shark"):
+    """The second level model in polymorphic multiple levels inheritance and it defines a new
+    discriminator.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    GoblinShark, SawShark
+
+    :ivar age: Required.
+    :vartype age: int
+    :ivar kind: Required. Default value is "shark".
+    :vartype kind: str
+    :ivar shark_type: Required. Default value is None.
+    :vartype shark_type: str
+    """
+
+    __mapping__: Dict[str, _Model] = {}
+    kind: Literal["shark"] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"shark\"."""
+    shark_type: str = rest_discriminator(name="sharkType", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        age: int,
+        shark_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind="shark", **kwargs)
+
+
+class GoblinShark(Shark, discriminator="goblin"):
+    """The third level model GoblinShark in polymorphic multiple levels inheritance.
+
+    :ivar age: Required.
+    :vartype age: int
+    :ivar kind: Required. Default value is "shark".
+    :vartype kind: str
+    :ivar shark_type: Required. Default value is "goblin".
+    :vartype shark_type: str
+    """
+
+    __mapping__: Dict[str, _Model] = {}
+    shark_type: Literal["goblin"] = rest_discriminator(name="sharkType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"goblin\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        age: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, shark_type="goblin", **kwargs)
+
+
 class PropertiesModel(_Model):
     """Properties model.
 
@@ -140,6 +278,112 @@ class ReadonlyModel(_Model):
 
     id: int = rest_field(visibility=["read"])
     """Required."""
+
+
+class RecursiveElement(Element):
+    """RecursiveElement.
+
+    :ivar level: Required.
+    :vartype level: int
+    """
+
+    level: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        level: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Salmon(Fish, discriminator="salmon"):
+    """The second level model in polymorphic multiple levels inheritance which contains references to
+    other polymorphic instances.
+
+    :ivar age: Required.
+    :vartype age: int
+    :ivar kind: Required. Default value is "salmon".
+    :vartype kind: str
+    :ivar friends:
+    :vartype friends: list[~modeltest.models.Fish]
+    :ivar hate:
+    :vartype hate: dict[str, ~modeltest.models.Fish]
+    :ivar life_partner:
+    :vartype life_partner: ~modeltest.models.Fish
+    """
+
+    kind: Literal["salmon"] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"salmon\"."""
+    friends: Optional[List["_models.Fish"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    hate: Optional[Dict[str, "_models.Fish"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    life_partner: Optional["_models.Fish"] = rest_field(
+        name="lifePartner", visibility=["read", "create", "update", "delete", "query"]
+    )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        age: int,
+        friends: Optional[List["_models.Fish"]] = None,
+        hate: Optional[Dict[str, "_models.Fish"]] = None,
+        life_partner: Optional["_models.Fish"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind="salmon", **kwargs)
+
+
+class SawShark(Shark, discriminator="saw"):
+    """The third level model SawShark in polymorphic multiple levels inheritance.
+
+    :ivar age: Required.
+    :vartype age: int
+    :ivar kind: Required. Default value is "shark".
+    :vartype kind: str
+    :ivar shark_type: Required. Default value is "saw".
+    :vartype shark_type: str
+    """
+
+    __mapping__: Dict[str, _Model] = {}
+    shark_type: Literal["saw"] = rest_discriminator(name="sharkType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"saw\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        age: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, shark_type="saw", **kwargs)
 
 
 class Scratch(_Model):

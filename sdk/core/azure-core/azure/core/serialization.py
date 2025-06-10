@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 import base64
 from json import JSONEncoder
-from typing import Union, cast, Any
+from typing import Dict, Union, cast, Any
 from datetime import datetime, date, time, timedelta
 from datetime import timezone
 
@@ -129,8 +129,53 @@ class AzureJSONEncoder(JSONEncoder):
         except AttributeError:
             pass
         return super(AzureJSONEncoder, self).default(o)
+    
+def _is_readonly(p: Any) -> bool:
+    """Check if an attribute is readonly."""
+    try:
+        return p._visibility == ["read"]
+    except AttributeError:
+        return False
+    
+def _as_attribute_dict_value(v: Any, *, exclude_readonly: bool = False) -> Any:
+    if v is None or isinstance(v, _Null):
+        return None
+    if isinstance(v, (list, tuple, set)):
+        return type(v)(_as_attribute_dict_value(x, exclude_readonly=exclude_readonly) for x in v)
+    if isinstance(v, dict):
+        return {dk: _as_attribute_dict_value(dv, exclude_readonly=exclude_readonly) for dk, dv in v.items()}
+    # TODO: switch to is_generated_model once pr is merged
+    return as_attribute_dict(v, exclude_readonly=exclude_readonly) if hasattr(v, "as_dict") else v
 
-def as_attribute_dict(obj: Any) -> dict:
+def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, Any]:
     """Convert an object to a dictionary of its attributes."""
-    if not is_generated_model(obj):
+    # if not is_generated_model(obj):
+    #     raise TypeError("Object must be a generated model instance.")
+    if hasattr(obj, "_attribute_map"):
+        # msrest generated model
+        return obj.as_dict(keep_readonly=not exclude_readonly)
+    # now we're a typespec generated model
+    result = {}
+    readonly_props = []
+
+    # create a reverse mapping from rest field name to attribute name
+    rest_to_attr = {}
+    for attr_name, rest_field in obj._attr_to_rest_field.items():
+        rest_to_attr[rest_field._rest_name] = attr_name
+        if exclude_readonly and _is_readonly(rest_field):
+            # if we're excluding readonly properties, we need to track them
+            readonly_props.append(rest_field._rest_name)
+    for k, v in obj.items():
+        if exclude_readonly and k in readonly_props:  # pyright: ignore
+            continue
+        is_multipart_file_input = False
+        try:
+            is_multipart_file_input = next(
+                rf for rf in obj._attr_to_rest_field.values() if rf._rest_name == k
+            )._is_multipart_file_input
+        except StopIteration:
+            pass
+        result[rest_to_attr.get(k, k)] = v if is_multipart_file_input else _as_attribute_dict_value(v, exclude_readonly=exclude_readonly)
+    return result
+
         
