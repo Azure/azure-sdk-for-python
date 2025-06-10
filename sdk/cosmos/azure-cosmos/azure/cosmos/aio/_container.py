@@ -40,7 +40,7 @@ from .._base import (
     _deserialize_throughput,
     _replace_throughput,
     GenerateGuidId,
-    _set_properties_cache
+    _build_properties_cache
 )
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 from .._cosmos_responses import CosmosDict, CosmosList
@@ -94,14 +94,21 @@ class ContainerProxy:
         self._scripts: Optional[ScriptsProxy] = None
         if properties:
             self.client_connection._set_container_properties_cache(self.container_link,
-                                                                   _set_properties_cache(properties))
+                                                                   _build_properties_cache(properties,
+                                                                                           self.container_link))
 
     def __repr__(self) -> str:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
 
-    async def _get_properties(self) -> Dict[str, Any]:
+    async def _get_properties_with_options(self, options: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        kwargs = {}
+        if options and "excludedLocations" in options:
+            kwargs['excluded_locations'] = options['excludedLocations']
+        return await self._get_properties(**kwargs)
+
+    async def _get_properties(self, **kwargs: Any) -> Dict[str, Any]:
         if self.container_link not in self.client_connection._container_properties_cache:
-            await self.read()
+            await self.read(**kwargs)
         return self.client_connection._container_properties_cache[self.container_link]
 
     @property
@@ -140,11 +147,16 @@ class ContainerProxy:
             return _return_undefined_or_empty_partition_key(await self.is_system_key)
         return cast(Union[str, int, float, bool, List[Union[str, int, float, bool]]], partition_key)
 
-    async def _get_epk_range_for_partition_key(self, partition_key_value: PartitionKeyType) -> Range:
-
-        container_properties = await self._get_properties()
+    async def _get_epk_range_for_partition_key(
+            self,
+            partition_key_value: PartitionKeyType,
+            feed_options: Optional[Dict[str, Any]] = None) -> Range:
+        container_properties = await self._get_properties_with_options(feed_options)
         partition_key_definition = container_properties["partitionKey"]
-        partition_key = PartitionKey(path=partition_key_definition["paths"], kind=partition_key_definition["kind"])
+        partition_key = PartitionKey(
+            path=partition_key_definition["paths"],
+            kind=partition_key_definition["kind"],
+            version=partition_key_definition["version"])
 
         return partition_key._get_epk_range_for_partition_key(partition_key_value)
 
@@ -192,7 +204,8 @@ class ContainerProxy:
             request_options["populateQuotaInfo"] = populate_quota_info
         container = await self.client_connection.ReadContainer(self.container_link, options=request_options, **kwargs)
         # Only cache Container Properties that will not change in the lifetime of the container
-        self.client_connection._set_container_properties_cache(self.container_link, _set_properties_cache(container))  # pylint: disable=protected-access, line-too-long
+        self.client_connection._set_container_properties_cache(self.container_link,  # pylint: disable=protected-access
+                                                               _build_properties_cache(container, self.container_link))
         return container
 
     @distributed_trace_async
@@ -273,8 +286,8 @@ class ContainerProxy:
         request_options["disableAutomaticIdGeneration"] = not enable_automatic_id_generation
         if indexing_directive is not None:
             request_options["indexingDirective"] = indexing_directive
-        if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        await self._get_properties_with_options(request_options)
+        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = await self.client_connection.CreateItem(
             database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
@@ -348,8 +361,8 @@ class ContainerProxy:
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
-        if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        await self._get_properties_with_options(request_options)
+        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         return await self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
 
@@ -405,6 +418,7 @@ class ContainerProxy:
             response_hook.clear()
         if self.container_link in self.__get_client_container_caches():
             feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        kwargs["containerProperties"] = self._get_properties_with_options
 
         items = self.client_connection.ReadItems(
             collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs
@@ -509,9 +523,9 @@ class ContainerProxy:
             feed_options["populateIndexMetrics"] = populate_index_metrics
         if enable_scan_in_query is not None:
             feed_options["enableScanInQuery"] = enable_scan_in_query
+        kwargs["containerProperties"] = self._get_properties_with_options
         if partition_key is not None:
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
-            kwargs["containerProperties"] = self._get_properties
         else:
             feed_options["enableCrossPartitionQuery"] = True
         if max_integrated_cache_staleness_in_ms:
@@ -746,16 +760,18 @@ class ContainerProxy:
         elif "start_time" in kwargs:
             change_feed_state_context["startTime"] = kwargs.pop("start_time")
         if "partition_key" in kwargs:
-            partition_key = kwargs.pop("partition_key")
-            change_feed_state_context["partitionKey"] = self._set_partition_key(cast(PartitionKeyType, partition_key))
-            change_feed_state_context["partitionKeyFeedRange"] = self._get_epk_range_for_partition_key(partition_key)
+            partition_key_value = kwargs.pop("partition_key")
+            change_feed_state_context["partitionKey"] = self._set_partition_key(
+                cast(PartitionKeyType, partition_key_value))
+            change_feed_state_context["partitionKeyFeedRange"] = self._get_epk_range_for_partition_key(
+                partition_key_value, feed_options)
         if "feed_range" in kwargs:
             change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
         if "continuation" in feed_options:
             change_feed_state_context["continuation"] = feed_options.pop("continuation")
 
         feed_options["changeFeedStateContext"] = change_feed_state_context
-        feed_options["containerProperties"] = self._get_properties()
+        feed_options["containerProperties"] = self._get_properties_with_options(feed_options)
 
         response_hook = kwargs.pop("response_hook", None)
         if hasattr(response_hook, "clear"):
@@ -837,8 +853,8 @@ class ContainerProxy:
             kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
-        if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        await self._get_properties_with_options(request_options)
+        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = await self.client_connection.UpsertItem(
             database_or_container_link=self.container_link,
@@ -920,8 +936,8 @@ class ContainerProxy:
             kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
-        if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        await self._get_properties_with_options(request_options)
+        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = await self.client_connection.ReplaceItem(
             document_link=item_link, new_document=body, options=request_options, **kwargs
@@ -1004,8 +1020,8 @@ class ContainerProxy:
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         if filter_predicate is not None:
             request_options["filterPredicate"] = filter_predicate
-        if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        await self._get_properties_with_options(request_options)
+        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         item_link = self._get_document_link(item)
         result = await self.client_connection.PatchItem(
@@ -1076,8 +1092,8 @@ class ContainerProxy:
             kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
-        if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        await self._get_properties_with_options(request_options)
+        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         document_link = self._get_document_link(item)
         await self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
@@ -1337,8 +1353,8 @@ class ContainerProxy:
         request_options = _build_options(kwargs)
         # regardless if partition key is valid we set it as invalid partition keys are set to a default empty value
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
-        if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        await self._get_properties_with_options(request_options)
+        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         await self.client_connection.DeleteAllItemsByPartitionKey(collection_link=self.container_link,
                                                                   options=request_options, **kwargs)
@@ -1405,8 +1421,8 @@ class ContainerProxy:
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         request_options["disableAutomaticIdGeneration"] = True
-        if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        await self._get_properties_with_options(request_options)
+        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         return await self.client_connection.Batch(
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)

@@ -14,11 +14,12 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-agents azure-identity
+    pip install azure-ai-projects azure-ai-agents azure-identity
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - the Azure AI Agents endpoint.
-    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+                          page of your Azure AI Foundry portal.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
     3) AZURE_BING_CONNECTION_ID - The connection id of the Bing connection, as found in the "Connected resources" tab
        in your Azure AI Foundry project.
@@ -27,7 +28,7 @@ USAGE:
 import os
 from typing import Any
 from azure.identity import DefaultAzureCredential
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import (
     MessageDeltaChunk,
     RunStep,
@@ -78,12 +79,13 @@ class MyEventHandler(AgentEventHandler):
         print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
 
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
 
     bing_connection_id = os.environ["AZURE_BING_CONNECTION_ID"]
     print(f"Bing Connection ID: {bing_connection_id}")

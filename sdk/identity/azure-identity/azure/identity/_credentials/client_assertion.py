@@ -66,6 +66,7 @@ class ClientAssertionCredential(GetTokenMixin):
         self._client.__exit__(*args)
 
     def close(self) -> None:
+        """Close the credential's underlying HTTP client and release resources."""
         self.__exit__()
 
     def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:
