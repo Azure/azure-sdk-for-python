@@ -26,12 +26,11 @@ class CallAutomationHMACCredentialsPolicy(SansIOHTTPPolicy):
 
     def __init__(
         self,
-        host,  # type: str
-        acs_url,  # type: str
-        access_key,  # type: Union[str, AzureKeyCredential]
-        decode_url=False,  # type: bool
-    ):
-        # type: (...) -> None
+        host: str,
+        acs_url: str,
+        access_key:  Union[str, AzureKeyCredential],
+        decode_url: bool = False,
+    ) -> None:
         super(CallAutomationHMACCredentialsPolicy, self).__init__()
 
         if host.startswith("https://"):
@@ -44,9 +43,7 @@ class CallAutomationHMACCredentialsPolicy(SansIOHTTPPolicy):
         self._decode_url = decode_url
         self._acs_url = acs_url
 
-    def _compute_hmac(
-        self, value  # type: str
-    ):
+    def _compute_hmac(self, value: str) -> str:
         if isinstance(self._access_key, AzureKeyCredential):
             decoded_secret = base64.b64decode(self._access_key.key)
         else:
@@ -66,33 +63,6 @@ class CallAutomationHMACCredentialsPolicy(SansIOHTTPPolicy):
 
         if parsed_url.query:
             query_url += "?" + parsed_url.query
-
-        # Need URL() to get a correct encoded key value, from "%3A" to ":", when transport is in type AioHttpTransport.
-        # There's a similar scenario in azure-storage-blob and azure-appconfiguration, the check logic is from there.
-        try:
-            from yarl import URL
-            from azure.core.pipeline.transport import (  # pylint:disable=non-abstract-transport-import
-                AioHttpTransport,
-            )
-
-            if (
-                isinstance(request.context.transport, AioHttpTransport)
-                or isinstance(
-                    getattr(request.context.transport, "_transport", None),
-                    AioHttpTransport,
-                )
-                or isinstance(
-                    getattr(
-                        getattr(request.context.transport, "_transport", None),
-                        "_transport",
-                        None,
-                    ),
-                    AioHttpTransport,
-                )
-            ):
-                query_url = str(URL(query_url))
-        except (ImportError, TypeError):
-            pass
 
         if self._decode_url:
             query_url = urllib.parse.unquote(query_url)

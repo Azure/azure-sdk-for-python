@@ -26,11 +26,10 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
 
     def __init__(
         self,
-        host,  # type: str
-        access_key,  # type: Union[str, AzureKeyCredential]
-        decode_url=False,  # type: bool
-    ):
-        # type: (...) -> None
+        host: str,
+        access_key: Union[str, AzureKeyCredential],
+        decode_url: bool = False,
+    ) -> None:
         super(HMACCredentialsPolicy, self).__init__()
 
         if host.startswith("https://"):
@@ -54,16 +53,8 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
 
         return base64.b64encode(digest).decode("utf-8")
 
-    def _sign_request(self, request):
-        verb = request.http_request.method.upper()
-
-        # Get the path and query from url, which looks like https://host/path/query
-        parsed_url: ParseResult = urlparse(request.http_request.url)
-        query_url = parsed_url.path
-
-        if parsed_url.query:
-            query_url += "?" + parsed_url.query
-
+    def _encode_query_url(self, query_url, request):
+        print("from HMACCredentialsPolicy")
         # Need URL() to get a correct encoded key value, from "%3A" to ":", when transport is in type AioHttpTransport.
         # There's a similar scenario in azure-storage-blob and azure-appconfiguration, the check logic is from there.
         try:
@@ -90,6 +81,19 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
                 query_url = str(URL(query_url))
         except (ImportError, TypeError):
             pass
+        return query_url
+
+    def _sign_request(self, request):
+        verb = request.http_request.method.upper()
+
+        # Get the path and query from url, which looks like https://host/path/query
+        parsed_url: ParseResult = urlparse(request.http_request.url)
+        query_url = parsed_url.path
+
+        if parsed_url.query:
+            query_url += "?" + parsed_url.query
+
+        query_url = self._encode_query_url(query_url, request)
 
         if self._decode_url:
             query_url = urllib.parse.unquote(query_url)
@@ -102,6 +106,7 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
         content_digest = hashlib.sha256((request.http_request.body.encode("utf-8"))).digest()
         content_hash = base64.b64encode(content_digest).decode("utf-8")
 
+        print(f"query_url  {query_url}")
         string_to_sign = verb + "\n" + query_url + "\n" + utc_now + ";" + self._host + ";" + content_hash
 
         signature = self._compute_hmac(string_to_sign)
