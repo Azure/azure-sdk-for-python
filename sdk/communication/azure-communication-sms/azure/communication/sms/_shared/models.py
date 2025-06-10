@@ -154,7 +154,7 @@ class PhoneNumberIdentifier:
         """
 
         raw_id: Optional[str] = kwargs.get("raw_id")
-        asserted_id: Optional[str] = None
+        asserted_id: Optional[str] = ""
         is_anonymous: Optional[bool] = False
 
         if raw_id is not None:
