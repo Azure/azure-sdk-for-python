@@ -15,6 +15,7 @@ from .token_exchange import TokenExchangeClient
 
 class CommunicationTokenCredential(object):
     """Credential type used for authenticating to an Azure Communication service.
+
     :param str token: The token used to authenticate to an Azure Communication service.
     :keyword token_refresher: The sync token refresher to provide capacity to fetch a fresh token.
      The returned token must be valid (expiration date must be in the future).
@@ -29,6 +30,7 @@ class CommunicationTokenCredential(object):
     :keyword token_credential: The credential to use for token exchange.
     :paramtype token_credential: ~azure.core.credentials.TokenCredential
     :keyword list[str] scopes: The scopes to request during the token exchange.
+
     :raises: TypeError if paramater 'token' is not a string
     :raises: ValueError if the 'proactive_refresh' is enabled without providing the 'token_refresher' callable.
     """
@@ -58,8 +60,7 @@ class CommunicationTokenCredential(object):
                 f"Missing: {', '.join(missing_fields)}")
 
         if self._resource_endpoint and self._token_credential and self._scopes:
-            self._token_exchange_client = TokenExchangeClient(self._resource_endpoint, self._token_credential,
-                                                              self._scopes)
+            self._token_exchange_client = TokenExchangeClient(self._resource_endpoint, self._token_credential, self._scopes)
             self._token_refresher = lambda: self._token_exchange_client.exchange_entra_token()
             self._proactive_refresh = kwargs.pop("proactive_refresh", False)
             self._token = self._token_exchange_client.exchange_entra_token()

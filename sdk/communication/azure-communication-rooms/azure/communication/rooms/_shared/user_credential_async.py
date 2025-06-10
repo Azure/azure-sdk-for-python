@@ -18,6 +18,7 @@ import asyncio
 
 class CommunicationTokenCredential(object):
     """Credential type used for authenticating to an Azure Communication service.
+
     :param str token: The token used to authenticate to an Azure Communication service.
     :keyword token_refresher: The async token refresher to provide capacity to fetch a fresh token.
      The returned token must be valid (expiration date must be in the future).
@@ -32,6 +33,7 @@ class CommunicationTokenCredential(object):
     :keyword token_credential: The credential to use for token exchange.
     :paramtype token_credential: ~azure.core.credentials.TokenCredential
     :keyword list[str] scopes: The scopes to request during the token exchange.
+
     :raises: TypeError if paramater 'token' is not a string
     :raises: ValueError if the 'proactive_refresh' is enabled without providing the 'token_refresher' function.
     """
