@@ -171,19 +171,18 @@ def receive_trace_context_manager(
             yield
     elif TRACER is not None:
         if settings.tracing_enabled():
+            attributes = get_span_attributes(TraceOperationTypes.RECEIVE, receiver, message_count=len(links))
             # Depending on the azure-core version, start_as_current_span may or may not support start_time as a
             # keyword argument. Handle both cases.
             try:
                 with TRACER.start_as_current_span(  # type: ignore[call-arg]  # pylint: disable=unexpected-keyword-arg
                     span_name, kind=SpanKind.CLIENT, start_time=start_time, links=links
                 ) as span:
-                    attributes = get_span_attributes(TraceOperationTypes.RECEIVE, receiver, message_count=len(links))
                     span.set_attributes(attributes)
                     yield
             except TypeError:
                 # If start_time is not supported, just call without it.
                 with TRACER.start_as_current_span(span_name, kind=SpanKind.CLIENT, links=links) as span:
-                    attributes = get_span_attributes(TraceOperationTypes.RECEIVE, receiver, message_count=len(links))
                     span.set_attributes(attributes)
                     yield
         else:
@@ -221,6 +220,8 @@ def settle_trace_context_manager(
                 yield
         else:
             yield
+    else:
+        yield
 
 
 def _update_message_with_trace_context(message, amqp_transport, context):
