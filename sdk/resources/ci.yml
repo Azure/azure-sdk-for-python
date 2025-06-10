@@ -39,3 +39,5 @@ extends:
       safeName: azuremgmtresourcedeploymentstacks
     - name: azure-mgmt-resource-templatespecs
       safeName: azuremgmtresourcetemplatespecs
+    - name: azure-mgmt-resource-deploymentscripts
+      safeName: azuremgmtresourcedeploymentscripts
