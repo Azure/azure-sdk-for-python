@@ -99,7 +99,6 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
 
         assert session_token.global_lsn >= 360
         assert '2' in pk_range_id
-        self.database.delete_container(container.id)
         await self.database.delete_container(container.id)
 
     async def test_latest_session_token_hpk(self):
