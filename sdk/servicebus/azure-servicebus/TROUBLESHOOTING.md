@@ -91,9 +91,9 @@ See the [Troubleshooting Authentication issues](#troubleshooting-authentication-
 
 - **OperationTimeoutError:** This indicates that the service did not respond to an operation within the expected amount of time. This may have been caused by a transient network issue or service problem. The service may or may not have successfully completed the request; the status is not known. It is recommended to attempt to verify the current state and retry if necessary.
 
-- **ServiceBusCommunicationError:** Client isn't able to establish a connection to Service Bus. Make sure the supplied host name is correct and the host is reachable. If your code runs in an environment with a firewall/proxy, ensure that the traffic to the Service Bus domain/IP address and ports isn't blocked. For details on which ports need to be open, see the [Azure Service Bus FAQ: What ports do I need to open on the firewall?](https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-faq#what-ports-do-i-need-to-open-on-the-firewall--).
+- **ServiceBusCommunicationError:** Client isn't able to establish a connection to Service Bus. Make sure the supplied host name is correct and the host is reachable. If your code runs in an environment with a firewall/proxy, ensure that the traffic to the Service Bus domain/IP address and ports isn't blocked. For details on which ports need to be open, see the [Azure Service Bus FAQ: What ports do I need to open on the firewall?](https://learn.microsoft.com/azure/service-bus-messaging/service-bus-faq#what-ports-do-i-need-to-open-on-the-firewall--).
 
-See the [Troubleshooting Connectivity issues](#troubleshooting-connectivity-issues) section to troubleshoot connection and timeout issues. More information on AMQP errors in Azure Service Bus can be found [here](https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-amqp-troubleshoot).
+See the [Troubleshooting Connectivity issues](#troubleshooting-connectivity-issues) section to troubleshoot connection and timeout issues. More information on AMQP errors in Azure Service Bus can be found [here](https://learn.microsoft.com/azure/service-bus-messaging/service-bus-amqp-troubleshoot).
 
 #### Message and Session Handling Exceptions
 
@@ -228,7 +228,7 @@ To troubleshoot:
 
 - Check the firewall and port permissions in your hosting environment and that the AMQP ports 5671 and 5672 are open and that the endpoint is allowed through the firewall.
 
-- Try using the Web Socket transport option, which connects using port 443. This can be done by passing the [`transport_type=TransportType.AmqpOverWebsocket`](https://learn.microsoft.com/en-us/python/api/azure-servicebus/azure.servicebus.transporttype?view=azure-python) to the client.
+- Try using the Web Socket transport option, which connects using port 443. This can be done by passing the [`transport_type=TransportType.AmqpOverWebsocket`](https://learn.microsoft.com/python/api/azure-servicebus/azure.servicebus.transporttype?view=azure-python) to the client.
 
 - See if your network is blocking specific IP addresses. For details, see: [What IP addresses do I need to allow?](https://learn.microsoft.com/azure/service-bus-messaging/service-bus-faq#what-ip-addresses-do-i-need-to-add-to-allowlist-).
 
@@ -246,7 +246,7 @@ Previous generations of the Service Bus clients allowed for some behavior to be 
 
 #### "TransportType.AmqpOverWebSocket" Alternative
 
-To configure web socket use, pass the [`transport_type=TransportType.AmqpOverWebsocket`](https://learn.microsoft.com/en-us/python/api/azure-servicebus/azure.servicebus.transporttype?view=azure-python) to the ServiceBusClient.
+To configure web socket use, pass the [`transport_type=TransportType.AmqpOverWebsocket`](https://learn.microsoft.com/python/api/azure-servicebus/azure.servicebus.transporttype?view=azure-python) to the ServiceBusClient.
 
 #### Azure Identity Authentication Alternative
 
