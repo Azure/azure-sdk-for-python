@@ -51,12 +51,11 @@ def _done_callback(fut, task):
         fut.cancel()
         return
 
-    exc = task.exception()  # pylint: disable=do-not-use-logging-exception
-    if exc is not None:
+    try:
+        result = task.result()
+        fut.set_result(result)
+    except Exception as exc:
         fut.set_exception(exc)
-        return
-
-    fut.set_result(task.result())
 
 
 def _cache_invalidate(wrapped, typed, *args, **kwargs):
