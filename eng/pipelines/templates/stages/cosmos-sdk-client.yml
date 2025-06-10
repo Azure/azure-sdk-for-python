@@ -30,7 +30,7 @@ extends:
           GenerateVMJobs: true
       - ${{ else }}:
         - Name: Python_cosmos_emulator
-          Path: sdk/cosmos/cosmos-emulator-matrix_full.json
+          Path: sdk/cosmos/cosmos-emulator-split-matrix.json
           Selection: all
           GenerateVMJobs: true
     Artifacts: ${{ parameters.Artifacts }}
