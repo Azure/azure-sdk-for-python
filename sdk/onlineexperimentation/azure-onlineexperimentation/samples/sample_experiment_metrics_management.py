@@ -69,7 +69,7 @@ try:
         etag=None,
     )
 
-    print(f"Experiment metric {create_response.id} created, etag: {create_response.e_tag}.")
+    print(f"Experiment metric {create_response.id} created, etag: {create_response.etag}.")
 
     # [Step 4] Deactivate the experiment metric and update the description
     updated_metric = {
@@ -80,15 +80,15 @@ try:
     update_response = client.create_or_update_metric(
         experiment_metric_id=example_metric_id,
         resource=updated_metric,
-        etag=create_response.e_tag,  # Ensures If-Match header is sent
+        etag=create_response.etag,  # Ensures If-Match header is sent
         match_condition=None,  # Not specifying match_condition as we're using etag
     )
 
-    print(f"Updated metric: {update_response.id}, etag: {update_response.e_tag}.")
+    print(f"Updated metric: {update_response.id}, etag: {update_response.etag}.")
 
     # [Step 5] Delete the experiment metric
     client.delete_metric(
-        experiment_metric_id=example_metric_id, etag=update_response.e_tag  # Ensures If-Match header is sent
+        experiment_metric_id=example_metric_id, etag=update_response.etag  # Ensures If-Match header is sent
     )
 
     print(f"Deleted metric: {example_metric_id}.")
