@@ -1,5 +1,32 @@
 # Release History
 
+## 1.2.0b1 (2025-07-21)
+
+### Features Added
+
+  - Client `DashboardManagementClient` added operation group `integration_fabrics`
+  - Client `DashboardManagementClient` added operation group `dashboards`
+  - Client `DashboardManagementClient` added operation group `managed_dashboards`
+  - Model `GrafanaConfigurations` added property `snapshots`
+  - Model `GrafanaConfigurations` added property `users`
+  - Model `GrafanaConfigurations` added property `security`
+  - Model `GrafanaConfigurations` added property `unified_alerting_screenshots`
+  - Added model `IntegrationFabric`
+  - Added model `IntegrationFabricListResponse`
+  - Added model `IntegrationFabricProperties`
+  - Added model `IntegrationFabricPropertiesUpdateParameters`
+  - Added model `IntegrationFabricUpdateParameters`
+  - Added model `ManagedDashboard`
+  - Added model `ManagedDashboardListResponse`
+  - Added model `ManagedDashboardUpdateParameters`
+  - Added model `Security`
+  - Added model `Snapshots`
+  - Added model `UnifiedAlertingScreenshots`
+  - Added model `Users`
+  - Added model `DashboardsOperations`
+  - Added model `IntegrationFabricsOperations`
+  - Added model `ManagedDashboardsOperations`
+
 ## 1.1.0 (2023-11-20)
 
 ### Features Added
