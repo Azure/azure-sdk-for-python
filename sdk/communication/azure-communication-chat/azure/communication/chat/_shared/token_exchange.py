@@ -14,7 +14,6 @@ from .entra_token_guard_policy import EntraTokenGuardPolicy, AsyncEntraTokenGuar
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.credentials import TokenCredential
 from typing import List, Optional
-from datetime import datetime, timezone
 from dateutil import parser as dateutil_parser
 
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
@@ -160,7 +159,9 @@ class _TokenExchangeUtils:
                     expires_on_epoch = int(expires_on_dt.timestamp())
                     return expires_on_epoch
                 except Exception as ex:
-                    expires_on_epoch = int(expires_on)
+                    raise HttpResponseError(
+                    message="Unknown format for expires_on field in access token response",
+                    response=response.http_response)
             else:
                 raise HttpResponseError(
                     message="Missing expires_on field in access token response",
