@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from azure.core.pipeline.policies import HTTPPolicy, AsyncHTTPPolicy
 from azure.core.pipeline import PipelineRequest
 
-from dateutil import parser as dateutil_parser
+from dateutil import parser as dateutil_parser # type: ignore
 
 class EntraTokenGuardPolicy(HTTPPolicy):
     """A pipeline policy that caches the response for a given Entra token and reuses it if valid."""

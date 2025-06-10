@@ -7,7 +7,7 @@
 
 from asyncio import Condition, Lock, Event
 from datetime import timedelta
-from typing import Any
+from typing import Any, Optional
 import sys
 from .utils import get_current_utc_as_int
 from .utils import create_access_token
@@ -33,7 +33,7 @@ class CommunicationTokenCredential(object):
     :keyword token_credential: The credential to use for token exchange.
     :paramtype token_credential: ~azure.core.credentials.TokenCredential
     :keyword list[str] scopes: The scopes to request during the token exchange.
-    
+
     :raises: TypeError if paramater 'token' is not a string
     :raises: ValueError if the 'proactive_refresh' is enabled without providing the 'token_refresher' function.
     """
@@ -41,7 +41,7 @@ class CommunicationTokenCredential(object):
     _ON_DEMAND_REFRESHING_INTERVAL_MINUTES = 2
     _DEFAULT_AUTOREFRESH_INTERVAL_MINUTES = 10
 
-    def __init__(self, token: str = None, **kwargs: Any):
+    def __init__(self, token: Optional[str] = None, **kwargs: Any):
         self._resource_endpoint = kwargs.pop("resource_endpoint", None)
         self._token_credential = kwargs.pop("token_credential", None)
         self._scopes = kwargs.pop("scopes", None)

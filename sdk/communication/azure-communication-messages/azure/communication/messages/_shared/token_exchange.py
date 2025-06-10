@@ -14,7 +14,7 @@ from .entra_token_guard_policy import EntraTokenGuardPolicy, AsyncEntraTokenGuar
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.credentials import TokenCredential
 from typing import List, Optional
-from dateutil import parser as dateutil_parser
+from dateutil import parser as dateutil_parser  # type: ignore
 
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.pipeline import AsyncPipeline, PipelineResponse

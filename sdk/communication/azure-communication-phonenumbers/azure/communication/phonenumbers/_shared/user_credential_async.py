@@ -7,7 +7,7 @@
 
 from asyncio import Condition, Lock, Event
 from datetime import timedelta
-from typing import Any
+from typing import Any, Optional
 import sys
 from .utils import get_current_utc_as_int
 from .utils import create_access_token
@@ -41,7 +41,7 @@ class CommunicationTokenCredential(object):
     _ON_DEMAND_REFRESHING_INTERVAL_MINUTES = 2
     _DEFAULT_AUTOREFRESH_INTERVAL_MINUTES = 10
 
-    def __init__(self, token: str = None, **kwargs: Any):
+    def __init__(self, token: Optional[str] = None, **kwargs: Any):
         self._resource_endpoint = kwargs.pop("resource_endpoint", None)
         self._token_credential = kwargs.pop("token_credential", None)
         self._scopes = kwargs.pop("scopes", None)
