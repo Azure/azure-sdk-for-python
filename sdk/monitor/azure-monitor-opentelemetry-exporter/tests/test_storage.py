@@ -79,16 +79,10 @@ class TestLocalFileBlob(unittest.TestCase):
 
 # pylint: disable=protected-access
 class TestLocalFileStorage(unittest.TestCase):
-    @classmethod
-    def setup_class(cls):
-        os.makedirs(TEST_FOLDER, exist_ok=True)
 
     @classmethod
     def tearDownClass(cls):
         shutil.rmtree(TEST_FOLDER, True)
-
-    def tearDown(self):
-        clean_folder(TEST_FOLDER)
 
     def test_get_nothing(self):
         with LocalFileStorage(os.path.join(TEST_FOLDER, "test", "a")) as stor:
@@ -134,7 +128,7 @@ class TestLocalFileStorage(unittest.TestCase):
 
     def test_check_storage_size_full(self):
         test_input = (1, 2, 3)
-        with LocalFileStorage(os.path.join(TEST_FOLDER, "asd2")) as stor:
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "asd2"), 1) as stor:
             stor.put(test_input)
             self.assertFalse(stor._check_storage_size())
 

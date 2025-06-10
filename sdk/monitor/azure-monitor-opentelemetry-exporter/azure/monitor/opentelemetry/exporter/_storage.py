@@ -203,8 +203,6 @@ class LocalFileStorage:
             lease_period = self._lease_period
         return blob.put(data, lease_period=lease_period)
 
-    # 
-    # to ensure secure access to the storage folder.
     def _check_and_set_folder_permissions(self):
         """
         Validate and set folder permissions where the telemetry data will be stored.

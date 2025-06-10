@@ -57,7 +57,8 @@ class TestAzureLogExporter(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        os.environ.clear()
+        os.environ.pop("APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL", None)
+        os.environ.pop("APPINSIGHTS_INSTRUMENTATIONKEY", None)
         os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = "1234abcd-5678-4efa-8abc-1234567890ab"
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         cls._exporter = cls._exporter_class()
