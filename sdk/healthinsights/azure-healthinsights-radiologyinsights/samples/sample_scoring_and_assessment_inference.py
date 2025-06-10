@@ -9,7 +9,11 @@ DESCRIPTION:
 The sample_scoring_and_assessment_inference.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize a RadiologyInsightsClient, build a Radiology Insights request with the sample document,
 submit it to the client, RadiologyInsightsClient, and display 
-  
+- the Scoring and Assessment Inference
+- the Category
+- the Category Description
+- the value as a Single Value or
+- the value a Range Value 
 
 
 USAGE:
@@ -145,12 +149,12 @@ def radiology_insights_sync() -> None:
             resource=patient_data,
         )
         radiology_insights_result = poller.result()
-        display_quality_measure(radiology_insights_result)
+        display_scoring_and_assessment(radiology_insights_result)
     except Exception as ex:
         raise ex
 
 
-def display_quality_measure(radiology_insights_result):
+def display_scoring_and_assessment(radiology_insights_result):
     # [START display_scoring_and_assessment]
     for patient_result in radiology_insights_result.patient_results:
         counter = 0

@@ -9,7 +9,10 @@ DESCRIPTION:
 The sample_guidance_inference_async.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize an asynchronous RadiologyInsightsClient, build a Radiology Insights request with the sample document,
 submit it to the client, RadiologyInsightsClient, and display 
-  
+- the Guidance Identifier
+- the Guidance Missing Information
+- the Guidance Present Information
+- the Guidance Ranking
 
 
 USAGE:
