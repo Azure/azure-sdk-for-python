@@ -1,13 +1,23 @@
+
 {
     "servers": {
-        "azure-sdk-python-mcp": {
+        "typespec-python": {
             "command": "uv",
             "args": [
                 "--directory",
-                "${workspaceFolder}/tools/mcp/azure-sdk-python-mcp/",
+                "${workspaceFolder}/tools/mcp/typespec/",
                 "run",
                 "main.py"
             ],
-        }
+        },
+        "azure-sdk-validation": {
+            "command": "uv",
+            "args": [
+                "--directory",
+                "${workspaceFolder}/tools/mcp/validation/",
+                "run",
+                "main.py"
+            ]
+        },
     }
-}
+  }
