@@ -136,3 +136,12 @@ Copilot will guide you through these steps. It will inform you of expected durat
 *   **Your action:** Copy the PR URL and use the `azure-rest-api-specs` agent as instructed.
 
 By following this guide and interacting effectively with Copilot, you can significantly accelerate the SDK generation process while ensuring adherence to Azure SDK standards.
+
+
+### Checking the health status of a library
+
+To get a quick glance of a library's health and whether it can pass CI checks to release the package, you can ask VS Code Copilot to check its health status. For example, while in `Agent` mode, you can say:
+
+`What is the health status of azure-ai-projects?`
+
+This will report the library's status from [aka.ms/azsdk/python/health](https://www.aka.ms/azsdk/python/health) and help identify any blockers for release.

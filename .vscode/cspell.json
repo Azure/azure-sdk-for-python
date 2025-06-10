@@ -1087,6 +1087,7 @@
         "otlp",
         "speced",
         "pkgutils",
+        "psutil",
         "psycopg",
         "uninstrument",
         "uninstrumented"
@@ -1971,7 +1972,27 @@
         "pericholecystic",
         "craniocaudally",
         "angiomyolipomas",
-        "Omnipaque"
+        "Omnipaque",
+        "acrad",
+        "MEDNAX",
+        "BIRADS",
+        "FRAX",
+        "ASCVD",
+        "TYRER",
+        "CUSICK",
+        "AGATSTON",
+        "CEUS",
+        "HNPCC",
+        "KELLGREN",
+        "TONNIS",
+        "Fleischner",
+        "CTCHWO",
+        "hilar",
+        "docid",
+        "encounterid",
+        "authorid",
+        "USTHY",
+        "assesment"
       ]
     },
     {
