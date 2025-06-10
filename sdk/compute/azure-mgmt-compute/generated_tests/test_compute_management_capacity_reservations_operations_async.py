@@ -54,7 +54,7 @@ class TestComputeManagementCapacityReservationsOperationsAsync(AzureMgmtRecorded
                     "virtualMachinesAssociated": [{"id": "str"}],
                     "zones": ["str"],
                 },
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -91,7 +91,7 @@ class TestComputeManagementCapacityReservationsOperationsAsync(AzureMgmtRecorded
                     "timeCreated": "2020-02-20 00:00:00",
                     "virtualMachinesAssociated": [{"id": "str"}],
                 },
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -106,7 +106,7 @@ class TestComputeManagementCapacityReservationsOperationsAsync(AzureMgmtRecorded
                 resource_group_name=resource_group.name,
                 capacity_reservation_group_name="str",
                 capacity_reservation_name="str",
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -120,7 +120,7 @@ class TestComputeManagementCapacityReservationsOperationsAsync(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
             capacity_reservation_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -132,7 +132,7 @@ class TestComputeManagementCapacityReservationsOperationsAsync(AzureMgmtRecorded
         response = self.client.capacity_reservations.list_by_capacity_reservation_group(
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

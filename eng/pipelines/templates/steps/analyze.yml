@@ -134,8 +134,7 @@ steps:
 
   - template: /eng/pipelines/templates/steps/update_snippet.yml
     parameters:
-      ScanPath: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
-      AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
+      PackageInfoFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
 
   - template: ../steps/run_breaking_changes.yml
     parameters:

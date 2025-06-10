@@ -122,7 +122,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
                 resource = tracer_provider.resource  # type: ignore
                 envelopes.append(self._get_otel_resource_envelope(resource))
             except AttributeError as e:
-                _logger.exception("Failed to derive Resource from Tracer Provider: %s", e)
+                _logger.exception("Failed to derive Resource from Tracer Provider: %s", e)  # pylint: disable=C4769
         for span in spans:
             envelopes.append(self._span_to_envelope(span))
             envelopes.extend(self._span_events_to_envelopes(span))
@@ -131,7 +131,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
             self._handle_transmit_from_storage(envelopes, result)
             return _get_trace_export_result(result)
         except Exception:  # pylint: disable=broad-except
-            _logger.exception("Exception occurred while exporting the data.")
+            _logger.exception("Exception occurred while exporting the data.")  # pylint: disable=C4769
             return _get_trace_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 
     def shutdown(self) -> None:
@@ -221,6 +221,8 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
     envelope.tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(span.context.trace_id)
     if SpanAttributes.ENDUSER_ID in span.attributes:
         envelope.tags[ContextTagKeys.AI_USER_ID] = span.attributes[SpanAttributes.ENDUSER_ID]
+    if _utils._is_synthetic_source(span.attributes):
+        envelope.tags[ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE] = "True"
     if span.parent and span.parent.span_id:
         envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(span.parent.span_id)
     if span.kind in (SpanKind.CONSUMER, SpanKind.SERVER):
@@ -348,7 +350,6 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     data.data = url
                 target, path = trace_utils._get_target_and_path_for_http_dependency(
                     span.attributes,
-                    target,  # type: ignore
                     url,
                 )
                 # http specific logic for name

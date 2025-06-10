@@ -1,0 +1,47 @@
+{
+  "parameters": {
+    "subscriptionId": "34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
+    "resourceGroupName": "testrg123",
+    "workspaceName": "workspaces123",
+    "computeName": "compute123",
+    "api-version": "2025-01-01-preview",
+    "customServices": [
+      {
+        "name": "rstudio-workbench",
+        "image": {
+          "type": "docker",
+          "reference": "ghcr.io/azure/rstudio-workbench:latest"
+        },
+        "environmentVariables": {
+          "RSP_LICENSE": {
+            "type": "local",
+            "value": "XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX"
+          }
+        },
+        "docker": {
+          "privileged": true
+        },
+        "endpoints": [
+          {
+            "protocol": "http",
+            "name": "connect",
+            "target": 8787,
+            "published": 4444,
+            "hostIp": null
+          }
+        ],
+        "volumes": [
+          {
+            "type": "bind",
+            "source": "/mnt/azureuser/",
+            "target": "/home/testuser/",
+            "readOnly": true
+          }
+        ]
+      }
+    ]
+  },
+  "responses": {
+    "200": {}
+  }
+}

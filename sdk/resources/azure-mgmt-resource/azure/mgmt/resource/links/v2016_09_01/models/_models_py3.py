@@ -1,5 +1,4 @@
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -9,10 +8,9 @@
 
 from typing import Any, List, Optional, TYPE_CHECKING
 
-from ... import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -153,9 +151,9 @@ class ResourceLink(_serialization.Model):
         :paramtype properties: ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkProperties
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[JSON] = None
         self.properties = properties
 
 
@@ -219,7 +217,7 @@ class ResourceLinkProperties(_serialization.Model):
         :paramtype notes: str
         """
         super().__init__(**kwargs)
-        self.source_id = None
+        self.source_id: Optional[str] = None
         self.target_id = target_id
         self.notes = notes
 
@@ -254,4 +252,4 @@ class ResourceLinkResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None

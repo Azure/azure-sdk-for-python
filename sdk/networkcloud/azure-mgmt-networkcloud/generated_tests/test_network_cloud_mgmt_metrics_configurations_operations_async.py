@@ -21,11 +21,11 @@ class TestNetworkCloudMgmtMetricsConfigurationsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_cluster(self, resource_group):
+    async def test_metrics_configurations_list_by_cluster(self, resource_group):
         response = self.client.metrics_configurations.list_by_cluster(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-10-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestNetworkCloudMgmtMetricsConfigurationsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_metrics_configurations_get(self, resource_group):
         response = await self.client.metrics_configurations.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
             metrics_configuration_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestNetworkCloudMgmtMetricsConfigurationsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_metrics_configurations_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.metrics_configurations.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -74,7 +74,7 @@ class TestNetworkCloudMgmtMetricsConfigurationsOperationsAsync(AzureMgmtRecorded
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-06-01-preview",
+                api_version="2024-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -83,13 +83,13 @@ class TestNetworkCloudMgmtMetricsConfigurationsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_metrics_configurations_begin_delete(self, resource_group):
         response = await (
             await self.client.metrics_configurations.begin_delete(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 metrics_configuration_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2024-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -98,13 +98,13 @@ class TestNetworkCloudMgmtMetricsConfigurationsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_metrics_configurations_begin_update(self, resource_group):
         response = await (
             await self.client.metrics_configurations.begin_update(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 metrics_configuration_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2024-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

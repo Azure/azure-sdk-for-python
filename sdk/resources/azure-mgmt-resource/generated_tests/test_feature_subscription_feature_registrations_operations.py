@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.resource import FeatureClient
+from azure.mgmt.resource.features.v2021_07_01 import FeatureClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -20,7 +20,7 @@ class TestFeatureSubscriptionFeatureRegistrationsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_subscription_feature_registrations_get(self, resource_group):
         response = self.client.subscription_feature_registrations.get(
             provider_namespace="str",
             feature_name="str",
@@ -32,7 +32,7 @@ class TestFeatureSubscriptionFeatureRegistrationsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_subscription_feature_registrations_create_or_update(self, resource_group):
         response = self.client.subscription_feature_registrations.create_or_update(
             provider_namespace="str",
             feature_name="str",
@@ -44,7 +44,7 @@ class TestFeatureSubscriptionFeatureRegistrationsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_subscription_feature_registrations_delete(self, resource_group):
         response = self.client.subscription_feature_registrations.delete(
             provider_namespace="str",
             feature_name="str",
@@ -56,7 +56,7 @@ class TestFeatureSubscriptionFeatureRegistrationsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_subscription(self, resource_group):
+    def test_subscription_feature_registrations_list_by_subscription(self, resource_group):
         response = self.client.subscription_feature_registrations.list_by_subscription(
             provider_namespace="str",
             api_version="2021-07-01",
@@ -67,7 +67,7 @@ class TestFeatureSubscriptionFeatureRegistrationsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_all_by_subscription(self, resource_group):
+    def test_subscription_feature_registrations_list_all_by_subscription(self, resource_group):
         response = self.client.subscription_feature_registrations.list_all_by_subscription(
             api_version="2021-07-01",
         )

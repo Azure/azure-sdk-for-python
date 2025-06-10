@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.resource.aio import FeatureClient
+from azure.mgmt.resource.features.v2021_07_01.aio import FeatureClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -21,7 +21,7 @@ class TestFeatureFeaturesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_all(self, resource_group):
+    async def test_features_list_all(self, resource_group):
         response = self.client.features.list_all(
             api_version="2021-07-01",
         )
@@ -31,7 +31,7 @@ class TestFeatureFeaturesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_features_list(self, resource_group):
         response = self.client.features.list(
             resource_provider_namespace="str",
             api_version="2021-07-01",
@@ -42,7 +42,7 @@ class TestFeatureFeaturesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_features_get(self, resource_group):
         response = await self.client.features.get(
             resource_provider_namespace="str",
             feature_name="str",
@@ -54,7 +54,7 @@ class TestFeatureFeaturesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_register(self, resource_group):
+    async def test_features_register(self, resource_group):
         response = await self.client.features.register(
             resource_provider_namespace="str",
             feature_name="str",
@@ -66,7 +66,7 @@ class TestFeatureFeaturesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_unregister(self, resource_group):
+    async def test_features_unregister(self, resource_group):
         response = await self.client.features.unregister(
             resource_provider_namespace="str",
             feature_name="str",

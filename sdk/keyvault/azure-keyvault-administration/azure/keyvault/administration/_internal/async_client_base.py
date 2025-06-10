@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import sys
+from collections.abc import Awaitable
 from typing import Any
 
 from azure.core.credentials_async import AsyncTokenCredential
@@ -15,11 +15,6 @@ from .client_base import ApiVersion, DEFAULT_VERSION, _format_api_version, _SERI
 from .._sdk_moniker import SDK_MONIKER
 from .._generated.aio import KeyVaultClient as _KeyVaultClient
 from .._generated import models as _models
-
-if sys.version_info < (3, 9):
-    from typing import Awaitable
-else:
-    from collections.abc import Awaitable
 
 
 class AsyncKeyVaultClientBase(object):
@@ -58,6 +53,8 @@ class AsyncKeyVaultClientBase(object):
 
             verify_challenge = kwargs.pop("verify_challenge_resource", True)
             self._client = _KeyVaultClient(
+                vault_base_url=self._vault_url,
+                credential=credential,
                 api_version=self.api_version,
                 authentication_policy=AsyncChallengeAuthPolicy(credential, verify_challenge_resource=verify_challenge),
                 sdk_moniker=SDK_MONIKER,

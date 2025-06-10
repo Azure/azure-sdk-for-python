@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,21 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-import sys
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -48,8 +42,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -90,11 +84,11 @@ class ErrorResponse(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ErrorResponse"]] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
 
 
 class Identity(_serialization.Model):
@@ -115,7 +109,7 @@ class Identity(_serialization.Model):
     :vartype type: str or ~azure.mgmt.resource.policy.v2023_04_01.models.ResourceIdentityType
     :ivar user_assigned_identities: The user identity associated with the policy. The user identity
      dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.resource.policy.v2023_04_01.models.UserAssignedIdentitiesValue]
     """
@@ -146,13 +140,13 @@ class Identity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.resource.policy.v2023_04_01.models.ResourceIdentityType
         :keyword user_assigned_identities: The user identity associated with the policy. The user
          identity dictionary key references will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.resource.policy.v2023_04_01.models.UserAssignedIdentitiesValue]
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
@@ -382,7 +376,7 @@ class ParameterValuesValue(_serialization.Model):
         self.value = value
 
 
-class PolicyAssignment(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class PolicyAssignment(_serialization.Model):
     """The policy assignment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -407,6 +401,12 @@ class PolicyAssignment(_serialization.Model):  # pylint: disable=too-many-instan
     :vartype policy_definition_id: str
     :ivar definition_version: The version of the policy definition to use.
     :vartype definition_version: str
+    :ivar latest_definition_version: The latest version of the policy definition available. This is
+     only present if requested via the $expand query parameter.
+    :vartype latest_definition_version: str
+    :ivar effective_definition_version: The effective version of the policy definition in use. This
+     is only present if requested via the $expand query parameter.
+    :vartype effective_definition_version: str
     :ivar scope: The scope for the policy assignment.
     :vartype scope: str
     :ivar not_scopes: The policy's excluded scopes.
@@ -440,6 +440,8 @@ class PolicyAssignment(_serialization.Model):  # pylint: disable=too-many-instan
         "type": {"readonly": True},
         "name": {"readonly": True},
         "system_data": {"readonly": True},
+        "latest_definition_version": {"readonly": True},
+        "effective_definition_version": {"readonly": True},
         "scope": {"readonly": True},
     }
 
@@ -453,6 +455,8 @@ class PolicyAssignment(_serialization.Model):  # pylint: disable=too-many-instan
         "display_name": {"key": "properties.displayName", "type": "str"},
         "policy_definition_id": {"key": "properties.policyDefinitionId", "type": "str"},
         "definition_version": {"key": "properties.definitionVersion", "type": "str"},
+        "latest_definition_version": {"key": "properties.latestDefinitionVersion", "type": "str"},
+        "effective_definition_version": {"key": "properties.effectiveDefinitionVersion", "type": "str"},
         "scope": {"key": "properties.scope", "type": "str"},
         "not_scopes": {"key": "properties.notScopes", "type": "[str]"},
         "parameters": {"key": "properties.parameters", "type": "{ParameterValuesValue}"},
@@ -522,16 +526,18 @@ class PolicyAssignment(_serialization.Model):  # pylint: disable=too-many-instan
         :paramtype overrides: list[~azure.mgmt.resource.policy.v2023_04_01.models.Override]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.type = None
-        self.name = None
+        self.id: Optional[str] = None
+        self.type: Optional[str] = None
+        self.name: Optional[str] = None
         self.location = location
         self.identity = identity
-        self.system_data = None
+        self.system_data: Optional["_models.SystemData"] = None
         self.display_name = display_name
         self.policy_definition_id = policy_definition_id
         self.definition_version = definition_version
-        self.scope = None
+        self.latest_definition_version: Optional[str] = None
+        self.effective_definition_version: Optional[str] = None
+        self.scope: Optional[str] = None
         self.not_scopes = not_scopes
         self.parameters = parameters
         self.description = description
@@ -625,7 +631,7 @@ class PolicyAssignmentUpdate(_serialization.Model):
         self.overrides = overrides
 
 
-class PolicyDefinition(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class PolicyDefinition(_serialization.Model):
     """The policy definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -726,10 +732,10 @@ class PolicyDefinition(_serialization.Model):  # pylint: disable=too-many-instan
         :paramtype versions: list[str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
         self.policy_type = policy_type
         self.mode = mode
         self.display_name = display_name
@@ -837,12 +843,20 @@ class PolicyDefinitionListResult(_serialization.Model):
 class PolicyDefinitionReference(_serialization.Model):
     """The policy definition reference.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to server.
 
     :ivar policy_definition_id: The ID of the policy definition or policy set definition. Required.
     :vartype policy_definition_id: str
     :ivar definition_version: The version of the policy definition to use.
     :vartype definition_version: str
+    :ivar latest_definition_version: The latest version of the policy definition available. This is
+     only present if requested via the $expand query parameter.
+    :vartype latest_definition_version: str
+    :ivar effective_definition_version: The effective version of the policy definition in use. This
+     is only present if requested via the $expand query parameter.
+    :vartype effective_definition_version: str
     :ivar parameters: The parameter values for the referenced policy rule. The keys are the
      parameter names.
     :vartype parameters: dict[str,
@@ -856,11 +870,15 @@ class PolicyDefinitionReference(_serialization.Model):
 
     _validation = {
         "policy_definition_id": {"required": True},
+        "latest_definition_version": {"readonly": True},
+        "effective_definition_version": {"readonly": True},
     }
 
     _attribute_map = {
         "policy_definition_id": {"key": "policyDefinitionId", "type": "str"},
         "definition_version": {"key": "definitionVersion", "type": "str"},
+        "latest_definition_version": {"key": "latestDefinitionVersion", "type": "str"},
+        "effective_definition_version": {"key": "effectiveDefinitionVersion", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterValuesValue}"},
         "policy_definition_reference_id": {"key": "policyDefinitionReferenceId", "type": "str"},
         "group_names": {"key": "groupNames", "type": "[str]"},
@@ -895,12 +913,14 @@ class PolicyDefinitionReference(_serialization.Model):
         super().__init__(**kwargs)
         self.policy_definition_id = policy_definition_id
         self.definition_version = definition_version
+        self.latest_definition_version: Optional[str] = None
+        self.effective_definition_version: Optional[str] = None
         self.parameters = parameters
         self.policy_definition_reference_id = policy_definition_reference_id
         self.group_names = group_names
 
 
-class PolicyDefinitionVersion(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class PolicyDefinitionVersion(_serialization.Model):
     """The ID of the policy definition version.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -995,10 +1015,10 @@ class PolicyDefinitionVersion(_serialization.Model):  # pylint: disable=too-many
         :paramtype version: str
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
         self.policy_type = policy_type
         self.mode = mode
         self.display_name = display_name
@@ -1041,7 +1061,7 @@ class PolicyDefinitionVersionListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class PolicySetDefinition(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class PolicySetDefinition(_serialization.Model):
     """The policy set definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1148,10 +1168,10 @@ class PolicySetDefinition(_serialization.Model):  # pylint: disable=too-many-ins
         :paramtype versions: list[str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
         self.policy_type = policy_type
         self.display_name = display_name
         self.description = description
@@ -1195,7 +1215,7 @@ class PolicySetDefinitionListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class PolicySetDefinitionVersion(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class PolicySetDefinitionVersion(_serialization.Model):
     """The policy set definition version.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1294,10 +1314,10 @@ class PolicySetDefinitionVersion(_serialization.Model):  # pylint: disable=too-m
         :paramtype version: str
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
         self.policy_type = policy_type
         self.display_name = display_name
         self.description = description
@@ -1500,5 +1520,5 @@ class UserAssignedIdentitiesValue(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None

@@ -1,14 +1,86 @@
 # Release History
 
-## 11.6.0b10 (Unreleased)
+## 11.6.0b13 (Unreleased)
 
 ### Features Added
+
+- Added `azure.search.documents.models.DebugInfo`.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 11.6.0b12 (2025-05-14)
+
+### Features Added
+
+- Added `azure.search.documents.agent.KnowledgeAgentRetrievalClient`.
+- Added knowledge agents operations in `SearchIndexClient`.
+- Added `resync` method in `SearchIndexerClient`.
+- Exposed `@search.reranker_boosted_score` in the search results.
+- Added `x_ms_query_source_authorization` as a keyword argument to `SearchClient.search`.
+- Added property `azure.search.documents.indexes.models.SearchField.permission_filter`.
+- Added property `azure.search.documents.indexes.models.SearchIndex.permission_filter_option`.
+- Added property `azure.search.documents.indexes.models.SearchIndexerDataSourceConnection.indexer_permission_options`.
+
+- Added new models:
+    - `azure.search.documents.models.QueryResultDocumentInnerHit`
+    - `azure.search.documents.indexes.models.ChatCompletionExtraParametersBehavior`
+    - `azure.search.documents.indexes.models.ChatCompletionResponseFormat`
+    - `azure.search.documents.indexes.models.ChatCompletionResponseFormatType`
+    - `azure.search.documents.indexes.models.ChatCompletionResponseFormatJsonSchemaProperties`
+    - `azure.search.documents.indexes.models.ChatCompletionSchema`
+    - `azure.search.documents.indexes.models.ChatCompletionSkill`
+    - `azure.search.documents.indexes.models.CommonModelParameters`
+    - `azure.search.documents.indexes.models.DocumentIntelligenceLayoutSkillChunkingProperties`
+    - `azure.search.documents.indexes.models.DocumentIntelligenceLayoutSkillChunkingUnit`
+    - `azure.search.documents.indexes.models.DocumentIntelligenceLayoutSkillExtractionOptions`
+    - `azure.search.documents.indexes.models.DocumentIntelligenceLayoutSkillOutputFormat`
+    - `azure.search.documents.indexes.models.IndexerPermissionOption`
+    - `azure.search.documents.indexes.models.IndexerResyncOption`
+    - `azure.search.documents.indexes.models.KnowledgeAgent`
+    - `azure.search.documents.indexes.models.KnowledgeAgentAzureOpenAIModel`
+    - `azure.search.documents.indexes.models.KnowledgeAgentModel`
+    - `azure.search.documents.indexes.models.KnowledgeAgentModelKind`
+    - `azure.search.documents.indexes.models.KnowledgeAgentRequestLimits`
+    - `azure.search.documents.indexes.models.KnowledgeAgentTargetIndex`
+    - `azure.search.documents.indexes.models.PermissionFilter`
+    - `azure.search.documents.indexes.models.RankingOrder`
+    - `azure.search.documents.indexes.models.SearchIndexPermissionFilterOption`
+
+### Bugs Fixed
+
+- Fixed the issue batching in upload_documents() did not work.    #40157
+
+### Other Changes
+
+- Updated the API version to "2025-05-01-preview"
+
+## 11.6.0b11 (2025-03-25)
+
+### Bugs Fixed
+
+- Fixed the issue that could not deserialize `document_debug_info`.    #40138
+
+## 11.6.0b10 (2025-03-11)
+
+### Features Added
+
+- Added `SearchIndexClient.list_index_stats_summary`.
+- Added `SearchIndexerCache.id`.
+- Added new model `azure.search.documents.indexes.models.IndexStatisticsSummary`.
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 11.5.0.
+> Only code written against a beta version such as 11.6.0b9 may be affected.
+- Renamed `azure.search.documents.indexes.models.AIStudioModelCatalogName` to `azure.search.documents.indexes.models.AIFoundryModelCatalogName`.
+
+### Other Changes
+
+- Updated the API version to "2025-03-01-preview"
 
 ## 11.6.0b9 (2025-01-14)
 
@@ -79,6 +151,11 @@
 ### Other Changes
 
 - Updated the API version to "2024-09-01-preview"
+
+### Breaking changes
+
+> These changes do not impact the API of stable versions such as 11.5.0.
+> Only code written against a beta version such as 11.6.0b4 may be affected.
 - Below models were renamed
   - `azure.search.documents.indexes.models.SearchIndexerIndexProjections` -> `azure.search.documents.indexes.models.SearchIndexerIndexProjection`
   - `azure.search.documents.indexes.models.LineEnding` -> `azure.search.documents.indexes.models.OrcLineEnding`

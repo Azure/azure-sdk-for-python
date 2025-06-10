@@ -1,6 +1,7 @@
+from typing import Any, Mapping
 import pytest
 import logging
-from azure.core.credentials import AzureSasCredential, TokenCredential
+from azure.core.credentials import AzureSasCredential, TokenCredential, AccessToken
 from azure.ai.evaluation._azure._clients import LiteMLClient
 
 
@@ -29,8 +30,8 @@ class TestLiteAzureManagementClient(object):
             logger=logging.getLogger(__name__),
         )
 
-        token = client.get_token()
-        assert isinstance(token, str) and len(token) > 0
+        token: AccessToken = client.get_token()
+        assert isinstance(token, AccessToken) and len(token.token) > 0
 
     @pytest.mark.azuretest
     @pytest.mark.parametrize("include_credentials", [False, True])
@@ -66,7 +67,12 @@ class TestLiteAzureManagementClient(object):
             assert store.credential == None
 
     @pytest.mark.azuretest
-    def test_workspace_get_info(self, project_scope, azure_cred):
+    @pytest.mark.parametrize("config_name", ["sas", "none", "private"])
+    def test_workspace_get_info(
+        self, datastore_project_scopes: Mapping[str, Any], azure_cred: TokenCredential, config_name: str
+    ):
+        project_scope = datastore_project_scopes[config_name]
+
         client = LiteMLClient(
             subscription_id=project_scope["subscription_id"],
             resource_group=project_scope["resource_group_name"],

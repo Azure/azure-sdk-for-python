@@ -5,7 +5,7 @@
 from enum import Enum
 from azure.ai.evaluation._common._experimental import experimental
 
-
+# cspell:ignore vuln
 @experimental
 class AdversarialScenario(Enum):
     """Adversarial scenario types
@@ -21,6 +21,7 @@ class AdversarialScenario(Enum):
     """
 
     ADVERSARIAL_QA = "adv_qa"
+    ADVERSARIAL_QA_ENTERPRISE = "adv_qa_enterprise"
     ADVERSARIAL_CONVERSATION = "adv_conversation"
     ADVERSARIAL_SUMMARIZATION = "adv_summarization"
     ADVERSARIAL_SEARCH = "adv_search"
@@ -28,6 +29,8 @@ class AdversarialScenario(Enum):
     ADVERSARIAL_CONTENT_GEN_UNGROUNDED = "adv_content_gen_ungrounded"
     ADVERSARIAL_CONTENT_GEN_GROUNDED = "adv_content_gen_grounded"
     ADVERSARIAL_CONTENT_PROTECTED_MATERIAL = "adv_content_protected_material"
+    ADVERSARIAL_CODE_VULNERABILITY = "adv_code_vuln"
+    ADVERSARIAL_UNGROUNDED_ATTRIBUTES = "adv_isa"
 
 
 @experimental

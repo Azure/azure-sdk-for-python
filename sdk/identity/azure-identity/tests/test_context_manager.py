@@ -4,7 +4,6 @@
 # ------------------------------------
 from unittest.mock import MagicMock, patch
 
-from azure.identity._credentials.application import AzureApplicationCredential
 from azure.identity import (
     AzureCliCredential,
     AzureDeveloperCliCredential,
@@ -108,7 +107,6 @@ def test_exit_args(fixture):
     (
         AzureCliCredential,
         AzureDeveloperCliCredential,
-        AzureApplicationCredential,
         AzurePowerShellCredential,
         EnvironmentCredential,
         SharedTokenCacheCredential,

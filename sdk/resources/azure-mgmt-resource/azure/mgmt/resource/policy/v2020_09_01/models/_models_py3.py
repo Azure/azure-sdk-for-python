@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,20 +7,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import sys
+from collections.abc import MutableMapping
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class Alias(_serialization.Model):
@@ -85,7 +79,7 @@ class Alias(_serialization.Model):
         self.type = type
         self.default_path = default_path
         self.default_pattern = default_pattern
-        self.default_metadata = None
+        self.default_metadata: Optional["_models.AliasPathMetadata"] = None
 
 
 class AliasPath(_serialization.Model):
@@ -135,7 +129,7 @@ class AliasPath(_serialization.Model):
         self.path = path
         self.api_versions = api_versions
         self.pattern = pattern
-        self.metadata = None
+        self.metadata: Optional["_models.AliasPathMetadata"] = None
 
 
 class AliasPathMetadata(_serialization.Model):
@@ -164,8 +158,8 @@ class AliasPathMetadata(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.attributes = None
+        self.type: Optional[Union[str, "_models.AliasPathTokenType"]] = None
+        self.attributes: Optional[Union[str, "_models.AliasPathAttributes"]] = None
 
 
 class AliasPattern(_serialization.Model):
@@ -287,7 +281,7 @@ class DataManifestCustomResourceFunctionDefinition(_serialization.Model):  # pyl
         self.allow_custom_properties = allow_custom_properties
 
 
-class DataPolicyManifest(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class DataPolicyManifest(_serialization.Model):
     """The data policy manifest.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -377,9 +371,9 @@ class DataPolicyManifest(_serialization.Model):  # pylint: disable=too-many-inst
          list[~azure.mgmt.resource.policy.v2020_09_01.models.DataManifestCustomResourceFunctionDefinition]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.namespaces = namespaces
         self.policy_mode = policy_mode
         self.is_built_in_only = is_built_in_only
@@ -446,8 +440,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -488,11 +482,11 @@ class ErrorResponse(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ErrorResponse"]] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
 
 
 class Identity(_serialization.Model):
@@ -527,8 +521,8 @@ class Identity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.resource.policy.v2020_09_01.models.ResourceIdentityType
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
 
 
@@ -705,7 +699,7 @@ class ParameterValuesValue(_serialization.Model):
         self.value = value
 
 
-class PolicyAssignment(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class PolicyAssignment(_serialization.Model):
     """The policy assignment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -820,14 +814,14 @@ class PolicyAssignment(_serialization.Model):  # pylint: disable=too-many-instan
          list[~azure.mgmt.resource.policy.v2020_09_01.models.NonComplianceMessage]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.type = None
-        self.name = None
+        self.id: Optional[str] = None
+        self.type: Optional[str] = None
+        self.name: Optional[str] = None
         self.location = location
         self.identity = identity
         self.display_name = display_name
         self.policy_definition_id = policy_definition_id
-        self.scope = None
+        self.scope: Optional[str] = None
         self.not_scopes = not_scopes
         self.parameters = parameters
         self.description = description
@@ -953,9 +947,9 @@ class PolicyDefinition(_serialization.Model):
          ~azure.mgmt.resource.policy.v2020_09_01.models.ParameterDefinitionsValue]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.policy_type = policy_type
         self.mode = mode
         self.display_name = display_name
@@ -1206,9 +1200,9 @@ class PolicySetDefinition(_serialization.Model):
          list[~azure.mgmt.resource.policy.v2020_09_01.models.PolicyDefinitionGroup]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.policy_type = policy_type
         self.display_name = display_name
         self.description = description

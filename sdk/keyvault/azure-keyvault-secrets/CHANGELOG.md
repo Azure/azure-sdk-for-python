@@ -1,14 +1,24 @@
 # Release History
 
-## 4.9.1 (Unreleased)
+## 4.10.0 (2025-06-10)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- Added support for service API version `7.6`
 
 ### Other Changes
+
+- Python 3.8 is no longer supported. Please use Python version 3.9 or later.
+- Key Vault API version `7.6` is now the default
+- (From 4.10.0b1) Updated minimum `typing-extensions` version to 4.6.0
+
+## 4.10.0b1 (2025-03-20)
+
+### Features Added
+- Added support for service API version `7.6-preview.2`
+
+### Other Changes
+- Updated minimum `typing-extensions` version to 4.6.0
 
 ## 4.9.0 (2024-10-17)
 
@@ -77,7 +87,7 @@
 ## 4.5.1 (2022-08-11)
 
 ### Other Changes
-- Documentation improvements 
+- Documentation improvements
   ([#25039](https://github.com/Azure/azure-sdk-for-python/issues/25039))
 
 ## 4.5.0b1 (2022-06-07)
@@ -186,7 +196,7 @@ Used as a context manager, a `SecretClient` closes opened sockets on exit.
 ## 4.0.0 (2019-10-31)
 ### Breaking changes:
 - Moved optional parameters of two methods into kwargs (
-[docs](https://azuresdkdocs.z19.web.core.windows.net/python/azure-keyvault-secrets/4.0.0/azure.keyvault.secrets.html)
+[docs](https://azuresdkdocs.z19.web.core.windows.net/python/azure-keyvault-secrets/latest/azure.keyvault.secrets.html)
 detail the new keyword arguments):
   - `set_secret` now has positional parameters `name` and `value`
   - `update_secret_properties` now has positional parameters `name` and

@@ -16,3 +16,4 @@ class CapabilityHostSchema(PathAwareSchema):
     vector_store_connections = fields.List(fields.Str(), required=False)
     ai_services_connections = fields.List(fields.Str(), required=False)
     storage_connections = fields.List(fields.Str(), required=False)
+    thread_storage_connections = fields.List(fields.Str(), required=False)

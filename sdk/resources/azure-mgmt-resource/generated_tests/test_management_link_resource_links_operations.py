@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.resource import ManagementLinkClient
+from azure.mgmt.resource.links.v2016_09_01 import ManagementLinkClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -20,7 +20,7 @@ class TestManagementLinkResourceLinksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_resource_links_delete(self, resource_group):
         response = self.client.resource_links.delete(
             link_id="str",
             api_version="2016-09-01",
@@ -31,7 +31,7 @@ class TestManagementLinkResourceLinksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_resource_links_create_or_update(self, resource_group):
         response = self.client.resource_links.create_or_update(
             link_id="str",
             parameters={
@@ -48,7 +48,7 @@ class TestManagementLinkResourceLinksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_resource_links_get(self, resource_group):
         response = self.client.resource_links.get(
             link_id="str",
             api_version="2016-09-01",
@@ -59,7 +59,7 @@ class TestManagementLinkResourceLinksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_at_subscription(self, resource_group):
+    def test_resource_links_list_at_subscription(self, resource_group):
         response = self.client.resource_links.list_at_subscription(
             api_version="2016-09-01",
         )
@@ -69,7 +69,7 @@ class TestManagementLinkResourceLinksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_at_source_scope(self, resource_group):
+    def test_resource_links_list_at_source_scope(self, resource_group):
         response = self.client.resource_links.list_at_source_scope(
             scope="str",
             api_version="2016-09-01",

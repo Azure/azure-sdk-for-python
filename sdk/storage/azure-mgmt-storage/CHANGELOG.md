@@ -1,5 +1,52 @@
 # Release History
 
+## 23.0.0 (2025-05-15)
+
+### Breaking Changes
+
+  - This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
+
+## 22.2.0 (2025-04-21)
+
+### Features Added
+  - Enum `ProvisioningState` added member `ACCEPTED`
+
+## 22.1.1 (2025-02-27)
+
+### Bugs Fixed
+
+  - Fix deserialization error for model `FileShare` and `FileShareItem`
+
+## 22.1.0 (2025-02-19)
+
+### Features Added
+
+  - Added operation FileServicesOperations.get_service_usage
+  - Added operation FileServicesOperations.list_service_usages
+  - Model FileShare has a new parameter file_share_paid_bursting
+  - Model FileShare has a new parameter included_burst_iops
+  - Model FileShare has a new parameter max_burst_credits_for_iops
+  - Model FileShare has a new parameter next_allowed_provisioned_bandwidth_downgrade_time
+  - Model FileShare has a new parameter next_allowed_provisioned_iops_downgrade_time
+  - Model FileShare has a new parameter next_allowed_quota_downgrade_time
+  - Model FileShare has a new parameter provisioned_bandwidth_mibps
+  - Model FileShare has a new parameter provisioned_iops
+  - Model FileShareItem has a new parameter file_share_paid_bursting
+  - Model FileShareItem has a new parameter included_burst_iops
+  - Model FileShareItem has a new parameter max_burst_credits_for_iops
+  - Model FileShareItem has a new parameter next_allowed_provisioned_bandwidth_downgrade_time
+  - Model FileShareItem has a new parameter next_allowed_provisioned_iops_downgrade_time
+  - Model FileShareItem has a new parameter next_allowed_quota_downgrade_time
+  - Model FileShareItem has a new parameter provisioned_bandwidth_mibps
+  - Model FileShareItem has a new parameter provisioned_iops
+  - Model ObjectReplicationPolicy has a new parameter metrics
+  - Enum `SkuName` added member `STANDARD_V2_LRS`
+  - Enum `SkuName` added member `STANDARD_V2_GRS`
+  - Enum `SkuName` added member `STANDARD_V2_ZRS`
+  - Enum `SkuName` added member `STANDARD_V2_GZRS`
+  - Enum `SkuName` added member `PREMIUM_V2_LRS`
+  - Enum `SkuName` added member `PREMIUM_V2_ZRS`
+
 ## 22.0.0 (2025-01-15)
 
 ### Breaking Changes

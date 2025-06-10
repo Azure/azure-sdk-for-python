@@ -1,6 +1,57 @@
 # Release History
 
-## 1.6.5 (Unreleased)
+## 1.6.11 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.6.10 (2025-05-30)
+
+### Features Added
+
+- Enabled diagnostics for AKS Attach
+    ([#40988](https://github.com/Azure/azure-sdk-for-python/pull/40988))
+
+### Other Changes
+
+- Defensively import and vendor experimental components from OpenTelemetry and azure.core + upgrade dependencies to latest OpenTelemetry
+    ([#41245](https://github.com/Azure/azure-sdk-for-python/pull/41245))
+
+## 1.6.9 (2025-05-12)
+
+### Features Added
+
+- Enable Azure AI Agents instrumentation for azure-ai-agents
+    ([#40866](https://github.com/Azure/azure-sdk-for-python/pull/40866))
+
+## 1.6.8 (2025-04-17)
+
+### Bugs Fixed
+
+- Pin OTel before breaking change.
+    ([#40529](https://github.com/Azure/azure-sdk-for-python/pull/40529))
+
+## 1.6.7 (2025-04-10)
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.6.6 (2025-04-07)
+
+### Features Added
+
+- Add `logging_format` as configuration option in api
+    ([#40057](https://github.com/Azure/azure-sdk-for-python/pull/40057))
+- Enable Azure AI Agents instrumentation
+    ([#40043](https://github.com/Azure/azure-sdk-for-python/pull/40043))
+
+## 1.6.5 (2025-02-14)
 
 ### Features Added
 
@@ -11,15 +62,9 @@
 - Distro to automatically configure event logger provider
     ([#38543](https://github.com/Azure/azure-sdk-for-python/pull/38543))
 - Configure live metrics first in pipeline to detect statsbeat usage
-    ([#37694](https://github.com/Azure/azure-sdk-for-python/pull/37694))
+    ([#38556](https://github.com/Azure/azure-sdk-for-python/pull/38556))
 - Ignore backoff warning from distro if in functions environment
     ([#38787](https://github.com/Azure/azure-sdk-for-python/pull/38787))
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.6.4 (2024-11-06)
 

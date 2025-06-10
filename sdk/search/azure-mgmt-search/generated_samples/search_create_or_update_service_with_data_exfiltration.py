@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.search import SearchManagementClient
@@ -38,6 +36,7 @@ def main():
         service={
             "location": "westus",
             "properties": {
+                "computeType": "default",
                 "disabledDataExfiltrationOptions": ["All"],
                 "hostingMode": "default",
                 "partitionCount": 1,
@@ -50,6 +49,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/preview/2024-06-01-preview/examples/SearchCreateOrUpdateServiceWithDataExfiltration.json
+# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/preview/2025-02-01-preview/examples/SearchCreateOrUpdateServiceWithDataExfiltration.json
 if __name__ == "__main__":
     main()

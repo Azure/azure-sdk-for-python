@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,21 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-import sys
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class Resource(_serialization.Model):
@@ -63,9 +57,9 @@ class Resource(_serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
 
@@ -131,7 +125,7 @@ class GenericResource(Resource):
         self.sku = sku
 
 
-class Application(GenericResource):  # pylint: disable=too-many-instance-attributes
+class Application(GenericResource):
     """Information about managed application.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -305,18 +299,18 @@ class Application(GenericResource):  # pylint: disable=too-many-instance-attribu
         self.managed_resource_group_id = managed_resource_group_id
         self.application_definition_id = application_definition_id
         self.parameters = parameters
-        self.outputs = None
-        self.provisioning_state = None
-        self.billing_details = None
+        self.outputs: Optional[JSON] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.billing_details: Optional["_models.ApplicationBillingDetailsDefinition"] = None
         self.jit_access_policy = jit_access_policy
-        self.publisher_tenant_id = None
-        self.authorizations = None
-        self.management_mode = None
-        self.customer_support = None
-        self.support_urls = None
-        self.artifacts = None
-        self.created_by = None
-        self.updated_by = None
+        self.publisher_tenant_id: Optional[str] = None
+        self.authorizations: Optional[List["_models.ApplicationAuthorization"]] = None
+        self.management_mode: Optional[Union[str, "_models.ApplicationManagementMode"]] = None
+        self.customer_support: Optional["_models.ApplicationPackageContact"] = None
+        self.support_urls: Optional["_models.ApplicationPackageSupportUrls"] = None
+        self.artifacts: Optional[List["_models.ApplicationArtifact"]] = None
+        self.created_by: Optional["_models.ApplicationClientDetails"] = None
+        self.updated_by: Optional["_models.ApplicationClientDetails"] = None
 
 
 class ApplicationArtifact(_serialization.Model):
@@ -472,7 +466,7 @@ class ApplicationClientDetails(_serialization.Model):
         self.application_id = application_id
 
 
-class ApplicationDefinition(GenericResource):  # pylint: disable=too-many-instance-attributes
+class ApplicationDefinition(GenericResource):
     """Information about managed application definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1051,7 +1045,7 @@ class ApplicationPackageSupportUrls(_serialization.Model):
         self.government_cloud = government_cloud
 
 
-class ApplicationPatchable(GenericResource):  # pylint: disable=too-many-instance-attributes
+class ApplicationPatchable(GenericResource):
     """Information about managed application.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1223,18 +1217,18 @@ class ApplicationPatchable(GenericResource):  # pylint: disable=too-many-instanc
         self.managed_resource_group_id = managed_resource_group_id
         self.application_definition_id = application_definition_id
         self.parameters = parameters
-        self.outputs = None
-        self.provisioning_state = None
-        self.billing_details = None
+        self.outputs: Optional[JSON] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.billing_details: Optional["_models.ApplicationBillingDetailsDefinition"] = None
         self.jit_access_policy = jit_access_policy
-        self.publisher_tenant_id = None
-        self.authorizations = None
-        self.management_mode = None
-        self.customer_support = None
-        self.support_urls = None
-        self.artifacts = None
-        self.created_by = None
-        self.updated_by = None
+        self.publisher_tenant_id: Optional[str] = None
+        self.authorizations: Optional[List["_models.ApplicationAuthorization"]] = None
+        self.management_mode: Optional[Union[str, "_models.ApplicationManagementMode"]] = None
+        self.customer_support: Optional["_models.ApplicationPackageContact"] = None
+        self.support_urls: Optional["_models.ApplicationPackageSupportUrls"] = None
+        self.artifacts: Optional[List["_models.ApplicationArtifact"]] = None
+        self.created_by: Optional["_models.ApplicationClientDetails"] = None
+        self.updated_by: Optional["_models.ApplicationClientDetails"] = None
 
 
 class ApplicationPolicy(_serialization.Model):
@@ -1332,8 +1326,8 @@ class ApplicationPropertiesPatchable(_serialization.Model):
         self.managed_resource_group_id = managed_resource_group_id
         self.application_definition_id = application_definition_id
         self.parameters = parameters
-        self.outputs = None
-        self.provisioning_state = None
+        self.outputs: Optional[JSON] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -1360,8 +1354,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorDetail(_serialization.Model):
@@ -1401,11 +1395,11 @@ class ErrorDetail(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -1444,7 +1438,7 @@ class Identity(_serialization.Model):
      ~azure.mgmt.resource.managedapplications.v2019_07_01.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user identities associated with the resource. The
      user identity dictionary key references will be resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.resource.managedapplications.v2019_07_01.models.UserAssignedResourceIdentity]
     """
@@ -1475,13 +1469,13 @@ class Identity(_serialization.Model):
          ~azure.mgmt.resource.managedapplications.v2019_07_01.models.ResourceIdentityType
         :keyword user_assigned_identities: The list of user identities associated with the resource.
          The user identity dictionary key references will be resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.resource.managedapplications.v2019_07_01.models.UserAssignedResourceIdentity]
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
@@ -1568,7 +1562,7 @@ class JitAuthorizationPolicies(_serialization.Model):
         self.role_definition_id = role_definition_id
 
 
-class JitRequestDefinition(Resource):  # pylint: disable=too-many-instance-attributes
+class JitRequestDefinition(Resource):
     """Information about JIT request definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1666,13 +1660,13 @@ class JitRequestDefinition(Resource):  # pylint: disable=too-many-instance-attri
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.application_resource_id = application_resource_id
-        self.publisher_tenant_id = None
+        self.publisher_tenant_id: Optional[str] = None
         self.jit_authorization_policies = jit_authorization_policies
         self.jit_scheduling_policy = jit_scheduling_policy
-        self.provisioning_state = None
-        self.jit_request_state = None
-        self.created_by = None
-        self.updated_by = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.jit_request_state: Optional[Union[str, "_models.JitRequestState"]] = None
+        self.created_by: Optional["_models.ApplicationClientDetails"] = None
+        self.updated_by: Optional["_models.ApplicationClientDetails"] = None
 
 
 class JitRequestDefinitionListResult(_serialization.Model):
@@ -1766,7 +1760,7 @@ class JitSchedulingPolicy(_serialization.Model):
         :paramtype start_time: ~datetime.datetime
         """
         super().__init__(**kwargs)
-        self.type = None
+        self.type: Optional[Union[str, "_models.JitSchedulingType"]] = None
         self.duration = duration
         self.start_time = start_time
 
@@ -1816,11 +1810,11 @@ class Operation(_serialization.Model):
          ~azure.mgmt.resource.managedapplications.v2019_07_01.models.OperationDisplay
         """
         super().__init__(**kwargs)
-        self.name = None
-        self.is_data_action = None
+        self.name: Optional[str] = None
+        self.is_data_action: Optional[bool] = None
         self.display = display
-        self.origin = None
-        self.action_type = None
+        self.origin: Optional[Union[str, "_models.Origin"]] = None
+        self.action_type: Optional[Union[str, "_models.ActionType"]] = None
 
 
 class OperationAutoGenerated(_serialization.Model):
@@ -1893,10 +1887,10 @@ class OperationDisplay(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.provider = None
-        self.resource = None
-        self.operation = None
-        self.description = None
+        self.provider: Optional[str] = None
+        self.resource: Optional[str] = None
+        self.operation: Optional[str] = None
+        self.description: Optional[str] = None
 
 
 class OperationDisplayAutoGenerated(_serialization.Model):
@@ -1963,8 +1957,8 @@ class OperationListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.Operation"]] = None
+        self.next_link: Optional[str] = None
 
 
 class Plan(_serialization.Model):
@@ -2173,5 +2167,5 @@ class UserAssignedResourceIdentity(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None

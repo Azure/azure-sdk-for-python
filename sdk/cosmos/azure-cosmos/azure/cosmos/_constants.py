@@ -38,10 +38,29 @@ class _Constants:
     ReadableLocations: Literal["readableLocations"] = "readableLocations"
     Name: Literal["name"] = "name"
     DatabaseAccountEndpoint: Literal["databaseAccountEndpoint"] = "databaseAccountEndpoint"
-    DefaultUnavailableLocationExpirationTime: int = 5 * 60 * 1000
+    DefaultEndpointsRefreshTime: int = 5 * 60 * 1000 # milliseconds
+    UnavailableEndpointDBATimeouts: int = 1 # seconds
 
     # ServiceDocument Resource
     EnableMultipleWritableLocations: Literal["enableMultipleWriteLocations"] = "enableMultipleWriteLocations"
+
+    # Environment variables
+    NON_STREAMING_ORDER_BY_DISABLED_CONFIG: str = "AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"
+    NON_STREAMING_ORDER_BY_DISABLED_CONFIG_DEFAULT: str = "False"
+    HS_MAX_ITEMS_CONFIG: str = "AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS"
+    HS_MAX_ITEMS_CONFIG_DEFAULT: int = 1000
+    MAX_ITEM_BUFFER_VS_CONFIG: str = "AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH"
+    MAX_ITEM_BUFFER_VS_CONFIG_DEFAULT: int = 50000
+    CIRCUIT_BREAKER_ENABLED_CONFIG: str =  "AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"
+    CIRCUIT_BREAKER_ENABLED_CONFIG_DEFAULT: str = "False"
+    # Only applicable when circuit breaker is enabled -------------------------
+    CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ: str = "AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ"
+    CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ_DEFAULT: int = 10
+    CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE: str = "AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE"
+    CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE_DEFAULT: int = 5
+    FAILURE_PERCENTAGE_TOLERATED = "AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"
+    FAILURE_PERCENTAGE_TOLERATED_DEFAULT: int = 90
+    # -------------------------------------------------------------------------
 
     # Error code translations
     ERROR_TRANSLATIONS: Dict[int, str] = {

@@ -41,6 +41,55 @@ class AutoUserScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     Node in a Pool."""
 
 
+class BatchCertificateFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchCertificateFormat enums."""
+
+    PFX = "pfx"
+    """The Certificate is a PFX (PKCS#12) formatted Certificate or Certificate chain."""
+    CER = "cer"
+    """The Certificate is a base64-encoded X.509 Certificate."""
+
+
+class BatchCertificateState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchCertificateState enums."""
+
+    ACTIVE = "active"
+    """The Certificate is available for use in Pools."""
+    DELETING = "deleting"
+    """The user has requested that the Certificate be deleted, but the delete operation has not yet
+    completed. You may not reference the Certificate when creating or updating Pools."""
+    DELETE_FAILED = "deletefailed"
+    """The user requested that the Certificate be deleted, but there are Pools that still have
+    references to the Certificate, or it is still installed on one or more Nodes. (The latter can
+    occur if the Certificate has been removed from the Pool, but the Compute Node has not yet
+    restarted. Compute Nodes refresh their Certificates only when they restart.) You may use the
+    cancel Certificate delete operation to cancel the delete, or the delete Certificate operation
+    to retry the delete."""
+
+
+class BatchCertificateStoreLocation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchCertificateStoreLocation enums."""
+
+    CURRENT_USER = "currentuser"
+    """Certificates should be installed to the CurrentUser Certificate store."""
+    LOCAL_MACHINE = "localmachine"
+    """Certificates should be installed to the LocalMachine Certificate store."""
+
+
+class BatchCertificateVisibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchCertificateVisibility enums."""
+
+    START_TASK = "starttask"
+    """The Certificate should be visible to the user account under which the StartTask is run. Note
+    that if AutoUser Scope is Pool for both the StartTask and a Task, this certificate will be
+    visible to the Task as well."""
+    TASK = "task"
+    """The Certificate should be visible to the user accounts under which Job Tasks are run."""
+    REMOTE_USER = "remoteuser"
+    """The Certificate should be visible to the user accounts under which users remotely access the
+    Compute Node."""
+
+
 class BatchJobAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """BatchJobAction enums."""
 
@@ -135,6 +184,25 @@ class BatchNodeCommunicationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     the "BatchNodeManagement.{region}" service tag. No open inbound ports are required."""
 
 
+class BatchNodeDeallocateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchNodeDeallocateOption enums."""
+
+    REQUEUE = "requeue"
+    """Terminate running Task processes and requeue the Tasks. The Tasks will run again when a Compute
+    Node is available. Deallocate the Compute Node as soon as Tasks have been terminated."""
+    TERMINATE = "terminate"
+    """Terminate running Tasks. The Tasks will be completed with failureInfo indicating that they were
+    terminated, and will not run again. Deallocate the Compute Node as soon as Tasks have been
+    terminated."""
+    TASK_COMPLETION = "taskcompletion"
+    """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Deallocate the
+    Compute Node when all Tasks have completed."""
+    RETAINED_DATA = "retaineddata"
+    """Allow currently running Tasks to complete, then wait for all Task data retention periods to
+    expire. Schedule no new Tasks while waiting. Deallocate the Compute Node when all Task
+    retention periods have expired."""
+
+
 class BatchNodeDeallocationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """BatchNodeDeallocationOption enums."""
 
@@ -207,6 +275,25 @@ class BatchNodeRebootOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     periods have expired."""
 
 
+class BatchNodeReimageOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchNodeReimageOption enums."""
+
+    REQUEUE = "requeue"
+    """Terminate running Task processes and requeue the Tasks. The Tasks will run again when a Compute
+    Node is available. Reimage the Compute Node as soon as Tasks have been terminated."""
+    TERMINATE = "terminate"
+    """Terminate running Tasks. The Tasks will be completed with failureInfo indicating that they were
+    terminated, and will not run again. Reimage the Compute Node as soon as Tasks have been
+    terminated."""
+    TASK_COMPLETION = "taskcompletion"
+    """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Reimage the
+    Compute Node when all Tasks have completed."""
+    RETAINED_DATA = "retaineddata"
+    """Allow currently running Tasks to complete, then wait for all Task data retention periods to
+    expire. Schedule no new Tasks while waiting. Reimage the Compute Node when all Task retention
+    periods have expired."""
+
+
 class BatchNodeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """BatchNodeState enums."""
 
@@ -242,8 +329,12 @@ class BatchNodeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PREEMPTED = "preempted"
     """The Spot/Low-priority Compute Node has been preempted. Tasks which were running on the Compute
     Node when it was preempted will be rescheduled when another Compute Node becomes available."""
-    UPGRADING_O_S = "upgradingos"
+    UPGRADING_OS = "upgradingos"
     """The Compute Node is undergoing an OS upgrade operation."""
+    DEALLOCATED = "deallocated"
+    """The Compute Node is deallocated."""
+    DEALLOCATING = "deallocating"
+    """The Compute Node is deallocating."""
 
 
 class BatchPoolIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -363,6 +454,23 @@ class CachingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The caching mode for the disk is read and write."""
 
 
+class ContainerHostDataPath(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The paths which will be mounted to container task's container."""
+
+    SHARED = "Shared"
+    """The path for multi-instances task to shared their files."""
+    STARTUP = "Startup"
+    """The path for start task."""
+    VFS_MOUNTS = "VfsMounts"
+    """The path contains all virtual file systems are mounted on this node."""
+    TASK = "Task"
+    """The task path."""
+    JOB_PREP = "JobPrep"
+    """The job-prep task path."""
+    APPLICATIONS = "Applications"
+    """The applications path."""
+
+
 class ContainerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ContainerType enums."""
 
@@ -394,7 +502,17 @@ class DependencyAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DiffDiskPlacement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """AccessDiffDiskPlacementScope enums."""
+    """Specifies the ephemeral disk placement for operating system disk for all compute nodes (VMs) in
+    the pool.  This property can be used by user in the request to choose which location the
+    operating system should be in. e.g., cache disk space for Ephemeral OS disk provisioning. For
+    more information on Ephemeral OS disk size requirements, please refer to Ephemeral OS disk size
+    requirements for Windows VMs at
+    `https://learn.microsoft.com/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements
+    <https://learn.microsoft.com/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements>`_
+    and Linux VMs at
+    `https://learn.microsoft.com/azure/virtual-machines/linux/ephemeral-os-disks#size-requirements
+    <https://learn.microsoft.com/azure/virtual-machines/linux/ephemeral-os-disks#size-requirements>`_.
+    """
 
     CACHE_DISK = "cachedisk"
     """The Ephemeral OS Disk is stored on the VM cache."""
@@ -552,6 +670,15 @@ class SchedulingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     may still run to completion. All Compute Nodes start with scheduling enabled."""
 
 
+class SecurityEncryptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SecurityEncryptionTypes enums."""
+
+    NON_PERSISTED_TPM = "NonPersistedTPM"
+    """NonPersistedTPM"""
+    VM_GUEST_STATE_ONLY = "VMGuestStateOnly"
+    """VMGuestStateOnly"""
+
+
 class SecurityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the SecurityType of the virtual machine. It has to be set to any specified value to
     enable UefiSettings.
@@ -559,6 +686,11 @@ class SecurityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     TRUSTED_LAUNCH = "trustedLaunch"
     """Trusted launch protects against advanced and persistent attack techniques."""
+    CONFIDENTIAL_VM = "confidentialVM"
+    """Azure confidential computing offers confidential VMs are for tenants with high security and
+    confidentiality requirements. These VMs provide a strong, hardware-enforced boundary to help
+    meet your security needs. You can use confidential VMs for migrations without making changes to
+    your code, with the platform protecting your VM's state from being read or modified."""
 
 
 class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -575,11 +707,11 @@ class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """StorageAccountType enums."""
 
-    STANDARD_L_R_S = "standard_lrs"
+    STANDARD_LRS = "standard_lrs"
     """The data disk should use standard locally redundant storage."""
-    PREMIUM_L_R_S = "premium_lrs"
+    PREMIUM_LRS = "premium_lrs"
     """The data disk should use premium locally redundant storage."""
-    STANDARD_S_S_D_L_R_S = "standardssd_lrs"
+    STANDARD_SSDLRS = "standardssd_lrs"
     """The data disk / OS disk should use standard SSD locally redundant storage."""
 
 

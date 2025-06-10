@@ -1,5 +1,4 @@
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,20 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import sys
+from collections.abc import MutableMapping
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -47,8 +40,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -89,11 +82,11 @@ class ErrorResponse(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ErrorResponse"]] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
 
 
 class Identity(_serialization.Model):
@@ -128,8 +121,8 @@ class Identity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.resource.policy.v2019_09_01.models.ResourceIdentityType
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
 
 
@@ -244,7 +237,7 @@ class ParameterValuesValue(_serialization.Model):
         self.value = value
 
 
-class PolicyAssignment(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class PolicyAssignment(_serialization.Model):
     """The policy assignment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -357,9 +350,9 @@ class PolicyAssignment(_serialization.Model):  # pylint: disable=too-many-instan
          ~azure.mgmt.resource.policy.v2019_09_01.models.EnforcementMode
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.type = None
-        self.name = None
+        self.id: Optional[str] = None
+        self.type: Optional[str] = None
+        self.name: Optional[str] = None
         self.sku = sku
         self.location = location
         self.identity = identity
@@ -490,9 +483,9 @@ class PolicyDefinition(_serialization.Model):
          ~azure.mgmt.resource.policy.v2019_09_01.models.ParameterDefinitionsValue]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.policy_type = policy_type
         self.mode = mode
         self.display_name = display_name
@@ -743,9 +736,9 @@ class PolicySetDefinition(_serialization.Model):
          list[~azure.mgmt.resource.policy.v2019_09_01.models.PolicyDefinitionGroup]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.policy_type = policy_type
         self.display_name = display_name
         self.description = description

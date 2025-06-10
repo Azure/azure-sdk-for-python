@@ -65,6 +65,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2020-11-01-preview/examples/CreateOrUpdateJobStepMax.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-05-01-preview/examples/CreateOrUpdateJobStepMax.json
 if __name__ == "__main__":
     main()

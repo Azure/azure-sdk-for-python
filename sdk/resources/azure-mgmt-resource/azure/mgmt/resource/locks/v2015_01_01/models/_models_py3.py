@@ -1,5 +1,4 @@
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -9,10 +8,9 @@
 
 from typing import Any, List, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -97,8 +95,8 @@ class ManagementLockObject(_serialization.Model):
         :paramtype notes: str
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.type: Optional[str] = None
         self.name = name
         self.level = level
         self.notes = notes

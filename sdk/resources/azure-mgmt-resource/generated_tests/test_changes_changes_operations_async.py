@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.resource.aio import ChangesClient
+from azure.mgmt.resource.changes.v2022_05_01.aio import ChangesClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -21,7 +21,7 @@ class TestChangesChangesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_changes_list(self, resource_group):
         response = self.client.changes.list(
             resource_group_name=resource_group.name,
             resource_provider_namespace="str",
@@ -35,7 +35,7 @@ class TestChangesChangesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_changes_get(self, resource_group):
         response = await self.client.changes.get(
             resource_group_name=resource_group.name,
             resource_provider_namespace="str",

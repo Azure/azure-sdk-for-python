@@ -1,14 +1,40 @@
 # Release History
 
-## 4.10.1 (Unreleased)
+## 4.11.0 (2025-06-10)
 
 ### Features Added
 
-### Breaking Changes
+- Added support for service API version `7.6`
+- (From 4.11.0b1) `KeyClient` has a `get_key_attestation` method that can be used to retrieve a key along with its
+  attestation blob (stored in a new `KeyProperties.attestation` property) from a managed HSM
+  [#37507](https://github.com/Azure/azure-sdk-for-python/pull/37507)
 
 ### Bugs Fixed
 
+- Fixed a bug where `KeyVaultRSAPublicKey` and `KeyVaultRSAPrivateKey` were not correctly implementing the `cryptography` library's `RSAPublicKey` and `RSAPrivateKey` interfaces, causing instantiation errors. ([#41205](https://github.com/Azure/azure-sdk-for-python/pull/41205))
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 4.10.0. Only code written against a beta version such as 4.11.0b1 may be affected.
+- The following enums have been moved:
+  - `EncryptionAlgorithm.ckm_aes_key_wrap` -> `KeyWrapAlgorithm.ckm_aes_key_wrap`
+  - `EncryptionAlgorithm.ckm_aes_key_wrap_pad` -> `KeyWrapAlgorithm.ckm_aes_key_wrap_pad`
+
 ### Other Changes
+
+- Key Vault API version `7.6` is now the default
+- (From 4.11.0b1) Updated minimum `typing-extensions` version to 4.6.0
+
+## 4.11.0b1 (2025-03-20)
+
+### Features Added
+- Added support for service API version `7.6-preview.2`
+- `KeyClient` has a `get_key_attestation` method that can be used to retrieve a key along with its attestation blob
+  (stored in a new `KeyProperties.attestation` property) from a managed HSM
+  [#37507](https://github.com/Azure/azure-sdk-for-python/pull/37507)
+
+### Other Changes
+- Updated minimum `typing-extensions` version to 4.6.0
 
 ## 4.10.0 (2024-10-17)
 
@@ -140,7 +166,7 @@
 ## 4.6.1 (2022-08-11)
 
 ### Other Changes
-- Documentation improvements 
+- Documentation improvements
   ([#25039](https://github.com/Azure/azure-sdk-for-python/issues/25039))
 
 ## 4.6.0b1 (2022-06-07)
@@ -435,7 +461,7 @@ as a context manager, a `KeyClient` closes opened sockets on exit.
 ### Breaking changes:
 - Removed `KeyClient.get_cryptography_client()` and `CryptographyClient.get_key()`
 - Moved the optional parameters of several methods into kwargs (
-[docs](https://azuresdkdocs.z19.web.core.windows.net/python/azure-keyvault-keys/4.0.0/index.html)
+[docs](https://azuresdkdocs.z19.web.core.windows.net/python/azure-keyvault-keys/latest/index.html)
 detail the new keyword arguments):
   - `create_key` now has positional parameters `name` and `key_type`
   - `create_ec_key` and `create_rsa_key` now have one positional parameter, `name`

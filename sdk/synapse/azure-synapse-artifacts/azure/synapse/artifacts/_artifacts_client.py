@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
+from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.pipeline import policies
@@ -44,7 +45,6 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
@@ -203,7 +203,7 @@ class ArtifactsClient:  # pylint: disable=client-accepts-api-version-keyword,too
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "ArtifactsClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

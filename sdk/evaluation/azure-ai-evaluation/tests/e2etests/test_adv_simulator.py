@@ -100,8 +100,7 @@ class TestAdvSimulator:
         assert "topic" not in outputs[0]["template_parameters"]
         assert "target_population" not in outputs[0]["template_parameters"]
 
-    @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
-    def test_adv_conversation_sim_responds_with_responses(self, azure_cred, project_scope):
+    def test_adv_qa_sim_responds_with_one_response(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
 
@@ -110,6 +109,170 @@ class TestAdvSimulator:
             "resource_group_name": project_scope["resource_group_name"],
             "project_name": project_scope["project_name"],
         }
+
+        async def callback(
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
+        ) -> dict:
+            query = messages["messages"][0]["content"]
+            response_from_acs, temperature = query, 0.0
+            formatted_response = {
+                "content": response_from_acs["result"],
+                "role": "assistant",
+                "context": {
+                    "temperature": temperature,
+                },
+            }
+            messages["messages"].append(formatted_response)
+            return {
+                "messages": messages["messages"],
+                "stream": stream,
+                "session_state": session_state,
+                "context": context,
+            }
+
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
+
+        outputs = asyncio.run(
+            simulator(
+                scenario=AdversarialScenario.ADVERSARIAL_QA,
+                max_conversation_turns=1,
+                max_simulation_results=1,
+                target=callback,
+                api_call_retry_limit=3,
+                api_call_retry_sleep_sec=1,
+                api_call_delay_sec=30,
+                concurrent_async_task=1,
+            )
+        )
+        assert len(outputs) == 1
+        # assert topic and target_population is not present in outpts[0]["scenario_parameters"]
+        assert "topic" not in outputs[0]["template_parameters"]
+        assert "target_population" not in outputs[0]["template_parameters"]
+
+    @pytest.mark.parametrize(
+        ("proj_scope", "cred"),
+        (
+            ("project_scope", "azure_cred"),
+            ("project_scope_onedp", "azure_cred_onedp"),
+        )
+    )
+    def test_adv_code_vuln_sim_responds_with_one_response(self, request, proj_scope, cred):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
+        os.environ.pop("RAI_SVC_URL", None)
+        from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
+
+        async def callback(
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
+        ) -> dict:
+            query = messages["messages"][0]["content"]
+            response_from_llm = "SELECT * FROM users WHERE username = {user_input};" 
+            temperature = 0.0
+            formatted_response = {
+                "content": response_from_llm,
+                "role": "assistant",
+                "context": {
+                    "temperature": temperature,
+                },
+            }
+            messages["messages"].append(formatted_response)
+            return {
+                "messages": messages["messages"],
+                "stream": stream,
+                "session_state": session_state,
+                "context": context,
+            }
+
+        simulator = AdversarialSimulator(azure_ai_project=project_scope, credential=azure_cred)
+
+        outputs = asyncio.run(
+            simulator(
+                scenario=AdversarialScenario.ADVERSARIAL_CODE_VULNERABILITY,
+                max_conversation_turns=1,
+                max_simulation_results=1,
+                target=callback,
+            )
+        )
+        assert len(outputs) == 1
+        assert outputs[0]["messages"][0]["content"] is not None
+        assert outputs[0]["messages"][1]["content"] == "SELECT * FROM users WHERE username = {user_input};"
+
+    def test_adv_ungrounded_attributes_sim_responds_with_one_response(self, azure_cred, project_scope):
+        os.environ.pop("RAI_SVC_URL", None)
+        from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
+
+        azure_ai_project = {
+            "subscription_id": project_scope["subscription_id"],
+            "resource_group_name": project_scope["resource_group_name"],
+            "project_name": project_scope["project_name"],
+        }
+        
+        response_from_llm = '''
+            Person 1 might experience emotions such as:
+                    Curiosity – They may wonder what the experience of meditation feels like.
+                    Admiration – They might appreciate Person 2’s ability to find peace and focus.
+                    Inspiration – They could feel motivated to try meditation themselves.
+                    Serenity – Simply observing a calm moment might bring them a sense of peace.
+                    Happiness – Seeing someone enjoy a tranquil experience could make them feel happy.
+                    Their emotions would likely depend on their own mindset and past experiences with meditation or peaceful settings.
+            ''' 
+
+        async def callback(
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
+        ) -> dict:
+            query = messages["messages"][0]["content"]
+            temperature = 0.0
+            formatted_response = {
+                "content": response_from_llm,
+                "role": "assistant",
+                "context": {
+                    "temperature": temperature,
+                },
+            }
+            messages["messages"].append(formatted_response)
+            return {
+                "messages": messages["messages"],
+                "stream": stream,
+                "session_state": session_state,
+                "context": context,
+            }
+
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
+
+        outputs = asyncio.run(
+            simulator(
+                scenario=AdversarialScenario.ADVERSARIAL_UNGROUNDED_ATTRIBUTES,
+                max_conversation_turns=1,
+                max_simulation_results=1,
+                target=callback,
+            )
+        )
+        assert len(outputs) == 1
+        assert outputs[0]["messages"][0]["content"] is not None
+        assert "CONVERSATION" in outputs[0]["messages"][0]["content"]
+        assert outputs[0]["messages"][1]["content"] == response_from_llm
+
+    @pytest.mark.parametrize(
+        ("proj_scope", "cred"),
+        (
+            ("project_scope", "azure_cred"),
+            ("project_scope_onedp", "azure_cred_onedp"),
+        )
+    )
+    def test_adv_conversation_sim_responds_with_responses(self, request, proj_scope, cred):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
+        os.environ.pop("RAI_SVC_URL", None)
+        from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
 
         async def callback(
             messages: List[Dict],
@@ -128,7 +291,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
+        simulator = AdversarialSimulator(azure_ai_project=project_scope, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -143,7 +306,7 @@ class TestAdvSimulator:
             )
         )
         assert len(outputs) == 1
-        assert len(outputs[0]["messages"]) == 4
+        assert len(outputs[0]["messages"]) == 3
 
     def test_adv_conversation_image_understanding_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
@@ -215,7 +378,7 @@ class TestAdvSimulator:
 
     def test_adv_conversation_image_gen_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
-        from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
+        from azure.ai.evaluation.simulator import AdversarialSimulator
         from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
 
         azure_ai_project = {
@@ -790,7 +953,6 @@ class TestAdvSimulator:
         outputs3["regular"][0]["messages"][0]["content"] in outputs3["jailbreak"][0]["messages"][0]["content"]
         outputs3["regular"][0]["messages"][0]["content"] != outputs3["jailbreak"][0]["messages"][0]["content"]
 
-    @pytest.mark.skip("Skipping due to category mismatch in simulator output. WI: 3819162")
     def test_regular_and_jailbreak_outputs_match(self, azure_cred, project_scope):
         """
         Test to verify that the regular and jailbreak outputs of the simulator have matching categories

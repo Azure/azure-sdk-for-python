@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import aiohttp
 import tempfile
 import uuid
 from datetime import datetime, timedelta
@@ -21,10 +22,16 @@ from azure.storage.blob.aio import BlobServiceClient, BlobClient
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
-from test_helpers_async import  NonSeekableStream, ProgressTracker
+from test_helpers_async import (
+    NonSeekableStream,
+    ProgressTracker,
+    _build_base_file_share_headers,
+    _create_file_share_oauth
+)
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
+SMALL_BLOB_SIZE = 1024
 LARGE_BLOB_SIZE = 64 * 1024
 # ------------------------------------------------------------------------------
 
@@ -44,6 +51,10 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
 
     def _get_blob_reference(self):
         return self.get_resource_name(TEST_BLOB_PREFIX)
+
+    async def _get_bearer_token_string(self, resource: str = "https://storage.azure.com/.default") -> str:
+        access_token = await self.get_credential(BlobServiceClient, is_async=True).get_token(resource)
+        return "Bearer " + access_token.token
 
     async def _create_blob(self, bsc, tags=None):
         blob_name = self._get_blob_reference()
@@ -1584,5 +1595,57 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         progress.assert_complete()
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_append_block_from_file_to_blob_with_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        account_url = self.account_url(storage_account_name, "blob")
+        bsc = BlobServiceClient(account_url, storage_account_key)
+        await self._setup(bsc)
+        bearer_token_string = await self._get_bearer_token_string()
+
+        # Set up source file share with random data
+        source_data = self.get_random_bytes(SMALL_BLOB_SIZE)
+        file_name, base_url = await _create_file_share_oauth(
+            self.get_resource_name("utshare"),
+            self.get_resource_name("file"),
+            bearer_token_string,
+            storage_account_name,
+            source_data
+        )
+
+        # Set up destination blob without data
+        destination_blob_client = BlobClient(
+            account_url=account_url,
+            container_name=self.source_container_name,
+            blob_name=self.get_resource_name(TEST_BLOB_PREFIX + "1"),
+            credential=storage_account_key
+        )
+        await destination_blob_client.create_append_blob()
+
+        try:
+            # Act
+            await destination_blob_client.append_block_from_url(
+                copy_source_url=base_url + "/" + file_name,
+                source_authorization=bearer_token_string,
+                source_token_intent='backup'
+            )
+            destination_blob = await destination_blob_client.download_blob()
+            destination_blob_data = await destination_blob.readall()
+
+            # Assert
+            assert destination_blob_data == source_data
+        finally:
+            async with aiohttp.ClientSession() as session:
+                await session.delete(
+                    url=base_url,
+                    headers=_build_base_file_share_headers(bearer_token_string, 0),
+                    params={'restype': 'share'}
+                )
+            await bsc.delete_container(self.source_container_name)
 
 # ------------------------------------------------------------------------------

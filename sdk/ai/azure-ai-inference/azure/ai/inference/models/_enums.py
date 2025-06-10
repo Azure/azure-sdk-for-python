@@ -46,6 +46,9 @@ class ChatRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The role that provides responses to system-instructed, user-prompted input."""
     TOOL = "tool"
     """The role that represents extension tool activity within a chat completions operation."""
+    DEVELOPER = "developer"
+    """The role that instructs or sets the behavior of the assistant. Some AI models support this role
+    instead of the 'system' role."""
 
 
 class CompletionsFinishReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):

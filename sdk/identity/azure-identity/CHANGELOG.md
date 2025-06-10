@@ -1,6 +1,6 @@
 # Release History
 
-## 1.20.1 (Unreleased)
+## 1.23.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,36 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.23.0 (2025-05-13)
+
+### Features Added
+
+- Added `AZURE_TOKEN_CREDENTIALS` environment variable to `DefaultAzureCredential` to allow for choosing groups of credentials.
+  - `prod` for `EnvironmentCredential`, `WorkloadIdentityCredential`,  and `ManagedIdentityCredential`.
+  - `dev` for `SharedTokenCacheCredential`, `AzureCliCredential`, `AzurePowershellCredential`, and `AzureDeveloperCliCredential`.
+
+## 1.22.0 (2025-05-06)
+
+### Breaking Changes
+
+- Previously, if a `client_id` or `identity_config` was specified in `ManagedIdentityCredential` for Service Fabric managed identity, which is not supported, the `client_id` (or `resource_id`/`object_id` specified `identity_config`) would be silently ignored. Now, an exception will be raised during a token request if a `client_id` or `identity_config` is specified for Service Fabric managed identity.
+
+### Bugs Fixed
+
+- Fixed an issue with error handling in MSAL-based credentials when the response content is a string rather than a dictionary. ([#40281](https://github.com/Azure/azure-sdk-for-python/pull/40281))
+
+### Other Changes
+
+- Deprecated `VisualStudioCodeCredential` as the VS Code Azure Account extension on which this credential depends on has been deprecated. See the Azure Account extension [deprecation notice](https://github.com/microsoft/vscode-azure-account/issues/964).  ([#40613](https://github.com/Azure/azure-sdk-for-python/pull/40613))
+- Python 3.8 is no longer supported. Please use Python version 3.9 or later.
+
+## 1.21.0 (2025-03-11)
+
+### Other Changes
+
+- Updated the asynchronous `CertificateCredential` to use the PS256 algorithm with PSS padding for certificate authentication in non-ADFS tenants. ([#39761](https://github.com/Azure/azure-sdk-for-python/pull/39761))
+- Deprecated `UsernamePasswordCredential`, as it doesn't support multifactor authentication (MFA). MFA will soon be enforced on all Microsoft Entra tenants. For more details, see [Planning for mandatory MFA](https://aka.ms/mfaforazure). ([#39785](https://github.com/Azure/azure-sdk-for-python/pull/39785))
 
 ## 1.20.0 (2025-02-11)
 
@@ -23,6 +53,7 @@
 ### Other Changes
 
 - `AzureCliCredential` and `AzureDeveloperCliCredential` will now call their corresponding executables directly instead of going through the shell. ([#38606](https://github.com/Azure/azure-sdk-for-python/pull/38606))
+- `ManagedIdentityCredential` will now log the configured user-assigned identity if one is set. ([#39621](https://github.com/Azure/azure-sdk-for-python/pull/39621))
 
 ## 1.19.0 (2024-10-08)
 

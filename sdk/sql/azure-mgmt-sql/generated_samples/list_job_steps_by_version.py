@@ -41,6 +41,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2020-11-01-preview/examples/ListJobStepsByVersion.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-05-01-preview/examples/ListJobStepsByVersion.json
 if __name__ == "__main__":
     main()

@@ -720,13 +720,13 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             NFS only. The owning group of the file.
         :keyword str file_mode:
             NFS only. The file mode of the file.
-        :keyword mode_copy_mode:
+        :keyword file_mode_copy_mode:
             NFS only. Applicable only when the copy source is a File. Determines the copy behavior
             of the mode bits of the file. Possible values are:
 
             source - The mode on the destination file is copied from the source file.
             override - The mode on the destination file is determined via the file_mode keyword.
-        :paramtype mode_copy_mode: Literal['source', 'override']
+        :paramtype file_mode_copy_mode: Literal['source', 'override']
         :keyword owner_copy_mode:
             NFS only. Applicable only when the copy source is a File. Determines the copy behavior
             of the owner and group of the file. Possible values are:
@@ -758,7 +758,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         owner = kwargs.pop('owner', None)
         group = kwargs.pop('group', None)
         file_mode = kwargs.pop('file_mode', None)
-        file_mode_copy_mode = kwargs.pop('mode_copy_mode', None)
+        file_mode_copy_mode = kwargs.pop('file_mode_copy_mode', None)
         file_owner_copy_mode = kwargs.pop('owner_copy_mode', None)
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
@@ -1702,14 +1702,14 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         }
 
     @distributed_trace_async
-    async def create_hard_link(
+    async def create_hardlink(
         self, target: str,
         *,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
-        """NFS only. Create a hard link to the file specified by path.
+        """NFS only. Creates a hard link to the file specified by path.
 
         :param str target:
             Specifies the path of the target file to which the link will be created, up to 2 KiB in length.
@@ -1732,6 +1732,87 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             return cast(Dict[str, Any], await self._client.file.create_hard_link(
                 target_file=target,
                 lease_access_conditions=lease,
+                timeout=timeout,
+                cls=return_response_headers,
+                **kwargs
+            ))
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    @distributed_trace_async
+    async def create_symlink(
+        self, target: str,
+        *,
+        metadata: Optional[Dict[str, str]] = None,
+        file_creation_time: Optional[Union[str, datetime]] = None,
+        file_last_write_time: Optional[Union[str, datetime]] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        lease: Optional[Union[ShareLeaseClient, str]] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
+        """NFS only. Creates a symbolic link to the specified file.
+
+        :param str target:
+            Specifies the file path the symbolic link will point to. The file path can be either relative or absolute.
+        :keyword dict[str, str] metadata:
+            Name-value pairs associated with the file as metadata.
+        :keyword file_creation_time: Creation time for the file.
+        :paramtype file_creation_time: str or ~datetime.datetime
+        :keyword file_last_write_time: Last write time for the file.
+        :paramtype file_last_write_time: str or ~datetime.datetime
+        :keyword str owner: The owner of the file.
+        :keyword str group: The owning group of the file.
+        :keyword lease:
+            Required if the file has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
+        :keyword int timeout:
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`__.
+        :returns: File-updated property dict (ETag and last modified).
+        :rtype: dict[str, Any]
+        """
+        try:
+            return cast(Dict[str, Any], await self._client.file.create_symbolic_link(
+                link_text=target,
+                metadata=metadata,
+                file_creation_time=file_creation_time,
+                file_last_write_time=file_last_write_time,
+                owner=owner,
+                group=group,
+                lease_access_conditions=lease,
+                timeout=timeout,
+                cls=return_response_headers,
+                **kwargs
+            ))
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    @distributed_trace_async
+    async def get_symlink(
+        self,
+        *,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
+        """NFS only. Gets the symbolic link for the file client.
+
+        :keyword int timeout:
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timeouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`__.
+        :returns: File-updated property dict (ETag and last modified).
+        :rtype: dict[str, Any]
+        """
+        try:
+            return cast(Dict[str, Any], await self._client.file.get_symbolic_link(
                 timeout=timeout,
                 cls=return_response_headers,
                 **kwargs

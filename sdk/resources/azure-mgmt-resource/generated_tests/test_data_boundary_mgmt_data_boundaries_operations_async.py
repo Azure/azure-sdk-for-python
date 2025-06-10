@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.resource.aio import DataBoundaryMgmtClient
+from azure.mgmt.resource.databoundaries.v2024_08_01.aio import DataBoundaryMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -21,7 +21,7 @@ class TestDataBoundaryMgmtDataBoundariesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_put(self, resource_group):
+    async def test_data_boundaries_put(self, resource_group):
         response = await self.client.data_boundaries.put(
             default="str",
             data_boundary_definition={
@@ -46,7 +46,7 @@ class TestDataBoundaryMgmtDataBoundariesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_tenant(self, resource_group):
+    async def test_data_boundaries_get_tenant(self, resource_group):
         response = await self.client.data_boundaries.get_tenant(
             default="str",
             api_version="2024-08-01",
@@ -57,7 +57,7 @@ class TestDataBoundaryMgmtDataBoundariesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_scope(self, resource_group):
+    async def test_data_boundaries_get_scope(self, resource_group):
         response = await self.client.data_boundaries.get_scope(
             scope="str",
             default="str",

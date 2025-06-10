@@ -1,0 +1,35 @@
+{
+  "parameters": {
+    "subscriptionId": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+    "resourceGroupName": "testrg123",
+    "workspaceName": "workspaces123",
+    "api-version": "2025-01-01-preview"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "userStorageKey": null,
+        "userStorageArmId": "/subscriptions/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee/resourceGroups/ragargeastus2euap/providers/Microsoft.Storage/storageAccounts/testdemoworkazashomr",
+        "appInsightsInstrumentationKey": null,
+        "containerRegistryCredentials": {
+          "location": null,
+          "username": "testdemoworkjmjmeykp",
+          "passwords": [
+            {
+              "name": "password",
+              "value": "<value>"
+            },
+            {
+              "name": "password2",
+              "value": "0KARRQoQHSUq1yViPWg7YFernOS=Ic/t"
+            }
+          ]
+        },
+        "notebookAccessKeys": {
+          "primaryAccessKey": null,
+          "secondaryAccessKey": null
+        }
+      }
+    }
+  }
+}

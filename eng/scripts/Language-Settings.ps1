@@ -51,7 +51,7 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
   # The targetedFiles needs to filter out anything in the ExcludePaths
   # otherwise it'll end up processing things below that it shouldn't be.
   foreach ($excludePath in $diffObj.ExcludePaths) {
-    $targetedFiles = $targetedFiles | Where-Object { -not $_.StartsWith($excludePath.TrimEnd("/") + "/") }
+    $targetedFiles = $targetedFiles | Where-Object { -not $_.StartsWith($excludePath) }
   }
 
   if ($targetedFiles) {
@@ -62,11 +62,17 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
         $changedServices += $pathComponents[1]
       }
 
-      # handle any changes under sdk/<file>.<extension>
-      if ($pathComponents.Length -eq 2 -and $pathComponents[0] -eq "sdk") {
+      # handle any changes under sdk/<file>.<extension> as well as any
+      # changes to the root of the repository. Changes to the root of
+      # repository is the case where pathComponents.Lenght -eq 1
+      if (($pathComponents.Length -eq 2 -and $pathComponents[0] -eq "sdk") -or
+          ($pathComponents.Length -eq 1)) {
         $changedServices += "template"
       }
     }
+
+    # dedupe the changed service list before processing
+    $changedServices = $changedServices | Get-Unique
     foreach ($changedService in $changedServices) {
       $additionalPackages = $AllPkgProps | Where-Object { $_.ServiceDirectory -eq $changedService }
 
@@ -90,8 +96,6 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
     $engChanged = $targetedFiles | Where-Object { $_.StartsWith("eng")}
     $othersChanged = $targetedFiles | Where-Object { isOther($_) }
   }
-
-  $changedServices = $changedServices | Get-Unique
 
   if ($toolChanged) {
     $additionalPackages = @(

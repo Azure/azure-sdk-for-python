@@ -14,6 +14,7 @@ from ._generated.models import (
     SkillNames,
     SearchIndexerStatus,
     DocumentKeysOrIds,
+    IndexerResyncOption,
 )
 from ._utils import (
     get_access_conditions,
@@ -40,7 +41,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
     :param credential: A credential to authorize search client requests
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
     :keyword str api_version: The Search API version to use for requests.
-    :keyword str audience: sets the Audience to use for authentication with Azure Active Directory (AAD). The
+    :keyword str audience: sets the Audience to use for authentication with Microsoft Entra ID. The
         audience is not considered when using a shared key. If audience is not provided, the public cloud audience
         will be assumed.
     """
@@ -322,6 +323,31 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         return self._client.indexers.reset_docs(name, overwrite=overwrite, **kwargs)
 
     @distributed_trace
+    def resync(
+        self,
+        indexer: Union[str, SearchIndexer],
+        indexer_resync_options: List[Union[str, IndexerResyncOption]],
+        **kwargs: Any
+    ) -> None:
+        """Resync selective options from the datasource to be re-ingested by the indexer.
+
+        :param indexer: The indexer to resync for.
+        :type indexer: str or ~azure.search.documents.indexes.models.SearchIndexer
+        :param indexer_resync_options: Required.
+        :type indexer_resync_options: list[str or
+         ~azure.search.documents.indexes.models.IndexerResyncOption]
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError: If there is an error in the REST request.
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        try:
+            name = indexer.name  # type: ignore
+        except AttributeError:
+            name = indexer
+        return self._client.indexers.resync(name, indexer_resync_options, **kwargs)
+
+    @distributed_trace
     def get_indexer_status(self, name: str, **kwargs: Any) -> SearchIndexerStatus:
         """Get the status of the indexer.
 
@@ -457,7 +483,10 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         result = self._client.data_sources.list(**kwargs)
         assert result.data_sources is not None  # Hint for mypy
         # pylint:disable=protected-access
-        return [SearchIndexerDataSourceConnection._from_generated(x) for x in result.data_sources]
+        return [
+            cast(SearchIndexerDataSourceConnection, SearchIndexerDataSourceConnection._from_generated(x))
+            for x in result.data_sources
+        ]
 
     @distributed_trace
     def get_data_source_connection_names(self, **kwargs: Any) -> Sequence[str]:
@@ -526,7 +555,10 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             kwargs["select"] = ",".join(select)
         result = self._client.skillsets.list(**kwargs)
         assert result.skillsets is not None  # Hint for mypy
-        return [SearchIndexerSkillset._from_generated(skillset) for skillset in result.skillsets]
+        return [
+            cast(SearchIndexerSkillset, SearchIndexerSkillset._from_generated(skillset))
+            for skillset in result.skillsets
+        ]
 
     @distributed_trace
     def get_skillset_names(self, **kwargs: Any) -> List[str]:

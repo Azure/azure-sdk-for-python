@@ -3,7 +3,7 @@
 This preview package for Python enables users to get blob change feed events. These events can be lazily generated, iterated by page, retrieved for a specific time interval, or iterated from a specific continuation token.
 
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob-changefeed/azure/storage/blob/changefeed) | [Package (PyPi)](https://pypi.org/project/azure-storage-blob-changefeed/) | [API reference documentation](https://aka.ms/azsdk-python-storage-blob-changefeed-ref) | [Product documentation](https://learn.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob-changefeed/samples)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob-changefeed/azure/storage/blob/changefeed) | [Package (PyPi)](https://pypi.org/project/azure-storage-blob-changefeed/) | [API reference documentation](https://learn.microsoft.com/python/api/overview/azure/storage-blob-changefeed-readme?view=azure-python-preview) | [Product documentation](https://learn.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob-changefeed/samples)
 
 
 ## Getting started

@@ -22,7 +22,7 @@ from ci_tools.variables import discover_repo_root
 
 logging.getLogger().setLevel(logging.INFO)
 
-CHECK_TYPE = Literal["mypy", "pylint", "pyright"]
+CHECK_TYPE = Literal["mypy", "pylint", "pyright", "sphinx"]
 
 
 def get_version_running(check_type: CHECK_TYPE) -> str:
@@ -44,11 +44,13 @@ def get_build_link(check_type: CHECK_TYPE) -> str:
 
     next_id: str
     if check_type == "mypy":
-        next_id = "59f5c573-b3ce-57f7-6a79-55fe2db3a175"
+        next_id = "c4b2a078-69a7-55a2-d776-67715c71590f"
     if check_type == "pyright":
-        next_id = "c0edaab3-85d6-5e4b-81a8-d1190a6ee92b"
+        next_id = "d243185e-b901-5eef-29fe-f7943e030451"
     if check_type == "pylint":
-        next_id = "e1fa7d9e-8471-5a74-cd7d-e1c9a992e07e"
+        next_id = "b33d1587-3539-5735-af43-e3e62f02ca4b"
+    if check_type == "sphinx":
+        next_id = "82919efa-82d6-5dc4-2e9a-f82117bff292"
 
     return (
         f"https://dev.azure.com/azure-sdk/internal/_build/results?buildId={build_id}&view=logs&j={job_id}&t={next_id}"
@@ -145,10 +147,12 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
     version = get_version_running(check_type)
     build_link = get_build_link(check_type)
     merge_date = get_date_for_version_bump(today)
-    error_type = "linting" if check_type == "pylint" else "typing"
+    error_type = "linting" if check_type == "pylint" else "docstring" if check_type == "sphinx" else "typing"
     guide_link = (
         "[Pylint Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/pylint_checking.md)"
         if check_type == "pylint"
+        else "[Sphinx and docstring checker](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#sphinx-and-docstring-checker)"
+        if check_type == "sphinx"
         else "[Typing Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking.md#run-mypy)"
     )
 
@@ -158,7 +162,7 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
         f"The build will begin to fail for this library if errors are not fixed."
         f"\n\n**Library name:** {package_name}"
         f"\n**{check_type.capitalize()} version:** {version}"
-        f"\n**{check_type.capitalize()} errors:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
+        f"\n**{check_type.capitalize()} Build:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
         f"\n**How to fix:** Run the `next-{check_type}` tox command at the library package-level and resolve "
         f"the {error_type} errors.\n"
         f'1) `../{package_name}>pip install "tox<5"`\n'

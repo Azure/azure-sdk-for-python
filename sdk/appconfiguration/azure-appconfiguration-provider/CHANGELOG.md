@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.1 (Unreleased)
+## 2.1.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,38 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 2.1.0 (2025-04-28)
+
+### Features Added
+
+* Added AllocationId to the feature flag telemetry metadata when the feature flag has telemetry enabled.
+
+## 2.0.2 (2025-04-17)
+
+### Other Changes
+
+* Updates telemetry for JSON usage.
+
+## 2.1.0b1 (2025-04-10)
+
+### Bugs Fixed
+
+* Updates the feature flag telemetry to use the provided endpoint instead of the endpoint of the store the feature flag was loaded from.
+* Removes FeatureFlagId from feature flag telemetry.
+
+## 2.0.1 (2025-03-07)
+
+### Bugs Fixed
+
+* Updates the failure to load from a config store from a debug level log to a warning level log.
+* Fixes an issue where the stack trace from the azure sdk wasn't being logged on startup.
+* Fixes a bug where feature flags could be loaded as configurations.
+
+### Other Changes
+
+* Bumped minimum dependency on `azure-core` to `>=1.30.0`
+* Bumped minimum dependency on `azure-appconfiguration` to `>=1.6.1`
 
 ## 2.0.0 (2025-01-06)
 

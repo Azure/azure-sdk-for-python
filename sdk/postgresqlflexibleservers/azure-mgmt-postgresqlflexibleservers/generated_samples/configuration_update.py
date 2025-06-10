@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -30,16 +31,15 @@ def main():
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    response = client.configurations.begin_put(
+    response = client.configurations.begin_update(
         resource_group_name="testrg",
         server_name="testserver",
-        configuration_name="event_scheduler",
+        configuration_name="constraint_exclusion",
         parameters={"properties": {"source": "user-override", "value": "on"}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2024-11-01-preview/examples/ConfigurationUpdate.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2025-01-01-preview/examples/ConfigurationUpdate.json
 if __name__ == "__main__":
     main()
-()

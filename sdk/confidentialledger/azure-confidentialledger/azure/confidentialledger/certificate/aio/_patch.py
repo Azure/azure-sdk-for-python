@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+
+
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -42,5 +44,4 @@ class ConfidentialLedgerCertificateClient(GeneratedClient):
 
         if not certificate_endpoint:
             certificate_endpoint = "https://identity.confidential-ledger.core.azure.com"
-
         super().__init__(certificate_endpoint, **kwargs)

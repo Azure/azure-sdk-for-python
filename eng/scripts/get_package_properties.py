@@ -8,34 +8,34 @@ from ci_tools.parsing import ParsedSetup
 
 additional_pr_triggers: Dict[str, List[str]] = {
     "azure-core":[
-        os.path.join("/sdk", "servicebus", "azure-servicebus"),
-        os.path.join("/sdk", "eventhub", "azure-eventhub"),
-        os.path.join("/sdk", "tables", "azure-data-tables"),
-        os.path.join("/sdk", "appconfiguration", "azure-appconfiguration"),
-        os.path.join("/sdk", "keyvault", "azure-keyvault-keys"),
-        os.path.join("/sdk", "identity", "azure-identity"),
-        os.path.join("/sdk", "core", "azure-mgmt-core"),
-        os.path.join("/sdk", "core", "azure-core-experimental"),
-        os.path.join("/sdk", "core", "azure-core-tracing-opentelemetry"),
-        os.path.join("/sdk", "core", "azure-core-tracing-opencensus"),
+        "/sdk/servicebus/azure-servicebus",
+        "/sdk/eventhub/azure-eventhub",
+        "/sdk/tables/azure-data-tables",
+        "/sdk/appconfiguration/azure-appconfiguration",
+        "/sdk/keyvault/azure-keyvault-keys",
+        "/sdk/identity/azure-identity",
+        "/sdk/core/azure-mgmt-core",
+        "/sdk/core/azure-core-experimental",
+        "/sdk/core/azure-core-tracing-opentelemetry",
+        "/sdk/core/azure-core-tracing-opencensus",
         # todo: this currently won't be included, as azure-cosmos needs some special construction
         # related to windows only + emulator
-        # os.path.join("/sdk", "cosmos", "azure-cosmos"),
-        os.path.join("/sdk", "ml", "azure-ai-ml"),
-        os.path.join("/sdk", "documentintelligence", "azure-ai-documentintelligence"),
-        os.path.join("/sdk", "ai", "azure-ai-inference"),
-        os.path.join("/sdk", "textanalytics", "azure-ai-textanalytics"),
-        os.path.join("/sdk", "translation", "azure-ai-translation-document"),
-        os.path.join("/sdk", "compute", "azure-mgmt-compute"),
-        os.path.join("/sdk", "communication", "azure-communication-chat"),
-        os.path.join("/sdk", "communication", "azure-communication-identity"),
-        os.path.join("/sdk", "storage", "azure-storage-blob")
+        # "/sdk/cosmos/azure-cosmos",
+        "/sdk/ml/azure-ai-ml",
+        "/sdk/documentintelligence/azure-ai-documentintelligence",
+        "/sdk/ai/azure-ai-inference",
+        "/sdk/textanalytics/azure-ai-textanalytics",
+        "/sdk/translation/azure-ai-translation-document",
+        "/sdk/compute/azure-mgmt-compute",
+        "/sdk/communication/azure-communication-chat",
+        "/sdk/communication/azure-communication-identity",
+        "/sdk/storage/azure-storage-blob"
     ],
     "azure-mgmt-core": [
-        os.path.join("/sdk", "compute", "azure-mgmt-compute"),
-        os.path.join("/sdk", "network", "azure-mgmt-network"),
-        os.path.join("/sdk", "resources", "azure-mgmt-resource"),
-        os.path.join("/sdk", "keyvault", "azure-mgmt-keyvault")
+        "/sdk/compute/azure-mgmt-compute",
+        "/sdk/network/azure-mgmt-network",
+        "/sdk/resources/azure-mgmt-resource",
+        "/sdk/keyvault/azure-mgmt-keyvault"
     ]
 }
 

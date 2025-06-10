@@ -3720,3 +3720,117 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 messages_in_queue = receiver1.peek_messages()
 
                 assert len(messages_in_queue) == 0
+    
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
+    @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
+    @ServiceBusQueuePreparer(name_prefix="servicebustest", dead_lettering_on_message_expiration=True)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasser()
+    def test_queue_by_queue_client_peek_auto_increment(
+        self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs
+    ):
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        credential = get_credential()
+        with ServiceBusClient(
+            fully_qualified_namespace, credential, logging_enable=False, uamqp_transport=uamqp_transport
+        ) as sb_client:
+
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            with sender:
+                messages = []
+                for i in range(3):
+                    message = ServiceBusMessage("Handler message no. {}".format(i), application_properties={"index": i})
+                    messages.append(message)
+                sender.send_messages(messages)
+
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
+            with receiver:
+                peek_message = receiver.peek_messages()
+                assert peek_message[0].application_properties[b"index"] == 0
+                assert peek_message[0].sequence_number == 1
+                peek_message = receiver.peek_messages()
+                assert peek_message[0].application_properties[b"index"] == 1
+                assert peek_message[0].sequence_number == 2
+                peek_message = receiver.peek_messages()
+                assert peek_message[0].application_properties[b"index"] == 2
+                assert peek_message[0].sequence_number == 3
+    
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
+    @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
+    @ServiceBusQueuePreparer(name_prefix="servicebustest", dead_lettering_on_message_expiration=True)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasser()
+    def test_queue_by_queue_client_peek_auto_increment_multiple(
+        self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs
+    ):
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        credential = get_credential()
+        with ServiceBusClient(
+            fully_qualified_namespace, credential, logging_enable=False, uamqp_transport=uamqp_transport
+        ) as sb_client:
+
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            with sender:
+                messages = []
+                for i in range(4):
+                    message = ServiceBusMessage("Handler message no. {}".format(i), application_properties={"index": i})
+                    messages.append(message)
+                sender.send_messages(messages)
+
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
+            with receiver:
+                peek_message = receiver.peek_messages(max_message_count=2)
+                assert len(peek_message) == 2
+                assert peek_message[0].application_properties[b"index"] == 0
+                assert peek_message[0].sequence_number == 1
+                assert peek_message[1].application_properties[b"index"] == 1
+                assert peek_message[1].sequence_number == 2
+                peek_message = receiver.peek_messages(max_message_count=2)
+                assert len(peek_message) == 2
+                assert peek_message[0].application_properties[b"index"] == 2
+                assert peek_message[0].sequence_number == 3
+                assert peek_message[1].application_properties[b"index"] == 3
+                assert peek_message[1].sequence_number == 4
+    
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
+    @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
+    @ServiceBusQueuePreparer(name_prefix="servicebustest", dead_lettering_on_message_expiration=True)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasser()
+    def test_queue_by_queue_client_peek_and_receive(
+        self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs
+    ):
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        credential = get_credential()
+        with ServiceBusClient(
+            fully_qualified_namespace, credential, logging_enable=False, uamqp_transport=uamqp_transport
+        ) as sb_client:
+
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            with sender:
+                messages = []
+                for i in range(4):
+                    message = ServiceBusMessage("Handler message no. {}".format(i), application_properties={"index": i})
+                    messages.append(message)
+                sender.send_messages(messages)
+
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
+            with receiver:
+                receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
+                peeked_messages = receiver.peek_messages(max_message_count=2)
+
+                messages = receiver.receive_messages(max_message_count=3)
+                last_received_sequnece_number = messages[-1].sequence_number
+                for message in messages:
+                    receiver.complete_message(message)
+
+                peeked_messages = receiver.peek_messages(max_message_count=2)
+                assert peeked_messages[0].sequence_number == last_received_sequnece_number + 1
+
+                

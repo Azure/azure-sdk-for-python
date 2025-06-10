@@ -1,0 +1,59 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "aml-workspace-name",
+    "connectionName": "testConnection",
+    "raiBlocklistName": "raiBlocklistName",
+    "raiBlocklistItemName": "raiBlocklistItemName",
+    "api-version": "2025-01-01-preview",
+    "body": {
+      "properties": {
+        "isRegex": false,
+        "pattern": "Pattern To Block"
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.MachineLearningServices/workspaces/aml-workspace-name/connections/testConnection/raiBlocklists/raiBlocklistName/raiBlocklistItems/raiBlocklistItemName",
+        "name": "raiBlocklistItemName",
+        "type": "Microsoft.MachineLearningServices/workspaces/connections/raiBlocklists/raiBlocklistItem",
+        "properties": {
+          "isRegex": false,
+          "pattern": "Pattern To Block"
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T00:00:00Z",
+          "createdBy": "00000000-1111-2222-3333-444444444444",
+          "createdByType": "Application",
+          "lastModifiedAt": "2020-01-01T00:00:00Z",
+          "lastModifiedBy": "00000000-1111-2222-3333-444444444444",
+          "lastModifiedByType": "Application"
+        }
+      }
+    },
+    "201": {
+      "headers": {},
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.MachineLearningServices/workspaces/aml-workspace-name/connections/testConnection/raiBlocklists/raiBlocklistName/raiBlocklistItems/raiBlocklistItemName",
+        "name": "raiBlocklistItemName",
+        "type": "Microsoft.MachineLearningServices/workspaces/connections/raiBlocklists/raiBlocklistItem",
+        "properties": {
+          "isRegex": false,
+          "pattern": "Pattern To Block"
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T00:00:00Z",
+          "createdBy": "00000000-1111-2222-3333-444444444444",
+          "createdByType": "Application",
+          "lastModifiedAt": "2020-01-01T00:00:00Z",
+          "lastModifiedBy": "00000000-1111-2222-3333-444444444444",
+          "lastModifiedByType": "Application"
+        }
+      }
+    }
+  }
+}

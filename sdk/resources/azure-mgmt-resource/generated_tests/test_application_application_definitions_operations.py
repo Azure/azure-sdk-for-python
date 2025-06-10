@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.resource import ApplicationClient
+from azure.mgmt.resource.managedapplications.v2019_07_01 import ApplicationClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -20,7 +20,7 @@ class TestApplicationApplicationDefinitionsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_application_definitions_get(self, resource_group):
         response = self.client.application_definitions.get(
             resource_group_name=resource_group.name,
             application_definition_name="str",
@@ -32,7 +32,7 @@ class TestApplicationApplicationDefinitionsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_application_definitions_begin_delete(self, resource_group):
         response = self.client.application_definitions.begin_delete(
             resource_group_name=resource_group.name,
             application_definition_name="str",
@@ -44,7 +44,7 @@ class TestApplicationApplicationDefinitionsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_application_definitions_begin_create_or_update(self, resource_group):
         response = self.client.application_definitions.begin_create_or_update(
             resource_group_name=resource_group.name,
             application_definition_name="str",
@@ -79,7 +79,7 @@ class TestApplicationApplicationDefinitionsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_application_definitions_list_by_resource_group(self, resource_group):
         response = self.client.application_definitions.list_by_resource_group(
             resource_group_name=resource_group.name,
             api_version="2019-07-01",
@@ -90,7 +90,7 @@ class TestApplicationApplicationDefinitionsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_by_id(self, resource_group):
+    def test_application_definitions_get_by_id(self, resource_group):
         response = self.client.application_definitions.get_by_id(
             resource_group_name=resource_group.name,
             application_definition_name="str",
@@ -102,7 +102,7 @@ class TestApplicationApplicationDefinitionsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete_by_id(self, resource_group):
+    def test_application_definitions_begin_delete_by_id(self, resource_group):
         response = self.client.application_definitions.begin_delete_by_id(
             resource_group_name=resource_group.name,
             application_definition_name="str",
@@ -114,7 +114,7 @@ class TestApplicationApplicationDefinitionsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update_by_id(self, resource_group):
+    def test_application_definitions_begin_create_or_update_by_id(self, resource_group):
         response = self.client.application_definitions.begin_create_or_update_by_id(
             resource_group_name=resource_group.name,
             application_definition_name="str",

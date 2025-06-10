@@ -1,0 +1,18 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "testrg123",
+    "registryName": "registry123",
+    "api-version": "2025-01-01-preview",
+    "modelName": "testContainer"
+  },
+  "responses": {
+    "200": {},
+    "202": {
+      "headers": {
+        "Location": "example_location"
+      }
+    },
+    "204": {}
+  }
+}

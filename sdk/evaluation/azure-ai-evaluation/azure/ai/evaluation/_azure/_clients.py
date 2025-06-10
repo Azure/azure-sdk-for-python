@@ -8,12 +8,12 @@ from threading import Lock
 from urllib.parse import quote
 from json.decoder import JSONDecodeError
 
-from azure.core.credentials import TokenCredential, AzureSasCredential
+from azure.core.credentials import TokenCredential, AzureSasCredential, AccessToken
 from azure.core.rest import HttpResponse
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import HttpPipeline, get_http_client
 from azure.ai.evaluation._azure._token_manager import AzureMLTokenManager
-from azure.ai.evaluation.simulator._model_tools._identity_manager import TokenScope
+from azure.ai.evaluation._constants import TokenScope
 from ._models import BlobStoreInfo, Workspace
 
 
@@ -61,7 +61,7 @@ class LiteMLClient:
         self._token_manager: Optional[AzureMLTokenManager] = None
         self._credential: Optional[TokenCredential] = credential
 
-    def get_token(self) -> str:
+    def get_token(self) -> AccessToken:
         return self._get_token_manager().get_token()
 
     def get_credential(self) -> TokenCredential:
@@ -201,4 +201,4 @@ class LiteMLClient:
         return url
 
     def _get_headers(self) -> Dict[str, str]:
-        return {"Authorization": f"Bearer {self.get_token()}", "Content-Type": "application/json"}
+        return {"Authorization": f"Bearer {self.get_token().token}", "Content-Type": "application/json"}

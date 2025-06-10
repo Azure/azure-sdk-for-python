@@ -14,7 +14,7 @@ pr:
     # any excludes here. The reason being is that we can't access
     # pr->paths->exclude
     exclude:
-    - sdk/cosmos
+    - sdk/cosmos/
 
 parameters:
   - name: Service
@@ -31,4 +31,4 @@ extends:
     # See pr->paths->exclude comment above. Anything added/removed there
     # needs to be added/removed here.
     ExcludePaths:
-      - sdk/cosmos
+      - sdk/cosmos/

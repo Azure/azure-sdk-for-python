@@ -21,7 +21,7 @@ class TestNetAppManagementBackupsUnderBackupVaultOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_restore_files(self, resource_group):
+    async def test_backups_under_backup_vault_begin_restore_files(self, resource_group):
         response = await (
             await self.client.backups_under_backup_vault.begin_restore_files(
                 resource_group_name=resource_group.name,
@@ -29,7 +29,7 @@ class TestNetAppManagementBackupsUnderBackupVaultOperationsAsync(AzureMgmtRecord
                 backup_vault_name="str",
                 backup_name="str",
                 body={"destinationVolumeId": "str", "fileList": ["str"], "restoreFilePath": "str"},
-                api_version="2024-07-01-preview",
+                api_version="2025-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

@@ -1,0 +1,16 @@
+{
+  "parameters": {
+    "subscriptionId": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+    "resourceGroupName": "testrg123",
+    "workspaceName": "workspaces123",
+    "api-version": "2025-01-01-preview"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "primaryAccessKey": null,
+        "secondaryAccessKey": null
+      }
+    }
+  }
+}

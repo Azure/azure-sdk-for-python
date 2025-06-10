@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -10,10 +10,9 @@
 import datetime
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -45,9 +44,9 @@ class AzureResourceBase(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
 
 
 class DeploymentScript(AzureResourceBase):
@@ -130,10 +129,10 @@ class DeploymentScript(AzureResourceBase):
         self.location = location
         self.tags = tags
         self.kind: Optional[str] = None
-        self.system_data = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
-class AzureCliScript(DeploymentScript):  # pylint: disable=too-many-instance-attributes
+class AzureCliScript(DeploymentScript):
     """Object model for the Azure CLI script.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -321,9 +320,9 @@ class AzureCliScript(DeploymentScript):  # pylint: disable=too-many-instance-att
         self.container_settings = container_settings
         self.storage_account_settings = storage_account_settings
         self.cleanup_preference = cleanup_preference
-        self.provisioning_state = None
-        self.status = None
-        self.outputs = None
+        self.provisioning_state: Optional[Union[str, "_models.ScriptProvisioningState"]] = None
+        self.status: Optional["_models.ScriptStatus"] = None
+        self.outputs: Optional[Dict[str, JSON]] = None
         self.primary_script_uri = primary_script_uri
         self.supporting_script_uris = supporting_script_uris
         self.script_content = script_content
@@ -496,14 +495,12 @@ class DeploymentScriptPropertiesBase(_serialization.Model):
         self.container_settings = container_settings
         self.storage_account_settings = storage_account_settings
         self.cleanup_preference = cleanup_preference
-        self.provisioning_state = None
-        self.status = None
-        self.outputs = None
+        self.provisioning_state: Optional[Union[str, "_models.ScriptProvisioningState"]] = None
+        self.status: Optional["_models.ScriptStatus"] = None
+        self.outputs: Optional[Dict[str, JSON]] = None
 
 
-class AzureCliScriptProperties(
-    DeploymentScriptPropertiesBase, ScriptConfigurationBase
-):  # pylint: disable=too-many-instance-attributes
+class AzureCliScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurationBase):
     """Properties of the Azure CLI script object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -664,12 +661,12 @@ class AzureCliScriptProperties(
         self.container_settings = container_settings
         self.storage_account_settings = storage_account_settings
         self.cleanup_preference = cleanup_preference
-        self.provisioning_state = None
-        self.status = None
-        self.outputs = None
+        self.provisioning_state: Optional[Union[str, "_models.ScriptProvisioningState"]] = None
+        self.status: Optional["_models.ScriptStatus"] = None
+        self.outputs: Optional[Dict[str, JSON]] = None
 
 
-class AzurePowerShellScript(DeploymentScript):  # pylint: disable=too-many-instance-attributes
+class AzurePowerShellScript(DeploymentScript):
     """Object model for the Azure PowerShell script.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -857,9 +854,9 @@ class AzurePowerShellScript(DeploymentScript):  # pylint: disable=too-many-insta
         self.container_settings = container_settings
         self.storage_account_settings = storage_account_settings
         self.cleanup_preference = cleanup_preference
-        self.provisioning_state = None
-        self.status = None
-        self.outputs = None
+        self.provisioning_state: Optional[Union[str, "_models.ScriptProvisioningState"]] = None
+        self.status: Optional["_models.ScriptStatus"] = None
+        self.outputs: Optional[Dict[str, JSON]] = None
         self.primary_script_uri = primary_script_uri
         self.supporting_script_uris = supporting_script_uris
         self.script_content = script_content
@@ -871,9 +868,7 @@ class AzurePowerShellScript(DeploymentScript):  # pylint: disable=too-many-insta
         self.az_power_shell_version = az_power_shell_version
 
 
-class AzurePowerShellScriptProperties(
-    DeploymentScriptPropertiesBase, ScriptConfigurationBase
-):  # pylint: disable=too-many-instance-attributes
+class AzurePowerShellScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurationBase):
     """Properties of the Azure PowerShell script object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1034,9 +1029,9 @@ class AzurePowerShellScriptProperties(
         self.container_settings = container_settings
         self.storage_account_settings = storage_account_settings
         self.cleanup_preference = cleanup_preference
-        self.provisioning_state = None
-        self.status = None
-        self.outputs = None
+        self.provisioning_state: Optional[Union[str, "_models.ScriptProvisioningState"]] = None
+        self.status: Optional["_models.ScriptStatus"] = None
+        self.outputs: Optional[Dict[str, JSON]] = None
 
 
 class ContainerConfiguration(_serialization.Model):
@@ -1110,7 +1105,7 @@ class DeploymentScriptListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class DeploymentScriptsError(_serialization.Model):
@@ -1237,8 +1232,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -1280,11 +1275,11 @@ class ErrorResponse(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ErrorResponse"]] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
 
 
 class ManagedServiceIdentity(_serialization.Model):
@@ -1331,7 +1326,7 @@ class ManagedServiceIdentity(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.type = type
-        self.tenant_id = None
+        self.tenant_id: Optional[str] = None
         self.user_assigned_identities = user_assigned_identities
 
 
@@ -1367,7 +1362,7 @@ class ScriptLog(AzureResourceBase):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.log = None
+        self.log: Optional[str] = None
 
 
 class ScriptLogsList(_serialization.Model):
@@ -1435,11 +1430,11 @@ class ScriptStatus(_serialization.Model):
          ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ErrorResponse
         """
         super().__init__(**kwargs)
-        self.container_instance_id = None
-        self.storage_account_id = None
-        self.start_time = None
-        self.end_time = None
-        self.expiration_time = None
+        self.container_instance_id: Optional[str] = None
+        self.storage_account_id: Optional[str] = None
+        self.start_time: Optional[datetime.datetime] = None
+        self.end_time: Optional[datetime.datetime] = None
+        self.expiration_time: Optional[datetime.datetime] = None
         self.error = error
 
 
@@ -1564,5 +1559,5 @@ class UserAssignedIdentity(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None

@@ -28,15 +28,36 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
+    :param threshold: The threshold for the similarity evaluator. Default is 3.
+    :type threshold: int
 
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-            :start-after: [START rouge_score_evaluator]
-            :end-before: [END rouge_score_evaluator]
+            :start-after: [START similarity_evaluator]
+            :end-before: [END similarity_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call a RougeScoreEvaluator with a four-gram rouge type.
+            :caption: Initialize and call a SimilarityEvaluator with a four-gram rouge type.
+
+    .. admonition:: Example using Azure AI Project URL:
+        
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START similarity_evaluator]
+            :end-before: [END similarity_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call SimilarityEvaluator using Azure AI Project URL in the following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/evaluation_samples_threshold.py
+            :start-after: [START threshold_similarity_evaluator]
+            :end-before: [END threshold_similarity_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize with a threshold and call a SimilarityEvaluator.
 
     .. note::
 
@@ -54,10 +75,18 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config):
+    def __init__(self, model_config, *, threshold=3):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
-        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
+        self._threshold = threshold
+        self._higher_is_better = True
+        super().__init__(
+            model_config=model_config,
+            prompty_file=prompty_path,
+            result_key=self._RESULT_KEY,
+            threshold=threshold,
+            _higher_is_better=self._higher_is_better
+        )
 
     # Ignoring a mypy error about having only 1 overload function.
     # We want to use the overload style for all evals, even single-inputs. This is both to make

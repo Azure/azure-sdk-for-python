@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# cspell:ignore ruamel
+
 import os
 import re
 from io import open
@@ -72,7 +74,20 @@ setup(
         "azure-core>=1.30.2",
         "nltk>=3.9.1",
         "azure-storage-blob>=12.10.0",
+        "httpx>=0.25.1",
+        # Dependencies added since Promptflow will soon be made optional
+        "pandas>=2.1.2,<3.0.0",
+        "openai>=1.78.0",
+        "ruamel.yaml>=0.17.10,<1.0.0",
+        "msrest>=0.6.21",
+        "Jinja2>=3.1.6",
+        "aiohttp>=3.0",
     ],
+    extras_require={
+        "redteam": [
+            "pyrit==0.8.1"
+        ]
+    },
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
         "Source": "https://github.com/Azure/azure-sdk-for-python",
@@ -81,5 +96,6 @@ setup(
         "pytyped": ["py.typed"],
         "azure.ai.evaluation.simulator._prompty": ["*.prompty"],
         "azure.ai.evaluation.simulator._data_sources": ["*.json"],
+        "azure.ai.evaluation._common.raiclient": ["**/*.py"],
     },
 )

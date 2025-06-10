@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.resource import ResourcePrivateLinkClient
+from azure.mgmt.resource.privatelinks.v2020_05_01 import ResourcePrivateLinkClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -20,7 +20,7 @@ class TestResourcePrivateLinkPrivateLinkAssociationOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_put(self, resource_group):
+    def test_private_link_association_put(self, resource_group):
         response = self.client.private_link_association.put(
             group_id="str",
             pla_id="str",
@@ -33,7 +33,7 @@ class TestResourcePrivateLinkPrivateLinkAssociationOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_private_link_association_get(self, resource_group):
         response = self.client.private_link_association.get(
             group_id="str",
             pla_id="str",
@@ -45,7 +45,7 @@ class TestResourcePrivateLinkPrivateLinkAssociationOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_private_link_association_delete(self, resource_group):
         response = self.client.private_link_association.delete(
             group_id="str",
             pla_id="str",
@@ -57,7 +57,7 @@ class TestResourcePrivateLinkPrivateLinkAssociationOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_private_link_association_list(self, resource_group):
         response = self.client.private_link_association.list(
             group_id="str",
             api_version="2020-05-01",

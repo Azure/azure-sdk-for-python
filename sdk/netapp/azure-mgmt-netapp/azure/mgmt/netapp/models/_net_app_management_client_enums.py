@@ -112,6 +112,18 @@ class CoolAccessRetrievalPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NEVER = "Never"
 
 
+class CoolAccessTieringPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """coolAccessTieringPolicy determines which cold data blocks are moved to cool tier. The possible
+    values for this field are: Auto - Moves cold user data blocks in both the Snapshot copies and
+    the active file system to the cool tier tier. This policy is the default. SnapshotOnly - Moves
+    user data blocks of the Volume Snapshot copies that are not associated with the active file
+    system to the cool tier.
+    """
+
+    AUTO = "Auto"
+    SNAPSHOT_ONLY = "SnapshotOnly"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -119,6 +131,23 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
+
+
+class CredentialsStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The bucket credentials status. There states:
+
+    "NoCredentialsSet": Access and Secret key pair have not been generated.
+    "CredentialsExpired": Access and Secret key pair have expired.
+    "Active": The certificate has been installed and credentials are unexpired.
+    """
+
+    NO_CREDENTIALS_SET = "NoCredentialsSet"
+    """Access and Secret key pair have not been generated."""
+    CREDENTIALS_EXPIRED = "CredentialsExpired"
+    """Access and Secret key pair have expired."""
+    ACTIVE = "Active"
+    """The certificate has been installed on the bucket server and the bucket credentials are
+    unexpired."""
 
 
 class EnableSubvolumes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -158,6 +187,25 @@ class EndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SRC = "src"
     DST = "dst"
+
+
+class ExternalReplicationSetupStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Property that only applies to external replications. Provides a machine-readable value for the
+    status of the external replication setup.
+    """
+
+    CLUSTER_PEER_REQUIRED = "ClusterPeerRequired"
+    """Your cluster needs to be peered by using the 'peerExternalCluster' action"""
+    CLUSTER_PEER_PENDING = "ClusterPeerPending"
+    """The peering needs to be accepted on your cluster before the setup can proceed"""
+    V_SERVER_PEER_REQUIRED = "VServerPeerRequired"
+    """Need to call 'authorizeExternalReplication' and accept the returned 'vserver peer accept'
+    command on your cluster to finish setting up the external replication"""
+    REPLICATION_CREATE_REQUIRED = "ReplicationCreateRequired"
+    """Need to call 'authorizeExternalReplication' to finish setting up the external replication"""
+    NO_ACTION_REQUIRED = "NoActionRequired"
+    """External Replication setup is complete, you can now monitor the 'mirrorState' in the
+    replication status for the health of the replication"""
 
 
 class FileAccessLogs(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -207,6 +255,15 @@ class KeyVaultStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """KeyVault connection Updating"""
 
 
+class LdapServerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the LDAP server."""
+
+    ACTIVE_DIRECTORY = "ActiveDirectory"
+    """The volume should use Active Directory for LDAP connections."""
+    OPEN_LDAP = "OpenLDAP"
+    """The volume should use OpenLDAP for LDAP connections."""
+
+
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of managed service identity (where both SystemAssigned and UserAssigned types are
     allowed).
@@ -230,6 +287,34 @@ class MirrorState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNINITIALIZED = "Uninitialized"
     MIRRORED = "Mirrored"
     BROKEN = "Broken"
+
+
+class MultiAdStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MultiAD Status for the account."""
+
+    DISABLED = "Disabled"
+    """Account is MultiAD disabled, Means its a SharedAD or SingleAD account."""
+    ENABLED = "Enabled"
+    """Account is MultiAD enabled"""
+
+
+class NetappProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the resource."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+    PROVISIONING = "Provisioning"
+    """Resource is getting provisioned"""
+    UPDATING = "Updating"
+    """Resource is updating"""
+    DELETING = "Deleting"
+    """Resource is getting deleted"""
+    ACCEPTED = "Accepted"
+    """Resource has been accepted"""
 
 
 class NetworkFeatures(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -341,7 +426,7 @@ class ServiceLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ULTRA = "Ultra"
     """Ultra service level"""
     STANDARD_ZRS = "StandardZRS"
-    """Zone redundant storage service level"""
+    """Zone redundant storage service level. This will be deprecated soon."""
     FLEXIBLE = "Flexible"
     """Flexible service level"""
 

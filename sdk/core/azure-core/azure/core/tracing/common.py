@@ -29,6 +29,7 @@ from typing import Any, Optional, Callable, Type, Generator
 import warnings
 
 from ._abstract_span import AbstractSpan
+from ..instrumentation import get_tracer
 from ..settings import settings
 
 
@@ -72,10 +73,11 @@ def change_context(span: Optional[AbstractSpan]) -> Generator:
     :rtype: contextmanager
     :return: A context manager that will run the given span in the new context
     """
-    span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
+    span_impl_type = settings.tracing_implementation()
     if span_impl_type is None or span is None:
         yield
     else:
+
         try:
             with span_impl_type.change_context(span):
                 yield
@@ -101,8 +103,14 @@ def with_current_context(func: Callable) -> Any:
     :return: The func wrapped with correct context
     :rtype: callable
     """
-    span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
-    if span_impl_type is None:
+    if not settings.tracing_enabled():
         return func
 
-    return span_impl_type.with_current_context(func)
+    span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
+    if span_impl_type:
+        return span_impl_type.with_current_context(func)
+
+    tracer = get_tracer()
+    if not tracer:
+        return func
+    return tracer.with_current_context(func)

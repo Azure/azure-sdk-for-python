@@ -20,9 +20,9 @@ class TestSqlManagementDeletedServersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_deleted_servers_list(self, resource_group):
         response = self.client.deleted_servers.list(
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -30,11 +30,22 @@ class TestSqlManagementDeletedServersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_deleted_servers_list_by_location(self, resource_group):
+        response = self.client.deleted_servers.list_by_location(
+            location_name="str",
+            api_version="2024-05-01-preview",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_deleted_servers_get(self, resource_group):
         response = self.client.deleted_servers.get(
             location_name="str",
             deleted_server_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -42,22 +53,11 @@ class TestSqlManagementDeletedServersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_location(self, resource_group):
-        response = self.client.deleted_servers.list_by_location(
-            location_name="str",
-            api_version="2020-11-01-preview",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_begin_recover(self, resource_group):
+    def test_deleted_servers_begin_recover(self, resource_group):
         response = self.client.deleted_servers.begin_recover(
             location_name="str",
             deleted_server_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

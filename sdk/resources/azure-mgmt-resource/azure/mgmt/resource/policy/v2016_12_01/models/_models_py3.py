@@ -1,5 +1,4 @@
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,20 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import sys
+from collections.abc import MutableMapping
 from typing import Any, List, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class PolicyAssignment(_serialization.Model):
@@ -90,7 +83,7 @@ class PolicyAssignment(_serialization.Model):
         :paramtype description: str
         """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
         self.type = type
         self.name = name
         self.display_name = display_name
@@ -207,8 +200,8 @@ class PolicyDefinition(_serialization.Model):
         :paramtype parameters: JSON
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
         self.policy_type = policy_type
         self.mode = mode
         self.display_name = display_name

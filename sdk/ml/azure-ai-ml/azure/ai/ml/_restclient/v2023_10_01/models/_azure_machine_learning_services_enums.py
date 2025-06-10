@@ -205,7 +205,7 @@ class ClassificationModels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: The goal is to create a model that predicts the value of a target variable by learning simple
     #: decision rules inferred from the data features."""
     RANDOM_FOREST = "RandomForest"
-    """Random forest is a supervised learning algorithm.
+    r"""Random forest is a supervised learning algorithm.
     #: The "forest"\  it builds, is an ensemble of decision trees, usually trained with the “bagging”\
     #: method.
     #: The general idea of the bagging method is that a combination of learning models increases the
@@ -1324,7 +1324,7 @@ class RegressionModels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: outputs.
     #: It's an inexact but powerful technique."""
     RANDOM_FOREST = "RandomForest"
-    """Random forest is a supervised learning algorithm.
+    r"""Random forest is a supervised learning algorithm.
     #: The "forest"\  it builds, is an ensemble of decision trees, usually trained with the “bagging”\
     #: method.
     #: The general idea of the bagging method is that a combination of learning models increases the

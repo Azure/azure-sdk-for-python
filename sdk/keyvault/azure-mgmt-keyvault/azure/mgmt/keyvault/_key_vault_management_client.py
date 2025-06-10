@@ -56,7 +56,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2023-07-01'
+    DEFAULT_API_VERSION = '2024-11-01'
     _PROFILE_TAG = "azure.mgmt.keyvault.KeyVaultManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -95,7 +95,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client = ARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
         super(KeyVaultManagementClient, self).__init__(
             api_version=api_version,
             profile=profile
@@ -110,45 +110,17 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         """Module depends on the API version:
 
            * 2016-10-01: :mod:`v2016_10_01.models<azure.mgmt.keyvault.v2016_10_01.models>`
-           * 2018-02-14: :mod:`v2018_02_14.models<azure.mgmt.keyvault.v2018_02_14.models>`
-           * 2019-09-01: :mod:`v2019_09_01.models<azure.mgmt.keyvault.v2019_09_01.models>`
-           * 2020-04-01-preview: :mod:`v2020_04_01_preview.models<azure.mgmt.keyvault.v2020_04_01_preview.models>`
-           * 2021-04-01-preview: :mod:`v2021_04_01_preview.models<azure.mgmt.keyvault.v2021_04_01_preview.models>`
-           * 2021-06-01-preview: :mod:`v2021_06_01_preview.models<azure.mgmt.keyvault.v2021_06_01_preview.models>`
-           * 2021-10-01: :mod:`v2021_10_01.models<azure.mgmt.keyvault.v2021_10_01.models>`
-           * 2022-07-01: :mod:`v2022_07_01.models<azure.mgmt.keyvault.v2022_07_01.models>`
            * 2023-02-01: :mod:`v2023_02_01.models<azure.mgmt.keyvault.v2023_02_01.models>`
-           * 2023-07-01: :mod:`v2023_07_01.models<azure.mgmt.keyvault.v2023_07_01.models>`
+           * 2024-11-01: :mod:`v2024_11_01.models<azure.mgmt.keyvault.v2024_11_01.models>`
         """
         if api_version == '2016-10-01':
             from .v2016_10_01 import models
             return models
-        elif api_version == '2018-02-14':
-            from .v2018_02_14 import models
-            return models
-        elif api_version == '2019-09-01':
-            from .v2019_09_01 import models
-            return models
-        elif api_version == '2020-04-01-preview':
-            from .v2020_04_01_preview import models
-            return models
-        elif api_version == '2021-04-01-preview':
-            from .v2021_04_01_preview import models
-            return models
-        elif api_version == '2021-06-01-preview':
-            from .v2021_06_01_preview import models
-            return models
-        elif api_version == '2021-10-01':
-            from .v2021_10_01 import models
-            return models
-        elif api_version == '2022-07-01':
-            from .v2022_07_01 import models
-            return models
         elif api_version == '2023-02-01':
             from .v2023_02_01 import models
             return models
-        elif api_version == '2023-07-01':
-            from .v2023_07_01 import models
+        elif api_version == '2024-11-01':
+            from .v2024_11_01 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -156,29 +128,14 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
     def keys(self):
         """Instance depends on the API version:
 
-           * 2019-09-01: :class:`KeysOperations<azure.mgmt.keyvault.v2019_09_01.operations.KeysOperations>`
-           * 2020-04-01-preview: :class:`KeysOperations<azure.mgmt.keyvault.v2020_04_01_preview.operations.KeysOperations>`
-           * 2021-06-01-preview: :class:`KeysOperations<azure.mgmt.keyvault.v2021_06_01_preview.operations.KeysOperations>`
-           * 2021-10-01: :class:`KeysOperations<azure.mgmt.keyvault.v2021_10_01.operations.KeysOperations>`
-           * 2022-07-01: :class:`KeysOperations<azure.mgmt.keyvault.v2022_07_01.operations.KeysOperations>`
            * 2023-02-01: :class:`KeysOperations<azure.mgmt.keyvault.v2023_02_01.operations.KeysOperations>`
-           * 2023-07-01: :class:`KeysOperations<azure.mgmt.keyvault.v2023_07_01.operations.KeysOperations>`
+           * 2024-11-01: :class:`KeysOperations<azure.mgmt.keyvault.v2024_11_01.operations.KeysOperations>`
         """
         api_version = self._get_api_version('keys')
-        if api_version == '2019-09-01':
-            from .v2019_09_01.operations import KeysOperations as OperationClass
-        elif api_version == '2020-04-01-preview':
-            from .v2020_04_01_preview.operations import KeysOperations as OperationClass
-        elif api_version == '2021-06-01-preview':
-            from .v2021_06_01_preview.operations import KeysOperations as OperationClass
-        elif api_version == '2021-10-01':
-            from .v2021_10_01.operations import KeysOperations as OperationClass
-        elif api_version == '2022-07-01':
-            from .v2022_07_01.operations import KeysOperations as OperationClass
-        elif api_version == '2023-02-01':
+        if api_version == '2023-02-01':
             from .v2023_02_01.operations import KeysOperations as OperationClass
-        elif api_version == '2023-07-01':
-            from .v2023_07_01.operations import KeysOperations as OperationClass
+        elif api_version == '2024-11-01':
+            from .v2024_11_01.operations import KeysOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'keys'".format(api_version))
         self._config.api_version = api_version
@@ -189,13 +146,13 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2023-02-01: :class:`ManagedHsmKeysOperations<azure.mgmt.keyvault.v2023_02_01.operations.ManagedHsmKeysOperations>`
-           * 2023-07-01: :class:`ManagedHsmKeysOperations<azure.mgmt.keyvault.v2023_07_01.operations.ManagedHsmKeysOperations>`
+           * 2024-11-01: :class:`ManagedHsmKeysOperations<azure.mgmt.keyvault.v2024_11_01.operations.ManagedHsmKeysOperations>`
         """
         api_version = self._get_api_version('managed_hsm_keys')
         if api_version == '2023-02-01':
             from .v2023_02_01.operations import ManagedHsmKeysOperations as OperationClass
-        elif api_version == '2023-07-01':
-            from .v2023_07_01.operations import ManagedHsmKeysOperations as OperationClass
+        elif api_version == '2024-11-01':
+            from .v2024_11_01.operations import ManagedHsmKeysOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'managed_hsm_keys'".format(api_version))
         self._config.api_version = api_version
@@ -205,29 +162,14 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
     def managed_hsms(self):
         """Instance depends on the API version:
 
-           * 2020-04-01-preview: :class:`ManagedHsmsOperations<azure.mgmt.keyvault.v2020_04_01_preview.operations.ManagedHsmsOperations>`
-           * 2021-04-01-preview: :class:`ManagedHsmsOperations<azure.mgmt.keyvault.v2021_04_01_preview.operations.ManagedHsmsOperations>`
-           * 2021-06-01-preview: :class:`ManagedHsmsOperations<azure.mgmt.keyvault.v2021_06_01_preview.operations.ManagedHsmsOperations>`
-           * 2021-10-01: :class:`ManagedHsmsOperations<azure.mgmt.keyvault.v2021_10_01.operations.ManagedHsmsOperations>`
-           * 2022-07-01: :class:`ManagedHsmsOperations<azure.mgmt.keyvault.v2022_07_01.operations.ManagedHsmsOperations>`
            * 2023-02-01: :class:`ManagedHsmsOperations<azure.mgmt.keyvault.v2023_02_01.operations.ManagedHsmsOperations>`
-           * 2023-07-01: :class:`ManagedHsmsOperations<azure.mgmt.keyvault.v2023_07_01.operations.ManagedHsmsOperations>`
+           * 2024-11-01: :class:`ManagedHsmsOperations<azure.mgmt.keyvault.v2024_11_01.operations.ManagedHsmsOperations>`
         """
         api_version = self._get_api_version('managed_hsms')
-        if api_version == '2020-04-01-preview':
-            from .v2020_04_01_preview.operations import ManagedHsmsOperations as OperationClass
-        elif api_version == '2021-04-01-preview':
-            from .v2021_04_01_preview.operations import ManagedHsmsOperations as OperationClass
-        elif api_version == '2021-06-01-preview':
-            from .v2021_06_01_preview.operations import ManagedHsmsOperations as OperationClass
-        elif api_version == '2021-10-01':
-            from .v2021_10_01.operations import ManagedHsmsOperations as OperationClass
-        elif api_version == '2022-07-01':
-            from .v2022_07_01.operations import ManagedHsmsOperations as OperationClass
-        elif api_version == '2023-02-01':
+        if api_version == '2023-02-01':
             from .v2023_02_01.operations import ManagedHsmsOperations as OperationClass
-        elif api_version == '2023-07-01':
-            from .v2023_07_01.operations import ManagedHsmsOperations as OperationClass
+        elif api_version == '2024-11-01':
+            from .v2024_11_01.operations import ManagedHsmsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'managed_hsms'".format(api_version))
         self._config.api_version = api_version
@@ -237,26 +179,14 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
     def mhsm_private_endpoint_connections(self):
         """Instance depends on the API version:
 
-           * 2021-04-01-preview: :class:`MHSMPrivateEndpointConnectionsOperations<azure.mgmt.keyvault.v2021_04_01_preview.operations.MHSMPrivateEndpointConnectionsOperations>`
-           * 2021-06-01-preview: :class:`MHSMPrivateEndpointConnectionsOperations<azure.mgmt.keyvault.v2021_06_01_preview.operations.MHSMPrivateEndpointConnectionsOperations>`
-           * 2021-10-01: :class:`MHSMPrivateEndpointConnectionsOperations<azure.mgmt.keyvault.v2021_10_01.operations.MHSMPrivateEndpointConnectionsOperations>`
-           * 2022-07-01: :class:`MHSMPrivateEndpointConnectionsOperations<azure.mgmt.keyvault.v2022_07_01.operations.MHSMPrivateEndpointConnectionsOperations>`
            * 2023-02-01: :class:`MHSMPrivateEndpointConnectionsOperations<azure.mgmt.keyvault.v2023_02_01.operations.MHSMPrivateEndpointConnectionsOperations>`
-           * 2023-07-01: :class:`MHSMPrivateEndpointConnectionsOperations<azure.mgmt.keyvault.v2023_07_01.operations.MHSMPrivateEndpointConnectionsOperations>`
+           * 2024-11-01: :class:`MHSMPrivateEndpointConnectionsOperations<azure.mgmt.keyvault.v2024_11_01.operations.MHSMPrivateEndpointConnectionsOperations>`
         """
         api_version = self._get_api_version('mhsm_private_endpoint_connections')
-        if api_version == '2021-04-01-preview':
-            from .v2021_04_01_preview.operations import MHSMPrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2021-06-01-preview':
-            from .v2021_06_01_preview.operations import MHSMPrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2021-10-01':
-            from .v2021_10_01.operations import MHSMPrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-07-01':
-            from .v2022_07_01.operations import MHSMPrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-02-01':
+        if api_version == '2023-02-01':
             from .v2023_02_01.operations import MHSMPrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-07-01':
-            from .v2023_07_01.operations import MHSMPrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == '2024-11-01':
+            from .v2024_11_01.operations import MHSMPrivateEndpointConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'mhsm_private_endpoint_connections'".format(api_version))
         self._config.api_version = api_version
@@ -266,26 +196,14 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
     def mhsm_private_link_resources(self):
         """Instance depends on the API version:
 
-           * 2021-04-01-preview: :class:`MHSMPrivateLinkResourcesOperations<azure.mgmt.keyvault.v2021_04_01_preview.operations.MHSMPrivateLinkResourcesOperations>`
-           * 2021-06-01-preview: :class:`MHSMPrivateLinkResourcesOperations<azure.mgmt.keyvault.v2021_06_01_preview.operations.MHSMPrivateLinkResourcesOperations>`
-           * 2021-10-01: :class:`MHSMPrivateLinkResourcesOperations<azure.mgmt.keyvault.v2021_10_01.operations.MHSMPrivateLinkResourcesOperations>`
-           * 2022-07-01: :class:`MHSMPrivateLinkResourcesOperations<azure.mgmt.keyvault.v2022_07_01.operations.MHSMPrivateLinkResourcesOperations>`
            * 2023-02-01: :class:`MHSMPrivateLinkResourcesOperations<azure.mgmt.keyvault.v2023_02_01.operations.MHSMPrivateLinkResourcesOperations>`
-           * 2023-07-01: :class:`MHSMPrivateLinkResourcesOperations<azure.mgmt.keyvault.v2023_07_01.operations.MHSMPrivateLinkResourcesOperations>`
+           * 2024-11-01: :class:`MHSMPrivateLinkResourcesOperations<azure.mgmt.keyvault.v2024_11_01.operations.MHSMPrivateLinkResourcesOperations>`
         """
         api_version = self._get_api_version('mhsm_private_link_resources')
-        if api_version == '2021-04-01-preview':
-            from .v2021_04_01_preview.operations import MHSMPrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2021-06-01-preview':
-            from .v2021_06_01_preview.operations import MHSMPrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2021-10-01':
-            from .v2021_10_01.operations import MHSMPrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-07-01':
-            from .v2022_07_01.operations import MHSMPrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-02-01':
+        if api_version == '2023-02-01':
             from .v2023_02_01.operations import MHSMPrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-07-01':
-            from .v2023_07_01.operations import MHSMPrivateLinkResourcesOperations as OperationClass
+        elif api_version == '2024-11-01':
+            from .v2024_11_01.operations import MHSMPrivateLinkResourcesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'mhsm_private_link_resources'".format(api_version))
         self._config.api_version = api_version
@@ -296,13 +214,13 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2023-02-01: :class:`MHSMRegionsOperations<azure.mgmt.keyvault.v2023_02_01.operations.MHSMRegionsOperations>`
-           * 2023-07-01: :class:`MHSMRegionsOperations<azure.mgmt.keyvault.v2023_07_01.operations.MHSMRegionsOperations>`
+           * 2024-11-01: :class:`MHSMRegionsOperations<azure.mgmt.keyvault.v2024_11_01.operations.MHSMRegionsOperations>`
         """
         api_version = self._get_api_version('mhsm_regions')
         if api_version == '2023-02-01':
             from .v2023_02_01.operations import MHSMRegionsOperations as OperationClass
-        elif api_version == '2023-07-01':
-            from .v2023_07_01.operations import MHSMRegionsOperations as OperationClass
+        elif api_version == '2024-11-01':
+            from .v2024_11_01.operations import MHSMRegionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'mhsm_regions'".format(api_version))
         self._config.api_version = api_version
@@ -313,37 +231,16 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2016-10-01: :class:`Operations<azure.mgmt.keyvault.v2016_10_01.operations.Operations>`
-           * 2018-02-14: :class:`Operations<azure.mgmt.keyvault.v2018_02_14.operations.Operations>`
-           * 2019-09-01: :class:`Operations<azure.mgmt.keyvault.v2019_09_01.operations.Operations>`
-           * 2020-04-01-preview: :class:`Operations<azure.mgmt.keyvault.v2020_04_01_preview.operations.Operations>`
-           * 2021-04-01-preview: :class:`Operations<azure.mgmt.keyvault.v2021_04_01_preview.operations.Operations>`
-           * 2021-06-01-preview: :class:`Operations<azure.mgmt.keyvault.v2021_06_01_preview.operations.Operations>`
-           * 2021-10-01: :class:`Operations<azure.mgmt.keyvault.v2021_10_01.operations.Operations>`
-           * 2022-07-01: :class:`Operations<azure.mgmt.keyvault.v2022_07_01.operations.Operations>`
            * 2023-02-01: :class:`Operations<azure.mgmt.keyvault.v2023_02_01.operations.Operations>`
-           * 2023-07-01: :class:`Operations<azure.mgmt.keyvault.v2023_07_01.operations.Operations>`
+           * 2024-11-01: :class:`Operations<azure.mgmt.keyvault.v2024_11_01.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2016-10-01':
             from .v2016_10_01.operations import Operations as OperationClass
-        elif api_version == '2018-02-14':
-            from .v2018_02_14.operations import Operations as OperationClass
-        elif api_version == '2019-09-01':
-            from .v2019_09_01.operations import Operations as OperationClass
-        elif api_version == '2020-04-01-preview':
-            from .v2020_04_01_preview.operations import Operations as OperationClass
-        elif api_version == '2021-04-01-preview':
-            from .v2021_04_01_preview.operations import Operations as OperationClass
-        elif api_version == '2021-06-01-preview':
-            from .v2021_06_01_preview.operations import Operations as OperationClass
-        elif api_version == '2021-10-01':
-            from .v2021_10_01.operations import Operations as OperationClass
-        elif api_version == '2022-07-01':
-            from .v2022_07_01.operations import Operations as OperationClass
         elif api_version == '2023-02-01':
             from .v2023_02_01.operations import Operations as OperationClass
-        elif api_version == '2023-07-01':
-            from .v2023_07_01.operations import Operations as OperationClass
+        elif api_version == '2024-11-01':
+            from .v2024_11_01.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         self._config.api_version = api_version
@@ -353,35 +250,14 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
     def private_endpoint_connections(self):
         """Instance depends on the API version:
 
-           * 2018-02-14: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.keyvault.v2018_02_14.operations.PrivateEndpointConnectionsOperations>`
-           * 2019-09-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.keyvault.v2019_09_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2020-04-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.keyvault.v2020_04_01_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2021-04-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.keyvault.v2021_04_01_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2021-06-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.keyvault.v2021_06_01_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2021-10-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.keyvault.v2021_10_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2022-07-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.keyvault.v2022_07_01.operations.PrivateEndpointConnectionsOperations>`
            * 2023-02-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.keyvault.v2023_02_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2023-07-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.keyvault.v2023_07_01.operations.PrivateEndpointConnectionsOperations>`
+           * 2024-11-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.keyvault.v2024_11_01.operations.PrivateEndpointConnectionsOperations>`
         """
         api_version = self._get_api_version('private_endpoint_connections')
-        if api_version == '2018-02-14':
-            from .v2018_02_14.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2019-09-01':
-            from .v2019_09_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2020-04-01-preview':
-            from .v2020_04_01_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2021-04-01-preview':
-            from .v2021_04_01_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2021-06-01-preview':
-            from .v2021_06_01_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2021-10-01':
-            from .v2021_10_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-07-01':
-            from .v2022_07_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-02-01':
+        if api_version == '2023-02-01':
             from .v2023_02_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-07-01':
-            from .v2023_07_01.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == '2024-11-01':
+            from .v2024_11_01.operations import PrivateEndpointConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_endpoint_connections'".format(api_version))
         self._config.api_version = api_version
@@ -391,35 +267,14 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
     def private_link_resources(self):
         """Instance depends on the API version:
 
-           * 2018-02-14: :class:`PrivateLinkResourcesOperations<azure.mgmt.keyvault.v2018_02_14.operations.PrivateLinkResourcesOperations>`
-           * 2019-09-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.keyvault.v2019_09_01.operations.PrivateLinkResourcesOperations>`
-           * 2020-04-01-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.keyvault.v2020_04_01_preview.operations.PrivateLinkResourcesOperations>`
-           * 2021-04-01-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.keyvault.v2021_04_01_preview.operations.PrivateLinkResourcesOperations>`
-           * 2021-06-01-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.keyvault.v2021_06_01_preview.operations.PrivateLinkResourcesOperations>`
-           * 2021-10-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.keyvault.v2021_10_01.operations.PrivateLinkResourcesOperations>`
-           * 2022-07-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.keyvault.v2022_07_01.operations.PrivateLinkResourcesOperations>`
            * 2023-02-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.keyvault.v2023_02_01.operations.PrivateLinkResourcesOperations>`
-           * 2023-07-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.keyvault.v2023_07_01.operations.PrivateLinkResourcesOperations>`
+           * 2024-11-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.keyvault.v2024_11_01.operations.PrivateLinkResourcesOperations>`
         """
         api_version = self._get_api_version('private_link_resources')
-        if api_version == '2018-02-14':
-            from .v2018_02_14.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2019-09-01':
-            from .v2019_09_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2020-04-01-preview':
-            from .v2020_04_01_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2021-04-01-preview':
-            from .v2021_04_01_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2021-06-01-preview':
-            from .v2021_06_01_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2021-10-01':
-            from .v2021_10_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-07-01':
-            from .v2022_07_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-02-01':
+        if api_version == '2023-02-01':
             from .v2023_02_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-07-01':
-            from .v2023_07_01.operations import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == '2024-11-01':
+            from .v2024_11_01.operations import PrivateLinkResourcesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_link_resources'".format(api_version))
         self._config.api_version = api_version
@@ -429,26 +284,14 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
     def secrets(self):
         """Instance depends on the API version:
 
-           * 2020-04-01-preview: :class:`SecretsOperations<azure.mgmt.keyvault.v2020_04_01_preview.operations.SecretsOperations>`
-           * 2021-06-01-preview: :class:`SecretsOperations<azure.mgmt.keyvault.v2021_06_01_preview.operations.SecretsOperations>`
-           * 2021-10-01: :class:`SecretsOperations<azure.mgmt.keyvault.v2021_10_01.operations.SecretsOperations>`
-           * 2022-07-01: :class:`SecretsOperations<azure.mgmt.keyvault.v2022_07_01.operations.SecretsOperations>`
            * 2023-02-01: :class:`SecretsOperations<azure.mgmt.keyvault.v2023_02_01.operations.SecretsOperations>`
-           * 2023-07-01: :class:`SecretsOperations<azure.mgmt.keyvault.v2023_07_01.operations.SecretsOperations>`
+           * 2024-11-01: :class:`SecretsOperations<azure.mgmt.keyvault.v2024_11_01.operations.SecretsOperations>`
         """
         api_version = self._get_api_version('secrets')
-        if api_version == '2020-04-01-preview':
-            from .v2020_04_01_preview.operations import SecretsOperations as OperationClass
-        elif api_version == '2021-06-01-preview':
-            from .v2021_06_01_preview.operations import SecretsOperations as OperationClass
-        elif api_version == '2021-10-01':
-            from .v2021_10_01.operations import SecretsOperations as OperationClass
-        elif api_version == '2022-07-01':
-            from .v2022_07_01.operations import SecretsOperations as OperationClass
-        elif api_version == '2023-02-01':
+        if api_version == '2023-02-01':
             from .v2023_02_01.operations import SecretsOperations as OperationClass
-        elif api_version == '2023-07-01':
-            from .v2023_07_01.operations import SecretsOperations as OperationClass
+        elif api_version == '2024-11-01':
+            from .v2024_11_01.operations import SecretsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'secrets'".format(api_version))
         self._config.api_version = api_version
@@ -459,37 +302,16 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2016-10-01: :class:`VaultsOperations<azure.mgmt.keyvault.v2016_10_01.operations.VaultsOperations>`
-           * 2018-02-14: :class:`VaultsOperations<azure.mgmt.keyvault.v2018_02_14.operations.VaultsOperations>`
-           * 2019-09-01: :class:`VaultsOperations<azure.mgmt.keyvault.v2019_09_01.operations.VaultsOperations>`
-           * 2020-04-01-preview: :class:`VaultsOperations<azure.mgmt.keyvault.v2020_04_01_preview.operations.VaultsOperations>`
-           * 2021-04-01-preview: :class:`VaultsOperations<azure.mgmt.keyvault.v2021_04_01_preview.operations.VaultsOperations>`
-           * 2021-06-01-preview: :class:`VaultsOperations<azure.mgmt.keyvault.v2021_06_01_preview.operations.VaultsOperations>`
-           * 2021-10-01: :class:`VaultsOperations<azure.mgmt.keyvault.v2021_10_01.operations.VaultsOperations>`
-           * 2022-07-01: :class:`VaultsOperations<azure.mgmt.keyvault.v2022_07_01.operations.VaultsOperations>`
            * 2023-02-01: :class:`VaultsOperations<azure.mgmt.keyvault.v2023_02_01.operations.VaultsOperations>`
-           * 2023-07-01: :class:`VaultsOperations<azure.mgmt.keyvault.v2023_07_01.operations.VaultsOperations>`
+           * 2024-11-01: :class:`VaultsOperations<azure.mgmt.keyvault.v2024_11_01.operations.VaultsOperations>`
         """
         api_version = self._get_api_version('vaults')
         if api_version == '2016-10-01':
             from .v2016_10_01.operations import VaultsOperations as OperationClass
-        elif api_version == '2018-02-14':
-            from .v2018_02_14.operations import VaultsOperations as OperationClass
-        elif api_version == '2019-09-01':
-            from .v2019_09_01.operations import VaultsOperations as OperationClass
-        elif api_version == '2020-04-01-preview':
-            from .v2020_04_01_preview.operations import VaultsOperations as OperationClass
-        elif api_version == '2021-04-01-preview':
-            from .v2021_04_01_preview.operations import VaultsOperations as OperationClass
-        elif api_version == '2021-06-01-preview':
-            from .v2021_06_01_preview.operations import VaultsOperations as OperationClass
-        elif api_version == '2021-10-01':
-            from .v2021_10_01.operations import VaultsOperations as OperationClass
-        elif api_version == '2022-07-01':
-            from .v2022_07_01.operations import VaultsOperations as OperationClass
         elif api_version == '2023-02-01':
             from .v2023_02_01.operations import VaultsOperations as OperationClass
-        elif api_version == '2023-07-01':
-            from .v2023_07_01.operations import VaultsOperations as OperationClass
+        elif api_version == '2024-11-01':
+            from .v2024_11_01.operations import VaultsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'vaults'".format(api_version))
         self._config.api_version = api_version

@@ -20,13 +20,13 @@ class TestNetAppManagementSubvolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_volume(self, resource_group):
+    def test_subvolumes_list_by_volume(self, resource_group):
         response = self.client.subvolumes.list_by_volume(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -34,14 +34,14 @@ class TestNetAppManagementSubvolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_subvolumes_get(self, resource_group):
         response = self.client.subvolumes.get(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
             subvolume_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -49,7 +49,7 @@ class TestNetAppManagementSubvolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create(self, resource_group):
+    def test_subvolumes_begin_create(self, resource_group):
         response = self.client.subvolumes.begin_create(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -73,7 +73,7 @@ class TestNetAppManagementSubvolumesOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -81,7 +81,7 @@ class TestNetAppManagementSubvolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_subvolumes_begin_update(self, resource_group):
         response = self.client.subvolumes.begin_update(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -89,7 +89,7 @@ class TestNetAppManagementSubvolumesOperations(AzureMgmtRecordedTestCase):
             volume_name="str",
             subvolume_name="str",
             body={"path": "str", "size": 0},
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -97,14 +97,14 @@ class TestNetAppManagementSubvolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_subvolumes_begin_delete(self, resource_group):
         response = self.client.subvolumes.begin_delete(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
             subvolume_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -112,14 +112,14 @@ class TestNetAppManagementSubvolumesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_get_metadata(self, resource_group):
+    def test_subvolumes_begin_get_metadata(self, resource_group):
         response = self.client.subvolumes.begin_get_metadata(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
             subvolume_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.hybridkubernetes import ConnectedKubernetesClient
 
 """
@@ -34,6 +35,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/hybridkubernetes/resource-manager/Microsoft.Kubernetes/stable/2021-10-01/examples/ListConnectedClusterOperationsExample.json
+# x-ms-original-file: specification/hybridkubernetes/resource-manager/Microsoft.Kubernetes/preview/2024-12-01-preview/examples/ListConnectedClusterOperationsExample.json
 if __name__ == "__main__":
     main()

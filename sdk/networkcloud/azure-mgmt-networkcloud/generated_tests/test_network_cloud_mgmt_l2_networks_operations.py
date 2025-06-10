@@ -20,9 +20,9 @@ class TestNetworkCloudMgmtL2NetworksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_subscription(self, resource_group):
+    def test_l2_networks_list_by_subscription(self, resource_group):
         response = self.client.l2_networks.list_by_subscription(
-            api_version="2024-06-01-preview",
+            api_version="2024-10-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -30,10 +30,10 @@ class TestNetworkCloudMgmtL2NetworksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_l2_networks_list_by_resource_group(self, resource_group):
         response = self.client.l2_networks.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-06-01-preview",
+            api_version="2024-10-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -41,11 +41,11 @@ class TestNetworkCloudMgmtL2NetworksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_l2_networks_get(self, resource_group):
         response = self.client.l2_networks.get(
             resource_group_name=resource_group.name,
             l2_network_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestNetworkCloudMgmtL2NetworksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_l2_networks_begin_create_or_update(self, resource_group):
         response = self.client.l2_networks.begin_create_or_update(
             resource_group_name=resource_group.name,
             l2_network_name="str",
@@ -83,7 +83,7 @@ class TestNetworkCloudMgmtL2NetworksOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "virtualMachinesAssociatedIds": ["str"],
             },
-            api_version="2024-06-01-preview",
+            api_version="2024-10-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -91,11 +91,11 @@ class TestNetworkCloudMgmtL2NetworksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_l2_networks_begin_delete(self, resource_group):
         response = self.client.l2_networks.begin_delete(
             resource_group_name=resource_group.name,
             l2_network_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-10-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -103,11 +103,11 @@ class TestNetworkCloudMgmtL2NetworksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_l2_networks_update(self, resource_group):
         response = self.client.l2_networks.update(
             resource_group_name=resource_group.name,
             l2_network_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-10-01-preview",
         )
 
         # please add some check logic here by yourself

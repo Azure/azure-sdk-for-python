@@ -1,0 +1,25 @@
+{
+  "parameters": {
+    "subscriptionId": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+    "resourceGroupName": "testrg123",
+    "workspaceName": "workspaces123",
+    "api-version": "2025-01-01-preview"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "resourceId": "aabbccddee112233445566778899",
+        "fqdn": "testnotebook.notebooks.azure.com",
+        "notebookPreparationError": {
+          "statusCode": 500,
+          "errorMessage": "general error"
+        }
+      }
+    },
+    "202": {
+      "headers": {
+        "Location": "example_location"
+      }
+    }
+  }
+}

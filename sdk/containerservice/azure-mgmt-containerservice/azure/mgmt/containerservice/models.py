@@ -6,4 +6,5 @@
 # --------------------------------------------------------------------------
 from .v2017_07_01.models import *
 from .v2019_09_30_preview.models import *
-from .v2024_09_01.models import *
+from .v2025_02_02_preview.models import *
+from .v2025_03_01.models import *

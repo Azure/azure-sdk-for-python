@@ -3,10 +3,11 @@ import logging
 import os
 import re
 from functools import wraps
+from typing import Optional
 
 from ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
-from subprocess import check_output, CalledProcessError, check_call, STDOUT
+from subprocess import check_output, CalledProcessError, check_call, STDOUT, call
 from typing import Dict, Any
 from glob import glob
 import yaml
@@ -132,8 +133,14 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
         _LOGGER.info(f"Fail to save metadata since package folder doesn't exist: {package_folder}")
         return
     for_swagger_gen = "meta" in config
-    metadata_folder = package_folder / "_meta.json"
-    if metadata_folder.exists() and for_swagger_gen:
+    # remove old _meta.json
+    old_metadata_folder = package_folder / "_meta.json"
+    if old_metadata_folder.exists():
+        os.remove(old_metadata_folder)
+        _LOGGER.info(f"Remove old metadata file: {old_metadata_folder}")
+
+    metadata_folder = package_folder / "_metadata.json"
+    if metadata_folder.exists():
         with open(metadata_folder, "r") as file_in:
             metadata = json.load(file_in)
     else:
@@ -172,30 +179,10 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
 
     _LOGGER.info("Metadata json:\n {}".format(json.dumps(metadata, indent=2)))
 
-    metadata_file_path = os.path.join(package_folder, "_meta.json")
-    with open(metadata_file_path, "w") as writer:
+    metadata_file_path = package_folder / "_metadata.json"
+    with metadata_file_path.open("w") as writer:
         json.dump(metadata, writer, indent=2)
     _LOGGER.info(f"Saved metadata to {metadata_file_path}")
-
-    # Check whether MANIFEST.in includes _meta.json
-    if "resource-manager" in input_readme:
-        require_meta = "include _meta.json\n"
-        manifest_file = os.path.join(package_folder, "MANIFEST.in")
-        if not os.path.exists(manifest_file):
-            _LOGGER.info(f"MANIFEST.in doesn't exist: {manifest_file}")
-            return
-
-        includes = []
-        write_flag = False
-        with open(manifest_file, "r") as f:
-            includes = f.readlines()
-            if require_meta not in includes:
-                includes = [require_meta] + includes
-                write_flag = True
-
-        if write_flag:
-            with open(manifest_file, "w") as f:
-                f.write("".join(includes))
 
 
 @return_origin_path
@@ -216,8 +203,10 @@ def judge_tag_preview(path: str, package_name: str) -> bool:
         for line in list_in:
             if "DEFAULT_API_VERSION = " in line:
                 default_api_version += line.split("=")[-1].strip("\n")  # collect all default api version
-            if default_api_version == "" and "api_version" in line:
-                api_version += ", ".join(re.findall("\d{4}-\d{2}-\d{2}[-a-z]*", line))  # collect all single api version
+            if default_api_version == "" and "api_version" in line and "method_added_on" not in line:
+                api_version += ", ".join(
+                    re.findall('"\d{4}-\d{2}-\d{2}[-a-z]*"[^:]', line)
+                )  # collect all single api version
     if default_api_version != "":
         _LOGGER.info(f"find default api version:{default_api_version}")
         return "preview" in default_api_version
@@ -377,34 +366,21 @@ def gen_dpg(rest_readme_path: str, autorest_config: str, spec_folder: str) -> Di
 
 
 def format_samples_and_tests(sdk_code_path) -> None:
+    try:
+        import black
+    except Exception as e:
+        try:
+            call("pip install black", shell=True)
+        except:
+            pass
     for item in ["generated_samples", "generated_tests"]:
         generate_path = Path(sdk_code_path) / item
-        if not generate_path.exists():
-            _LOGGER.info(f"not find {generate_path}")
-            continue
-
-        try:
-            import black
-        except Exception as e:
-            check_call("pip install black", shell=True)
-            import black
-
-        _BLACK_MODE = black.Mode()
-        _BLACK_MODE.line_length = 120
-        files = generate_path.glob("**/*.py")
-        for path in files:
+        if generate_path.exists():
             try:
-                with open(path, "r") as fr:
-                    file_content = fr.read()
-
-                file_content = black.format_file_contents(file_content, fast=True, mode=_BLACK_MODE)
-
-                with open(path, "w") as fw:
-                    fw.write(file_content)
+                call(f"black {generate_path} -l 120", shell=True)
+                _LOGGER.info(f"format {generate_path} successfully")
             except Exception as e:
-                _LOGGER.warning(f"Failed to format {path}: {e}")
-
-        _LOGGER.info(f"format {generate_path} successfully")
+                _LOGGER.info(f"failed to format {generate_path}: {e}")
 
 
 def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> None:
@@ -421,19 +397,47 @@ def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> No
             for line in content:
                 if package_name in line:
                     return
-            content.append(f"    - name: {package_name}\n")
-            content.append(f"      safeName: {safe_name}\n")
+            new_line = "" if content[-1].endswith("\n") else "\n"
+            content.append(f"{new_line}    - name: {package_name}\n")
+            content.append(f"      safeName: {safe_name}")
     with open(ci, "w") as file_out:
         file_out.writelines(content)
 
 
-def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, rest_repo_url: str) -> Dict[str, Any]:
+def gen_typespec(
+    typespec_relative_path: str,
+    spec_folder: str,
+    head_sha: str,
+    rest_repo_url: str,
+    run_in_pipeline: bool,
+    api_version: Optional[str] = None,
+) -> Dict[str, Any]:
     typespec_python = "@azure-tools/typespec-python"
     # call scirpt to generate sdk
     try:
         tsp_dir = (Path(spec_folder) / typespec_relative_path).resolve()
         repo_url = rest_repo_url.replace("https://github.com/", "")
-        cmd = f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url} --debug"
+        tspconfig = tsp_dir / "tspconfig.yaml"
+        if api_version and tspconfig.exists():
+            with open(tspconfig, "r") as file_in:
+                content = yaml.safe_load(file_in)
+                if content.get("options", {}).get("@azure-tools/typespec-python"):
+                    content["options"]["@azure-tools/typespec-python"]["api-version"] = api_version
+            with open(tspconfig, "w") as file_out:
+                yaml.dump(content, file_out)
+        cmd = (
+            f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url}"
+        )
+        if run_in_pipeline:
+            emitter_name = "@azure-tools/typespec-python"
+            if not os.path.exists(f"node_modules/{emitter_name}"):
+                _LOGGER.info("install dependencies only for the first run")
+                check_output("tsp-client install-dependencies", stderr=STDOUT, shell=True)
+            else:
+                _LOGGER.info(f"skip install since {emitter_name} is already installed")
+            cmd += " --skip-install --debug"
+        else:
+            cmd += " --debug"
         _LOGGER.info(f"generation cmd: {cmd}")
         output = check_output(cmd, stderr=STDOUT, shell=True)
     except CalledProcessError as e:
@@ -455,8 +459,8 @@ def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, r
 
     with open(Path("eng/emitter-package.json"), "r") as file_in:
         data = json.load(file_in)
-        npm_package_verstion = {
-            typespec_python: data["dependencies"][typespec_python],
+        npm_package_version = {
+            "emitterVersion": data["dependencies"][typespec_python],
         }
 
-    return npm_package_verstion
+    return npm_package_version

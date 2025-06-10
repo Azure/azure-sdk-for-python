@@ -13,10 +13,11 @@ from azure.cosmos.http_constants import ResourceType
 
 class ServiceRequestRetryPolicy(object):
 
-    def __init__(self, connection_policy, global_endpoint_manager, *args):
+    def __init__(self, connection_policy, global_endpoint_manager, pk_range_wrapper, *args):
         self.args = args
         self.global_endpoint_manager = global_endpoint_manager
-        self.total_retries = len(self.global_endpoint_manager.location_cache.read_regional_endpoints)
+        self.pk_range_wrapper = pk_range_wrapper
+        self.total_retries = len(self.global_endpoint_manager.location_cache.read_regional_routing_contexts)
         self.total_in_region_retries = 1
         self.in_region_retry_count = 0
         self.failover_retry_count = 0
@@ -25,9 +26,9 @@ class ServiceRequestRetryPolicy(object):
         self.logger = logging.getLogger("azure.cosmos.ServiceRequestRetryPolicy")
         if self.request:
             if _OperationType.IsReadOnlyOperation(self.request.operation_type):
-                self.total_retries = len(self.global_endpoint_manager.location_cache.read_regional_endpoints)
+                self.total_retries = len(self.global_endpoint_manager.location_cache.read_regional_routing_contexts)
             else:
-                self.total_retries = len(self.global_endpoint_manager.location_cache.write_regional_endpoints)
+                self.total_retries = len(self.global_endpoint_manager.location_cache.write_regional_routing_contexts)
 
     def ShouldRetry(self):
         """Returns true if the request should retry based on preferred regions and retries already done.
@@ -57,17 +58,17 @@ class ServiceRequestRetryPolicy(object):
                     return False
 
             self.request.last_routed_location_endpoint_within_region = self.request.location_endpoint_to_route
-            if _OperationType.IsReadOnlyOperation(self.request.operation_type):
+            if (_OperationType.IsReadOnlyOperation(self.request.operation_type)
+                    or self.global_endpoint_manager.can_use_multiple_write_locations(self.request)):
                 self.update_location_cache()
                 # We just directly got to the next location in case of read requests
                 # We don't retry again on the same region for regional endpoint
                 self.failover_retry_count += 1
                 if self.failover_retry_count >= self.total_retries:
                     return False
-                # # Check if it is safe to failover to another region
+                # Check if it is safe to failover to another region
                 location_endpoint = self.resolve_next_region_service_endpoint()
             else:
-                self.global_endpoint_manager.swap_regional_endpoint_values(self.request)
                 location_endpoint = self.resolve_current_region_service_endpoint()
                 # This is the case where both current and previous point to the same writable endpoint
                 # In this case we don't want to retry again, rather failover to the next region
@@ -80,7 +81,7 @@ class ServiceRequestRetryPolicy(object):
                     # and we reset the in region retry count
                     self.in_region_retry_count = 0
                     self.failover_retry_count += 1
-                    # # Check if it is safe to failover to another region
+                    # Check if it is safe to failover to another region
                     if self.failover_retry_count >= self.total_retries:
                         return False
                     location_endpoint = self.resolve_next_region_service_endpoint()
@@ -96,7 +97,7 @@ class ServiceRequestRetryPolicy(object):
         # resolve the next service endpoint in the same region
         # since we maintain 2 endpoints per region for write operations
         self.request.route_to_location_with_preferred_location_flag(0, True)
-        return self.global_endpoint_manager.resolve_service_endpoint(self.request)
+        return self.global_endpoint_manager.resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper)
 
     # This function prepares the request to go to the next region
     def resolve_next_region_service_endpoint(self):
@@ -110,7 +111,7 @@ class ServiceRequestRetryPolicy(object):
         self.request.route_to_location_with_preferred_location_flag(0, True)
         # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
         # This enables marking the endpoint unavailability on endpoint failover/unreachability
-        return self.global_endpoint_manager.resolve_service_endpoint(self.request)
+        return self.global_endpoint_manager.resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper)
 
     def mark_endpoint_unavailable(self, unavailable_endpoint, refresh_cache: bool):
         if _OperationType.IsReadOnlyOperation(self.request.operation_type):

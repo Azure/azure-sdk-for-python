@@ -56,10 +56,10 @@ pip install azure-storage-file-datalake --pre
 ## Running the samples
 
 1. Open a terminal window and `cd` to the directory that the samples are saved in.
-2. Set the environment variables `STORAGE_ACCOUNT_NAME` and `STORAGE_ACCOUNT_KEY` with your own values.
+2. Set the environment variables `DATALAKE_STORAGE_ACCOUNT_NAME` and `DATALAKE_STORAGE_ACCOUNT_KEY` with your own values.
 3. run the file, eg.`python datalake_samples_upload_download.py`
 
 ## Next steps
 
-Check out the [API reference documentation](https://aka.ms/azsdk-python-storage-filedatalake-ref) to learn more about
+Check out the [API reference documentation](https://learn.microsoft.com/python/api/azure-storage-file-datalake/azure.storage.filedatalake?view=azure-python) to learn more about
 what you can do with the DataLake Storage client library.

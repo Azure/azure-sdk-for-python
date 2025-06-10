@@ -21,13 +21,13 @@ class TestNetAppManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_snapshots_list(self, resource_group):
         response = self.client.snapshots.list(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -35,14 +35,14 @@ class TestNetAppManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_snapshots_get(self, resource_group):
         response = await self.client.snapshots.get(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
             volume_name="str",
             snapshot_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestNetAppManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create(self, resource_group):
+    async def test_snapshots_begin_create(self, resource_group):
         response = await (
             await self.client.snapshots.begin_create(
                 resource_group_name=resource_group.name,
@@ -75,7 +75,7 @@ class TestNetAppManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
                     },
                     "type": "str",
                 },
-                api_version="2024-07-01-preview",
+                api_version="2025-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -84,7 +84,7 @@ class TestNetAppManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_snapshots_begin_update(self, resource_group):
         response = await (
             await self.client.snapshots.begin_update(
                 resource_group_name=resource_group.name,
@@ -93,7 +93,7 @@ class TestNetAppManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
                 volume_name="str",
                 snapshot_name="str",
                 body={},
-                api_version="2024-07-01-preview",
+                api_version="2025-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -102,7 +102,7 @@ class TestNetAppManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_snapshots_begin_delete(self, resource_group):
         response = await (
             await self.client.snapshots.begin_delete(
                 resource_group_name=resource_group.name,
@@ -110,7 +110,7 @@ class TestNetAppManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
                 pool_name="str",
                 volume_name="str",
                 snapshot_name="str",
-                api_version="2024-07-01-preview",
+                api_version="2025-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -119,7 +119,7 @@ class TestNetAppManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_restore_files(self, resource_group):
+    async def test_snapshots_begin_restore_files(self, resource_group):
         response = await (
             await self.client.snapshots.begin_restore_files(
                 resource_group_name=resource_group.name,
@@ -128,7 +128,7 @@ class TestNetAppManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
                 volume_name="str",
                 snapshot_name="str",
                 body={"filePaths": ["str"], "destinationPath": "str"},
-                api_version="2024-07-01-preview",
+                api_version="2025-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

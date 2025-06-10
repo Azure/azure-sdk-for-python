@@ -139,7 +139,7 @@ def test_bearer_policy_default_context():
 
     pipeline.run(HttpRequest("GET", "https://localhost"))
 
-    credential.get_token_info.assert_called_once_with(expected_scope)
+    credential.get_token_info.assert_called_once_with(expected_scope, options={})
 
 
 def test_bearer_policy_context_unmodified_by_default():
@@ -194,7 +194,7 @@ def test_bearer_policy_cannot_complete_challenge():
 
     assert response.http_response is expected_response
     assert transport.send.call_count == 1
-    credential.get_token_info.assert_called_once_with(expected_scope)
+    credential.get_token_info.assert_called_once_with(expected_scope, options={})
 
 
 def test_bearer_policy_calls_sansio_methods():
@@ -221,7 +221,7 @@ def test_bearer_policy_calls_sansio_methods():
     pipeline = Pipeline(transport=transport, policies=[policy])
     pipeline.run(HttpRequest("GET", "https://localhost"))
 
-    policy.on_request.assert_called_once_with(policy.request)
+    policy.on_request.assert_called_once_with(policy.request, auth_flows=None)
     policy.on_response.assert_called_once_with(policy.request, policy.response)
 
     # the policy should call on_exception when next.send() raises
@@ -415,3 +415,73 @@ def test_need_new_token():
     # Token is not close to expiring, but refresh_on is in the past.
     policy._token = AccessTokenInfo("", now + 1200, refresh_on=now - 1)
     assert policy._need_new_token
+
+
+def test_send_with_auth_flows():
+    auth_flows = [
+        {
+            "tokenUrl": "https://login.microsoftonline.com/common/oauth2/token",
+            "type": "client_credentials",
+            "scopes": [
+                {"value": "https://test.microsoft.com/.default"},
+            ],
+        }
+    ]
+    credential = Mock(
+        spec_set=["get_token_info"],
+        get_token_info=Mock(return_value=AccessTokenInfo("***", int(time.time()) + 3600)),
+    )
+    policy = BearerTokenCredentialPolicy(credential, "https://test.microsoft.com/.default", auth_flows=auth_flows)
+    transport = Mock(send=Mock(return_value=Mock(status_code=200)))
+
+    pipeline = Pipeline(transport=transport, policies=[policy])
+    pipeline.run(HttpRequest("GET", "https://localhost"))
+    policy._credential.get_token_info.assert_called_with(
+        "https://test.microsoft.com/.default", options={"auth_flows": auth_flows}
+    )
+
+
+def test_disable_authorization_header():
+    """Tests that we can disable the Authorization header in the request"""
+    credential = Mock(
+        spec_set=["get_token_info"],
+        get_token_info=Mock(return_value=AccessTokenInfo("***", int(time.time()) + 3600)),
+    )
+    policy = BearerTokenCredentialPolicy(credential, "scope", auth_flows={"foo": "bar"})
+    transport = Mock(send=Mock(return_value=Mock(status_code=200)))
+
+    pipeline = Pipeline(transport=transport, policies=[policy])
+    request = HttpRequest("GET", "https://localhost")
+    pipeline.run(request, auth_flows=[])
+    assert "Authorization" not in request.headers
+
+
+def test_auth_flow_operation_override():
+    """Tests that the operation level auth_flow is passed to the credential's get_token_info method."""
+    auth_flows = [
+        {
+            "tokenUrl": "https://login.microsoftonline.com/common/oauth2/token",
+            "type": "client_credentials",
+            "scopes": [{"value": "https://graph.microsoft.com/.default"}],
+        }
+    ]
+    credential = Mock(
+        spec_set=["get_token_info"],
+        get_token_info=Mock(return_value=AccessTokenInfo("***", int(time.time()) + 3600)),
+    )
+    policy = BearerTokenCredentialPolicy(credential, "https://graph.microsoft.com/.default", auth_flows=auth_flows)
+    transport = Mock(send=Mock(return_value=Mock(status_code=200)))
+
+    op_auth_flow = [
+        {
+            "tokenUrl": "https://login.microsoftonline.com/common/oauth2/token",
+            "type": "client_credentials",
+            "scopes": [{"value": "https://foo.microsoft.com/.default"}],
+        }
+    ]
+
+    pipeline = Pipeline(transport=transport, policies=[policy])
+    pipeline.run(HttpRequest("GET", "https://localhost"), auth_flows=op_auth_flow)
+    policy._credential.get_token_info.assert_called_with(
+        "https://graph.microsoft.com/.default", options={"auth_flows": op_auth_flow}
+    )

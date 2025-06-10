@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.resource.aio import TemplateSpecsClient
+from azure.mgmt.resource.templatespecs.v2022_02_01.aio import TemplateSpecsClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -21,7 +21,7 @@ class TestTemplateSpecsTemplateSpecVersionsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_template_spec_versions_create_or_update(self, resource_group):
         response = await self.client.template_spec_versions.create_or_update(
             resource_group_name=resource_group.name,
             template_spec_name="str",
@@ -54,7 +54,7 @@ class TestTemplateSpecsTemplateSpecVersionsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_template_spec_versions_update(self, resource_group):
         response = await self.client.template_spec_versions.update(
             resource_group_name=resource_group.name,
             template_spec_name="str",
@@ -67,7 +67,7 @@ class TestTemplateSpecsTemplateSpecVersionsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_template_spec_versions_get(self, resource_group):
         response = await self.client.template_spec_versions.get(
             resource_group_name=resource_group.name,
             template_spec_name="str",
@@ -80,7 +80,7 @@ class TestTemplateSpecsTemplateSpecVersionsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_template_spec_versions_delete(self, resource_group):
         response = await self.client.template_spec_versions.delete(
             resource_group_name=resource_group.name,
             template_spec_name="str",
@@ -93,7 +93,7 @@ class TestTemplateSpecsTemplateSpecVersionsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_template_spec_versions_list(self, resource_group):
         response = self.client.template_spec_versions.list(
             resource_group_name=resource_group.name,
             template_spec_name="str",
@@ -105,7 +105,7 @@ class TestTemplateSpecsTemplateSpecVersionsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_built_ins(self, resource_group):
+    async def test_template_spec_versions_list_built_ins(self, resource_group):
         response = self.client.template_spec_versions.list_built_ins(
             template_spec_name="str",
             api_version="2022-02-01",
@@ -116,7 +116,7 @@ class TestTemplateSpecsTemplateSpecVersionsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_built_in(self, resource_group):
+    async def test_template_spec_versions_get_built_in(self, resource_group):
         response = await self.client.template_spec_versions.get_built_in(
             template_spec_name="str",
             template_spec_version="str",

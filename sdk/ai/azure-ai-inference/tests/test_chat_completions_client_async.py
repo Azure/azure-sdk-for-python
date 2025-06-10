@@ -371,16 +371,15 @@ class TestChatCompletionsClientAsync(ModelClientTestBase):
     @ServicePreparerChatCompletions()
     @recorded_by_proxy_async
     async def test_async_chat_completions_streaming(self, **kwargs):
-        client = self._create_async_chat_client(Sync=False, **kwargs)
-        response = await client.complete(
-            stream=True,
-            messages=[
-                sdk.models.SystemMessage(content="You are a helpful assistant."),
-                sdk.models.UserMessage(content="Give me 3 good reasons why I should exercise every day."),
-            ],
-        )
-        await self._validate_async_chat_completions_streaming_result(response)
-        await client.close()
+        async with self._create_async_chat_client(Sync=False, **kwargs) as client:
+            async with await client.complete(
+                stream=True,
+                messages=[
+                    sdk.models.SystemMessage(content="You are a helpful assistant."),
+                    sdk.models.UserMessage(content="Give me 3 good reasons why I should exercise every day."),
+                ],
+            ) as response:
+                await self._validate_async_chat_completions_streaming_result(response)
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy_async

@@ -20,10 +20,10 @@ class TestNetAppManagementNetAppResourceQuotaLimitsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_net_app_resource_quota_limits_list(self, resource_group):
         response = self.client.net_app_resource_quota_limits.list(
             location="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -31,11 +31,11 @@ class TestNetAppManagementNetAppResourceQuotaLimitsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_net_app_resource_quota_limits_get(self, resource_group):
         response = self.client.net_app_resource_quota_limits.get(
             location="str",
             quota_limit_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2025-01-01-preview",
         )
 
         # please add some check logic here by yourself

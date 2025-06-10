@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.resource.aio import DeploymentScriptsClient
+from azure.mgmt.resource.deploymentscripts.v2020_10_01.aio import DeploymentScriptsClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -21,7 +21,7 @@ class TestDeploymentScriptsDeploymentScriptsOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create(self, resource_group):
+    async def test_deployment_scripts_begin_create(self, resource_group):
         response = await (
             await self.client.deployment_scripts.begin_create(
                 resource_group_name=resource_group.name,
@@ -84,7 +84,7 @@ class TestDeploymentScriptsDeploymentScriptsOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_deployment_scripts_update(self, resource_group):
         response = await self.client.deployment_scripts.update(
             resource_group_name=resource_group.name,
             script_name="str",
@@ -96,7 +96,7 @@ class TestDeploymentScriptsDeploymentScriptsOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_deployment_scripts_get(self, resource_group):
         response = await self.client.deployment_scripts.get(
             resource_group_name=resource_group.name,
             script_name="str",
@@ -108,7 +108,7 @@ class TestDeploymentScriptsDeploymentScriptsOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_deployment_scripts_delete(self, resource_group):
         response = await self.client.deployment_scripts.delete(
             resource_group_name=resource_group.name,
             script_name="str",
@@ -120,7 +120,7 @@ class TestDeploymentScriptsDeploymentScriptsOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_subscription(self, resource_group):
+    async def test_deployment_scripts_list_by_subscription(self, resource_group):
         response = self.client.deployment_scripts.list_by_subscription(
             api_version="2020-10-01",
         )
@@ -130,7 +130,7 @@ class TestDeploymentScriptsDeploymentScriptsOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_logs(self, resource_group):
+    async def test_deployment_scripts_get_logs(self, resource_group):
         response = await self.client.deployment_scripts.get_logs(
             resource_group_name=resource_group.name,
             script_name="str",
@@ -142,7 +142,7 @@ class TestDeploymentScriptsDeploymentScriptsOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_logs_default(self, resource_group):
+    async def test_deployment_scripts_get_logs_default(self, resource_group):
         response = await self.client.deployment_scripts.get_logs_default(
             resource_group_name=resource_group.name,
             script_name="str",
@@ -154,7 +154,7 @@ class TestDeploymentScriptsDeploymentScriptsOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_deployment_scripts_list_by_resource_group(self, resource_group):
         response = self.client.deployment_scripts.list_by_resource_group(
             resource_group_name=resource_group.name,
             api_version="2020-10-01",

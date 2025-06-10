@@ -1,4 +1,5 @@
 import sys
+import time
 from typing import List, Dict, Any
 import argparse
 import json
@@ -219,11 +220,25 @@ def main(generate_input, generate_output):
     result = {}
     python_tag = data.get("python_tag")
     package_total = set()
-    readme_and_tsp = data.get("relatedReadmeMdFiles", []) + data.get("relatedTypeSpecProjectFolder", [])
-    for readme_or_tsp in readme_and_tsp:
+    readme_and_tsp = [("relatedReadmeMdFiles", item) for item in data.get("relatedReadmeMdFiles", [])] + [
+        ("relatedTypeSpecProjectFolder", item) for item in data.get("relatedTypeSpecProjectFolder", [])
+    ]
+    run_in_pipeline = data.get("runMode") is not None
+    for input_type, readme_or_tsp in readme_and_tsp:
         _LOGGER.info(f"[CODEGEN]({readme_or_tsp})codegen begin")
         try:
-            if "resource-manager" in readme_or_tsp:
+            code_generation_start_time = time.time()
+            if input_type == "relatedTypeSpecProjectFolder":
+                del_outdated_generated_files(str(Path(spec_folder, readme_or_tsp)))
+                config = gen_typespec(
+                    readme_or_tsp,
+                    spec_folder,
+                    data["headSha"],
+                    data["repoHttpsUrl"],
+                    run_in_pipeline,
+                    data.get("apiVersion"),
+                )
+            elif "resource-manager" in readme_or_tsp:
                 relative_path_readme = str(Path(spec_folder, readme_or_tsp))
                 del_outdated_files(relative_path_readme)
                 generate_mgmt = partial(
@@ -239,11 +254,9 @@ def main(generate_input, generate_output):
                 config = generate_mgmt()
                 if need_regen_for_multiapi_package(spec_folder, readme_or_tsp):
                     generate_mgmt()
-            elif "data-plane" in readme_or_tsp:
-                config = gen_dpg(readme_or_tsp, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
             else:
-                del_outdated_generated_files(str(Path(spec_folder, readme_or_tsp)))
-                config = gen_typespec(readme_or_tsp, spec_folder, data["headSha"], data["repoHttpsUrl"])
+                config = gen_dpg(readme_or_tsp, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
+            _LOGGER.info(f"code generation cost time: {int(time.time() - code_generation_start_time)} seconds")
         except Exception as e:
             _LOGGER.error(f"fail to generate sdk for {readme_or_tsp}: {str(e)}")
             for hint_message in [
@@ -278,6 +291,8 @@ def main(generate_input, generate_output):
                     package_entry["tagIsStable"] = not judge_tag_preview(sdk_code_path, package_name)
                     readme_python_content = get_readme_python_content(str(Path(spec_folder) / readme_or_tsp))
                     package_entry["isMultiapi"] = is_multiapi_package(readme_python_content)
+                    package_entry["targetReleaseDate"] = data.get("targetReleaseDate", "")
+                    package_entry["allowInvalidNextVersion"] = data.get("allowInvalidNextVersion", False)
                     result[package_name] = package_entry
                 else:
                     result[package_name]["path"].append(folder_name)

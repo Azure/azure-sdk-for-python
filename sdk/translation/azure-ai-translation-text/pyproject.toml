@@ -4,5 +4,4 @@ type_check_samples = true
 verifytypes = true
 pyright = true
 
-[tool.generate]
-autorest-post-process = true
+

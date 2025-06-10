@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.resource.aio import SubscriptionClient
+from azure.mgmt.resource.subscriptions.v2022_12_01.aio import SubscriptionClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -21,7 +21,7 @@ class TestSubscriptionSubscriptionsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_locations(self, resource_group):
+    async def test_subscriptions_list_locations(self, resource_group):
         response = self.client.subscriptions.list_locations(
             subscription_id="str",
             api_version="2022-12-01",
@@ -32,7 +32,7 @@ class TestSubscriptionSubscriptionsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_subscriptions_get(self, resource_group):
         response = await self.client.subscriptions.get(
             subscription_id="str",
             api_version="2022-12-01",
@@ -43,7 +43,7 @@ class TestSubscriptionSubscriptionsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_subscriptions_list(self, resource_group):
         response = self.client.subscriptions.list(
             api_version="2022-12-01",
         )
@@ -53,7 +53,7 @@ class TestSubscriptionSubscriptionsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_check_zone_peers(self, resource_group):
+    async def test_subscriptions_check_zone_peers(self, resource_group):
         response = await self.client.subscriptions.check_zone_peers(
             subscription_id="str",
             parameters={"location": "str", "subscriptionIds": ["str"]},
