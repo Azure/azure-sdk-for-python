@@ -14,11 +14,10 @@ from azure.mgmt.core.policies import ARMHttpLoggingPolicy, AsyncARMChallengeAuth
 from .._version import VERSION
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class TrustedSigningMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class TrustedSigningMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for TrustedSigningMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -31,7 +30,7 @@ class TrustedSigningMgmtClientConfiguration:  # pylint: disable=too-many-instanc
     :param base_url: Service host. Default value is "https://management.azure.com".
     :type base_url: str
     :keyword api_version: The API version to use for this operation. Default value is
-     "2024-02-05-preview". Note that overriding this default value may result in unsupported
+     "2024-09-30-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
@@ -43,7 +42,7 @@ class TrustedSigningMgmtClientConfiguration:  # pylint: disable=too-many-instanc
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-02-05-preview")
+        api_version: str = kwargs.pop("api_version", "2024-09-30-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
