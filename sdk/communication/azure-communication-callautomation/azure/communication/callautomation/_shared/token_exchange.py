@@ -34,10 +34,10 @@ class TokenExchangeClient:
         self._resource_endpoint = resource_endpoint
         self._scopes = scopes or ["https://communication.azure.com/clients/.default"]
         self._token_credential = token_credential
-        self._pipeline = self._create_pipeline_from_options(token_credential, scopes, pipeline_transport)
+        self._pipeline = self._create_pipeline_from_options(pipeline_transport)
 
-    def _create_pipeline_from_options(self, token_credential, scopes, pipeline_transport):
-        auth_policy = BearerTokenCredentialPolicy(token_credential, *scopes)
+    def _create_pipeline_from_options(self, pipeline_transport):
+        auth_policy = BearerTokenCredentialPolicy(self._token_credential, *self._scopes)
         entra_token_guard_policy = EntraTokenGuardPolicy()
         policies = [auth_policy, entra_token_guard_policy]
         if pipeline_transport:
@@ -83,10 +83,10 @@ class AsyncTokenExchangeClient:
         self._resource_endpoint = resource_endpoint
         self._scopes = scopes or ["https://communication.azure.com/clients/.default"]
         self._token_credential = token_credential
-        self._pipeline = self._create_pipeline_from_options(token_credential, scopes, pipeline_transport)
+        self._pipeline = self._create_pipeline_from_options(pipeline_transport)
 
-    def _create_pipeline_from_options(self, token_credential, scopes, pipeline_transport):
-        auth_policy = AsyncBearerTokenCredentialPolicy(token_credential, *scopes)
+    def _create_pipeline_from_options(self, pipeline_transport):
+        auth_policy = AsyncBearerTokenCredentialPolicy(self._token_credential, *self._scopes)
         entra_token_guard_policy = AsyncEntraTokenGuardPolicy()
         policies = [auth_policy, entra_token_guard_policy]
         if pipeline_transport:
