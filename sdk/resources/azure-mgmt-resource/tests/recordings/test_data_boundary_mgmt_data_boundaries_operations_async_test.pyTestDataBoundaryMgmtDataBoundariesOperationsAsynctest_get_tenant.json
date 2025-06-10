@@ -1,0 +1,39 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.azure.com/providers/Microsoft.Resources/dataBoundaries/default?api-version=2024-08-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-azure-mgmt-resource/24.0.0 Python/3.10.11 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "108",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 10 Jun 2025 06:54:02 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "c63ecdaf-4ae2-4c8d-b339-bbc0459d6f52",
+        "x-ms-ratelimit-remaining-tenant-reads": "2199",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20250610T065403Z:c63ecdaf-4ae2-4c8d-b339-bbc0459d6f52",
+        "X-MSEdge-Ref": "Ref A: 08CFBC4F4A67448F86BF1B3B80F312EF Ref B: MAA201060515039 Ref C: 2025-06-10T06:54:03Z"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "name": "Sanitized",
+        "properties": {
+          "dataBoundary": "Global",
+          "provisioningState": "Succeeded"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

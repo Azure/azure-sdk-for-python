@@ -1,0 +1,138 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Compute//availabilitySets/test_resourced454303a?api-version=2019-07-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "22",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-azure-mgmt-resource/24.0.0 Python/3.10.11 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": {
+        "location": "eastus"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "202",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 10 Jun 2025 06:54:37 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "72d27cf1-10e4-4c83-975c-e754f7cfef8f",
+        "x-ms-need-to-refresh-epl-cache": "False",
+        "x-ms-operation-identifier": "tenantId=00000000-0000-0000-0000-000000000000,objectId=5350cd0a-129b-4051-86d2-76d567db42a7/southeastasia/7f0a0e1b-2cfc-4061-ba48-fc2aa74cbacd",
+        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/PutVMSubscriptionMaximum;1499",
+        "x-ms-ratelimit-remaining-subscription-global-writes": "11999",
+        "x-ms-ratelimit-remaining-subscription-writes": "799",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20250610T065437Z:72d27cf1-10e4-4c83-975c-e754f7cfef8f",
+        "X-MSEdge-Ref": "Ref A: A87D98F2EC624D5EBB23C881BB8BAC4D Ref B: MAA201060515039 Ref C: 2025-06-10T06:54:34Z"
+      },
+      "ResponseBody": {
+        "name": "Sanitized",
+        "id": "Sanitized",
+        "type": "Microsoft.Compute/availabilitySets",
+        "location": "eastus",
+        "properties": {
+          "platformUpdateDomainCount": 5,
+          "platformFaultDomainCount": 3
+        },
+        "sku": {
+          "name": "Sanitized"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/test_resourced454303a/providers/Microsoft.Resources/changes?api-version=2022-05-01&$top=100",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-azure-mgmt-resource/24.0.0 Python/3.10.11 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "599",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 10 Jun 2025 06:54:40 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "03ca2db7-f5a8-4be8-93ef-f71649c07c4d",
+        "x-ms-operation-identifier": "tenantId=00000000-0000-0000-0000-000000000000,objectId=5350cd0a-129b-4051-86d2-76d567db42a7/southeastasia/39fa535d-845a-4aaa-b3c5-38700d41f0a1",
+        "x-ms-ratelimit-remaining-subscription-resource-requests": "299",
+        "x-ms-ratelimit-remaining-tenant-resource-requests": "1",
+        "x-ms-resource-graph-request-duration": "0:00:00:00.9657525",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20250610T065440Z:03ca2db7-f5a8-4be8-93ef-f71649c07c4d",
+        "x-ms-user-quota-remaining": "1",
+        "x-ms-user-quota-resets-after": "00:00:00",
+        "X-MSEdge-Ref": "Ref A: 2E507B83FADE4BE28182AE9780711EA7 Ref B: MAA201060515039 Ref C: 2025-06-10T06:54:39Z"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "microsoft.resources/changes",
+            "properties": {
+              "TargetResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/test_resourced454303a",
+              "TargetResourceType": "microsoft.compute/availabilitysets",
+              "ChangeType": "Create",
+              "ChangeAttributes": {
+                "ChangesCount": 0,
+                "CorrelationId": "72d27cf1-10e4-4c83-975c-e754f7cfef8f",
+                "Timestamp": "2025-06-10T06:54:38.355+00:00",
+                "NewResourceSnapshotId": "08584520684071225807_7b0d0447-fc8b-05ae-0157-12bc29909355_2989181392_1749538478"
+              },
+              "Changes": {}
+            }
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Compute//availabilitySets/test_resourced454303a?api-version=2019-07-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-azure-mgmt-resource/24.0.0 Python/3.10.11 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Tue, 10 Jun 2025 06:54:43 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "408afe5e-608f-49dd-bfe1-7b2211016379",
+        "x-ms-need-to-refresh-epl-cache": "False",
+        "x-ms-operation-identifier": "tenantId=00000000-0000-0000-0000-000000000000,objectId=5350cd0a-129b-4051-86d2-76d567db42a7/southeastasia/0bda203c-7115-478f-a430-46f84f594141",
+        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/DeleteVMSubscriptionMaximum;1499",
+        "x-ms-ratelimit-remaining-subscription-deletes": "799",
+        "x-ms-ratelimit-remaining-subscription-global-deletes": "11999",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20250610T065443Z:408afe5e-608f-49dd-bfe1-7b2211016379",
+        "X-MSEdge-Ref": "Ref A: 6E0C5CC1FF15486EA39368082568119F Ref B: MAA201060515039 Ref C: 2025-06-10T06:54:40Z"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

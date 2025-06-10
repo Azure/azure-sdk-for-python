@@ -1,0 +1,1962 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.azure.com/subscriptions?api-version=2022-12-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-azure-mgmt-resource/24.0.0 Python/3.10.11 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "47867",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 10 Jun 2025 07:03:19 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "f4ceae83-c4fa-433b-b65c-e2b94e287160",
+        "x-ms-ratelimit-remaining-tenant-reads": "2199",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20250610T070320Z:f4ceae83-c4fa-433b-b65c-e2b94e287160",
+        "X-MSEdge-Ref": "Ref A: 5865428B6C204D099F9CFC835012B95F Ref B: MAA201060515039 Ref C: 2025-06-10T07:03:20Z"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "00000000-0000-0000-0000-000000000000"
+              }
+            ],
+            "subscriptionId": "8cff5c8a-98f3-44ad-b300-2d44716c802c",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Service 360 Test",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "54b875cc-a81a-4914-8bfd-1a36bc7ddf4d",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "MSFT-WindowsVirtualDesktop-01",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "C-AI-MG-Placement-Subscription-Level": "2023-09-18",
+              "Az.Sec.AnonymousBlobAccessEnforcement::OptIn": "all_regions",
+              "Az.Sec.AnonymousBlobEnforcement::OptIn": "all_regions"
+            },
+            "subscriptionId": "52942f45-54fd-4fd9-b730-03d518fedf35",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "ES-TAP-TestContent",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "C-AI-MG-Placement-Subscription-Level": "2024-06-02"
+            },
+            "subscriptionId": "a18897a6-7e44-457d-9260-f2854c0aca42",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Azure SDK Engineering System",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "93543f02-938d-4016-9d15-9cc4329b7033",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "ODSP WIRE",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "SLNMBreakGlass": "SubscriptionMove"
+            },
+            "subscriptionId": "7ea7f0a6-7ba1-4165-ae53-33d63d627f94",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "NetworkIsolationMSFTSLNMManagement04",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "ringValue": "r1",
+              "Env": "NonProd",
+              "tnr-sfi221": "True"
+            },
+            "subscriptionId": "66522bd8-56b0-44fa-bd1f-23485611a6c3",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "FoSSE Redmond",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "821eb853-2617-44be-935b-0f88b3b0b0cd",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "MTP_BAND_STG",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "C-AI-MG-Placement-Subscription-Level": "2023-06-15",
+              "C-AI-MG-Placement-Service-Level": "2023-06-27"
+            },
+            "subscriptionId": "659180e3-5b8c-4831-8632-33a035332736",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "ServiceHealthSRE-Sandbox",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "df969b00-37ba-4874-bb86-1f60b9cea9fc",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "HnS_ AzureDiagnostics_Grafana_Corp_Prod",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "3f01c831-e426-4e17-99dd-de39d98c4ead",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Core-ES-Signing-Dev",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "8c4b5b03-3b24-4ed0-91f5-a703cd91b412",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "GDT - Cosmos_C&E_Azure_AzureEngineeringSystems_100200",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "00000000-0000-0000-0000-000000000000"
+              }
+            ],
+            "tags": {
+              "tagKey1": "tag-value-1",
+              "tagKey2": "tag-value-2",
+              "DDFunMDCTag": "Public",
+              "Az.Sec.DisableLocalAuth.CosmosDB::OptIn": "all_regions",
+              "Az.Sec.DisableLocalAuth.EventHub::OptIn": "all_regions",
+              "Az.Sec.DisableLocalAuth.ServiceBus::OptIn": "all_regions",
+              "Az.Sec.DisableLocalAuth.SqlManagedInstance::Opt-In": "all_regions",
+              "Az.Sec.DisableLocalAuth.SqlServer::OptIn": "all_regions",
+              "Az.Sec.DisableLocalAuth.Storage::OptIn": "all_regions",
+              "Az.Sec.DenySubnetOutboundAccess::OptIn": "all_regions",
+              "Az.Sec.AnonymousBlobEnforcement::OptIn": "all_regions",
+              "Owner": "azsdk"
+            },
+            "subscriptionId": "00000000-0000-0000-0000-000000000000",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Azure SDK Developer Playground",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {},
+            "subscriptionId": "2cd617ea-1866-46b1-90e3-fffb087ebf9b",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Azure SDK Test Resources",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Az.Sec.AnonymousBlobEnforcement::OptIn": "all_regions"
+            },
+            "subscriptionId": "01f17b70-0225-4480-96fc-3c92ad6a0a17",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "DDRITS-PUBLIC",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Az.Sec.AnonymousBlobEnforcement::OptIn": "all_regions"
+            },
+            "subscriptionId": "ac9b504a-2dab-413a-9796-af3727700230",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "VSEng Test Automation Infrastructure",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "createsbeneficiaryresources": "true"
+            },
+            "subscriptionId": "0a86e8d0-8c17-4765-90eb-aa50dae47299",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "PJ-VISUALSTUDIOCLIENT",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "createsbeneficiaryresources": "true"
+            },
+            "subscriptionId": "dde02a76-63cf-4f5f-be84-c943b4da4409",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "1ES-DevBoxInfra",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "createsbeneficiaryresources": "true"
+            },
+            "subscriptionId": "1603ca8f-8a37-42c0-9e39-26fb03b3cbb6",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "PJ-DEVDIVAZURESERVICE",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "createsbeneficiaryresources": "true"
+            },
+            "subscriptionId": "1702e86b-0726-4f19-9ae5-25cad10e4f26",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "PJ-VSCODE",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "createsbeneficiaryresources": "true"
+            },
+            "subscriptionId": "f91f9734-8835-4fa4-8564-1dd169bc29dd",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "PJ-VISUALSTUDIOSERVICING",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "createsbeneficiaryresources": "true"
+            },
+            "subscriptionId": "ed99ad84-f5da-479f-81df-23460857ccca",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "PJ-DATAANDAI",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "createsbeneficiaryresources": "true"
+            },
+            "subscriptionId": "1e627736-1411-423a-81c4-aa35ca55f2b3",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "PJ-NUGET",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "createsbeneficiaryresources": "true"
+            },
+            "subscriptionId": "0f6b8985-2847-41a6-a1be-9ce8c00b369b",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "PJ-MICROBUILD",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "createsbeneficiaryresources": "true"
+            },
+            "subscriptionId": "16cb61da-05bc-4f08-8bd4-b2cdf51f8035",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "PJ-LANGUAGEANDFRAMEWORKSERVICES",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "createsbeneficiaryresources": "true"
+            },
+            "subscriptionId": "1ba77102-f6a9-4834-93c3-cc42bad6686e",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "PJ-PMUXDESIGN",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "createsbeneficiaryresources": "true"
+            },
+            "subscriptionId": "17c9d6d4-b083-4266-a260-cbcb366a27a4",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "PJ-SERVERLESSPAAS",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "IsHostedOnBehalfOf": "False",
+              "Env": "Prod"
+            },
+            "subscriptionId": "bac420ed-c6fc-4a05-8ac1-8c0c52da1d6e",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "IDEAs MS Reporting",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "407ff5d7-0113-4c5c-8534-f5cfb09298f5",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "msteams.nonprod.pub.msft.msts",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "c3547baf-332f-4d8f-96bd-0659b39c7a59",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "MSAI Search Research",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "00000000-0000-0000-0000-000000000000"
+              }
+            ],
+            "subscriptionId": "8ef80208-601f-4c83-802e-751d211745f9",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "GDT - CloudAnalytics_Prod1",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "b43a6159-1bea-4fa2-9407-e875fdc0ff55",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "BAP IA EU Schrems (P)",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "96f7a6ad-39d4-42e5-b676-a510a9e6fd22",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "COSINE-ES-FailureAnalysis",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "dad45786-32e5-4ef3-b90e-8e0838fbadb6",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "AnE.ExP.NonProduction",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "e01de573-132a-42ac-9ee2-f9dea9dd2717",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Cosmos_WDG_Core_BnB_100292",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "2998c1d7-09ae-4b08-b6d0-9c2ee5a84c35",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Core-ES-BLD-Allegro-Dev",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "551f97b7-e9a4-4b2a-9be9-1f3c4db41b65",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Core-ES-BLD-Allegro-Prod",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Point of Contact": "russsan;moshelu;gacald",
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "e686ef8c-d35d-4e9b-92f8-caaaa7948c0a",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Applied Sciences Group Dev",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "1278a874-89fc-418c-b6b9-ac763b000415",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Microsoft Azure Internal Consumption (nbrady)",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "IsHostedOnBehalfOf": "False",
+              "Env": "Prod",
+              "ringValue": "r1"
+            },
+            "subscriptionId": "29de2cfc-f00a-43bb-bdc8-3108795bd282",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "MSFT-Modern Device-Modern Mgmt-Imaging00",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "SkipASMAzSecPack": "True",
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False",
+              "M365-CognitiveServices-EntraIDAuth-OptIn-1-0": "all_regions",
+              "M365-StorageAccounts-EntraIDAuth-OptIn-1-0": "all_regions",
+              "Az.Sec.DenySubnetOutboundAccess::OptIn": "all_regions"
+            },
+            "subscriptionId": "f7c445af-a4de-4264-9e87-3196d6bc384d",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Efficiency Pack Services (MSIT)",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "b01d20f7-9367-4764-9778-dfaf98a89389",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Azure DNS LKG Client Cache - Test",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {},
+            "subscriptionId": "2145a411-d149-4010-84d4-40fe8a55db44",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "ARM Test Environment",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "a386d5ea-ea90-441a-8263-d816368c84a1",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "IOT_PLATFORM_UPX_TEST",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "4dc2cd39-7a89-43d8-bebe-8bb501359891",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Observability_AzMon_Grafana_Dev",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Az.Sec.DisableLocalAuth.Storage::OptIn": "all_regions"
+            },
+            "subscriptionId": "432a7068-99ae-4975-ad38-d96b71172cdf",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Azure Profiler - Testing",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "637dfe95-cc3a-4788-a287-c3ae5f76403c",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "C+E Airgap Engineering PPE",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "60214a3c-65a2-46f8-8b32-f959f2454106",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Data Pillar Security Tooling",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "526094ba-add2-4793-905d-a99153306c9d",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "LA_VMInsights_Telemetry_All_NonProd",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "IsHostedOnBehalfOf": "False",
+              "Env": "NonProd"
+            },
+            "subscriptionId": "a471d615-ff98-4e80-b375-a19543d4691e",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "ODC-OneBox-Resources",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "b65b516b-415b-4c68-a254-bfa7411275f8",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "OneBranch Services ER - Dev",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "IsHostedOnBehalfOf": "False",
+              "Env": "NonProd"
+            },
+            "subscriptionId": "4c33a6bb-d566-4d0b-8951-00b55a91fba8",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "AzPIESecurity-DEV-Apple",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "f1d79e73-f8e3-4b10-bfdb-4207ca0723ed",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "AML Infra - Engineering System",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "96c1e83f-a544-4a27-86bc-b0c821745ae7",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "FunGates-DiffPipeline-Dev",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "DDFunMDCTag": "Public",
+              "Az.Sec.DisableLocalAuth.CosmosDB::OptIn": "all_regions",
+              "Az.Sec.DisableLocalAuth.EventHub::OptIn": "all_regions",
+              "Az.Sec.DisableLocalAuth.ServiceBus::OptIn": "all_regions",
+              "Az.Sec.DisableLocalAuth.SqlManagedInstance::Opt-In": "all_regions",
+              "Az.Sec.DisableLocalAuth.SqlServer::OptIn": "all_regions",
+              "Az.Sec.DisableLocalAuth.Storage::OptIn": "all_regions",
+              "Az.Sec.DenySubnetOutboundAccess::OptIn": "all_regions",
+              "Az.Sec.AnonymousBlobEnforcement::OptIn": "all_regions"
+            },
+            "subscriptionId": "86f010b8-6473-4cb9-90c1-671c74faa4ee",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "emilyzhu dev subscription",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "00000000-0000-0000-0000-000000000000"
+              },
+              {
+                "tenantId": "00000000-0000-0000-0000-000000000000"
+              },
+              {
+                "tenantId": "00000000-0000-0000-0000-000000000000"
+              }
+            ],
+            "tags": {
+              "DDFunMDCTag": "Public",
+              "Az.Sec.DisableLocalAuth.CosmosDB::OptIn": "all_regions",
+              "Az.Sec.DisableLocalAuth.EventHub::OptIn": "all_regions",
+              "Az.Sec.DisableLocalAuth.ServiceBus::OptIn": "all_regions",
+              "Az.Sec.DisableLocalAuth.SqlManagedInstance::Opt-In": "all_regions",
+              "Az.Sec.DisableLocalAuth.SqlServer::OptIn": "all_regions",
+              "Az.Sec.DisableLocalAuth.Storage::OptIn": "all_regions",
+              "Az.Sec.DenySubnetOutboundAccess::OptIn": "all_regions",
+              "Az.Sec.AnonymousBlobEnforcement::OptIn": "all_regions",
+              "Owner": "jbinder"
+            },
+            "subscriptionId": "1163fbbe-27e7-4b0f-8466-195fe5417043",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Python_AI_Tools_PM_Team_Sub (jbinder)",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "a1920ebd-59b7-4f19-af9f-5e80599e88e4",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Babel",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "f1f95d34-0719-46a3-b2b5-d91d73e2c08c",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Edge_AzureStackZ_Haas_Release",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "NRMSBreakGlass": "286547060",
+              "SLNMBreakglass": "285153933"
+            },
+            "subscriptionId": "eef8b6d5-94da-4b36-9327-a662f2674efb",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "AISC-EngSys-01",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "3cd95ff9-ac62-4b5c-8240-0cd046687ea0",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Internal App Insights Resources for Perflens",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "IsHostedOnBehalfOf": "False",
+              "Env": "NonProd",
+              "WebXT-Environment": "Prod"
+            },
+            "subscriptionId": "f6993bd6-e1fe-4f22-82f5-54d28c51e589",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Quantus Singularity",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "e0fd569c-e34a-4249-8c24-e8d723c7f054",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "AML - Responsible AI R&D",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Az.Sec.AnonymousBlobEnforcement::OptIn": "all_regions"
+            },
+            "subscriptionId": "3905431d-c062-4c17-8fd9-c51f89f334c4",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Pytorch Build",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {},
+            "subscriptionId": "13723929-6644-4060-a50a-cc38ebc5e8b1",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "LinuxMdsd Test",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "WebXT-Environment": "NonProd",
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "ae71ef11-a03f-4b4f-a0e6-ef144727c711",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Bing MM Measurement",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "9ec1d932-0f3f-486c-acc6-e7d78b358f9b",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "TScience",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "SkipGreenTeamLinuxSSHAuthForSub": "1208671158"
+            },
+            "subscriptionId": "d2c9544f-4329-4642-b73d-020e7fef844f",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "HPCScrub1",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "NRMS10078350": "https://msazure.visualstudio.com/One/_workitems/edit/10078350"
+            },
+            "subscriptionId": "e72e5254-f265-4e95-9bd2-9ee8e7329051",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Speech Services - DEV - SDK (carbon)",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "SecurityProgram": "Cloud+AI Security Wave 1"
+            },
+            "subscriptionId": "f7b4a5ce-d3bd-4a03-84fe-8bcad772c8c1",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Cog Services Computer Vision",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Env": "Prod",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "bac044cf-49e1-4843-8dda-1ce9662606c8",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "UI Fabric",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "6760347d-9ffe-41a9-ba11-c139dcea5ce6",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "xt-teams-migration-dev",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "NRMS10078350": "20220530"
+            },
+            "subscriptionId": "a1c3dc6b-8630-4bb7-a29e-4ed4407c329b",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Speech Services - EXP2",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "IsHostedOnBehalfOf": "False",
+              "Env": "Prod",
+              "ringValue": "r1"
+            },
+            "subscriptionId": "6a0ab98c-24d4-4131-8cd7-0a78bfce58f5",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "ITSM Integration - Production - New",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "environment": "DEV",
+              "Az.Sec.AnonymousBlobEnforcement::OptIn": "all_regions"
+            },
+            "subscriptionId": "d36c99c1-a188-46d4-b2ed-920e20dd554e",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "COIE-EHS-CORP-DEV",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "C-AI-MG-Placement-Subscription-Level": "2023-06-05"
+            },
+            "subscriptionId": "e2a8a7b3-cb7a-4930-9c79-2b0eb7bf843c",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "ASZ_Lab_Hardware_Dev_1",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Env": "Prod",
+              "ringValue": "r1"
+            },
+            "subscriptionId": "14e688c5-bd44-41f2-a2ea-4873a647199e",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "DSR-SecurityControlsReleaseManagement-Prod",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "3f577935-3138-4d07-86b3-75651b696483",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Responsible & OpenAi Research",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "98b02a69-28a5-4ee7-a622-cd69c7a59c4e",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Marvel Intelligence Model Training Subscription",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "38dbd059-bd26-4172-af17-bcc5a00744de",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Core-ES-STREAM-DeXDI",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "SLNMBreakglass": "285153933"
+            },
+            "subscriptionId": "b2a328a7-ffff-4c09-b643-a4758cf170bc",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "AISC-DEV-02",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "C-AI-MG-Placement-Subscription-Level": "2023-05-02"
+            },
+            "subscriptionId": "ec6f35fa-c805-4254-b10b-03a5e0536b69",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "dpu-build",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "C-AI-MG-Placement-Subscription-Level": "2024-08-15"
+            },
+            "subscriptionId": "4496e94c-b276-44d5-8809-1233f334e678",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Azure CIS SH - Dev",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "4bbecc02-f2c3-402a-8e01-1dfb1ffef499",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Azure Portal Telemetry Reporting",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "SLNMBreakglass": "285153933"
+            },
+            "subscriptionId": "e7cc6a8c-618e-4d1e-9c0d-df412c47b7e9",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "WAN Optical",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "50ff7bc0-cd15-49d5-abb2-e975184c2f65",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "IDXXpertRandD Dev Data Catalog",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "73c84423-276c-4f33-8048-2225a4ade5e7",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Tip Node Service",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "00000000-0000-0000-0000-000000000000"
+              }
+            ],
+            "tags": {
+              "IaaSExpSubGroup": "IaaSExp-DevTools",
+              "EnableAzSecPackIdentityPolicy": "true"
+            },
+            "subscriptionId": "47013160-2f48-4226-8331-256b8c5cad14",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "TEST - IaaS UX - Dev Tools",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {},
+            "subscriptionId": "de6bc98d-2a4d-4607-919e-67692d1eba2b",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Dart Eng Beta",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "NRMS9636218": "20210927"
+            },
+            "subscriptionId": "33f886e7-6f1e-4b1a-a834-705f60eacee3",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Azure-DevOps-Shared-Resources",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "00000000-0000-0000-0000-000000000000"
+              }
+            ],
+            "subscriptionId": "35da7c97-a5de-4be6-b1f0-69d33722a3f4",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "ServiceInsights_Eng",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {},
+            "subscriptionId": "b8faf5eb-39a1-42c4-9e2a-335704d4c740",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "VSO-SD-POC",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "NRMSBreakGlass": "1"
+            },
+            "subscriptionId": "21057343-6652-448d-8422-d7dadedf1f11",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "VSO DevTest Secrets",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "eb87f285-893a-4f0f-8c55-7b4f67b1d097",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Dart Eng Alpha",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "TagLocation": "Subscription"
+            },
+            "subscriptionId": "a178425c-491a-416c-b313-39dce68d9b86",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "ASM Kustodian Corp",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "aac83de9-b56c-4fab-a73f-c80d6a0c9261",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "RC NonProd -001",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Az.Sec.AnonymousBlobEnforcement::OptIn": "all_regions"
+            },
+            "subscriptionId": "326daf21-cbc6-40c8-877f-10324177771e",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Azure Carbon Testing",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "f7616b56-4c4f-481f-8a80-0e0f51d430c5",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "AKS Global corpdev",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "AZSECPACK_ENABLED_FEATURES": "AsmBaseline,AsmScan,AsmEventDriven,OffNodeVulnScan,CertInUse,CertInUseContainerEventLogging,AsmAuditCPRPMISE,CodeIntegrity",
+              "Az.Sec.AnonymousBlobEnforcement::OptIn": "all_regions"
+            },
+            "subscriptionId": "d2a3f240-56f3-45bf-a0be-1d497a230cf4",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Azure System Lockdown Internal NonProd",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "8168a4f2-74d6-4663-9951-8e3a454937b7",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "TEST - IbizaFx misc",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "84ca48fe-c942-42e5-b492-d56681d058fa",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "AEP_CorePlatform_Playground_Dev",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "00000000-0000-0000-0000-000000000000"
+              },
+              {
+                "tenantId": "00000000-0000-0000-0000-000000000000"
+              },
+              {
+                "tenantId": "00000000-0000-0000-0000-000000000000"
+              },
+              {
+                "tenantId": "00000000-0000-0000-0000-000000000000"
+              }
+            ],
+            "tags": {
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "3200ab44-a4aa-4e65-9715-4107c91216ba",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "SI Test Infrastructure - Data Retention",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "07b929e5-80fe-4775-95f5-d25ceddf0e90",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "ADR-nonprod-grafana",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "8c2648d7-ba20-463e-83d9-c45a1d3f20c1",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Service Fabric Team - Observability",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "nrmsbreakglass": "true",
+              "SLNMBreakGlass": "SubscriptionMove"
+            },
+            "subscriptionId": "2c505610-a5dd-473e-aa33-b31aac398e29",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "NetIso NRMS Microsoft Tenant Admin Management",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "IsHostedOnBehalfOf": "False",
+              "Env": "NonProd"
+            },
+            "subscriptionId": "f1251103-af5a-44b7-ac2a-4e5538e80cde",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "O365 OFE - Focus Infrastructure (CORP)",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "DDFunMDCTag": "Public"
+            },
+            "subscriptionId": "bd62906c-0a81-43c3-a2f8-126e4cf66ada",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "DevDiv Key Vault",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Az.Sec.AnonymousBlobEnforcement::OptIn": "all_regions"
+            },
+            "subscriptionId": "8bc2f89b-c4f6-4559-ad6a-4f2cfa6ccc49",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "VSEng MadDog-RPS Telemetry",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "52a442a2-31e9-42f9-8e3e-4b27dbf82673",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Core-ES-WorkManagement",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Owner": "scheerla",
+              "Feature": "Developer Productivity",
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "e188d541-aa57-45e8-8687-c83dc57a671e",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Developer VM Optimization",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "3cc5881f-521e-4926-9cca-d2abac5a4409",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "TiP-ShipReady-Staging",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "00000000-0000-0000-0000-000000000000"
+              }
+            ],
+            "tags": {
+              "ms-azores-category": "DataPlane",
+              "ms-azores-classification": "Customer Choice"
+            },
+            "subscriptionId": "6f53185c-ea09-4fc3-9075-318dec805303",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "RPaaS-DF",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "SkipGreenTeamLinuxSSHAuthForSub": "1081476937"
+            },
+            "subscriptionId": "7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "Cloud-Native-Testing-IDC-Test",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False",
+              "Msi1AutoConfig": "true"
+            },
+            "subscriptionId": "ef186ee7-6b9a-4d9f-966f-927ebe6494f8",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "M365Admin PPEPRV - AZSC",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "IsHostedOnBehalfOf": "False",
+              "Env": "NonProd"
+            },
+            "subscriptionId": "3bc94887-5f56-4d55-a6a0-de02cbfe8935",
+            "tenantId": "00000000-0000-0000-0000-000000000000",
+            "displayName": "OE-AppleFundamentals - External - Prod",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          }
+        ],
+        "count": {
+          "type": "Total",
+          "value": 114
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

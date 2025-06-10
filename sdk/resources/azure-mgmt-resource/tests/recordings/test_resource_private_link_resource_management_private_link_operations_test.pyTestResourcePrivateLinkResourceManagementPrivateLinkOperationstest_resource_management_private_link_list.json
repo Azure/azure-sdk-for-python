@@ -1,0 +1,36 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/resourceManagementPrivateLinks?api-version=2020-05-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-azure-mgmt-resource/24.0.0 Python/3.10.11 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "12",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 10 Jun 2025 07:02:50 GMT",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "243948ef-9864-4f57-893b-03ba4ee0ee05",
+        "x-ms-original-request-ids": "southeastasia:aea53b1a-141d-42a6-b270-d85a5fb55308",
+        "x-ms-ratelimit-remaining-subscription-global-reads": "16499",
+        "x-ms-ratelimit-remaining-subscription-reads": "1099",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20250610T070251Z:243948ef-9864-4f57-893b-03ba4ee0ee05",
+        "X-MSEdge-Ref": "Ref A: AC78958E90FC41C69D8ACA9EA3727EBE Ref B: MAA201060515039 Ref C: 2025-06-10T07:02:50Z"
+      },
+      "ResponseBody": {
+        "value": []
+      }
+    }
+  ],
+  "Variables": {}
+}

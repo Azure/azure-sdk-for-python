@@ -1,0 +1,1219 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups?api-version=2025-04-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-azure-mgmt-resource/24.0.0 Python/3.10.11 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "21133",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 10 Jun 2025 07:01:04 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "1ca40951-fbce-4579-a592-313856bda076",
+        "x-ms-ratelimit-remaining-subscription-global-reads": "16499",
+        "x-ms-ratelimit-remaining-subscription-reads": "1099",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20250610T070104Z:1ca40951-fbce-4579-a592-313856bda076",
+        "X-MSEdge-Ref": "Ref A: 77B69DC8B7DE4F939CFC3D1745B4739B Ref B: MAA201060515039 Ref C: 2025-06-10T07:01:04Z"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "centraluseuap",
+            "managedBy": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg73273/providers/Microsoft.NetworkAnalytics/dataProducts/dataproduct48702",
+            "tags": {},
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "centraluseuap",
+            "managedBy": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg39104/providers/Microsoft.NetworkAnalytics/dataProducts/dataproduct72706",
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "centraluseuap",
+            "managedBy": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg98573/providers/Microsoft.NetworkAnalytics/dataProducts/product89683",
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "centraluseuap",
+            "managedBy": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg31226/providers/Microsoft.NetworkAnalytics/dataProducts/product56057",
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "centraluseuap",
+            "managedBy": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg22243/providers/Microsoft.NetworkAnalytics/dataProducts/product52308",
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "centraluseuap",
+            "managedBy": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg70288/providers/Microsoft.NetworkAnalytics/dataProducts/product09392",
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "centraluseuap",
+            "managedBy": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/v-tongMonthlyReleaseTest02/providers/Microsoft.NetworkAnalytics/dataProducts/product4lh001",
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "centraluseuap",
+            "managedBy": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-xiaofei/providers/Microsoft.NetworkAnalytics/dataProducts/xiaofeitest",
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "northcentralus",
+            "tags": {
+              "DeleteAfter": "06/12/2025 03:11:59"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "swedencentral",
+            "tags": {
+              "DoNotDelete": ""
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "southcentralus",
+            "tags": {
+              "DeleteAfter": "07/12/2024 17:23:01"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "southcentralus",
+            "tags": {
+              "DoNotDelete": ""
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus2",
+            "tags": {
+              "DeleteAfter": "09/09/2023 21:30:48"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus2",
+            "tags": {
+              "DeleteAfter": "09/09/2023 21:31:22"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus2",
+            "managedBy": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/PlatEng-Dev/providers/Microsoft.DevCenter/networkconnections/nc-platEng-Dev",
+            "tags": {},
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus2",
+            "tags": {
+              "azd-env-name": "devcenter4lh003",
+              "DeleteAfter": "11/08/2023 08:09:14"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus2",
+            "tags": {
+              "Owners": "rajeshkamal,hemarina,matell,vivazqu,wabrez,weilim",
+              "DoNotDelete": ""
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus2",
+            "tags": {
+              "azd-env-name": "wabrez-devcenter",
+              "DoNotDelete": ""
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus2",
+            "tags": {
+              "DeleteAfter": "05/11/2024 19:17:16"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "DeleteAfter ": "2024-12-30T12:30:00.000Z",
+              "owner": "raychen",
+              "DoNotDelete": ""
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "DoNotDelete": "\"\""
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "DeleteAfter": "03/08/2024 00:08:48"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus",
+            "tags": {
+              "DoNotDelete": ""
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus",
+            "tags": {
+              "DeleteAfter": "2025-12-24T05:11:17.9627286Z",
+              "Owners": "shreja",
+              "ServiceDirectory": "appconfiguration"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus",
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus",
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus",
+            "tags": {
+              "DeleteAfter": "11/23/2024 00:21:43"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus",
+            "tags": {
+              "ServiceDirectory": "messaging/eventgrid/aznamespaces",
+              "Owners": "ripark",
+              "DoNotDelete": ""
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus",
+            "tags": {
+              "ServiceDirectory": "storage",
+              "Owners": "swathip",
+              "DeleteAfter": "2025-01-26T22:17:50.4296899Z"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus",
+            "tags": {
+              "DeleteAfter": "01/23/2025 08:15:38"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus",
+            "tags": {
+              "Owners": "ripark",
+              "DeleteAfter": "2025-03-05T22:20:18.0264905Z",
+              "ServiceDirectory": "messaging/azeventhubs"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus2",
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus2",
+            "tags": {
+              "Owners": "rajeshkamal,hemarina,matell,vivazqu,wabrez,weilim",
+              "product": "azdev",
+              "DoNotDelete": ""
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus2",
+            "tags": {
+              "DoNotDelete": ""
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus3",
+            "tags": {
+              "DoNotDelete": ""
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus2",
+            "tags": {
+              "DoNotDelete": "\"\"",
+              "owners": "jsquire, juanospina"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus2",
+            "tags": {
+              "purpose": "local development",
+              "owner": "Jesse Squire",
+              "DoNotDelete": ""
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus2",
+            "tags": {
+              "DoNotDelete": "true"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus2",
+            "tags": {
+              "DeleteAfter": "12/15/2026 04:13:05"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus2",
+            "tags": {
+              "DoNotDelete": "true"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus2",
+            "tags": {
+              "DoNotDelete": "true"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus2",
+            "tags": {
+              "DeleteAfter": "06/13/2025 23:26:59"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus2",
+            "tags": {
+              "DeleteAfter": "06/14/2025 19:22:12"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus2",
+            "tags": {
+              "DeleteAfter": "06/10/2025 11:17:01"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus3",
+            "tags": {
+              "DeleteAfter": "2025-06-14T17:00:17.3249941Z",
+              "ServiceDirectory": "security/keyvault/azkeys",
+              "Owners": "chlowe"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastasia",
+            "tags": {
+              "DeleteAfter": "07/09/2024 07:20:37"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastasia",
+            "tags": {},
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "DoNotDelete": "",
+              " Owners": "marioguerra"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westcentralus",
+            "tags": {
+              "ServiceDirectory": "search",
+              "DeleteAfter": "2025-10-23T04:00:14.3477795Z",
+              "Owners": "shreja",
+              "DoNotDelete": "AI Chat Protocol Demo"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "northeurope",
+            "tags": {},
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus2",
+            "tags": {
+              "azd-env-name": "wb-devcenter",
+              "DeleteAfter": "09/05/2024 23:19:06"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus2",
+            "tags": {
+              "Environment": "Dev",
+              "Owner": "AI Team",
+              "Project": "GPTBot",
+              "Toolkit": "Bicep",
+              "DeleteAfter": "10/09/2024 12:06:59"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus2",
+            "tags": {
+              "Environment": "Dev",
+              "Owner": "AI Team",
+              "Project": "GPTBot",
+              "Toolkit": "Bicep",
+              "DeleteAfter": "10/10/2024 11:13:37"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus2",
+            "tags": {
+              "DoNotDelete": "true"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus2",
+            "tags": {
+              "azd-env-name": "jinlong-2",
+              "azd-template": "ronaldbosma/azure-integration-services-quickstart",
+              "DeleteAfter": "03/01/2025 12:17:43"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus2",
+            "tags": {
+              " Owner": "marioguerra",
+              "DoNotDelete": ""
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus2",
+            "tags": {
+              "DoNotDelete": "true"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus2",
+            "tags": {
+              "DoNotDelete": "Because It's Awesome"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus2",
+            "tags": {
+              "DoNotDelete": "true"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus2",
+            "tags": {
+              "DoNotDelete": "true"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus2",
+            "tags": {
+              "DoNotDelete": ""
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus2",
+            "tags": {
+              "DeleteAfter": "05/16/2025 07:41:44"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus2",
+            "managedBy": "subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.RecoveryServices/",
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus2",
+            "tags": {
+              "DeleteAfter": "06/11/2025 23:14:43"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus2",
+            "tags": {
+              "DeleteAfter": "06/09/2025 07:13:24"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus2",
+            "tags": {
+              "DeleteAfter": "06/12/2025 03:12:00"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus2",
+            "tags": {
+              "DeleteAfter": "06/16/2025 23:12:44"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "northeurope",
+            "tags": {},
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "southcentralus",
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "DeleteAfter": "09/11/2024 19:25:43"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus",
+            "tags": {
+              "DoNotDelete": "true"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus",
+            "tags": {
+              "Owners": "larryo",
+              "DeleteAfter": "2025-06-10T20:30:51.7905885Z",
+              "ServiceDirectory": "eventhubs"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus",
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus",
+            "tags": {
+              "Owners": "vicolina",
+              "DeleteAfter": "2025-06-10T21:39:28.8640104Z"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus",
+            "tags": {
+              "Owners": "conniey",
+              "DeleteAfter": "2025-06-10T10:38:52.4732222Z"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus",
+            "tags": {
+              "DeleteAfter": "2025-06-10T21:14:09.5885818Z",
+              "Owners": "heaths",
+              "ServiceDirectory": "keyvault"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus",
+            "tags": {
+              "Owners": "timov",
+              "DeleteAfter": "2025-06-11T22:03:41.2155817Z",
+              "ServiceDirectory": "tables"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus",
+            "tags": {
+              "Owners": "timov",
+              "ServiceDirectory": "appconfiguration",
+              "DeleteAfter": "2025-06-11T22:49:58.3700806Z"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus",
+            "tags": {
+              "DeleteAfter": "2025-06-17T00:56:59.0148675+00:00",
+              "ServiceDirectory": "healthdataaiservices",
+              "Owners": "jolov"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus",
+            "tags": {
+              "ServiceDirectory": "keyvault",
+              "Owners": "timov",
+              "DeleteAfter": "2025-06-14T17:42:12.7165285Z"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus",
+            "tags": {
+              "DeleteAfter": "2025-06-14T23:37:03.5295977Z",
+              "ServiceDirectory": "azidentity",
+              "Owners": "chlowe"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "DeleteAfter": "07/12/2025 17:23:02"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              " Owner": "marioguerra",
+              "DoNotDelete": ""
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "southcentralus",
+            "tags": {
+              "DeleteAfter": "06/14/2025 19:22:13"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "southcentralus",
+            "managedBy": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/javaacsrg35475/providers/Microsoft.ContainerService/managedClusters/aks431939a6",
+            "tags": {
+              "aks-managed-cluster-name": "aks431939a6",
+              "aks-managed-cluster-rg": "javaacsrg35475"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "DeleteAfter": "05/26/2025 03:17:36"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {},
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {},
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {},
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "DeleteAfter": "06/10/2025 03:34:12"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {},
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "DeleteAfter": "06/10/2025 07:18:07"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "DeleteAfter": "06/19/2025 19:14:52"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "eastus",
+            "tags": {
+              "DeleteAfter": "2025-06-10T15:00:59",
+              "BuildId": "local",
+              "BuildJob": "local",
+              "BuildNumber": "local",
+              "BuildReason": "local"
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "westus2",
+            "tags": {
+              "DoNotDelete": ""
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "centralus",
+            "tags": {
+              "DoNotDelete": ""
+            },
+            "properties": {
+              "provisioningState": "Succeeded"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

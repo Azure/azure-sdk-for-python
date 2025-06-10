@@ -1,0 +1,2054 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/tagNames?api-version=2025-04-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-azure-mgmt-resource/24.0.0 Python/3.10.11 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "20604",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 10 Jun 2025 07:02:07 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "1ce60ae5-2b85-4e3b-833c-b7ebeeab65d2",
+        "x-ms-ratelimit-remaining-subscription-global-reads": "16499",
+        "x-ms-ratelimit-remaining-subscription-reads": "1099",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20250610T070208Z:1ce60ae5-2b85-4e3b-833c-b7ebeeab65d2",
+        "X-MSEdge-Ref": "Ref A: D60EC042E07D4CC7A47CA4D71D5DA8C7 Ref B: MAA201060515039 Ref C: 2025-06-10T07:02:07Z"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "Sanitized",
+            "tagName": " Owner",
+            "count": {
+              "type": "Total",
+              "value": 6
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "marioguerra",
+                "count": {
+                  "type": "Total",
+                  "value": 5
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "prmarott",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "DoNotDelete",
+            "count": {
+              "type": "Total",
+              "value": 46
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "",
+                "count": {
+                  "type": "Total",
+                  "value": 29
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": " (Create resource)",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "true",
+                "count": {
+                  "type": "Total",
+                  "value": 9
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "AI Chat Protocol Demo",
+                "count": {
+                  "type": "Total",
+                  "value": 3
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "Turbo Cache Test for the Azure SDK for JS",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "\"\"",
+                "count": {
+                  "type": "Total",
+                  "value": 2
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "Because It's Awesome",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "Creator",
+            "count": {
+              "type": "Total",
+              "value": 14
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "Automatically added by NRMS Azure Policy",
+                "count": {
+                  "type": "Total",
+                  "value": 14
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "NRMS-Info",
+            "count": {
+              "type": "Total",
+              "value": 14
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "http://aka.ms/nrms",
+                "count": {
+                  "type": "Total",
+                  "value": 14
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "NRMS-Version",
+            "count": {
+              "type": "Total",
+              "value": 14
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "2019-03-20",
+                "count": {
+                  "type": "Total",
+                  "value": 14
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "Environment",
+            "count": {
+              "type": "Total",
+              "value": 14
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "Non-Prod",
+                "count": {
+                  "type": "Total",
+                  "value": 5
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "Dev",
+                "count": {
+                  "type": "Total",
+                  "value": 7
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "testing",
+                "count": {
+                  "type": "Total",
+                  "value": 2
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "Role",
+            "count": {
+              "type": "Total",
+              "value": 5
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "DeploymentValidation",
+                "count": {
+                  "type": "Total",
+                  "value": 5
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "TagA",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "Would you kindly...",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "TagB",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "Tags for sale",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": " Owners",
+            "count": {
+              "type": "Total",
+              "value": 9
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "marioguerra",
+                "count": {
+                  "type": "Total",
+                  "value": 8
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "marioguerra (Create resource)",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "aks-managed-azure-cni-overlay",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "true",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "aks-managed-bootstrap-profile-acr-name",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "aks-managed-consolidated-additional-properties",
+            "count": {
+              "type": "Total",
+              "value": 2
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "ccdb003e-44e7-11f0-aa79-f296f66fc447",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "29618f4b-1f64-11ef-b76a-aa8e6fbdeb42",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "aks-managed-createOperationID",
+            "count": {
+              "type": "Total",
+              "value": 2
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "958596ff-6df2-4796-8239-fd7517453611",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "f58b3522-6277-4e3c-b34a-9f05c4e80e3a",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "aks-managed-creationSource",
+            "count": {
+              "type": "Total",
+              "value": 2
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "vmssclient-aks-ap083225c-40168950-vmss",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "vmssclient-aks-agentpool-22709587-vmss",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "aks-managed-enable-imds-restriction",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "false",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "aks-managed-kubeletIdentityClientID",
+            "count": {
+              "type": "Total",
+              "value": 2
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "b91d21ab-df81-4c84-9138-d5ae2cd8d4f0",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "b38f88b7-6545-43f2-8d9b-2cf733cc6e22",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "aks-managed-orchestrator",
+            "count": {
+              "type": "Total",
+              "value": 2
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "Kubernetes:1.31.8",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "Kubernetes:1.28.9",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "aks-managed-poolName",
+            "count": {
+              "type": "Total",
+              "value": 2
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "ap083225c",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "agentpool",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "aks-managed-resourceNameSuffix",
+            "count": {
+              "type": "Total",
+              "value": 2
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "29166302",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "39476167",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "aks-managed-ssh-access",
+            "count": {
+              "type": "Total",
+              "value": 2
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "LocalUser",
+                "count": {
+                  "type": "Total",
+                  "value": 2
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "azsecpack",
+            "count": {
+              "type": "Total",
+              "value": 23
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "nonprod",
+                "count": {
+                  "type": "Total",
+                  "value": 23
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "platformsettings.host_environment.service.platform_optedin_for_rootcerts",
+            "count": {
+              "type": "Total",
+              "value": 23
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "true",
+                "count": {
+                  "type": "Total",
+                  "value": 23
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "aks-managed-cluster-name",
+            "count": {
+              "type": "Total",
+              "value": 3
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "aks431939a6",
+                "count": {
+                  "type": "Total",
+                  "value": 3
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "aks-managed-cluster-rg",
+            "count": {
+              "type": "Total",
+              "value": 3
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "javaacsrg35475",
+                "count": {
+                  "type": "Total",
+                  "value": 3
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "aks-managed-type",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "aks-slb-managed-outbound-ip",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "aks-managed-coordination",
+            "count": {
+              "type": "Total",
+              "value": 2
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "true",
+                "count": {
+                  "type": "Total",
+                  "value": 2
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "applicationName",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "chenxiaca",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "azd-env-name",
+            "count": {
+              "type": "Total",
+              "value": 16
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "chenxiaca",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "devcenter4lh003",
+                "count": {
+                  "type": "Total",
+                  "value": 3
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "senyangapi011",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "shihua99",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "vivazq-nomo",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "vivazqu-sec",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "wabrez-devcenter",
+                "count": {
+                  "type": "Total",
+                  "value": 3
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "wb-devcenter",
+                "count": {
+                  "type": "Total",
+                  "value": 3
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "zedytps2",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "jinlong-2",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "CosmosAccountType",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "Non-Production",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "defaultExperience",
+            "count": {
+              "type": "Total",
+              "value": 3
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "Core (SQL)",
+                "count": {
+                  "type": "Total",
+                  "value": 3
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "NRMS.KustoPlatform.Classification.1P",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "Default",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "Owner",
+            "count": {
+              "type": "Total",
+              "value": 12
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "AI Team",
+                "count": {
+                  "type": "Total",
+                  "value": 7
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "mdw",
+                "count": {
+                  "type": "Total",
+                  "value": 2
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "raychen",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "Jesse Squire",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "azsdk",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "Project",
+            "count": {
+              "type": "Total",
+              "value": 7
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "GPTBot",
+                "count": {
+                  "type": "Total",
+                  "value": 7
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "Toolkit",
+            "count": {
+              "type": "Total",
+              "value": 7
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "Bicep",
+                "count": {
+                  "type": "Total",
+                  "value": 7
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "department",
+            "count": {
+              "type": "Total",
+              "value": 2
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "engineering",
+                "count": {
+                  "type": "Total",
+                  "value": 2
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "azd-service-name",
+            "count": {
+              "type": "Total",
+              "value": 2
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "api",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "web",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "network-isolation",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "corp-ip",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": " Created by",
+            "count": {
+              "type": "Total",
+              "value": 2
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "nikolami",
+                "count": {
+                  "type": "Total",
+                  "value": 2
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "Description",
+            "count": {
+              "type": "Total",
+              "value": 2
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "Managed identity used to call DevCom/Feedback system APIs",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "Service bus for ADO service hooks",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "key1",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "value1",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "key",
+            "count": {
+              "type": "Total",
+              "value": 2
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "value",
+                "count": {
+                  "type": "Total",
+                  "value": 2
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "SapMonId",
+            "count": {
+              "type": "Total",
+              "value": 2
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "5444ace5935a87",
+                "count": {
+                  "type": "Total",
+                  "value": 2
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "appName",
+            "count": {
+              "type": "Total",
+              "value": 2
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "My e-commerce app",
+                "count": {
+                  "type": "Total",
+                  "value": 2
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "tag3",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "value3",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "tag4",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "value4",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "ProjectType",
+            "count": {
+              "type": "Total",
+              "value": 2
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "aoai-your-data-service",
+                "count": {
+                  "type": "Total",
+                  "value": 2
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "DeleteAfter",
+            "count": {
+              "type": "Total",
+              "value": 45
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "06/12/2025 03:11:59",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "07/12/2024 17:23:01",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "09/09/2023 21:30:48",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "09/09/2023 21:31:22",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "11/08/2023 08:09:14",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "05/11/2024 19:17:16",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "03/08/2024 00:08:48",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "2025-12-24T05:11:17.9627286Z",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "11/23/2024 00:21:43",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "2025-01-26T22:17:50.4296899Z",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "01/23/2025 08:15:38",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "2025-03-05T22:20:18.0264905Z",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "12/15/2026 04:13:05",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "06/13/2025 23:26:59",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "06/14/2025 19:22:12",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "06/10/2025 11:17:01",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "2025-06-14T17:00:17.3249941Z",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "07/09/2024 07:20:37",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "2025-10-23T04:00:14.3477795Z",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "09/05/2024 23:19:06",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "10/09/2024 12:06:59",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "10/10/2024 11:13:37",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "03/01/2025 12:17:43",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "05/16/2025 07:41:44",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "06/11/2025 23:14:43",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "06/09/2025 07:13:24",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "06/12/2025 03:12:00",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "06/16/2025 23:12:44",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "09/11/2024 19:25:43",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "2025-06-10T20:30:51.7905885Z",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "2025-06-10T21:39:28.8640104Z",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "2025-06-10T10:38:52.4732222Z",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "2025-06-10T21:14:09.5885818Z",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "2025-06-11T22:03:41.2155817Z",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "2025-06-11T22:49:58.3700806Z",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "2025-06-17T00:56:59.0148675+00:00",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "2025-06-14T17:42:12.7165285Z",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "2025-06-14T23:37:03.5295977Z",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "07/12/2025 17:23:02",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "06/14/2025 19:22:13",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "05/26/2025 03:17:36",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "06/10/2025 03:34:12",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "06/10/2025 07:18:07",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "06/19/2025 19:14:52",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "2025-06-10T15:02:01",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "Owners",
+            "count": {
+              "type": "Total",
+              "value": 18
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "rajeshkamal,hemarina,matell,vivazqu,wabrez,weilim",
+                "count": {
+                  "type": "Total",
+                  "value": 2
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "shreja",
+                "count": {
+                  "type": "Total",
+                  "value": 2
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "ripark",
+                "count": {
+                  "type": "Total",
+                  "value": 2
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "swathip",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "jsquire, juanospina",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "chlowe",
+                "count": {
+                  "type": "Total",
+                  "value": 2
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "larryo",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "vicolina",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "conniey",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "heaths",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "timov",
+                "count": {
+                  "type": "Total",
+                  "value": 3
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "jolov",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "DeleteAfter ",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "2024-12-30T12:30:00.000Z",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "ServiceDirectory",
+            "count": {
+              "type": "Total",
+              "value": 13
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "appconfiguration",
+                "count": {
+                  "type": "Total",
+                  "value": 2
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "messaging/eventgrid/aznamespaces",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "storage",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "messaging/azeventhubs",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "security/keyvault/azkeys",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "search",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "eventhubs",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "keyvault",
+                "count": {
+                  "type": "Total",
+                  "value": 2
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "tables",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "healthdataaiservices",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              },
+              {
+                "id": "Sanitized",
+                "tagValue": "azidentity",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "product",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "azdev",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "purpose",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "local development",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "azd-template",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "ronaldbosma/azure-integration-services-quickstart",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "BuildId",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "local",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "BuildJob",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "local",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "BuildNumber",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "local",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "BuildReason",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "local",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "tagKey1",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "tag-value-1",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "tagKey2",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "tag-value-2",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "DDFunMDCTag",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "Public",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "Az.Sec.DisableLocalAuth.CosmosDB::OptIn",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "all_regions",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "Az.Sec.DisableLocalAuth.EventHub::OptIn",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "all_regions",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "Az.Sec.DisableLocalAuth.ServiceBus::OptIn",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "all_regions",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "Az.Sec.DisableLocalAuth.SqlManagedInstance::Opt-In",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "all_regions",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "Az.Sec.DisableLocalAuth.SqlServer::OptIn",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "all_regions",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "Az.Sec.DisableLocalAuth.Storage::OptIn",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "all_regions",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "Az.Sec.DenySubnetOutboundAccess::OptIn",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "all_regions",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          {
+            "id": "Sanitized",
+            "tagName": "Az.Sec.AnonymousBlobEnforcement::OptIn",
+            "count": {
+              "type": "Total",
+              "value": 1
+            },
+            "values": [
+              {
+                "id": "Sanitized",
+                "tagValue": "all_regions",
+                "count": {
+                  "type": "Total",
+                  "value": 1
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}
