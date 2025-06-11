@@ -294,10 +294,11 @@ class RedTeam:
             )
 
         if self._one_dp_project:
+            red_team = RedTeamUpload(
+                scan_name=run_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
+            )
             response = self.generated_rai_client._evaluation_onedp_client.start_red_team_run(
-                red_team=RedTeamUpload(
-                    scan_name=run_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
-                )
+                red_team=red_team,
             )
 
             self.ai_studio_url = response.properties.get("AiStudioEvaluationUri")
@@ -353,6 +354,7 @@ class RedTeam:
         redteam_result: RedTeamResult,
         eval_run: EvalRun,
         _skip_evals: bool = False,
+        scan_name: Optional[str] = None
     ) -> Optional[str]:
         """Log the Red Team Agent results to MLFlow.
         
@@ -493,7 +495,7 @@ class RedTeam:
             if self._one_dp_project:
                 try:
                     create_evaluation_result_response = self.generated_rai_client._evaluation_onedp_client.create_evaluation_result(
-                        name=uuid.uuid4(),
+                        name=eval_run.scan_name or str(uuid.uuid4()),
                         path=tmpdir,
                         metrics=metrics,
                         result_type=ResultType.REDTEAM
@@ -503,7 +505,7 @@ class RedTeam:
                         name=eval_run.id,
                         red_team=RedTeamUpload(
                             id=eval_run.id,
-                            scan_name=eval_run.scan_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
+                            scan_name=scan_name or eval_run.scan_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
                             status="Completed",
                             outputs={
                                 'evaluationResultId': create_evaluation_result_response.id,
@@ -2579,7 +2581,8 @@ class RedTeam:
             await self._log_redteam_results_to_mlflow(
                 redteam_result=output,
                 eval_run=eval_run,
-                _skip_evals=skip_evals
+                _skip_evals=skip_evals,
+                scan_name=scan_name,
             )
         
         
