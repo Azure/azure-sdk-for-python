@@ -42,32 +42,33 @@ class CommunicationTokenCredential(object):
     _DEFAULT_AUTOREFRESH_INTERVAL_MINUTES = 10
 
     def __init__(self, token: Optional[str] = None, **kwargs: Any):
-        self._resource_endpoint = kwargs.pop("resource_endpoint", None)
-        self._token_credential = kwargs.pop("token_credential", None)
-        self._scopes = kwargs.pop("scopes", None)
+        resource_endpoint = kwargs.pop("resource_endpoint", None)
+        token_credential = kwargs.pop("token_credential", None)
+        scopes = kwargs.pop("scopes", None)
 
         # Check if at least one field exists but not all fields exist when token is None
-        fields_present = [self._resource_endpoint, self._token_credential, self._scopes]
+        fields_present = [resource_endpoint, token_credential, scopes]
         fields_exist = [field is not None for field in fields_present]
 
         if token is None and any(fields_exist) and not all(fields_exist):
             missing_fields = []
-            if self._resource_endpoint is None:
+            if resource_endpoint is None:
                 missing_fields.append("resource_endpoint")
-            if self._token_credential is None:
+            if token_credential is None:
                 missing_fields.append("token_credential")
-            if self._scopes is None:
+            if scopes is None:
                 missing_fields.append("scopes")
             raise ValueError(
                 "When using token exchange, all of resource_endpoint, token_credential, and scopes must be provided. "
                 f"Missing: {', '.join(missing_fields)}")
 
-        if self._resource_endpoint and self._token_credential and self._scopes:
+        self._token_exchange_client = None
+        if resource_endpoint and token_credential and scopes:
             self._token_exchange_client = TokenExchangeClient(
-                self._resource_endpoint,
-                self._token_credential,
-                self._scopes)
-            self._token_refresher = lambda: self._token_exchange_client.exchange_entra_token()
+                resource_endpoint,
+                token_credential,
+                scopes)
+            self._token_refresher = self._token_exchange_client.exchange_entra_token
             self._proactive_refresh = kwargs.pop("proactive_refresh", False)
 
             async def _initialize_token():

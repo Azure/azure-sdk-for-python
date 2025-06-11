@@ -5,8 +5,10 @@
 # --------------------------------------------------------------------------
 
 import json
-from typing import Any
-from typing import List, Optional
+from typing import Any, Optional, List
+# pylint: disable=non-abstract-transport-import
+# pylint: disable=no-name-in-module
+from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import AsyncPipeline, PipelineResponse
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
@@ -17,27 +19,36 @@ from .token_exchange_utils import TokenExchangeUtils
 
 
 class TokenExchangeClient:
-    """Asynchronous client that exchanges an Entra token for an Azure Communication Services (ACS) token."""
+    """Asynchronous client that exchanges an Entra token for an Azure Communication Services (ACS) token.
 
+    :param resource_endpoint: The endpoint URL of the resource to authenticate against.
+    :param credential: The credential to use for token exchange.
+    :param scopes: The scopes to request during the token exchange.
+    :keyword transport: Optional transport to use for the pipeline.
+    :keyword api_version: Optional API version to use for requests.
+    """
+
+    # pylint: disable=client-method-missing-type-annotations
     def __init__(
-            self,
-            resource_endpoint: str,
-            token_credential: AsyncTokenCredential,
-            scopes: Optional[List[str]] = None,
-            pipeline_transport: Any = None):
+        self,
+        resource_endpoint: str,
+        credential: AsyncTokenCredential,
+        scopes: Optional[List[str]] = None,
+        **kwargs: Any):
 
         self._resource_endpoint = resource_endpoint
         self._scopes = scopes or ["https://communication.azure.com/clients/.default"]
-        self._token_credential = token_credential
+        self._credential = credential
+        self._api_version = kwargs.get("api_version", None)
+        pipeline_transport = kwargs.get("transport", None)
         self._pipeline = self._create_pipeline_from_options(pipeline_transport)
 
     def _create_pipeline_from_options(self, pipeline_transport):
-        auth_policy = AsyncBearerTokenCredentialPolicy(self._token_credential, *self._scopes)
+        auth_policy = AsyncBearerTokenCredentialPolicy(self._credential, *self._scopes)
         entra_token_guard_policy = EntraTokenGuardPolicy()
         policies = [auth_policy, entra_token_guard_policy]
         if pipeline_transport:
             return AsyncPipeline(policies=policies, transport=pipeline_transport)
-        from azure.core.pipeline.transport import AioHttpTransport
         return AsyncPipeline(policies=policies, transport=AioHttpTransport())
 
     async def exchange_entra_token(self) -> AccessToken:
