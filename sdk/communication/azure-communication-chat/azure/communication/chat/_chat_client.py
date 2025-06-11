@@ -51,11 +51,10 @@ class ChatClient(object):  # pylint: disable=client-accepts-api-version-keyword
 
     def __init__(
         self,
-        endpoint,  # type: str
-        credential,  # type: CommunicationTokenCredential
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        endpoint: str,
+        credential: CommunicationTokenCredential,
+        **kwargs: Any
+    ) -> None:
         if not credential:
             raise ValueError("credential can not be None")
 
@@ -82,10 +81,9 @@ class ChatClient(object):  # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace
     def get_chat_thread_client(
         self,
-        thread_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> ChatThreadClient
+        thread_id: str,
+        **kwargs: Any
+    ) -> ChatThreadClient:
         """
         Get ChatThreadClient by providing a thread_id.
 
@@ -112,10 +110,9 @@ class ChatClient(object):  # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace
     def create_chat_thread(
         self,
-        topic,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> CreateChatThreadResult
+        topic: str,
+        **kwargs: Any
+    ) -> CreateChatThreadResult:
         """Creates a chat thread.
 
         :param topic: Required. The thread topic.
@@ -175,8 +172,10 @@ class ChatClient(object):  # pylint: disable=client-accepts-api-version-keyword
         return create_chat_thread_result
 
     @distributed_trace
-    def list_chat_threads(self, **kwargs):
-        # type: (...) -> ItemPaged[ChatThreadItem]
+    def list_chat_threads(
+        self,
+        **kwargs: Any
+    ):
         """Gets the list of chat threads of a user.
 
         :keyword int results_per_page: The maximum number of chat threads returned per page.
@@ -200,12 +199,7 @@ class ChatClient(object):  # pylint: disable=client-accepts-api-version-keyword
         return self._client.chat.list_chat_threads(max_page_size=results_per_page, start_time=start_time, **kwargs)
 
     @distributed_trace
-    def delete_chat_thread(
-        self,
-        thread_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def delete_chat_thread(self, thread_id: str, **kwargs: Any) -> None:
         """Deletes a chat thread.
 
         :param thread_id: Required. Thread id to delete.
@@ -228,15 +222,12 @@ class ChatClient(object):  # pylint: disable=client-accepts-api-version-keyword
 
         return self._client.chat.delete_chat_thread(thread_id, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> ChatClient
+    def __enter__(self) -> 'ChatClient':
         self._client.__enter__()  # pylint:disable=no-member
         return self
 
-    def __exit__(self, *args):
-        # type: (*Any) -> None
+    def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)  # pylint:disable=no-member
