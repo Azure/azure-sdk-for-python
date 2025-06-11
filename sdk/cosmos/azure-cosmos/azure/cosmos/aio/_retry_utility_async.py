@@ -140,7 +140,8 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     status_code=StatusCodes.NOT_FOUND,
                     message="Could not find ThroughputProperties for container " + link,
                     sub_status_code=SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND)
-                _log_diagnostics_error(client._enable_diagnostics_logging, request, result[1], e_offer,
+                response_headers = result[1] if len(result) > 1 else {}
+                _log_diagnostics_error(client._enable_diagnostics_logging, request, response_headers, e_offer,
                                        {}, global_endpoint_manager, logger=logger)
                 raise e_offer
 
@@ -222,7 +223,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 if not database_account_retry_policy.ShouldRetry(e):
                     raise e
             else:
-                _handle_service_request_retries(request, client, service_request_retry_policy, e, *args)
+                _handle_service_request_retries(client, service_request_retry_policy, e, *args)
 
         except ServiceResponseError as e:
             if request and _has_database_account_header(request.headers):

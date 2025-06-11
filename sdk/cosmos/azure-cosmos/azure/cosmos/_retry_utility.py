@@ -141,8 +141,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                     status_code=StatusCodes.NOT_FOUND,
                     message="Could not find ThroughputProperties for container " + link,
                     sub_status_code=SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND)
-
-                _log_diagnostics_error(client._enable_diagnostics_logging, request, result[1], e_offer,
+                response_headers = result[1] if len(result) > 1 else {}
+                _log_diagnostics_error(client._enable_diagnostics_logging, request, response_headers, e_offer,
                                            {}, global_endpoint_manager, logger=logger)
                 raise e_offer
             return result

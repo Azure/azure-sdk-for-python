@@ -30,7 +30,7 @@ import time
 import os
 import urllib.parse
 from logging import Logger
-from typing import Optional, Union, Dict, TYPE_CHECKING, Set, List, Tuple, Type
+from typing import Optional, Union, Dict, TYPE_CHECKING, Set, List, Tuple, Type, Any
 import types
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
@@ -61,7 +61,7 @@ HTTPResponseType = Union["LegacyHttpResponse", "HttpResponse", "LegacyAsyncHttpR
 # These Helper functions are used to Log Diagnostics for the SDK outside on_request and on_response
 def _populate_logger_attributes(  # type: ignore[attr-defined, union-attr]
                                 logger_attributes: Optional[Dict] = None,
-                                request: Optional[PipelineRequest[HTTPRequestType]] = None,
+                                request: Optional[Union[PipelineRequest[HTTPRequestType], Any]] = None,
                                 response_headers: Optional[Dict] = None,
                                 exception: Optional[Union[CosmosHttpResponseError,
                                 ServiceRequestError, ServiceResponseError]] = None) -> Dict:
