@@ -142,7 +142,14 @@ class WebSocketProtocol(WebSocketMixin):
                     (self._http_proxy['host'], self._http_proxy['port']),
                     timeout=self._timeout
                 )
-                self._socket.sendall(f'CONNECT {self._ws_url.hostname}:{self._ws_url.port} HTTP/1.1\r\n\r\n'.encode())
+                self._socket.sendall(f'CONNECT {self._ws_url.hostname}:{self._ws_url.port} HTTP/1.1\r\n'.encode())
+                self._socket.sendall(b'Host: ' + f'{self._ws_url.hostname}:{self._ws_url.port}'.encode() + b'\r\n')
+                if self._http_proxy['auth']:
+                    import base64
+                    credentials = f"{self._http_proxy['username']}:{self._http_proxy['password']}"
+                    encoded_credentials = base64.b64encode(credentials.encode()).decode()
+                    self._socket.sendall(f'Proxy-Authorization: Basic {encoded_credentials}\r\n'.encode())
+                self._socket.sendall(b'\r\n')
                 proxy_response = parse_proxy_response(self._socket.recv(1024))
                 if not proxy_response[0].startswith(b'HTTP/'):
                     self._socket.close()
@@ -396,7 +403,14 @@ class AsyncWebSocketProtocol(WebSocketMixin):
                     (self._http_proxy['host'], self._http_proxy['port']),
                     #timeout=self._timeout
                 )
-                self._socket.sendall(f'CONNECT {self._ws_url.hostname}:{self._ws_url.port} HTTP/1.1\r\n\r\n'.encode())
+                self._socket.sendall(f'CONNECT {self._ws_url.hostname}:{self._ws_url.port} HTTP/1.1\r\n'.encode())
+                self._socket.sendall(b'Host: ' + f'{self._ws_url.hostname}:{self._ws_url.port}'.encode() + b'\r\n')
+                if self._http_proxy['auth'] and self._http_proxy['auth'][0]:
+                    import base64
+                    credentials = f"{self._http_proxy['username']}:{self._http_proxy['password'] if self._http_proxy['password'] else ''}"
+                    encoded_credentials = base64.b64encode(credentials.encode()).decode()
+                    self._socket.sendall(f'Proxy-Authorization: Basic {encoded_credentials}\r\n'.encode())
+                self._socket.sendall(b'\r\n')
                 proxy_response = parse_proxy_response(self._socket.recv(1024))
                 if not proxy_response[0].startswith(b'HTTP/'):
                     self._socket.close()
