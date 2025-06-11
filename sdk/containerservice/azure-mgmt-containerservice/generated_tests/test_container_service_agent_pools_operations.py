@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerservice.v2025_03_01 import ContainerServiceClient
+from azure.mgmt.containerservice.v2025_04_01 import ContainerServiceClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -25,7 +25,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            api_version="2025-03-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
         response = self.client.agent_pools.list(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2025-03-01",
+            api_version="2025-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            api_version="2025-03-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -75,6 +75,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
                 "enableFIPS": bool,
                 "enableNodePublicIP": bool,
                 "enableUltraSSD": bool,
+                "gatewayProfile": {"publicIPPrefixSize": 31},
                 "gpuInstanceProfile": "str",
                 "gpuProfile": {"driver": "str"},
                 "hostGroupID": "str",
@@ -148,6 +149,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
                 "osDiskType": "str",
                 "osSKU": "str",
                 "osType": "Linux",
+                "podIPAllocationMode": "str",
                 "podSubnetID": "str",
                 "powerState": {"code": "str"},
                 "provisioningState": "str",
@@ -157,6 +159,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
                 "scaleSetPriority": "Regular",
                 "securityProfile": {"enableSecureBoot": bool, "enableVTPM": bool},
                 "spotMaxPrice": -1,
+                "status": {"provisioningError": {"code": "str", "details": [...], "message": "str", "target": "str"}},
                 "tags": {"str": "str"},
                 "type": "str",
                 "upgradeSettings": {
@@ -166,12 +169,14 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
                     "nodeSoakDurationInMinutes": 0,
                     "undrainableNodeBehavior": "str",
                 },
+                "virtualMachineNodesStatus": [{"count": 0, "size": "str"}],
+                "virtualMachinesProfile": {"scale": {"manual": [{"count": 0, "size": "str"}]}},
                 "vmSize": "str",
                 "vnetSubnetID": "str",
                 "windowsProfile": {"disableOutboundNat": bool},
                 "workloadRuntime": "str",
             },
-            api_version="2025-03-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -184,7 +189,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            api_version="2025-03-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -197,7 +202,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            api_version="2025-03-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -211,7 +216,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
             resource_name="str",
             agent_pool_name="str",
             machines={"machineNames": ["str"]},
-            api_version="2025-03-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -223,7 +228,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
         response = self.client.agent_pools.get_available_agent_pool_versions(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2025-03-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -236,7 +241,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            api_version="2025-03-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

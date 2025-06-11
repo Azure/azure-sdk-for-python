@@ -66,6 +66,7 @@ _LOGGER = logging.getLogger(__name__)
 
 class RetryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     # pylint: disable=enum-must-be-uppercase
+    """Enum for retry modes."""
     Exponential = "exponential"
     Fixed = "fixed"
 

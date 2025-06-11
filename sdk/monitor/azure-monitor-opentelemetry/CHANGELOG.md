@@ -1,15 +1,21 @@
 # Release History
 
-## 1.6.10 (Unreleased)
+## 1.6.11 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.6.10 (2025-05-30)
 
 ### Features Added
 
 - Enabled diagnostics for AKS Attach
     ([#40988](https://github.com/Azure/azure-sdk-for-python/pull/40988))
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 

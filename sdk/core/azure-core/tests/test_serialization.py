@@ -8,8 +8,10 @@ from enum import Enum
 import json
 import sys
 
-from azure.core.serialization import AzureJSONEncoder, NULL
+from azure.core.serialization import AzureJSONEncoder, NULL, is_generated_model
 import pytest
+from modeltest._utils.model_base import Model as HybridModel, rest_field
+from modeltest import models
 
 
 def _expand_value(obj):
@@ -462,3 +464,93 @@ def test_model_recursion(json_dumps_with_encoder):
         ],
     }
     assert json.loads(json_dumps_with_encoder(expected.to_dict())) == expected_dict
+
+
+def test_json_roundtrip():
+    class Pet(HybridModel):
+        name: str = rest_field()  # my name
+        species: str = rest_field()  # my species
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    dict_response = {
+        "name": "wall-e",
+        "species": "dog",
+    }
+    model = Pet(
+        name="wall-e",
+        species="dog",
+    )
+    with pytest.raises(TypeError):
+        json.dumps(model)
+    assert json.dumps(dict(model)) == '{"name": "wall-e", "species": "dog"}'
+    assert json.loads(json.dumps(dict(model))) == model == dict_response
+
+
+def test_flattened_model():
+    def _flattened_model_assertions(model):
+        assert model.name == "wall-e"
+        assert model.description == "a dog"
+        assert model.age == 2
+        assert model.properties.description == "a dog"
+        assert model.properties.age == 2
+
+    model = models.FlattenModel(name="wall-e", description="a dog", age=2)
+    _flattened_model_assertions(model)
+    model = models.FlattenModel({"name": "wall-e", "properties": {"description": "a dog", "age": 2}})
+    _flattened_model_assertions(model)
+
+
+def test_client_name_model():
+    model = models.ClientNamedPropertyModel(prop_client_name="wall-e")
+    assert model.prop_client_name == "wall-e"
+
+
+def test_readonly():
+    model = models.ReadonlyModel({"id": 1})
+    assert model.id == 1
+    assert model.as_dict() == {"id": 1}
+    assert model.as_dict(exclude_readonly=True) == {}
+
+
+def test_is_generated_model_with_hybrid_model():
+    assert is_generated_model(HybridModel())
+    assert is_generated_model(models.FlattenModel({"name": "wall-e", "properties": {"description": "a dog", "age": 2}}))
+    assert is_generated_model(models.ClientNamedPropertyModel(prop_client_name="wall-e"))
+    assert is_generated_model(models.ReadonlyModel())
+
+
+def test_is_generated_model_with_msrest_model():
+    # Instead of importing msrest, we're just going to do a basic rendering of the msrest models
+    class MsrestModel(object):
+        _subtype_map = {}
+        _attribute_map = {}
+        _validation = {}
+
+        def __init__(self, *args, **kwargs):
+            self.additional_properties = {}
+
+    assert is_generated_model(MsrestModel())
+
+    class InstantiatedMsrestModel(MsrestModel):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.attr = "value"
+
+    assert is_generated_model(InstantiatedMsrestModel())
+
+
+def test_is_generated_model_with_non_models():
+    assert not is_generated_model({})
+    assert not is_generated_model([])
+    assert not is_generated_model("string")
+    assert not is_generated_model(42)
+    assert not is_generated_model(None)
+    assert not is_generated_model(object)
+
+    class Model:
+        def __init__(self):
+            self.attr = "value"
+
+    assert not is_generated_model(Model())

@@ -116,6 +116,12 @@ class AzureJSONEncoder(JSONEncoder):
     """A JSON encoder that's capable of serializing datetime objects and bytes."""
 
     def default(self, o: Any) -> Any:
+        """Override the default method to handle datetime and bytes serialization.
+        :param o: The object to serialize.
+        :type o: any
+        :return: A JSON-serializable representation of the object.
+        :rtype: any
+        """
         if isinstance(o, (bytes, bytearray)):
             return base64.b64encode(o).decode()
         try:
@@ -123,3 +129,14 @@ class AzureJSONEncoder(JSONEncoder):
         except AttributeError:
             pass
         return super(AzureJSONEncoder, self).default(o)
+
+
+def is_generated_model(obj: Any) -> bool:
+    """Check if the object is a generated SDK model.
+
+    :param obj: The object to check.
+    :type obj: any
+    :return: True if the object is a generated SDK model, False otherwise.
+    :rtype: bool
+    """
+    return bool(getattr(obj, "_is_model", False) or hasattr(obj, "_attribute_map"))
