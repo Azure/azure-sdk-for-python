@@ -139,7 +139,7 @@ class QueueClient(  # type: ignore [misc]
         await self._client.__aenter__()
         return self
 
-    async def __exit__(
+    async def __aexit__(
         self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
     ) -> Any:
         await self._client.__aexit__(typ, exc, tb)
