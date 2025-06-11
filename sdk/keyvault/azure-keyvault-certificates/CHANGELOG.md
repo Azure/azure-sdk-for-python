@@ -6,7 +6,7 @@
 
 - Added support for service API version `7.6`
 - Added a `preserve_order` keyword-only argument when creating or importing certificates to
-  allow preserving a certificate chain's original order, and corresponding a `preserve_order` property to
+  allow preserving a certificate chain's original order, and a corresponding `preserve_order` property to
   `CertificateProperties` and `CertificateOperation` models
   ([#37507](https://github.com/Azure/azure-sdk-for-python/pull/37507))
 
