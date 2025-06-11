@@ -29,6 +29,7 @@ AI models deployed to the Project's AI Services. This is in addition to the exis
 * Evaluator Ids are available using the Enum `EvaluatorIds` and no longer require `azure-ai-evaluation` package to be installed.
 * Property `scope` on `AIProjectClient` is removed, use AI Foundry Project endpoint instead.
 * Property `id` on Evaluation is replaced with `name`.
+* Please see the [agents migration guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/AGENTS_MIGRATION_GUIDE.md) on how to use the new `azure-ai-projects` with `azure-ai-agents` package.
 
 ### Sample updates
 
