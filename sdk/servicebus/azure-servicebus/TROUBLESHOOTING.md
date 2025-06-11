@@ -12,8 +12,7 @@ This troubleshooting guide contains instructions to diagnose frequently encounte
     * [Message and session handling exceptions](#message-and-session-handling-exceptions)
     * [Service and entity exceptions](#service-and-entity-exceptions)
     * [Auto lock renewal exceptions](#auto-lock-renewal-exceptions)
-* [Threading and concurrency issues](#threading-and-concurrency-issues)
-  * [Thread safety limitations](#thread-safety-limitations)
+
 * [Troubleshooting authentication and authorization issues](#troubleshooting-authentication-and-authorization-issues)
 * [Troubleshooting connectivity issues](#troubleshooting-connectivity-issues)
   * [Timeout when connecting to service](#timeout-when-connecting-to-service)
@@ -128,82 +127,6 @@ See the [Troubleshooting message handling issues](#troubleshooting-message-handl
 
 See the [Troubleshooting message handling issues](#troubleshooting-message-handling-issues) to help troubleshoot AutoLockRenewer errors.
 
-## Threading and concurrency issues
-
-### Thread safety limitations
-
-**Important:** We do not guarantee that the `ServiceBusClient`, `ServiceBusSender`, and `ServiceBusReceiver` are thread-safe or coroutine-safe. We do not recommend reusing these instances across threads or sharing them between coroutines.
-
-The data model type, `ServiceBusMessageBatch` is not thread-safe or coroutine-safe. It should not be shared across threads nor used concurrently with client methods.
-
-Using the same client instances across multiple threads or tasks without proper synchronization can lead to:
-
-- Connection errors and unexpected exceptions
-- Message corruption or loss
-- Deadlocks and race conditions
-- Unpredictable behavior
-
-It is up to the running application to use these classes in a concurrency-safe manner.
-
-For scenarios requiring concurrent sending in asyncio applications, ensure proper coroutine-safety management using mechanisms like asyncio.Lock().
-
-```python
-import asyncio
-from azure.servicebus.aio import ServiceBusClient
-from azure.servicebus import ServiceBusMessage
-from azure.identity.aio import DefaultAzureCredential
-
-SERVICE_BUS_NAMESPACE = "<your-namespace>.servicebus.windows.net"
-QUEUE_NAME = "<your-queue-name>"
-
-lock = asyncio.Lock()
-
-async def send_batch(sender_id, sender):
-    async with lock:
-        messages = [ServiceBusMessage(f"Message {i} from sender {sender_id}") for i in range(10)]
-        await sender.send_messages(messages)
-        print(f"Sender {sender_id} sent messages.")
-
-credential = DefaultAzureCredential()
-client = ServiceBusClient(fully_qualified_namespace=SERVICE_BUS_NAMESPACE, credential=credential)
-
-async with client:
-    sender = client.get_queue_sender(queue_name=QUEUE_NAME)
-    async with sender:
-        await asyncio.gather(*(send_batch(i, sender) for i in range(5)))
-```
-
-For scenarios requiring concurrent sending from multiple threads, ensure proper thread-safety management using mechanisms like `threading.Lock()`. 
-
-> **NOTE:** Native async APIs should be used instead of running in a `ThreadPoolExecutor`, if possible.
-
-```python
-import threading
-from concurrent.futures import ThreadPoolExecutor
-from azure.servicebus import ServiceBusClient, ServiceBusMessage
-from azure.identity import DefaultAzureCredential
-
-SERVICE_BUS_NAMESPACE = "<your-namespace>.servicebus.windows.net"
-QUEUE_NAME = "<your-queue-name>"
-
-lock = threading.Lock()
-
-def send_batch(sender_id, sender):
-    with lock:
-        messages = [ServiceBusMessage(f"Message {i} from sender {sender_id}") for i in range(10)]
-        sender.send_messages(messages)
-        print(f"Sender {sender_id} sent messages.")
-
-credential = DefaultAzureCredential()
-client = ServiceBusClient(fully_qualified_namespace=SERVICE_BUS_NAMESPACE, credential=credential)
-
-with client:
-    sender = client.get_queue_sender(queue_name=QUEUE_NAME)
-    with sender:
-        with ThreadPoolExecutor(max_workers=5) as executor:
-            for i in range(5):
-                executor.submit(send_batch, i, sender)
-```
 
 ## Troubleshooting authentication and authorization issues
 
