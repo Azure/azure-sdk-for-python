@@ -37,8 +37,7 @@ class SmsClient(object):  # pylint: disable=client-accepts-api-version-keyword
             endpoint: str,
             credential: Union[TokenCredential, AzureKeyCredential],
             **kwargs: Any
-    ):
-        # type: (...) -> None
+    ) -> None:
         try:
             if not endpoint.lower().startswith("http"):
                 endpoint = "https://" + endpoint
