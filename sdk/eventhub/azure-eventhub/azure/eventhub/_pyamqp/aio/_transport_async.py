@@ -32,7 +32,7 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 # -------------------------------------------------------------------------
 
-import asyncio
+import asyncio # pylint:disable=do-not-import-asyncio
 import errno
 import socket
 import ssl
@@ -556,6 +556,7 @@ class LegacyWebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too
             from aiohttp import (  # pylint: disable=networking-import-outside-azure-core-transport
                 ClientSession,
                 ClientConnectorError,
+                ClientWSTimeout,
             )
             from urllib.parse import urlsplit
         except ImportError:
@@ -584,7 +585,7 @@ class LegacyWebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too
 
             self.sock = await self.session.ws_connect(
                 url=url,
-                timeout=self.socket_timeout,  # timeout for connect
+                timeout=ClientWSTimeout(ws_close=self.socket_timeout),
                 protocols=[AMQP_WS_SUBPROTOCOL],
                 autoclose=False,
                 proxy=http_proxy_host,
@@ -654,3 +655,4 @@ class LegacyWebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too
         :param str s: The string to write.
         """
         await self.sock.send_bytes(s)
+
