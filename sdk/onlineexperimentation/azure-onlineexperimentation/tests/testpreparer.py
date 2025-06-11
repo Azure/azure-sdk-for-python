@@ -9,6 +9,7 @@ from azure.onlineexperimentation import OnlineExperimentationClient
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 import functools
 
+
 class OnlineExperimentationClientTestBase(AzureRecordedTestCase):
 
     def create_client(self, endpoint) -> OnlineExperimentationClient:
