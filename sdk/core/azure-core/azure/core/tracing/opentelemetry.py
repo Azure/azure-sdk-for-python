@@ -5,7 +5,7 @@
 from __future__ import annotations
 from contextlib import contextmanager
 from contextvars import Token
-from typing import Optional, Dict, Sequence, cast, Callable, Iterator, TYPE_CHECKING
+from typing import Any, Optional, Dict, Sequence, cast, Callable, Iterator, TYPE_CHECKING
 
 from opentelemetry import context as otel_context_module, trace
 from opentelemetry.trace import (
@@ -82,7 +82,7 @@ class OpenTelemetryTracer:
         attributes: Optional[Attributes] = None,
         links: Optional[Sequence[Link]] = None,
         start_time: Optional[int] = None,
-        context: Optional[Dict[str, object]] = None,
+        context: Optional[Dict[str, Any]] = None,
     ) -> Span:
         """Starts a span without setting it as the current span in the context.
 
@@ -98,7 +98,7 @@ class OpenTelemetryTracer:
         :paramtype start_time: Optional[int]
         :keyword context: A dictionary of context values corresponding to the parent span. If not provided,
           the current global context will be used.
-        :paramtype context: Optional[Dict[str, object]]
+        :paramtype context: Optional[Dict[str, any]]
         :return: The span that was started
         :rtype: ~opentelemetry.trace.Span
         """
@@ -130,7 +130,7 @@ class OpenTelemetryTracer:
         attributes: Optional[Attributes] = None,
         links: Optional[Sequence[Link]] = None,
         start_time: Optional[int] = None,
-        context: Optional[Dict[str, object]] = None,
+        context: Optional[Dict[str, Any]] = None,
         end_on_exit: bool = True,
     ) -> Iterator[Span]:
         """Context manager that starts a span and sets it as the current span in the context.
@@ -153,7 +153,7 @@ class OpenTelemetryTracer:
         :paramtype start_time: Optional[int]
         :keyword context: A dictionary of context values corresponding to the parent span. If not provided,
           the current global context will be used.
-        :paramtype context: Optional[Dict[str, object]]
+        :paramtype context: Optional[Dict[str, any]]
         :keyword end_on_exit: Whether to end the span when exiting the context manager. Defaults to True.
         :paramtype end_on_exit: bool
         :return: The span that was started
