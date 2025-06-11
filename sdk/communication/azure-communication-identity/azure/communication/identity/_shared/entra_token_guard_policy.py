@@ -6,7 +6,6 @@
 
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.pipeline import PipelineRequest
-from dateutil import parser as dateutil_parser  # type: ignore
 from .entra_token_guard_policy_utils import EntraTokenGuardUtils
 
 
