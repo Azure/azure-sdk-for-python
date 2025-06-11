@@ -4,10 +4,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import pytest
 from websockets import connect as ws_connect
 from testcase import WebpubsubTest, WebpubsubPowerShellPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 
+@pytest.mark.live_test_only
 class TestListConnectionsInGroup(WebpubsubTest):
 
     @WebpubsubPowerShellPreparer()
@@ -65,6 +67,9 @@ class TestListConnectionsInGroup(WebpubsubTest):
                 group=group_name,
                 top=test_case["max_count_to_list"]
             )
+
+            for member in connections:
+                assert member.connection_id is not None
 
             # Count pages and connections
             for page in connections.by_page():

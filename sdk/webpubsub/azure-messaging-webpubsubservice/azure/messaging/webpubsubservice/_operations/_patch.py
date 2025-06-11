@@ -9,10 +9,14 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, List, IO, Optional, Union, overload, Iterable
+from collections.abc import MutableMapping
+from typing import Any, List, IO, Optional, Union, overload
+import urllib.parse
 from datetime import datetime, timedelta, tzinfo
 import jwt
 from azure.core.credentials import AzureKeyCredential
+from azure.core.paging import ItemPaged
+from azure.core.pipeline import PipelineResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -22,6 +26,7 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
     map_error,
 )
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.utils import case_insensitive_dict
 from ._operations import (
     WebPubSubServiceClientOperationsMixin as WebPubSubServiceClientOperationsMixinGenerated,
@@ -30,8 +35,9 @@ from ._operations import (
     build_web_pub_sub_service_send_to_connection_request,
     build_web_pub_sub_service_send_to_user_request,
     build_web_pub_sub_service_send_to_group_request,
+    build_web_pub_sub_service_list_connections_in_group_request,
 )
-
+from .._models import GroupMember
 
 class _UTC_TZ(tzinfo):
     """from https://docs.python.org/2/library/datetime.html#tzinfo-objects"""
@@ -150,6 +156,128 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         }
 
     get_client_access_token.metadata = {"url": "/api/hubs/{hub}/:generateToken"}  # type: ignore
+
+    @distributed_trace
+    def list_connections_in_group(
+        self,
+        group: str,
+        *,
+        top: Optional[int] = None,
+        continuation_token_parameter: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged[GroupMember]:
+        """List connections in a group.
+
+        List connections in a group.
+
+        :param group: Target group name, whose length should be greater than 0 and less than 1025.
+         Required.
+        :type group: str
+        :keyword top: The maximum number of connections to return. If the value is not set, then all
+         the connections in a group are returned. Default value is None.
+        :paramtype top: int
+        :keyword continuation_token_parameter: A token that allows the client to retrieve the next page
+         of results. This parameter is provided by the service in the response of a previous request
+         when there are additional results to be fetched. Clients should include the continuationToken
+         in the next request to receive the subsequent page of data. If this parameter is omitted, the
+         server will return the first page of results. Default value is None.
+        :paramtype continuation_token_parameter: str
+        :return: An iterator like instance of GroupMember object
+        :rtype: ~azure.core.paging.ItemPaged[GroupMember]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "connectionId": "str",
+                    "userId": "str"
+                }
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        maxpagesize = kwargs.pop("maxpagesize", None)
+        cls = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_web_pub_sub_service_list_connections_in_group_request(
+                    group=group,
+                    hub=self._config.hub,
+                    maxpagesize=maxpagesize,
+                    top=top,
+                    continuation_token_parameter=continuation_token_parameter,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response: PipelineResponse):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized.get("value", [])
+
+            # Convert each dictionary item to a GroupMember object
+            list_of_elem = [GroupMember(connection_id=item.get("connectionId"), user_id=item.get("userId")) for item in list_of_elem]
+
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
     @overload
     def send_to_all(  # pylint: disable=inconsistent-return-statements

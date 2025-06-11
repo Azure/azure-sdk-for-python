@@ -13,7 +13,6 @@ class GroupMember:
     user_id: Optional[str]
 
     def __init__(self, **kwargs: Any) -> None:
-        super(GroupMember, self).__init__(**kwargs)
         self.connection_id = kwargs['connection_id']
         self.user_id = kwargs.get('user_id')
 
