@@ -3,4 +3,4 @@
 -e ../../identity/azure-identity
 -e ../azure-storage-blob
 aiohttp>=3.0
-cryptography==44.0.3
+cryptography==44.0.3  # TODO: Pinned due to cryptography compatibility issue in CI. Revisit once resolved.
