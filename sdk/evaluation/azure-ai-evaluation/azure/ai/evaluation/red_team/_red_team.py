@@ -294,10 +294,11 @@ class RedTeam:
             )
 
         if self._one_dp_project:
+            red_team = RedTeamUpload(
+                scan_name=run_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
+            )
             response = self.generated_rai_client._evaluation_onedp_client.start_red_team_run(
-                red_team=RedTeamUpload(
-                    scan_name=run_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
-                )
+                red_team=red_team,
             )
 
             self.ai_studio_url = response.properties.get("AiStudioEvaluationUri")
@@ -353,6 +354,7 @@ class RedTeam:
         redteam_result: RedTeamResult,
         eval_run: EvalRun,
         _skip_evals: bool = False,
+        scan_name: Optional[str] = None
     ) -> Optional[str]:
         """Log the Red Team Agent results to MLFlow.
         
@@ -503,7 +505,7 @@ class RedTeam:
                         name=eval_run.id,
                         red_team=RedTeamUpload(
                             id=eval_run.id,
-                            scan_name=eval_run.scan_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
+                            scan_name=scan_name or eval_run.scan_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
                             status="Completed",
                             outputs={
                                 'evaluationResultId': create_evaluation_result_response.id,
@@ -1994,8 +1996,8 @@ class RedTeam:
             result_path = os.path.join(self.scan_output_dir, result_filename)
         else:
             result_path = f"{str(uuid.uuid4())}{RESULTS_EXT}"
-
-        try:  # Run evaluation silently
+        
+        try: # Run evaluation silently
             # Import the utility function to get the appropriate metric
             from ._utils.metric_mapping import get_metric_from_risk_category
             
@@ -2174,32 +2176,8 @@ class RedTeam:
             
             async with progress_bar_lock:
                 progress_bar.update(1)
-        finally:
-            # This 'finally' block is new and will execute after try or except,
-            # but before any return statement in try/except takes effect.
-            async with progress_bar_lock: # progress_bar_lock is an argument to _process_attack
                 
-                current_task_info = "Task finished" # Default postfix message part
-                try:
-                    # strategy_name and risk_category are defined in the outer scope of _process_attack
-                    s_name = strategy_name.split('.')[-1] 
-                    s_name_short = (s_name[:12] + '...') if len(s_name) > 15 else s_name
-                    
-                    r_cat_val = str(risk_category.value)
-                    r_cat_short = (r_cat_val[:12] + '...') if len(r_cat_val) > 15 else r_cat_val
-                    current_task_info = f"{r_cat_short}/{s_name_short}"
-                except Exception: 
-                    # Fallback in case of any error during string formatting for postfix
-                    pass
-
-                postfix_dict = {
-                    "C": self.completed_tasks, # Assumes self.completed_tasks is updated in the try block
-                    "F": self.failed_tasks,   # Assumes self.failed_tasks is updated in the except blocks
-                    "Task": current_task_info
-                }
-                progress_bar.set_postfix(postfix_dict, refresh=True)
-        
-        return None  # Explicitly return None if an exception occurred and was handled
+        return None
 
     async def scan(
             self,
@@ -2398,14 +2376,16 @@ class RedTeam:
             raise ValueError("MultiTurn and Crescendo strategies are not compatible with multiple attack strategies.")
 
         # Calculate total tasks: #risk_categories * #converters
-        # This 'planned_total_tasks' is for initial informational message.
-        planned_total_tasks = len(self.risk_categories) * len(flattened_attack_strategies)
-        tqdm.write(f"📋 Planning {planned_total_tasks} total tasks")
-        self.logger.info(f"Total tasks: {planned_total_tasks} ({len(self.risk_categories)} risk categories * {len(flattened_attack_strategies)} strategies)")
-
+        self.total_tasks = len(self.risk_categories) * len(flattened_attack_strategies) 
+        # Show task count for user awareness
+        tqdm.write(f"📋 Planning {self.total_tasks} total tasks")
+        self.logger.info(f"Total tasks: {self.total_tasks} ({len(self.risk_categories)} risk categories * {len(flattened_attack_strategies)} strategies)")
+        
+        # Initialize our tracking dictionary early with empty structures
+        # This ensures we have a place to store results even if tasks fail
         self.red_team_info = {}
-        for strategy_config in flattened_attack_strategies:
-            strategy_name = self._get_strategy_name(strategy_config)
+        for strategy in flattened_attack_strategies:
+            strategy_name = self._get_strategy_name(strategy)
             self.red_team_info[strategy_name] = {}
             for risk_category in self.risk_categories:
                 self.red_team_info[strategy_name][risk_category.value] = {
@@ -2414,81 +2394,108 @@ class RedTeam:
                     "evaluation_result": None,
                     "status": TASK_STATUS["PENDING"]
                 }
-        self.logger.debug(f"Initialized tracking dictionary with {len(self.red_team_info)} strategies")
-
-        # progress_bar_lock can be initialized here
-        progress_bar_lock = asyncio.Lock()
-        progress_bar = None # Will be initialized after counting actual tasks
-
-        log_section_header(self.logger, "Fetching attack objectives")
-        # ... existing code for fetching all_objectives ...
-
-        log_section_header(self.logger, "Preparing tasks and calculating actual count")
         
-        tasks_to_create_params = []
-        actual_tasks_to_run_count = 0
+        self.logger.debug(f"Initialized tracking dictionary with {len(self.red_team_info)} strategies")
+        
+        # More visible progress bar with additional status
+        progress_bar = tqdm(
+            total=self.total_tasks,
+            desc="Scanning: ",
+            ncols=100,
+            unit="scan",
+            bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
+        )
+        progress_bar.set_postfix({"current": "initializing"})
+        progress_bar_lock = asyncio.Lock()
+        
+        # Process all API calls sequentially to respect dependencies between objectives
+        log_section_header(self.logger, "Fetching attack objectives")
+        
+        # Log the objective source mode
+        if using_custom_objectives:
+            self.logger.info(f"Using custom attack objectives from {self.attack_objective_generator.custom_attack_seed_prompts}")
+            tqdm.write(f"📚 Using custom attack objectives from {self.attack_objective_generator.custom_attack_seed_prompts}")
+        else:
+            self.logger.info("Using attack objectives from Azure RAI service")
+            tqdm.write("📚 Using attack objectives from Azure RAI service")
+        
+        # Dictionary to store all objectives
+        all_objectives = {}
+        
+        # First fetch baseline objectives for all risk categories
+        # This is important as other strategies depend on baseline objectives
+        self.logger.info("Fetching baseline objectives for all risk categories")
+        for risk_category in self.risk_categories:
+            progress_bar.set_postfix({"current": f"fetching baseline/{risk_category.value}"})
+            self.logger.debug(f"Fetching baseline objectives for {risk_category.value}")
+            baseline_objectives = await self._get_attack_objectives(
+                risk_category=risk_category,
+                application_scenario=application_scenario,
+                strategy="baseline"
+            )
+            if "baseline" not in all_objectives:
+                all_objectives["baseline"] = {}
+            all_objectives["baseline"][risk_category.value] = baseline_objectives
+            tqdm.write(f"📝 Fetched baseline objectives for {risk_category.value}: {len(baseline_objectives)} objectives")
+        
+        # Then fetch objectives for other strategies
+        self.logger.info("Fetching objectives for non-baseline strategies")
+        strategy_count = len(flattened_attack_strategies)
+        for i, strategy in enumerate(flattened_attack_strategies):
+            strategy_name = self._get_strategy_name(strategy)
+            if strategy_name == "baseline":
+                continue  # Already fetched
+                
+            tqdm.write(f"🔄 Fetching objectives for strategy {i+1}/{strategy_count}: {strategy_name}")
+            all_objectives[strategy_name] = {}
+            
+            for risk_category in self.risk_categories:
+                progress_bar.set_postfix({"current": f"fetching {strategy_name}/{risk_category.value}"})
+                self.logger.debug(f"Fetching objectives for {strategy_name} strategy and {risk_category.value} risk category")
+                objectives = await self._get_attack_objectives(
+                    risk_category=risk_category,
+                    application_scenario=application_scenario,
+                    strategy=strategy_name
+                )
+                all_objectives[strategy_name][risk_category.value] = objectives
+                
+        self.logger.info("Completed fetching all attack objectives")
+        
+        log_section_header(self.logger, "Starting orchestrator processing")
+        
+        # Create all tasks for parallel processing
+        orchestrator_tasks = []
         combinations = list(itertools.product(flattened_attack_strategies, self.risk_categories))
-
-        for combo_idx, (strategy_config, risk_category) in enumerate(combinations):
-            strategy_name = self._get_strategy_name(strategy_config)
-            objectives = all_objectives.get(strategy_name, {}).get(risk_category.value, [])
-
+        
+        for combo_idx, (strategy, risk_category) in enumerate(combinations):
+            strategy_name = self._get_strategy_name(strategy)
+            objectives = all_objectives[strategy_name][risk_category.value]
+            
             if not objectives:
-                self.logger.warning(f"No objectives found for {strategy_name}+{risk_category.value}, skipping task")
-                tqdm.write(f"⚠️ No objectives found for {strategy_name}/{risk_category.value}, skipping task")
-                # Ensure status is updated for skipped tasks if necessary for reporting
-                if strategy_name not in self.red_team_info:
-                    self.red_team_info[strategy_name] = {}
-                if risk_category.value not in self.red_team_info[strategy_name]:
-                    self.red_team_info[strategy_name][risk_category.value] = {}
-                self.red_team_info[strategy_name][risk_category.value]["status"] = TASK_STATUS["SKIPPED"] # Or COMPLETED
-                self.task_statuses[(strategy_name, risk_category.value)] = TASK_STATUS["SKIPPED"]
+                self.logger.warning(f"No objectives found for {strategy_name}+{risk_category.value}, skipping")
+                tqdm.write(f"⚠️ No objectives found for {strategy_name}/{risk_category.value}, skipping")
+                self.red_team_info[strategy_name][risk_category.value]["status"] = TASK_STATUS["COMPLETED"]
+                async with progress_bar_lock:
+                    progress_bar.update(1)
                 continue
             
-            actual_tasks_to_run_count += 1
-            tasks_to_create_params.append({
-                "all_prompts": objectives,
-                "strategy": strategy_config,
-                "risk_category": risk_category,
-                "strategy_name": strategy_name # For logging/identification if needed later
-            })
-
-        if actual_tasks_to_run_count > 0:
-            self.logger.info(f"Actual tasks to run: {actual_tasks_to_run_count}")
-            tqdm.write(f"⚙️  Preparing to run {actual_tasks_to_run_count} actual tasks.")
-            progress_bar = tqdm(
-                total=actual_tasks_to_run_count,
-                desc="Scanning: ",
-                ncols=100,
-                unit="scan",
-                bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
-            )
-            progress_bar.set_postfix({"current": "initializing"})
-        elif planned_total_tasks > 0:
-            tqdm.write("⚠️ All planned tasks were skipped (e.g., due to missing objectives). No scan operations to perform.")
-            self.logger.warning("All planned tasks were skipped. No scan operations to perform.")
-        else:
-            tqdm.write("⚠️ No tasks planned or available to run.")
-            self.logger.info("No tasks planned or available to run.")
-
-        orchestrator_tasks = []
-        if actual_tasks_to_run_count > 0 and progress_bar is not None: # Ensure progress_bar is initialized
-            for params in tasks_to_create_params:
-                orchestrator_tasks.append(
-                    self._process_attack(
-                        all_prompts=params["all_prompts"],
-                        strategy=params["strategy"],
-                        risk_category=params["risk_category"],
-                        progress_bar=progress_bar, # Pass the initialized progress_bar
-                        progress_bar_lock=progress_bar_lock,
-                        scan_name=scan_name,
-                        skip_upload=skip_upload,
-                        output_path=output_path,
-                        timeout=timeout,
-                        _skip_evals=skip_evals,
-                    )
+            self.logger.debug(f"[{combo_idx+1}/{len(combinations)}] Creating task: {strategy_name} + {risk_category.value}")
+            
+            orchestrator_tasks.append(
+                self._process_attack(
+                    all_prompts=objectives,
+                    strategy=strategy,
+                    progress_bar=progress_bar,
+                    progress_bar_lock=progress_bar_lock,
+                    scan_name=scan_name,
+                    skip_upload=skip_upload,
+                    output_path=output_path,
+                    risk_category=risk_category,
+                    timeout=timeout,
+                    _skip_evals=skip_evals,
                 )
-        
+            )
+            
         # Process tasks in parallel with optimized batching
         if parallel_execution and orchestrator_tasks:
             tqdm.write(f"⚙️ Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)")
@@ -2521,8 +2528,7 @@ class RedTeam:
         else:
             # Sequential execution 
             self.logger.info("Running orchestrator processing sequentially")
-            if orchestrator_tasks: # Only write if there are tasks
-                tqdm.write("⚙️ Processing tasks sequentially")
+            tqdm.write("⚙️ Processing tasks sequentially")
             for i, task in enumerate(orchestrator_tasks):
                 progress_bar.set_postfix({"current": f"task {i+1}/{len(orchestrator_tasks)}"})
                 self.logger.debug(f"Processing task {i+1}/{len(orchestrator_tasks)}")
@@ -2542,8 +2548,7 @@ class RedTeam:
                     self.logger.debug(f"Error in task {i+1}: {str(e)}")
                     continue
         
-        if progress_bar:
-            progress_bar.close()
+        progress_bar.close()
         
         # Print final status
         tasks_completed = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["COMPLETED"])
@@ -2576,7 +2581,8 @@ class RedTeam:
             await self._log_redteam_results_to_mlflow(
                 redteam_result=output,
                 eval_run=eval_run,
-                _skip_evals=skip_evals
+                _skip_evals=skip_evals,
+                scan_name=scan_name,
             )
         
         
