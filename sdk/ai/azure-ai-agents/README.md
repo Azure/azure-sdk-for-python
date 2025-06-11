@@ -173,6 +173,8 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
+## Examples
+
 ### Create Agent
 
 Before creating an Agent, you need to set up Azure resources to deploy your model. [Create a New Agent Quickstart](https://learn.microsoft.com/azure/ai-services/agents/quickstart?pivots=programming-language-python-azure) details selecting and deploying your Agent Setup.
