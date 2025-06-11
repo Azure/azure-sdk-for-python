@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
+from types import TracebackType
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from typing_extensions import Self
 
@@ -120,8 +121,10 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         self._client.__enter__()
         return self
 
-    def __exit__(self, *args) -> None:
-        self._client.__exit__(*args)
+    def __exit__(
+        self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
+    ) -> Any:
+        self._client.__exit__(typ, exc, tb)
 
     def close(self) -> None:
         """This method is to close the sockets opened by the client.
