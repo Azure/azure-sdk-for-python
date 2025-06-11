@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from datetime import datetime
 from typing import Any, Dict, Optional, Union
 
 from azure.core.rest import HttpResponse
