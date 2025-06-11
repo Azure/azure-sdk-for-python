@@ -6,7 +6,9 @@
 
 import json
 from typing import Any, Optional, List
-from azure.core.pipeline.transport import AioHttpTransport  # pylint: disable=no-name-in-module
+# pylint: disable=non-abstract-transport-import
+# pylint: disable=no-name-in-module
+from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import AsyncPipeline, PipelineResponse
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
@@ -19,15 +21,14 @@ from .token_exchange_utils import TokenExchangeUtils
 class TokenExchangeClient:
     """Asynchronous client that exchanges an Entra token for an Azure Communication Services (ACS) token.
 
-    :param str resource_endpoint: The endpoint URL of the resource to authenticate against.
+    :param resource_endpoint: The endpoint URL of the resource to authenticate against.
     :param credential: The credential to use for token exchange.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param list[str] scopes: The scopes to request during the token exchange.
+    :param scopes: The scopes to request during the token exchange.
     :keyword transport: Optional transport to use for the pipeline.
-    :type transport: ~azure.core.pipeline.transport.AioHttpTransport
-    :keyword str api_version: Optional API version to use for requests.
+    :keyword api_version: Optional API version to use for requests.
     """
 
+    # pylint: disable=client-method-missing-type-annotations
     def __init__(
         self,
         resource_endpoint: str,
