@@ -142,11 +142,13 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
 
     async def __aenter__(self) -> Self:
         await self._client.__aenter__()
+        await self._blob_client.__aenter__()
+        await self._datalake_client_for_blob_operation.__aenter__()
         return self
 
     async def __aexit__(self, *args: Any) -> None:
-        await self._blob_client.close()
-        await self._datalake_client_for_blob_operation.close()
+        await self._datalake_client_for_blob_operation.__aexit__(*args)
+        await self._blob_client.__aexit__(*args)
         await self._client.__aexit__(*args)
 
     async def close(self) -> None:  # type: ignore
@@ -157,7 +159,9 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         :return: None
         :rtype: None
         """
-        await self.__aexit__()
+        await self._datalake_client_for_blob_operation.close()
+        await self._blob_client.close()
+        await self._client.close()
 
     def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
         client = AzureDataLakeStorageRESTAPI(
@@ -780,7 +784,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
             Required if the file/directory was created with a customer-provided key.
         :keyword bool upn:
             If True, the user identity values returned in the x-ms-owner, x-ms-group,
-            and x-ms-acl response headers will be transformed from Azure Active Directory Object IDs to User 
+            and x-ms-acl response headers will be transformed from Azure Active Directory Object IDs to User
             Principal Names in the owner, group, and acl fields of the respective property object returned.
             If False, the values will be returned as Azure Active Directory Object IDs.
             The default value is False. Note that group and application Object IDs are not translate

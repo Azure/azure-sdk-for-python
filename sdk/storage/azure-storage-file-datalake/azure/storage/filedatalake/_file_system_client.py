@@ -134,11 +134,13 @@ class FileSystemClient(StorageAccountHostsMixin):
 
     def __enter__(self) -> Self:
         self._client.__enter__()
+        self._container_client.__enter__()
+        self._datalake_client_for_blob_operation.__enter__()
         return self
 
     def __exit__(self, *args: Any) -> None:
-        self._container_client.close()
-        self._datalake_client_for_blob_operation.close()
+        self._datalake_client_for_blob_operation.__exit__(*args)
+        self._container_client.__exit__(*args)
         self._client.__exit__(*args)
 
     def close(self) -> None:
@@ -148,7 +150,9 @@ class FileSystemClient(StorageAccountHostsMixin):
         :return: None
         :rtype: None
         """
-        self.__exit__()
+        self._datalake_client_for_blob_operation.close()
+        self._container_client.close()
+        self._client.close()
 
     def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
         client = AzureDataLakeStorageRESTAPI(

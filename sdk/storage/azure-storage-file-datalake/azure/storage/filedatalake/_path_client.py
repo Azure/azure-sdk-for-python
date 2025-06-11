@@ -140,11 +140,13 @@ class PathClient(StorageAccountHostsMixin):
 
     def __enter__(self) -> Self:
         self._client.__enter__()
+        self._blob_client.__enter__()
+        self._datalake_client_for_blob_operation.__enter__()
         return self
 
     def __exit__(self, *args) -> None:
-        self._blob_client.close()
-        self._datalake_client_for_blob_operation.close()
+        self._datalake_client_for_blob_operation.__exit__(*args)
+        self._blob_client.__exit__(*args)
         self._client.__exit__(*args)
 
     def close(self) -> None:
@@ -154,7 +156,9 @@ class PathClient(StorageAccountHostsMixin):
         :return: None
         :rtype: None
         """
-        self.__exit__()
+        self._datalake_client_for_blob_operation.close()
+        self._blob_client.close()
+        self._client.close()
 
     def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
         client = AzureDataLakeStorageRESTAPI(
@@ -776,7 +780,7 @@ class PathClient(StorageAccountHostsMixin):
             Required if the file/directory was created with a customer-provided key.
         :keyword bool upn:
             If True, the user identity values returned in the x-ms-owner, x-ms-group,
-            and x-ms-acl response headers will be transformed from Azure Active Directory Object IDs to User 
+            and x-ms-acl response headers will be transformed from Azure Active Directory Object IDs to User
             Principal Names in the owner, group, and acl fields of the respective property object returned.
             If False, the values will be returned as Azure Active Directory Object IDs.
             The default value is False. Note that group and application Object IDs are not translate

@@ -131,7 +131,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
         return self
 
     async def __aexit__(self, *args: Any) -> None:
-        await self._blob_service_client.close()
+        await self._blob_service_client.__aexit__(*args)
         await self._client.__aexit__(*args)
 
     async def close(self) -> None:  # type: ignore
@@ -141,7 +141,8 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
         :return: None
         :rtype: None
         """
-        await self.__aexit__()
+        await self._blob_service_client.close()
+        await self._client.close()
 
     def _format_url(self, hostname: str) -> str:
         """Format the endpoint URL according to hostname.
