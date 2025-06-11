@@ -49,7 +49,7 @@ class SettingSelector:
      EMPTY_LABEL i.e. (No Label) as seen in the portal.
     :type label_filter: Optional[str]
     :keyword tag_filters: A filter to select configuration settings based on their tags. This is a list of strings
-     that will be used to match tags on the configuration settings. Reserved characters (*, \\, ,) must be escaped
+     that will be used to match tags on the configuration settings. Reserved characters (\\*, \\, ,) must be escaped
      with backslash if they are part of the value.
     :type tag_filters: Optional[List[str]]
     """
