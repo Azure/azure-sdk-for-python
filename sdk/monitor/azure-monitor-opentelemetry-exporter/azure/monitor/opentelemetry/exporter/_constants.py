@@ -162,7 +162,6 @@ _INSTRUMENTATIONS_LIST = [
     "urllib",
     "urllib3",
     _AZURE_SDK_OPENTELEMETRY_NAME,
-    # Instrumentations below this line have not been added to statsbeat report yet
     "cassandra",
     "tortoiseorm",
     "aiohttp-server",
@@ -171,6 +170,14 @@ _INSTRUMENTATIONS_LIST = [
     "psycopg",
     "threading",
     "wsgi",
+    "aiokafka",
+    "asyncclick",
+    "click",
+    "pymssql",
+    "google-genai",
+    "openai-v2",
+    "vertexai",
+    # Instrumentations below this line have not been added to statsbeat report yet
 ]
 
 _INSTRUMENTATIONS_BIT_MAP = {_INSTRUMENTATIONS_LIST[i]: _BASE**i for i in range(len(_INSTRUMENTATIONS_LIST))}
