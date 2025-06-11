@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.healthbot import HealthBotMgmtClient
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.healthbot import HealthBotMgmtClient
     pip install azure-identity
     pip install azure-mgmt-healthbot
 # USAGE
-    python bot_regenerate_api_jwt_secret.py
+    python resource_update_patch.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +31,14 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.bots.regenerate_api_jwt_secret(
+    response = client.bots.begin_update(
         resource_group_name="healthbotClient",
         bot_name="samplebotname",
-    )
+        parameters={"sku": {"name": "F0"}},
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/healthbot/resource-manager/Microsoft.HealthBot/stable/2022-08-08/examples/RegenerateApiJwtSecret.json
+# x-ms-original-file: specification/healthbot/resource-manager/Microsoft.HealthBot/stable/2025-05-25/examples/ResourceUpdatePatch.json
 if __name__ == "__main__":
     main()
