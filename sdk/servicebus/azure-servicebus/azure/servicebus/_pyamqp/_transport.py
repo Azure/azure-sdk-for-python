@@ -644,6 +644,143 @@ class WebSocketTransport(_AbstractTransport):
         ssl_opts=None,
         **kwargs,
     ):
+        self.sslopts = ssl_opts
+        self.socket_timeout = socket_timeout or WS_TIMEOUT_INTERVAL
+        self._host = host
+        self._custom_endpoint = kwargs.get("custom_endpoint")
+        super().__init__(host, port=port, socket_timeout=socket_timeout, **kwargs)
+        self.sock = None
+        self._http_proxy = kwargs.get("http_proxy", None)
+
+    def connect(self):
+        http_proxy_host, http_proxy_port, http_proxy_auth = None, None, None
+        http_proxy = None
+        if self._http_proxy:
+            http_proxy_host = self._http_proxy["proxy_hostname"]
+            http_proxy_port = self._http_proxy["proxy_port"]
+            username = self._http_proxy.get("username", None)
+            password = self._http_proxy.get("password", None)
+            if username or password:
+                http_proxy_auth = (username, password)
+            http_proxy={
+                    "host": http_proxy_host,
+                    "port": http_proxy_port,
+                    "auth": http_proxy_auth,
+                }
+
+
+        from ._websocket.websockets import WebSocket
+        from ._websocket._exceptions import WebSocketConnectionError
+        try:
+            self.sock = WebSocket(
+                url=(
+                    f"wss://{self._custom_endpoint or self._host}"
+                    if self._use_tls
+                    else f"ws://{self._custom_endpoint or self._host}"
+                ),
+                http_proxy=http_proxy,
+                subprotocols=[AMQP_WS_SUBPROTOCOL],
+                timeout=self.socket_timeout,  # timeout for read/write operations
+                ssl_ctx=self.sslopts if self._use_tls else None,
+            )
+            self.sock.connect()
+        except WebSocketConnectionError as exc:
+            raise AuthenticationException(
+                ErrorCondition.ClientError,
+                description="Failed to authenticate the connection due to exception: " + str(exc),
+                error=exc,
+            ) from exc
+        # TODO: resolve pylance error when type: ignore is removed below, issue #22051
+        except (ConnectionError, SSLError) as exc:  # type: ignore
+            self.close()
+            raise ConnectionError("Websocket failed to establish connection: %r" % exc) from exc
+        except (OSError, IOError, SSLError) as e:
+            _LOGGER.info("Websocket connection failed: %r", e, extra=self.network_trace_params)
+            self.close()
+            raise
+
+    def _read(self, n, initial=False, buffer=None, _errnos=None):  # pylint: disable=unused-argument
+        """Read exactly n bytes from the peer.
+
+        :param int n: The number of bytes to read.
+        :param bool initial: Whether this is the first read in a sequence.
+        :param bytearray or None buffer: The buffer to read into.
+        :param list or None _errnos: A list of errno values to catch and retry on.
+        :return: The data read.
+        :rtype: bytearray
+        """
+        from ._websocket._exceptions import WebSocketConnectionError, WebSocketConnectionClosed
+
+        try:
+            length = 0
+            view = buffer or memoryview(bytearray(n))
+            nbytes = self._read_buffer.readinto(view)
+            length += nbytes
+            n -= nbytes
+            try:
+                while n:
+                    data = self.sock.receive_bytes()
+                    if len(data) <= n:
+                        view[length : length + len(data)] = data
+                        n -= len(data)
+                        length += len(data)
+                    else:
+                        view[length : length + n] = data[0:n]
+                        self._read_buffer = BytesIO(data[n:])
+                        n = 0
+                return view
+            except AttributeError:
+                raise IOError("Websocket connection has already been closed.") from None
+            except (WebSocketConnectionClosed, SSLError) as e:
+                raise ConnectionError(f"Websocket disconnected: {e!r}") from e
+            except (WebSocketConnectionError, socket.timeout) as wte:
+                raise TimeoutError(f"Websocket receive timed out ({wte})") from wte
+
+        except Exception as e:
+            self._read_buffer = BytesIO(view[:length])
+            raise
+
+    def close(self):
+        with self.socket_lock:
+            if self.sock:
+                self._shutdown_transport()
+                self.sock = None
+
+    def _shutdown_transport(self):
+        # TODO Sync and Async close functions named differently
+        """Do any preliminary work in shutting down the connection."""
+        if self.sock:
+            self.sock.close()
+
+    def _write(self, s):
+        """Completely write a string to the peer.
+        ABNF, OPCODE_BINARY = 0x2
+        See http://tools.ietf.org/html/rfc5234
+        http://tools.ietf.org/html/rfc6455#section-5.2
+
+        :param str s: The string to write.
+        """
+        from ._websocket._exceptions import WebSocketConnectionError, WebSocketConnectionClosed
+
+        try:
+            self.sock.send_bytes(s)
+        except AttributeError:
+            raise IOError("Websocket connection has already been closed.") from None
+        except (WebSocketConnectionClosed, SSLError) as e:
+            raise ConnectionError("Websocket disconnected: %r" % e) from e
+        except WebSocketConnectionError as e:
+            raise socket.timeout("Websocket send timed out (%s)" % e) from e
+
+class LegacyWebSocketTransport(_AbstractTransport):
+    def __init__(
+        self,
+        host,
+        *,
+        port=WEBSOCKET_PORT,
+        socket_timeout=None,
+        ssl_opts=None,
+        **kwargs,
+    ):
         self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else {}
         self.socket_timeout = socket_timeout or WS_TIMEOUT_INTERVAL
         self._host = host
