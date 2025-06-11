@@ -63,7 +63,10 @@ class CommunicationTokenCredential(object):
                 f"Missing: {', '.join(missing_fields)}")
 
         if self._resource_endpoint and self._token_credential and self._scopes:
-            self._token_exchange_client = TokenExchangeClient(self._resource_endpoint, self._token_credential, self._scopes)
+            self._token_exchange_client = TokenExchangeClient(
+                self._resource_endpoint,
+                self._token_credential,
+                self._scopes)
             self._token_refresher = lambda: self._token_exchange_client.exchange_entra_token()
             self._proactive_refresh = kwargs.pop("proactive_refresh", False)
 

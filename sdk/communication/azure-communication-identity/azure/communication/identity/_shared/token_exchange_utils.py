@@ -4,11 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import json
-from typing import Tuple, Any
-from azure.core.exceptions import HttpResponseError
-from typing import List, Optional
+
+from typing import Tuple, Any, List, Optional
 from dateutil import parser as dateutil_parser  # type: ignore
+from azure.core.exceptions import HttpResponseError
 
 TEAMS_EXTENSION_SCOPE_PREFIX = "https://auth.msft.communication.azure.com/"
 COMMUNICATION_CLIENTS_SCOPE_PREFIX = "https://communication.azure.com/clients/"
@@ -44,13 +43,12 @@ class TokenExchangeUtils:
             )
         if all(scope.startswith(TEAMS_EXTENSION_SCOPE_PREFIX) for scope in scopes):
             return TEAMS_EXTENSION_ENDPOINT, TEAMS_EXTENSION_API_VERSION
-        elif all(scope.startswith(COMMUNICATION_CLIENTS_SCOPE_PREFIX) for scope in scopes):
+        if all(scope.startswith(COMMUNICATION_CLIENTS_SCOPE_PREFIX) for scope in scopes):
             return COMMUNICATION_CLIENTS_ENDPOINT, COMMUNICATION_CLIENTS_API_VERSION
-        else:
-            raise ValueError(
-                "Scopes validation failed. Ensure all scopes start with either"
-                f"{TEAMS_EXTENSION_SCOPE_PREFIX} or {COMMUNICATION_CLIENTS_SCOPE_PREFIX}."
-            )
+        raise ValueError(
+            "Scopes validation failed. Ensure all scopes start with either"
+            f"{TEAMS_EXTENSION_SCOPE_PREFIX} or {COMMUNICATION_CLIENTS_SCOPE_PREFIX}."
+        )
 
     @staticmethod
     def parse_expires_on(expires_on, response):
@@ -59,10 +57,10 @@ class TokenExchangeUtils:
                 expires_on_dt = dateutil_parser.parse(expires_on)
                 expires_on_epoch = int(expires_on_dt.timestamp())
                 return expires_on_epoch
-            except Exception as ex:
+            except Exception as exc:
                 raise HttpResponseError(
                     message="Unknown format for expires_on field in access token response",
-                    response=response.http_response)
+                    response=response.http_response) from exc
         else:
             raise HttpResponseError(
                 message="Missing expires_on field in access token response",

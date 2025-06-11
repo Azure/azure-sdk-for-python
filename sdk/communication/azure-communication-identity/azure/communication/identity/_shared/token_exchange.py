@@ -6,13 +6,12 @@
 
 import json
 from typing import Any
+from typing import List, Optional
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.credentials import TokenCredential
-from typing import List, Optional
-from dateutil import parser as dateutil_parser  # type: ignore
 from .entra_token_guard_policy import EntraTokenGuardPolicy
 from .token_exchange_utils import TokenExchangeUtils
 
