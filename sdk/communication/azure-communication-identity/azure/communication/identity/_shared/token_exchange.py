@@ -7,18 +7,14 @@
 import json
 from typing import Tuple, Any
 from azure.core.credentials import AccessToken
-from azure.core.pipeline import Pipeline, PipelineResponse
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+from azure.core.pipeline import Pipeline, AsyncPipeline, PipelineResponse
+from azure.core.pipeline.policies import BearerTokenCredentialPolicy, AsyncBearerTokenCredentialPolicy
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from .entra_token_guard_policy import EntraTokenGuardPolicy, AsyncEntraTokenGuardPolicy
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.credentials import TokenCredential
 from typing import List, Optional
 from dateutil import parser as dateutil_parser  # type: ignore
-
-from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
-from azure.core.pipeline import AsyncPipeline, PipelineResponse
-
 
 TEAMS_EXTENSION_SCOPE_PREFIX = "https://auth.msft.communication.azure.com/"
 COMMUNICATION_CLIENTS_SCOPE_PREFIX = "https://communication.azure.com/clients/"
@@ -27,10 +23,17 @@ TEAMS_EXTENSION_API_VERSION = "2025-06-30"
 COMMUNICATION_CLIENTS_ENDPOINT = "/access/entra/:exchangeAccessToken"
 COMMUNICATION_CLIENTS_API_VERSION = "2025-03-02-preview"
 
+
 class TokenExchangeClient:
     """Represents a client that exchanges an Entra token for an Azure Communication Services (ACS) token."""
 
-    def __init__(self, resource_endpoint: str, token_credential: TokenCredential, scopes: Optional[List[str]] = None, pipeline_transport: Any = None):
+    def __init__(
+            self,
+            resource_endpoint: str,
+            token_credential: TokenCredential,
+            scopes: Optional[List[str]] = None,
+            pipeline_transport: Any = None):
+
         self._resource_endpoint = resource_endpoint
         self._scopes = scopes or ["https://communication.azure.com/clients/.default"]
         self._token_credential = token_credential
@@ -70,16 +73,17 @@ class TokenExchangeClient:
                 response=response.http_response
             )
 
+
 class AsyncTokenExchangeClient:
     """Asynchronous client that exchanges an Entra token for an Azure Communication Services (ACS) token."""
 
     def __init__(
-        self,
-        resource_endpoint: str,
-        token_credential: AsyncTokenCredential,
-        scopes: Optional[List[str]] = None,
-        pipeline_transport: Any = None
-    ):
+            self,
+            resource_endpoint: str,
+            token_credential: AsyncTokenCredential,
+            scopes: Optional[List[str]] = None,
+            pipeline_transport: Any = None):
+
         self._resource_endpoint = resource_endpoint
         self._scopes = scopes or ["https://communication.azure.com/clients/.default"]
         self._token_credential = token_credential
@@ -119,53 +123,53 @@ class AsyncTokenExchangeClient:
                 response=response.http_response
             )
 
+
 class _TokenExchangeUtils:
-        @staticmethod
-        def create_request_message(resource_endpoint: str, scopes: Optional[List[str]]) -> Any:
-            from azure.core.pipeline.transport import HttpRequest
-            request_uri = _TokenExchangeUtils.create_request_uri(resource_endpoint, scopes)
-            request = HttpRequest("POST", request_uri)
-            request.headers["Accept"] = "application/json"
-            request.headers["Content-Type"] = "application/json"
-            request.set_json_body({})
-            return request
+    @staticmethod
+    def create_request_message(resource_endpoint: str, scopes: Optional[List[str]]) -> Any:
+        from azure.core.pipeline.transport import HttpRequest
+        request_uri = _TokenExchangeUtils.create_request_uri(resource_endpoint, scopes)
+        request = HttpRequest("POST", request_uri)
+        request.headers["Accept"] = "application/json"
+        request.headers["Content-Type"] = "application/json"
+        request.set_json_body({})
+        return request
 
-        @staticmethod
-        def create_request_uri(resource_endpoint: str, scopes: Optional[List[str]]) -> str:
-            endpoint, api_version = _TokenExchangeUtils.determine_endpoint_and_api_version(scopes)
-            base = resource_endpoint.rstrip("/")
-            return f"{base}{endpoint}?api-version={api_version}"
+    @staticmethod
+    def create_request_uri(resource_endpoint: str, scopes: Optional[List[str]]) -> str:
+        endpoint, api_version = _TokenExchangeUtils.determine_endpoint_and_api_version(scopes)
+        base = resource_endpoint.rstrip("/")
+        return f"{base}{endpoint}?api-version={api_version}"
 
-        @staticmethod
-        def determine_endpoint_and_api_version(scopes: Optional[List[str]]) -> Tuple[str, str]:
-            if not scopes or not isinstance(scopes, list):
-                raise ValueError(
-                    f"Scopes validation failed. Ensure all scopes start with either {TEAMS_EXTENSION_SCOPE_PREFIX} or {COMMUNICATION_CLIENTS_SCOPE_PREFIX}."
-                )
-            if all(scope.startswith(TEAMS_EXTENSION_SCOPE_PREFIX) for scope in scopes):
-                return TEAMS_EXTENSION_ENDPOINT, TEAMS_EXTENSION_API_VERSION
-            elif all(scope.startswith(COMMUNICATION_CLIENTS_SCOPE_PREFIX) for scope in scopes):
-                return COMMUNICATION_CLIENTS_ENDPOINT, COMMUNICATION_CLIENTS_API_VERSION
-            else:
-                raise ValueError(
-                    f"Scopes validation failed. Ensure all scopes start with either {TEAMS_EXTENSION_SCOPE_PREFIX} or {COMMUNICATION_CLIENTS_SCOPE_PREFIX}."
-                )
+    @staticmethod
+    def determine_endpoint_and_api_version(scopes: Optional[List[str]]) -> Tuple[str, str]:
+        if not scopes or not isinstance(scopes, list):
+            raise ValueError(
+                "Scopes validation failed. Ensure all scopes start with either "
+                f"{TEAMS_EXTENSION_SCOPE_PREFIX} or {COMMUNICATION_CLIENTS_SCOPE_PREFIX}."
+            )
+        if all(scope.startswith(TEAMS_EXTENSION_SCOPE_PREFIX) for scope in scopes):
+            return TEAMS_EXTENSION_ENDPOINT, TEAMS_EXTENSION_API_VERSION
+        elif all(scope.startswith(COMMUNICATION_CLIENTS_SCOPE_PREFIX) for scope in scopes):
+            return COMMUNICATION_CLIENTS_ENDPOINT, COMMUNICATION_CLIENTS_API_VERSION
+        else:
+            raise ValueError(
+                "Scopes validation failed. Ensure all scopes start with either"
+                f"{TEAMS_EXTENSION_SCOPE_PREFIX} or {COMMUNICATION_CLIENTS_SCOPE_PREFIX}."
+            )
 
-        @staticmethod
-        def parse_expires_on(expires_on, response):
-            if isinstance(expires_on, str):
-                try:
-                    expires_on_dt = dateutil_parser.parse(expires_on)
-                    expires_on_epoch = int(expires_on_dt.timestamp())
-                    return expires_on_epoch
-                except Exception as ex:
-                    raise HttpResponseError(
+    @staticmethod
+    def parse_expires_on(expires_on, response):
+        if isinstance(expires_on, str):
+            try:
+                expires_on_dt = dateutil_parser.parse(expires_on)
+                expires_on_epoch = int(expires_on_dt.timestamp())
+                return expires_on_epoch
+            except Exception as ex:
+                raise HttpResponseError(
                     message="Unknown format for expires_on field in access token response",
                     response=response.http_response)
-            else:
-                raise HttpResponseError(
-                    message="Missing expires_on field in access token response",
-                    response=response.http_response)
-            
-
-            
+        else:
+            raise HttpResponseError(
+                message="Missing expires_on field in access token response",
+                response=response.http_response)

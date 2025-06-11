@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=C4763
 
+import asyncio
 from asyncio import Condition, Lock, Event
 from datetime import timedelta
 from typing import Any, Optional
@@ -13,7 +14,6 @@ from .utils import get_current_utc_as_int
 from .utils import create_access_token
 from .utils_async import AsyncTimer
 from .token_exchange import AsyncTokenExchangeClient
-import asyncio
 
 
 class CommunicationTokenCredential(object):
