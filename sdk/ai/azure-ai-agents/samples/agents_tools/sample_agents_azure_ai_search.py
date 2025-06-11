@@ -45,13 +45,16 @@ project_client = AIProjectClient(
 )
 
 # [START create_agent_with_azure_ai_search_tool]
-conn_id = os.environ["AI_AZURE_AI_CONNECTION_ID"]
+#conn_id = os.environ["AI_AZURE_AI_CONNECTION_ID"]
+conn_id = project_client.connections.get(os.environ["AI_AZURE_AI_CONNECTION_ID"]).id
 
 print(conn_id)
 
 # Initialize agent AI search tool and add the search index connection id
 ai_search = AzureAISearchTool(
-    index_connection_id=conn_id, index_name="sample_index", query_type=AzureAISearchQueryType.SIMPLE, top_k=3, filter=""
+    index_connection_id=conn_id,
+    #index_asset_id = "search/versions/1"
+    index_name="sample_index", query_type=AzureAISearchQueryType.SIMPLE, top_k=3, filter=""
 )
 
 # Create agent with AI search tool and process agent run
@@ -62,14 +65,16 @@ project_client = AIProjectClient(
 
 with project_client:
     agents_client = project_client.agents
+    
+    agent = agents_client.get_agent('asst_nn0pAiVrPtCDwoIjZ0ElZwQO')
 
-    agent = agents_client.create_agent(
-        model=os.environ["MODEL_DEPLOYMENT_NAME"],
-        name="my-agent",
-        instructions="You are a helpful agent",
-        tools=ai_search.definitions,
-        tool_resources=ai_search.resources,
-    )
+    # agent = agents_client.create_agent(
+    #     model=os.environ["MODEL_DEPLOYMENT_NAME"],
+    #     name="my-agent",
+    #     instructions="You are a helpful agent",
+    #     tools=ai_search.definitions,
+    #     tool_resources=ai_search.resources,
+    # )
     # [END create_agent_with_azure_ai_search_tool]
     print(f"Created agent, ID: {agent.id}")
 

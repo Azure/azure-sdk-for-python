@@ -6,7 +6,7 @@ from typing import Iterable, Dict, Any, Optional, Union, TYPE_CHECKING
 import logging
 import copy
 from collections import defaultdict
-import asyncio
+import asyncio # pylint:disable=do-not-import-asyncio
 from azure.eventhub.exceptions import OwnershipLostError  # type: ignore
 from azure.eventhub.aio import CheckpointStore  # type: ignore
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError, ResourceNotFoundError  # type: ignore

@@ -96,9 +96,75 @@ Also, the concepts for AMQP are well documented in [OASIS Advanced Messaging Que
 
 ### Thread safety
 
-We do not guarantee that the EventHubProducerClient or EventHubConsumerClient are thread-safe. We do not recommend reusing these instances across threads. It is up to the running application to use these classes in a thread-safe manner.
+We do not guarantee that the EventHubProducerClient or EventHubConsumerClient are thread-safe or coroutine-safe. We do not recommend reusing these instances across threads or sharing them between coroutines. It is up to the running application to use these classes in a concurrency-safe manner.
 
-The data model type, `EventDataBatch` is not thread-safe. It should not be shared across threads nor used concurrently with client methods.
+The data model type, `EventDataBatch` is not thread-safe or coroutine-safe. It should not be shared across threads nor used concurrently with client methods.
+
+For scenarios requiring concurrent sending from multiple threads, ensure proper thread-safety management using mechanisms like threading.Lock(). **Note:** Native async APIs should be used instead of running in a ThreadPoolExecutor, if possible.
+```python
+import threading
+from concurrent.futures import ThreadPoolExecutor
+from azure.eventhub import EventHubProducerClient, EventData
+from azure.identity import DefaultAzureCredential
+
+EVENTHUB_NAMESPACE = "<your-namespace>.servicebus.windows.net"
+EVENTHUB_NAME = "<your-eventhub-name>"
+
+# Create a global lock
+producer_lock = threading.Lock()
+
+def send_batch(producer_id, producer):
+    with producer_lock:
+        event_data_batch = producer.create_batch()
+        for i in range(10):
+            event_data_batch.add(EventData(f"Message {i} from producer {producer_id}"))
+        producer.send_batch(event_data_batch)
+        print(f"Producer {producer_id} sent batch.")
+
+credential = DefaultAzureCredential()
+producer = EventHubProducerClient(
+    fully_qualified_namespace=EVENTHUB_NAMESPACE,
+    eventhub_name=EVENTHUB_NAME,
+    credential=credential
+)
+
+with producer:
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        for i in range(5):  # Launch 5 threads
+            executor.submit(send_batch, i, producer)
+```
+
+For scenarios requiring concurrent sending in asyncio applications, ensure proper coroutine-safety management using mechanisms like asyncio.Lock()
+```python
+import asyncio
+from azure.eventhub.aio import EventHubProducerClient
+from azure.eventhub import EventData
+from azure.identity.aio import DefaultAzureCredential
+
+EVENTHUB_NAMESPACE = "<your-namespace>.servicebus.windows.net"
+EVENTHUB_NAME = "<your-eventhub-name>"
+
+# Shared lock for coroutine-safe access
+producer_lock = asyncio.Lock()
+
+async def send_batch(producer_id, producer):
+    async with producer_lock:
+        event_data_batch = await producer.create_batch()
+        for i in range(10):
+            event_data_batch.add(EventData(f"Message {i} from producer {producer_id}"))
+        await producer.send_batch(event_data_batch)
+        print(f"Producer {producer_id} sent batch.")
+
+credential = DefaultAzureCredential()
+producer = EventHubProducerClient(
+    fully_qualified_namespace=EVENTHUB_NAMESPACE,
+    eventhub_name=EVENTHUB_NAME,
+    credential=credential
+)
+
+async with producer:
+    await asyncio.gather(*(send_batch(i, producer) for i in range(5)))
+```
 
 ## Examples
 

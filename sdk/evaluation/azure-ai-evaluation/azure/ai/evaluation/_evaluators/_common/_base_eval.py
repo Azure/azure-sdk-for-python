@@ -416,12 +416,12 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                         threshold_key = f"{base_key}_threshold"
                         result[threshold_key] = self._threshold
                         if self._higher_is_better:
-                            if int(score_value) >= self._threshold:
+                            if float(score_value) >= self._threshold:
                                 result[result_key] = EVALUATION_PASS_FAIL_MAPPING[True]
                             else:
                                 result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]
                         else:
-                            if int(score_value) <= self._threshold:
+                            if float(score_value) <= self._threshold:
                                 result[result_key] = EVALUATION_PASS_FAIL_MAPPING[True]
                             else:
                                 result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]

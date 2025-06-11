@@ -88,8 +88,9 @@ class RedTeam:
     This class uses various attack strategies to test the robustness of AI models against adversarial inputs.
     It logs the results of these evaluations and provides detailed scorecards summarizing the attack success rates.
     
-    :param azure_ai_project: The Azure AI project configuration
-    :type azure_ai_project: dict
+    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint 
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :type azure_ai_project: Union[str, ~azure.ai.evaluation.AzureAIProject]
     :param credential: The credential to authenticate with Azure services
     :type credential: TokenCredential
     :param risk_categories: List of risk categories to generate attack objectives for (optional if custom_attack_seed_prompts is provided)
@@ -202,8 +203,9 @@ class RedTeam:
         This initializes the token management, attack objective generation, and logging
         needed for running red team evaluations against AI models.
         
-        :param azure_ai_project: Azure AI project details for connecting to services
-        :type azure_ai_project: dict
+        :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint 
+            or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+        :type azure_ai_project: Union[str, ~azure.ai.evaluation.AzureAIProject]
         :param credential: Authentication credential for Azure services
         :type credential: TokenCredential
         :param risk_categories: List of risk categories to test (required unless custom prompts provided)

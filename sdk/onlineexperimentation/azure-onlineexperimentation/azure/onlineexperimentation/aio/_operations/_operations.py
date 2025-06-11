@@ -10,10 +10,10 @@ from collections.abc import MutableMapping
 import datetime
 from io import IOBase
 import json
-from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 import urllib.parse
 
-from azure.core import MatchConditions
+from azure.core import AsyncPipelineClient, MatchConditions
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -33,7 +33,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._model_base import SdkJSONEncoder, _deserialize
 from ..._operations._operations import (
     build_online_experimentation_create_or_update_metric_request,
     build_online_experimentation_delete_metric_request,
@@ -41,14 +40,18 @@ from ..._operations._operations import (
     build_online_experimentation_list_metrics_request,
     build_online_experimentation_validate_metric_request,
 )
-from .._vendor import OnlineExperimentationClientMixinABC
+from ..._utils.model_base import SdkJSONEncoder, _deserialize
+from ..._utils.utils import ClientMixinABC
+from .._configuration import OnlineExperimentationClientConfiguration
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class OnlineExperimentationClientOperationsMixin(OnlineExperimentationClientMixinABC):  # pylint: disable=name-too-long
+class OnlineExperimentationClientOperationsMixin(  # pylint: disable=name-too-long
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], OnlineExperimentationClientConfiguration]
+):
 
     @distributed_trace_async
     async def get_metric(
@@ -591,7 +594,7 @@ class OnlineExperimentationClientOperationsMixin(OnlineExperimentationClientMixi
     @distributed_trace
     def list_metrics(
         self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.ExperimentMetric"]:
+    ) -> AsyncItemPaged["_models.ExperimentMetric"]:
         """Lists experiment metrics.
 
         :keyword top: The number of result items to return. Default value is None.

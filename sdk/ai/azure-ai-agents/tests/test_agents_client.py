@@ -66,6 +66,7 @@ from azure.ai.agents.models import (
     VectorStoreDataSource,
     VectorStoreDataSourceAssetType,
 )
+from azure.ai.agents.models._models import RunStepToolCallDetails
 
 
 # Set to True to enable SDK logging

@@ -1037,7 +1037,7 @@ def _archive_or_restore(
         )
         container_resource.properties.is_archived = is_archived
         (  # pylint: disable=expression-not-assigned
-            container_operation.create_or_update(
+            container_operation.begin_create_or_update(
                 name=name,
                 resource_group_name=resource_group_name,
                 registry_name=registry_name,
