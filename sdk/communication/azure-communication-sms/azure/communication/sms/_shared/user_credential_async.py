@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=C4763
 
+import asyncio
 from asyncio import Condition, Lock, Event
 from datetime import timedelta
 from typing import Any, Optional
@@ -12,8 +13,7 @@ import sys
 from .utils import get_current_utc_as_int
 from .utils import create_access_token
 from .utils_async import AsyncTimer
-from .token_exchange import AsyncTokenExchangeClient
-import asyncio
+from .token_exchange_async import TokenExchangeClient
 
 
 class CommunicationTokenCredential(object):
@@ -63,7 +63,10 @@ class CommunicationTokenCredential(object):
                 f"Missing: {', '.join(missing_fields)}")
 
         if self._resource_endpoint and self._token_credential and self._scopes:
-            self._token_exchange_client = AsyncTokenExchangeClient(self._resource_endpoint, self._token_credential, self._scopes)
+            self._token_exchange_client = TokenExchangeClient(
+                self._resource_endpoint,
+                self._token_credential,
+                self._scopes)
             self._token_refresher = lambda: self._token_exchange_client.exchange_entra_token()
             self._proactive_refresh = kwargs.pop("proactive_refresh", False)
 

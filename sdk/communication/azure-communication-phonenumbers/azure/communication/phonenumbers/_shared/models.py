@@ -168,11 +168,10 @@ class PhoneNumberIdentifier:
                 asserted_id=asserted_id,
                 is_anonymous=is_anonymous
             )
-        else:    
+        else:
             self.properties = PhoneNumberProperties(value=value)
         self.raw_id = raw_id if raw_id is not None else self._format_raw_id(self.properties)
 
-        
     def __eq__(self, other):
         try:
             if other.raw_id:
@@ -406,7 +405,8 @@ class TeamsExtensionUserIdentifier:
         :param str resource_id: Resource id associated with the user.
         :keyword cloud: Cloud environment that the user belongs to. Default value is `PUBLIC`.
         :paramtype cloud: str or ~azure.communication.phonenumbers.CommunicationCloudEnvironment
-        :keyword str raw_id: The raw ID of the identifier. If not specified, this value will be constructed from the other properties.
+        :keyword str raw_id: The raw ID of the identifier.
+         If not specified, this value will be constructed from the other properties.
         """
         self.properties = TeamsExtensionUserProperties(
             user_id=user_id,
@@ -435,7 +435,7 @@ class TeamsExtensionUserIdentifier:
         else:
             prefix = ACS_USER_PREFIX
         return f"{prefix}{properties['resource_id']}_{properties['tenant_id']}_{properties['user_id']}"
-    
+
 def try_create_teams_extension_user(prefix: str, suffix: str) -> Optional[TeamsExtensionUserIdentifier]:
     segments = suffix.split("_")
     if len(segments) != 3:
@@ -513,7 +513,7 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: d
         )
     if prefix == SPOOL_USER_PREFIX:
         return CommunicationUserIdentifier(id=raw_id, raw_id=raw_id)
-    
+
     if prefix in [
         ACS_USER_PREFIX,
         ACS_USER_DOD_CLOUD_PREFIX,

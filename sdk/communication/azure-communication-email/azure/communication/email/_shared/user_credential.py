@@ -46,7 +46,7 @@ class CommunicationTokenCredential(object):
         # Check if at least one field exists but not all fields exist when token is None
         fields_present = [self._resource_endpoint, self._token_credential, self._scopes]
         fields_exist = [field is not None for field in fields_present]
-        
+
         if token is None and any(fields_exist) and not all(fields_exist):
             missing_fields = []
             if self._resource_endpoint is None:
@@ -60,7 +60,10 @@ class CommunicationTokenCredential(object):
                 f"Missing: {', '.join(missing_fields)}")
 
         if self._resource_endpoint and self._token_credential and self._scopes:
-            self._token_exchange_client = TokenExchangeClient(self._resource_endpoint, self._token_credential, self._scopes)
+            self._token_exchange_client = TokenExchangeClient(
+                self._resource_endpoint,
+                self._token_credential,
+                self._scopes)
             self._token_refresher = lambda: self._token_exchange_client.exchange_entra_token()
             self._proactive_refresh = kwargs.pop("proactive_refresh", False)
             self._token = self._token_exchange_client.exchange_entra_token()
