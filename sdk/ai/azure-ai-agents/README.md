@@ -134,7 +134,7 @@ async with project_client:
     agents_client = project_client.agents
 ```
 
-Alternatively, you can create an `AgentsClient` directly which is not recommend and subject to be depreciated:
+Alternatively, you can create an `AgentsClient` directly which is not recommended and subject to be deprecated:
 
 **Synchronous Client:**
 ```python
