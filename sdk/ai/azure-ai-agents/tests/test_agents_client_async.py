@@ -43,6 +43,7 @@ from azure.ai.agents.models import (
     RunStepFileSearchToolCall,
     RunStepFileSearchToolCallResult,
     RunStepFileSearchToolCallResults,
+    RunStepToolCallDetails,
     RunStatus,
     ThreadMessageOptions,
     ThreadRun,
@@ -2791,7 +2792,6 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             assert messages, "The data from the agent was not received."
 
     @agentClientPreparer()
-    @pytest.mark.skip("Recordings not yet implemented")
     @recorded_by_proxy_async
     async def test_include_file_search_results_no_stream(self, **kwargs):
         """Test using include_file_search."""
@@ -2799,7 +2799,6 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         await self._do_test_include_file_search_results(use_stream=False, include_content=False, **kwargs)
 
     @agentClientPreparer()
-    @pytest.mark.skip("Recordings not yet implemented")
     @recorded_by_proxy_async
     async def test_include_file_search_results_stream(self, **kwargs):
         """Test using include_file_search with streaming."""
@@ -2850,6 +2849,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                     async for event_type, event_data, _ in stream:
                         if isinstance(event_data, ThreadRun):
                             run = event_data
+                        elif event_type == AgentStreamEvent.THREAD_RUN_STEP_COMPLETED:
+                            if isinstance(event_data.step_details, RunStepToolCallDetails):
+                                self._assert_file_search_valid(event_data.step_details.tool_calls[0], include_content)
                         elif event_type == AgentStreamEvent.DONE:
                             print("Stream completed.")
                             break

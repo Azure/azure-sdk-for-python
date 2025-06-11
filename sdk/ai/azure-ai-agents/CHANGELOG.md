@@ -2,6 +2,11 @@
 
 # Release History
 
+## 1.1.0b3 (Unreleased)
+
+### Sample updates
+- The file search samples were updated to demonstrate retrieving text associated with citations.
+
 ## 1.1.0b2 (2025-06-09)
 
 ### Bugs Fixed
