@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from ._transport_async import AsyncTransport, WebSocketTransportAsync
+from ._transport_async import AsyncTransport, WebSocketTransportAsync, LegacyWebSocketTransportAsync
 from ..constants import SASLCode, SASL_HEADER_FRAME, WEBSOCKET_PORT
 from .._transport import AMQPS_PORT
 from ..performatives import SASLInit
@@ -119,6 +119,30 @@ class SASLTransport(AsyncTransport, SASLTransportMixinAsync):
 
 
 class SASLWithWebSocket(WebSocketTransportAsync, SASLTransportMixinAsync):
+    def __init__(
+        self,
+        host,
+        credential,
+        *,
+        port=WEBSOCKET_PORT,
+        socket_timeout=None,
+        ssl_opts=None,
+        **kwargs,
+    ):
+        self.credential = credential
+        ssl_opts = ssl_opts or True
+        super().__init__(
+            host,
+            port=port,
+            socket_timeout=socket_timeout,
+            ssl_opts=ssl_opts,
+            **kwargs,
+        )
+
+    async def negotiate(self):
+        await self._negotiate()
+
+class SASLWithLegacyWebSocket(LegacyWebSocketTransportAsync, SASLTransportMixinAsync):
     def __init__(
         self,
         host,

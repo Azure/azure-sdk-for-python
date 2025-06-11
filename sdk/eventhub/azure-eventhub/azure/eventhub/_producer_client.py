@@ -386,6 +386,7 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
             idle_timeout=self._idle_timeout,
             amqp_transport=self._amqp_transport,
             keep_alive=self._keep_alive,
+            legacy_ws=self._config.legacy_ws,
         )
         return handler
 

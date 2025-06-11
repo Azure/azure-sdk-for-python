@@ -14,7 +14,7 @@ import asyncio # pylint:disable=do-not-import-asyncio
 from typing import Any, Dict, List, Tuple, Optional, NamedTuple, Type, Union, cast
 
 from ._transport_async import AsyncTransport
-from ._sasl_async import SASLTransport, SASLWithWebSocket
+from ._sasl_async import SASLTransport, SASLWithWebSocket, SASLWithLegacyWebSocket
 from ._session_async import Session
 from ..performatives import OpenFrame, CloseFrame
 from .._connection import get_local_timeout, _CLOSING_STATES
@@ -139,22 +139,26 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             self._socket_timeout = WS_TIMEOUT_INTERVAL
 
         if transport:
-            sasl_transport: Union[Type[SASLTransport], Type[SASLWithWebSocket]] = SASLTransport
+            sasl_transport: Union[
+                Type[SASLTransport], Type[SASLWithWebSocket], Type[SASLWithLegacyWebSocket]
+            ] = SASLTransport
         elif "sasl_credential" in kwargs:
             sasl_transport = SASLTransport
             if self._transport_type.name == "AmqpOverWebsocket" or kwargs.get("http_proxy"):
-                sasl_transport = SASLWithWebSocket
+                use_legacy_ws = kwargs.get("legacy_ws", False)
+                sasl_transport = SASLWithWebSocket if not use_legacy_ws else SASLWithLegacyWebSocket
                 endpoint = parsed_url.hostname + parsed_url.path
-            self._transport: Union[SASLTransport, SASLWithWebSocket, AsyncTransport] = sasl_transport(
-                host=endpoint,
-                credential=kwargs["sasl_credential"],
-                port=self._port,
-                custom_endpoint=custom_endpoint,
-                custom_port=custom_port,
-                socket_timeout=self._socket_timeout,
-                network_trace_params=self._network_trace_params,
-                **kwargs,
-            )
+            self._transport: Union[SASLTransport, SASLWithWebSocket, AsyncTransport, SASLWithLegacyWebSocket] = \
+                sasl_transport(
+                    host=endpoint,
+                    credential=kwargs["sasl_credential"],
+                    port=self._port,
+                    custom_endpoint=custom_endpoint,
+                    custom_port=custom_port,
+                    socket_timeout=self._socket_timeout,
+                    network_trace_params=self._network_trace_params,
+                    **kwargs,
+                )
         else:
             self._transport = AsyncTransport(
                 parsed_url.netloc, network_trace_params=self._network_trace_params, **kwargs

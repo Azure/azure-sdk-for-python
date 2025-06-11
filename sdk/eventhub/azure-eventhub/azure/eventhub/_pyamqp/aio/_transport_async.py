@@ -32,7 +32,7 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 # -------------------------------------------------------------------------
 
-import asyncio # pylint:disable=do-not-import-asyncio
+import asyncio
 import errno
 import socket
 import ssl
@@ -294,11 +294,11 @@ class AsyncTransport(AsyncTransportMixin):  # pylint: disable=too-many-instance-
         return tcp_opts
 
     def _set_socket_options(self, sock, socket_settings):
+        tcp_opts = self._get_tcp_socket_defaults(sock)
         if socket_settings:
-            tcp_opts = self._get_tcp_socket_defaults(sock)
             tcp_opts.update(socket_settings)
-            for opt, val in tcp_opts.items():
-                sock.setsockopt(SOL_TCP, opt, val)
+        for opt, val in tcp_opts.items():
+            sock.setsockopt(SOL_TCP, opt, val)
 
     async def _read(
         self,
@@ -395,8 +395,126 @@ class AsyncTransport(AsyncTransportMixin):  # pylint: disable=too-many-instance-
                 """received: {returned_header[1]!r}"""
             )
 
-
 class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-instance-attributes
+    def __init__(
+        self,
+        host,
+        *,
+        port=WEBSOCKET_PORT,
+        socket_timeout=CONNECT_TIMEOUT,
+        ssl_opts=None,
+        use_tls: bool = True,
+        **kwargs,
+    ):
+        self._read_buffer = BytesIO()
+        self.socket_lock = asyncio.Lock()
+        self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else None
+        self.socket_timeout = socket_timeout
+        self._custom_endpoint = kwargs.get("custom_endpoint")
+        self.host, self.port = to_host_port(host, port)
+        self.sock = None
+        self.session = None
+        self._http_proxy = kwargs.get("http_proxy", None)
+        self.connected = False
+        self.network_trace_params = kwargs.get("network_trace_params")
+        self._use_tls = use_tls
+
+    async def connect(self):
+        self.sslopts = self._build_ssl_opts(self.sslopts)
+        username, password = None, None
+        http_proxy_host, http_proxy_port = None, None
+        http_proxy = None
+
+        if self._http_proxy:
+            http_proxy_host = self._http_proxy["proxy_hostname"]
+            http_proxy_port = self._http_proxy["proxy_port"]
+            username = self._http_proxy.get("username", None)
+            password = self._http_proxy.get("password", None)
+            http_proxy={
+                    "host": http_proxy_host,
+                    "port": http_proxy_port,
+                    "auth": (username, password),
+                }
+
+        from urllib.parse import urlsplit
+
+        if self._custom_endpoint:
+            url = f"wss://{self._custom_endpoint}" if self._use_tls else f"ws://{self._custom_endpoint}"
+        else:
+            url = f"wss://{self.host}" if self._use_tls else f"ws://{self.host}"
+            parsed_url = urlsplit(url)
+            url = f"{parsed_url.scheme}://{parsed_url.netloc}:{self.port}{parsed_url.path}"
+
+        try:
+            from .._websocket.websockets import AsyncWebSocket
+            from .._websocket._exceptions import WebSocketConnectionError
+
+
+            self.sock = AsyncWebSocket(
+                url=url,
+                subprotocols=[AMQP_WS_SUBPROTOCOL],
+                http_proxy=http_proxy,
+                ssl_ctx=self.sslopts if self._use_tls else None,
+            )
+            await self.sock.connect()
+        except WebSocketConnectionError as exc:
+            _LOGGER.info("Websocket connect failed: %r", exc, extra=self.network_trace_params)
+            if self._custom_endpoint:
+                raise AuthenticationException(
+                    ErrorCondition.ClientError,
+                    description="Failed to authenticate the connection due to exception: " + str(exc),
+                    error=exc,
+                ) from exc
+            raise ConnectionError("Failed to establish websocket connection: " + str(exc)) from exc
+        self.connected = True
+
+    async def _read(self, toread, buffer=None, **kwargs):  # pylint: disable=unused-argument
+        """Read exactly n bytes from the peer.
+
+        :param int toread: The number of bytes to read.
+        :param bytearray or None buffer: The buffer to read into. If not specified, a new buffer is allocated.
+        :return: The buffer of bytes read.
+        :rtype: bytearray
+        """
+        length = 0
+        view = buffer or memoryview(bytearray(toread))
+        nbytes = self._read_buffer.readinto(view)
+        length += nbytes
+        toread -= nbytes
+        try:
+            while toread:
+                data = await self.sock.receive_bytes()
+                read_length = len(data)
+                if read_length <= toread:
+                    view[length : length + read_length] = data
+                    toread -= read_length
+                    length += read_length
+                else:
+                    view[length : length + toread] = data[0:toread]
+                    self._read_buffer = BytesIO(data[toread:])
+                    toread = 0
+            return view
+        except:
+            self._read_buffer = BytesIO(view[:length])
+            raise
+
+    async def close(self):
+        """Do any preliminary work in shutting down the connection."""
+        async with self.socket_lock:
+            await self.sock.close()
+            self.connected = False
+
+    async def _write(self, s):
+        """Completely write a string (byte array) to the peer.
+        ABNF, OPCODE_BINARY = 0x2
+        See http://tools.ietf.org/html/rfc5234
+        http://tools.ietf.org/html/rfc6455#section-5.2
+
+        :param str s: The string to write.
+        """
+        await self.sock.send_bytes(s)
+
+class LegacyWebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         host,
@@ -438,7 +556,6 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
             from aiohttp import (  # pylint: disable=networking-import-outside-azure-core-transport
                 ClientSession,
                 ClientConnectorError,
-                ClientWSTimeout,
             )
             from urllib.parse import urlsplit
         except ImportError:
@@ -467,7 +584,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
 
             self.sock = await self.session.ws_connect(
                 url=url,
-                timeout=ClientWSTimeout(ws_close=self.socket_timeout),
+                timeout=self.socket_timeout,  # timeout for connect
                 protocols=[AMQP_WS_SUBPROTOCOL],
                 autoclose=False,
                 proxy=http_proxy_host,

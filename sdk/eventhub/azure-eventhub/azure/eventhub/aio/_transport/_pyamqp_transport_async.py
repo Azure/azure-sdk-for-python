@@ -140,6 +140,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             properties=properties,
             client_name=client_name,
             use_tls=config.use_tls,
+            legacy_ws=config.legacy_ws,
             **kwargs,
         )
 
@@ -228,6 +229,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             message_received_callback=message_received_callback,
             timeout=timeout,
             use_tls=config.use_tls,
+            legacy_ws=config.legacy_ws,
             **kwargs,
         )
 
@@ -392,6 +394,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             connection_verify=config.connection_verify,
             ssl_context=config.ssl_context,
             use_tls=config.use_tls,
+            legacy_ws=config.legacy_ws,
         )
 
     @staticmethod

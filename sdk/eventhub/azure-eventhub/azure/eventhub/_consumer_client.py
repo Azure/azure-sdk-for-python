@@ -223,6 +223,7 @@ class EventHubConsumerClient(ClientBase):  # pylint: disable=client-accepts-api-
             idle_timeout=self._idle_timeout,
             track_last_enqueued_event_properties=track_last_enqueued_event_properties,
             amqp_transport=self._amqp_transport,
+            legacy_ws=self._config.legacy_ws,
         )
         return handler
 
