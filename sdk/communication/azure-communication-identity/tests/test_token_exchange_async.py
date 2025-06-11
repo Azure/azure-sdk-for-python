@@ -8,8 +8,9 @@
 import pytest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
-from unittest.mock import MagicMock
-from azure.communication.identity._shared.token_exchange import (
+from unittest.mock import MagicMock, AsyncMock
+
+from azure.communication.identity._shared.token_exchange_async import (
     TokenExchangeClient
 )
 
@@ -27,34 +28,35 @@ class DummyPipelineResponse:
             )
 
 
+@pytest.mark.asyncio
 class TestTokenExchangeClient:
-    def test_exchange_entra_token_success(self):
+    async def test_async_exchange_entra_token_success(self):
         client = TokenExchangeClient("https://endpoint", MagicMock())
         dummy_response = DummyPipelineResponse()
-        client._pipeline = MagicMock()
+        client._pipeline = AsyncMock()
         client._pipeline.run.return_value = dummy_response
 
-        token = client.exchange_entra_token()
+        token = await client.exchange_entra_token()
         assert isinstance(token, AccessToken)
         assert token.token == "tok"
 
-    def test_exchange_entra_token_failure(self):
+    async def test_async_exchange_entra_token_failure(self):
         client = TokenExchangeClient("https://endpoint", MagicMock())
         dummy_response = DummyPipelineResponse(status_code=400)
-        client._pipeline = MagicMock()
+        client._pipeline = AsyncMock()
         client._pipeline.run.return_value = dummy_response
 
         with pytest.raises(HttpResponseError):
-            client.exchange_entra_token()
+            await client.exchange_entra_token()
 
-    def test_parse_access_token_from_response_invalid_json(self):
+    async def test_async_parse_access_token_from_response_invalid_json(self):
         client = TokenExchangeClient("https://endpoint", MagicMock())
         dummy_response = DummyPipelineResponse(content="not json")
         with pytest.raises(ClientAuthenticationError):
-            client._parse_access_token_from_response(dummy_response)
+            await client._parse_access_token_from_response(dummy_response)
 
-    def test_parse_access_token_from_response_missing_fields(self):
+    async def test_async_parse_access_token_from_response_missing_fields(self):
         client = TokenExchangeClient("https://endpoint", MagicMock())
         dummy_response = DummyPipelineResponse(content='{"invalid": "data"}')
         with pytest.raises(ClientAuthenticationError):
-            client._parse_access_token_from_response(dummy_response)
+            await client._parse_access_token_from_response(dummy_response)

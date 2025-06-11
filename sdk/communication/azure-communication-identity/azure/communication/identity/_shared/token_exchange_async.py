@@ -7,23 +7,23 @@
 import json
 from typing import Any
 from azure.core.credentials import AccessToken
-from azure.core.pipeline import Pipeline, PipelineResponse
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+from azure.core.pipeline import AsyncPipeline, PipelineResponse
+from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
-from azure.core.credentials import TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from typing import List, Optional
 from dateutil import parser as dateutil_parser  # type: ignore
-from .entra_token_guard_policy import EntraTokenGuardPolicy
+from .entra_token_guard_policy_async import EntraTokenGuardPolicy
 from .token_exchange_utils import TokenExchangeUtils
 
 
 class TokenExchangeClient:
-    """Represents a client that exchanges an Entra token for an Azure Communication Services (ACS) token."""
+    """Asynchronous client that exchanges an Entra token for an Azure Communication Services (ACS) token."""
 
     def __init__(
             self,
             resource_endpoint: str,
-            token_credential: TokenCredential,
+            token_credential: AsyncTokenCredential,
             scopes: Optional[List[str]] = None,
             pipeline_transport: Any = None):
 
@@ -33,20 +33,20 @@ class TokenExchangeClient:
         self._pipeline = self._create_pipeline_from_options(pipeline_transport)
 
     def _create_pipeline_from_options(self, pipeline_transport):
-        auth_policy = BearerTokenCredentialPolicy(self._token_credential, *self._scopes)
+        auth_policy = AsyncBearerTokenCredentialPolicy(self._token_credential, *self._scopes)
         entra_token_guard_policy = EntraTokenGuardPolicy()
         policies = [auth_policy, entra_token_guard_policy]
         if pipeline_transport:
-            return Pipeline(policies=policies, transport=pipeline_transport)
-        from azure.core.pipeline.transport import RequestsTransport
-        return Pipeline(policies=policies, transport=RequestsTransport())
+            return AsyncPipeline(policies=policies, transport=pipeline_transport)
+        from azure.core.pipeline.transport import AioHttpTransport
+        return AsyncPipeline(policies=policies, transport=AioHttpTransport())
 
-    def exchange_entra_token(self) -> AccessToken:
+    async def exchange_entra_token(self) -> AccessToken:
         message = TokenExchangeUtils.create_request_message(self._resource_endpoint, self._scopes)
-        response = self._pipeline.run(message)
-        return self._parse_access_token_from_response(response)
+        response = await self._pipeline.run(message)
+        return await self._parse_access_token_from_response(response)
 
-    def _parse_access_token_from_response(self, response: PipelineResponse) -> AccessToken:
+    async def _parse_access_token_from_response(self, response: PipelineResponse) -> AccessToken:
         if response.http_response.status_code == 200:
             try:
                 content = response.http_response.text()
