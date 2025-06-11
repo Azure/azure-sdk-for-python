@@ -60,6 +60,7 @@ from ._auth_policy import CosmosBearerTokenCredentialPolicy
 from ._base import _build_properties_cache
 from ._change_feed.change_feed_iterable import ChangeFeedIterable
 from ._change_feed.change_feed_state import ChangeFeedState
+from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._constants import _Constants as Constants
 from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from ._cosmos_responses import CosmosDict, CosmosList
@@ -72,8 +73,9 @@ from .partition_key import (
     _Undefined,
     _Empty,
     PartitionKey,
+    PartitionKeyKind,
     _return_undefined_or_empty_partition_key,
-    NonePartitionKeyValue
+    NonePartitionKeyValue,
 )
 
 PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
@@ -3161,19 +3163,25 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # check if query has prefix partition key
         isPrefixPartitionQuery = kwargs.pop("isPrefixPartitionQuery", None)
-        if isPrefixPartitionQuery and "partitionKeyDefinition" in kwargs:
+        if (("feedRange" in options) or
+            (isPrefixPartitionQuery and "partitionKeyDefinition" in kwargs)):
+
             last_response_headers = CaseInsensitiveDict()
             # here get the over lapping ranges
-            # Default to empty Dictionary, but unlikely to be empty as we first check if we have it in kwargs
-            pk_properties: Union[PartitionKey, Dict] = kwargs.pop("partitionKeyDefinition", {})
-            partition_key_definition = PartitionKey(
-                path=pk_properties["paths"],
-                kind=pk_properties["kind"],
-                version=pk_properties["version"])
-            partition_key_value = pk_properties["partition_key"]
-            feedrangeEPK = partition_key_definition._get_epk_range_for_prefix_partition_key(
-                partition_key_value
-            )  # cspell:disable-line
+            if "feedRange" in options:
+                feedrangeEPK = FeedRangeInternalEpk.from_json(options.pop("feedRange")).get_normalized_range()
+            else:
+                # Default to empty Dictionary, but unlikely to be empty as we first check if we have it in kwargs
+                pk_properties: Union[PartitionKey, Dict] = kwargs.pop("partitionKeyDefinition", {})
+                partition_key_definition = PartitionKey(
+                    path=pk_properties["paths"],
+                    kind=pk_properties["kind"],
+                    version=pk_properties["version"])
+                partition_key_value = pk_properties["partition_key"]
+                feedrangeEPK = partition_key_definition._get_epk_range_for_prefix_partition_key(
+                    partition_key_value
+                )  # cspell:disable-line
+
             over_lapping_ranges = self._routing_map_provider.get_overlapping_ranges(resource_id, [feedrangeEPK],
                                                                                     options)
             # It is possible to get more than one over lapping range. We need to get the query results for each one
@@ -3337,7 +3345,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         partitionKeyDefinition: Mapping[str, Any],
         document: Mapping[str, Any]
     ) -> Union[List[Optional[Union[str, float, bool]]], str, float, bool, _Empty, _Undefined]:
-        if partitionKeyDefinition["kind"] == "MultiHash":
+        if partitionKeyDefinition["kind"] == PartitionKeyKind.MULTI_HASH:
             ret: List[Optional[Union[str, float, bool]]] = []
             for partition_key_level in partitionKeyDefinition["paths"]:
                 # Parses the paths into a list of token each representing a property

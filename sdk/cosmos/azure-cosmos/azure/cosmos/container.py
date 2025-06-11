@@ -577,6 +577,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             change_feed_state_context["startTime"] = kwargs.pop("start_time")
 
         container_properties = self._get_properties_with_options(feed_options)
+        # TODO: validate partition_key and feed_range exclusive check here to avoid any extra API calls
         if "partition_key" in kwargs:
             partition_key = kwargs.pop("partition_key")
             change_feed_state_context["partitionKey"] = self._set_partition_key(cast(PartitionKeyType, partition_key))
@@ -599,6 +600,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         )
         return result
 
+    # TODO: add override methods to give hint to users such as exclusive options: partition_key and feed_range
     @distributed_trace
     def query_items(  # pylint:disable=docstring-missing-param
         self,
@@ -610,14 +612,16 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         enable_scan_in_query: Optional[bool] = None,
         populate_query_metrics: Optional[bool] = None,
         *,
-        populate_index_metrics: Optional[bool] = None,
-        session_token: Optional[str] = None,
+        continuation_token_limit: Optional[int] = None,
+        #TODO: consider adding `excluded_locations` as kwarg option here
+        feed_range: Optional[Dict[str, Any]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
+        populate_index_metrics: Optional[bool] = None,
         priority: Optional[Literal["High", "Low"]] = None,
-        continuation_token_limit: Optional[int] = None,
-        throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
+        session_token: Optional[str] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Return all results matching the given `query`.
@@ -641,27 +645,28 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
-        :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
             response. Valid values are positive integers.
             A value of 0 is the same as not passing a value (default no limit).
-        :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
-            milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
-            responses are guaranteed to be no staler than this value.
-        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
-            request. Once the user has reached their provisioned throughput, low priority requests are throttled
-            before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
-            existing indexes and how it could use potential new indexes. Please note that this options will incur
-            overhead, so it should be enabled only when debugging slow queries.
-        :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
+        :keyword Dict[str, Any] feed_range: The feed range that is used to define the scope.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
+            milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
+            responses are guaranteed to be no staler than this value.
+        :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
+            existing indexes and how it could use potential new indexes. Please note that this options will incur
+            overhead, so it should be enabled only when debugging slow queries.
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :returns: An Iterable of items (dicts).
         :rtype: ItemPaged[Dict[str, Any]]
 
@@ -681,12 +686,18 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 :dedent: 0
                 :caption: Parameterized query to get all products that have been discontinued:
         """
-        if session_token is not None:
-            kwargs['session_token'] = session_token
+        if feed_range is not None:
+            kwargs['feed_range'] = feed_range
+        if 'feed_range' in kwargs and partition_key is not None:
+            warnings.warn("'feed_range' and 'partition_key' are mutually exclusive, "
+                          "if both were given, the 'feed_range' will be used automatically.")
+            partition_key = None
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
         if priority is not None:
             kwargs['priority'] = priority
+        if session_token is not None:
+            kwargs['session_token'] = session_token
         if throughput_bucket is not None:
             kwargs["throughputBucket"] = throughput_bucket
         feed_options = build_options(kwargs)
@@ -699,7 +710,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if populate_index_metrics is not None:
             feed_options["populateIndexMetrics"] = populate_index_metrics
         properties = self._get_properties_with_options(feed_options)
-        if partition_key is not None:
+        if "feed_range" in kwargs:
+            feed_options["feedRange"] = kwargs.pop('feed_range')
+        elif partition_key is not None:
             partition_key_value = self._set_partition_key(partition_key)
             if is_prefix_partition_key(properties, partition_key):
                 kwargs["isPrefixPartitionQuery"] = True

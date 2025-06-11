@@ -68,6 +68,13 @@ class _PartitionKeyComponentType:
     Float = 0x14
     Infinity = 0xFF
 
+class PartitionKeyKind:
+    HASH: str = "Hash"
+    MULTI_HASH: str = "MultiHash"
+
+class PartitionKeyVersion:
+    V1: int = 1
+    V2: int = 2
 
 class NonePartitionKeyValue:
     """Represents None value for partitionKey when it's missing in a container.
@@ -102,17 +109,22 @@ class PartitionKey(dict):
     """
 
     @overload
-    def __init__(self, path: List[str], *, kind: Literal["MultiHash"] = "MultiHash", version: int = 2) -> None:
+    def __init__(self, path: List[str], *, kind: Literal["MultiHash"] = PartitionKeyKind.MULTI_HASH,
+                 version: int = PartitionKeyVersion.V2
+    ) -> None:
         ...
 
     @overload
-    def __init__(self, path: str, *, kind: Literal["Hash"] = "Hash", version: int = 2) -> None:
+    def __init__(self, path: str, *, kind: Literal["Hash"] = PartitionKeyKind.HASH,
+                 version:int = PartitionKeyVersion.V2
+    ) -> None:
         ...
 
     def __init__(self, *args, **kwargs):
         path = args[0] if args else kwargs['path']
-        kind = args[1] if len(args) > 1 else kwargs.get('kind', 'Hash' if isinstance(path, str) else 'MultiHash')
-        version = args[2] if len(args) > 2 else kwargs.get('version', 2)
+        kind = args[1] if len(args) > 1 else kwargs.get('kind', PartitionKeyKind.HASH if isinstance(path, str)
+        else PartitionKeyKind.MULTI_HASH)
+        version = args[2] if len(args) > 2 else kwargs.get('version', PartitionKeyVersion.V2)
         super().__init__(paths=[path] if isinstance(path, str) else path, kind=kind, version=version)
 
     def __repr__(self) -> str:
@@ -128,7 +140,7 @@ class PartitionKey(dict):
 
     @property
     def path(self) -> str:
-        if self.kind == "MultiHash":
+        if self.kind == PartitionKeyKind.MULTI_HASH:
             return ''.join(self["paths"])
         return self["paths"][0]
 
@@ -151,7 +163,7 @@ class PartitionKey(dict):
         self,
         pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]]
     ) -> _Range:
-        if self.kind != "MultiHash":
+        if self.kind != PartitionKeyKind.MULTI_HASH:
             raise ValueError(
                 "Effective Partition Key Range for Prefix Partition Keys is only supported for Hierarchical Partition Keys.")  # pylint: disable=line-too-long
         len_pk_value = len(pk_value)
@@ -224,26 +236,32 @@ class PartitionKey(dict):
         partition_key_components = [hash_value] + truncated_components
         return _to_hex_encoded_binary_string_v1(partition_key_components)
 
-    def _get_effective_partition_key_string(
-        self,
-        pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]]
+    @staticmethod
+    def get_hashed_partition_key_string(
+            pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]],
+            kind: str,
+            version: int = PartitionKeyVersion.V2,
     ) -> Union[int, str]:
         if not pk_value:
             return _MinimumInclusiveEffectivePartitionKey
 
+        if kind == PartitionKeyKind.HASH:
+            if version == PartitionKeyVersion.V1:
+                return PartitionKey._get_effective_partition_key_for_hash_partitioning(pk_value)
+            if version == PartitionKeyVersion.V2:
+                return PartitionKey._get_effective_partition_key_for_hash_partitioning_v2(pk_value)
+        elif kind == PartitionKeyKind.MULTI_HASH:
+            return PartitionKey._get_effective_partition_key_for_multi_hash_partitioning_v2(pk_value)
+        return _to_hex_encoded_binary_string(pk_value)
+
+    def _get_effective_partition_key_string(
+        self,
+        pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]]
+    ) -> Union[int, str]:
         if isinstance(self, _Infinity):
             return _MaximumExclusiveEffectivePartitionKey
 
-        kind = self.kind
-        if kind == 'Hash':
-            version = self.version or 2
-            if version == 1:
-                return PartitionKey._get_effective_partition_key_for_hash_partitioning(pk_value)
-            if version == 2:
-                return PartitionKey._get_effective_partition_key_for_hash_partitioning_v2(pk_value)
-        elif kind == 'MultiHash':
-            return self._get_effective_partition_key_for_multi_hash_partitioning_v2(pk_value)
-        return _to_hex_encoded_binary_string(pk_value)
+        return PartitionKey.get_hashed_partition_key_string(pk_value=pk_value, kind=self.kind, version=self.version)
 
     @staticmethod
     def _write_for_hashing(
@@ -331,7 +349,7 @@ class PartitionKey(dict):
     def _is_prefix_partition_key(
             self,
             partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]) -> bool:  # pylint: disable=line-too-long
-        if self.kind != "MultiHash":
+        if self.kind != PartitionKeyKind.MULTI_HASH:
             return False
         ret = ((isinstance(partition_key, Sequence) and
                 not isinstance(partition_key, str)) and len(self['paths']) != len(partition_key))

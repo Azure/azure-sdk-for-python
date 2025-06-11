@@ -430,18 +430,19 @@ class ContainerProxy:
         self,
         query: str,
         *,
-        parameters: Optional[List[Dict[str, object]]] = None,
-        partition_key: Optional[PartitionKeyType] = None,
-        max_item_count: Optional[int] = None,
+        continuation_token_limit: Optional[int] = None,
         enable_scan_in_query: Optional[bool] = None,
-        populate_query_metrics: Optional[bool] = None,
-        populate_index_metrics: Optional[bool] = None,
-        session_token: Optional[str] = None,
+        feed_range: Optional[Dict[str, Any]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
+        max_item_count: Optional[int] = None,
+        parameters: Optional[List[Dict[str, object]]] = None,
+        partition_key: Optional[PartitionKeyType] = None,
+        populate_index_metrics: Optional[bool] = None,
+        populate_query_metrics: Optional[bool] = None,
         priority: Optional[Literal["High", "Low"]] = None,
-        continuation_token_limit: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
+        session_token: Optional[str] = None,
         throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
@@ -506,12 +507,14 @@ class ContainerProxy:
                 :caption: Parameterized query to get all products that have been discontinued:
                 :name: query_items_param
         """
-        if session_token is not None:
-            kwargs['session_token'] = session_token
+        if feed_range is not None:
+            kwargs['feed_range'] = feed_range
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
         if priority is not None:
             kwargs['priority'] = priority
+        if session_token is not None:
+            kwargs['session_token'] = session_token
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         feed_options = _build_options(kwargs)
@@ -765,8 +768,8 @@ class ContainerProxy:
                 cast(PartitionKeyType, partition_key_value))
             change_feed_state_context["partitionKeyFeedRange"] = self._get_epk_range_for_partition_key(
                 partition_key_value, feed_options)
-        if "feed_range" in kwargs:
-            change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
+        if "feedRange" in kwargs:
+            change_feed_state_context["feedRange"] = feed_options.pop('feedRange')
         if "continuation" in feed_options:
             change_feed_state_context["continuation"] = feed_options.pop("continuation")
 

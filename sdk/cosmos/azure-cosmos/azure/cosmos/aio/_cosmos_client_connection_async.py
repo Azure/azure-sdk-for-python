@@ -72,6 +72,7 @@ from .. import _utils
 from ..partition_key import (
     _Undefined,
     PartitionKey,
+    PartitionKeyKind,
     _return_undefined_or_empty_partition_key,
     NonePartitionKeyValue, _Empty
 )
@@ -3182,7 +3183,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
     # Extracts the partition key from the document using the partitionKey definition
     def _ExtractPartitionKey(self, partitionKeyDefinition, document):
-        if partitionKeyDefinition["kind"] == "MultiHash":
+        if partitionKeyDefinition["kind"] == PartitionKeyKind.MULTI_HASH:
             ret = []
             for partition_key_level in partitionKeyDefinition.get("paths"):
                 # Parses the paths into a list of token each representing a property
