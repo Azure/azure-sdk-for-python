@@ -26,6 +26,8 @@ try:
 except:
     print("no urllib3")
 
+SPLIT_TIMEOUT = 60*25 # timeout test at 25 minutes
+SLEEP_TIME = 60 # sleep for 1 minutes
 
 class TestConfig(object):
     local_host = 'https://localhost:8081/'
@@ -204,7 +206,7 @@ class TestConfig(object):
     def trigger_split(container, throughput):
         print("Triggering a split in session token helpers")
         container.replace_throughput(throughput)
-        print("changed offer to 11k")
+        print(f"changed offer to {throughput}")
         print("--------------------------------")
         print("Waiting for split to complete")
         start_time = time.time()
@@ -212,11 +214,11 @@ class TestConfig(object):
         while True:
             offer = container.get_throughput()
             if offer.properties['content'].get('isOfferReplacePending', False):
-                if time.time() - start_time > 60 * 25:  # timeout test at 25 minutes
-                    unittest.skip("Partition split didn't complete in time.")
+                if time.time() - start_time > SPLIT_TIMEOUT:  # timeout test at 25 minutes
+                    raise unittest.SkipTest("Partition split didn't complete in time")
                 else:
                     print("Waiting for split to complete")
-                    time.sleep(60)
+                    time.sleep(SLEEP_TIME)
             else:
                 break
         print("Split in session token helpers has completed")
@@ -225,7 +227,7 @@ class TestConfig(object):
     async def trigger_split_async(container, throughput):
         print("Triggering a split in session token helpers")
         await container.replace_throughput(throughput)
-        print("changed offer to 11k")
+        print(f"changed offer to {throughput}")
         print("--------------------------------")
         print("Waiting for split to complete")
         start_time = time.time()
@@ -233,11 +235,11 @@ class TestConfig(object):
         while True:
             offer = await container.get_throughput()
             if offer.properties['content'].get('isOfferReplacePending', False):
-                if time.time() - start_time > 60 * 25:  # timeout test at 25 minutes
-                    unittest.skip("Partition split didn't complete in time.")
+                if time.time() - start_time > SPLIT_TIMEOUT:  # timeout test at 25 minutes
+                    raise unittest.SkipTest("Partition split didn't complete in time")
                 else:
                     print("Waiting for split to complete")
-                    time.sleep(60)
+                    time.sleep(SLEEP_TIME)
             else:
                 break
         print("Split in session token helpers has completed")
