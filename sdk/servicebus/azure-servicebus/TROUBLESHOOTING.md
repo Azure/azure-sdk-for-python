@@ -164,9 +164,7 @@ This error can occur when an intercepting proxy is used. To verify, it is recomm
 
 ### Adding components to the connection string does not work
 
-The current generation of the Service Bus client library supports connection strings only in the form published by the Azure portal. These are intended to provide basic location and shared key information only; configuring behavior of the clients is done through its options.
-
-Previous generations of the Service Bus clients allowed for some behavior to be configured by adding key/value components to a connection string. These components are no longer recognized and have no effect on client behavior.
+The Service Bus client library supports connection strings only in the format published by the Azure portal. Custom key/value components added to connection strings are not recognized and have no effect on client behavior.
 
 #### Specifying AMQP over websockets
 
