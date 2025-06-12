@@ -67,6 +67,13 @@ _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE = "APPLICATION_INSIGHTS_EVENT_MARKE
 _AZURE_MONITOR_DISTRO_VERSION_ARG = "distro_version"
 _MICROSOFT_CUSTOM_EVENT_NAME = "microsoft.custom_event.name"
 
+# ONE SETTINGS
+_ONE_SETTINGS_URL = "https://settings-ppe.data.microsoft.com/settings/v3.0/AzureMonitorSDK/AzMonSDKDynamicConfiguration"
+_ONE_SETTINGS_PROD_URL = "https://settings.data.microsoft.com/settings/v3.0/AzureMonitorSDK/AzMonSDKDynamicConfiguration"
+_ONE_SETTINGS_PYTHON_KEY = "python"
+_ONE_SETTINGS_CNAME = "https://settings.sdk.monitor.azure.com"
+_ONE_SETTINGS_PATH = "/settings/v3.0/AzureMonitorSDK/AzMonSDKDynamicConfiguration"
+
 # Statsbeat
 
 # (OpenTelemetry metric name, Statsbeat metric name)
