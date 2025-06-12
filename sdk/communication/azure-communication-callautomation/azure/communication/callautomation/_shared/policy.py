@@ -53,36 +53,6 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
 
         return base64.b64encode(digest).decode("utf-8")
 
-    def _encode_query_url(self, query_url, request):
-        print("from HMACCredentialsPolicy")
-        # Need URL() to get a correct encoded key value, from "%3A" to ":", when transport is in type AioHttpTransport.
-        # There's a similar scenario in azure-storage-blob and azure-appconfiguration, the check logic is from there.
-        try:
-            from yarl import URL
-            from azure.core.pipeline.transport import (  # pylint:disable=non-abstract-transport-import
-                AioHttpTransport,
-            )
-
-            if (
-                isinstance(request.context.transport, AioHttpTransport)
-                or isinstance(
-                    getattr(request.context.transport, "_transport", None),
-                    AioHttpTransport,
-                )
-                or isinstance(
-                    getattr(
-                        getattr(request.context.transport, "_transport", None),
-                        "_transport",
-                        None,
-                    ),
-                    AioHttpTransport,
-                )
-            ):
-                query_url = str(URL(query_url))
-        except (ImportError, TypeError):
-            pass
-        return query_url
-
     def _sign_request(self, request):
         verb = request.http_request.method.upper()
 
@@ -92,8 +62,6 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
 
         if parsed_url.query:
             query_url += "?" + parsed_url.query
-
-        query_url = self._encode_query_url(query_url, request)
 
         if self._decode_url:
             query_url = urllib.parse.unquote(query_url)
@@ -106,7 +74,6 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
         content_digest = hashlib.sha256((request.http_request.body.encode("utf-8"))).digest()
         content_hash = base64.b64encode(content_digest).decode("utf-8")
 
-        print(f"query_url  {query_url}")
         string_to_sign = verb + "\n" + query_url + "\n" + utc_now + ";" + self._host + ";" + content_hash
 
         signature = self._compute_hmac(string_to_sign)
