@@ -901,9 +901,13 @@ Per partition circuit breaker is a feature that allows the SDK to failover reque
 reads in single write region accounts and reads and writes for multi-write region accounts. The following are the environment variables to enable per partition circuit breaker and to modify the thresholds for failing over 
 requests to another region:
 - `AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER`: Default is `False`.
+  - Enables the per partition circuit breaker feature.
 - `AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ`: Default is `10` consecutive errors.
+  - After a partition has encountered 10 consecutive errors for read requests, the SDK will send requests routed to that partition to another region.
 - `AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE`: Default is `5` consecutive errors.
+    - After a partition has encountered 5 consecutive errors for write requests, the SDK will send requests routed to that partition to another region.
 - `AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED`: Default is a `90` percent failure rate.
+  - After a partition reaches a 90 percent failure rate for all requests, the SDK will send requests routed to that partition to another region.
 
 ## Troubleshooting
 
