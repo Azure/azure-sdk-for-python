@@ -12,6 +12,9 @@
 
 ### Other Changes
 
+- Update instrumentation list for Attach Statsbeat
+  ([#41537] https://github.com/Azure/azure-sdk-for-python/pull/41537)
+
 ## 1.0.0b37 (2025-05-29)
 
 ### Features Added
