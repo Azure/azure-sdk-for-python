@@ -13,7 +13,8 @@ from azure.communication.callautomation.aio import (
 )
 from azure.communication.callautomation._shared.models import  identifier_from_raw_id
 
-from tests.e2e import AsyncCallAutomationRecordedTestCase   
+from callautomation_test_case_async import AsyncCallAutomationRecordedTestCase   
+
 class TestCallAutomationClientAutomatedLiveTestAsync(AsyncCallAutomationRecordedTestCase):
 
     @pytest.mark.asyncio
