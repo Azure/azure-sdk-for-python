@@ -6,14 +6,11 @@
 # license information.
 # --------------------------------------------------------------------------
 
-# coverd ops:
-#   management_locks: 16/16
-#   authorization_operations: 1/1
-
 import unittest
 import pytest
 
-import azure.mgmt.resource
+from azure.mgmt.resource.resources import ResourceManagementClient
+from azure.mgmt.resource.locks import ManagementLockClient
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 import pytest
 
@@ -22,9 +19,9 @@ import pytest
 class TestMgmtResourceLocks(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
-        self.locks_client = self.create_mgmt_client(azure.mgmt.resource.ManagementLockClient)
+        self.locks_client = self.create_mgmt_client(ManagementLockClient)
 
-        self.resource_client = self.create_mgmt_client(azure.mgmt.resource.ResourceManagementClient)
+        self.resource_client = self.create_mgmt_client(ResourceManagementClient)
 
     @pytest.mark.skip(reason="authorization failed, need to add white_list")
     @recorded_by_proxy

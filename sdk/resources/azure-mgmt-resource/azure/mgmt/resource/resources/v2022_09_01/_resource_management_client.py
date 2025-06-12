@@ -40,9 +40,6 @@ class ResourceManagementClient:  # pylint: disable=too-many-instance-attributes
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.resource.resources.v2022_09_01.operations.Operations
-    :ivar deployments: DeploymentsOperations operations
-    :vartype deployments:
-     azure.mgmt.resource.resources.v2022_09_01.operations.DeploymentsOperations
     :ivar providers: ProvidersOperations operations
     :vartype providers: azure.mgmt.resource.resources.v2022_09_01.operations.ProvidersOperations
     :ivar provider_resource_types: ProviderResourceTypesOperations operations
@@ -55,6 +52,9 @@ class ResourceManagementClient:  # pylint: disable=too-many-instance-attributes
      azure.mgmt.resource.resources.v2022_09_01.operations.ResourceGroupsOperations
     :ivar tags: TagsOperations operations
     :vartype tags: azure.mgmt.resource.resources.v2022_09_01.operations.TagsOperations
+    :ivar deployments: DeploymentsOperations operations
+    :vartype deployments:
+     azure.mgmt.resource.resources.v2022_09_01.operations.DeploymentsOperations
     :ivar deployment_operations: DeploymentOperationsOperations operations
     :vartype deployment_operations:
      azure.mgmt.resource.resources.v2022_09_01.operations.DeploymentOperationsOperations
@@ -108,9 +108,6 @@ class ResourceManagementClient:  # pylint: disable=too-many-instance-attributes
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize, "2022-09-01")
-        self.deployments = DeploymentsOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2022-09-01"
-        )
         self.providers = ProvidersOperations(
             self._client, self._config, self._serialize, self._deserialize, "2022-09-01"
         )
@@ -124,6 +121,9 @@ class ResourceManagementClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize, "2022-09-01"
         )
         self.tags = TagsOperations(self._client, self._config, self._serialize, self._deserialize, "2022-09-01")
+        self.deployments = DeploymentsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2022-09-01"
+        )
         self.deployment_operations = DeploymentOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize, "2022-09-01"
         )

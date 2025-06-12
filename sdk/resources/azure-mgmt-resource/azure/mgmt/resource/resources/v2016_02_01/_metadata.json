@@ -4,7 +4,7 @@
     "client": {
         "name": "ResourceManagementClient",
         "filename": "_resource_management_client",
-        "description": "ResourceManagementClient.",
+        "description": "Provides operations for working with deployments.",
         "host_value": null,
         "parameterized_host_template": null,
         "azure_arm": true,
@@ -105,11 +105,11 @@
         "async_imports": "{\"regular\": {\"sdkcore\": {\"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"sdkcore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
-        "deployments": "DeploymentsOperations",
         "providers": "ProvidersOperations",
         "resource_groups": "ResourceGroupsOperations",
         "resources": "ResourcesOperations",
         "tags": "TagsOperations",
+        "deployments": "DeploymentsOperations",
         "deployment_operations": "DeploymentOperationsOperations"
     }
 }
