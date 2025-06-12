@@ -7,7 +7,7 @@ from datetime import date, datetime, time, timedelta, tzinfo
 from enum import Enum
 import json
 import sys
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from azure.core.serialization import AzureJSONEncoder, NULL, as_attribute_dict, is_generated_model
 import pytest
@@ -1258,12 +1258,31 @@ def test_as_attribute_dict_flatten():
     _test(as_attribute_dict(msrest_model))
 
 def test_as_attribute_dict_additional_properties():
+    class HybridPetAPTrue(HybridModel):
+        name: str = rest_field()
     class MsrestPetAPTrue(MsrestModel):
         _attribute_map = {
             "additional_properties": {"key": "", "type": "{object}"},
             "name": {"key": "name", "type": "str"},
         }
 
-        def __init__(self, *, additional_prpname: Optional[str] = None, **kwargs):
+        def __init__(self, *, additional_properties: Optional[Dict[str, Any]], name: Optional[str] = None, **kwargs):
             super().__init__(**kwargs)
+            self.additional_properties = additional_properties
             self.name = name
+
+    def _tests(model):
+        attr_dict = as_attribute_dict(model)
+        assert attr_dict["name"] == "Buddy"
+        assert "additional_properties" not in attr_dict
+        assert attr_dict["birthdate"] == "2017-12-13T02:29:51Z"
+        assert attr_dict["complexProperty"] == {"color": "Red"}
+        assert getattr(model, "birthdate", None) is None
+        assert getattr(model, "complexProperty", None) is None
+
+    hybrid_model = HybridPetAPTrue({"birthdate": "2017-12-13T02:29:51Z", "complexProperty": {"color": "Red"}, "name": "Buddy"})
+    assert getattr(hybrid_model, "additional_properties", None) is None
+    _tests(hybrid_model)
+    msrest_model = MsrestPetAPTrue(additional_properties={"birthdate": "2017-12-13T02:29:51Z", "complexProperty": {"color": "Red"}}, name="Buddy")
+    _tests(msrest_model)
+    assert msrest_model.additional_properties == {"birthdate": "2017-12-13T02:29:51Z", "complexProperty": {"color": "Red"}}
