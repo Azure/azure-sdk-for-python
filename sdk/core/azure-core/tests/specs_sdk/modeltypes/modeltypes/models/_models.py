@@ -245,7 +245,7 @@ class PropertiesModel(_Model):
     :vartype age: int
     """
 
-    description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    description: str = rest_field(name="modelDescription", visibility=["read", "create", "update", "delete", "query"])
     """Required."""
     age: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""

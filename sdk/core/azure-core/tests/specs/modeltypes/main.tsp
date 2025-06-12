@@ -26,6 +26,7 @@ model FlattenModel {
  * Properties model
  */
 model PropertiesModel {
+  @encodedName("application/json", "modelDescription")
   description: string;
   age: int32;
 }

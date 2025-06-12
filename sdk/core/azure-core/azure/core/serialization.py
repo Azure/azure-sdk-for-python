@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 import base64
 from json import JSONEncoder
-from typing import Dict, Union, cast, Any
+from typing import Dict, List, Optional, Union, cast, Any
 from datetime import datetime, date, time, timedelta
 from datetime import timezone
 
@@ -150,6 +150,27 @@ def _as_attribute_dict_value(v: Any, *, exclude_readonly: bool = False) -> Any:
     return as_attribute_dict(v, exclude_readonly=exclude_readonly) if hasattr(v, "as_dict") else v
 
 
+def _get_flattened_attribute(obj: Any) -> Optional[str]:
+    flattened_items = None
+    try:
+        flattened_items = getattr(obj, next(a for a in dir(obj) if "__flattened_items" in a), None)
+    except StopIteration:
+        return None
+
+    if flattened_items is None:
+        return None
+
+    for k, v in obj._attr_to_rest_field.items():
+        try:
+            if set(v._class_type._attr_to_rest_field.keys()).intersection(set(flattened_items)):
+                return k
+            return k
+        except AttributeError:
+            # if the attribute does not have _class_type, it is not a typespec generated model
+            continue
+    return None
+
+
 def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, Any]:
     """Convert an object to a dictionary of its attributes."""
     # if not is_generated_model(obj):
@@ -164,24 +185,35 @@ def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, 
 
         # create a reverse mapping from rest field name to attribute name
         rest_to_attr = {}
+        flattened_attribute = _get_flattened_attribute(obj)
         for attr_name, rest_field in obj._attr_to_rest_field.items():
-            rest_to_attr[rest_field._rest_name] = attr_name
+
             if exclude_readonly and _is_readonly(rest_field):
                 # if we're excluding readonly properties, we need to track them
                 readonly_props.append(rest_field._rest_name)
+            if flattened_attribute == attr_name:
+                for fk, fv in rest_field._class_type._attr_to_rest_field.items():
+                    rest_to_attr[fv._rest_name] = fk
+            else:
+                rest_to_attr[rest_field._rest_name] = attr_name
         for k, v in obj.items():
             if exclude_readonly and k in readonly_props:  # pyright: ignore
                 continue
-            is_multipart_file_input = False
-            try:
-                is_multipart_file_input = next(
-                    rf for rf in obj._attr_to_rest_field.values() if rf._rest_name == k
-                )._is_multipart_file_input
-            except StopIteration:
-                pass
-            result[rest_to_attr.get(k, k)] = (
-                v if is_multipart_file_input else _as_attribute_dict_value(v, exclude_readonly=exclude_readonly)
-            )
+            if k == flattened_attribute:
+                for fk, fv in v.items():
+                    result[rest_to_attr.get(fk, fk)] = _as_attribute_dict_value(fv, exclude_readonly=exclude_readonly)
+            else:
+                is_multipart_file_input = False
+                try:
+                    is_multipart_file_input = next(
+                        rf for rf in obj._attr_to_rest_field.values() if rf._rest_name == k
+                    )._is_multipart_file_input
+                except StopIteration:
+                    pass
+
+                result[rest_to_attr.get(k, k)] = (
+                    v if is_multipart_file_input else _as_attribute_dict_value(v, exclude_readonly=exclude_readonly)
+                )
         return result
     except AttributeError:
         # not a typespec generated model

@@ -491,17 +491,18 @@ def test_json_roundtrip():
 
 
 def test_flattened_model():
-    def _flattened_model_assertions(model):
-        assert model.name == "wall-e"
-        assert model.description == "a dog"
-        assert model.age == 2
-        assert model.properties.description == "a dog"
-        assert model.properties.age == 2
+    def _test(result):
+        assert result["name"] == "wall-e"
+        assert result["description"] == "a dog"
+        assert result["age"] == 2
+        assert "properties" not in result
+        assert "modelDescription" not in result
+        assert "model_description" not in result
 
     model = models.FlattenModel(name="wall-e", description="a dog", age=2)
-    _flattened_model_assertions(model)
-    model = models.FlattenModel({"name": "wall-e", "properties": {"description": "a dog", "age": 2}})
-    _flattened_model_assertions(model)
+    _test(as_attribute_dict(model))
+    model = models.FlattenModel({"name": "wall-e", "properties": {"modelDescription": "a dog", "age": 2}})
+    _test(as_attribute_dict(model))
 
 
 def test_client_name_model():
@@ -1185,3 +1186,32 @@ def test_as_attribute_dict_complex_scenario():
     attr_dict = as_attribute_dict(msrest_employee, exclude_readonly=True)
     assert "employee_id" not in attr_dict
     assert attr_dict["first_name"] == "Jane"
+
+
+def test_as_attribute_dict_flatten():
+    class MsrestFlattenModel(MsrestModel):
+        _attribute_map = {
+            "name": {"key": "name", "type": "str"},
+            "description": {"key": "properties.modelDescription", "type": "str"},
+            "age": {"key": "properties.age", "type": "int"},
+        }
+
+        def __init__(self, *, name: str, description: str, age: int, **kwargs):
+            super().__init__(**kwargs)
+            self.name = name
+            self.description = description
+            self.age = age
+
+    def _test(result):
+        assert result["name"] == "wall-e"
+        assert result["description"] == "a dog"
+        assert result["age"] == 2
+        assert "properties" not in result
+        assert "modelDescription" not in result
+        assert "model_description" not in result
+
+    hybrid_model = models.FlattenModel(name="wall-e", description="a dog", age=2)
+    msrest_model = MsrestFlattenModel(name="wall-e", description="a dog", age=2)
+
+    _test(as_attribute_dict(hybrid_model))
+    _test(as_attribute_dict(msrest_model))
