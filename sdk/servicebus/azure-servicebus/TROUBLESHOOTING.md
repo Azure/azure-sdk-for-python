@@ -18,7 +18,7 @@ This troubleshooting guide contains instructions to diagnose frequently encounte
 * [Troubleshooting connectivity issues](#troubleshooting-connectivity-issues)
   * [Timeout when connecting to service](#timeout-when-connecting-to-service)
   * [SSL handshake failures](#ssl-handshake-failures)
-  * [Specifying AMQP over websockets](#specifying-amqp-over-websockets)
+  * [Specifying AMQP over WebSockets](#specifying-amqp-over-websockets)
   * [Using Service Bus with Azure Identity](#using-service-bus-with-azure-identity)
   * [Entity not found errors](#entity-not-found-errors)
 * [Troubleshooting message handling issues](#troubleshooting-message-handling-issues)
@@ -45,6 +45,7 @@ To enable client logging and AMQP frame level trace:
 import logging
 import sys
 
+# Enable client level logging
 handler = logging.StreamHandler(stream=sys.stdout)
 log_fmt = logging.Formatter(fmt="%(asctime)s | %(threadName)s | %(levelname)s | %(name)s | %(message)s")
 handler.setFormatter(log_fmt)
@@ -52,11 +53,12 @@ logger = logging.getLogger('azure.servicebus')
 logger.setLevel(logging.DEBUG)
 logger.addHandler(handler)
 
-# Enable AMQP frame level trace
 from azure.servicebus import ServiceBusClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
+
+# Enable AMQP frame level trace with `logging_enable=True`
 client = ServiceBusClient(fully_qualified_namespace, credential, logging_enable=True)
 ```
 
@@ -227,7 +229,7 @@ To troubleshoot:
 
 - Check the firewall and port permissions in your hosting environment and that the AMQP ports 5671 and 5672 are open and that the endpoint is allowed through the firewall.
 
-- Try using the Web Socket transport option, which connects using port 443. This can be done by passing the [`transport_type=TransportType.AmqpOverWebsocket`](https://learn.microsoft.com/python/api/azure-servicebus/azure.servicebus.transporttype?view=azure-python) to the client.
+- Try using the WebSocket transport option, which connects using port 443. This can be done by passing the [`transport_type=TransportType.AmqpOverWebsocket`](https://learn.microsoft.com/python/api/azure-servicebus/azure.servicebus.transporttype?view=azure-python) to the client.
 
 - See if your network is blocking specific IP addresses. For details, see: [What IP addresses do I need to allow?](https://learn.microsoft.com/azure/service-bus-messaging/service-bus-faq#what-ip-addresses-do-i-need-to-add-to-allowlist-).
 
@@ -237,9 +239,9 @@ To troubleshoot:
 
 This error can occur when an intercepting proxy is used. To verify, it is recommended that the application be tested in the host environment with the proxy disabled. Note that intercepting proxies are not a supported scenario.
 
-### Specifying AMQP over websockets
+### Specifying AMQP over WebSockets
 
-To configure web socket use, pass the [`transport_type=TransportType.AmqpOverWebsocket`](https://learn.microsoft.com/python/api/azure-servicebus/azure.servicebus.transporttype?view=azure-python) to the `ServiceBusClient`.
+To configure WebSocket use, pass the [`transport_type=TransportType.AmqpOverWebsocket`](https://learn.microsoft.com/python/api/azure-servicebus/azure.servicebus.transporttype?view=azure-python) to the `ServiceBusClient`.
 
 ### Using Service Bus with Azure Identity
 
