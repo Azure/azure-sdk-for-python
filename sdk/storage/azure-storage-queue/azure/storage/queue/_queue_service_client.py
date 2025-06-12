@@ -124,7 +124,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     def __exit__(
         self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
     ) -> Any:
-        self._client.__exit__(typ=typ, exc=exc, tb=tb)
+        self._client.__exit__(typ, exc, tb)  # pylint: disable=specify-parameter-names-in-call
 
     def close(self) -> None:
         """This method is to close the sockets opened by the client.
