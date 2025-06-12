@@ -29,11 +29,7 @@ print(deps_list)
 
 from packaging.requirements import Requirement
 
-deps = [
-    Requirement(line)
-    for line in deps_list
-    if line.strip() and not line.strip().startswith("#")
-]
+deps = [Requirement(line) for line in deps_list if line.strip() and not line.strip().startswith("#")]
 import requests
 
 
