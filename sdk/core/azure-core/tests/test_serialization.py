@@ -9,7 +9,11 @@ import json
 import sys
 from typing import Dict, List, Optional
 
+<<<<<<< HEAD
 from azure.core.serialization import AzureJSONEncoder, NULL, as_attribute_dict
+=======
+from azure.core.serialization import AzureJSONEncoder, NULL, is_generated_model
+>>>>>>> 57f5413b7ab3a864ecba8d88718cc2c66e16e7dd
 import pytest
 from modeltypes._utils.model_base import Model as HybridModel, rest_field
 from modeltypes._utils.serialization import Model as MsrestModel
@@ -525,6 +529,47 @@ def test_readonly():
 def test_as_attribute_dict_scratch():
     model = models.Scratch(prop="test")
     assert as_attribute_dict(model) == {"prop": "test"}
+
+def test_is_generated_model_with_hybrid_model():
+    assert is_generated_model(HybridModel())
+    assert is_generated_model(models.FlattenModel({"name": "wall-e", "properties": {"description": "a dog", "age": 2}}))
+    assert is_generated_model(models.ClientNamedPropertyModel(prop_client_name="wall-e"))
+    assert is_generated_model(models.ReadonlyModel())
+
+
+def test_is_generated_model_with_msrest_model():
+    # Instead of importing msrest, we're just going to do a basic rendering of the msrest models
+    class MsrestModel(object):
+        _subtype_map = {}
+        _attribute_map = {}
+        _validation = {}
+
+        def __init__(self, *args, **kwargs):
+            self.additional_properties = {}
+
+    assert is_generated_model(MsrestModel())
+
+    class InstantiatedMsrestModel(MsrestModel):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.attr = "value"
+
+    assert is_generated_model(InstantiatedMsrestModel())
+
+
+def test_is_generated_model_with_non_models():
+    assert not is_generated_model({})
+    assert not is_generated_model([])
+    assert not is_generated_model("string")
+    assert not is_generated_model(42)
+    assert not is_generated_model(None)
+    assert not is_generated_model(object)
+
+    class Model:
+        def __init__(self):
+            self.attr = "value"
+
+    assert not is_generated_model(Model())
 
 
 def test_as_attribute_dict_client_name():

@@ -131,6 +131,17 @@ class AzureJSONEncoder(JSONEncoder):
         return super(AzureJSONEncoder, self).default(o)
 
 
+def is_generated_model(obj: Any) -> bool:
+    """Check if the object is a generated SDK model.
+
+    :param obj: The object to check.
+    :type obj: any
+    :return: True if the object is a generated SDK model, False otherwise.
+    :rtype: bool
+    """
+    return bool(getattr(obj, "_is_model", False) or hasattr(obj, "_attribute_map"))
+
+
 def _is_readonly(p: Any) -> bool:
     """Check if an attribute is readonly."""
     try:
@@ -173,8 +184,8 @@ def _get_flattened_attribute(obj: Any) -> Optional[str]:
 
 def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, Any]:
     """Convert an object to a dictionary of its attributes."""
-    # if not is_generated_model(obj):
-    #     raise TypeError("Object must be a generated model instance.")
+    if not is_generated_model(obj):
+        raise TypeError("Object must be a generated model instance.")
     if hasattr(obj, "_attribute_map"):
         # msrest generated model
         return obj.as_dict(keep_readonly=not exclude_readonly)
