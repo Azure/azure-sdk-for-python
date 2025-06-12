@@ -1,5 +1,15 @@
 # Release History
 
+## 12.14.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 12.14.0b1 (2025-06-12)
 
 This version and all future versions will require Python 3.9+. Python 3.8 is no longer supported.
