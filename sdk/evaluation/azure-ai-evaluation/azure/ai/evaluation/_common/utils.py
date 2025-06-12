@@ -481,6 +481,95 @@ def validate_conversation(conversation):
             ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
         )
 
+def _extract_text_from_content(content):
+    text = []
+    for msg in content:
+        if 'text' in msg:
+            text.append(msg['text'])
+    return text
+
+def _get_conversation_history(query):
+    all_user_queries = []
+    cur_user_query = []
+    all_agent_responses = []
+    cur_agent_response = []
+    for msg in query:
+        if not 'role' in msg:
+            continue
+        if msg['role'] == 'user' and 'content' in msg:
+            if cur_agent_response != []:
+                all_agent_responses.append(cur_agent_response)
+                cur_agent_response = []
+            text_in_msg = _extract_text_from_content(msg['content'])
+            if text_in_msg:
+                cur_user_query.append(text_in_msg)
+
+        if msg['role'] == 'assistant' and 'content' in msg:
+            if cur_user_query !=[]:
+                all_user_queries.append(cur_user_query)
+                cur_user_query = []
+            text_in_msg = _extract_text_from_content(msg['content'])
+            if text_in_msg:
+                cur_agent_response.append(text_in_msg)
+    if cur_user_query !=[]:
+        all_user_queries.append(cur_user_query)
+    assert len(all_user_queries) == len(all_agent_responses) + 1, "There should be exactly one more user query than agent responses"
+    return {
+            'user_queries'    : all_user_queries,
+            'agent_responses' : all_agent_responses
+           }
+
+def _pretty_format_conversation_history(conversation_history):
+    """Formats the conversation history for better readability."""
+    formatted_history = ""
+    for i, (user_query, agent_response) in enumerate(zip(conversation_history['user_queries'], conversation_history['agent_responses']+[None])):
+        formatted_history+=f"User turn {i+1}:\n"
+        for msg in user_query:
+            formatted_history+="  " + "\n  ".join(msg)
+        formatted_history+="\n\n"
+        if agent_response:
+            formatted_history+=f"Agent turn {i+1}:\n"
+            for msg in agent_response:
+                formatted_history+="  " + "\n  ".join(msg)
+        formatted_history+="\n\n"
+    return formatted_history
+
+def reformat_conversation_history(query):
+    """Reformats the conversation history to a more compact representation."""
+    try:
+        conversation_history = _get_conversation_history(query)
+        return _pretty_format_conversation_history(conversation_history)
+    except:
+        # If the conversation history cannot be parsed for whatever reason (e.g. the converter format changed), the original query is returned
+        # This is a fallback to ensure that the evaluation can still proceed. However the accuracy of the evaluation will be affected.
+        # From our tests the negative impact on IntentResolution is:
+        #   Higher intra model variance (0.142 vs 0.046)
+        #   Higher inter model variance (0.345 vs 0.607)
+        #   Lower percentage of mode in Likert scale (73.4% vs 75.4%)
+        #   Lower pairwise agreement between LLMs (85% vs 90% at the pass/fail level with threshold of 3)
+        return query
+
+def _get_agent_response(agent_response_msgs):
+    """Extracts the text from the agent response content."""
+    agent_response_text = []
+    for msg in agent_response_msgs:
+        if 'role' in msg and msg['role'] == 'assistant' and 'content' in msg:
+            text = _extract_text_from_content(msg['content'])
+            if text:
+                agent_response_text.extend(text)
+    return agent_response_text
+
+def reformat_agent_response(response):
+    try:
+        agent_response = _get_agent_response(response)
+        if agent_response == []:
+            return ""
+        return "\n".join(agent_response)
+    except:
+        # If the agent response cannot be parsed for whatever reason (e.g. the converter format changed), the original response is returned
+        # This is a fallback to ensure that the evaluation can still proceed. See comments on reformat_conversation_history for more details.
+        return response
+
 def upload(path: str, container_client: ContainerClient, logger=None):
     """Upload files or directories to Azure Blob Storage using a container client.
 
