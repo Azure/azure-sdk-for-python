@@ -12,7 +12,7 @@ DESCRIPTION:
     For more information on the azure.ai.inference package see https://pypi.org/project/azure-ai-inference/.
 
 USAGE:
-    sample_chat_completions_with_azure_ai_inference_client_and_azure_monitor_tracing.py
+    python sample_chat_completions_with_azure_ai_inference_client_and_azure_monitor_tracing.py
 
     Before running the sample:
 
@@ -27,8 +27,10 @@ USAGE:
 """
 
 import os
+from urllib.parse import urlparse
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient, enable_telemetry
+from azure.ai.inference import ChatCompletionsClient
 from azure.ai.inference.models import UserMessage
 from azure.monitor.opentelemetry import configure_azure_monitor
 
@@ -52,10 +54,19 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
 
         configure_azure_monitor(connection_string=application_insights_connection_string)
 
-        with project_client.inference.get_chat_completions_client() as client:
+    # Project endpoint has the form:   https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>
+    # Inference endpoint has the form: https://<your-ai-services-account-name>.services.ai.azure.com/models
+    # Strip the "/api/projects/<your-project-name>" part and replace with "/models":
+    inference_endpoint = f"https://{urlparse(endpoint).netloc}/models"
 
-            response = client.complete(
-                model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
-            )
+    with ChatCompletionsClient(
+        endpoint=inference_endpoint,
+        credential=credential,
+        credential_scopes=["https://ai.azure.com/.default"],
+    ) as client:
 
-            print(response.choices[0].message.content)
+        response = client.complete(
+            model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
+        )
+
+        print(response.choices[0].message.content)

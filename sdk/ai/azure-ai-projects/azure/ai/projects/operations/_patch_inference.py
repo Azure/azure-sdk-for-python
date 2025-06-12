@@ -17,29 +17,8 @@ from ..models._enums import ConnectionType
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from openai import AzureOpenAI
-    from azure.ai.inference import ChatCompletionsClient, EmbeddingsClient, ImageEmbeddingsClient
 
 logger = logging.getLogger(__name__)
-
-
-def _get_inference_url(input_url: str) -> str:
-    """
-    Converts an input URL in the format:
-    https://<host-name>/<some-path>
-    to:
-    https://<host-name>/models
-
-    :param input_url: The input endpoint URL used to construct AIProjectClient.
-    :type input_url: str
-
-    :return: The endpoint URL required to construct inference clients from the `azure-ai-inference` package.
-    :rtype: str
-    """
-    parsed = urlparse(input_url)
-    if parsed.scheme != "https" or not parsed.netloc:
-        raise ValueError("Invalid endpoint URL format. Must be an https URL with a host.")
-    new_url = f"https://{parsed.netloc}/models"
-    return new_url
 
 
 def _get_aoai_inference_url(input_url: str) -> str:
@@ -74,123 +53,6 @@ class InferenceOperations:
 
     def __init__(self, outer_instance: "azure.ai.projects.AIProjectClient") -> None:  # type: ignore[name-defined]
         self._outer_instance = outer_instance
-
-    @distributed_trace
-    def get_chat_completions_client(self, **kwargs: Any) -> "ChatCompletionsClient":  # type: ignore[name-defined]
-        """Get an authenticated ChatCompletionsClient (from the package azure-ai-inference) to use with
-        AI models deployed to your AI Foundry Project. Keyword arguments are passed to the constructor of
-        ChatCompletionsClient.
-
-        At least one AI model that supports chat completions must be deployed.
-
-        .. note:: The package `azure-ai-inference` must be installed prior to calling this method.
-
-        :return: An authenticated chat completions client.
-        :rtype: ~azure.ai.inference.ChatCompletionsClient
-
-        :raises ~azure.core.exceptions.ModuleNotFoundError: if the `azure-ai-inference` package
-         is not installed.
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-        try:
-            from azure.ai.inference import ChatCompletionsClient
-        except ModuleNotFoundError as e:
-            raise ModuleNotFoundError(
-                "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
-            ) from e
-
-        endpoint = _get_inference_url(self._outer_instance._config.endpoint)  # pylint: disable=protected-access
-
-        client = ChatCompletionsClient(
-            endpoint=endpoint,
-            credential=self._outer_instance._config.credential,  # pylint: disable=protected-access
-            credential_scopes=self._outer_instance._config.credential_scopes,  # pylint: disable=protected-access
-            user_agent=kwargs.pop(
-                "user_agent", self._outer_instance._patched_user_agent  # pylint: disable=protected-access
-            ),
-            **kwargs,
-        )
-
-        return client
-
-    @distributed_trace
-    def get_embeddings_client(self, **kwargs: Any) -> "EmbeddingsClient":  # type: ignore[name-defined]
-        """Get an authenticated EmbeddingsClient (from the package azure-ai-inference) to use with
-        AI models deployed to your AI Foundry Project. Keyword arguments are passed to the constructor of
-        ChatCompletionsClient.
-
-        At least one AI model that supports text embeddings must be deployed.
-
-        .. note:: The package `azure-ai-inference` must be installed prior to calling this method.
-
-        :return: An authenticated Embeddings client.
-        :rtype: ~azure.ai.inference.EmbeddingsClient
-
-        :raises ~azure.core.exceptions.ModuleNotFoundError: if the `azure-ai-inference` package
-         is not installed.
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-        try:
-            from azure.ai.inference import EmbeddingsClient
-        except ModuleNotFoundError as e:
-            raise ModuleNotFoundError(
-                "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
-            ) from e
-
-        endpoint = _get_inference_url(self._outer_instance._config.endpoint)  # pylint: disable=protected-access
-
-        client = EmbeddingsClient(
-            endpoint=endpoint,
-            credential=self._outer_instance._config.credential,  # pylint: disable=protected-access
-            credential_scopes=self._outer_instance._config.credential_scopes,  # pylint: disable=protected-access,
-            user_agent=kwargs.pop(
-                "user_agent", self._outer_instance._patched_user_agent  # pylint: disable=protected-access
-            ),
-            **kwargs,
-        )
-
-        return client
-
-    @distributed_trace
-    def get_image_embeddings_client(self, **kwargs: Any) -> "ImageEmbeddingsClient":  # type: ignore[name-defined]
-        """Get an authenticated ImageEmbeddingsClient (from the package azure-ai-inference) to use with
-        AI models deployed to your AI Foundry Project. Keyword arguments are passed to the constructor of
-        ChatCompletionsClient.
-
-        At least one AI model that supports image embeddings must be deployed.
-
-        .. note:: The package `azure-ai-inference` must be installed prior to calling this method.
-
-        :return: An authenticated Image Embeddings client.
-        :rtype: ~azure.ai.inference.ImageEmbeddingsClient
-
-        :raises ~azure.core.exceptions.ModuleNotFoundError: if the `azure-ai-inference` package
-         is not installed.
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-        try:
-            from azure.ai.inference import ImageEmbeddingsClient
-        except ModuleNotFoundError as e:
-            raise ModuleNotFoundError(
-                "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
-            ) from e
-
-        endpoint = _get_inference_url(self._outer_instance._config.endpoint)  # pylint: disable=protected-access
-
-        client = ImageEmbeddingsClient(
-            endpoint=endpoint,
-            credential=self._outer_instance._config.credential,  # pylint: disable=protected-access
-            credential_scopes=self._outer_instance._config.credential_scopes,  # pylint: disable=protected-access,
-            user_agent=kwargs.pop(
-                "user_agent", self._outer_instance._patched_user_agent  # pylint: disable=protected-access
-            ),
-            **kwargs,
-        )
-
-        return client
 
     @distributed_trace
     def get_azure_openai_client(
