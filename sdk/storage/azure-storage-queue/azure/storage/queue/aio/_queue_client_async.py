@@ -141,7 +141,7 @@ class QueueClient(  # type: ignore [misc]
 
     async def __aexit__(
         self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
-    ) -> Any:
+    ) -> None:
         await self._client.__aexit__(typ, exc, tb)  # pylint: disable=specify-parameter-names-in-call
 
     async def close(self) -> None:
