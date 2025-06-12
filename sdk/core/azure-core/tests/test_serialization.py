@@ -9,11 +9,7 @@ import json
 import sys
 from typing import Dict, List, Optional
 
-<<<<<<< HEAD
-from azure.core.serialization import AzureJSONEncoder, NULL, as_attribute_dict
-=======
-from azure.core.serialization import AzureJSONEncoder, NULL, is_generated_model
->>>>>>> 57f5413b7ab3a864ecba8d88718cc2c66e16e7dd
+from azure.core.serialization import AzureJSONEncoder, NULL, as_attribute_dict, is_generated_model
 import pytest
 from modeltypes._utils.model_base import Model as HybridModel, rest_field
 from modeltypes._utils.serialization import Model as MsrestModel
@@ -533,7 +529,7 @@ def test_as_attribute_dict_scratch():
 def test_is_generated_model_with_hybrid_model():
     assert is_generated_model(HybridModel())
     assert is_generated_model(models.FlattenModel({"name": "wall-e", "properties": {"description": "a dog", "age": 2}}))
-    assert is_generated_model(models.ClientNamedPropertyModel(prop_client_name="wall-e"))
+    assert is_generated_model(models.ClientNameAndJsonEncodedNameModel(client_name="wall-e"))
     assert is_generated_model(models.ReadonlyModel())
 
 
