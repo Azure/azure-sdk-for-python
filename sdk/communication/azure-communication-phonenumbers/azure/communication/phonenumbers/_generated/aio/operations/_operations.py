@@ -100,8 +100,8 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
 
         :param country_code: The ISO 3166-2 country code, e.g. US. Required.
         :type country_code: str
-        :keyword phone_number_type: Filter by numberType, e.g. Geographic, TollFree. Known values are:
-         "geographic" and "tollFree". Required.
+        :keyword phone_number_type: Filter by numberType, e.g. Geographic, TollFree, Mobile. Known
+         values are: "geographic", "tollFree", and "mobile". Required.
         :paramtype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
@@ -461,6 +461,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         max_page_size: int = 100,
         administrative_division: Optional[str] = None,
         accept_language: Optional[str] = None,
+        phone_number_type: Optional[Union[str, _models.PhoneNumberType]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.PhoneNumberLocality"]:
         """Gets the list of cities or towns with available phone numbers.
@@ -481,6 +482,9 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         :keyword accept_language: The locale to display in the localized fields in the response. e.g.
          'en-US'. Default value is None.
         :paramtype accept_language: str
+        :keyword phone_number_type: Filter by numberType, e.g. Geographic, TollFree, Mobile. Known
+         values are: "geographic", "tollFree", and "mobile". Default value is None.
+        :paramtype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
         :return: An iterator like instance of PhoneNumberLocality
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.models.PhoneNumberLocality]
@@ -508,6 +512,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
                     max_page_size=max_page_size,
                     administrative_division=administrative_division,
                     accept_language=accept_language,
+                    phone_number_type=phone_number_type,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -592,8 +597,8 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         :keyword max_page_size: An optional parameter for how many entries to return, for pagination
          purposes. The default value is 100. Default value is 100.
         :paramtype max_page_size: int
-        :keyword phone_number_type: Filter by numberType, e.g. Geographic, TollFree. Known values are:
-         "geographic" and "tollFree". Default value is None.
+        :keyword phone_number_type: Filter by numberType, e.g. Geographic, TollFree, Mobile. Known
+         values are: "geographic", "tollFree", and "mobile". Default value is None.
         :paramtype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
         :keyword assignment_type: Filter by assignmentType, e.g. Person, Application. Known values are:
          "person" and "application". Default value is None.
