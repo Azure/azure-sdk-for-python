@@ -795,10 +795,10 @@ def _replace_throughput(
             increment_percent = throughput.auto_scale_increment_percent
             if max_throughput is not None:
                 new_throughput_properties['content']['offerAutopilotSettings']['maxThroughput'] = max_throughput
-                if increment_percent:
-                    new_throughput_properties['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy']['incrementPercent'] = increment_percent  # pylint: disable=line-too-long
-                if throughput.offer_throughput:
-                    new_throughput_properties["content"]["offerThroughput"] = throughput.offer_throughput
+            if increment_percent:
+                new_throughput_properties['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy']['incrementPercent'] = increment_percent  # pylint: disable=line-too-long
+            if throughput.offer_throughput:
+                new_throughput_properties["content"]["offerThroughput"] = throughput.offer_throughput
         except AttributeError as e:
             raise TypeError("offer_throughput must be int or an instance of ThroughputProperties") from e
 
