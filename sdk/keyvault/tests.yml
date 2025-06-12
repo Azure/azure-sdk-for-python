@@ -11,6 +11,7 @@ extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: keyvault
+      PersistOidcToken: true
       Packages: ${{ parameters.Services }}
       TestTimeoutInMinutes: 240
       EnvVars:

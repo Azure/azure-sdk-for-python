@@ -32,9 +32,9 @@ from ._utils import current_time_millis
 from ._constants import _Constants as Constants
 
 MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
-MAX_UNAVAILABLE_TIME = 1200 * 1000 # milliseconds
-REFRESH_INTERVAL = 60 * 1000 # milliseconds
-INITIAL_UNAVAILABLE_TIME = 60 * 1000 # milliseconds
+MAX_UNAVAILABLE_TIME_MS = 1200 * 1000 # 20 minutes in milliseconds
+REFRESH_INTERVAL_MS = 60 * 1000 # 1 minute in milliseconds
+INITIAL_UNAVAILABLE_TIME_MS = 60 * 1000 # 1 minute in milliseconds
 # partition is unhealthy if sdk tried to recover and failed
 UNHEALTHY = "unhealthy"
 # partition is unhealthy tentative when it initially marked unavailable
@@ -58,13 +58,11 @@ class _PartitionHealthInfo(object):
         self.write_consecutive_failure_count: int = 0
         self.unavailability_info: Dict[str, Any] = {}
 
-    def reset_health_stats(self) -> None:
+    def reset_failure_rate_health_stats(self) -> None:
         self.write_failure_count = 0
         self.read_failure_count = 0
         self.write_success_count = 0
         self.read_success_count = 0
-        self.read_consecutive_failure_count = 0
-        self.write_consecutive_failure_count = 0
 
     def transition_health_status(self, target_health_status: str, curr_time: int) -> None:
         if target_health_status == UNHEALTHY :
@@ -72,13 +70,13 @@ class _PartitionHealthInfo(object):
             # reset the last unavailability check time stamp
             self.unavailability_info[UNAVAILABLE_INTERVAL] = \
                 min(self.unavailability_info[UNAVAILABLE_INTERVAL] * 2,
-                    MAX_UNAVAILABLE_TIME)
+                    MAX_UNAVAILABLE_TIME_MS)
             self.unavailability_info[LAST_UNAVAILABILITY_CHECK_TIME_STAMP] \
                 = curr_time
         elif target_health_status == UNHEALTHY_TENTATIVE :
             self.unavailability_info = {
                 LAST_UNAVAILABILITY_CHECK_TIME_STAMP: curr_time,
-                UNAVAILABLE_INTERVAL: INITIAL_UNAVAILABLE_TIME,
+                UNAVAILABLE_INTERVAL: INITIAL_UNAVAILABLE_TIME_MS,
                 HEALTH_STATUS: UNHEALTHY_TENTATIVE
             }
 
@@ -108,7 +106,7 @@ def _should_mark_healthy_tentative(partition_health_info: _PartitionHealthInfo, 
     stale_partition_unavailability_check = partition_health_info.unavailability_info[UNAVAILABLE_INTERVAL]
     # check if the partition key range is still unavailable
     return ((current_health_status == UNHEALTHY and elapsed_time > stale_partition_unavailability_check)
-            or (current_health_status == UNHEALTHY_TENTATIVE and  elapsed_time > INITIAL_UNAVAILABLE_TIME))
+            or (current_health_status == UNHEALTHY_TENTATIVE and elapsed_time > INITIAL_UNAVAILABLE_TIME_MS))
 
 logger = logging.getLogger("azure.cosmos._PartitionHealthTracker")
 
@@ -178,9 +176,10 @@ class _PartitionHealthTracker(object):
                                 partition_health_info.transition_health_status(UNHEALTHY, current_time)
                                 request.healthy_tentative_location = location
 
-        if current_time - self.last_refresh > REFRESH_INTERVAL:
+        if current_time - self.last_refresh > REFRESH_INTERVAL_MS:
             # all partition stats reset every minute
             self._reset_partition_health_tracker_stats()
+            self.last_refresh = current_time
 
 
     def get_unhealthy_locations(
@@ -290,4 +289,4 @@ class _PartitionHealthTracker(object):
     def _reset_partition_health_tracker_stats(self) -> None:
         for locations in self.pk_range_wrapper_to_health_info.values():
             for health_info in locations.values():
-                health_info.reset_health_stats()
+                health_info.reset_failure_rate_health_stats()
