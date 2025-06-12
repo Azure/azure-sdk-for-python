@@ -349,7 +349,7 @@
 # ServiceOwners:  @mattgotteiner
 
 # PRLabel: %Search
-/sdk/search/                                                         @xiangyan99
+/sdk/search/                                                         @xiangyan99 @Azure/azsdk-search
 
 # PRLabel: %Service Fabric
 /sdk/servicefabric/                                                  @QingChenmsft @samedder
