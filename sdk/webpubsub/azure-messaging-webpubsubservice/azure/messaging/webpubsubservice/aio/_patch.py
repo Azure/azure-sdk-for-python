@@ -50,7 +50,7 @@ from .._operations._operations import (
 
 from .._patch import _parse_connection_string, WebPubSubServiceClientBase
 from ._client import WebPubSubServiceClient as WebPubSubServiceClientGenerated
-from .._models import GroupMember
+from ..models import GroupMember
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -108,11 +108,7 @@ class WebPubSubServiceClient(WebPubSubServiceClientBase, WebPubSubServiceClientG
         Example:
             .. code-block:: python
 
-                # response body for status code(s): 200
-                response == {
-                    "connectionId": "str",
-                    "userId": "str"
-                }
+
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}

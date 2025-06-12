@@ -37,7 +37,7 @@ from ._operations import (
     build_web_pub_sub_service_send_to_group_request,
     build_web_pub_sub_service_list_connections_in_group_request,
 )
-from .._models import GroupMember
+from ..models import GroupMember
 
 class _UTC_TZ(tzinfo):
     """from https://docs.python.org/2/library/datetime.html#tzinfo-objects"""
@@ -135,7 +135,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         # Example URL for Default Client Type: https://<service-name>.webpubsub.azure.com/client/hubs/<hub>
         #                 MQTT Client Type: https://<service-name>.webpubsub.azure.com/clients/mqtt/hubs/<hub>
         #                 SocketIO Client Type: https://<service-name>.webpubsub.azure.com/clients/socketio/hubs/<hub>
-
         path = "/client/hubs/"
         if client_protocol.lower() == "mqtt":
             path = "/clients/mqtt/hubs/"
@@ -144,9 +143,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         client_url = client_endpoint + path + hub
         jwt_headers = kwargs.pop("jwt_headers", {})
         if isinstance(self._config.credential, AzureKeyCredential):
-            token = get_token_by_key(
-                endpoint, path, hub, self._config.credential.key, jwt_headers=jwt_headers, **kwargs
-            )
+            token = get_token_by_key(endpoint, path, hub, self._config.credential.key, jwt_headers=jwt_headers, **kwargs)
         else:
             token = super().get_client_access_token(client_protocol=client_protocol, **kwargs).get("token")
         return {
@@ -160,8 +157,8 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
     @distributed_trace
     def list_connections_in_group(
         self,
-        group: str,
         *,
+        group: str,
         top: Optional[int] = None,
         continuation_token_parameter: Optional[str] = None,
         **kwargs: Any
@@ -189,11 +186,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         Example:
             .. code-block:: python
 
-                # response body for status code(s): 200
-                response == {
-                    "connectionId": "str",
-                    "userId": "str"
-                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
