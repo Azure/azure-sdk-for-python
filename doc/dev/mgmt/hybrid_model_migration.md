@@ -16,7 +16,7 @@ When migrating to the hybrid model design, expect these breaking changes:
 | [Model Hierarchy](#model-hierarchy-reflects-rest-api-structure)                     | Multi-level flattened properties removed                  | Replace `obj.level1_level2_prop` with `obj.level1.level2.prop`                    |
 | [Additional Properties](#additional-properties-handling)                            | `additional_properties` parameter removed                 | Use direct dictionary syntax: `model["key"] = value`                              |
 | [String Representation](#string-representation-matches-rest-api)                    | Model key output changed from `snake_case` to `camelCase` | Update any code parsing model strings to expect `camelCase`                       |
-| [Serialization/Deserialization](#serialization-and-deserialization-methods-removed) | `serialization` and `deserialization` methods removed     | Use dictionary access for serialization, constructor for deserialization          |
+| [Serialization/Deserialization](#serialization-and-deserialization-methods-removed) | `serialize` and `deserialize` methods removed     | Use dictionary access for serialization, constructor for deserialization          |
 
 ## Detailed Breaking Changes
 
@@ -26,14 +26,14 @@ When migrating to the hybrid model design, expect these breaking changes:
 
 **What will break**:
 
-- Code that relies on parameter `keep_readonly` to `.on_dict()`
+- Code that relies on parameter `keep_readonly` to `.as_dict()`
 - Code that expects `snake_case` keys in dictionary output
 
 **Before**:
 
 ```python
 from azure.mgmt.test.models import Model
-model = Model(name="example")
+model = Model(my_name="example")
 
 # Dictionary access required as_dict()
 json_model = model.as_dict(keep_readonly=True)
@@ -44,7 +44,7 @@ print(json_model["my_name"])  # snake_case key
 
 ```python
 from azure.mgmt.test.models import Model
-model = Model(name="example")
+model = Model(my_name="example")
 
 # Direct dictionary access now works
 print(model["myName"])  # Works directly
@@ -67,7 +67,7 @@ print(json_model["myName"])  # Now returns camelCase key (matches REST API)
 **What will break**:
 
 - We've maintained backcompat for attribute access for single-level flattened properties, but multi-level flattening will no longer be supported.
-- No level of flattening will be supported when dealing with the the response object from `.to_dict()`.
+- No level of flattening will be supported when dealing with the response object from `.as_dict()`.
 
 **Before**:
 
@@ -82,7 +82,6 @@ print(json_model["properties_properties_name"])  # Works (artificially flattened
 **After**:
 
 ```python
-
 model = Model(...)
 print(model.properties_name)                      # Still works (single-level flattening maintained for compatibility)
 print(model.properties.name)                      # Equivalent to above, preferred approach
@@ -95,11 +94,10 @@ print(model["properties"]["properties"]["name"])  # ✅ Mirrors actual API struc
 
 **Migration steps:**
 
-Identify any properties with multiple underscores that represent nested structures
-Replace them with the actual nested property access using dot notation
-
-Example: `obj.level1_level2_property` → `obj.level1.level2.property`
-This new structure will match your REST API documentation exactly
+- Identify any properties with multiple underscores that represent nested structures
+- Replace them with the actual nested property access using dot notation
+- Example: `obj.level1_level2_property` → `obj.level1.level2.property`
+- This new structure will match your REST API documentation exactly
 
 ### Additional Properties Handling
 
@@ -187,7 +185,7 @@ import json
 
 # Serialization
 model = Model(name="example", value=42)
-serialized_dict = model.serialize()  # Returns dict using the REST API name, compatible with `json.dump` 
+serialized_dict = model.serialize()  # Returns dict using the REST API name, compatible with `json.dumps` 
 json_string = json.dumps(serialized_dict)
 
 # Deserialization
