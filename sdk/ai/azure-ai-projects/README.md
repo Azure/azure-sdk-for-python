@@ -97,7 +97,7 @@ project_client = AIProjectClient.from_connection_string(
 
 ### Performing Agent operations
 
-The `.agents` property on the `AIProjectsClient` gives you access to an authenticated `AgentsClient` from the `azure-ai-agents` package. Below we show how to create an Agent and delete it. To see what you can do with the `agent` you created, see the [many samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents/samples) associated with the `azure-ai-agents` package.
+The `.agents` property on the `AIProjectsClient` gives you access to an authenticated `AgentsClient` from the `azure-ai-agents` package. Below we show how to create an Agent and delete it. To see what you can do with the Agent you created, see the [many samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents/samples) and the [README.md](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents) file of the dependent `azure-ai-agents` package.
 
 The code below assumes `model_deployment_name` (a string) is defined. It's the deployment name of an AI model in your Foundry Project, as shown in the "Models + endpoints" tab, under the "Name" column.
 
