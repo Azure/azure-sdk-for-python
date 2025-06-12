@@ -183,7 +183,18 @@ def _get_flattened_attribute(obj: Any) -> Optional[str]:
 
 
 def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, Any]:
-    """Convert an object to a dictionary of its attributes."""
+    """Convert an object to a dictionary of its attributes.
+
+    Made solely for backcompatibility with the legacy `.as_dict()` on msrest models.
+
+    .. deprecated::1.35.0
+        This function is added for backcompat purposes only.
+
+    :param obj: The object to convert to a dictionary
+    :param exclude_readonly: Whether to exclude readonly properties
+    :return: A dictionary containing the object's attributes
+    :raises TypeError: If the object is not a generated model instance
+    """
     if not is_generated_model(obj):
         raise TypeError("Object must be a generated model instance.")
     if hasattr(obj, "_attribute_map"):
@@ -192,7 +203,7 @@ def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, 
     try:
         # now we're a typespec generated model
         result = {}
-        readonly_props = []
+        readonly_props = set()
 
         # create a reverse mapping from rest field name to attribute name
         rest_to_attr = {}
@@ -201,7 +212,7 @@ def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, 
 
             if exclude_readonly and _is_readonly(rest_field):
                 # if we're excluding readonly properties, we need to track them
-                readonly_props.append(rest_field._rest_name)
+                readonly_props.add(rest_field._rest_name)
             if flattened_attribute == attr_name:
                 for fk, fv in rest_field._class_type._attr_to_rest_field.items():
                     rest_to_attr[fv._rest_name] = fk
