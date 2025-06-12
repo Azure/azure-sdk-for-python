@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -56,7 +56,7 @@ def build_phone_numbers_list_area_codes_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -95,7 +95,7 @@ def build_phone_numbers_list_available_countries_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -123,7 +123,7 @@ def build_phone_numbers_browse_available_numbers_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -152,12 +152,13 @@ def build_phone_numbers_list_available_localities_request(  # pylint: disable=na
     max_page_size: int = 100,
     administrative_division: Optional[str] = None,
     accept_language: Optional[str] = None,
+    phone_number_type: Optional[Union[str, _models.PhoneNumberType]] = None,
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -176,6 +177,8 @@ def build_phone_numbers_list_available_localities_request(  # pylint: disable=na
     if administrative_division is not None:
         _params["administrativeDivision"] = _SERIALIZER.query("administrative_division", administrative_division, "str")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if phone_number_type is not None:
+        _params["phoneNumberType"] = _SERIALIZER.query("phone_number_type", phone_number_type, "str")
 
     # Construct headers
     if accept_language is not None:
@@ -198,7 +201,7 @@ def build_phone_numbers_list_offerings_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -234,7 +237,7 @@ def build_phone_numbers_list_reservations_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -258,7 +261,7 @@ def build_phone_numbers_create_or_update_reservation_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -286,7 +289,7 @@ def build_phone_numbers_get_reservation_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -312,7 +315,7 @@ def build_phone_numbers_delete_reservation_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -339,7 +342,7 @@ def build_phone_numbers_purchase_reservation_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -368,7 +371,7 @@ def build_phone_numbers_search_available_phone_numbers_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -396,7 +399,7 @@ def build_phone_numbers_get_search_result_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -421,7 +424,7 @@ def build_phone_numbers_purchase_phone_numbers_request(**kwargs: Any) -> HttpReq
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -444,7 +447,7 @@ def build_phone_numbers_get_operation_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -470,7 +473,7 @@ def build_phone_numbers_cancel_operation_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -497,7 +500,7 @@ def build_phone_numbers_update_capabilities_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -525,7 +528,7 @@ def build_phone_numbers_get_by_number_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -551,7 +554,7 @@ def build_phone_numbers_release_phone_number_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -577,7 +580,7 @@ def build_phone_numbers_list_phone_numbers_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -603,7 +606,7 @@ def build_phone_numbers_operator_information_search_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -652,15 +655,15 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         administrative_division: Optional[str] = None,
         accept_language: Optional[str] = None,
         **kwargs: Any,
-    ) -> Iterable["_models.PhoneNumberAreaCode"]:
+    ) -> ItemPaged["_models.PhoneNumberAreaCode"]:
         """Gets the list of available area codes.
 
         Gets the list of available area codes.
 
         :param country_code: The ISO 3166-2 country code, e.g. US. Required.
         :type country_code: str
-        :keyword phone_number_type: Filter by numberType, e.g. Geographic, TollFree. Known values are:
-         "geographic" and "tollFree". Required.
+        :keyword phone_number_type: Filter by numberType, e.g. Geographic, TollFree, Mobile. Known
+         values are: "geographic", "tollFree", and "mobile". Required.
         :paramtype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
@@ -774,7 +777,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_available_countries(
         self, *, skip: int = 0, max_page_size: int = 100, accept_language: Optional[str] = None, **kwargs: Any
-    ) -> Iterable["_models.PhoneNumberCountry"]:
+    ) -> ItemPaged["_models.PhoneNumberCountry"]:
         """Gets the list of supported countries.
 
         Gets the list of supported countries.
@@ -1020,8 +1023,9 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         max_page_size: int = 100,
         administrative_division: Optional[str] = None,
         accept_language: Optional[str] = None,
+        phone_number_type: Optional[Union[str, _models.PhoneNumberType]] = None,
         **kwargs: Any,
-    ) -> Iterable["_models.PhoneNumberLocality"]:
+    ) -> ItemPaged["_models.PhoneNumberLocality"]:
         """Gets the list of cities or towns with available phone numbers.
 
         Gets the list of cities or towns with available phone numbers.
@@ -1040,6 +1044,9 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         :keyword accept_language: The locale to display in the localized fields in the response. e.g.
          'en-US'. Default value is None.
         :paramtype accept_language: str
+        :keyword phone_number_type: Filter by numberType, e.g. Geographic, TollFree, Mobile. Known
+         values are: "geographic", "tollFree", and "mobile". Default value is None.
+        :paramtype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
         :return: An iterator like instance of PhoneNumberLocality
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.PhoneNumberLocality]
@@ -1067,6 +1074,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
                     max_page_size=max_page_size,
                     administrative_division=administrative_division,
                     accept_language=accept_language,
+                    phone_number_type=phone_number_type,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1138,7 +1146,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         assignment_type: Optional[Union[str, _models.PhoneNumberAssignmentType]] = None,
         accept_language: Optional[str] = None,
         **kwargs: Any,
-    ) -> Iterable["_models.PhoneNumberOffering"]:
+    ) -> ItemPaged["_models.PhoneNumberOffering"]:
         """List available offerings of capabilities with rates for the given country.
 
         List available offerings of capabilities with rates for the given country.
@@ -1151,8 +1159,8 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
         :keyword max_page_size: An optional parameter for how many entries to return, for pagination
          purposes. The default value is 100. Default value is 100.
         :paramtype max_page_size: int
-        :keyword phone_number_type: Filter by numberType, e.g. Geographic, TollFree. Known values are:
-         "geographic" and "tollFree". Default value is None.
+        :keyword phone_number_type: Filter by numberType, e.g. Geographic, TollFree, Mobile. Known
+         values are: "geographic", "tollFree", and "mobile". Default value is None.
         :paramtype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
         :keyword assignment_type: Filter by assignmentType, e.g. Person, Application. Known values are:
          "person" and "application". Default value is None.
@@ -1252,7 +1260,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_reservations(
         self, *, max_page_size: int = 100, **kwargs: Any
-    ) -> Iterable["_models.PhoneNumbersReservation"]:
+    ) -> ItemPaged["_models.PhoneNumbersReservation"]:
         """Lists all reservations.
 
         Retrieves a paginated list of all phone number reservations. Note that the reservations will
@@ -2707,7 +2715,7 @@ class PhoneNumbersOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_phone_numbers(
         self, *, skip: int = 0, top: int = 100, **kwargs: Any
-    ) -> Iterable["_models.PurchasedPhoneNumber"]:
+    ) -> ItemPaged["_models.PurchasedPhoneNumber"]:
         """Gets the list of all purchased phone numbers.
 
         Gets the list of all purchased phone numbers.
