@@ -9,6 +9,7 @@ from typing import Union, Sequence, Optional, Dict
 import uuid
 
 from azure.core.tracing import HttpSpanMixin, SpanKind
+from opentelemetry.trace import SpanKind
 
 
 AttributeValue = Union[
@@ -218,3 +219,58 @@ class FakeSpan(HttpSpanMixin, object):
         :return: The target the pass in instead of the function
         """
         return func
+
+
+class EventHubsTracingTestBase:
+
+    def _verify_span_attributes(self, *, span):
+        # Ensure all attributes are set and have a value.
+        for attr in span.attributes:
+            assert span.attributes[attr] is not None and span.attributes[attr] != ""
+
+    def _verify_message(self, *, span, dest, server_address):
+        assert span.name == "EventHubs.message"
+        assert span.kind == SpanKind.PRODUCER
+        self._verify_span_attributes(span=span)
+        assert span.attributes["az.namespace"] == "Microsoft.EventHub"
+        assert span.attributes["messaging.system"] == "eventhubs"
+        assert span.attributes["messaging.destination.name"] == dest
+        assert span.attributes["net.peer.name"] == server_address
+
+    def _verify_send(self, *, span, dest, server_address, message_count):
+        assert span.name == "EventHubs.send"
+        assert span.kind == SpanKind.CLIENT
+        self._verify_span_attributes(span=span)
+        assert span.attributes["az.namespace"] == "Microsoft.EventHub"
+        assert span.attributes["messaging.system"] == "eventhubs"
+        assert span.attributes["messaging.destination.name"] == dest
+        assert span.attributes["messaging.operation"] == "publish"
+        assert span.attributes["net.peer.name"] == server_address
+        if message_count > 1:
+            assert span.attributes["messaging.batch.message_count"] == message_count
+
+    def _verify_receive(self, *, span, dest, server_address, message_count):
+        assert span.name == "EventHubs.receive"
+        assert span.kind == SpanKind.CLIENT
+        self._verify_span_attributes(span=span)
+        assert span.attributes["az.namespace"] == "Microsoft.EventHub"
+        assert span.attributes["messaging.system"] == "eventhubs"
+        assert span.attributes["messaging.destination.name"] == dest
+        assert span.attributes["messaging.operation"] == "receive"
+        assert span.attributes["net.peer.name"] == server_address
+        for link in span.links:
+            assert "enqueuedTime" in link.attributes
+        if message_count > 1:
+            assert span.attributes["messaging.batch.message_count"] == message_count
+
+    def _verify_process(self, *, span, dest, server_address, message_count):
+        assert span.name == "EventHubs.process"
+        assert span.kind == SpanKind.CONSUMER
+        self._verify_span_attributes(span=span)
+        assert span.attributes["az.namespace"] == "Microsoft.EventHub"
+        assert span.attributes["messaging.system"] == "eventhubs"
+        assert span.attributes["messaging.destination.name"] == dest
+        assert span.attributes["messaging.operation"] == "process"
+        assert span.attributes["net.peer.name"] == server_address
+        if message_count > 1:
+            assert span.attributes["messaging.batch.message_count"] == message_count
