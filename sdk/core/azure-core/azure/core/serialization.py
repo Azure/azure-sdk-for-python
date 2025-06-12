@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 import base64
 from json import JSONEncoder
-from typing import Union, cast, Any
+from typing import List, Union, cast, Any
 from datetime import datetime, date, time, timedelta
 from datetime import timezone
 
@@ -140,3 +140,18 @@ def is_generated_model(obj: Any) -> bool:
     :rtype: bool
     """
     return bool(getattr(obj, "_is_model", False) or hasattr(obj, "_attribute_map"))
+
+def attribute_list(obj: Any) -> List[str]:
+    """Get a list of attribute names for a generated SDK model.
+
+    :param obj: The object to get attributes from.
+    :type obj: any
+    :return: A list of attribute names.
+    :rtype: List[str]
+    """
+    if not is_generated_model(obj):
+        raise TypeError("Object is not a generated SDK model.")
+    if hasattr(obj, "_attribute_map"):
+        # msrest model
+        return list(obj._attribute_map.keys())
+    
