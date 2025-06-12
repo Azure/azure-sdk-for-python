@@ -15,11 +15,6 @@ logger = logging.getLogger(__name__)
 ICACLS_PATH = os.path.join(
     os.environ.get("SYSTEMDRIVE", "C:"), r"\Windows\System32\icacls.exe"
 )
-POWERSHELL_PATH = os.path.join(
-    os.environ.get("SYSTEMDRIVE", "C:"),
-    r"\Windows\System32\WindowsPowerShell\v1.0\powershell.exe",
-)
-
 
 def _fmt(timestamp):
     return timestamp.strftime("%Y-%m-%dT%H%M%S.%f")
@@ -114,7 +109,7 @@ class LocalFileStorage:
             self._maintenance_task.daemon = True
             self._maintenance_task.start()
         else:
-            logger.error("Could not set secure permissions on storage folder.")
+            logger.error("Could not set secure permissions on storage folder, local storage is disabled.")
 
     def close(self):
         if self._enabled:
@@ -136,44 +131,45 @@ class LocalFileStorage:
         except Exception:
             pass  # keep silent
 
+    # pylint: disable=too-many-nested-blocks
     def gets(self):
-        if not self._enabled:
-            return None
-        now = _now()
-        lease_deadline = _fmt(now)
-        retention_deadline = _fmt(now - _seconds(self._retention_period))
-        timeout_deadline = _fmt(now - _seconds(self._write_timeout))
-        try:
-            for name in sorted(os.listdir(self._path)):
-                path = os.path.join(self._path, name)
-                if not os.path.isfile(path):
-                    continue  # skip if not a file
-                if path.endswith(".tmp"):
-                    if name < timeout_deadline:
+        if self._enabled:
+            now = _now()
+            lease_deadline = _fmt(now)
+            retention_deadline = _fmt(now - _seconds(self._retention_period))
+            timeout_deadline = _fmt(now - _seconds(self._write_timeout))
+            try:
+                for name in sorted(os.listdir(self._path)):
+                    path = os.path.join(self._path, name)
+                    if not os.path.isfile(path):
+                        continue  # skip if not a file
+                    if path.endswith(".tmp"):
+                        if name < timeout_deadline:
+                            try:
+                                os.remove(path)  # TODO: log data loss
+                            except Exception:
+                                pass  # keep silent
+                    if path.endswith(".lock"):
+                        if path[path.rindex("@") + 1 : -5] > lease_deadline:
+                            continue  # under lease
+                        new_path = path[: path.rindex("@")]
                         try:
-                            os.remove(path)  # TODO: log data loss
+                            os.rename(path, new_path)
                         except Exception:
                             pass  # keep silent
-                if path.endswith(".lock"):
-                    if path[path.rindex("@") + 1 : -5] > lease_deadline:
-                        continue  # under lease
-                    new_path = path[: path.rindex("@")]
-                    try:
-                        os.rename(path, new_path)
-                    except Exception:
-                        pass  # keep silent
-                    path = new_path
-                if path.endswith(".blob"):
-                    if name < retention_deadline:
-                        try:
-                            os.remove(path)  # TODO: log data loss
-                        except Exception:
-                            pass  # keep silent
-                    else:
-                        yield LocalFileBlob(path)
-        except Exception:
-            pass  # keep silent
-        return None
+                        path = new_path
+                    if path.endswith(".blob"):
+                        if name < retention_deadline:
+                            try:
+                                os.remove(path)  # TODO: log data loss
+                            except Exception:
+                                pass  # keep silent
+                        else:
+                            yield LocalFileBlob(path)
+            except Exception:
+                pass  # keep silent
+        else:
+            pass
 
     def get(self):
         if not self._enabled:
@@ -271,21 +267,11 @@ class LocalFileStorage:
         return True
 
     def _get_current_user(self):
-        try:
-            if os.name == "nt":
-                result = subprocess.run(
-                    [
-                        POWERSHELL_PATH,
-                        "-Command",
-                        "[System.Security.Principal.WindowsIdentity]::GetCurrent().Name",
-                    ],
-                    capture_output=True,
-                    text=True,
-                    check=True,
-                )
-                user = result.stdout.strip()
-                if user:
-                    return user
-        except Exception:
-            pass
-        return None
+        user = ""
+        domain = os.environ.get("USERDOMAIN")
+        username = os.environ.get("USERNAME")
+        if domain and username:
+            user = f"{domain}\\{username}"
+        else:
+            user = os.getlogin()
+        return user
