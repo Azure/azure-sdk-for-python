@@ -6,6 +6,7 @@
 
 import functools
 import warnings
+from types import TracebackType
 from typing import Any, cast, Dict, List, Optional, Tuple, TYPE_CHECKING, Union
 from typing_extensions import Self
 
@@ -119,6 +120,24 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(api_version)  # type: ignore [assignment]
         self._configure_encryption(kwargs)
+
+    def __enter__(self) -> Self:
+        self._client.__enter__()
+        return self
+
+    def __exit__(
+        self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
+    ) -> None:
+        self._client.__exit__(typ, exc, tb)  # pylint: disable=specify-parameter-names-in-call
+
+    def close(self) -> None:
+        """This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+
+        :return: None
+        :rtype: None
+        """
+        self._client.close()
 
     def _format_url(self, hostname: str) -> str:
         """Format the endpoint URL according to the current location
