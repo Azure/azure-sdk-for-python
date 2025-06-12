@@ -1256,3 +1256,14 @@ def test_as_attribute_dict_flatten():
 
     _test(as_attribute_dict(hybrid_model))
     _test(as_attribute_dict(msrest_model))
+
+def test_as_attribute_dict_additional_properties():
+    class MsrestPetAPTrue(MsrestModel):
+        _attribute_map = {
+            "additional_properties": {"key": "", "type": "{object}"},
+            "name": {"key": "name", "type": "str"},
+        }
+
+        def __init__(self, *, additional_prpname: Optional[str] = None, **kwargs):
+            super().__init__(**kwargs)
+            self.name = name
