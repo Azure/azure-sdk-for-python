@@ -124,7 +124,7 @@ class QueueServiceClient(  # type: ignore [misc]
     async def __aexit__(
         self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
     ) -> Any:
-        await self._client.__aexit__(typ, exc, tb)
+        await self._client.__aexit__(typ=typ, exc=exc, tb=tb)
 
     async def close(self) -> None:
         """This method is to close the sockets opened by the client.
