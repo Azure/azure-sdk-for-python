@@ -37,7 +37,8 @@ from ._base import (
     _deserialize_throughput,
     _replace_throughput,
     GenerateGuidId,
-    _build_properties_cache
+    _build_properties_cache,
+    _RequestOption,
 )
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._cosmos_client_connection import CosmosClientConnection
@@ -682,13 +683,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 :caption: Parameterized query to get all products that have been discontinued:
         """
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs[_RequestOption.SESSION_TOKEN] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[_RequestOption.INITIAL_HEADERS] = initial_headers
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs[_RequestOption.PRIORITY] = priority
         if throughput_bucket is not None:
-            kwargs["throughputBucket"] = throughput_bucket
+            kwargs[_RequestOption.THROUGHPUT_BUCKET] = throughput_bucket
         feed_options = build_options(kwargs)
         if enable_cross_partition_query is not None:
             feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
@@ -784,23 +785,23 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         item_link = self._get_document_link(item)
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs[_RequestOption.PRE_TRIGGER_INCLUDE] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs[_RequestOption.POST_TRIGGER_INCLUDE] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs[_RequestOption.SESSION_TOKEN] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[_RequestOption.INITIAL_HEADERS] = initial_headers
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs[_RequestOption.PRIORITY] = priority
         if etag is not None:
-            kwargs['etag'] = etag
+            kwargs['etag'] = etag   # Not in common options
         if match_condition is not None:
-            kwargs['match_condition'] = match_condition
+            kwargs['match_condition'] = match_condition # Not in common options
         if no_response is not None:
-            kwargs['no_response'] = no_response
+            kwargs[_RequestOption.NO_RESPONSE] = no_response
         if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+            kwargs[_RequestOption.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
