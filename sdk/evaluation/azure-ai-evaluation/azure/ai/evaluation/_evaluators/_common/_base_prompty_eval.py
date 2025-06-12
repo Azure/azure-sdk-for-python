@@ -93,6 +93,11 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
             else:
                 return EVALUATION_PASS_FAIL_MAPPING[False]
 
+    def _sync_reasoning_model_state(self) -> None:
+        """Synchronize the reasoning model state between the evaluator and prompty flow."""
+        if hasattr(self._flow, 'is_reasoning_model') and self._flow.is_reasoning_model != self._is_reasoning_model:
+            self._is_reasoning_model = self._flow.is_reasoning_model
+
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:  # type: ignore[override]
         """Do a relevance evaluation.
@@ -113,6 +118,9 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                 target=ErrorTarget.CONVERSATION,
             )
         llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+
+        # Sync the reasoning model state after the call
+        self._sync_reasoning_model_state()
 
         score = math.nan
         if llm_output:

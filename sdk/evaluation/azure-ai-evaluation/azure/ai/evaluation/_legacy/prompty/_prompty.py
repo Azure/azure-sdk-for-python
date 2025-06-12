@@ -203,6 +203,15 @@ class AsyncPrompty:
         """
         return self._data.get("description")
 
+    @property
+    def is_reasoning_model(self) -> bool:
+        """Whether this prompty is configured for reasoning models.
+
+        :return: True if configured for reasoning models, False otherwise.
+        :rtype: bool
+        """
+        return self._is_reasoning_model
+
     @classmethod
     def load(
         cls,
@@ -397,6 +406,10 @@ class AsyncPrompty:
                     )
                     # Remove unsupported parameters for reasoning models
                     AsyncPrompty._adapt_parameters_for_reasoning_model(mutable_params)
+                    # Also update the model configuration to persist changes
+                    if hasattr(self._model, 'parameters') and isinstance(self._model.parameters, dict):
+                        AsyncPrompty._adapt_parameters_for_reasoning_model(self._model.parameters)
+
                     self._is_reasoning_model = True
                     retry = 0
                     delay = 0
