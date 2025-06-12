@@ -107,7 +107,7 @@ with project_client:
                 if isinstance(tool_call, RunStepFileSearchToolCall) and tool_call.file_search \
                   and tool_call.file_search.results and tool_call.file_search.results[0].content \
                   and tool_call.file_search.results[0].content[0].text:
-                    print("The search tool have found the next relevant content in "
+                    print("The search tool has found the next relevant content in "
                           f"the file {tool_call.file_search.results[0].file_name}:")
                     # Note: technically we may have several search results, however in our example
                     # we only have one file, so we are taking the only result.
