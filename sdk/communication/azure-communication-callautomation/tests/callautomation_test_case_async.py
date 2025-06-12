@@ -14,7 +14,6 @@ from azure.identity import AzureCliCredential
 from azure.communication.phonenumbers.aio import PhoneNumbersClient
 from azure.servicebus.aio import ServiceBusClient
 
-
 class AsyncCallAutomationRecordedTestCase:
     @classmethod
     async def async_setup_class(cls):
@@ -80,7 +79,7 @@ class AsyncCallAutomationRecordedTestCase:
         # Return unique_id (for event correlation), call_connection, and None for compatibility
         return unique_id, call_connection, None
 
-    async def terminate_call(self, call_connection_id) -> None:
+    async def terminate_call_async(self, call_connection_id) -> None:
         call_connection = self.open_call_connections.pop(call_connection_id, None)
         if call_connection:
             await call_connection.hang_up(is_for_everyone=True)

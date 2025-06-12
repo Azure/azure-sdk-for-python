@@ -42,7 +42,7 @@ class TestCallAutomationClientAutomatedLiveTestAsync(AsyncCallAutomationRecorded
         caller = await self.identity_client.create_user()
         target = await self.identity_client.create_user()
         participant_to_add = identifier_from_raw_id((await self.identity_client.create_user()).raw_id)
-        call_connection_id, call_connection, _ = await self.establish_callconnection_voip(caller, target)
+        call_connection_id, call_connection, _ = await self.establish_callconnection_voip_async(caller, target)
 
         connected_event = await self.check_for_event(
             "CallConnected", call_connection_id, timedelta(seconds=15)
