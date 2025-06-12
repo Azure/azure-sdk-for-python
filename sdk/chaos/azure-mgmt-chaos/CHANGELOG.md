@@ -1,5 +1,44 @@
 # Release History
 
+## 2.0.0 (2025-06-12)
+
+### Features Added
+
+  - Model `CapabilityType` added property `required_azure_role_definition_ids`
+  - Model `ExperimentExecution` added property `system_data`
+  - Model `ExperimentExecutionDetails` added property `properties`
+  - Model `Resource` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Added enum `ExperimentActionType`
+  - Added model `ManagedServiceIdentity`
+  - Added enum `ManagedServiceIdentityType`
+  - Added model `OperationStatusResult`
+  - Added model `ProxyResource`
+
+### Breaking Changes
+
+  - Model `CapabilityType` deleted or renamed its instance variable `location`
+  - Model `ExperimentExecutionDetails` deleted or renamed its instance variable `status`
+  - Model `ExperimentExecutionDetails` deleted or renamed its instance variable `started_at`
+  - Model `ExperimentExecutionDetails` deleted or renamed its instance variable `stopped_at`
+  - Model `ExperimentExecutionDetails` deleted or renamed its instance variable `failure_reason`
+  - Model `ExperimentExecutionDetails` deleted or renamed its instance variable `last_action_at`
+  - Model `ExperimentExecutionDetails` deleted or renamed its instance variable `run_information`
+  - Model `TargetType` deleted or renamed its instance variable `location`
+  - Deleted or renamed model `ExperimentExecutionProperties`
+  - Deleted or renamed model `OperationStatus`
+  - Deleted or renamed model `ResourceIdentity`
+  - Deleted or renamed model `ResourceIdentityType`
+  - Method `CapabilitiesOperations.create_or_update` renamed its parameter `capability` to `resource`
+  - Method `CapabilityTypesOperations.get` renamed its parameter `location_name` to `location`
+  - Method `CapabilityTypesOperations.list` renamed its parameter `location_name` to `location`
+  - Method `ExperimentsOperations.begin_create_or_update` renamed its parameter `experiment` to `resource`
+  - Method `ExperimentsOperations.begin_update` renamed its parameter `experiment` to `properties`
+  - Method `OperationStatusesOperations.get` renamed its parameter `async_operation_id` to `operation_id`
+  - Method `TargetTypesOperations.get` renamed its parameter `location_name` to `location`
+  - Method `TargetTypesOperations.list` renamed its parameter `location_name` to `location`
+  - Method `TargetsOperations.create_or_update` renamed its parameter `target` to `resource`
+
 ## 1.1.0 (2024-03-04)
 
 ### Features Added
