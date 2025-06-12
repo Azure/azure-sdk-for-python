@@ -7,10 +7,12 @@ from datetime import date, datetime, time, timedelta, tzinfo
 from enum import Enum
 import json
 import sys
+from typing import Any, Dict, Optional
 
 from azure.core.serialization import AzureJSONEncoder, NULL, is_generated_model, attribute_list
 import pytest
 from modeltest._utils.model_base import Model as HybridModel, rest_field
+from modeltest._utils.serialization import Model as MsrestModel
 from modeltest import models
 
 
@@ -587,7 +589,7 @@ def test_attribute_list_scratch_model():
     model = models.Scratch(prop="wall-e")
     assert attribute_list(model) == ["prop"]
 
-    class MsrestScratchModel:
+    class MsrestScratchModel(MsrestModel):
         _attribute_map = {"prop": {"key": "prop", "type": "str"}}
 
         def __init__(self, prop):
@@ -601,7 +603,7 @@ def test_attribute_list_client_named_property_model():
     model = models.ClientNamedPropertyModel(prop_client_name="wall-e")
     assert attribute_list(model) == ["prop_client_name"]
 
-    class MsrestClientNamedPropertyModel:
+    class MsrestClientNamedPropertyModel(MsrestModel):
         _attribute_map = {"prop_client_name": "propClientName"}
 
         def __init__(self, prop_client_name):
@@ -615,7 +617,7 @@ def test_attribute_list_flattened_model():
     model = models.FlattenModel(name="wall-e", description="a dog", age=2)
     assert attribute_list(model) == ["name", "description", "age"]
 
-    class MsrestFlattenedModel:
+    class MsrestFlattenedModel(MsrestModel):
         _attribute_map = {
             "name": {"key": "name", "type": "str"},
             "description": {"key": "properties.description", "type": "str"},
@@ -636,7 +638,7 @@ def test_attribute_list_readonly_model():
     model = models.ReadonlyModel({"id": 1})
     assert attribute_list(model) == ["id"]
 
-    class MsrestReadonlyModel:
+    class MsrestReadonlyModel(MsrestModel):
         _validation = {
             "id": {"readonly": True},
         }
@@ -649,3 +651,25 @@ def test_attribute_list_readonly_model():
 
     msrest_model = MsrestReadonlyModel(id=1)
     assert attribute_list(msrest_model) == ["id"]
+
+def test_attribute_list_additional_properties_hybrid():
+    class HybridPetAPTrue(HybridModel):
+        name: str = rest_field()
+
+    hybrid_model = HybridPetAPTrue({"birthdate": "2017-12-13T02:29:51Z", "complexProperty": {"color": "Red"}, "name": "Buddy"})
+    assert attribute_list(hybrid_model) == ["name"]
+
+def test_attribute_list_additional_properties_msrest():
+    class MsrestPetAPTrue(MsrestModel):
+        _attribute_map = {
+            "additional_properties": {"key": "", "type": "{object}"},
+            "name": {"key": "name", "type": "str"},
+        }
+
+        def __init__(self, *, additional_properties: Optional[Dict[str, Any]], name: Optional[str] = None, **kwargs):
+            super().__init__(**kwargs)
+            self.additional_properties = additional_properties
+            self.name = name
+
+    msrest_model = MsrestPetAPTrue(additional_properties={"birthdate": "2017-12-13T02:29:51Z", "complexProperty": {"color": "Red"}}, name="Buddy")
+    assert attribute_list(msrest_model) == ["additional_properties", "name"]
