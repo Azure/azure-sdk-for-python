@@ -8,7 +8,7 @@ from enum import Enum
 import json
 import sys
 
-from azure.core.serialization import AzureJSONEncoder, NULL, is_generated_model
+from azure.core.serialization import AzureJSONEncoder, NULL, is_generated_model, attribute_list
 import pytest
 from modeltest._utils.model_base import Model as HybridModel, rest_field
 from modeltest import models
@@ -554,3 +554,98 @@ def test_is_generated_model_with_non_models():
             self.attr = "value"
 
     assert not is_generated_model(Model())
+
+
+def test_attribute_list_non_model():
+    with pytest.raises(TypeError):
+        attribute_list({})
+
+    with pytest.raises(TypeError):
+        attribute_list([])
+
+    with pytest.raises(TypeError):
+        attribute_list("string")
+
+    with pytest.raises(TypeError):
+        attribute_list(42)
+
+    with pytest.raises(TypeError):
+        attribute_list(None)
+
+    with pytest.raises(TypeError):
+        attribute_list(object)
+
+    class RandomModel:
+        def __init__(self):
+            self.attr = "value"
+
+    with pytest.raises(TypeError):
+        attribute_list(RandomModel())
+
+
+def test_attribute_list_scratch_model():
+    model = models.Scratch(prop="wall-e")
+    assert attribute_list(model) == ["prop"]
+
+    class MsrestScratchModel:
+        _attribute_map = {"prop": {"key": "prop", "type": "str"}}
+
+        def __init__(self, prop):
+            self.prop = prop
+
+    msrest_model = MsrestScratchModel(prop="wall-e")
+    assert attribute_list(msrest_model) == ["prop"]
+
+
+def test_attribute_list_client_named_property_model():
+    model = models.ClientNamedPropertyModel(prop_client_name="wall-e")
+    assert attribute_list(model) == ["prop_client_name"]
+
+    class MsrestClientNamedPropertyModel:
+        _attribute_map = {"prop_client_name": "propClientName"}
+
+        def __init__(self, prop_client_name):
+            self.prop_client_name = prop_client_name
+
+    msrest_model = MsrestClientNamedPropertyModel(prop_client_name="wall-e")
+    assert attribute_list(msrest_model) == ["prop_client_name"]
+
+
+def test_attribute_list_flattened_model():
+    model = models.FlattenModel(name="wall-e", description="a dog", age=2)
+    assert attribute_list(model) == ["name", "description", "age"]
+
+    class MsrestFlattenedModel:
+        _attribute_map = {
+            "name": {"key": "name", "type": "str"},
+            "description": {"key": "properties.description", "type": "str"},
+            "age": {"key": "properties.age", "type": "int"},
+        }
+
+        def __init__(self, name, description, age, **kwargs):
+            super().__init__(**kwargs)
+            self.name = name
+            self.description = description
+            self.age = age
+
+    msrest_model = MsrestFlattenedModel(name="wall-e", description="a dog", age=2)
+    assert attribute_list(msrest_model) == ["name", "description", "age"]
+
+
+def test_attribute_list_readonly_model():
+    model = models.ReadonlyModel({"id": 1})
+    assert attribute_list(model) == ["id"]
+
+    class MsrestReadonlyModel:
+        _validation = {
+            "id": {"readonly": True},
+        }
+        _attribute_map = {
+            "id": {"key": "id", "type": "int"},
+        }
+
+        def __init__(self, id):
+            self.id = id
+
+    msrest_model = MsrestReadonlyModel(id=1)
+    assert attribute_list(msrest_model) == ["id"]
