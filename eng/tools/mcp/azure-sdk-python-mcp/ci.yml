@@ -8,7 +8,7 @@ trigger:
       - hotfix/*
   paths:
     include:
-      - tools/mcp/azure-sdk-python-mcp
+      - eng/tools/mcp/azure-sdk-python-mcp
 
 pr:
   branches:
@@ -19,13 +19,13 @@ pr:
       - hotfix/*
   paths:
     include:
-      - tools/mcp/azure-sdk-python-mcp
+      - eng/tools/mcp/azure-sdk-python-mcp
 
 extends:
   template: /eng/pipelines/templates/stages/archetype-sdk-tool-python.yml
   parameters:
     PythonVersion: '3.13'
-    PackagePath: 'tools/mcp/azure-sdk-python-mcp'
+    PackagePath: 'eng/tools/mcp/azure-sdk-python-mcp'
     FeedName: 'public/azure-sdk-for-python'
     ArtifactName: 'azure-sdk-python-mcp'
     PackageName: 'Azure SDK Python MCP'
