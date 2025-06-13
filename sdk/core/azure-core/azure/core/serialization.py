@@ -162,8 +162,7 @@ def _as_attribute_dict_value(v: Any, *, exclude_readonly: bool = False) -> Any:
         return type(v)(_as_attribute_dict_value(x, exclude_readonly=exclude_readonly) for x in v)
     if isinstance(v, dict):
         return {dk: _as_attribute_dict_value(dv, exclude_readonly=exclude_readonly) for dk, dv in v.items()}
-    # TODO: switch to is_generated_model once pr is merged
-    return as_attribute_dict(v, exclude_readonly=exclude_readonly) if hasattr(v, "as_dict") else v
+    return as_attribute_dict(v, exclude_readonly=exclude_readonly) if is_generated_model(v) else v
 
 
 def _get_flattened_attribute(obj: Any) -> Optional[str]:
@@ -182,7 +181,6 @@ def _get_flattened_attribute(obj: Any) -> Optional[str]:
                 set(flattened_items)
             ):
                 return k
-            return k
         except AttributeError:
             # if the attribute does not have _class_type, it is not a typespec generated model
             continue
