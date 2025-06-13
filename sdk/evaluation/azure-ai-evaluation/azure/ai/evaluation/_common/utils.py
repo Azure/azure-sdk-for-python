@@ -13,7 +13,7 @@ from azure.storage.blob import ContainerClient
 from typing_extensions import NotRequired, Required, TypeGuard
 from azure.ai.evaluation._legacy._adapters._errors import MissingRequiredPackage
 from azure.ai.evaluation._constants import AZURE_OPENAI_TYPE, OPENAI_TYPE
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._exceptions import ErrorMessage, ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import (
     AzureAIProject,
     AzureOpenAIModelConfiguration,
@@ -513,7 +513,18 @@ def _get_conversation_history(query):
                 cur_agent_response.append(text_in_msg)
     if cur_user_query !=[]:
         all_user_queries.append(cur_user_query)
-    assert len(all_user_queries) == len(all_agent_responses) + 1, "There should be exactly one more user query than agent responses"
+    if cur_agent_response !=[]:
+        all_agent_responses.append(cur_agent_response)
+
+    if len(all_user_queries) != len(all_agent_responses) + 1:
+        raise EvaluationException(
+            message=ErrorMessage.MALFORMED_CONVERSATION_HISTORY,
+            internal_message=ErrorMessage.MALFORMED_CONVERSATION_HISTORY,
+            target=ErrorTarget.CONVERSATION_HISTORY_PARSING,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.USER_ERROR,
+        )
+
     return {
             'user_queries'    : all_user_queries,
             'agent_responses' : all_agent_responses
@@ -531,7 +542,7 @@ def _pretty_format_conversation_history(conversation_history):
             formatted_history+=f"Agent turn {i+1}:\n"
             for msg in agent_response:
                 formatted_history+="  " + "\n  ".join(msg)
-        formatted_history+="\n\n"
+            formatted_history+="\n\n"
     return formatted_history
 
 def reformat_conversation_history(query):
@@ -561,9 +572,12 @@ def _get_agent_response(agent_response_msgs):
 
 def reformat_agent_response(response):
     try:
+        if response is None or response == []:
+            return ""
         agent_response = _get_agent_response(response)
         if agent_response == []:
-            return ""
+            # If no message could be extracted, likely the format changed, fallback to the original response in that case
+            return response
         return "\n".join(agent_response)
     except:
         # If the agent response cannot be parsed for whatever reason (e.g. the converter format changed), the original response is returned
