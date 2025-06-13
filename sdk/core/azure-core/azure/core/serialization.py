@@ -11,7 +11,7 @@ from datetime import datetime, date, time, timedelta
 from datetime import timezone
 
 
-__all__ = ["NULL", "AzureJSONEncoder"]
+__all__ = ["NULL", "AzureJSONEncoder", "is_generated_model", "as_attribute_dict", "model_dump"]
 TZ_UTC = timezone.utc
 
 
@@ -248,3 +248,75 @@ def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, 
     except AttributeError as exc:
         # not a typespec generated model
         raise TypeError("Object must be a generated model instance.") from exc
+
+
+def _convert_value(value: Any, *, exclude_readonly: bool = False):
+    if value is None or isinstance(value, _Null):
+        return None
+
+    # Handle Model instances recursively
+    if getattr(value, "_is_model", False):
+        return model_dump(value, exclude_readonly=exclude_readonly)
+
+    # Handle collections
+    if isinstance(value, (list, tuple, set)):
+        return type(value)(_convert_value(x, exclude_readonly=exclude_readonly) for x in value)
+    if isinstance(value, dict):
+        return {k: _convert_value(v, exclude_readonly=exclude_readonly) for k, v in value.items()}
+
+    return value
+
+
+def model_dump(model: Any, *, exclude_readonly: bool = False) -> dict:
+    """Convert a model object to a dictionary using REST field names as keys.
+
+    This function recursively serializes a model object and all nested Model objects
+    to Python dictionaries, using the REST API field names as defined by the model's
+    rest field defintions.
+
+    :param model: The model object to convert to a dictionary
+    :type model: any
+    :keyword bool exclude_readonly: Whether to exclude readonly fields from the output
+    :return: A dictionary representation of the model with REST field names as keys
+    :rtype: dict
+    :raises TypeError: If the input is not a Model instance
+    """
+    if not getattr(model, "_is_model", False):
+        raise TypeError(f"Expected a Model instance, got {type(model).__name__}")
+
+    result = {}
+
+    # Get readonly properties if we need to exclude them
+    readonly_props = set()
+    if exclude_readonly and hasattr(model, "_attr_to_rest_field"):
+        readonly_props = {
+            rf._rest_name  # pylint: disable=protected-access
+            for rf in model._attr_to_rest_field.values()  # pylint: disable=protected-access
+            if _is_readonly(rf)
+        }
+
+    # Iterate through the model's items (which are stored with REST field names)
+    for key, value in model.items():
+        # Skip readonly properties if requested
+        if exclude_readonly and key in readonly_props:
+            continue
+
+        # Handle multipart file inputs specially (don't convert them)
+        is_multipart_file_input = False
+        if hasattr(model, "_attr_to_rest_field"):
+            try:
+                rest_field = next(
+                    rf
+                    for rf in model._attr_to_rest_field.values()  # pylint: disable=protected-access
+                    if rf._rest_name == key  # pylint: disable=protected-access
+                )
+                is_multipart_file_input = getattr(rest_field, "_is_multipart_file_input", False)
+            except StopIteration:
+                pass
+
+        if is_multipart_file_input:
+            result[key] = value
+        else:
+            result[key] = _convert_value(value, exclude_readonly=exclude_readonly)
+
+    return result
