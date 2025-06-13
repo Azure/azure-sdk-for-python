@@ -1,5 +1,5 @@
 promptflow[azure]
 promptflow-tools
 python-dotenv
-langchain #sometest
+langchain
 jinja2
