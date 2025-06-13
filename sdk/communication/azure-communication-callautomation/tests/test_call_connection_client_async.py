@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock, Mock
 from azure.core.credentials import AzureKeyCredential
 from azure.communication.callautomation.aio import CallConnectionClient as AsyncCallConnectionClient
 from azure.communication.callautomation import CommunicationUserIdentifier, TransferCallResult
-from azure.core.paging import ItemPaged
+from azure.core.async_paging import AsyncItemPaged
 
 from azure.communication.callautomation._generated.models import AddParticipantRequest
 from unittest_helpers import mock_response
@@ -109,8 +109,8 @@ class TestCallConnectionClientAsync(IsolatedAsyncioTestCase):
             transport=Mock(send=AsyncMock(side_effect=mock_send)),
         )
 
-        response = await call_connection.list_participants()
-        assert isinstance(response, ItemPaged)
+        response = call_connection.list_participants()
+        assert isinstance(response, AsyncItemPaged)
 
     async def test_get_participants(self):
         async def mock_send(*_, **kwargs):

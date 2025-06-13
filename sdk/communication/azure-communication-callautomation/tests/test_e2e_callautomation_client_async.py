@@ -13,9 +13,9 @@ from azure.communication.callautomation.aio import (
 )
 from azure.communication.callautomation._shared.models import  identifier_from_raw_id
 
-from callautomation_test_case_async import AsyncCallAutomationRecordedTestCase   
+from callautomation_test_case_async import CallAutomationRecordedTestCaseAsync   
 
-class TestCallAutomationClientAutomatedLiveTestAsync(AsyncCallAutomationRecordedTestCase):
+class TestCallAutomationClientAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
     @pytest.mark.asyncio
     @recorded_by_proxy
@@ -24,10 +24,10 @@ class TestCallAutomationClientAutomatedLiveTestAsync(AsyncCallAutomationRecorded
         target = await self.identity_client.create_user()
         call_connection_id, call_connection, _ = await self.establish_callconnection_voip_async(caller, target)
 
-        connected_event = await self.check_for_event(
+        connected_event = await self.check_for_event_async(
             "CallConnected", call_connection_id, timedelta(seconds=15)
         )
-        participant_updated_event = await self.check_for_event(
+        participant_updated_event = await self.check_for_event_async(
             "ParticipantsUpdated", call_connection_id, timedelta(seconds=15)
         )
 
@@ -44,10 +44,10 @@ class TestCallAutomationClientAutomatedLiveTestAsync(AsyncCallAutomationRecorded
         participant_to_add = identifier_from_raw_id((await self.identity_client.create_user()).raw_id)
         call_connection_id, call_connection, _ = await self.establish_callconnection_voip_async(caller, target)
 
-        connected_event = await self.check_for_event(
+        connected_event = await self.check_for_event_async(
             "CallConnected", call_connection_id, timedelta(seconds=15)
         )
-        participant_updated_event = await self.check_for_event(
+        participant_updated_event = await self.check_for_event_async(
             "ParticipantsUpdated", call_connection_id, timedelta(seconds=15)
         )
 
@@ -58,7 +58,7 @@ class TestCallAutomationClientAutomatedLiveTestAsync(AsyncCallAutomationRecorded
         await asyncio.sleep(3)
         await call_connection.cancel_add_participant_operation(add_participant_result.invitation_id)
 
-        cancel_add_participant_succeeded_event = await self.check_for_event(
+        cancel_add_participant_succeeded_event = await self.check_for_event_async(
             "CancelAddParticipantSucceeded", call_connection_id, timedelta(seconds=15)
         )
 
@@ -75,8 +75,8 @@ class TestCallAutomationClientAutomatedLiveTestAsync(AsyncCallAutomationRecorded
         unique_id, call_connection, _, call_automation_client, callback_url = await self.establish_callconnection_voip_connect_call_async(caller, target)
 
         # check returned events
-        connected_event = await self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
-        participant_updated_event = await self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+        connected_event = await self.check_for_event_async('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
+        participant_updated_event = await self.check_for_event_async('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
 
         assert connected_event is not None, "Caller CallConnected event is None"
         assert participant_updated_event is not None, "Caller ParticipantsUpdated event is None"
@@ -91,7 +91,7 @@ class TestCallAutomationClientAutomatedLiveTestAsync(AsyncCallAutomationRecorded
         )
 
         # check returned call connected events
-        connect_call_connected_event = await self.check_for_event('CallConnected', connect_call_connection.call_connection_id, timedelta(seconds=20))
+        connect_call_connected_event = await self.check_for_event_async('CallConnected', connect_call_connection.call_connection_id, timedelta(seconds=20))
         assert connect_call_connected_event is not None, "Caller CallConnected event is None"
 
         await self.terminate_call(unique_id)
@@ -106,10 +106,10 @@ class TestCallAutomationClientAutomatedLiveTestAsync(AsyncCallAutomationRecorded
         unique_id, call_connection, _ = await self.establish_callconnection_voip_answercall_withcustomcontext_async(caller, target)
 
         # check returned events
-        connected_event = await self.check_for_event(
+        connected_event = await self.check_for_event_async(
             "CallConnected", call_connection._call_connection_id, timedelta(seconds=15)
         )
-        participant_updated_event = await self.check_for_event(
+        participant_updated_event = await self.check_for_event_async(
             "ParticipantsUpdated", call_connection._call_connection_id, timedelta(seconds=15)
         )
 
@@ -128,8 +128,8 @@ class TestCallAutomationClientAutomatedLiveTestAsync(AsyncCallAutomationRecorded
         unique_id, call_connection, _, call_automation_client, callback_url = await self.establish_callconnection_voip_connect_call_async(caller, target)
 
         # check returned events
-        connected_event = await self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
-        participant_updated_event = await self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+        connected_event = await self.check_for_event_async('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
+        participant_updated_event = await self.check_for_event_async('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
 
         assert connected_event is not None, "Caller CallConnected event is None"
         assert participant_updated_event is not None, "Caller ParticipantsUpdated event is None"
@@ -146,7 +146,7 @@ class TestCallAutomationClientAutomatedLiveTestAsync(AsyncCallAutomationRecorded
         await asyncio.sleep(5)
 
         # check for RecordingStateChanged event
-        recording_state_changed_event = await self.check_for_event('RecordingStateChanged', call_connection_id, timedelta(seconds=30))
+        recording_state_changed_event = await self.check_for_event_async('RecordingStateChanged', call_connection_id, timedelta(seconds=30))
         assert recording_state_changed_event is not None, "RecordingStateChanged event is None"
 
         # stop recording request
@@ -165,8 +165,8 @@ class TestCallAutomationClientAutomatedLiveTestAsync(AsyncCallAutomationRecorded
         unique_id, call_connection, _, call_automation_client, callback_url = await self.establish_callconnection_voip_connect_call_async(caller, target)
 
         # check returned events
-        connected_event = await self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
-        participant_updated_event = await self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+        connected_event = await self.check_for_event_async('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
+        participant_updated_event = await self.check_for_event_async('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
 
         assert connected_event is not None, "Caller CallConnected event is None"
         assert participant_updated_event is not None, "Caller ParticipantsUpdated event is None"
@@ -184,7 +184,7 @@ class TestCallAutomationClientAutomatedLiveTestAsync(AsyncCallAutomationRecorded
         await asyncio.sleep(5)
 
         # check for RecordingStateChanged event
-        recording_state_changed_event = await self.check_for_event('RecordingStateChanged', call_connection_id, timedelta(seconds=30))
+        recording_state_changed_event = await self.check_for_event_async('RecordingStateChanged', call_connection_id, timedelta(seconds=30))
         assert recording_state_changed_event is not None, "RecordingStateChanged event is None"
 
         # stop recording request

@@ -4,50 +4,65 @@ import os
 from datetime import timedelta
 from typing import Dict, Any
 from azure.communication.callautomation.aio import (
-    CallAutomationClient as AsyncCallAutomationClient,
-    CallConnectionClient as AsyncCallConnectionClient,
+    CallAutomationClient as CallAutomationClientAsync,
+    CallConnectionClient as CallConnectionClientAsync,
 )
 from azure.communication.callautomation._shared.models import CommunicationUserIdentifier, identifier_from_raw_id
 from azure.communication.callautomation._models import ChannelAffinity
 from azure.communication.identity import CommunicationIdentityClient
+from devtools_testutils import AzureRecordedTestCase, is_live
+from devtools_testutils.helpers import get_test_id
+
 from azure.identity import AzureCliCredential
 from azure.communication.phonenumbers.aio import PhoneNumbersClient
 from azure.servicebus.aio import ServiceBusClient
 
-class AsyncCallAutomationRecordedTestCase:
+class CallAutomationRecordedTestCaseAsync(AzureRecordedTestCase):
     @classmethod
-    async def async_setup_class(cls):
-        cls.connection_str = os.environ.get('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING', "endpoint=https://someEndpoint/;accesskey=someAccessKeyw==")
-        cls.identity_client = CommunicationIdentityClient.from_connection_string(cls.connection_str)
-        cls.event_store: Dict[str, Dict[str, Any]] = {}
-        cls.open_call_connections: Dict[str, AsyncCallConnectionClient] = {}
-        cls.servicebus_str = os.environ.get('SERVICEBUS_STRING', "redacted.servicebus.windows.net")
-        cls.dispatcher_endpoint = os.environ.get('DISPATCHER_ENDPOINT', "https://REDACTED.azurewebsites.net")
-        cls.file_source_url = os.environ.get('FILE_SOURCE_URL', "https://REDACTED/prompt.wav")
-        cls.cognitive_service_endpoint = os.environ.get('COGNITIVE_SERVICE_ENDPOINT', "https://sanitized/")
-        cls.transport_url = os.environ.get('TRANSPORT_URL', "wss://sanitized/ws")
+    async def setup_class(cls):
+        if is_live():
+            print("Live Test")
+            cls.connection_str = os.environ.get('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
+            cls.servicebus_str = os.environ.get('SERVICEBUS_STRING')
+            cls.dispatcher_endpoint = os.environ.get('DISPATCHER_ENDPOINT')
+            cls.file_source_url = os.environ.get('FILE_SOURCE_URL')
+            cls.cognitive_service_endpoint = os.environ.get('COGNITIVE_SERVICE_ENDPOINT')
+            cls.transport_url = os.environ.get('TRANSPORT_URL')
+        else:
+            print("Recorded Test")
+            cls.connection_str = "endpoint=https://someEndpoint/;accesskey=someAccessKeyw=="
+            cls.servicebus_str = "redacted.servicebus.windows.net"
+            cls.dispatcher_endpoint = "https://REDACTED.azurewebsites.net"
+            cls.file_source_url = "https://REDACTED/prompt.wav"
+            cls.cognitive_service_endpoint = "https://sanitized/"
+            cls.transport_url ="wss://sanitized/ws"
+
+
         cls.credential = AzureCliCredential()
         cls.dispatcher_callback = cls.dispatcher_endpoint + "/api/servicebuscallback/events"
+        cls.identity_client = CommunicationIdentityClient.from_connection_string(cls.connection_str)
         cls.phonenumber_client = PhoneNumbersClient.from_connection_string(cls.connection_str)
         cls.service_bus_client = ServiceBusClient(
             fully_qualified_namespace=cls.servicebus_str,
             credential=cls.credential)
 
         cls.wait_for_event_flags = []
+        cls.event_store: Dict[str, Dict[str, Any]] = {}
         cls.event_to_save: Dict[str, Dict[str, Any]] = {}
+        cls.open_call_connections: Dict[str, CallConnectionClientAsync] = {}
 
     @classmethod
-    async def async_teardown_class(cls):
+    async def teardown_class(cls):
         for cc in cls.open_call_connections.values():
             await cc.hang_up(is_for_everyone=True)
 
-    async def async_setup_method(self, method):
+    async def setup_method(self, method):
         self.event_store: Dict[str, Dict[str, Any]] = {}
 
-    async def async_teardown_method(self, method):
+    async def teardown_method(self, method):
         self.event_store: Dict[str, Dict[str, Any]] = {}
 
-    async def check_for_event(self, event_type: str, call_connection_id: str, wait_time: timedelta) -> Any:
+    async def check_for_event_async(self, event_type: str, call_connection_id: str, wait_time: timedelta) -> Any:
         # Dummy async event checker for demonstration
         timeout = time.time() + wait_time.total_seconds()
         while time.time() < timeout:
@@ -59,7 +74,7 @@ class AsyncCallAutomationRecordedTestCase:
 
     async def establish_callconnection_voip_async(self, caller, target) -> tuple:
         # Create async call automation client for the caller
-        client = AsyncCallAutomationClient.from_connection_string(self.connection_str, source=caller)
+        client = CallAutomationClientAsync.from_connection_string(self.connection_str, source=caller)
 
         # Generate a unique_id for the call (mimic sync logic if needed)
         unique_id = f"{caller.raw_id}_{target.raw_id}"
@@ -71,7 +86,7 @@ class AsyncCallAutomationRecordedTestCase:
         create_call_result = await client.create_call(target_participant=target, callback_url=callback_url)
 
         # Create async call connection client
-        call_connection = AsyncCallConnectionClient.from_connection_string(self.connection_str, create_call_result.call_connection_id)
+        call_connection = CallConnectionClientAsync.from_connection_string(self.connection_str, create_call_result.call_connection_id)
 
         # Store the connection for later cleanup
         self.open_call_connections[unique_id] = call_connection
@@ -90,7 +105,7 @@ class AsyncCallAutomationRecordedTestCase:
         Returns: unique_id, call_connection, _, call_automation_client, callback_url
         """
         # Create async call automation client for the caller
-        call_automation_client = AsyncCallAutomationClient.from_connection_string(self.connection_str, source=caller)
+        call_automation_client = CallAutomationClientAsync.from_connection_string(self.connection_str, source=caller)
 
         # Generate a unique_id for the call
         unique_id = f"{caller.raw_id}_{target.raw_id}"
@@ -102,7 +117,7 @@ class AsyncCallAutomationRecordedTestCase:
         create_call_result = await call_automation_client.create_call(target_participant=target, callback_url=callback_url)
 
         # Create async call connection client
-        call_connection = AsyncCallConnectionClient.from_connection_string(self.connection_str, create_call_result.call_connection_id)
+        call_connection = CallConnectionClientAsync.from_connection_string(self.connection_str, create_call_result.call_connection_id)
 
         # Store the connection for later cleanup
         self.open_call_connections[unique_id] = call_connection
@@ -132,7 +147,7 @@ class AsyncCallAutomationRecordedTestCase:
         Returns: unique_id, call_connection, None
         """
         # Create async call automation client for the caller
-        client = AsyncCallAutomationClient.from_connection_string(self.connection_str, source=caller)
+        client = CallAutomationClientAsync.from_connection_string(self.connection_str, source=caller)
 
         # Generate a unique_id for the call
         unique_id = f"{caller.raw_id}_{target.raw_id}"
