@@ -49,7 +49,9 @@ def throw(exc_type, *args, **kwargs):
 class TestAzureTraceExporter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        os.environ.clear()
+        os.environ.pop("APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL", None)
+        os.environ.pop("APPINSIGHTS_INSTRUMENTATIONKEY", None)
+        os.environ.pop("APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED", None)
         os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = "1234abcd-5678-4efa-8abc-1234567890ab"
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         os.environ["APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"] = "true"

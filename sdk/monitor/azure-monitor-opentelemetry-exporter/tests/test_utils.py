@@ -35,7 +35,6 @@ TEST_AKS_ARM_NAMESPACE_ID = "TEST_AKS_ARM_NAMESPACE_ID"
 
 class TestUtils(unittest.TestCase):
     def setUp(self):
-        os.environ.clear()
         self._valid_instrumentation_key = "1234abcd-5678-4efa-8abc-1234567890ab"
 
     def test_nanoseconds_to_duration(self):
