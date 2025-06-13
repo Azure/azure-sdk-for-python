@@ -559,7 +559,8 @@ class BlobReference(_Model):
     """Blob reference details.
 
     :ivar blob_uri: Blob URI path for client to upload data. Example:
-     ``https://blob.windows.core.net/Container/Path``. Required.
+     ``https://blob.windows.core.net/Container/Path <https://blob.windows.core.net/Container/Path>``.
+     Required.
     :vartype blob_uri: str
     :ivar storage_account_arm_id: ARM ID of the storage account to use. Required.
     :vartype storage_account_arm_id: str
