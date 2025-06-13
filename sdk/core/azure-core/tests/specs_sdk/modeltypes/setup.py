@@ -12,8 +12,8 @@ import re
 from setuptools import setup, find_packages
 
 
-PACKAGE_NAME = "modeltest"
-PACKAGE_PPRINT_NAME = "Modeltest"
+PACKAGE_NAME = "modeltypes"
+PACKAGE_PPRINT_NAME = "Modeltypes"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")
@@ -56,7 +56,7 @@ setup(
     ),
     include_package_data=True,
     package_data={
-        "modeltest": ["py.typed"],
+        "modeltypes": ["py.typed"],
     },
     install_requires=[
         "isodate>=0.6.1",

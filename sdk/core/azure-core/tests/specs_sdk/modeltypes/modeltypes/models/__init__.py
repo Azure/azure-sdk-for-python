@@ -14,22 +14,36 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
-    ClientNamedPropertyModel,
+    ClientNameAndJsonEncodedNameModel,
+    Element,
+    Fish,
     FlattenModel,
+    GoblinShark,
     PropertiesModel,
     ReadonlyModel,
+    RecursiveElement,
+    Salmon,
+    SawShark,
     Scratch,
+    Shark,
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "ClientNamedPropertyModel",
+    "ClientNameAndJsonEncodedNameModel",
+    "Element",
+    "Fish",
     "FlattenModel",
+    "GoblinShark",
     "PropertiesModel",
     "ReadonlyModel",
+    "RecursiveElement",
+    "Salmon",
+    "SawShark",
     "Scratch",
+    "Shark",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()
