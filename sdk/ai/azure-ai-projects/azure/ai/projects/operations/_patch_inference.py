@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import logging
-from typing import Optional, TYPE_CHECKING, Any
+from typing import Optional, TYPE_CHECKING
 from urllib.parse import urlparse
 from azure.core.tracing.decorator import distributed_trace
 from ..models._models import ApiKeyCredentials, EntraIDCredentials

@@ -8,10 +8,8 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import logging
-from typing import Optional, TYPE_CHECKING, Any
+from typing import Optional, TYPE_CHECKING
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.tracing.decorator import distributed_trace
-
 from ...models._models import (
     ApiKeyCredentials,
     EntraIDCredentials,
