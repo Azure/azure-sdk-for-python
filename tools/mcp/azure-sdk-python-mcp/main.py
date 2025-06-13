@@ -230,6 +230,7 @@ def init_local_tool(tsp_config_path: str, repo_path: str) -> Dict[str, Any]:
         A dictionary containing the result of the command."""
     # Prepare arguments for the CLI command
     tsp_config_path = Path(tsp_config_path).resolve().as_posix()
+    repo_path = Path(repo_path).resolve().as_posix()
 
     # install dependencies
     if os.name == "nt":
