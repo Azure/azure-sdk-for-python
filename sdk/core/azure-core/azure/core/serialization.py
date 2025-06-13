@@ -11,7 +11,7 @@ from datetime import datetime, date, time, timedelta
 from datetime import timezone
 
 
-__all__ = ["NULL", "AzureJSONEncoder", "is_generated_model", "as_attribute_dict", "attribute_list"]
+__all__ = ["NULL", "AzureJSONEncoder", "is_generated_model", "as_attribute_dict", "attribute_list", "model_dump"]
 TZ_UTC = timezone.utc
 
 
@@ -155,14 +155,65 @@ def _is_readonly(p: Any) -> bool:
         return False
 
 
-def _as_attribute_dict_value(v: Any, *, exclude_readonly: bool = False) -> Any:
-    if v is None or isinstance(v, _Null):
+def _is_multipart_file_input(model: Any, rest_name: str) -> bool:
+    """Check if a field is a multipart file input.
+
+    :param model: The model containing the field
+    :type model: any
+    :param rest_name: The REST field name to check
+    :type rest_name: str
+    :return: True if the field is a multipart file input, False otherwise
+    :rtype: bool
+    """
+    try:
+        rest_field = next(
+            rf
+            for rf in model._attr_to_rest_field.values()  # pylint: disable=protected-access
+            if rf._rest_name == rest_name  # pylint: disable=protected-access
+        )
+        return getattr(rest_field, "_is_multipart_file_input", False)
+    except StopIteration:
+        return False
+
+
+def _process_value(value: Any, *, exclude_readonly: bool = False, use_rest_names: bool = True) -> Any:
+    """Process a value recursively, handling None, collections, and models.
+
+    :param value: The value to process
+    :type value: any
+    :keyword bool exclude_readonly: Whether to exclude readonly properties
+    :keyword bool use_rest_names: Whether to use REST field names (True) or attribute names (False)
+    :return: The processed value
+    :rtype: any
+    """
+    if value is None or isinstance(value, _Null):
         return None
-    if isinstance(v, (list, tuple, set)):
-        return type(v)(_as_attribute_dict_value(x, exclude_readonly=exclude_readonly) for x in v)
-    if isinstance(v, dict):
-        return {dk: _as_attribute_dict_value(dv, exclude_readonly=exclude_readonly) for dk, dv in v.items()}
-    return as_attribute_dict(v, exclude_readonly=exclude_readonly) if is_generated_model(v) else v
+
+    # Handle Model instances recursively
+    if is_generated_model(value):
+        fn = model_dump if use_rest_names else as_attribute_dict
+        return fn(value, exclude_readonly=exclude_readonly)
+
+    # Handle collections
+    if isinstance(value, (list, tuple, set)):
+        return type(value)(
+            _process_value(x, exclude_readonly=exclude_readonly, use_rest_names=use_rest_names) for x in value
+        )
+    if isinstance(value, dict):
+        return {
+            k: _process_value(v, exclude_readonly=exclude_readonly, use_rest_names=use_rest_names)
+            for k, v in value.items()
+        }
+
+    return value
+
+
+def _as_attribute_dict_value(v: Any, *, exclude_readonly: bool = False) -> Any:
+    return _process_value(v, exclude_readonly=exclude_readonly, use_rest_names=False)
+
+
+def _model_dump_value(value: Any, *, exclude_readonly: bool = False):
+    return _process_value(value, exclude_readonly=exclude_readonly, use_rest_names=True)
 
 
 def _get_flattened_attribute(obj: Any) -> Optional[str]:
@@ -248,11 +299,13 @@ def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, 
             if exclude_readonly and _is_readonly(rest_field):
                 # if we're excluding readonly properties, we need to track them
                 readonly_props.add(rest_field._rest_name)  # pylint: disable=protected-access
+
             if flattened_attribute == attr_name:
                 for fk, fv in rest_field._class_type._attr_to_rest_field.items():  # pylint: disable=protected-access
                     rest_to_attr[fv._rest_name] = fk  # pylint: disable=protected-access
             else:
                 rest_to_attr[rest_field._rest_name] = attr_name  # pylint: disable=protected-access
+
         for k, v in obj.items():
             if exclude_readonly and k in readonly_props:  # pyright: ignore
                 continue
@@ -260,15 +313,7 @@ def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, 
                 for fk, fv in v.items():
                     result[rest_to_attr.get(fk, fk)] = _as_attribute_dict_value(fv, exclude_readonly=exclude_readonly)
             else:
-                is_multipart_file_input = False
-                try:
-                    is_multipart_file_input = next(  # pylint: disable=protected-access
-                        rf
-                        for rf in obj._attr_to_rest_field.values()  # pylint: disable=protected-access
-                        if rf._rest_name == k  # pylint: disable=protected-access
-                    )._is_multipart_file_input
-                except StopIteration:
-                    pass
+                is_multipart_file_input = _is_multipart_file_input(obj, k)
 
                 result[rest_to_attr.get(k, k)] = (
                     v if is_multipart_file_input else _as_attribute_dict_value(v, exclude_readonly=exclude_readonly)
@@ -277,3 +322,50 @@ def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, 
     except AttributeError as exc:
         # not a typespec generated model
         raise TypeError("Object must be a generated model instance.") from exc
+
+
+def model_dump(model: Any, *, exclude_readonly: bool = False) -> dict:
+    """Convert a model object to a dictionary using REST field names as keys.
+
+    This function recursively serializes a model object and all nested model objects
+    to Python dictionaries, using the REST API field names as defined by the model's
+    rest field definitions.
+
+    :param model: The model object to convert to a dictionary
+    :type model: any
+    :keyword bool exclude_readonly: Whether to exclude readonly fields from the output
+    :return: A dictionary representation of the model with REST field names as keys
+    :rtype: dict
+    :raises TypeError: If the input is not a model instance
+    """
+    if not is_generated_model(model):
+        raise TypeError("The provided model is not a TypeSpec generated model instance.")
+    if hasattr(model, "_attribute_map"):
+        raise TypeError(
+            "The provided model is not a TypeSpec generated model instance. "
+            "It appears to be a legacy autorest model instance. Please use `model.serialize()` instead."
+        )
+
+    result = {}
+
+    # Get readonly properties if we need to exclude them
+    readonly_props = set()
+    if exclude_readonly:
+        readonly_props = {
+            rf._rest_name  # pylint: disable=protected-access
+            for rf in model._attr_to_rest_field.values()  # pylint: disable=protected-access
+            if _is_readonly(rf)
+        }
+
+    # Iterate through the model's items (which are stored with REST field names)
+    for key, value in model.items():
+        # Skip readonly properties if requested
+        if exclude_readonly and key in readonly_props:
+            continue
+
+        # Handle multipart file inputs specially (don't convert them)
+        is_multipart_file_input = _is_multipart_file_input(model, key)
+
+        result[key] = value if is_multipart_file_input else _model_dump_value(value, exclude_readonly=exclude_readonly)
+
+    return result

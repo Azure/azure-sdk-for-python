@@ -5,15 +5,21 @@
 import base64
 from datetime import date, datetime, time, timedelta, tzinfo
 from enum import Enum
+from typing import List
 import json
 import sys
-from typing import Any, Dict, List, Optional
 from io import BytesIO
 
-from azure.core.serialization import AzureJSONEncoder, NULL, as_attribute_dict, is_generated_model, attribute_list
+from azure.core.serialization import (
+    AzureJSONEncoder,
+    NULL,
+    as_attribute_dict,
+    is_generated_model,
+    attribute_list,
+    model_dump,
+)
 import pytest
-from modeltypes._utils.model_base import Model as HybridModel, rest_field
-from modeltypes._utils.serialization import Model as MsrestModel
+from modeltypes._utils.model_base import Model as HybridModel, rest_field, rest_discriminator
 from modeltypes import models
 
 
@@ -972,3 +978,340 @@ def test_as_attribute_dict_additional_properties():
         "birthdate": "2017-12-13T02:29:51Z",
         "complexProperty": {"color": "Red"},
     }
+
+
+class TestModelDump:
+    """Test cases for the model_dump function"""
+
+    def test_model_dump_basic_model(self):
+        """Test model_dump with a basic HybridModel"""
+        model = models.PropertiesModel(description="A simple model", age=30)
+        result = model_dump(model)
+
+        expected = {"modelDescription": "A simple model", "age": 30}
+        assert result == expected
+
+    def test_model_dump_with_none_values(self):
+        """Test model_dump with None values"""
+        model = models.HybridOptionalProps(required_prop="always here", optional_prop=None, optional_model=None)
+
+        result = model_dump(model)
+        expected = {
+            "requiredProp": "always here",
+        }
+        assert result == expected
+
+        hybrid_nested = models.HybridOptionalProps(required_prop="nested", optional_prop="present", optional_model=None)
+        hybrid_model = models.HybridOptionalProps(
+            required_prop="outer", optional_prop=None, optional_model=hybrid_nested
+        )
+        result = model_dump(hybrid_model)
+        expected = {"requiredProp": "outer", "optionalModel": {"requiredProp": "nested", "optionalProp": "present"}}
+        assert result == expected
+
+    def test_model_dump_nested_models(self):
+        """Test model_dump with nested HybridModel objects"""
+
+        model = models.HybridDog(name="Wall-E", species="dog", breed="Pitbull", is_best_boy=True)
+        result = model_dump(model)
+        expected = {"name": "Wall-E", "species": "dog", "breed": "Pitbull", "isBestBoy": True}
+        assert result == expected
+
+    def test_model_dump_with_lists(self):
+        """Test model_dump with list values containing models"""
+        model = models.HybridContactInfo(
+            email="foo@example.com",
+            phone="123-456-7890",
+            addresses=[
+                models.HybridAddress(street="123 Main St", city="Anytown", zip_code="12345"),
+                models.HybridAddress(street="456 Elm St", city="Othertown", zip_code="67890"),
+            ],
+        )
+        result = model_dump(model)
+        expected = {
+            "email": "foo@example.com",
+            "phone": "123-456-7890",
+            "addresses": [
+                {"street": "123 Main St", "city": "Anytown", "zipCode": "12345"},
+                {"street": "456 Elm St", "city": "Othertown", "zipCode": "67890"},
+            ],
+        }
+        assert result == expected
+
+    def test_model_dump_with_sets(self):
+        """Test model_dump with set values."""
+
+        model = models.HybridModelWithSet(name="Product", categories={"electronics", "mobile", "devices"})
+
+        result = model_dump(model)
+
+        assert result["name"] == "Product"
+        assert result["categories"] == {"electronics", "mobile", "devices"}
+
+    def test_model_dump_with_dict_values(self):
+        """Test model_dump with dictionary values"""
+        hybrid_resource = models.HybridTaggedResource(
+            name="Tagged Resource",
+            tags=[],
+            metadata={"created_by": "admin", "priority": "high"},
+            string_list=["a", "b", "c"],
+            int_list=[1, 2, 3],
+        )
+        result = model_dump(hybrid_resource)
+        expected = {
+            "name": "Tagged Resource",
+            "tags": [],
+            "metadata": {"created_by": "admin", "priority": "high"},
+            "stringList": ["a", "b", "c"],
+            "intList": [1, 2, 3],
+        }
+        assert result == expected
+
+    def test_model_dump_exclude_readonly(self):
+        """Test model_dump with exclude_readonly=False (default)"""
+        model = models.HybridResource(
+            id="r456",
+            name="My Resource",
+            description="A test resource",
+        )
+        result = model_dump(model, exclude_readonly=False)
+
+        expected = {"id": "r456", "name": "My Resource", "description": "A test resource"}
+        assert result == expected
+
+        result = model_dump(model, exclude_readonly=True)
+        expected = {"name": "My Resource", "description": "A test resource"}
+        assert result == expected
+
+    def test_model_dump_with_multipart_file_input(self):
+        """Test model_dump with multipart file input fields"""
+        file_data = BytesIO(b"This is test file content")
+        model = models.FileUpload(name="test.txt", content=file_data, content_type="text/plain")
+
+        result = model_dump(model)
+
+        expected = {
+            "name": "test.txt",
+            "content": file_data,  # Should be preserved as-is for multipart files
+            "contentType": "text/plain",
+        }
+        assert result == expected
+
+    def test_model_dump_deeply_nested_models(self):
+        """Test model_dump with deeply nested model structures"""
+        model = models.HybridEmployee(
+            employee_id="E12345",
+            first_name="Jane",
+            last_name="Doe",
+            hire_date=date(2020, 3, 15),
+            contact=models.HybridContactInfo(
+                email="jane.doe@example.com",
+                phone="555-123-4567",
+                addresses=[
+                    models.HybridAddress(street="123 Home St", city="Hometown", zip_code="12345"),
+                    models.HybridAddress(street="456 Work Ave", city="Workville", zip_code="67890"),
+                ],
+            ),
+            department=models.HybridDepartment(name="Engineering", cost_center="CC-ENG-123"),
+            skills=["Python", "TypeScript", "Azure"],
+            performance_ratings={"2020": 4.5, "2021": 4.7, "2022": 4.8},
+        )
+        result = model_dump(model)
+        expected = {
+            "employeeId": "E12345",
+            "firstName": "Jane",
+            "lastName": "Doe",
+            "hireDate": "2020-03-15",
+            "contact": {
+                "email": "jane.doe@example.com",
+                "phone": "555-123-4567",
+                "addresses": [
+                    {"street": "123 Home St", "city": "Hometown", "zipCode": "12345"},
+                    {"street": "456 Work Ave", "city": "Workville", "zipCode": "67890"},
+                ],
+            },
+            "department": {"name": "Engineering", "costCenter": "CC-ENG-123"},
+            "skills": ["Python", "TypeScript", "Azure"],
+            "performanceRatings": {"2020": 4.5, "2021": 4.7, "2022": 4.8},
+        }
+        assert result == expected
+
+    def test_model_dump_polymorphic(self):
+        """Test model_dump where an attribute can be polymorphic."""
+        model = models.Salmon(
+            age=3,
+            life_partner=models.SawShark(age=5),
+            friends=[
+                models.Salmon(age=2, life_partner=models.Salmon(age=1)),
+                models.GoblinShark(age=4),
+            ],
+            hate={
+                "key1": models.Salmon(age=6),
+                "key2": models.GoblinShark(age=7),
+            },
+        )
+        result = model_dump(model)
+        expected = {
+            "age": 3,
+            "kind": "salmon",
+            "lifePartner": {"age": 5, "kind": "shark", "sharkType": "saw"},
+            "friends": [
+                {"age": 2, "kind": "salmon", "lifePartner": {"age": 1, "kind": "salmon"}},
+                {"age": 4, "kind": "shark", "sharkType": "goblin"},
+            ],
+            "hate": {
+                "key1": {"age": 6, "kind": "salmon"},
+                "key2": {"age": 7, "kind": "shark", "sharkType": "goblin"},
+            },
+        }
+
+    def test_model_dump_error_cases(self):
+        """Test model_dump error handling"""
+        # Test with non-model object
+        with pytest.raises(TypeError, match="provided model is not a TypeSpec generated model instance"):
+            model_dump({"not": "a model"})
+
+        with pytest.raises(TypeError, match="provided model is not a TypeSpec generated model instance"):
+            model_dump("string")
+
+        model = models.MsrestResource(
+            name="Test Resource",
+            description="This is a test resource",
+        )
+        with pytest.raises(TypeError, match="provided model is not a TypeSpec generated model instance"):
+            model_dump(model)
+
+        # Test with object that doesn't have _is_model attribute
+        class NotAModel:
+            pass
+
+        with pytest.raises(TypeError, match="provided model is not a TypeSpec generated model instance"):
+            model_dump(NotAModel())
+
+    def test_model_dump_empty_model(self):
+        """Test model_dump with empty model"""
+
+        class EmptyModel(HybridModel):
+            pass
+
+        model = EmptyModel({})
+        result = model_dump(model)
+
+        assert result == {}
+
+    def test_model_dump_complex_nested_with_readonly(self):
+        """Test model_dump with complex nested structure and readonly fields"""
+
+        class OuterModel(HybridModel):
+            name: str = rest_field()
+            readonly_outer: str = rest_field(name="readonlyOuter", visibility=["read"])
+            inner: models.HybridResource = rest_field()
+            inner_list: List[models.HybridResource] = rest_field(name="innerList")
+
+        inner1 = models.HybridResource(
+            id="inner1",
+            name="Inner Resource 1",
+            description="First inner resource",
+        )
+        inner2 = models.HybridResource(
+            id="inner2",
+            name="Inner Resource 2",
+            description="Second inner resource",
+        )
+
+        outer = OuterModel(
+            name="outer", readonly_outer="readonly_outer_value", inner=inner1, inner_list=[inner1, inner2]
+        )
+
+        # Test with exclude_readonly=False
+        result_with_readonly = model_dump(outer, exclude_readonly=False)
+        expected_with_readonly = {
+            "name": "outer",
+            "readonlyOuter": "readonly_outer_value",
+            "inner": {"id": "inner1", "name": "Inner Resource 1", "description": "First inner resource"},
+            "innerList": [
+                {"id": "inner1", "name": "Inner Resource 1", "description": "First inner resource"},
+                {"id": "inner2", "name": "Inner Resource 2", "description": "Second inner resource"},
+            ],
+        }
+        assert result_with_readonly == expected_with_readonly
+
+        # Test with exclude_readonly=True
+        result_without_readonly = model_dump(outer, exclude_readonly=True)
+        expected_without_readonly = {
+            "name": "outer",
+            "inner": {"name": "Inner Resource 1", "description": "First inner resource"},
+            "innerList": [
+                {"name": "Inner Resource 1", "description": "First inner resource"},
+                {"name": "Inner Resource 2", "description": "Second inner resource"},
+            ],
+        }
+        assert result_without_readonly == expected_without_readonly
+
+    def test_model_dump_nested_discriminators(self):
+        model = models.SawShark(age=5)
+        result = model_dump(model)
+        expected = {"age": 5, "kind": "shark", "sharkType": "saw"}
+        assert result == expected
+
+    def test_model_dump_with_rest_discriminator_readonly(self):
+        """Test model_dump with rest_discriminator field having readonly visibility"""
+
+        class BaseResource(HybridModel):
+            resource_type: str = rest_discriminator(name="resourceType", visibility=["read"])
+            name: str = rest_field()
+            status: str = rest_field()
+
+        class DatabaseResource(BaseResource, discriminator="database"):
+            resource_type: str = rest_discriminator(name="resourceType", visibility=["read"])
+            connection_string: str = rest_field(name="connectionString")
+
+        db_resource = DatabaseResource(
+            {
+                "resourceType": "database",
+                "name": "ProductionDB",
+                "status": "active",
+                "connectionString": "Server=localhost;Database=prod",
+            }
+        )
+
+        # Test with exclude_readonly=False (default)
+        result_with_readonly = model_dump(db_resource, exclude_readonly=False)
+        expected_with_readonly = {
+            "resourceType": "database",
+            "name": "ProductionDB",
+            "status": "active",
+            "connectionString": "Server=localhost;Database=prod",
+        }
+        assert result_with_readonly == expected_with_readonly
+
+        # Test with exclude_readonly=True
+        result_without_readonly = model_dump(db_resource, exclude_readonly=True)
+        expected_without_readonly = {
+            "name": "ProductionDB",
+            "status": "active",
+            "connectionString": "Server=localhost;Database=prod",
+        }
+        assert result_without_readonly == expected_without_readonly
+
+    def test_model_dump_datetime_serialization(self):
+
+        event = models.HybridEvent(
+            event_id="evt123",
+            start_time=datetime(2023, 10, 1, 14, 30, 0),
+            end_time=datetime(2023, 10, 1, 16, 0, 0),
+            created_date=date(2023, 9, 30),
+            reminder_time=time(13, 0),
+            duration=timedelta(hours=1, minutes=30, seconds=15),
+        )
+
+        result = model_dump(event)
+        expected = {
+            "eventId": "evt123",
+            "startTime": "2023-10-01T14:30:00Z",
+            "endTime": "2023-10-01T16:00:00Z",
+            "createdDate": "2023-09-30",
+            "reminderTime": "13:00:00",
+            "duration": "PT01H30M15S",
+        }
+        assert result == expected

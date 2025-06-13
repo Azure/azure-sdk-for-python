@@ -314,9 +314,14 @@ class FileUpload(HybridModel):
 
 
 class HybridOptionalProps(HybridModel):
-    required_prop: str = rest_field()
+    required_prop: str = rest_field(name="requiredProp")
     optional_prop: Optional[str] = rest_field(name="optionalProp")
     optional_model: Optional["HybridOptionalProps"] = rest_field(name="optionalModel")
+
+
+class HybridModelWithSet(HybridModel):
+    name: str = rest_field()
+    categories: set = rest_field()
 
 
 class MsrestOptionalProps(MsrestModel):
@@ -420,6 +425,7 @@ __all__: List[str] = [
     "MsrestTaggedResource",
     "FileUpload",
     "HybridOptionalProps",
+    "HybridModelWithSet",
     "MsrestOptionalProps",
     "MsrestFlattenModel",
     "HybridPetAPTrue",
