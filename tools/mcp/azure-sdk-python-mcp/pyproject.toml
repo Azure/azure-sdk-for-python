@@ -1,12 +1,11 @@
 [project]
 name = "azure-sdk-python-mcp"
-version = "0.1.1"
+version = "0.1.2"
 description = "MCP server to help developing Azure SDK for Python"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "azure-core>=1.34.0",
-    "black>=25.1.0",
     "mcp[cli]>=1.9.2",
     "mypy>=1.16.0",
     "pip>=25.1.1",
@@ -17,7 +16,7 @@ dependencies = [
 ]
 
 [project.scripts]
-azure-sdk-mcp-python = "main:main"
+azure-sdk-python-mcp = "main:main"
 
 [[tool.uv.index]]
 name = "azure-sdk-python-mcp"
