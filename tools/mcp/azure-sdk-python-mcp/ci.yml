@@ -29,4 +29,3 @@ extends:
     FeedName: 'public/azure-sdk-for-python'
     ArtifactName: 'azure-sdk-python-mcp'
     PackageName: 'Azure SDK Python MCP'
-    BuildUsingPyProjectToml: true
