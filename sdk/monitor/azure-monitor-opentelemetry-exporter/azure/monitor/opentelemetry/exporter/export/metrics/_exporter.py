@@ -309,6 +309,6 @@ def _determine_metrics_to_log_analytics() -> bool:
     if not _utils._is_on_aks() or not _utils._is_attach_enabled():
         return True
     env_var = os.environ.get(_APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED)
-    if env_var is not None:
-        return env_var.lower().strip() != "false"
-    return True
+    if not env_var:
+        return True
+    return env_var.lower().strip() != "false"
