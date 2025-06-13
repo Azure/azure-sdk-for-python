@@ -173,6 +173,7 @@ def verify_setup_tool(command_path: str, tox_ini_path: str) -> Dict[str, Any]:
         "node": verify_installation(["node", "--version"], "Node.js"),
         "python": verify_installation(["python", "--version"], "Python"),
         "tox": verify_installation(["tox", "--version", "-c", tox_ini_path], "tox"),
+        "tsp-client": verify_installation(["tsp-client", "--version"], "TypeSpec Client Generator CLI"),
     }
 
     return results
