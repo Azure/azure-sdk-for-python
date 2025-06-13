@@ -166,7 +166,7 @@ class JobOperations(_ScopeDependentOperations):
         **kwargs: Any,
     ) -> None:
         super(JobOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_filter() #test
+        ops_logger.update_filter()
 
         self._operation_2023_02_preview = service_client_02_2023_preview.jobs
         self._service_client = service_client_02_2023_preview
