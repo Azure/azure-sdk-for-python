@@ -144,6 +144,7 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         if self.storage:
             self.storage.close()
 
+    # pylint: disable=protected-access
     def _point_to_envelope(
         self,
         point: DataPointT,
@@ -160,11 +161,11 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             if _utils._is_on_aks() and _utils._is_attach_enabled():
                 if (
                     OTEL_EXPORTER_OTLP_METRICS_ENDPOINT in os.environ
-                    and "otlp" in os.environ.get("OTEL_METRICS_EXPORTER", "")
+                    and "otlp" in os.environ.get(OTEL_METRICS_EXPORTER, "")
                 ):
-                    envelope.data.base_data.properties["_MS.SentToAMW"] = "True"
+                    envelope.data.base_data.properties["_MS.SentToAMW"] = "True"  # type: ignore
                 else:
-                    envelope.data.base_data.properties["_MS.SentToAMW"] = "False"
+                    envelope.data.base_data.properties["_MS.SentToAMW"] = "False"  # type: ignore
 
         return envelope
 
