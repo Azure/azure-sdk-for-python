@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Add AMW Deduping flag, SentToAMW, for AKS Attach
+- Add AMW deduplicating flag, SentToAMW, for AKS Attach
   ([#41410](https://github.com/Azure/azure-sdk-for-python/pull/41410))
 
 ### Breaking Changes
