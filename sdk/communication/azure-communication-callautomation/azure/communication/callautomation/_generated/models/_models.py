@@ -876,6 +876,7 @@ class CallLocator(_serialization.Model):
     :ivar server_call_id: The server call id.
     :vartype server_call_id: str
     :ivar room_id: The Acs room id. (Not supported for Start Recording).
+    :ivar room_id: The Acs room id. (Not supported for Start Recording).
     :vartype room_id: str
     :ivar kind: The call locator kind. Known values are: "groupCallLocator", "serverCallLocator",
      and "roomCallLocator".
@@ -903,6 +904,7 @@ class CallLocator(_serialization.Model):
         :paramtype group_call_id: str
         :keyword server_call_id: The server call id.
         :paramtype server_call_id: str
+        :keyword room_id: The Acs room id. (Not supported for Start Recording).
         :keyword room_id: The Acs room id. (Not supported for Start Recording).
         :paramtype room_id: str
         :keyword kind: The call locator kind. Known values are: "groupCallLocator",
@@ -2996,7 +2998,7 @@ class DtmfResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.tones: Optional[List[Union[str, "_models.DtmfTone"]]] = None
+        self.tones = None
 
 
 class Error(_serialization.Model):
@@ -3143,6 +3145,7 @@ class GetParticipantsResponse(_serialization.Model):
 
 class HoldAudioCompleted(_serialization.Model):
     """Hold Audio Completed event.
+    """Hold Audio Completed event.
 
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
@@ -3199,6 +3202,7 @@ class HoldAudioCompleted(_serialization.Model):
 
 
 class HoldAudioPaused(_serialization.Model):
+    """Hold Audio Paused event.
     """Hold Audio Paused event.
 
     :ivar call_connection_id: Call connection ID.
@@ -3257,6 +3261,7 @@ class HoldAudioPaused(_serialization.Model):
 
 class HoldAudioResumed(_serialization.Model):
     """Hold Audio Resumed event.
+    """Hold Audio Resumed event.
 
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
@@ -3314,6 +3319,7 @@ class HoldAudioResumed(_serialization.Model):
 
 class HoldAudioStarted(_serialization.Model):
     """Hold Audio Started event.
+    """Hold Audio Started event.
 
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
@@ -3370,6 +3376,7 @@ class HoldAudioStarted(_serialization.Model):
 
 
 class HoldFailed(_serialization.Model):
+    """Hold Failed event.
     """Hold Failed event.
 
     :ivar call_connection_id: Call connection ID.
@@ -4429,6 +4436,9 @@ class PlayOptions(_serialization.Model):
     :ivar interrupt_hold_audio: If set, hold audio will be interrupted, then this request will be
      played, and then the hold audio will be resumed.
     :vartype interrupt_hold_audio: bool
+    :ivar interrupt_hold_audio: If set, hold audio will be interrupted, then this request will be
+     played, and then the hold audio will be resumed.
+    :vartype interrupt_hold_audio: bool
     """
 
     _validation = {
@@ -4439,8 +4449,17 @@ class PlayOptions(_serialization.Model):
         "loop": {"key": "loop", "type": "bool"},
         "interrupt_call_media_operation": {"key": "interruptCallMediaOperation", "type": "bool"},
         "interrupt_hold_audio": {"key": "interruptHoldAudio", "type": "bool"},
+        "interrupt_hold_audio": {"key": "interruptHoldAudio", "type": "bool"},
     }
 
+    def __init__(
+        self,
+        *,
+        loop: bool,
+        interrupt_call_media_operation: Optional[bool] = None,
+        interrupt_hold_audio: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
     def __init__(
         self,
         *,
@@ -4458,14 +4477,19 @@ class PlayOptions(_serialization.Model):
         :keyword interrupt_hold_audio: If set, hold audio will be interrupted, then this request will
          be played, and then the hold audio will be resumed.
         :paramtype interrupt_hold_audio: bool
+        :keyword interrupt_hold_audio: If set, hold audio will be interrupted, then this request will
+         be played, and then the hold audio will be resumed.
+        :paramtype interrupt_hold_audio: bool
         """
         super().__init__(**kwargs)
         self.loop = loop
         self.interrupt_call_media_operation = interrupt_call_media_operation
         self.interrupt_hold_audio = interrupt_hold_audio
+        self.interrupt_hold_audio = interrupt_hold_audio
 
 
 class PlayPaused(_serialization.Model):
+    """Play Paused event.
     """Play Paused event.
 
     :ivar call_connection_id: Call connection ID.
@@ -4591,6 +4615,7 @@ class PlayRequest(_serialization.Model):
 
 
 class PlayResumed(_serialization.Model):
+    """Play Resumed event.
     """Play Resumed event.
 
     :ivar call_connection_id: Call connection ID.
@@ -5315,13 +5340,13 @@ class RecordingResultResponse(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.recording_id: Optional[str] = None
-        self.recording_storage_info: Optional["_models.RecordingStorageInfo"] = None
-        self.errors: Optional[List["_models.Error"]] = None
-        self.recording_start_time: Optional[datetime.datetime] = None
-        self.recording_duration_ms: Optional[int] = None
-        self.session_end_reason: Optional[Union[str, "_models.CallSessionEndReason"]] = None
-        self.recording_expiration_time: Optional[datetime.datetime] = None
+        self.recording_id = None
+        self.recording_storage_info = None
+        self.errors = None
+        self.recording_start_time = None
+        self.recording_duration_ms = None
+        self.session_end_reason = None
+        self.recording_expiration_time = None
 
 
 class RecordingStateChanged(_serialization.Model):
@@ -5448,7 +5473,7 @@ class RecordingStorageInfo(_serialization.Model):
     """Container for chunks.
 
     :ivar recording_chunks: Collection of
-     {Microsoft.Skype.Platform.ExecutionAgent.Azure.Communication.Service.ServerCalling.Content.Contracts.ALPHA4_2024_09_01_preview.Models.RecordingChunkStorageInfo}.
+     {Microsoft.Skype.Platform.ExecutionAgent.Azure.Communication.Service.ServerCalling.Content.Contracts.ALPHA4_2024_09_01_preview.Models.RecordingChunkStorageInfo}.  # pylint: disable=line-too-long
     :vartype recording_chunks:
      list[~azure.communication.callautomation.models.RecordingChunkStorageInfo]
     """
@@ -5462,7 +5487,7 @@ class RecordingStorageInfo(_serialization.Model):
     ) -> None:
         """
         :keyword recording_chunks: Collection of
-         {Microsoft.Skype.Platform.ExecutionAgent.Azure.Communication.Service.ServerCalling.Content.Contracts.ALPHA4_2024_09_01_preview.Models.RecordingChunkStorageInfo}.
+         {Microsoft.Skype.Platform.ExecutionAgent.Azure.Communication.Service.ServerCalling.Content.Contracts.ALPHA4_2024_09_01_preview.Models.RecordingChunkStorageInfo}.  # pylint: disable=line-too-long
         :paramtype recording_chunks:
          list[~azure.communication.callautomation.models.RecordingChunkStorageInfo]
         """
