@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-05-01-preview",
+  "commit": "0bf123645e53f9006c15a962087c9073d7fd455f",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/cloudhealth/CloudHealth.Management",
+  "emitterVersion": "0.45.0"
+}
