@@ -11,14 +11,13 @@
 import datetime
 from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .. import _model_base
-from .._model_base import rest_field
+from .._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class Attributes(_model_base.Model):
+class Attributes(_Model):
     """Additional attributes specific to Neon Resources.
 
     :ivar name: Name of the attribute. Required.
@@ -51,8 +50,8 @@ class Attributes(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Resource(_model_base.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
+class Resource(_Model):
+    """Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -80,8 +79,7 @@ class Resource(_model_base.Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
-    tags and a location.
+    """Proxy Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -138,7 +136,7 @@ class Branch(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class BranchProperties(_model_base.Model):
+class BranchProperties(_Model):
     """Properties specific to Branch.
 
     :ivar entity_id: Unique identifier for the entity.
@@ -234,7 +232,7 @@ class BranchProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class CompanyDetails(_model_base.Model):
+class CompanyDetails(_Model):
     """Company details for an organization.
 
     :ivar company_name: Company name.
@@ -336,7 +334,7 @@ class Compute(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ComputeProperties(_model_base.Model):
+class ComputeProperties(_Model):
     """Properties specific to Compute.
 
     :ivar entity_id: Unique identifier for the entity.
@@ -409,7 +407,7 @@ class ComputeProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionUriProperties(_model_base.Model):
+class ConnectionUriProperties(_Model):
     """Connection uri parameters for the associated database.
 
     :ivar project_id: Project Id associated with this connection.
@@ -470,7 +468,7 @@ class ConnectionUriProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DefaultEndpointSettings(_model_base.Model):
+class DefaultEndpointSettings(_Model):
     """Default Endpoint Settings for the project.
 
     :ivar autoscaling_limit_min_cu: Minimum compute units for autoscaling. Required.
@@ -548,7 +546,7 @@ class Endpoint(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class EndpointProperties(_model_base.Model):
+class EndpointProperties(_Model):
     """Properties specific to Endpoints.
 
     :ivar entity_id: Unique identifier for the entity.
@@ -618,7 +616,7 @@ class EndpointProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorAdditionalInfo(_model_base.Model):
+class ErrorAdditionalInfo(_Model):
     """The resource management error additional info.
 
     :ivar type: The additional info type.
@@ -633,7 +631,7 @@ class ErrorAdditionalInfo(_model_base.Model):
     """The additional info."""
 
 
-class ErrorDetail(_model_base.Model):
+class ErrorDetail(_Model):
     """The error detail.
 
     :ivar code: The error code.
@@ -662,9 +660,8 @@ class ErrorDetail(_model_base.Model):
     """The error additional info."""
 
 
-class ErrorResponse(_model_base.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations.
+class ErrorResponse(_Model):
+    """Error response.
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.neonpostgres.models.ErrorDetail
@@ -691,7 +688,7 @@ class ErrorResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MarketplaceDetails(_model_base.Model):
+class MarketplaceDetails(_Model):
     """Marketplace details for an organization.
 
     :ivar subscription_id: SaaS subscription id for the the marketplace offer.
@@ -779,7 +776,7 @@ class NeonDatabase(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class NeonDatabaseProperties(_model_base.Model):
+class NeonDatabaseProperties(_Model):
     """Properties specific to Databases.
 
     :ivar entity_id: Unique identifier for the entity.
@@ -883,7 +880,7 @@ class NeonRole(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class NeonRoleProperties(_model_base.Model):
+class NeonRoleProperties(_Model):
     """Properties specific to Roles.
 
     :ivar entity_id: Unique identifier for the entity.
@@ -953,7 +950,7 @@ class NeonRoleProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OfferDetails(_model_base.Model):
+class OfferDetails(_Model):
     """Offer details for the marketplace that is selected by the user.
 
     :ivar publisher_id: Publisher Id for the marketplace offer. Required.
@@ -1006,8 +1003,8 @@ class OfferDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_model_base.Model):
-    """Details of a REST API operation, returned from the Resource Provider Operations API.
+class Operation(_Model):
+    """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
@@ -1063,7 +1060,7 @@ class Operation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_model_base.Model):
+class OperationDisplay(_Model):
     """Localized display information for and operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
@@ -1094,7 +1091,7 @@ class OperationDisplay(_model_base.Model):
      views."""
 
 
-class OrganizationProperties(_model_base.Model):
+class OrganizationProperties(_Model):
     """Properties specific to Neon Organization resource.
 
     :ivar marketplace_details: Marketplace details of the resource. Required.
@@ -1114,7 +1111,7 @@ class OrganizationProperties(_model_base.Model):
     """
 
     marketplace_details: "_models.MarketplaceDetails" = rest_field(
-        name="marketplaceDetails", visibility=["read", "create"]
+        name="marketplaceDetails", visibility=["read", "create", "update"]
     )
     """Marketplace details of the resource. Required."""
     user_details: "_models.UserDetails" = rest_field(
@@ -1162,8 +1159,7 @@ class OrganizationProperties(_model_base.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which
-    has 'tags' and a 'location'.
+    """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -1253,7 +1249,7 @@ class OrganizationResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class PartnerOrganizationProperties(_model_base.Model):
+class PartnerOrganizationProperties(_Model):
     """Properties specific to Partner's organization.
 
     :ivar organization_id: Organization Id in partner's system.
@@ -1297,7 +1293,7 @@ class PartnerOrganizationProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PgVersion(_model_base.Model):
+class PgVersion(_Model):
     """PostgreSQL Version model.
 
     :ivar version: The major PostgreSQL version number.
@@ -1325,7 +1321,7 @@ class PgVersion(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PgVersionsResult(_model_base.Model):
+class PgVersionsResult(_Model):
     """Response model for PostgreSQL versions.
 
     :ivar versions: List of PostgreSQL versions. Required.
@@ -1394,7 +1390,7 @@ class Project(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ProjectProperties(_model_base.Model):
+class ProjectProperties(_Model):
     """Properties specific to Project.
 
     :ivar entity_id: Unique identifier for the entity.
@@ -1504,7 +1500,7 @@ class ProjectProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SingleSignOnProperties(_model_base.Model):
+class SingleSignOnProperties(_Model):
     """Properties specific to Single Sign On Resource.
 
     :ivar single_sign_on_state: State of the Single Sign On for the organization. Known values are:
@@ -1558,7 +1554,7 @@ class SingleSignOnProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_model_base.Model):
+class SystemData(_Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -1625,7 +1621,7 @@ class SystemData(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UserDetails(_model_base.Model):
+class UserDetails(_Model):
     """User details for an organization.
 
     :ivar first_name: First name of the user.

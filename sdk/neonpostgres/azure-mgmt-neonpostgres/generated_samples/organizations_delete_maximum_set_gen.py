@@ -32,7 +32,7 @@ def main():
 
     client.organizations.begin_delete(
         resource_group_name="rgneon",
-        organization_name="test-org",
+        organization_name="contoso-org",
     ).result()
 
 

@@ -15,7 +15,7 @@ from azure.mgmt.neonpostgres import NeonPostgresMgmtClient
     pip install azure-identity
     pip install azure-mgmt-neonpostgres
 # USAGE
-    python neon_roles_create_or_update_maximum_set_gen.py
+    python organizations_list_by_subscription_minimum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,25 +30,11 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.neon_roles.begin_create_or_update(
-        resource_group_name="rgneon",
-        organization_name="test-org",
-        project_name="entity-name",
-        branch_name="entity-name",
-        neon_role_name="entity-name",
-        resource={
-            "properties": {
-                "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
-                "branchId": "wxbojkmdgaggkfiwqfakdkbyztm",
-                "entityName": "entity-name",
-                "isSuperUser": True,
-                "permissions": ["myucqecpjriewzohxvadgkhiudnyx"],
-            }
-        },
-    ).result()
-    print(response)
+    response = client.organizations.list_by_subscription()
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2025-03-01/NeonRoles_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2025-03-01/Organizations_ListBySubscription_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()
