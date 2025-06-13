@@ -1028,9 +1028,8 @@ class TestRedTeamProcessing:
             assert output_path == "test-uuid.jsonl"
 
     @pytest.mark.asyncio
-    @patch("azure.ai.evaluation.red_team._red_team.RISK_CATEGORY_EVALUATOR_MAP")
     @patch("logging.getLogger")
-    async def test_evaluate_method(self, mock_get_logger, mock_risk_category_map, red_team):
+    async def test_evaluate_method(self, mock_get_logger, red_team):
         """Test _evaluate method."""
         # Create a proper mock logger that doesn't crash when used
         mock_logger = MagicMock()
