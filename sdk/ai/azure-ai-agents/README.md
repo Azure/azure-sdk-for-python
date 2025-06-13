@@ -134,7 +134,7 @@ async with project_client:
     agents_client = project_client.agents
 ```
 
-Alternatively, you can create an `AgentsClient` directly which is not recommended and subject to be deprecated:
+Alternatively, you can instantiate an AgentsClient directly as a standalone approach without using `azure-ai-projects`. However, this is not recommended, as it has limitations and lacks the integrated capabilities provided by using an `AIProjectClient`.   Here is is the example:
 
 **Synchronous Client:**
 ```python
