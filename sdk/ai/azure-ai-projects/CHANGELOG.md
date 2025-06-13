@@ -10,6 +10,11 @@
 
 * Fix for enable_telemetry to correctly instrument azure-ai-agents
 
+### Other
+
+* Set dependency on `azure-ai-agents` version `1.0.0` or above,
+now that we have a stable release of the Agents package.
+
 ### Sample updates
 
 ## 1.0.0b11 (2025-05-15)

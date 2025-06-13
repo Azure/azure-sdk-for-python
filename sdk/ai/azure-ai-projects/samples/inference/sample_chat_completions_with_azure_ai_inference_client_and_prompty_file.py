@@ -5,7 +5,7 @@
 
 """
 DESCRIPTION:
-    Given an AIProjectClient, this sample demonstrates how to
+    Given an AI Foundry Project endpoint, this sample demonstrates how to
     * Get an authenticated ChatCompletionsClient from the azure.ai.inference package
     * Load a Prompty file and render a template with provided parameters to create a list of chat messages.
     * Perform one chat completion operation.
@@ -27,11 +27,18 @@ USAGE:
 """
 
 import os
+from urllib.parse import urlparse
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient, PromptTemplate
+from azure.ai.projects import PromptTemplate
+from azure.ai.inference import ChatCompletionsClient
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
+
+# Project endpoint has the form:   https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>
+# Inference endpoint has the form: https://<your-ai-services-account-name>.services.ai.azure.com/models
+# Strip the "/api/projects/<your-project-name>" part and replace with "/models":
+inference_endpoint = f"https://{urlparse(endpoint).netloc}/models"
 
 # Construct the path to the Prompty file used in this sample
 data_folder = os.environ.get("DATA_FOLDER", os.path.dirname(os.path.abspath(__file__)))
@@ -39,24 +46,30 @@ prompty_file = os.path.join(data_folder, "sample1.prompty")
 
 with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
-    with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
+    prompt_template = PromptTemplate.from_prompty(file_path=prompty_file)
 
-        with project_client.inference.get_chat_completions_client() as client:
+    input = "When I arrived, can I still have breakfast?"
 
-            prompt_template = PromptTemplate.from_prompty(file_path=prompty_file)
+    rules = [
+        {"rule": "The check-in time is 3pm"},
+        {"rule": "The check-out time is 11am"},
+        {"rule": "Breakfast is served from 7am to 10am"},
+    ]
 
-            input = "When I arrived, can I still have breakfast?"
-            rules = [
-                {"rule": "The check-in time is 3pm"},
-                {"rule": "The check-out time is 11am"},
-                {"rule": "Breakfast is served from 7am to 10am"},
-            ]
-            chat_history = [
-                {"role": "user", "content": "I'll arrive at 2pm. What's the check-in and check-out time?"},
-                {"role": "system", "content": "The check-in time is 3 PM, and the check-out time is 11 AM."},
-            ]
-            messages = prompt_template.create_messages(input=input, rules=rules, chat_history=chat_history)
-            print(messages)
-            response = client.complete(model=model_deployment_name, messages=messages)
+    chat_history = [
+        {"role": "user", "content": "I'll arrive at 2pm. What's the check-in and check-out time?"},
+        {"role": "system", "content": "The check-in time is 3 PM, and the check-out time is 11 AM."},
+    ]
 
-            print(response.choices[0].message.content)
+    messages = prompt_template.create_messages(input=input, rules=rules, chat_history=chat_history)
+    print(messages)
+
+    with ChatCompletionsClient(
+        endpoint=inference_endpoint,
+        credential=credential,
+        credential_scopes=["https://ai.azure.com/.default"],
+    ) as client:
+
+        response = client.complete(model=model_deployment_name, messages=messages)
+
+        print(response.choices[0].message.content)
