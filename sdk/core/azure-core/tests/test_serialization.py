@@ -526,6 +526,7 @@ def test_as_attribute_dict_scratch():
     model = models.Scratch(prop="test")
     assert as_attribute_dict(model) == {"prop": "test"}
 
+
 def test_is_generated_model_with_hybrid_model():
     assert is_generated_model(HybridModel())
     assert is_generated_model(models.FlattenModel({"name": "wall-e", "properties": {"description": "a dog", "age": 2}}))
@@ -1257,9 +1258,11 @@ def test_as_attribute_dict_flatten():
     _test(as_attribute_dict(hybrid_model))
     _test(as_attribute_dict(msrest_model))
 
+
 def test_as_attribute_dict_additional_properties():
     class HybridPetAPTrue(HybridModel):
         name: str = rest_field()
+
     class MsrestPetAPTrue(MsrestModel):
         _attribute_map = {
             "additional_properties": {"key": "", "type": "{object}"},
@@ -1280,9 +1283,16 @@ def test_as_attribute_dict_additional_properties():
         assert getattr(model, "birthdate", None) is None
         assert getattr(model, "complexProperty", None) is None
 
-    hybrid_model = HybridPetAPTrue({"birthdate": "2017-12-13T02:29:51Z", "complexProperty": {"color": "Red"}, "name": "Buddy"})
+    hybrid_model = HybridPetAPTrue(
+        {"birthdate": "2017-12-13T02:29:51Z", "complexProperty": {"color": "Red"}, "name": "Buddy"}
+    )
     assert getattr(hybrid_model, "additional_properties", None) is None
     _tests(hybrid_model)
-    msrest_model = MsrestPetAPTrue(additional_properties={"birthdate": "2017-12-13T02:29:51Z", "complexProperty": {"color": "Red"}}, name="Buddy")
+    msrest_model = MsrestPetAPTrue(
+        additional_properties={"birthdate": "2017-12-13T02:29:51Z", "complexProperty": {"color": "Red"}}, name="Buddy"
+    )
     _tests(msrest_model)
-    assert msrest_model.additional_properties == {"birthdate": "2017-12-13T02:29:51Z", "complexProperty": {"color": "Red"}}
+    assert msrest_model.additional_properties == {
+        "birthdate": "2017-12-13T02:29:51Z",
+        "complexProperty": {"color": "Red"},
+    }
