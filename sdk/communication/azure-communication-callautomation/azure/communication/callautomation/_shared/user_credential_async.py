@@ -8,7 +8,7 @@
 import asyncio
 from asyncio import Condition, Lock, Event
 from datetime import timedelta
-from typing import Any, Optional
+from typing import Any, Optional, overload, Awaitable, Callable
 import sys
 from .utils import get_current_utc_as_int
 from .utils import create_access_token
@@ -41,13 +41,51 @@ class CommunicationTokenCredential(object):
     _ON_DEMAND_REFRESHING_INTERVAL_MINUTES = 2
     _DEFAULT_AUTOREFRESH_INTERVAL_MINUTES = 10
 
+    @overload
+    def __init__(
+        self,
+        token: str,
+        *,
+        token_refresher: Optional[Callable[[], Awaitable[Any]]] = None,
+        proactive_refresh: bool = False,
+        **kwargs: Any
+    ):
+        """
+        Initializes the CommunicationTokenCredential.
+
+        :param str token: The token used to authenticate to an Azure Communication service.
+        :param token_refresher: Optional async callable to refresh the token.
+        :param proactive_refresh: Whether to refresh the token proactively.
+        :param kwargs: Additional keyword arguments.
+        """
+        self.__init__(token, token_refresher=token_refresher, proactive_refresh=proactive_refresh, **kwargs)
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_endpoint: str,
+        token_credential: Any,
+        scopes: list[str],
+        **kwargs: Any
+    ):
+        """
+        Initializes the CommunicationTokenCredential using token exchange.
+
+        :param resource_endpoint: The endpoint URL of the resource to authenticate against.
+        :param token_credential: The credential to use for token exchange.
+        :param scopes: The scopes to request during the token exchange.
+        :param kwargs: Additional keyword arguments.
+        """
+        self.__init__(resource_endpoint=resource_endpoint, token_credential=token_credential, scopes=scopes, **kwargs)
+
     def __init__(self, token: Optional[str] = None, **kwargs: Any):
         resource_endpoint = kwargs.pop("resource_endpoint", None)
         token_credential = kwargs.pop("token_credential", None)
         scopes = kwargs.pop("scopes", None)
 
         # Check if at least one field exists but not all fields exist when token is None
-        fields_present = [resource_endpoint, token_credential, scopes]
+        fields_present = [resource_endpoint, token_credential]
         fields_exist = [field is not None for field in fields_present]
 
         if token is None and any(fields_exist) and not all(fields_exist):
@@ -56,20 +94,18 @@ class CommunicationTokenCredential(object):
                 missing_fields.append("resource_endpoint")
             if token_credential is None:
                 missing_fields.append("token_credential")
-            if scopes is None:
-                missing_fields.append("scopes")
             raise ValueError(
-                "When using token exchange, all of resource_endpoint, token_credential, and scopes must be provided. "
+                "When using token exchange, resource_endpoint and token_credential must be provided. "
                 f"Missing: {', '.join(missing_fields)}")
 
         self._token_exchange_client = None
-        if resource_endpoint and token_credential and scopes:
+        if resource_endpoint and token_credential:
             self._token_exchange_client = TokenExchangeClient(
                 resource_endpoint,
                 token_credential,
                 scopes)
             self._token_refresher = self._token_exchange_client.exchange_entra_token
-            self._proactive_refresh = kwargs.pop("proactive_refresh", False)
+            self._proactive_refresh = False
 
             async def _initialize_token():
                 self._token = await self._token_exchange_client.exchange_entra_token()
