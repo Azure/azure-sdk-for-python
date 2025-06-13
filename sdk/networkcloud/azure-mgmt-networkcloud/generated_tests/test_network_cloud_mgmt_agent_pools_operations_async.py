@@ -25,7 +25,7 @@ class TestNetworkCloudMgmtAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.agent_pools.list_by_kubernetes_cluster(
             resource_group_name=resource_group.name,
             kubernetes_cluster_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestNetworkCloudMgmtAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             kubernetes_cluster_name="str",
             agent_pool_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -67,6 +67,7 @@ class TestNetworkCloudMgmtAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                     "availabilityZones": ["str"],
                     "detailedStatus": "str",
                     "detailedStatusMessage": "str",
+                    "etag": "str",
                     "extendedLocation": {"name": "str", "type": "str"},
                     "id": "str",
                     "kubernetesVersion": "str",
@@ -86,7 +87,7 @@ class TestNetworkCloudMgmtAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "upgradeSettings": {"drainTimeout": 0, "maxSurge": "str", "maxUnavailable": "str"},
                 },
-                api_version="2024-10-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -101,7 +102,7 @@ class TestNetworkCloudMgmtAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 kubernetes_cluster_name="str",
                 agent_pool_name="str",
-                api_version="2024-10-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -116,7 +117,7 @@ class TestNetworkCloudMgmtAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 kubernetes_cluster_name="str",
                 agent_pool_name="str",
-                api_version="2024-10-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

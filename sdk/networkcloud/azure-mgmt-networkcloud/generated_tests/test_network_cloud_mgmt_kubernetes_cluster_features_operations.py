@@ -24,7 +24,7 @@ class TestNetworkCloudMgmtKubernetesClusterFeaturesOperations(AzureMgmtRecordedT
         response = self.client.kubernetes_cluster_features.list_by_kubernetes_cluster(
             resource_group_name=resource_group.name,
             kubernetes_cluster_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestNetworkCloudMgmtKubernetesClusterFeaturesOperations(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             kubernetes_cluster_name="str",
             feature_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -55,6 +55,7 @@ class TestNetworkCloudMgmtKubernetesClusterFeaturesOperations(AzureMgmtRecordedT
                 "availabilityLifecycle": "str",
                 "detailedStatus": "str",
                 "detailedStatusMessage": "str",
+                "etag": "str",
                 "id": "str",
                 "name": "str",
                 "options": [{"key": "str", "value": "str"}],
@@ -72,7 +73,7 @@ class TestNetworkCloudMgmtKubernetesClusterFeaturesOperations(AzureMgmtRecordedT
                 "type": "str",
                 "version": "str",
             },
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -85,7 +86,7 @@ class TestNetworkCloudMgmtKubernetesClusterFeaturesOperations(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             kubernetes_cluster_name="str",
             feature_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -98,7 +99,7 @@ class TestNetworkCloudMgmtKubernetesClusterFeaturesOperations(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             kubernetes_cluster_name="str",
             feature_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

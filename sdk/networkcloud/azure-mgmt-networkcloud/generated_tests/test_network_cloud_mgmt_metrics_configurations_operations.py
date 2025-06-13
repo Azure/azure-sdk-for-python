@@ -24,7 +24,7 @@ class TestNetworkCloudMgmtMetricsConfigurationsOperations(AzureMgmtRecordedTestC
         response = self.client.metrics_configurations.list_by_cluster(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestNetworkCloudMgmtMetricsConfigurationsOperations(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             cluster_name="str",
             metrics_configuration_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -58,6 +58,7 @@ class TestNetworkCloudMgmtMetricsConfigurationsOperations(AzureMgmtRecordedTestC
                 "detailedStatusMessage": "str",
                 "disabledMetrics": ["str"],
                 "enabledMetrics": ["str"],
+                "etag": "str",
                 "id": "str",
                 "name": "str",
                 "provisioningState": "str",
@@ -72,7 +73,7 @@ class TestNetworkCloudMgmtMetricsConfigurationsOperations(AzureMgmtRecordedTestC
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -85,7 +86,7 @@ class TestNetworkCloudMgmtMetricsConfigurationsOperations(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             cluster_name="str",
             metrics_configuration_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -98,7 +99,7 @@ class TestNetworkCloudMgmtMetricsConfigurationsOperations(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             cluster_name="str",
             metrics_configuration_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

@@ -23,7 +23,7 @@ class TestNetworkCloudMgmtRacksOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_racks_list_by_subscription(self, resource_group):
         response = self.client.racks.list_by_subscription(
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestNetworkCloudMgmtRacksOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_racks_list_by_resource_group(self, resource_group):
         response = self.client.racks.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestNetworkCloudMgmtRacksOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.racks.get(
             resource_group_name=resource_group.name,
             rack_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -69,6 +69,7 @@ class TestNetworkCloudMgmtRacksOperationsAsync(AzureMgmtRecordedTestCase):
                     "clusterId": "str",
                     "detailedStatus": "str",
                     "detailedStatusMessage": "str",
+                    "etag": "str",
                     "id": "str",
                     "name": "str",
                     "provisioningState": "str",
@@ -83,7 +84,7 @@ class TestNetworkCloudMgmtRacksOperationsAsync(AzureMgmtRecordedTestCase):
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-10-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -97,7 +98,7 @@ class TestNetworkCloudMgmtRacksOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.racks.begin_delete(
                 resource_group_name=resource_group.name,
                 rack_name="str",
-                api_version="2024-10-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -111,7 +112,7 @@ class TestNetworkCloudMgmtRacksOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.racks.begin_update(
                 resource_group_name=resource_group.name,
                 rack_name="str",
-                api_version="2024-10-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
