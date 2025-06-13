@@ -152,7 +152,7 @@ class TestCallAutomationClientAutomatedLiveTest(CallAutomationRecordedTestCase):
      self.terminate_call(unique_id)
      return
 
-     @recorded_by_proxy
+    @recorded_by_proxy
     def test_start_recording_with_call_connection_id(self):
      # try to establish the call
      caller = self.identity_client.create_user()

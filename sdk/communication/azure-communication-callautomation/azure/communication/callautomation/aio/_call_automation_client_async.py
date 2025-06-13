@@ -552,7 +552,7 @@ class CallAutomationClient:
         await self._client.reject_call(reject_call_request=reject_call_request, **kwargs)
 
     @overload
-    def start_recording(
+    async def start_recording(
         self,
         *,
         call_connection_id: str,
