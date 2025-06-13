@@ -207,7 +207,7 @@ class TestSamples:
             ("samples\\telemetry\\sample_telemetry.py", "", "", ""),
         ],
     )
-    # @pytest.mark.skip(reason="This test should only run manually on your local machine, with live service calls.")
+    @pytest.mark.skip(reason="This test should only run manually on your local machine, with live service calls.")
     def test_samples(
         self, sample_name: str, model_deployment_name: str, connection_name: str, data_folder: str
     ) -> None:
@@ -271,7 +271,7 @@ class TestSamples:
             ("samples\\telemetry\\sample_telemetry_async.py", "", "", ""),
         ],
     )
-    # @pytest.mark.skip(reason="This test should only run manually on your local machine, with live service calls.")
+    @pytest.mark.skip(reason="This test should only run manually on your local machine, with live service calls.")
     async def test_samples_async(
         self, sample_name: str, model_deployment_name: str, connection_name: str, data_folder: str
     ) -> None:
