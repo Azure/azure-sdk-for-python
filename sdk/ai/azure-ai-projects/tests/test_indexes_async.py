@@ -37,7 +37,7 @@ class TestIndexesAsync(TestBase):
             index = await project_client.indexes.create_or_update(
                 name=index_name,
                 version=index_version,
-                body=AzureAISearchIndex(connection_name=ai_search_connection_name, index_name=ai_search_index_name),
+                index=AzureAISearchIndex(connection_name=ai_search_connection_name, index_name=ai_search_index_name),
             )
             print(index)
             TestBase.validate_index(
