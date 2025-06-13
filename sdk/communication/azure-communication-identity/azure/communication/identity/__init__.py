@@ -20,6 +20,8 @@ from ._shared.models import (
     PhoneNumberIdentifier,
     PhoneNumberProperties,
     UnknownIdentifier,
+    TeamsExtensionUserIdentifier,
+    TeamsExtensionUserProperties,
 )
 
 __all__ = [
@@ -40,4 +42,6 @@ __all__ = [
     "PhoneNumberIdentifier",
     "PhoneNumberProperties",
     "UnknownIdentifier",
+    "TeamsExtensionUserIdentifier",
+    "TeamsExtensionUserProperties",
 ]

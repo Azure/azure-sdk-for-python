@@ -4,3 +4,4 @@
 aiohttp>=3.0
 aiounittest>=1.4
 pytest-tornasync==0.6.0.post2
+python-dateutil>=2.8.1
