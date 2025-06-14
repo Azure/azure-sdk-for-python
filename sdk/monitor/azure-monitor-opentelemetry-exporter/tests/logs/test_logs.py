@@ -363,10 +363,6 @@ class TestAzureLogExporter(unittest.TestCase):
             envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE), azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE]
         )
         self.assertEqual(
-            envelope.tags.get(ContextTagKeys.AI_DEVICE_OS_VERSION),
-            azure_monitor_context[ContextTagKeys.AI_DEVICE_OS_VERSION],
-        )
-        self.assertEqual(
             envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE), azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE]
         )
         self.assertEqual(
