@@ -11,6 +11,9 @@ from azure.core.exceptions import HttpResponseError
 
 
 class TestSamples:
+    _samples_folder_path: str
+    _results: dict[str, tuple[bool, str]]
+
     """
     Test class for running all samples in the `/sdk/ai/azure-ai-projects/samples` folder.
 
