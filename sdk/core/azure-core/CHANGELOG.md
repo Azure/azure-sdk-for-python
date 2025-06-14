@@ -1,6 +1,6 @@
 # Release History
 
-## 1.35.0 (Unreleased)
+## 1.35.0 (2025-06-05)
 
 ### Features Added
 
@@ -9,9 +9,9 @@
 - Added method `as_attribute_dict` to `azure.core.serialization` for backcompat migration purposes. Will return a generated model as a dictionary where the keys are in attribute syntax.
 - Added `is_generated_model` method to `azure.core.serialization`. Returns whether a given input is a model from one of our generated sdks. #41445
 
-### Breaking Changes
-
 ### Bugs Fixed
+
+- Reduce risk of hanging while closing aiohttp transport if server does not follow best practices. Fix #41363
 
 ### Other Changes
 
