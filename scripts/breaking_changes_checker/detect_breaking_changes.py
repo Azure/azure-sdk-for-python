@@ -25,7 +25,7 @@ from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES, IGNORE_BRE
 from breaking_changes_tracker import BreakingChangesTracker
 from changelog_tracker import ChangelogTracker
 from pathlib import Path
-from supported_checkers import CHECKERS
+from supported_checkers import CHECKERS, POST_PROCESSING_CHECKERS
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 _LOGGER = logging.getLogger(__name__)
@@ -457,10 +457,11 @@ def test_compare_reports(pkg_dir: str, changelog: bool, source_report: str = "st
         current,
         package_name,
         checkers = CHECKERS,
-        ignore = IGNORE_BREAKING_CHANGES
+        ignore = IGNORE_BREAKING_CHANGES,
+        post_processing_checkers = POST_PROCESSING_CHECKERS
     )
     if changelog:
-        checker = ChangelogTracker(stable, current, package_name, checkers = CHECKERS, ignore = IGNORE_BREAKING_CHANGES)
+        checker = ChangelogTracker(stable, current, package_name, checkers = CHECKERS, ignore = IGNORE_BREAKING_CHANGES, post_processing_checkers = POST_PROCESSING_CHECKERS)
     checker.run_checks()
 
     remove_json_files(pkg_dir)
