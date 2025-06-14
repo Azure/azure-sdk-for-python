@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -606,7 +606,7 @@ class AccountsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.Account"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.Account"]:
         """Returns all the resources of a particular type belonging to a resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -685,7 +685,7 @@ class AccountsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.Account"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Account"]:
         """Returns all the resources of a particular type belonging to a subscription.
 
         :return: An iterator like instance of either Account or the result of cls(response)
@@ -1006,7 +1006,7 @@ class AccountsOperations:
     @distributed_trace
     def list_models(
         self, resource_group_name: str, account_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.AccountModel"]:
+    ) -> AsyncItemPaged["_models.AccountModel"]:
         """List available Models for the requested Cognitive Services account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.

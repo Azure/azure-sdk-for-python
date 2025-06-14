@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -80,7 +80,7 @@ class CommitmentPlansOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, account_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.CommitmentPlan"]:
+    ) -> AsyncItemPaged["_models.CommitmentPlan"]:
         """Gets the commitmentPlans associated with the Cognitive Services account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1056,7 +1056,7 @@ class CommitmentPlansOperations:
     @distributed_trace
     def list_plans_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.CommitmentPlan"]:
+    ) -> AsyncItemPaged["_models.CommitmentPlan"]:
         """Returns all the resources of a particular type belonging to a resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1136,7 +1136,7 @@ class CommitmentPlansOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_plans_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.CommitmentPlan"]:
+    def list_plans_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.CommitmentPlan"]:
         """Returns all the resources of a particular type belonging to a subscription.
 
         :return: An iterator like instance of either CommitmentPlan or the result of cls(response)
@@ -1214,7 +1214,7 @@ class CommitmentPlansOperations:
     @distributed_trace
     def list_associations(
         self, resource_group_name: str, commitment_plan_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.CommitmentPlanAccountAssociation"]:
+    ) -> AsyncItemPaged["_models.CommitmentPlanAccountAssociation"]:
         """Gets the associations of the Cognitive Services commitment plan.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.

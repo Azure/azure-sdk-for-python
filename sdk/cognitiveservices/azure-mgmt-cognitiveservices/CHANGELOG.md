@@ -1,5 +1,67 @@
 # Release History
 
+## 13.7.0 (2025-07-21)
+
+### Features Added
+
+  - Client `CognitiveServicesManagementClient` added operation group `projects`
+  - Client `CognitiveServicesManagementClient` added operation group `account_connections`
+  - Client `CognitiveServicesManagementClient` added operation group `project_connections`
+  - Client `CognitiveServicesManagementClient` added operation group `account_capability_hosts`
+  - Client `CognitiveServicesManagementClient` added operation group `project_capability_hosts`
+  - Model `AccountProperties` added property `network_injections`
+  - Model `AccountProperties` added property `allow_project_management`
+  - Model `AccountProperties` added property `default_project`
+  - Model `AccountProperties` added property `associated_projects`
+  - Model `DeploymentProperties` added property `spillover_deployment_name`
+  - Enum `ProvisioningState` added member `CANCELED`
+  - Added model `AADAuthTypeConnectionProperties`
+  - Added model `AccessKeyAuthTypeConnectionProperties`
+  - Added model `AccountKeyAuthTypeConnectionProperties`
+  - Added model `ApiKeyAuthConnectionProperties`
+  - Added model `CapabilityHost`
+  - Added enum `CapabilityHostKind`
+  - Added model `CapabilityHostProperties`
+  - Added enum `CapabilityHostProvisioningState`
+  - Added model `ConnectionAccessKey`
+  - Added model `ConnectionAccountKey`
+  - Added model `ConnectionApiKey`
+  - Added enum `ConnectionAuthType`
+  - Added enum `ConnectionCategory`
+  - Added enum `ConnectionGroup`
+  - Added model `ConnectionManagedIdentity`
+  - Added model `ConnectionOAuth2`
+  - Added model `ConnectionPersonalAccessToken`
+  - Added model `ConnectionPropertiesV2`
+  - Added model `ConnectionPropertiesV2BasicResource`
+  - Added model `ConnectionPropertiesV2BasicResourceArmPaginatedResult`
+  - Added model `ConnectionServicePrincipal`
+  - Added model `ConnectionSharedAccessSignature`
+  - Added model `ConnectionUpdateContent`
+  - Added model `ConnectionUsernamePassword`
+  - Added model `CustomKeys`
+  - Added model `CustomKeysConnectionProperties`
+  - Added model `ManagedIdentityAuthTypeConnectionProperties`
+  - Added enum `ManagedPERequirement`
+  - Added enum `ManagedPEStatus`
+  - Added model `NetworkInjections`
+  - Added model `NoneAuthTypeConnectionProperties`
+  - Added model `OAuth2AuthTypeConnectionProperties`
+  - Added model `PATAuthTypeConnectionProperties`
+  - Added model `Project`
+  - Added model `ProjectListResult`
+  - Added model `ProjectProperties`
+  - Added model `ResourceBase`
+  - Added model `SASAuthTypeConnectionProperties`
+  - Added enum `ScenarioType`
+  - Added model `ServicePrincipalAuthTypeConnectionProperties`
+  - Added model `UsernamePasswordAuthTypeConnectionProperties`
+  - Added model `AccountCapabilityHostsOperations`
+  - Added model `AccountConnectionsOperations`
+  - Added model `ProjectCapabilityHostsOperations`
+  - Added model `ProjectConnectionsOperations`
+  - Added model `ProjectsOperations`
+
 ## 13.7.0b1 (2025-05-15)
 
 ### Features Added
