@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -777,7 +777,7 @@ class ConnectionsOperations:
         connection_type: Optional[Union[str, _models.ConnectionType]] = None,
         default_connection: Optional[bool] = None,
         **kwargs: Any
-    ) -> Iterable["_models.Connection"]:
+    ) -> ItemPaged["_models.Connection"]:
         """List all connections in the project, without populating connection credentials.
 
         :keyword connection_type: List connections of this specific type. Known values are:
@@ -959,7 +959,7 @@ class EvaluationsOperations:
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
     )
-    def list(self, **kwargs: Any) -> Iterable["_models.Evaluation"]:
+    def list(self, **kwargs: Any) -> ItemPaged["_models.Evaluation"]:
         """List evaluation runs.
 
         :return: An iterator like instance of Evaluation
@@ -1303,7 +1303,7 @@ class DatasetsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_versions(self, name: str, **kwargs: Any) -> Iterable["_models.DatasetVersion"]:
+    def list_versions(self, name: str, **kwargs: Any) -> ItemPaged["_models.DatasetVersion"]:
         """List all versions of the given DatasetVersion.
 
         :param name: The name of the resource. Required.
@@ -1388,7 +1388,7 @@ class DatasetsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> Iterable["_models.DatasetVersion"]:
+    def list(self, **kwargs: Any) -> ItemPaged["_models.DatasetVersion"]:
         """List the latest version of each DatasetVersion.
 
         :return: An iterator like instance of DatasetVersion
@@ -1588,7 +1588,7 @@ class DatasetsOperations:
         self,
         name: str,
         version: str,
-        body: _models.DatasetVersion,
+        dataset_version: _models.DatasetVersion,
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
@@ -1597,30 +1597,10 @@ class DatasetsOperations:
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param version: The specific version id of the DatasetVersion to create or replace. Required.
+        :param version: The specific version id of the DatasetVersion to create or update. Required.
         :type version: str
-        :param body: The definition of the DatasetVersion to create or update. Required.
-        :type body: ~azure.ai.projects.models.DatasetVersion
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DatasetVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_or_update(
-        self, name: str, version: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.DatasetVersion:
-        """Create a new or update an existing DatasetVersion with the given version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the DatasetVersion to create or replace. Required.
-        :type version: str
-        :param body: The definition of the DatasetVersion to create or update. Required.
-        :type body: JSON
+        :param dataset_version: The DatasetVersion to create or update. Required.
+        :type dataset_version: ~azure.ai.projects.models.DatasetVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -1634,7 +1614,7 @@ class DatasetsOperations:
         self,
         name: str,
         version: str,
-        body: IO[bytes],
+        dataset_version: JSON,
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
@@ -1643,10 +1623,36 @@ class DatasetsOperations:
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param version: The specific version id of the DatasetVersion to create or replace. Required.
+        :param version: The specific version id of the DatasetVersion to create or update. Required.
         :type version: str
-        :param body: The definition of the DatasetVersion to create or update. Required.
-        :type body: IO[bytes]
+        :param dataset_version: The DatasetVersion to create or update. Required.
+        :type dataset_version: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.DatasetVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update(
+        self,
+        name: str,
+        version: str,
+        dataset_version: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.DatasetVersion:
+        """Create a new or update an existing DatasetVersion with the given version id.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The specific version id of the DatasetVersion to create or update. Required.
+        :type version: str
+        :param dataset_version: The DatasetVersion to create or update. Required.
+        :type dataset_version: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -1657,17 +1663,17 @@ class DatasetsOperations:
 
     @distributed_trace
     def create_or_update(
-        self, name: str, version: str, body: Union[_models.DatasetVersion, JSON, IO[bytes]], **kwargs: Any
+        self, name: str, version: str, dataset_version: Union[_models.DatasetVersion, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.DatasetVersion:
         """Create a new or update an existing DatasetVersion with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param version: The specific version id of the DatasetVersion to create or replace. Required.
+        :param version: The specific version id of the DatasetVersion to create or update. Required.
         :type version: str
-        :param body: The definition of the DatasetVersion to create or update. Is one of the following
-         types: DatasetVersion, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.projects.models.DatasetVersion or JSON or IO[bytes]
+        :param dataset_version: The DatasetVersion to create or update. Is one of the following types:
+         DatasetVersion, JSON, IO[bytes] Required.
+        :type dataset_version: ~azure.ai.projects.models.DatasetVersion or JSON or IO[bytes]
         :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1688,10 +1694,10 @@ class DatasetsOperations:
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(dataset_version, (IOBase, bytes)):
+            _content = dataset_version
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(dataset_version, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_datasets_create_or_update_request(
             name=name,
@@ -1738,7 +1744,7 @@ class DatasetsOperations:
         self,
         name: str,
         version: str,
-        body: _models.PendingUploadRequest,
+        pending_upload_request: _models.PendingUploadRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1749,8 +1755,8 @@ class DatasetsOperations:
         :type name: str
         :param version: The specific version id of the DatasetVersion to operate on. Required.
         :type version: str
-        :param body: Parameters for the action. Required.
-        :type body: ~azure.ai.projects.models.PendingUploadRequest
+        :param pending_upload_request: The pending upload request parameters. Required.
+        :type pending_upload_request: ~azure.ai.projects.models.PendingUploadRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1761,7 +1767,13 @@ class DatasetsOperations:
 
     @overload
     def pending_upload(
-        self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        pending_upload_request: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of a dataset for a specific version.
 
@@ -1769,8 +1781,8 @@ class DatasetsOperations:
         :type name: str
         :param version: The specific version id of the DatasetVersion to operate on. Required.
         :type version: str
-        :param body: Parameters for the action. Required.
-        :type body: JSON
+        :param pending_upload_request: The pending upload request parameters. Required.
+        :type pending_upload_request: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1781,7 +1793,13 @@ class DatasetsOperations:
 
     @overload
     def pending_upload(
-        self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        pending_upload_request: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of a dataset for a specific version.
 
@@ -1789,8 +1807,8 @@ class DatasetsOperations:
         :type name: str
         :param version: The specific version id of the DatasetVersion to operate on. Required.
         :type version: str
-        :param body: Parameters for the action. Required.
-        :type body: IO[bytes]
+        :param pending_upload_request: The pending upload request parameters. Required.
+        :type pending_upload_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1801,7 +1819,11 @@ class DatasetsOperations:
 
     @distributed_trace
     def pending_upload(
-        self, name: str, version: str, body: Union[_models.PendingUploadRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        pending_upload_request: Union[_models.PendingUploadRequest, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of a dataset for a specific version.
 
@@ -1809,9 +1831,10 @@ class DatasetsOperations:
         :type name: str
         :param version: The specific version id of the DatasetVersion to operate on. Required.
         :type version: str
-        :param body: Parameters for the action. Is one of the following types: PendingUploadRequest,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.ai.projects.models.PendingUploadRequest or JSON or IO[bytes]
+        :param pending_upload_request: The pending upload request parameters. Is one of the following
+         types: PendingUploadRequest, JSON, IO[bytes] Required.
+        :type pending_upload_request: ~azure.ai.projects.models.PendingUploadRequest or JSON or
+         IO[bytes]
         :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1832,10 +1855,10 @@ class DatasetsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(pending_upload_request, (IOBase, bytes)):
+            _content = pending_upload_request
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(pending_upload_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_datasets_pending_upload_request(
             name=name,
@@ -1959,7 +1982,7 @@ class IndexesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_versions(self, name: str, **kwargs: Any) -> Iterable["_models.Index"]:
+    def list_versions(self, name: str, **kwargs: Any) -> ItemPaged["_models.Index"]:
         """List all versions of the given Index.
 
         :param name: The name of the resource. Required.
@@ -2044,7 +2067,7 @@ class IndexesOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> Iterable["_models.Index"]:
+    def list(self, **kwargs: Any) -> ItemPaged["_models.Index"]:
         """List the latest version of each Index.
 
         :return: An iterator like instance of Index
@@ -2244,7 +2267,7 @@ class IndexesOperations:
         self,
         name: str,
         version: str,
-        body: _models.Index,
+        index: _models.Index,
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
@@ -2253,10 +2276,10 @@ class IndexesOperations:
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param version: The specific version id of the Index to create or replace. Required.
+        :param version: The specific version id of the Index to create or update. Required.
         :type version: str
-        :param body: The definition of the Index to create or update. Required.
-        :type body: ~azure.ai.projects.models.Index
+        :param index: The Index to create or update. Required.
+        :type index: ~azure.ai.projects.models.Index
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -2267,16 +2290,16 @@ class IndexesOperations:
 
     @overload
     def create_or_update(
-        self, name: str, version: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self, name: str, version: str, index: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.Index:
         """Create a new or update an existing Index with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param version: The specific version id of the Index to create or replace. Required.
+        :param version: The specific version id of the Index to create or update. Required.
         :type version: str
-        :param body: The definition of the Index to create or update. Required.
-        :type body: JSON
+        :param index: The Index to create or update. Required.
+        :type index: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -2290,7 +2313,7 @@ class IndexesOperations:
         self,
         name: str,
         version: str,
-        body: IO[bytes],
+        index: IO[bytes],
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
@@ -2299,10 +2322,10 @@ class IndexesOperations:
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param version: The specific version id of the Index to create or replace. Required.
+        :param version: The specific version id of the Index to create or update. Required.
         :type version: str
-        :param body: The definition of the Index to create or update. Required.
-        :type body: IO[bytes]
+        :param index: The Index to create or update. Required.
+        :type index: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -2313,17 +2336,17 @@ class IndexesOperations:
 
     @distributed_trace
     def create_or_update(
-        self, name: str, version: str, body: Union[_models.Index, JSON, IO[bytes]], **kwargs: Any
+        self, name: str, version: str, index: Union[_models.Index, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Index:
         """Create a new or update an existing Index with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param version: The specific version id of the Index to create or replace. Required.
+        :param version: The specific version id of the Index to create or update. Required.
         :type version: str
-        :param body: The definition of the Index to create or update. Is one of the following types:
-         Index, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.projects.models.Index or JSON or IO[bytes]
+        :param index: The Index to create or update. Is one of the following types: Index, JSON,
+         IO[bytes] Required.
+        :type index: ~azure.ai.projects.models.Index or JSON or IO[bytes]
         :return: Index. The Index is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Index
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2344,10 +2367,10 @@ class IndexesOperations:
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(index, (IOBase, bytes)):
+            _content = index
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(index, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_indexes_create_or_update_request(
             name=name,
@@ -2480,7 +2503,7 @@ class DeploymentsOperations:
         model_name: Optional[str] = None,
         deployment_type: Optional[Union[str, _models.DeploymentType]] = None,
         **kwargs: Any
-    ) -> Iterable["_models.Deployment"]:
+    ) -> ItemPaged["_models.Deployment"]:
         """List all deployed models in the project.
 
         :keyword model_publisher: Model publisher to filter models by. Default value is None.
@@ -2664,7 +2687,7 @@ class RedTeamsOperations:
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
     )
-    def list(self, **kwargs: Any) -> Iterable["_models.RedTeam"]:
+    def list(self, **kwargs: Any) -> ItemPaged["_models.RedTeam"]:
         """List a redteam by name.
 
         :return: An iterator like instance of RedTeam

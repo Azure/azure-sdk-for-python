@@ -2,13 +2,23 @@
 
 ## 1.0.0b12 (Unreleased)
 
-### Features added
-
 ### Breaking changes
+
+* These 3 methods on `AIProjectClient` were removed: `.inference.get_chat_completions_client()`,
+`.inference.get_embeddings_client()`, `.inference.get_image_embeddings_client()`. They no longer provide much
+value. To see how you can easily get an authenticated `azure-ai-inference` client for your AI Foundry Project, see
+the updated samples in the folder `samples\inference`. For example,
+[sample_chat_completions_with_azure_ai_inference_client.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/inference/sample_chat_completions_with_azure_ai_inference_client.py). Alternatively, us the `.inference.get_azure_openai_client()` method
+to perform chat completions with an Azure OpenAI client.
+* Method argument name changes:
+  * In method `.indexes.create_or_update()` argument `body` was renamed `index`.
+  * In method `.datasets.create_or_update()` argument `body` was renamed `dataset_version`.
+  * In method `.datasets.pending_upload()` argument `body` was renamed `pending_upload_request`.
+
 
 ### Bugs Fixed
 
-* Fix for enable_telemetry to correctly instrument azure-ai-agents
+* Fix to package function `enable_telemetry()` to correctly instrument `azure-ai-agents`.
 
 ### Other
 
