@@ -15,7 +15,7 @@ TEST_SUB = "25b4d56c-0dc2-4c45-9a13-c3653a70b912"
 
 def test_resourcegroup_properties():
     r = ResourceGroup()
-    assert r.properties == {}
+    assert r.properties == {"tags": {"azd-env-name": None}}
     assert r.extensions == {}
     assert r._existing == False
     assert not r.parent
@@ -26,7 +26,7 @@ def test_resourcegroup_properties():
     assert len(symbols) == 1
     assert list(fields.keys()) == ["resourcegroup"]
     assert fields["resourcegroup"].resource == "Microsoft.Resources/resourceGroups"
-    assert fields["resourcegroup"].properties == {}
+    assert fields["resourcegroup"].properties == {"tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]}}
     assert fields["resourcegroup"].outputs == {}
     assert fields["resourcegroup"].extensions == {}
     assert fields["resourcegroup"].existing == False
@@ -37,11 +37,14 @@ def test_resourcegroup_properties():
     assert fields["resourcegroup"].defaults
 
     r2 = ResourceGroup(location="westus")
-    assert r2.properties == {"location": "westus"}
+    assert r2.properties == {"location": "westus", "tags": {"azd-env-name": None}}
     r2.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["resourcegroup"]
     assert fields["resourcegroup"].resource == "Microsoft.Resources/resourceGroups"
-    assert fields["resourcegroup"].properties == {"location": "westus"}
+    assert fields["resourcegroup"].properties == {
+        "location": "westus",
+        "tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]},
+    }
     assert fields["resourcegroup"].outputs == {}
     assert fields["resourcegroup"].extensions == {}
     assert fields["resourcegroup"].existing == False
@@ -52,16 +55,19 @@ def test_resourcegroup_properties():
     assert fields["resourcegroup"].defaults
 
     r3 = ResourceGroup(location="eastus")
-    assert r3.properties == {"location": "eastus"}
+    assert r3.properties == {"location": "eastus", "tags": {"azd-env-name": None}}
     with pytest.raises(ValueError):
         r3.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
 
     r4 = ResourceGroup(name="foo", tags={"test": "value"})
-    assert r4.properties == {"name": "foo", "tags": {"test": "value"}}
+    assert r4.properties == {"name": "foo", "tags": {"test": "value", "azd-env-name": None}}
     symbols = r4.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["resourcegroup", "resourcegroup_foo"]
     assert fields["resourcegroup_foo"].resource == "Microsoft.Resources/resourceGroups"
-    assert fields["resourcegroup_foo"].properties == {"name": "foo", "tags": {"test": "value"}}
+    assert fields["resourcegroup_foo"].properties == {
+        "name": "foo",
+        "tags": {"test": "value", "azd-env-name": GLOBAL_PARAMS["environmentName"]},
+    }
     assert fields["resourcegroup_foo"].outputs == {}
     assert fields["resourcegroup_foo"].extensions == {}
     assert fields["resourcegroup_foo"].existing == False
@@ -76,7 +82,7 @@ def test_resourcegroup_parameter_properties():
     rg_name = Parameter("RgName")
     rg_tag = Parameter("RgTag")
     r = ResourceGroup(name=rg_name, tags={"rgtag": rg_tag})
-    assert r.properties == {"name": rg_name, "tags": {"rgtag": rg_tag}}
+    assert r.properties == {"name": rg_name, "tags": {"rgtag": rg_tag, "azd-env-name": None}}
     assert r.extensions == {}
     assert r._existing == False
     assert not r.parent
@@ -86,7 +92,10 @@ def test_resourcegroup_parameter_properties():
     symbols = r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["resourcegroup_rgname"]
     assert fields["resourcegroup_rgname"].resource == "Microsoft.Resources/resourceGroups"
-    assert fields["resourcegroup_rgname"].properties == {"name": rg_name, "tags": {"rgtag": rg_tag}}
+    assert fields["resourcegroup_rgname"].properties == {
+        "name": rg_name,
+        "tags": {"rgtag": rg_tag, "azd-env-name": GLOBAL_PARAMS["environmentName"]},
+    }
     assert fields["resourcegroup_rgname"].outputs == {}
     assert fields["resourcegroup_rgname"].extensions == {}
     assert fields["resourcegroup_rgname"].existing == False
@@ -180,12 +189,14 @@ def test_resourcegroup_defaults():
     r = ResourceGroup(name=rg_name)
     fields = {}
     r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
-    add_defaults(fields, parameters=dict(GLOBAL_PARAMS))
+    with pytest.raises(ValueError):
+        add_defaults(fields, parameters=dict(GLOBAL_PARAMS), values={}, resource_defaults={})
+    add_defaults(fields, parameters=dict(GLOBAL_PARAMS), values={"rgName": "foo"}, resource_defaults={})
     field = fields.popitem()[1]
     assert field.properties == {
         "name": rg_name,
         "location": GLOBAL_PARAMS["location"],
-        "tags": GLOBAL_PARAMS["azdTags"],
+        "tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]},
     }
 
 
@@ -235,8 +246,8 @@ def test_resourcegroup_export_existing(export_dir):
 
 
 def test_resourcegroup_export_existing_with_parameter(export_dir):
-    rg_name = Parameter("RgName")
-    rg_sub = Parameter("RgSub")
+    rg_name = Parameter("RgName", default="foo")
+    rg_sub = Parameter("RgSub", default=TEST_SUB)
 
     class test(AzureInfrastructure):
         resource_group: ResourceGroup = field(default=ResourceGroup.reference(name=rg_name, subscription=rg_sub))
@@ -261,7 +272,7 @@ def test_resourcegroup_infra():
         infra = TestInfra()
     infra = TestInfra(resource_group=ResourceGroup())
     assert isinstance(infra.resource_group, ResourceGroup)
-    assert infra.resource_group.properties == {}
+    assert infra.resource_group.properties == {"tags": {"azd-env-name": None}}
 
     infra = TestInfra(resource_group=ResourceGroup(name="foo"))
     assert infra.resource_group._settings["name"]() == "foo"

@@ -9,9 +9,8 @@ from collections import defaultdict
 import inspect
 from typing import (
     TYPE_CHECKING,
-    Dict,
+    TypedDict,
     Generic,
-    List,
     Literal,
     Mapping,
     Tuple,
@@ -22,7 +21,7 @@ from typing import (
     cast,
     overload,
 )
-from typing_extensions import TypeVar, Unpack, TypedDict
+from typing_extensions import TypeVar, Unpack
 
 from ....._parameters import GLOBAL_PARAMS
 from ...._identifiers import ResourceIdentifiers
@@ -35,7 +34,7 @@ from .. import BlobStorage
 if TYPE_CHECKING:
     from ...._extension import RoleAssignment
     from ....resourcegroup import ResourceGroup
-    from .types import ContainerResource
+    from ._types import ContainerResource
 
     from azure.core.credentials import SupportsTokenInfo
     from azure.core.credentials_async import AsyncSupportsTokenInfo
@@ -44,30 +43,26 @@ if TYPE_CHECKING:
 
 
 class ContainerKwargs(TypedDict, total=False):
-    default_encryption_scope: str
+    default_encryption_scope: Union[str, Parameter]
     """Default the container to use specified encryption scope for all writes."""
-    deny_encryption_scope_override: bool
+    deny_encryption_scope_override: Union[bool, Parameter]
     """Block override of encryption scope from the container default."""
-    enable_nfsv3_all_squash: bool
+    enable_nfsv3_all_squash: Union[bool, Parameter]
     """Enable NFSv3 all squash on blob container."""
-    enable_nfsv3_root_squash: bool
+    enable_nfsv3_root_squash: Union[bool, Parameter]
     """Enable NFSv3 root squash on blob container."""
-    # immutability_policy_name: str
-    # """Name of the immutable policy."""
-    # immutability_policy_properties: Dict[str, object]
-    # """Configure immutability policy."""
-    immutable_storage_with_versioning_enabled: bool
+    immutable_storage_with_versioning_enabled: Union[bool, Parameter]
     """This is an immutable property, when set to true it enables object level immutability at the container level.
     The property is immutable and can only be set to true at the container creation time. Existing containers must
     undergo a migration process.
     """
-    metadata: Dict[str, str]
+    metadata: Union[dict[str, Union[str, Parameter]], Parameter]
     """A name-value pair to associate with the container as metadata."""
-    public_access: Literal["Blob", "Container", "None"]
+    public_access: Union[Literal["Blob", "Container", "None"], Parameter]
     """Specifies whether data in the container may be accessed publicly and the level of access."""
     roles: Union[
         Parameter,
-        List[
+        list[
             Union[
                 Parameter,
                 "RoleAssignment",
@@ -92,7 +87,7 @@ class ContainerKwargs(TypedDict, total=False):
     """Array of role assignments to create for user-assigned identity."""
     user_roles: Union[
         Parameter,
-        List[
+        list[
             Union[
                 Parameter,
                 "RoleAssignment",
@@ -192,7 +187,7 @@ class BlobContainer(_ClientResource, Generic[ContainerResourceType]):
 
     @property
     def version(self) -> str:
-        from .types import VERSION
+        from ._types import VERSION
 
         return VERSION
 
@@ -238,7 +233,7 @@ class BlobContainer(_ClientResource, Generic[ContainerResourceType]):
         suffix: str,
         parents: Tuple[ResourceSymbol, ...],
         **kwargs,
-    ) -> Dict[str, List[Output]]:
+    ) -> dict[str, list[Output]]:
         outputs = super()._outputs(symbol=symbol, suffix=suffix, **kwargs)
         outputs["endpoint"].append(
             Output(
