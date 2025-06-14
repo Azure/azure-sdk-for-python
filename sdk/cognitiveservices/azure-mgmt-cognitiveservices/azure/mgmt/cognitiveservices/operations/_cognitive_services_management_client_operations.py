@@ -40,7 +40,7 @@ def build_check_sku_availability_request(location: str, subscription_id: str, **
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -71,7 +71,7 @@ def build_check_domain_availability_request(subscription_id: str, **kwargs: Any)
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -100,7 +100,7 @@ def build_calculate_model_capacity_request(subscription_id: str, **kwargs: Any) 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -126,7 +126,7 @@ def build_calculate_model_capacity_request(subscription_id: str, **kwargs: Any) 
 
 
 class CognitiveServicesManagementClientOperationsMixin(  # pylint: disable=name-too-long
-    ClientMixinABC[PipelineClient, CognitiveServicesManagementClientConfiguration]
+    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], CognitiveServicesManagementClientConfiguration]
 ):
 
     @distributed_trace
