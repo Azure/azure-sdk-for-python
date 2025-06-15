@@ -95,7 +95,7 @@ class TestLocationCache:
 
         # check read endpoints without preferred locations
         read_regions = lc.get_read_regional_routing_contexts()
-        assert len(read_regions) == 1
+        assert len(read_regions) == 3
         assert read_regions[0].get_primary() == location1_endpoint
 
         # check read endpoints with preferred locations
