@@ -23,10 +23,9 @@
 DatabaseAccount with multiple writable and readable locations.
 """
 import collections
-import difflib
 import logging
 from typing import Set, Mapping
-from typing import List, OrderedDict
+from typing import List
 from urllib.parse import urlparse
 
 from . import documents, _base as base
