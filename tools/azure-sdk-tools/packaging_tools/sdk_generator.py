@@ -293,6 +293,7 @@ def main(generate_input, generate_output):
                     package_entry["isMultiapi"] = is_multiapi_package(readme_python_content)
                     package_entry["targetReleaseDate"] = data.get("targetReleaseDate", "")
                     package_entry["allowInvalidNextVersion"] = data.get("allowInvalidNextVersion", False)
+                    package_entry["runInPipeline"] = run_in_pipeline
                     result[package_name] = package_entry
                 else:
                     result[package_name]["path"].append(folder_name)

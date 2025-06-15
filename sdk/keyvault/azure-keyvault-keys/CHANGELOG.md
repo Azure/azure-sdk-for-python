@@ -1,6 +1,6 @@
 # Release History
 
-## 4.11.0 (2025-06-10)
+## 4.11.0 (2025-06-12)
 
 ### Features Added
 
@@ -16,6 +16,7 @@
 ### Breaking Changes
 
 > These changes do not impact the API of stable versions such as 4.10.0. Only code written against a beta version such as 4.11.0b1 may be affected.
+
 - The following enums have been moved:
   - `EncryptionAlgorithm.ckm_aes_key_wrap` -> `KeyWrapAlgorithm.ckm_aes_key_wrap`
   - `EncryptionAlgorithm.ckm_aes_key_wrap_pad` -> `KeyWrapAlgorithm.ckm_aes_key_wrap_pad`

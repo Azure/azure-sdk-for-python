@@ -1,6 +1,6 @@
 # Release History
 
-## 4.6.0 (2025-06-10)
+## 4.6.0 (2025-06-12)
 
 ### Features Added
 
@@ -14,6 +14,13 @@
 - Python 3.8 is no longer supported. Please use Python version 3.9 or later.
 - Key Vault API version `7.6` is now the default
 - (From 4.6.0b1) Updated minimum `typing-extensions` version to 4.6.0
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 4.5.0. Only code written against a beta version such as 4.6.0b1 may be affected.
+
+- Changed the return types of `KeyVaultBackupClient.begin_pre_backup` and `KeyVaultBackupClient.begin_pre_restore` to be
+  pollers returning `None`
 
 ## 4.6.0b1 (2025-03-20)
 
