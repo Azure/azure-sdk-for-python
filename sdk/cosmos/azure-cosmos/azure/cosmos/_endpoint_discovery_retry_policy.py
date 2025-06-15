@@ -43,8 +43,9 @@ class EndpointDiscoveryRetryPolicy(object):
     Max_retry_attempt_count = 120
     Retry_after_in_milliseconds = 1000
 
-    def __init__(self, connection_policy, global_endpoint_manager, *args):
+    def __init__(self, connection_policy, global_endpoint_manager, pk_range_wrapper, *args):
         self.global_endpoint_manager = global_endpoint_manager
+        self.pk_range_wrapper = pk_range_wrapper
         self._max_retry_attempt_count = EndpointDiscoveryRetryPolicy.Max_retry_attempt_count
         self.failover_retry_count = 0
         self.retry_after_in_milliseconds = EndpointDiscoveryRetryPolicy.Retry_after_in_milliseconds
@@ -84,6 +85,14 @@ class EndpointDiscoveryRetryPolicy(object):
         # set the refresh_needed flag to ensure that endpoint list is
         # refreshed with new writable and readable locations
         self.global_endpoint_manager.refresh_needed = True
+
+        # If per partition automatic failover is applicable, we mark the current endpoint as unavailable
+        # and resolve the service endpoint for the partition range - otherwise, continue with the default retry logic
+        if self.global_endpoint_manager.is_per_partition_automatic_failover_applicable(self.request):
+            partition_level_info = self.global_endpoint_manager.partition_range_to_failover_info[self.pk_range_wrapper]
+            partition_level_info.unavailable_regional_endpoints.add(self.request.location_endpoint_to_route)
+            self.global_endpoint_manager.resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper)
+            return True
 
         # clear previous location-based routing directive
         self.request.clear_route_to_location()

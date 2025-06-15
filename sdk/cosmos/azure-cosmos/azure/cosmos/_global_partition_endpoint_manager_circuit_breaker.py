@@ -100,7 +100,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
             if pk_range_wrapper:
                 self.global_partition_endpoint_manager_core.record_failure(request, pk_range_wrapper)
 
-    def resolve_service_endpoint_for_partition(
+    def _resolve_service_endpoint_for_partition_circuit_breaker(
             self,
             request: RequestObject,
             pk_range_wrapper: Optional[PartitionKeyRangeWrapper]

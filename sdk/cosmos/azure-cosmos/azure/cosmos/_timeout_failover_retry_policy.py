@@ -27,8 +27,8 @@ class _TimeoutFailoverRetryPolicy(object):
         :returns: a boolean stating whether the request should be retried
         :rtype: bool
         """
-        # we don't retry on write operations for timeouts or any internal server errors
-        if self.request and (not _OperationType.IsReadOnlyOperation(self.request.operation_type)):
+        if self.request and (not _OperationType.IsReadOnlyOperation(self.request.operation_type) and
+                        not self.global_endpoint_manager.is_per_partition_automatic_failover_applicable(self.request)):
             return False
 
         if not self.connection_policy.EnableEndpointDiscovery:
@@ -46,6 +46,13 @@ class _TimeoutFailoverRetryPolicy(object):
 
     # This function prepares the request to go to the next region
     def resolve_next_region_service_endpoint(self):
+        if self.global_endpoint_manager.is_per_partition_automatic_failover_applicable(self.request):
+            # If per partition automatic failover is applicable, we mark the current endpoint as unavailable
+            # and resolve the service endpoint for the partition range - otherwise, continue with the default retry logic
+            partition_level_info = self.global_endpoint_manager.partition_range_to_failover_info[self.pk_range_wrapper]
+            partition_level_info.unavailable_regional_endpoints.add(self.request.location_endpoint_to_route)
+            return self.global_endpoint_manager.resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper)
+
         # clear previous location-based routing directive
         self.request.clear_route_to_location()
         # clear the last routed endpoint within same region since we are going to a new region now

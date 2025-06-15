@@ -107,8 +107,9 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
         base_url = request_params.endpoint_override
     else:
         pk_range_wrapper = None
-        if global_endpoint_manager.is_circuit_breaker_applicable(request_params):
-            # Circuit breaker is applicable, so we need to use the endpoint from the request
+        if (global_endpoint_manager.is_circuit_breaker_applicable(request_params) or
+                global_endpoint_manager.is_per_partition_automatic_failover_applicable(request_params)):
+            # Circuit breaker or per-partition failover are applicable, so we need to use the endpoint from the request
             pk_range_wrapper = global_endpoint_manager.create_pk_range_wrapper(request_params)
         base_url = global_endpoint_manager.resolve_service_endpoint_for_partition(request_params, pk_range_wrapper)
     if not request.url.startswith(base_url):

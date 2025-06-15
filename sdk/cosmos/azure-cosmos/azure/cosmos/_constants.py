@@ -40,6 +40,7 @@ class _Constants:
     DatabaseAccountEndpoint: Literal["databaseAccountEndpoint"] = "databaseAccountEndpoint"
     DefaultEndpointsRefreshTime: int = 5 * 60 * 1000 # milliseconds
     UnavailableEndpointDBATimeouts: int = 1 # seconds
+    EnablePerPartitionFailoverBehavior: Literal["enablePerPartitionFailoverBehavior"] = "enablePerPartitionFailoverBehavior" #pylint: disable=line-too-long
 
     # ServiceDocument Resource
     EnableMultipleWritableLocations: Literal["enableMultipleWriteLocations"] = "enableMultipleWriteLocations"
@@ -53,6 +54,8 @@ class _Constants:
     MAX_ITEM_BUFFER_VS_CONFIG_DEFAULT: int = 50000
     CIRCUIT_BREAKER_ENABLED_CONFIG: str =  "AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"
     CIRCUIT_BREAKER_ENABLED_CONFIG_DEFAULT: str = "False"
+    PER_PARTITION_AUTOMATIC_FAILOVER_ENABLED_CONFIG: str =  "AZURE_COSMOS_ENABLE_PER_PARTITION_AUTOMATIC_FAILOVER"
+    PER_PARTITION_AUTOMATIC_FAILOVER_ENABLED_CONFIG_DEFAULT: str = "False"
     # Only applicable when circuit breaker is enabled -------------------------
     CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ: str = "AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ"
     CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ_DEFAULT: int = 10
