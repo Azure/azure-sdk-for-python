@@ -1,20 +1,11 @@
 ## Release History
-### 4.10.1b1 (Unreleased)
-
-#### Features Added
-
-#### Breaking Changes
-* Adds cross region retries when no preferred locations are set. This is only a breaking change for customers using bounded staleness consistency. See [PR 39714](https://github.com/Azure/azure-sdk-for-python/pull/39714)
-
-#### Bugs Fixed
-
-#### Other Changes
 
 ### 4.13.0b2 (Unreleased)
 
 #### Features Added
 
 #### Breaking Changes
+* Adds cross region retries when no preferred locations are set. This is only a breaking change for customers using bounded staleness consistency. See [PR 39714](https://github.com/Azure/azure-sdk-for-python/pull/39714)
 
 #### Bugs Fixed
 
