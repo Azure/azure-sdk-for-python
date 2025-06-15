@@ -611,7 +611,7 @@ class _AIInferenceInstrumentorPreview:
                 try:
                     # tracing events not supported in azure-core-tracing-opentelemetry
                     # so need to access the span instance directly
-                    with span_impl_type.change_context(span.span_instance):
+                    with span_impl_type.change_context(span):
                         last_event_timestamp_ns = self._add_request_details(span, args, kwargs)
                         result = function(*args, **kwargs)
                         if kwargs.get("stream") is True:
@@ -685,7 +685,7 @@ class _AIInferenceInstrumentorPreview:
                 try:
                     # tracing events not supported in azure-core-tracing-opentelemetry
                     # so need to access the span instance directly
-                    with span_impl_type.change_context(span.span_instance):
+                    with span_impl_type.change_context(span):
                         last_event_timestamp_ns = self._add_request_details(span, args, kwargs)
                         result = await function(*args, **kwargs)
                         if kwargs.get("stream") is True:
