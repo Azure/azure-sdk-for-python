@@ -50,7 +50,6 @@ def preferred_locations():
         ([REGION_1, REGION_2, REGION_3], locational_endpoint)
     ]
 
-@pytest.mark.cosmosEmulator
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup")
 class TestPreferredLocationsAsync:

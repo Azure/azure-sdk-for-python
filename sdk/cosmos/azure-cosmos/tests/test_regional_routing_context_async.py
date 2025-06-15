@@ -33,9 +33,9 @@ class TestRegionalRoutingContextAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncTearDown(self):
         await self.client.close()
 
-    async def test_no_swaps_on_successful_request(self):
+    async def test_no_swaps_on_successful_request_async(self):
         # Make sure that getDatabaseAccount call has finished
-        await self.client.client_connection._global_endpoint_manager.force_refresh(None)
+        await self.client.client_connection._global_endpoint_manager.force_refresh_on_startup(None)
         original_read_endpoint = (self.client.client_connection._global_endpoint_manager
                                   .location_cache.get_read_regional_routing_context())
         await self.created_container.create_item(body={"id": str(uuid.uuid4())})
