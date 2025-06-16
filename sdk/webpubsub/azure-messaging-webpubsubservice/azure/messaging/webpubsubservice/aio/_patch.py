@@ -51,7 +51,7 @@ from .._operations._operations import (
 
 from .._patch import _parse_connection_string, WebPubSubServiceClientBase
 from ._client import WebPubSubServiceClient as WebPubSubServiceClientGenerated
-from ..models import GroupMember
+from .._models import GroupMember
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -222,7 +222,7 @@ class WebPubSubServiceClient(WebPubSubServiceClientBase, WebPubSubServiceClientG
         return cls(hub=hub, credential=credential, **kwargs)
 
 
-__all__ = ["WebPubSubServiceClient", "GroupMember"]
+__all__ = ["WebPubSubServiceClient"]
 
 
 def patch_sdk():

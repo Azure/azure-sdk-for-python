@@ -4,7 +4,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -37,7 +36,7 @@ from ._operations import (
     build_web_pub_sub_service_send_to_group_request,
     build_web_pub_sub_service_list_connections_request,
 )
-from ..models import GroupMember
+from .._models import GroupMember
 
 
 class _UTC_TZ(tzinfo):
@@ -936,8 +935,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
 
 __all__: List[str] = [
-    "WebPubSubServiceClientOperationsMixin",
-    "GroupMember",
+    "WebPubSubServiceClientOperationsMixin"
 ]  # Add all objects you want publicly available to users at this package level
 
 
