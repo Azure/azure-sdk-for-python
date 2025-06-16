@@ -76,13 +76,8 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
                 or _OperationType.IsReadOnlyOperation(request.operation_type)):
             return False
 
-        per_partition_automatic_failover_config_enabled = (
-                os.environ.get(Constants.PER_PARTITION_AUTOMATIC_FAILOVER_ENABLED_CONFIG,
-                               Constants.PER_PARTITION_AUTOMATIC_FAILOVER_ENABLED_CONFIG_DEFAULT).lower() == "true")
-
         # TODO: This check here needs to be verified once we test against a live account with the config enabled.
-        if (not per_partition_automatic_failover_config_enabled or
-                not self._database_account_cache._EnablePerPartitionFailoverBehavior):
+        if not self._database_account_cache._EnablePerPartitionFailoverBehavior:
             return False
 
         # if we have at most one region available in the account, we cannot do per partition automatic failover

@@ -19,12 +19,6 @@ from test_per_partition_circuit_breaker_mm_async import perform_write_operation
 
 # cspell:disable
 
-@pytest.fixture(scope="class", autouse=True)
-def setup_teardown():
-    os.environ["AZURE_COSMOS_ENABLE_PER_PARTITION_AUTOMATIC_FAILOVER"] = "True"
-    yield
-    os.environ["AZURE_COSMOS_ENABLE_PER_PARTITION_AUTOMATIC_FAILOVER"] = "False"
-
 # These tests assume that the configured live account has one main write region and one secondary read region.
 
 @pytest.mark.cosmosPerPartitionAutomaticFailover
