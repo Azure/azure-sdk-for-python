@@ -252,7 +252,6 @@ def init_local_tool(tsp_config_path: str, repo_path: str, commit_id: str) -> Dic
             text=True,
             stdin=subprocess.DEVNULL,  # Explicitly close stdin
             cwd=repo_path,
-            check=True,
         )
         logger.info("Install dependencies for SDK generation")
 
