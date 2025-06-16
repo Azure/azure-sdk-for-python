@@ -40,7 +40,7 @@ def get_pip_command():
     if pip_impl == 'uv':
         return ["uv", "pip"]
     else:
-        return ["pip"]
+        return [sys.executable, "-m", "pip"]
 
 
 def install_from_main(setup_path: str) -> None:

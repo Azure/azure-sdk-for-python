@@ -43,7 +43,7 @@ def get_pip_command():
     if pip_impl == 'uv':
         return ["uv", "pip"]
     else:
-        return ["pip"]
+        return [sys.executable, "-m", "pip"]
 
 
 # GENERIC_OVERRIDES dictionaries pair a specific dependency with a MINIMUM or MAXIMUM inclusive bound.

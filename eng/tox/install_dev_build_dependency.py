@@ -46,7 +46,7 @@ def get_pip_command():
     if pip_impl == 'uv':
         return ["uv", "pip"]
     else:
-        return ["pip"]
+        return [sys.executable, "-m", "pip"]
 
 
 # This script verifies installed package version and ensure all installed pacakges are dev build version
