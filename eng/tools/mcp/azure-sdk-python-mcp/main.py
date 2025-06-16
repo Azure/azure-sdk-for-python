@@ -12,7 +12,7 @@ from github import Github
 from mcp.server.fastmcp import FastMCP
 
 # Set default pip implementation for tox to use uv
-os.environ.setdefault('TOX_PIP_IMPL', 'uv')
+os.environ.setdefault('TOX_PIP_IMPL', 'uv pip')
 
 # Create FastMCP instance
 mcp = FastMCP("azure-sdk-python-mcp")
