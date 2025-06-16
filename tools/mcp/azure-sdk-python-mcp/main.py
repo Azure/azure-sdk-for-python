@@ -285,7 +285,7 @@ def init_local_tool(tsp_config_path: str, repo_path: str, commit_id: str) -> Dic
             cwd=repo_path,
             check=True,
         )
-        logger.info(f"generate sdk")
+        logger.info(f"generate sdk successfully")
         result = subprocess.run(
             [python_interpreter, "-m", "packaging_tools.sdk_package", generate_tmp_path, generate_output_path],
             capture_output=True,
@@ -294,7 +294,7 @@ def init_local_tool(tsp_config_path: str, repo_path: str, commit_id: str) -> Dic
             cwd=repo_path,
             check=True,
         )
-        logger.info(f"package sdk")
+        logger.info(f"package sdk successfully")
         return {"success": True, "stdout": result.stdout, "stderr": result.stderr, "code": result.returncode}
     except Exception as e:
         logger.error(f"Failed to generate sdk: {str(e)}")
