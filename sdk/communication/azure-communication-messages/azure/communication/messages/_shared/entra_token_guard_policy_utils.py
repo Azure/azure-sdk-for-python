@@ -30,5 +30,5 @@ class EntraTokenGuardUtils:
             expires_on = data["accessToken"]["expiresOn"]
             expires_on_dt = dateutil_parser.parse(expires_on)
             return datetime.now(timezone.utc) < expires_on_dt
-        except (KeyError, ValueError, json.JSONDecodeError):
-            return False
+        except (KeyError, ValueError, json.JSONDecodeError) as exc:
+            raise exc

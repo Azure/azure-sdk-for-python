@@ -154,7 +154,7 @@ class PhoneNumberIdentifier:
         """
 
         raw_id: Optional[str] = kwargs.get("raw_id")
-        asserted_id: Optional[str] = ""
+        asserted_id: Optional[str] = None
         is_anonymous: Optional[bool] = False
 
         if raw_id is not None:
@@ -162,7 +162,7 @@ class PhoneNumberIdentifier:
             is_anonymous = phone_number == PHONE_NUMBER_ANONYMOUS_SUFFIX
             asserted_id_index = -1 if is_anonymous else phone_number.rfind("_") + 1
             has_asserted_id = 0 < asserted_id_index < len(phone_number)
-            asserted_id = phone_number[asserted_id_index:] if has_asserted_id else ""
+            asserted_id = phone_number[asserted_id_index:] if has_asserted_id else None
             self.properties = PhoneNumberProperties(
                 value=value,
                 asserted_id=asserted_id,
@@ -377,7 +377,7 @@ class TeamsExtensionUserProperties(TypedDict):
     tenant_id: str
     """The tenant id associated with the user."""
     resource_id: str
-    """The resource id associated with the user."""
+    """The Communication Services resource id."""
     cloud: Union[CommunicationCloudEnvironment, str]
     """Cloud environment that this identifier belongs to."""
 
@@ -402,7 +402,7 @@ class TeamsExtensionUserIdentifier:
         """
         :param str user_id: Teams extension user id.
         :param str tenant_id: Tenant id associated with the user.
-        :param str resource_id: Resource id associated with the user.
+        :param str resource_id: The Communication Services resource id.
         :keyword cloud: Cloud environment that the user belongs to. Default value is `PUBLIC`.
         :paramtype cloud: str or ~azure.communication.jobrouter.CommunicationCloudEnvironment
         :keyword str raw_id: The raw ID of the identifier.
@@ -448,7 +448,7 @@ def try_create_teams_extension_user(prefix: str, suffix: str) -> Optional[TeamsE
     elif prefix == ACS_USER_GCCH_CLOUD_PREFIX:
         cloud = CommunicationCloudEnvironment.GCCH
     else:
-        raise ValueError(f"Invalid prefix {prefix} for TeamsExtensionUserIdentifier")
+        raise ValueError("Invalid MRI")
     return TeamsExtensionUserIdentifier(user_id, tenant_id, resource_id, cloud=cloud)
 
 def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: disable=too-many-return-statements

@@ -16,6 +16,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.credentials_async import AsyncTokenCredential
 from .entra_token_guard_policy_async import EntraTokenGuardPolicy
 from .token_exchange_utils import TokenExchangeUtils
+from azure.core.pipeline.policies import AsyncRetryPolicy
 
 
 class TokenExchangeClient:
@@ -46,7 +47,8 @@ class TokenExchangeClient:
     def _create_pipeline_from_options(self, pipeline_transport):
         auth_policy = AsyncBearerTokenCredentialPolicy(self._credential, *self._scopes)
         entra_token_guard_policy = EntraTokenGuardPolicy()
-        policies = [auth_policy, entra_token_guard_policy]
+        retry_policy = AsyncRetryPolicy()
+        policies = [auth_policy, entra_token_guard_policy, retry_policy]
         if pipeline_transport:
             return AsyncPipeline(policies=policies, transport=pipeline_transport)
         return AsyncPipeline(policies=policies, transport=AioHttpTransport())

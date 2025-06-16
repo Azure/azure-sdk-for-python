@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 
 import unittest
+import json
 from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock, AsyncMock
 from azure.communication.identity._shared.entra_token_guard_policy_utils import (
@@ -52,5 +53,6 @@ class TestEntraTokenGuardUtils(unittest.TestCase):
         # Exception in parsing
         response = DummyResponse(status_code=200)
         response.http_response.text.return_value = "not json"
-        self.assertFalse(EntraTokenGuardUtils.is_acs_token_cache_valid(response))
+        with self.assertRaises(Exception):
+            EntraTokenGuardUtils.is_acs_token_cache_valid(response)
 

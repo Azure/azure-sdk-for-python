@@ -14,6 +14,7 @@ from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.credentials import TokenCredential
+from azure.core.pipeline.policies import RetryPolicy
 from .entra_token_guard_policy import EntraTokenGuardPolicy
 from .token_exchange_utils import TokenExchangeUtils
 
@@ -45,7 +46,8 @@ class TokenExchangeClient:
     def _create_pipeline_from_options(self, pipeline_transport):
         auth_policy = BearerTokenCredentialPolicy(self._credential, *self._scopes)
         entra_token_guard_policy = EntraTokenGuardPolicy()
-        policies = [auth_policy, entra_token_guard_policy]
+        retry_policy = RetryPolicy()
+        policies = [auth_policy, entra_token_guard_policy, retry_policy]
         if pipeline_transport:
             return Pipeline(policies=policies, transport=pipeline_transport)
         return Pipeline(policies=policies, transport=RequestsTransport())
