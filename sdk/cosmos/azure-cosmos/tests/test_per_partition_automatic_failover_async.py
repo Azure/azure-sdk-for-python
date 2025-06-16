@@ -79,7 +79,6 @@ class TestPerPartitionAutomaticFailoverAsync:
 
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors(create_errors()))
     async def test_ppaf_partition_info_cache_and_routing_async(self, write_operation, error):
-        os.environ["AZURE_COSMOS_ENABLE_PER_PARTITION_AUTOMATIC_FAILOVER"] = "True"
         # This test validates that the partition info cache is updated correctly upon failures, and that the
         # per-partition automatic failover logic routes requests to the next available regional endpoint
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
