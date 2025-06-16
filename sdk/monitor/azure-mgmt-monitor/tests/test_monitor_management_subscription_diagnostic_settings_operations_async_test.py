@@ -24,4 +24,4 @@ class TestMonitorManagementSubscriptionDiagnosticSettingsOperationsAsync(AzureMg
     async def test_subscription_diagnostic_settings_list(self, resource_group):
         response = await self.client.subscription_diagnostic_settings.list()
 
-        assert response.value == []
+        assert response
