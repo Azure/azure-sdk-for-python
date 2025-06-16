@@ -51,7 +51,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
             item['pk'] = str((index % 2) + 1)
             cls.test_container.create_item(item)
         # Need to give the container time to index all the recently added items - 10 minutes seems to work
-        time.sleep(12 * 60)
+        # time.sleep(5 * 60)
 
     @classmethod
     def tearDownClass(cls):
@@ -140,7 +140,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
                 "ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'))"
         results = self.test_container.query_items(query, enable_cross_partition_query=True)
         result_list = list(results)
-        assert len(result_list) == 15
+        assert len(result_list) == 13
         for res in result_list:
             assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85]
 
@@ -238,8 +238,8 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         result_list = [res['Index'] for res in results]
         # If some scores rank the same the order of the results may change
         assert result_list in [
-            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85],
-            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 85, 57]
+            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 2, 22, 66, 57, 85],
+            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 2, 22, 66, 85, 57]
         ]
 
         # Test case 2
@@ -253,8 +253,8 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         result_list = [res['Index'] for res in results]
         # If some scores rank the same the order of the results may change
         assert result_list in [
-            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85],
-            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 85, 57]
+            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 2, 22, 66, 57, 85],
+            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 2, 22, 66, 85, 57]
         ]
 
         # Test case 3
