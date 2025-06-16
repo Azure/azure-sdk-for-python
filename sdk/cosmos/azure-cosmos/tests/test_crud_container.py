@@ -958,10 +958,8 @@ class TestCRUDContainerOperations(unittest.TestCase):
         created_db = self.databaseForTest
         collection = created_db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
-        # get current collection throughput settings
-        current_throughput = collection.get_throughput()
         new_throughput = ThroughputProperties(offer_throughput=2500)
-        update_throughput = collection.replace_throughput(new_throughput.offer_throughput)
+        collection.replace_throughput(new_throughput.offer_throughput)
 
         retrieve_throughput = collection.get_throughput()
         assert getattr(retrieve_throughput, "offer_throughput") == getattr(new_throughput, "offer_throughput")
@@ -970,10 +968,8 @@ class TestCRUDContainerOperations(unittest.TestCase):
         created_db = self.databaseForTest
         collection = created_db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
-        # get current collection throughput settings
-        current_throughput = collection.get_throughput()
         new_throughput = ThroughputProperties(offer_throughput=2500)
-        update_throughput = collection.replace_throughput(new_throughput)
+        collection.replace_throughput(new_throughput)
 
         retrieve_throughput = collection.get_throughput()
         assert getattr(retrieve_throughput, "offer_throughput") == getattr(new_throughput, "offer_throughput")
