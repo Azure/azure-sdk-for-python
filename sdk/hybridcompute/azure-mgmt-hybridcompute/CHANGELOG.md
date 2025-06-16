@@ -28,9 +28,9 @@
   - Added model `SetupExtensionRequest`
   - Model `HybridComputeManagementClientOperationsMixin` added method `begin_setup_extensions`
   - Model `MachinesOperations` added method `begin_delete`
-  - Added model `ExtensionMetadataV2Operations`
-  - Added model `ExtensionPublisherOperations`
-  - Added model `ExtensionTypeOperations`
+  - Added operation group `ExtensionMetadataV2Operations`
+  - Added operation group `ExtensionPublisherOperations`
+  - Added operation group `ExtensionTypeOperations`
 
 ### Breaking Changes
 
