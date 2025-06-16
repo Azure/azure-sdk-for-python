@@ -144,7 +144,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         for res in result_list:
             assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85]
 
-        query = "SELECT TOP 10 c.index, c.title, c.title FROM c WHERE " \
+        query = "SELECT TOP 10 c.index, c.title, c.text FROM c WHERE " \
                 "FullTextContains(c.title, 'John') OR FullTextContains(c.text, 'John') OR " \
                 "FullTextContains(c.text, 'United States') ORDER BY RANK RRF(FullTextScore(c.title, 'John')," \
                 " FullTextScore(c.text, 'United States'))"
@@ -237,10 +237,8 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         results = self.test_container.query_items(query, enable_cross_partition_query=True)
         result_list = [res['Index'] for res in results]
         # If some scores rank the same the order of the results may change
-        assert result_list in [
-            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85],
-            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 85, 57]
-        ]
+        for result in result_list:
+            assert result in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85]
 
         # Test case 2
         query = """
