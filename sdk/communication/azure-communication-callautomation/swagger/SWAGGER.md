@@ -17,7 +17,7 @@ autorest SWAGGER.md
 
 ```yaml
 tag: package-2024-09-01-preview
-require: https://github.com/Azure/azure-rest-api-specs/blob/c8d14e82887409318f471cb17d2fa03844e8187f/specification/communication/data-plane/CallAutomation/readme.md
+require: https://github.com/Azure/azure-rest-api-specs/blob/1a08384511e96c42aaf18edd646baf01e5e5fc84/specification/communication/data-plane/CallAutomation/readme.md
 output-folder: ../azure/communication/callautomation/_generated
 models-mode: msrest
 namespace: azure.communication.callautomation
@@ -31,6 +31,8 @@ v3: true
 no-async: false
 add-credential: false
 title: Azure Communication Call Automation Service
+use-extension:
+  "@autorest/python": "5.9.3"
 ```
 
 ### Rename response to result
