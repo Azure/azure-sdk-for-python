@@ -61,10 +61,10 @@
     },
     {
       "MacTestConfig": {
-        "Ubuntu2404_313_search_query": {
-          "OSVmImage": "env:LINUXVMIMAGE",
-          "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.13",
+        "macos311_search_query": {
+          "OSVmImage": "env:MACVMIMAGE",
+          "Pool": "env:MACPOOL",
+          "PythonVersion": "3.11",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
           "TestMarkArgument": "cosmosSearchQuery"
