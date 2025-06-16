@@ -6,12 +6,9 @@
 
   - Model `ConfigurationStore` added property `default_key_value_revision_retention_period_in_seconds`
   - Model `ConfigurationStoreUpdateParameters` added property `default_key_value_revision_retention_period_in_seconds`
-  - Method `KeyValuesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, config_store_name: str, key_value_name: str, key_value_parameters: KeyValue, content_type: str)`
-  - Method `KeyValuesOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, config_store_name: str, key_value_name: str, key_value_parameters: IO[bytes], content_type: str)`
 
 ### Breaking Changes
-
-  - Method `KeyValuesOperations.create_or_update` removed default value `None` from its parameter `key_value_parameters`
+  - Parameter `key_value_parameters` of Method `KeyValuesOperations.create_or_update` is now required
 
 ## 4.0.0 (2024-10-29)
 
