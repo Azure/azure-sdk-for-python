@@ -6,16 +6,16 @@
 # -------------------------------------------------------------------------
 import pytest
 from websockets import connect as ws_connect
-from testcase import WebpubsubPowerShellPreparer
-from devtools_testutils.aio import recorded_by_proxy_async
-from testcase_async import WebpubsubAsyncTest
+from testcase import WebpubsubTest, WebpubsubPowerShellPreparer
+from devtools_testutils import recorded_by_proxy
 
-@pytest.mark.live_test_only
-class TestListConnectionsInGroup(WebpubsubAsyncTest):
+@pytest.mark.asyncio
+class TestListConnections(WebpubsubTest):
 
     @WebpubsubPowerShellPreparer()
-    @recorded_by_proxy_async
-    async def test_list_connections(self, webpubsub_connection_string, **kwargs):
+    @recorded_by_proxy
+    async def test_list_connections(self, **kwargs):
+        webpubsub_connection_string = kwargs.get("webpubsub_connection_string")
         # Test cases with different pagination scenarios
         test_cases = [
             {
@@ -46,40 +46,36 @@ class TestListConnectionsInGroup(WebpubsubAsyncTest):
 
         for test_case in test_cases:
             client = self.create_client(connection_string = webpubsub_connection_string, hub='test_list_connections')
-            async with client:
-                group_name = "group1"
-                ws_clients = []
+            group_name = "group1"
+            ws_clients = []
 
-                # Get client access token
-                token = await client.get_client_access_token(groups=[group_name])
-                client_url = token["url"]
+            # Get client access token
+            token = client.get_client_access_token(groups=[group_name])
+            client_url = token["url"]
 
-                # Create WebSocket connections if not in playback mode
-                if not self.is_playback():
-                    for _ in range(test_case["total_connection_count"]):
-                        ws = await ws_connect(client_url)
-                        ws_clients.append(ws)
+            # Create WebSocket connections if not in playback mode
+            if not self.is_playback():
+                for _ in range(test_case["total_connection_count"]):
+                    ws = await ws_connect(client_url)
+                    ws_clients.append(ws)
 
-                # List connections with pagination
-                actual_page_count = 0
-                actual_connection_count = 0
+            # List connections with pagination
+            actual_page_count = 0
+            actual_connection_count = 0
 
-                # Get connections with pagination
-                connections = client.list_connections(
-                    group=group_name,
-                    top=test_case["max_count_to_list"]
-                )
+            # Get connections with pagination
+            connections = client.list_connections(
+                group=group_name,
+                top=test_case["max_count_to_list"]
+            )
 
-                async for member in connections:
-                    assert member.connection_id is not None
+            for member in connections:
+                assert member.connection_id is not None
 
-                # Count pages and connections
-                async for page in connections.by_page():
-                    page_count = 0
-                    async for item in page:
-                        page_count += 1
-                    actual_connection_count += page_count
-                    actual_page_count += 1
+            # Count pages and connections
+            for page in connections.by_page():
+                actual_connection_count += len(list(page))
+                actual_page_count += 1
 
             # Verify results
             assert actual_page_count == test_case["expected_page_count"], \
