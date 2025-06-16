@@ -158,7 +158,7 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         if envelope is not None:
             envelope.instrumentation_key = self._instrumentation_key
             # Only set SentToAMW on AKS Attach
-            if _utils._is_on_aks() and _utils._is_attach_enabled():
+            if _utils._is_on_aks() and _utils._is_attach_enabled() and not self._is_stats_exporter():
                 if (
                     OTEL_EXPORTER_OTLP_METRICS_ENDPOINT in os.environ
                     and "otlp" in os.environ.get(OTEL_METRICS_EXPORTER, "")
