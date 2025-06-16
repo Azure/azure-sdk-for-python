@@ -26,7 +26,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
     masterKey = config.masterKey
     connectionPolicy = config.connectionPolicy
     TEST_DATABASE_ID = config.TEST_DATABASE_ID
-    TEST_CONTAINER_ID = "Full Text Container " + str(uuid.uuid4())
+    TEST_CONTAINER_ID = "FullTextContainer-" + str(uuid.uuid4())
 
     @classmethod
     def setUpClass(cls):
@@ -40,7 +40,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.test_db = cls.client.create_database(str(uuid.uuid4()))
         cls.test_container = cls.test_db.create_container(
-            id="FTS" + cls.TEST_CONTAINER_ID,
+            id=cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_2_PARTITIONS,
             indexing_policy=test_config.get_full_text_indexing_policy(path="/text"),
@@ -51,7 +51,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
             item['pk'] = str((index % 2) + 1)
             cls.test_container.create_item(item)
         # Need to give the container time to index all the recently added items - 10 minutes seems to work
-        time.sleep(10 * 60)
+        time.sleep(12 * 60)
 
     @classmethod
     def tearDownClass(cls):

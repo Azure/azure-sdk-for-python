@@ -25,7 +25,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
     host = config.host
     masterKey = config.masterKey
     connectionPolicy = config.connectionPolicy
-    TEST_CONTAINER_ID = "Full Text Container " + str(uuid.uuid4())
+    TEST_CONTAINER_ID = "FullTextContainer-" + str(uuid.uuid4())
 
     @classmethod
     def setUpClass(cls):
@@ -38,7 +38,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         cls.sync_client = CosmosSyncClient(cls.host, cls.masterKey)
         cls.test_db = cls.sync_client.create_database(str(uuid.uuid4()))
         cls.test_container = cls.test_db.create_container(
-            id="FTS" + cls.TEST_CONTAINER_ID,
+            id=cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_2_PARTITIONS,
             indexing_policy=test_config.get_full_text_indexing_policy(path="/text"),
@@ -49,7 +49,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             item['pk'] = str((index % 2) + 1)
             cls.test_container.create_item(item)
         # Need to give the container time to index all the recently added items - 10 minutes seems to work
-        time.sleep(10 * 60)
+        time.sleep(12 * 60)
 
     @classmethod
     def tearDownClass(cls):
@@ -140,7 +140,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         query = "SELECT TOP 20 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \
                 "FullTextContains(c.text, 'John') OR FullTextContains(c.text, 'United States') " \
-                "ORDER BY RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, 'United States'))"
+                "ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'))"
         results = self.test_container.query_items(query)
         result_list = [item async for item in results]
         assert len(result_list) == 15
