@@ -2621,15 +2621,16 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             database_account._ReadableLocations = result[Constants.ReadableLocations]
         if Constants.EnableMultipleWritableLocations in result:
             database_account._EnableMultipleWritableLocations = result[
-                Constants.EnableMultipleWritableLocations
-            ]
-        # TODO: PPAF - Verify that this is the correct variable from the service
-        if Constants.EnablePerPartitionFailoverBehavior in result:
-            database_account._EnablePerPartitionFailoverBehavior = result[Constants.EnablePerPartitionFailoverBehavior]
+                Constants.EnableMultipleWritableLocations]
 
         self.UseMultipleWriteLocations = (
                 self.connection_policy.UseMultipleWriteLocations and database_account._EnableMultipleWritableLocations
         )
+
+        # TODO: Verify that this is the correct variable from the service
+        if Constants.EnablePerPartitionFailoverBehavior in result:
+            database_account._EnablePerPartitionFailoverBehavior = result[Constants.EnablePerPartitionFailoverBehavior]
+
         if response_hook:
             response_hook(last_response_headers, result)
         return database_account

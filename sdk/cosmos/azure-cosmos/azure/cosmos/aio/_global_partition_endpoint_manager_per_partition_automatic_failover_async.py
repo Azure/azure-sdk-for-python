@@ -12,8 +12,8 @@ from typing import Dict, Set, TYPE_CHECKING, Optional
 
 from azure.cosmos.http_constants import ResourceType
 from azure.cosmos._constants import _Constants as Constants
-from azure.cosmos._global_partition_endpoint_manager_circuit_breaker import \
-    _GlobalPartitionEndpointManagerForCircuitBreaker
+from azure.cosmos.aio._global_partition_endpoint_manager_circuit_breaker_async import \
+    _GlobalPartitionEndpointManagerForCircuitBreakerAsync
 from azure.cosmos.documents import _OperationType
 
 from azure.cosmos._request_object import RequestObject
@@ -58,13 +58,13 @@ class PartitionLevelFailoverInfo:
 
             return False
 
-class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover(_GlobalPartitionEndpointManagerForCircuitBreaker):
+class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(_GlobalPartitionEndpointManagerForCircuitBreakerAsync):
     """
     This internal class implements the logic for partition endpoint management for
     geo-replicated database accounts.
     """
     def __init__(self, client: "CosmosClientConnection"):
-        super(_GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover, self).__init__(client)
+        super(_GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync, self).__init__(client)
         self.partition_range_to_failover_info: Dict[PartitionKeyRangeWrapper, PartitionLevelFailoverInfo] = {}
 
     def is_per_partition_automatic_failover_applicable(self, request: RequestObject) -> bool:

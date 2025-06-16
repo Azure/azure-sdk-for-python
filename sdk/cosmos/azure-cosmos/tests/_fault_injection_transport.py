@@ -259,7 +259,7 @@ class FaultInjectionTransport(RequestsTransport):
             writable_locations[0]["name"] = write_region_name
             readable_locations.append({"name": read_region_name, "databaseAccountEndpoint" : test_config.TestConfig.local_host})
             FaultInjectionTransport.logger.info("Transformed Account Topology: {}".format(result))
-            # TODO: PPAF - need to verify below behavior against actual Cosmos DB service response
+            # TODO: need to verify below behavior against actual Cosmos DB service response
             if enable_per_partition_failover:
                 result["enablePerPartitionFailoverBehavior"] = True
             request: HttpRequest = response.request
@@ -268,9 +268,8 @@ class FaultInjectionTransport(RequestsTransport):
         return response
 
     @staticmethod
-    def transform_topology_ppaf_enabled(
-            inner: Callable[[], RequestsTransportResponse],
-            enable_per_partition_failover: bool = False) -> RequestsTransportResponse:
+    def transform_topology_ppaf_enabled( # cspell:disable-line
+            inner: Callable[[], RequestsTransportResponse]) -> RequestsTransportResponse:
 
         response = inner()
         if not FaultInjectionTransport.predicate_is_database_account_call(response.request):
@@ -280,10 +279,9 @@ class FaultInjectionTransport(RequestsTransport):
         if response.status_code == 200 and data:
             data = data.decode("utf-8")
             result = json.loads(data)
+            # TODO: need to verify below behavior against actual Cosmos DB service response
+            result["enablePerPartitionFailoverBehavior"] = True
             FaultInjectionTransport.logger.info("Transformed Account Topology: {}".format(result))
-            # TODO: PPAF - need to verify below behavior against actual Cosmos DB service response
-            if enable_per_partition_failover:
-                result["enablePerPartitionFailoverBehavior"] = True
             request: HttpRequest = response.request
             return FaultInjectionTransport.MockHttpResponse(request, 200, result)
 

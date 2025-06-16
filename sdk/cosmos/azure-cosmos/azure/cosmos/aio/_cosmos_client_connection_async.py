@@ -48,8 +48,8 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     ProxyPolicy)
 from azure.core.utils import CaseInsensitiveDict
-from azure.cosmos.aio._global_partition_endpoint_manager_circuit_breaker_async import (
-    _GlobalPartitionEndpointManagerForCircuitBreakerAsync)
+from azure.cosmos.aio._global_partition_endpoint_manager_per_partition_automatic_failover_async import (
+    _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync)
 
 from .. import _base as base
 from .._base import _build_properties_cache
@@ -174,7 +174,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Keeps the latest response headers from the server.
         self.last_response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
         self.UseMultipleWriteLocations = False
-        self._global_endpoint_manager = _GlobalPartitionEndpointManagerForCircuitBreakerAsync(self)
+        self._global_endpoint_manager = _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(self)
 
         retry_policy = None
         if isinstance(self.connection_policy.ConnectionRetryConfiguration, AsyncHTTPPolicy):
@@ -452,6 +452,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.UseMultipleWriteLocations = (
                 self.connection_policy.UseMultipleWriteLocations and database_account._EnableMultipleWritableLocations
         )
+
+        # TODO: Verify that this is the correct variable from the service
+        if Constants.EnablePerPartitionFailoverBehavior in result:
+            database_account._EnablePerPartitionFailoverBehavior = result[Constants.EnablePerPartitionFailoverBehavior]
+
         return database_account
 
     async def _GetDatabaseAccountCheck(

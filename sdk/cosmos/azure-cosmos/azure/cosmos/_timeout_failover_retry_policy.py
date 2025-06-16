@@ -48,10 +48,11 @@ class _TimeoutFailoverRetryPolicy(object):
     def resolve_next_region_service_endpoint(self):
         if self.global_endpoint_manager.is_per_partition_automatic_failover_applicable(self.request):
             # If per partition automatic failover is applicable, we mark the current endpoint as unavailable
-            # and resolve the service endpoint for the partition range - otherwise, continue with the default retry logic
+            # and resolve the service endpoint for the partition range - otherwise, continue with default retry logic
             partition_level_info = self.global_endpoint_manager.partition_range_to_failover_info[self.pk_range_wrapper]
             partition_level_info.unavailable_regional_endpoints.add(self.request.location_endpoint_to_route)
-            return self.global_endpoint_manager.resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper)
+            return self.global_endpoint_manager.resolve_service_endpoint_for_partition(self.request,
+                                                                                       self.pk_range_wrapper)
 
         # clear previous location-based routing directive
         self.request.clear_route_to_location()

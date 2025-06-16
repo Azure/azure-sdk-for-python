@@ -23,7 +23,7 @@ from test_per_partition_circuit_breaker_mm import validate_stats
 
 COLLECTION = "created_collection"
 
-async def perform_write_operation(operation, container, fault_injection_container, doc_id, pk, expected_uri):
+async def perform_write_operation(operation, container, fault_injection_container, doc_id, pk, expected_uri=None):
     doc = {'id': doc_id,
            'pk': pk,
            'name': 'sample document',
@@ -61,7 +61,7 @@ async def perform_write_operation(operation, container, fault_injection_containe
     elif operation == DELETE_ALL_ITEMS_BY_PARTITION_KEY:
         await container.create_item(body=doc)
         resp = await fault_injection_container.delete_all_items_by_partition_key(pk)
-    if resp:
+    if resp and expected_uri:
         validate_response_uri(resp, expected_uri)
 
 async def perform_read_operation(operation, container, doc_id, pk, expected_uri):
