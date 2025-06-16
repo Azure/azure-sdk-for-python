@@ -7,20 +7,22 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
+from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the audio format used for encoding, including sample rate and channel type."""
+class AudioFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Specifies the audio format used for encoding, including sample rate and channel type.
+    """
 
+    #: Pcm16KMono.
     PCM16_K_MONO = "Pcm16KMono"
-    """Pcm16KMono"""
+    #: Pcm24KMono.
     PCM24_K_MONO = "Pcm24KMono"
-    """Pcm24KMono"""
 
-
-class CallConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The state of the call connection."""
+class CallConnectionState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The state of the call connection.
+    """
 
     UNKNOWN = "unknown"
     CONNECTING = "connecting"
@@ -30,25 +32,23 @@ class CallConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISCONNECTING = "disconnecting"
     DISCONNECTED = "disconnected"
 
-
-class CallLocatorKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The call locator kind."""
+class CallLocatorKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The call locator kind.
+    """
 
     GROUP_CALL_LOCATOR = "groupCallLocator"
     SERVER_CALL_LOCATOR = "serverCallLocator"
     ROOM_CALL_LOCATOR = "roomCallLocator"
 
-
-class CallRejectReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The rejection reason."""
+class CallRejectReason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The rejection reason.
+    """
 
     NONE = "none"
     BUSY = "busy"
     FORBIDDEN = "forbidden"
 
-
-class CallSessionEndReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """CallSessionEndReason."""
+class CallSessionEndReason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     SESSION_STILL_ONGOING = "sessionStillOngoing"
     CALL_ENDED = "callEnded"
@@ -70,18 +70,16 @@ class CallSessionEndReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     HANDED_OVER_DUE_TO_MEDIA_TIMEOUT = "handedOverDueToMediaTimeout"
     HANDED_OVER_DUE_TO_AUDIO_STREAM_FAILURE = "handedOverDueToAudioStreamFailure"
     SPEECH_RECOGNITION_SESSION_NON_RETRIABLE_ERROR = "speechRecognitionSessionNonRetriableError"
-    SPEECH_RECOGNITION_SESSION_RETRIABLE_ERROR_MAX_RETRY_COUNT_REACHED = (
-        "speechRecognitionSessionRetriableErrorMaxRetryCountReached"
-    )
+    SPEECH_RECOGNITION_SESSION_RETRIABLE_ERROR_MAX_RETRY_COUNT_REACHED = "speechRecognitionSessionRetriableErrorMaxRetryCountReached"
     HANDED_OVER_DUE_TO_CHUNK_CREATION_FAILURE = "handedOverDueToChunkCreationFailure"
     CHUNK_CREATION_FAILED = "chunkCreationFailed"
     HANDED_OVER_DUE_TO_PROCESSING_TIMEOUT = "handedOverDueToProcessingTimeout"
     PROCESSING_TIMEOUT = "processingTimeout"
     TRANSCRIPT_OBJECT_CREATION_FAILED = "transcriptObjectCreationFailed"
 
-
-class ChunkEndReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Reason this chunk ended."""
+class ChunkEndReason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Reason this chunk ended
+    """
 
     CHUNK_IS_BEING_RECORDED = "chunkIsBeingRecorded"
     SESSION_ENDED = "sessionEnded"
@@ -89,34 +87,33 @@ class ChunkEndReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CHUNK_MAXIMUM_TIME_EXCEEDED = "chunkMaximumTimeExceeded"
     CHUNK_UPLOAD_FAILURE = "chunkUploadFailure"
 
-
-class CommunicationCloudEnvironmentModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The cloud that the identifier belongs to."""
+class CommunicationCloudEnvironmentModel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The cloud that the identifier belongs to.
+    """
 
     PUBLIC = "public"
     DOD = "dod"
     GCCH = "gcch"
 
-
-class CommunicationIdentifierModelKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The identifier kind, for example 'communicationUser' or 'phoneNumber'."""
+class CommunicationIdentifierModelKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The identifier kind, for example 'communicationUser' or 'phoneNumber'.
+    """
 
     UNKNOWN = "unknown"
     COMMUNICATION_USER = "communicationUser"
     PHONE_NUMBER = "phoneNumber"
     MICROSOFT_TEAMS_USER = "microsoftTeamsUser"
     MICROSOFT_TEAMS_APP = "microsoftTeamsApp"
+    TEAMS_EXTENSION_USER = "teamsExtensionUser"
 
-
-class DialogInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Determines the type of the dialog."""
+class DialogInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Determines the type of the dialog.
+    """
 
     POWER_VIRTUAL_AGENTS = "powerVirtualAgents"
     AZURE_OPEN_AI = "azureOpenAI"
 
-
-class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """DtmfTone."""
+class DtmfTone(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     ZERO = "zero"
     ONE = "one"
@@ -135,31 +132,27 @@ class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     POUND = "pound"
     ASTERISK = "asterisk"
 
-
-class MediaStreamingAudioChannelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Audio channel type to stream, eg. unmixed audio, mixed audio."""
+class MediaStreamingAudioChannelType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Audio channel type to stream, eg. unmixed audio, mixed audio
+    """
 
     MIXED = "mixed"
     UNMIXED = "unmixed"
 
-
-class MediaStreamingContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Content type to stream, eg. audio."""
+class MediaStreamingContentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Content type to stream, eg. audio
+    """
 
     AUDIO = "audio"
 
-
-class MediaStreamingStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """MediaStreamingStatus."""
+class MediaStreamingStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     MEDIA_STREAMING_STARTED = "mediaStreamingStarted"
     MEDIA_STREAMING_FAILED = "mediaStreamingFailed"
     MEDIA_STREAMING_STOPPED = "mediaStreamingStopped"
     UNSPECIFIED_ERROR = "unspecifiedError"
 
-
-class MediaStreamingStatusDetails(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """MediaStreamingStatusDetails."""
+class MediaStreamingStatusDetails(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     SUBSCRIPTION_STARTED = "subscriptionStarted"
     STREAM_CONNECTION_REESTABLISHED = "streamConnectionReestablished"
@@ -177,106 +170,97 @@ class MediaStreamingStatusDetails(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SERVICE_TIMEOUT = "serviceTimeout"
     INITIAL_WEB_SOCKET_CONNECTION_FAILED = "initialWebSocketConnectionFailed"
 
-
-class MediaStreamingSubscriptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Media streaming subscription state."""
+class MediaStreamingSubscriptionState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Media streaming subscription state.
+    """
 
     DISABLED = "disabled"
     INACTIVE = "inactive"
     ACTIVE = "active"
 
-
-class MediaStreamingTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of transport to be used for media streaming, eg. Websocket."""
+class MediaStreamingTransportType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of transport to be used for media streaming, eg. Websocket
+    """
 
     WEBSOCKET = "websocket"
 
-
-class PlaySourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the type of the play source."""
+class PlaySourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Defines the type of the play source
+    """
 
     FILE = "file"
     TEXT = "text"
     SSML = "ssml"
 
-
-class RecognitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class RecognitionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Determines the sub-type of the recognize operation.
-    In case of cancel operation the this field is not set and is returned empty.
+    In case of cancel operation the this field is not set and is returned empty
     """
 
     DTMF = "dtmf"
     SPEECH = "speech"
     CHOICES = "choices"
 
-
-class RecognizeInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Determines the type of the recognition."""
+class RecognizeInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Determines the type of the recognition.
+    """
 
     DTMF = "dtmf"
     SPEECH = "speech"
     SPEECH_OR_DTMF = "speechOrDtmf"
     CHOICES = "choices"
 
-
-class RecordingChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The channel type of call recording."""
+class RecordingChannel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The channel type of call recording.
+    """
 
     MIXED = "mixed"
     UNMIXED = "unmixed"
 
-
-class RecordingContent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The content type of call recording."""
+class RecordingContent(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The content type of call recording.
+    """
 
     AUDIO = "audio"
     AUDIO_VIDEO = "audioVideo"
 
-
-class RecordingFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The format type of call recording."""
+class RecordingFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The format type of call recording.
+    """
 
     WAV = "wav"
     MP3 = "mp3"
     MP4 = "mp4"
 
+class RecordingKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
-class RecordingKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RecordingKind."""
-
+    #: Recording initiated by Azure Communication Services.
     AZURE_COMMUNICATION_SERVICES = "AzureCommunicationServices"
-    """Recording initiated by Azure Communication Services"""
+    #: Recording initiated by Teams user.
     TEAMS = "Teams"
-    """Recording initiated by Teams user"""
+    #: Recording initiated by Teams compliance policy.
     TEAMS_COMPLIANCE = "TeamsCompliance"
-    """Recording initiated by Teams compliance policy"""
 
-
-class RecordingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RecordingState."""
+class RecordingState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     ACTIVE = "active"
     INACTIVE = "inactive"
 
+class RecordingStorageKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Defines the kind of external storage
+    """
 
-class RecordingStorageKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the kind of external storage."""
-
+    #: Storage managed by Azure Communication Services.
     AZURE_COMMUNICATION_SERVICES = "AzureCommunicationServices"
-    """Storage managed by Azure Communication Services"""
+    #: Storage managed by provided Azure blob.
     AZURE_BLOB_STORAGE = "AzureBlobStorage"
-    """Storage managed by provided Azure blob"""
 
-
-class TranscriptionResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """TranscriptionResultType."""
+class TranscriptionResultType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     FINAL = "final"
     INTERMEDIATE = "intermediate"
 
-
-class TranscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """TranscriptionStatus."""
+class TranscriptionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     TRANSCRIPTION_STARTED = "transcriptionStarted"
     TRANSCRIPTION_FAILED = "transcriptionFailed"
@@ -285,9 +269,7 @@ class TranscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TRANSCRIPTION_STOPPED = "transcriptionStopped"
     UNSPECIFIED_ERROR = "unspecifiedError"
 
-
-class TranscriptionStatusDetails(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """TranscriptionStatusDetails."""
+class TranscriptionStatusDetails(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     SUBSCRIPTION_STARTED = "subscriptionStarted"
     STREAM_CONNECTION_REESTABLISHED = "streamConnectionReestablished"
@@ -305,23 +287,23 @@ class TranscriptionStatusDetails(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SERVICE_TIMEOUT = "serviceTimeout"
     TRANSCRIPTION_LOCALE_UPDATED = "transcriptionLocaleUpdated"
 
-
-class TranscriptionSubscriptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Transcription subscription state."""
+class TranscriptionSubscriptionState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Transcription subscription state.
+    """
 
     DISABLED = "disabled"
     INACTIVE = "inactive"
     ACTIVE = "active"
 
-
-class TranscriptionTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of transport to be used for live transcription, eg. Websocket."""
+class TranscriptionTransportType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of transport to be used for live transcription, eg. Websocket
+    """
 
     WEBSOCKET = "websocket"
 
-
-class VoiceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Voice kind type."""
+class VoiceKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Voice kind type
+    """
 
     MALE = "male"
     FEMALE = "female"

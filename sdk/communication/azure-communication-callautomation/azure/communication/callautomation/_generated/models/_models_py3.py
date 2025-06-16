@@ -6,8 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, Dict, List, Optional, Union
+
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+from ._azure_communication_call_automation_service_enums import *
 
 
 class AddParticipantFailed(msrest.serialization.Model):
@@ -40,6 +44,13 @@ class AddParticipantFailed(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
+        participant: Optional["CommunicationIdentifierModel"] = None,
         **kwargs
     ):
         """
@@ -59,12 +70,12 @@ class AddParticipantFailed(msrest.serialization.Model):
         :paramtype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
         """
         super(AddParticipantFailed, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
-        self.participant = kwargs.get('participant', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
+        self.participant = participant
 
 
 class AddParticipantRequest(msrest.serialization.Model):
@@ -119,6 +130,14 @@ class AddParticipantRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        participant_to_add: "CommunicationIdentifierModel",
+        source_caller_id_number: Optional["PhoneNumberIdentifierModel"] = None,
+        source_display_name: Optional[str] = None,
+        invitation_timeout_in_seconds: Optional[int] = None,
+        operation_context: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
+        custom_calling_context: Optional["CustomCallingContext"] = None,
         **kwargs
     ):
         """
@@ -152,13 +171,13 @@ class AddParticipantRequest(msrest.serialization.Model):
          ~azure.communication.callautomation.models.CustomCallingContext
         """
         super(AddParticipantRequest, self).__init__(**kwargs)
-        self.source_caller_id_number = kwargs.get('source_caller_id_number', None)
-        self.source_display_name = kwargs.get('source_display_name', None)
-        self.participant_to_add = kwargs['participant_to_add']
-        self.invitation_timeout_in_seconds = kwargs.get('invitation_timeout_in_seconds', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.operation_callback_uri = kwargs.get('operation_callback_uri', None)
-        self.custom_calling_context = kwargs.get('custom_calling_context', None)
+        self.source_caller_id_number = source_caller_id_number
+        self.source_display_name = source_display_name
+        self.participant_to_add = participant_to_add
+        self.invitation_timeout_in_seconds = invitation_timeout_in_seconds
+        self.operation_context = operation_context
+        self.operation_callback_uri = operation_callback_uri
+        self.custom_calling_context = custom_calling_context
 
 
 class AddParticipantResponse(msrest.serialization.Model):
@@ -180,6 +199,10 @@ class AddParticipantResponse(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        participant: Optional["CallParticipant"] = None,
+        operation_context: Optional[str] = None,
+        invitation_id: Optional[str] = None,
         **kwargs
     ):
         """
@@ -191,9 +214,9 @@ class AddParticipantResponse(msrest.serialization.Model):
         :paramtype invitation_id: str
         """
         super(AddParticipantResponse, self).__init__(**kwargs)
-        self.participant = kwargs.get('participant', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.invitation_id = kwargs.get('invitation_id', None)
+        self.participant = participant
+        self.operation_context = operation_context
+        self.invitation_id = invitation_id
 
 
 class AddParticipantSucceeded(msrest.serialization.Model):
@@ -226,6 +249,13 @@ class AddParticipantSucceeded(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
+        participant: Optional["CommunicationIdentifierModel"] = None,
         **kwargs
     ):
         """
@@ -245,12 +275,12 @@ class AddParticipantSucceeded(msrest.serialization.Model):
         :paramtype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
         """
         super(AddParticipantSucceeded, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
-        self.participant = kwargs.get('participant', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
+        self.participant = participant
 
 
 class AnswerCallRequest(msrest.serialization.Model):
@@ -299,6 +329,15 @@ class AnswerCallRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        incoming_call_context: str,
+        callback_uri: str,
+        custom_calling_context: Optional["CustomCallingContext"] = None,
+        operation_context: Optional[str] = None,
+        call_intelligence_options: Optional["CallIntelligenceOptions"] = None,
+        answered_by: Optional["CommunicationUserIdentifierModel"] = None,
+        media_streaming_options: Optional["MediaStreamingOptions"] = None,
+        transcription_options: Optional["TranscriptionOptions"] = None,
         **kwargs
     ):
         """
@@ -326,14 +365,14 @@ class AnswerCallRequest(msrest.serialization.Model):
          ~azure.communication.callautomation.models.TranscriptionOptions
         """
         super(AnswerCallRequest, self).__init__(**kwargs)
-        self.incoming_call_context = kwargs['incoming_call_context']
-        self.callback_uri = kwargs['callback_uri']
-        self.custom_calling_context = kwargs.get('custom_calling_context', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.call_intelligence_options = kwargs.get('call_intelligence_options', None)
-        self.answered_by = kwargs.get('answered_by', None)
-        self.media_streaming_options = kwargs.get('media_streaming_options', None)
-        self.transcription_options = kwargs.get('transcription_options', None)
+        self.incoming_call_context = incoming_call_context
+        self.callback_uri = callback_uri
+        self.custom_calling_context = custom_calling_context
+        self.operation_context = operation_context
+        self.call_intelligence_options = call_intelligence_options
+        self.answered_by = answered_by
+        self.media_streaming_options = media_streaming_options
+        self.transcription_options = transcription_options
 
 
 class AnswerFailed(msrest.serialization.Model):
@@ -363,6 +402,12 @@ class AnswerFailed(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -380,11 +425,11 @@ class AnswerFailed(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(AnswerFailed, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class BaseDialog(msrest.serialization.Model):
@@ -418,6 +463,8 @@ class BaseDialog(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        context: Dict[str, Any],
         **kwargs
     ):
         """
@@ -426,7 +473,7 @@ class BaseDialog(msrest.serialization.Model):
         """
         super(BaseDialog, self).__init__(**kwargs)
         self.kind = None  # type: Optional[str]
-        self.context = kwargs['context']
+        self.context = context
 
 
 class AzureOpenAIDialog(BaseDialog):
@@ -453,13 +500,15 @@ class AzureOpenAIDialog(BaseDialog):
 
     def __init__(
         self,
+        *,
+        context: Dict[str, Any],
         **kwargs
     ):
         """
         :keyword context: Required. Dialog context.
         :paramtype context: dict[str, any]
         """
-        super(AzureOpenAIDialog, self).__init__(**kwargs)
+        super(AzureOpenAIDialog, self).__init__(context=context, **kwargs)
         self.kind = 'azureOpenAI'  # type: str
 
 
@@ -493,6 +542,8 @@ class DialogUpdateBase(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        context: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         """
@@ -501,7 +552,7 @@ class DialogUpdateBase(msrest.serialization.Model):
         """
         super(DialogUpdateBase, self).__init__(**kwargs)
         self.kind = None  # type: Optional[str]
-        self.context = kwargs.get('context', None)
+        self.context = context
 
 
 class AzureOpenAIDialogUpdate(DialogUpdateBase):
@@ -527,13 +578,15 @@ class AzureOpenAIDialogUpdate(DialogUpdateBase):
 
     def __init__(
         self,
+        *,
+        context: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         """
         :keyword context: Dialog context.
         :paramtype context: dict[str, any]
         """
-        super(AzureOpenAIDialogUpdate, self).__init__(**kwargs)
+        super(AzureOpenAIDialogUpdate, self).__init__(context=context, **kwargs)
         self.kind = 'azureOpenAI'  # type: str
 
 
@@ -564,6 +617,12 @@ class CallConnected(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -581,11 +640,11 @@ class CallConnected(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(CallConnected, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class CallConnectionProperties(msrest.serialization.Model):
@@ -654,6 +713,22 @@ class CallConnectionProperties(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        targets: Optional[List["CommunicationIdentifierModel"]] = None,
+        call_connection_state: Optional[Union[str, "CallConnectionState"]] = None,
+        callback_uri: Optional[str] = None,
+        source_caller_id_number: Optional["PhoneNumberIdentifierModel"] = None,
+        source_display_name: Optional[str] = None,
+        source: Optional["CommunicationIdentifierModel"] = None,
+        correlation_id: Optional[str] = None,
+        answered_by: Optional["CommunicationUserIdentifierModel"] = None,
+        media_subscription_id: Optional[str] = None,
+        data_subscription_id: Optional[str] = None,
+        media_streaming_subscription: Optional["MediaStreamingSubscription"] = None,
+        transcription_subscription: Optional["TranscriptionSubscription"] = None,
+        answered_for: Optional["PhoneNumberIdentifierModel"] = None,
         **kwargs
     ):
         """
@@ -701,21 +776,21 @@ class CallConnectionProperties(msrest.serialization.Model):
         :paramtype answered_for: ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
         """
         super(CallConnectionProperties, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.targets = kwargs.get('targets', None)
-        self.call_connection_state = kwargs.get('call_connection_state', None)
-        self.callback_uri = kwargs.get('callback_uri', None)
-        self.source_caller_id_number = kwargs.get('source_caller_id_number', None)
-        self.source_display_name = kwargs.get('source_display_name', None)
-        self.source = kwargs.get('source', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.answered_by = kwargs.get('answered_by', None)
-        self.media_subscription_id = kwargs.get('media_subscription_id', None)
-        self.data_subscription_id = kwargs.get('data_subscription_id', None)
-        self.media_streaming_subscription = kwargs.get('media_streaming_subscription', None)
-        self.transcription_subscription = kwargs.get('transcription_subscription', None)
-        self.answered_for = kwargs.get('answered_for', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.targets = targets
+        self.call_connection_state = call_connection_state
+        self.callback_uri = callback_uri
+        self.source_caller_id_number = source_caller_id_number
+        self.source_display_name = source_display_name
+        self.source = source
+        self.correlation_id = correlation_id
+        self.answered_by = answered_by
+        self.media_subscription_id = media_subscription_id
+        self.data_subscription_id = data_subscription_id
+        self.media_streaming_subscription = media_streaming_subscription
+        self.transcription_subscription = transcription_subscription
+        self.answered_for = answered_for
 
 
 class CallDisconnected(msrest.serialization.Model):
@@ -745,6 +820,12 @@ class CallDisconnected(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -762,11 +843,11 @@ class CallDisconnected(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(CallDisconnected, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class CallIntelligenceOptions(msrest.serialization.Model):
@@ -787,6 +868,9 @@ class CallIntelligenceOptions(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        cognitive_services_endpoint: Optional[str] = None,
+        backup_cognitive_services_endpoint: Optional[str] = None,
         **kwargs
     ):
         """
@@ -798,8 +882,8 @@ class CallIntelligenceOptions(msrest.serialization.Model):
         :paramtype backup_cognitive_services_endpoint: str
         """
         super(CallIntelligenceOptions, self).__init__(**kwargs)
-        self.cognitive_services_endpoint = kwargs.get('cognitive_services_endpoint', None)
-        self.backup_cognitive_services_endpoint = kwargs.get('backup_cognitive_services_endpoint', None)
+        self.cognitive_services_endpoint = cognitive_services_endpoint
+        self.backup_cognitive_services_endpoint = backup_cognitive_services_endpoint
 
 
 class CallLocator(msrest.serialization.Model):
@@ -825,6 +909,11 @@ class CallLocator(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        group_call_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        room_id: Optional[str] = None,
+        kind: Optional[Union[str, "CallLocatorKind"]] = None,
         **kwargs
     ):
         """
@@ -839,10 +928,10 @@ class CallLocator(msrest.serialization.Model):
         :paramtype kind: str or ~azure.communication.callautomation.models.CallLocatorKind
         """
         super(CallLocator, self).__init__(**kwargs)
-        self.group_call_id = kwargs.get('group_call_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.room_id = kwargs.get('room_id', None)
-        self.kind = kwargs.get('kind', None)
+        self.group_call_id = group_call_id
+        self.server_call_id = server_call_id
+        self.room_id = room_id
+        self.kind = kind
 
 
 class CallParticipant(msrest.serialization.Model):
@@ -864,6 +953,10 @@ class CallParticipant(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        identifier: Optional["CommunicationIdentifierModel"] = None,
+        is_muted: Optional[bool] = None,
+        is_on_hold: Optional[bool] = None,
         **kwargs
     ):
         """
@@ -875,9 +968,9 @@ class CallParticipant(msrest.serialization.Model):
         :paramtype is_on_hold: bool
         """
         super(CallParticipant, self).__init__(**kwargs)
-        self.identifier = kwargs.get('identifier', None)
-        self.is_muted = kwargs.get('is_muted', None)
-        self.is_on_hold = kwargs.get('is_on_hold', None)
+        self.identifier = identifier
+        self.is_muted = is_muted
+        self.is_on_hold = is_on_hold
 
 
 class CallTransferAccepted(msrest.serialization.Model):
@@ -914,6 +1007,14 @@ class CallTransferAccepted(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
+        transfer_target: Optional["CommunicationIdentifierModel"] = None,
+        transferee: Optional["CommunicationIdentifierModel"] = None,
         **kwargs
     ):
         """
@@ -936,13 +1037,13 @@ class CallTransferAccepted(msrest.serialization.Model):
         :paramtype transferee: ~azure.communication.callautomation.models.CommunicationIdentifierModel
         """
         super(CallTransferAccepted, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
-        self.transfer_target = kwargs.get('transfer_target', None)
-        self.transferee = kwargs.get('transferee', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
+        self.transfer_target = transfer_target
+        self.transferee = transferee
 
 
 class CallTransferFailed(msrest.serialization.Model):
@@ -972,6 +1073,12 @@ class CallTransferFailed(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -989,11 +1096,11 @@ class CallTransferFailed(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(CallTransferFailed, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class CancelAddParticipantFailed(msrest.serialization.Model):
@@ -1026,6 +1133,13 @@ class CancelAddParticipantFailed(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
+        invitation_id: Optional[str] = None,
         **kwargs
     ):
         """
@@ -1045,12 +1159,12 @@ class CancelAddParticipantFailed(msrest.serialization.Model):
         :paramtype invitation_id: str
         """
         super(CancelAddParticipantFailed, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
-        self.invitation_id = kwargs.get('invitation_id', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
+        self.invitation_id = invitation_id
 
 
 class CancelAddParticipantRequest(msrest.serialization.Model):
@@ -1082,6 +1196,10 @@ class CancelAddParticipantRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        invitation_id: str,
+        operation_context: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs
     ):
         """
@@ -1097,9 +1215,9 @@ class CancelAddParticipantRequest(msrest.serialization.Model):
         :paramtype operation_callback_uri: str
         """
         super(CancelAddParticipantRequest, self).__init__(**kwargs)
-        self.invitation_id = kwargs['invitation_id']
-        self.operation_context = kwargs.get('operation_context', None)
-        self.operation_callback_uri = kwargs.get('operation_callback_uri', None)
+        self.invitation_id = invitation_id
+        self.operation_context = operation_context
+        self.operation_callback_uri = operation_callback_uri
 
 
 class CancelAddParticipantResponse(msrest.serialization.Model):
@@ -1118,6 +1236,9 @@ class CancelAddParticipantResponse(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        invitation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
         **kwargs
     ):
         """
@@ -1127,8 +1248,8 @@ class CancelAddParticipantResponse(msrest.serialization.Model):
         :paramtype operation_context: str
         """
         super(CancelAddParticipantResponse, self).__init__(**kwargs)
-        self.invitation_id = kwargs.get('invitation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
+        self.invitation_id = invitation_id
+        self.operation_context = operation_context
 
 
 class CancelAddParticipantSucceeded(msrest.serialization.Model):
@@ -1161,6 +1282,13 @@ class CancelAddParticipantSucceeded(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        invitation_id: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -1180,12 +1308,12 @@ class CancelAddParticipantSucceeded(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(CancelAddParticipantSucceeded, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.invitation_id = kwargs.get('invitation_id', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.invitation_id = invitation_id
+        self.result_information = result_information
 
 
 class ChannelAffinity(msrest.serialization.Model):
@@ -1213,6 +1341,9 @@ class ChannelAffinity(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        participant: "CommunicationIdentifierModel",
+        channel: Optional[int] = None,
         **kwargs
     ):
         """
@@ -1225,8 +1356,8 @@ class ChannelAffinity(msrest.serialization.Model):
         :paramtype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
         """
         super(ChannelAffinity, self).__init__(**kwargs)
-        self.channel = kwargs.get('channel', None)
-        self.participant = kwargs['participant']
+        self.channel = channel
+        self.participant = participant
 
 
 class Choice(msrest.serialization.Model):
@@ -1256,6 +1387,10 @@ class Choice(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        label: str,
+        phrases: List[str],
+        tone: Optional[Union[str, "DtmfTone"]] = None,
         **kwargs
     ):
         """
@@ -1268,9 +1403,9 @@ class Choice(msrest.serialization.Model):
         :paramtype tone: str or ~azure.communication.callautomation.models.DtmfTone
         """
         super(Choice, self).__init__(**kwargs)
-        self.label = kwargs['label']
-        self.phrases = kwargs['phrases']
-        self.tone = kwargs.get('tone', None)
+        self.label = label
+        self.phrases = phrases
+        self.tone = tone
 
 
 class ChoiceResult(msrest.serialization.Model):
@@ -1292,6 +1427,9 @@ class ChoiceResult(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        label: Optional[str] = None,
+        recognized_phrase: Optional[str] = None,
         **kwargs
     ):
         """
@@ -1304,8 +1442,8 @@ class ChoiceResult(msrest.serialization.Model):
         :paramtype recognized_phrase: str
         """
         super(ChoiceResult, self).__init__(**kwargs)
-        self.label = kwargs.get('label', None)
-        self.recognized_phrase = kwargs.get('recognized_phrase', None)
+        self.label = label
+        self.recognized_phrase = recognized_phrase
 
 
 class CommunicationError(msrest.serialization.Model):
@@ -1345,6 +1483,9 @@ class CommunicationError(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        code: str,
+        message: str,
         **kwargs
     ):
         """
@@ -1354,8 +1495,8 @@ class CommunicationError(msrest.serialization.Model):
         :paramtype message: str
         """
         super(CommunicationError, self).__init__(**kwargs)
-        self.code = kwargs['code']
-        self.message = kwargs['message']
+        self.code = code
+        self.message = message
         self.target = None
         self.details = None
         self.inner_error = None
@@ -1380,6 +1521,8 @@ class CommunicationErrorResponse(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        error: "CommunicationError",
         **kwargs
     ):
         """
@@ -1387,7 +1530,7 @@ class CommunicationErrorResponse(msrest.serialization.Model):
         :paramtype error: ~azure.communication.callautomation.models.CommunicationError
         """
         super(CommunicationErrorResponse, self).__init__(**kwargs)
-        self.error = kwargs['error']
+        self.error = error
 
 
 class CommunicationIdentifierModel(msrest.serialization.Model):
@@ -1428,6 +1571,14 @@ class CommunicationIdentifierModel(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        kind: Optional[Union[str, "CommunicationIdentifierModelKind"]] = None,
+        raw_id: Optional[str] = None,
+        communication_user: Optional["CommunicationUserIdentifierModel"] = None,
+        phone_number: Optional["PhoneNumberIdentifierModel"] = None,
+        microsoft_teams_user: Optional["MicrosoftTeamsUserIdentifierModel"] = None,
+        microsoft_teams_app: Optional["MicrosoftTeamsAppIdentifierModel"] = None,
+        teams_extension_user: Optional["TeamsExtensionUserIdentifierModel"] = None,
         **kwargs
     ):
         """
@@ -1454,13 +1605,13 @@ class CommunicationIdentifierModel(msrest.serialization.Model):
          ~azure.communication.callautomation.models.TeamsExtensionUserIdentifierModel
         """
         super(CommunicationIdentifierModel, self).__init__(**kwargs)
-        self.kind = kwargs.get('kind', None)
-        self.raw_id = kwargs.get('raw_id', None)
-        self.communication_user = kwargs.get('communication_user', None)
-        self.phone_number = kwargs.get('phone_number', None)
-        self.microsoft_teams_user = kwargs.get('microsoft_teams_user', None)
-        self.microsoft_teams_app = kwargs.get('microsoft_teams_app', None)
-        self.teams_extension_user = kwargs.get('teams_extension_user', None)
+        self.kind = kind
+        self.raw_id = raw_id
+        self.communication_user = communication_user
+        self.phone_number = phone_number
+        self.microsoft_teams_user = microsoft_teams_user
+        self.microsoft_teams_app = microsoft_teams_app
+        self.teams_extension_user = teams_extension_user
 
 
 class CommunicationUserIdentifierModel(msrest.serialization.Model):
@@ -1482,6 +1633,8 @@ class CommunicationUserIdentifierModel(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        id: str,
         **kwargs
     ):
         """
@@ -1489,7 +1642,7 @@ class CommunicationUserIdentifierModel(msrest.serialization.Model):
         :paramtype id: str
         """
         super(CommunicationUserIdentifierModel, self).__init__(**kwargs)
-        self.id = kwargs['id']
+        self.id = id
 
 
 class ConnectFailed(msrest.serialization.Model):
@@ -1519,6 +1672,12 @@ class ConnectFailed(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -1536,11 +1695,11 @@ class ConnectFailed(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(ConnectFailed, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class ConnectRequest(msrest.serialization.Model):
@@ -1580,6 +1739,13 @@ class ConnectRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_locator: "CallLocator",
+        callback_uri: str,
+        operation_context: Optional[str] = None,
+        call_intelligence_options: Optional["CallIntelligenceOptions"] = None,
+        media_streaming_options: Optional["MediaStreamingOptions"] = None,
+        transcription_options: Optional["TranscriptionOptions"] = None,
         **kwargs
     ):
         """
@@ -1600,12 +1766,12 @@ class ConnectRequest(msrest.serialization.Model):
          ~azure.communication.callautomation.models.TranscriptionOptions
         """
         super(ConnectRequest, self).__init__(**kwargs)
-        self.call_locator = kwargs['call_locator']
-        self.callback_uri = kwargs['callback_uri']
-        self.operation_context = kwargs.get('operation_context', None)
-        self.call_intelligence_options = kwargs.get('call_intelligence_options', None)
-        self.media_streaming_options = kwargs.get('media_streaming_options', None)
-        self.transcription_options = kwargs.get('transcription_options', None)
+        self.call_locator = call_locator
+        self.callback_uri = callback_uri
+        self.operation_context = operation_context
+        self.call_intelligence_options = call_intelligence_options
+        self.media_streaming_options = media_streaming_options
+        self.transcription_options = transcription_options
 
 
 class ContinuousDtmfRecognitionRequest(msrest.serialization.Model):
@@ -1637,6 +1803,10 @@ class ContinuousDtmfRecognitionRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        target_participant: "CommunicationIdentifierModel",
+        operation_context: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs
     ):
         """
@@ -1652,9 +1822,9 @@ class ContinuousDtmfRecognitionRequest(msrest.serialization.Model):
         :paramtype operation_callback_uri: str
         """
         super(ContinuousDtmfRecognitionRequest, self).__init__(**kwargs)
-        self.target_participant = kwargs['target_participant']
-        self.operation_context = kwargs.get('operation_context', None)
-        self.operation_callback_uri = kwargs.get('operation_callback_uri', None)
+        self.target_participant = target_participant
+        self.operation_context = operation_context
+        self.operation_callback_uri = operation_callback_uri
 
 
 class ContinuousDtmfRecognitionStopped(msrest.serialization.Model):
@@ -1684,6 +1854,12 @@ class ContinuousDtmfRecognitionStopped(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -1701,11 +1877,11 @@ class ContinuousDtmfRecognitionStopped(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(ContinuousDtmfRecognitionStopped, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class ContinuousDtmfRecognitionToneFailed(msrest.serialization.Model):
@@ -1735,6 +1911,12 @@ class ContinuousDtmfRecognitionToneFailed(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
+        operation_context: Optional[str] = None,
         **kwargs
     ):
         """
@@ -1752,11 +1934,11 @@ class ContinuousDtmfRecognitionToneFailed(msrest.serialization.Model):
         :paramtype operation_context: str
         """
         super(ContinuousDtmfRecognitionToneFailed, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.result_information = kwargs.get('result_information', None)
-        self.operation_context = kwargs.get('operation_context', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.result_information = result_information
+        self.operation_context = operation_context
 
 
 class ContinuousDtmfRecognitionToneReceived(msrest.serialization.Model):
@@ -1800,6 +1982,13 @@ class ContinuousDtmfRecognitionToneReceived(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        tone: Optional[Union[str, "DtmfTone"]] = None,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -1821,12 +2010,12 @@ class ContinuousDtmfRecognitionToneReceived(msrest.serialization.Model):
         """
         super(ContinuousDtmfRecognitionToneReceived, self).__init__(**kwargs)
         self.sequence_id = None
-        self.tone = kwargs.get('tone', None)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.tone = tone
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class CreateCallFailed(msrest.serialization.Model):
@@ -1856,6 +2045,12 @@ class CreateCallFailed(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -1873,11 +2068,11 @@ class CreateCallFailed(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(CreateCallFailed, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class CreateCallRequest(msrest.serialization.Model):
@@ -1938,6 +2133,18 @@ class CreateCallRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        targets: List["CommunicationIdentifierModel"],
+        callback_uri: str,
+        source_caller_id_number: Optional["PhoneNumberIdentifierModel"] = None,
+        source_display_name: Optional[str] = None,
+        source: Optional["CommunicationUserIdentifierModel"] = None,
+        operation_context: Optional[str] = None,
+        call_intelligence_options: Optional["CallIntelligenceOptions"] = None,
+        teams_app_source: Optional["MicrosoftTeamsAppIdentifierModel"] = None,
+        custom_calling_context: Optional["CustomCallingContext"] = None,
+        media_streaming_options: Optional["MediaStreamingOptions"] = None,
+        transcription_options: Optional["TranscriptionOptions"] = None,
         **kwargs
     ):
         """
@@ -1975,17 +2182,17 @@ class CreateCallRequest(msrest.serialization.Model):
          ~azure.communication.callautomation.models.TranscriptionOptions
         """
         super(CreateCallRequest, self).__init__(**kwargs)
-        self.targets = kwargs['targets']
-        self.source_caller_id_number = kwargs.get('source_caller_id_number', None)
-        self.source_display_name = kwargs.get('source_display_name', None)
-        self.source = kwargs.get('source', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.callback_uri = kwargs['callback_uri']
-        self.call_intelligence_options = kwargs.get('call_intelligence_options', None)
-        self.teams_app_source = kwargs.get('teams_app_source', None)
-        self.custom_calling_context = kwargs.get('custom_calling_context', None)
-        self.media_streaming_options = kwargs.get('media_streaming_options', None)
-        self.transcription_options = kwargs.get('transcription_options', None)
+        self.targets = targets
+        self.source_caller_id_number = source_caller_id_number
+        self.source_display_name = source_display_name
+        self.source = source
+        self.operation_context = operation_context
+        self.callback_uri = callback_uri
+        self.call_intelligence_options = call_intelligence_options
+        self.teams_app_source = teams_app_source
+        self.custom_calling_context = custom_calling_context
+        self.media_streaming_options = media_streaming_options
+        self.transcription_options = transcription_options
 
 
 class CustomCallingContext(msrest.serialization.Model):
@@ -2008,6 +2215,10 @@ class CustomCallingContext(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        voip_headers: Optional[Dict[str, str]] = None,
+        sip_headers: Optional[Dict[str, str]] = None,
+        teams_phone_call_details: Optional["TeamsPhoneCallDetails"] = None,
         **kwargs
     ):
         """
@@ -2020,9 +2231,9 @@ class CustomCallingContext(msrest.serialization.Model):
          ~azure.communication.callautomation.models.TeamsPhoneCallDetails
         """
         super(CustomCallingContext, self).__init__(**kwargs)
-        self.voip_headers = kwargs.get('voip_headers', None)
-        self.sip_headers = kwargs.get('sip_headers', None)
-        self.teams_phone_call_details = kwargs.get('teams_phone_call_details', None)
+        self.voip_headers = voip_headers
+        self.sip_headers = sip_headers
+        self.teams_phone_call_details = teams_phone_call_details
 
 
 class DialogCompleted(msrest.serialization.Model):
@@ -2065,6 +2276,13 @@ class DialogCompleted(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        dialog_input_type: Optional[Union[str, "DialogInputType"]] = None,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -2085,13 +2303,13 @@ class DialogCompleted(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(DialogCompleted, self).__init__(**kwargs)
-        self.dialog_input_type = kwargs.get('dialog_input_type', None)
+        self.dialog_input_type = dialog_input_type
         self.dialog_id = None
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class DialogConsent(msrest.serialization.Model):
@@ -2138,6 +2356,13 @@ class DialogConsent(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        dialog_input_type: Optional[Union[str, "DialogInputType"]] = None,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -2158,14 +2383,14 @@ class DialogConsent(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(DialogConsent, self).__init__(**kwargs)
-        self.dialog_input_type = kwargs.get('dialog_input_type', None)
+        self.dialog_input_type = dialog_input_type
         self.user_consent = None
         self.dialog_id = None
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class DialogFailed(msrest.serialization.Model):
@@ -2208,6 +2433,13 @@ class DialogFailed(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        dialog_input_type: Optional[Union[str, "DialogInputType"]] = None,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -2228,13 +2460,13 @@ class DialogFailed(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(DialogFailed, self).__init__(**kwargs)
-        self.dialog_input_type = kwargs.get('dialog_input_type', None)
+        self.dialog_input_type = dialog_input_type
         self.dialog_id = None
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class DialogHangup(msrest.serialization.Model):
@@ -2281,6 +2513,13 @@ class DialogHangup(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        dialog_input_type: Optional[Union[str, "DialogInputType"]] = None,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -2301,14 +2540,14 @@ class DialogHangup(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(DialogHangup, self).__init__(**kwargs)
-        self.dialog_input_type = kwargs.get('dialog_input_type', None)
+        self.dialog_input_type = dialog_input_type
         self.dialog_id = None
         self.ivr_context = None
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class DialogLanguageChange(msrest.serialization.Model):
@@ -2359,6 +2598,13 @@ class DialogLanguageChange(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        dialog_input_type: Optional[Union[str, "DialogInputType"]] = None,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -2379,15 +2625,15 @@ class DialogLanguageChange(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(DialogLanguageChange, self).__init__(**kwargs)
-        self.dialog_input_type = kwargs.get('dialog_input_type', None)
+        self.dialog_input_type = dialog_input_type
         self.dialog_id = None
         self.selected_language = None
         self.ivr_context = None
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class DialogSensitivityUpdate(msrest.serialization.Model):
@@ -2434,6 +2680,13 @@ class DialogSensitivityUpdate(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        dialog_input_type: Optional[Union[str, "DialogInputType"]] = None,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -2454,14 +2707,14 @@ class DialogSensitivityUpdate(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(DialogSensitivityUpdate, self).__init__(**kwargs)
-        self.dialog_input_type = kwargs.get('dialog_input_type', None)
+        self.dialog_input_type = dialog_input_type
         self.dialog_id = None
         self.sensitive_mask = None
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class DialogStarted(msrest.serialization.Model):
@@ -2504,6 +2757,13 @@ class DialogStarted(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        dialog_input_type: Optional[Union[str, "DialogInputType"]] = None,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -2524,13 +2784,13 @@ class DialogStarted(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(DialogStarted, self).__init__(**kwargs)
-        self.dialog_input_type = kwargs.get('dialog_input_type', None)
+        self.dialog_input_type = dialog_input_type
         self.dialog_id = None
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class DialogStateResponse(msrest.serialization.Model):
@@ -2552,6 +2812,10 @@ class DialogStateResponse(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        dialog_id: Optional[str] = None,
+        dialog: Optional["BaseDialog"] = None,
+        operation_context: Optional[str] = None,
         **kwargs
     ):
         """
@@ -2563,9 +2827,9 @@ class DialogStateResponse(msrest.serialization.Model):
         :paramtype operation_context: str
         """
         super(DialogStateResponse, self).__init__(**kwargs)
-        self.dialog_id = kwargs.get('dialog_id', None)
-        self.dialog = kwargs.get('dialog', None)
-        self.operation_context = kwargs.get('operation_context', None)
+        self.dialog_id = dialog_id
+        self.dialog = dialog
+        self.operation_context = operation_context
 
 
 class DialogTransfer(msrest.serialization.Model):
@@ -2620,6 +2884,13 @@ class DialogTransfer(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        dialog_input_type: Optional[Union[str, "DialogInputType"]] = None,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -2640,16 +2911,16 @@ class DialogTransfer(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(DialogTransfer, self).__init__(**kwargs)
-        self.dialog_input_type = kwargs.get('dialog_input_type', None)
+        self.dialog_input_type = dialog_input_type
         self.dialog_id = None
         self.transfer_type = None
         self.transfer_destination = None
         self.ivr_context = None
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class DialogUpdated(msrest.serialization.Model):
@@ -2696,6 +2967,13 @@ class DialogUpdated(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        dialog_input_type: Optional[Union[str, "DialogInputType"]] = None,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -2716,14 +2994,14 @@ class DialogUpdated(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(DialogUpdated, self).__init__(**kwargs)
-        self.dialog_input_type = kwargs.get('dialog_input_type', None)
+        self.dialog_input_type = dialog_input_type
         self.dialog_id = None
         self.ivr_context = None
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class DtmfOptions(msrest.serialization.Model):
@@ -2749,6 +3027,10 @@ class DtmfOptions(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        inter_tone_timeout_in_seconds: Optional[int] = None,
+        max_tones_to_collect: Optional[int] = None,
+        stop_tones: Optional[List[Union[str, "DtmfTone"]]] = None,
         **kwargs
     ):
         """
@@ -2760,9 +3042,9 @@ class DtmfOptions(msrest.serialization.Model):
         :paramtype stop_tones: list[str or ~azure.communication.callautomation.models.DtmfTone]
         """
         super(DtmfOptions, self).__init__(**kwargs)
-        self.inter_tone_timeout_in_seconds = kwargs.get('inter_tone_timeout_in_seconds', None)
-        self.max_tones_to_collect = kwargs.get('max_tones_to_collect', None)
-        self.stop_tones = kwargs.get('stop_tones', None)
+        self.inter_tone_timeout_in_seconds = inter_tone_timeout_in_seconds
+        self.max_tones_to_collect = max_tones_to_collect
+        self.stop_tones = stop_tones
 
 
 class DtmfResult(msrest.serialization.Model):
@@ -2811,6 +3093,10 @@ class Error(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        code: Optional[str] = None,
+        message: Optional[str] = None,
+        inner_error: Optional["Error"] = None,
         **kwargs
     ):
         """
@@ -2822,9 +3108,9 @@ class Error(msrest.serialization.Model):
         :paramtype inner_error: ~azure.communication.callautomation.models.Error
         """
         super(Error, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.inner_error = kwargs.get('inner_error', None)
+        self.code = code
+        self.message = message
+        self.inner_error = inner_error
 
 
 class ExternalStorage(msrest.serialization.Model):
@@ -2851,6 +3137,9 @@ class ExternalStorage(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        recording_storage_kind: Union[str, "RecordingStorageKind"],
+        recording_destination_container_url: Optional[str] = None,
         **kwargs
     ):
         """
@@ -2863,8 +3152,8 @@ class ExternalStorage(msrest.serialization.Model):
         :paramtype recording_destination_container_url: str
         """
         super(ExternalStorage, self).__init__(**kwargs)
-        self.recording_storage_kind = kwargs['recording_storage_kind']
-        self.recording_destination_container_url = kwargs.get('recording_destination_container_url', None)
+        self.recording_storage_kind = recording_storage_kind
+        self.recording_destination_container_url = recording_destination_container_url
 
 
 class FileSource(msrest.serialization.Model):
@@ -2886,6 +3175,8 @@ class FileSource(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        uri: str,
         **kwargs
     ):
         """
@@ -2893,7 +3184,7 @@ class FileSource(msrest.serialization.Model):
         :paramtype uri: str
         """
         super(FileSource, self).__init__(**kwargs)
-        self.uri = kwargs['uri']
+        self.uri = uri
 
 
 class GetParticipantsResponse(msrest.serialization.Model):
@@ -2918,6 +3209,9 @@ class GetParticipantsResponse(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        value: List["CallParticipant"],
+        next_link: Optional[str] = None,
         **kwargs
     ):
         """
@@ -2927,8 +3221,8 @@ class GetParticipantsResponse(msrest.serialization.Model):
         :paramtype next_link: str
         """
         super(GetParticipantsResponse, self).__init__(**kwargs)
-        self.value = kwargs['value']
-        self.next_link = kwargs.get('next_link', None)
+        self.value = value
+        self.next_link = next_link
 
 
 class HoldAudioCompleted(msrest.serialization.Model):
@@ -2958,6 +3252,12 @@ class HoldAudioCompleted(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -2975,11 +3275,11 @@ class HoldAudioCompleted(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(HoldAudioCompleted, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class HoldAudioPaused(msrest.serialization.Model):
@@ -3009,6 +3309,12 @@ class HoldAudioPaused(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -3026,11 +3332,11 @@ class HoldAudioPaused(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(HoldAudioPaused, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class HoldAudioResumed(msrest.serialization.Model):
@@ -3060,6 +3366,12 @@ class HoldAudioResumed(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -3077,11 +3389,11 @@ class HoldAudioResumed(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(HoldAudioResumed, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class HoldAudioStarted(msrest.serialization.Model):
@@ -3111,6 +3423,12 @@ class HoldAudioStarted(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -3128,11 +3446,11 @@ class HoldAudioStarted(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(HoldAudioStarted, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class HoldFailed(msrest.serialization.Model):
@@ -3162,6 +3480,12 @@ class HoldFailed(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -3179,11 +3503,11 @@ class HoldFailed(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(HoldFailed, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class HoldRequest(msrest.serialization.Model):
@@ -3219,6 +3543,11 @@ class HoldRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        target_participant: "CommunicationIdentifierModel",
+        play_source_info: Optional["PlaySource"] = None,
+        operation_context: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs
     ):
         """
@@ -3237,10 +3566,10 @@ class HoldRequest(msrest.serialization.Model):
         :paramtype operation_callback_uri: str
         """
         super(HoldRequest, self).__init__(**kwargs)
-        self.target_participant = kwargs['target_participant']
-        self.play_source_info = kwargs.get('play_source_info', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.operation_callback_uri = kwargs.get('operation_callback_uri', None)
+        self.target_participant = target_participant
+        self.play_source_info = play_source_info
+        self.operation_context = operation_context
+        self.operation_callback_uri = operation_callback_uri
 
 
 class IncomingCall(msrest.serialization.Model):
@@ -3335,6 +3664,10 @@ class InterruptAudioAndAnnounceRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        play_sources: List["PlaySource"],
+        play_to: "CommunicationIdentifierModel",
+        operation_context: Optional[str] = None,
         **kwargs
     ):
         """
@@ -3347,9 +3680,9 @@ class InterruptAudioAndAnnounceRequest(msrest.serialization.Model):
         :paramtype operation_context: str
         """
         super(InterruptAudioAndAnnounceRequest, self).__init__(**kwargs)
-        self.play_sources = kwargs['play_sources']
-        self.play_to = kwargs['play_to']
-        self.operation_context = kwargs.get('operation_context', None)
+        self.play_sources = play_sources
+        self.play_to = play_to
+        self.operation_context = operation_context
 
 
 class MediaStreamingFailed(msrest.serialization.Model):
@@ -3390,6 +3723,12 @@ class MediaStreamingFailed(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -3408,11 +3747,11 @@ class MediaStreamingFailed(msrest.serialization.Model):
         """
         super(MediaStreamingFailed, self).__init__(**kwargs)
         self.media_streaming_update = None
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class MediaStreamingOptions(msrest.serialization.Model):
@@ -3463,6 +3802,14 @@ class MediaStreamingOptions(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        transport_url: str,
+        transport_type: Union[str, "MediaStreamingTransportType"],
+        content_type: Union[str, "MediaStreamingContentType"],
+        audio_channel_type: Union[str, "MediaStreamingAudioChannelType"],
+        start_media_streaming: Optional[bool] = None,
+        enable_bidirectional: Optional[bool] = None,
+        audio_format: Optional[Union[str, "AudioFormat"]] = None,
         **kwargs
     ):
         """
@@ -3490,13 +3837,13 @@ class MediaStreamingOptions(msrest.serialization.Model):
         :paramtype audio_format: str or ~azure.communication.callautomation.models.AudioFormat
         """
         super(MediaStreamingOptions, self).__init__(**kwargs)
-        self.transport_url = kwargs['transport_url']
-        self.transport_type = kwargs['transport_type']
-        self.content_type = kwargs['content_type']
-        self.audio_channel_type = kwargs['audio_channel_type']
-        self.start_media_streaming = kwargs.get('start_media_streaming', None)
-        self.enable_bidirectional = kwargs.get('enable_bidirectional', None)
-        self.audio_format = kwargs.get('audio_format', None)
+        self.transport_url = transport_url
+        self.transport_type = transport_type
+        self.content_type = content_type
+        self.audio_channel_type = audio_channel_type
+        self.start_media_streaming = start_media_streaming
+        self.enable_bidirectional = enable_bidirectional
+        self.audio_format = audio_format
 
 
 class MediaStreamingStarted(msrest.serialization.Model):
@@ -3537,6 +3884,12 @@ class MediaStreamingStarted(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -3555,11 +3908,11 @@ class MediaStreamingStarted(msrest.serialization.Model):
         """
         super(MediaStreamingStarted, self).__init__(**kwargs)
         self.media_streaming_update = None
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class MediaStreamingStopped(msrest.serialization.Model):
@@ -3600,6 +3953,12 @@ class MediaStreamingStopped(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -3618,11 +3977,11 @@ class MediaStreamingStopped(msrest.serialization.Model):
         """
         super(MediaStreamingStopped, self).__init__(**kwargs)
         self.media_streaming_update = None
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class MediaStreamingSubscription(msrest.serialization.Model):
@@ -3647,6 +4006,10 @@ class MediaStreamingSubscription(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        id: Optional[str] = None,
+        state: Optional[Union[str, "MediaStreamingSubscriptionState"]] = None,
+        subscribed_content_types: Optional[List[Union[str, "MediaStreamingContentType"]]] = None,
         **kwargs
     ):
         """
@@ -3661,9 +4024,9 @@ class MediaStreamingSubscription(msrest.serialization.Model):
          ~azure.communication.callautomation.models.MediaStreamingContentType]
         """
         super(MediaStreamingSubscription, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.state = kwargs.get('state', None)
-        self.subscribed_content_types = kwargs.get('subscribed_content_types', None)
+        self.id = id
+        self.state = state
+        self.subscribed_content_types = subscribed_content_types
 
 
 class MediaStreamingUpdate(msrest.serialization.Model):
@@ -3692,6 +4055,10 @@ class MediaStreamingUpdate(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        content_type: Optional[str] = None,
+        media_streaming_status: Optional[Union[str, "MediaStreamingStatus"]] = None,
+        media_streaming_status_details: Optional[Union[str, "MediaStreamingStatusDetails"]] = None,
         **kwargs
     ):
         """
@@ -3710,9 +4077,9 @@ class MediaStreamingUpdate(msrest.serialization.Model):
          ~azure.communication.callautomation.models.MediaStreamingStatusDetails
         """
         super(MediaStreamingUpdate, self).__init__(**kwargs)
-        self.content_type = kwargs.get('content_type', None)
-        self.media_streaming_status = kwargs.get('media_streaming_status', None)
-        self.media_streaming_status_details = kwargs.get('media_streaming_status_details', None)
+        self.content_type = content_type
+        self.media_streaming_status = media_streaming_status
+        self.media_streaming_status_details = media_streaming_status_details
 
 
 class MicrosoftTeamsAppIdentifierModel(msrest.serialization.Model):
@@ -3739,6 +4106,9 @@ class MicrosoftTeamsAppIdentifierModel(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        app_id: str,
+        cloud: Optional[Union[str, "CommunicationCloudEnvironmentModel"]] = None,
         **kwargs
     ):
         """
@@ -3750,8 +4120,8 @@ class MicrosoftTeamsAppIdentifierModel(msrest.serialization.Model):
          ~azure.communication.callautomation.models.CommunicationCloudEnvironmentModel
         """
         super(MicrosoftTeamsAppIdentifierModel, self).__init__(**kwargs)
-        self.app_id = kwargs['app_id']
-        self.cloud = kwargs.get('cloud', None)
+        self.app_id = app_id
+        self.cloud = cloud
 
 
 class MicrosoftTeamsUserIdentifierModel(msrest.serialization.Model):
@@ -3782,6 +4152,10 @@ class MicrosoftTeamsUserIdentifierModel(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        user_id: str,
+        is_anonymous: Optional[bool] = None,
+        cloud: Optional[Union[str, "CommunicationCloudEnvironmentModel"]] = None,
         **kwargs
     ):
         """
@@ -3797,9 +4171,9 @@ class MicrosoftTeamsUserIdentifierModel(msrest.serialization.Model):
          ~azure.communication.callautomation.models.CommunicationCloudEnvironmentModel
         """
         super(MicrosoftTeamsUserIdentifierModel, self).__init__(**kwargs)
-        self.user_id = kwargs['user_id']
-        self.is_anonymous = kwargs.get('is_anonymous', None)
-        self.cloud = kwargs.get('cloud', None)
+        self.user_id = user_id
+        self.is_anonymous = is_anonymous
+        self.cloud = cloud
 
 
 class MoveParticipantFailed(msrest.serialization.Model):
@@ -3835,6 +4209,14 @@ class MoveParticipantFailed(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        from_call: Optional[str] = None,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
+        participant: Optional["CommunicationIdentifierModel"] = None,
         **kwargs
     ):
         """
@@ -3856,13 +4238,13 @@ class MoveParticipantFailed(msrest.serialization.Model):
         :paramtype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
         """
         super(MoveParticipantFailed, self).__init__(**kwargs)
-        self.from_call = kwargs.get('from_call', None)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
-        self.participant = kwargs.get('participant', None)
+        self.from_call = from_call
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
+        self.participant = participant
 
 
 class MoveParticipantsRequest(msrest.serialization.Model):
@@ -3900,6 +4282,11 @@ class MoveParticipantsRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        target_participants: List["CommunicationIdentifierModel"],
+        from_call: str,
+        operation_context: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs
     ):
         """
@@ -3919,10 +4306,10 @@ class MoveParticipantsRequest(msrest.serialization.Model):
         :paramtype from_call: str
         """
         super(MoveParticipantsRequest, self).__init__(**kwargs)
-        self.target_participants = kwargs['target_participants']
-        self.operation_context = kwargs.get('operation_context', None)
-        self.operation_callback_uri = kwargs.get('operation_callback_uri', None)
-        self.from_call = kwargs['from_call']
+        self.target_participants = target_participants
+        self.operation_context = operation_context
+        self.operation_callback_uri = operation_callback_uri
+        self.from_call = from_call
 
 
 class MoveParticipantsResponse(msrest.serialization.Model):
@@ -3944,6 +4331,10 @@ class MoveParticipantsResponse(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        participants: Optional[List["CallParticipant"]] = None,
+        operation_context: Optional[str] = None,
+        from_call: Optional[str] = None,
         **kwargs
     ):
         """
@@ -3955,9 +4346,9 @@ class MoveParticipantsResponse(msrest.serialization.Model):
         :paramtype from_call: str
         """
         super(MoveParticipantsResponse, self).__init__(**kwargs)
-        self.participants = kwargs.get('participants', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.from_call = kwargs.get('from_call', None)
+        self.participants = participants
+        self.operation_context = operation_context
+        self.from_call = from_call
 
 
 class MoveParticipantSucceeded(msrest.serialization.Model):
@@ -3993,6 +4384,14 @@ class MoveParticipantSucceeded(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        from_call: Optional[str] = None,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
+        participant: Optional["CommunicationIdentifierModel"] = None,
         **kwargs
     ):
         """
@@ -4014,13 +4413,13 @@ class MoveParticipantSucceeded(msrest.serialization.Model):
         :paramtype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
         """
         super(MoveParticipantSucceeded, self).__init__(**kwargs)
-        self.from_call = kwargs.get('from_call', None)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
-        self.participant = kwargs.get('participant', None)
+        self.from_call = from_call
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
+        self.participant = participant
 
 
 class MuteParticipantsRequest(msrest.serialization.Model):
@@ -4048,6 +4447,9 @@ class MuteParticipantsRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        target_participants: List["CommunicationIdentifierModel"],
+        operation_context: Optional[str] = None,
         **kwargs
     ):
         """
@@ -4060,8 +4462,8 @@ class MuteParticipantsRequest(msrest.serialization.Model):
         :paramtype operation_context: str
         """
         super(MuteParticipantsRequest, self).__init__(**kwargs)
-        self.target_participants = kwargs['target_participants']
-        self.operation_context = kwargs.get('operation_context', None)
+        self.target_participants = target_participants
+        self.operation_context = operation_context
 
 
 class MuteParticipantsResult(msrest.serialization.Model):
@@ -4077,6 +4479,8 @@ class MuteParticipantsResult(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        operation_context: Optional[str] = None,
         **kwargs
     ):
         """
@@ -4084,7 +4488,7 @@ class MuteParticipantsResult(msrest.serialization.Model):
         :paramtype operation_context: str
         """
         super(MuteParticipantsResult, self).__init__(**kwargs)
-        self.operation_context = kwargs.get('operation_context', None)
+        self.operation_context = operation_context
 
 
 class ParticipantsUpdated(msrest.serialization.Model):
@@ -4116,6 +4520,13 @@ class ParticipantsUpdated(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        sequence_number: Optional[int] = None,
+        participants: Optional[List["CallParticipant"]] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -4134,12 +4545,12 @@ class ParticipantsUpdated(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(ParticipantsUpdated, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.sequence_number = kwargs.get('sequence_number', None)
-        self.participants = kwargs.get('participants', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.sequence_number = sequence_number
+        self.participants = participants
+        self.result_information = result_information
 
 
 class PhoneNumberIdentifierModel(msrest.serialization.Model):
@@ -4169,6 +4580,10 @@ class PhoneNumberIdentifierModel(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        value: str,
+        is_anonymous: Optional[bool] = None,
+        asserted_id: Optional[str] = None,
         **kwargs
     ):
         """
@@ -4182,9 +4597,9 @@ class PhoneNumberIdentifierModel(msrest.serialization.Model):
         :paramtype asserted_id: str
         """
         super(PhoneNumberIdentifierModel, self).__init__(**kwargs)
-        self.value = kwargs['value']
-        self.is_anonymous = kwargs.get('is_anonymous', None)
-        self.asserted_id = kwargs.get('asserted_id', None)
+        self.value = value
+        self.is_anonymous = is_anonymous
+        self.asserted_id = asserted_id
 
 
 class PlayCanceled(msrest.serialization.Model):
@@ -4214,6 +4629,12 @@ class PlayCanceled(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -4231,11 +4652,11 @@ class PlayCanceled(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(PlayCanceled, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class PlayCompleted(msrest.serialization.Model):
@@ -4265,6 +4686,12 @@ class PlayCompleted(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -4282,11 +4709,11 @@ class PlayCompleted(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(PlayCompleted, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class PlayFailed(msrest.serialization.Model):
@@ -4319,6 +4746,13 @@ class PlayFailed(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
+        failed_play_source_index: Optional[int] = None,
         **kwargs
     ):
         """
@@ -4338,12 +4772,12 @@ class PlayFailed(msrest.serialization.Model):
         :paramtype failed_play_source_index: int
         """
         super(PlayFailed, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
-        self.failed_play_source_index = kwargs.get('failed_play_source_index', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
+        self.failed_play_source_index = failed_play_source_index
 
 
 class PlayOptions(msrest.serialization.Model):
@@ -4373,6 +4807,10 @@ class PlayOptions(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        loop: bool,
+        interrupt_call_media_operation: Optional[bool] = None,
+        interrupt_hold_audio: Optional[bool] = None,
         **kwargs
     ):
         """
@@ -4386,9 +4824,9 @@ class PlayOptions(msrest.serialization.Model):
         :paramtype interrupt_hold_audio: bool
         """
         super(PlayOptions, self).__init__(**kwargs)
-        self.loop = kwargs['loop']
-        self.interrupt_call_media_operation = kwargs.get('interrupt_call_media_operation', None)
-        self.interrupt_hold_audio = kwargs.get('interrupt_hold_audio', None)
+        self.loop = loop
+        self.interrupt_call_media_operation = interrupt_call_media_operation
+        self.interrupt_hold_audio = interrupt_hold_audio
 
 
 class PlayPaused(msrest.serialization.Model):
@@ -4418,6 +4856,12 @@ class PlayPaused(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -4435,11 +4879,11 @@ class PlayPaused(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(PlayPaused, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class PlayRequest(msrest.serialization.Model):
@@ -4477,6 +4921,12 @@ class PlayRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        play_sources: List["PlaySource"],
+        play_to: Optional[List["CommunicationIdentifierModel"]] = None,
+        play_options: Optional["PlayOptions"] = None,
+        operation_context: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs
     ):
         """
@@ -4497,11 +4947,11 @@ class PlayRequest(msrest.serialization.Model):
         :paramtype operation_callback_uri: str
         """
         super(PlayRequest, self).__init__(**kwargs)
-        self.play_sources = kwargs['play_sources']
-        self.play_to = kwargs.get('play_to', None)
-        self.play_options = kwargs.get('play_options', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.operation_callback_uri = kwargs.get('operation_callback_uri', None)
+        self.play_sources = play_sources
+        self.play_to = play_to
+        self.play_options = play_options
+        self.operation_context = operation_context
+        self.operation_callback_uri = operation_callback_uri
 
 
 class PlayResumed(msrest.serialization.Model):
@@ -4531,6 +4981,12 @@ class PlayResumed(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -4548,11 +5004,11 @@ class PlayResumed(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(PlayResumed, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class PlaySource(msrest.serialization.Model):
@@ -4587,6 +5043,12 @@ class PlaySource(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        kind: Union[str, "PlaySourceType"],
+        play_source_cache_id: Optional[str] = None,
+        file: Optional["FileSource"] = None,
+        text: Optional["TextSource"] = None,
+        ssml: Optional["SsmlSource"] = None,
         **kwargs
     ):
         """
@@ -4604,11 +5066,11 @@ class PlaySource(msrest.serialization.Model):
         :paramtype ssml: ~azure.communication.callautomation.models.SsmlSource
         """
         super(PlaySource, self).__init__(**kwargs)
-        self.kind = kwargs['kind']
-        self.play_source_cache_id = kwargs.get('play_source_cache_id', None)
-        self.file = kwargs.get('file', None)
-        self.text = kwargs.get('text', None)
-        self.ssml = kwargs.get('ssml', None)
+        self.kind = kind
+        self.play_source_cache_id = play_source_cache_id
+        self.file = file
+        self.text = text
+        self.ssml = ssml
 
 
 class PlayStarted(msrest.serialization.Model):
@@ -4638,6 +5100,12 @@ class PlayStarted(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -4655,11 +5123,11 @@ class PlayStarted(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(PlayStarted, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class PostProcessingOptions(msrest.serialization.Model):
@@ -4690,6 +5158,10 @@ class PostProcessingOptions(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        transcription: "Transcription",
+        cognitive_services_endpoint: Optional[str] = None,
+        summarization: Optional["Summarization"] = None,
         **kwargs
     ):
         """
@@ -4704,9 +5176,9 @@ class PostProcessingOptions(msrest.serialization.Model):
         :paramtype summarization: ~azure.communication.callautomation.models.Summarization
         """
         super(PostProcessingOptions, self).__init__(**kwargs)
-        self.cognitive_services_endpoint = kwargs.get('cognitive_services_endpoint', None)
-        self.transcription = kwargs['transcription']
-        self.summarization = kwargs.get('summarization', None)
+        self.cognitive_services_endpoint = cognitive_services_endpoint
+        self.transcription = transcription
+        self.summarization = summarization
 
 
 class PowerVirtualAgentsDialog(BaseDialog):
@@ -4740,6 +5212,10 @@ class PowerVirtualAgentsDialog(BaseDialog):
 
     def __init__(
         self,
+        *,
+        context: Dict[str, Any],
+        bot_app_id: str,
+        language: Optional[str] = None,
         **kwargs
     ):
         """
@@ -4750,10 +5226,10 @@ class PowerVirtualAgentsDialog(BaseDialog):
         :keyword language: Language.
         :paramtype language: str
         """
-        super(PowerVirtualAgentsDialog, self).__init__(**kwargs)
+        super(PowerVirtualAgentsDialog, self).__init__(context=context, **kwargs)
         self.kind = 'powerVirtualAgents'  # type: str
-        self.bot_app_id = kwargs['bot_app_id']
-        self.language = kwargs.get('language', None)
+        self.bot_app_id = bot_app_id
+        self.language = language
 
 
 class RecognizeCanceled(msrest.serialization.Model):
@@ -4783,6 +5259,12 @@ class RecognizeCanceled(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -4800,11 +5282,11 @@ class RecognizeCanceled(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(RecognizeCanceled, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class RecognizeCompleted(msrest.serialization.Model):
@@ -4854,6 +5336,15 @@ class RecognizeCompleted(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
+        recognition_type: Optional[Union[str, "RecognitionType"]] = None,
+        dtmf_result: Optional["DtmfResult"] = None,
+        choice_result: Optional["ChoiceResult"] = None,
         **kwargs
     ):
         """
@@ -4879,14 +5370,14 @@ class RecognizeCompleted(msrest.serialization.Model):
         :paramtype choice_result: ~azure.communication.callautomation.models.ChoiceResult
         """
         super(RecognizeCompleted, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
-        self.recognition_type = kwargs.get('recognition_type', None)
-        self.dtmf_result = kwargs.get('dtmf_result', None)
-        self.choice_result = kwargs.get('choice_result', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
+        self.recognition_type = recognition_type
+        self.dtmf_result = dtmf_result
+        self.choice_result = choice_result
         self.speech_result = None
 
 
@@ -4920,6 +5411,13 @@ class RecognizeFailed(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
+        failed_play_source_index: Optional[int] = None,
         **kwargs
     ):
         """
@@ -4939,12 +5437,12 @@ class RecognizeFailed(msrest.serialization.Model):
         :paramtype failed_play_source_index: int
         """
         super(RecognizeFailed, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
-        self.failed_play_source_index = kwargs.get('failed_play_source_index', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
+        self.failed_play_source_index = failed_play_source_index
 
 
 class RecognizeOptions(msrest.serialization.Model):
@@ -4989,6 +5487,15 @@ class RecognizeOptions(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        target_participant: "CommunicationIdentifierModel",
+        interrupt_prompt: Optional[bool] = None,
+        initial_silence_timeout_in_seconds: Optional[int] = None,
+        speech_language: Optional[str] = None,
+        speech_recognition_model_endpoint_id: Optional[str] = None,
+        dtmf_options: Optional["DtmfOptions"] = None,
+        choices: Optional[List["Choice"]] = None,
+        speech_options: Optional["SpeechOptions"] = None,
         **kwargs
     ):
         """
@@ -5012,14 +5519,14 @@ class RecognizeOptions(msrest.serialization.Model):
         :paramtype speech_options: ~azure.communication.callautomation.models.SpeechOptions
         """
         super(RecognizeOptions, self).__init__(**kwargs)
-        self.interrupt_prompt = kwargs.get('interrupt_prompt', None)
-        self.initial_silence_timeout_in_seconds = kwargs.get('initial_silence_timeout_in_seconds', None)
-        self.target_participant = kwargs['target_participant']
-        self.speech_language = kwargs.get('speech_language', None)
-        self.speech_recognition_model_endpoint_id = kwargs.get('speech_recognition_model_endpoint_id', None)
-        self.dtmf_options = kwargs.get('dtmf_options', None)
-        self.choices = kwargs.get('choices', None)
-        self.speech_options = kwargs.get('speech_options', None)
+        self.interrupt_prompt = interrupt_prompt
+        self.initial_silence_timeout_in_seconds = initial_silence_timeout_in_seconds
+        self.target_participant = target_participant
+        self.speech_language = speech_language
+        self.speech_recognition_model_endpoint_id = speech_recognition_model_endpoint_id
+        self.dtmf_options = dtmf_options
+        self.choices = choices
+        self.speech_options = speech_options
 
 
 class RecognizeRequest(msrest.serialization.Model):
@@ -5066,6 +5573,14 @@ class RecognizeRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        recognize_input_type: Union[str, "RecognizeInputType"],
+        recognize_options: "RecognizeOptions",
+        play_prompt: Optional["PlaySource"] = None,
+        play_prompts: Optional[List["PlaySource"]] = None,
+        interrupt_call_media_operation: Optional[bool] = None,
+        operation_context: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs
     ):
         """
@@ -5091,13 +5606,13 @@ class RecognizeRequest(msrest.serialization.Model):
         :paramtype operation_callback_uri: str
         """
         super(RecognizeRequest, self).__init__(**kwargs)
-        self.recognize_input_type = kwargs['recognize_input_type']
-        self.play_prompt = kwargs.get('play_prompt', None)
-        self.play_prompts = kwargs.get('play_prompts', None)
-        self.interrupt_call_media_operation = kwargs.get('interrupt_call_media_operation', None)
-        self.recognize_options = kwargs['recognize_options']
-        self.operation_context = kwargs.get('operation_context', None)
-        self.operation_callback_uri = kwargs.get('operation_callback_uri', None)
+        self.recognize_input_type = recognize_input_type
+        self.play_prompt = play_prompt
+        self.play_prompts = play_prompts
+        self.interrupt_call_media_operation = interrupt_call_media_operation
+        self.recognize_options = recognize_options
+        self.operation_context = operation_context
+        self.operation_callback_uri = operation_callback_uri
 
 
 class RecordingChunkStorageInfo(msrest.serialization.Model):
@@ -5129,6 +5644,13 @@ class RecordingChunkStorageInfo(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        document_id: Optional[str] = None,
+        index: Optional[int] = None,
+        end_reason: Optional[Union[str, "ChunkEndReason"]] = None,
+        content_location: Optional[str] = None,
+        metadata_location: Optional[str] = None,
+        delete_location: Optional[str] = None,
         **kwargs
     ):
         """
@@ -5147,12 +5669,12 @@ class RecordingChunkStorageInfo(msrest.serialization.Model):
         :paramtype delete_location: str
         """
         super(RecordingChunkStorageInfo, self).__init__(**kwargs)
-        self.document_id = kwargs.get('document_id', None)
-        self.index = kwargs.get('index', None)
-        self.end_reason = kwargs.get('end_reason', None)
-        self.content_location = kwargs.get('content_location', None)
-        self.metadata_location = kwargs.get('metadata_location', None)
-        self.delete_location = kwargs.get('delete_location', None)
+        self.document_id = document_id
+        self.index = index
+        self.end_reason = end_reason
+        self.content_location = content_location
+        self.metadata_location = metadata_location
+        self.delete_location = delete_location
 
 
 class RecordingResultResponse(msrest.serialization.Model):
@@ -5267,6 +5789,13 @@ class RecordingStateChanged(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        state: Optional[Union[str, "RecordingState"]] = None,
+        recording_kind: Optional[Union[str, "RecordingKind"]] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -5286,14 +5815,14 @@ class RecordingStateChanged(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(RecordingStateChanged, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
         self.recording_id = None
-        self.state = kwargs.get('state', None)
+        self.state = state
         self.start_date_time = None
-        self.recording_kind = kwargs.get('recording_kind', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.recording_kind = recording_kind
+        self.result_information = result_information
 
 
 class RecordingStateResponse(msrest.serialization.Model):
@@ -5316,6 +5845,10 @@ class RecordingStateResponse(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        recording_id: Optional[str] = None,
+        recording_state: Optional[Union[str, "RecordingState"]] = None,
+        recording_kind: Optional[Union[str, "RecordingKind"]] = None,
         **kwargs
     ):
         """
@@ -5328,9 +5861,9 @@ class RecordingStateResponse(msrest.serialization.Model):
         :paramtype recording_kind: str or ~azure.communication.callautomation.models.RecordingKind
         """
         super(RecordingStateResponse, self).__init__(**kwargs)
-        self.recording_id = kwargs.get('recording_id', None)
-        self.recording_state = kwargs.get('recording_state', None)
-        self.recording_kind = kwargs.get('recording_kind', None)
+        self.recording_id = recording_id
+        self.recording_state = recording_state
+        self.recording_kind = recording_kind
 
 
 class RecordingStorageInfo(msrest.serialization.Model):
@@ -5348,6 +5881,8 @@ class RecordingStorageInfo(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        recording_chunks: Optional[List["RecordingChunkStorageInfo"]] = None,
         **kwargs
     ):
         """
@@ -5357,7 +5892,7 @@ class RecordingStorageInfo(msrest.serialization.Model):
          list[~azure.communication.callautomation.models.RecordingChunkStorageInfo]
         """
         super(RecordingStorageInfo, self).__init__(**kwargs)
-        self.recording_chunks = kwargs.get('recording_chunks', None)
+        self.recording_chunks = recording_chunks
 
 
 class RedirectCallRequest(msrest.serialization.Model):
@@ -5387,6 +5922,10 @@ class RedirectCallRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        incoming_call_context: str,
+        target: "CommunicationIdentifierModel",
+        custom_calling_context: Optional["CustomCallingContext"] = None,
         **kwargs
     ):
         """
@@ -5399,9 +5938,9 @@ class RedirectCallRequest(msrest.serialization.Model):
          ~azure.communication.callautomation.models.CustomCallingContext
         """
         super(RedirectCallRequest, self).__init__(**kwargs)
-        self.incoming_call_context = kwargs['incoming_call_context']
-        self.target = kwargs['target']
-        self.custom_calling_context = kwargs.get('custom_calling_context', None)
+        self.incoming_call_context = incoming_call_context
+        self.target = target
+        self.custom_calling_context = custom_calling_context
 
 
 class RejectCallRequest(msrest.serialization.Model):
@@ -5427,6 +5966,9 @@ class RejectCallRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        incoming_call_context: str,
+        call_reject_reason: Optional[Union[str, "CallRejectReason"]] = None,
         **kwargs
     ):
         """
@@ -5438,8 +5980,8 @@ class RejectCallRequest(msrest.serialization.Model):
          ~azure.communication.callautomation.models.CallRejectReason
         """
         super(RejectCallRequest, self).__init__(**kwargs)
-        self.incoming_call_context = kwargs['incoming_call_context']
-        self.call_reject_reason = kwargs.get('call_reject_reason', None)
+        self.incoming_call_context = incoming_call_context
+        self.call_reject_reason = call_reject_reason
 
 
 class RemoveParticipantFailed(msrest.serialization.Model):
@@ -5472,6 +6014,13 @@ class RemoveParticipantFailed(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
+        participant: Optional["CommunicationIdentifierModel"] = None,
         **kwargs
     ):
         """
@@ -5491,12 +6040,12 @@ class RemoveParticipantFailed(msrest.serialization.Model):
         :paramtype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
         """
         super(RemoveParticipantFailed, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
-        self.participant = kwargs.get('participant', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
+        self.participant = participant
 
 
 class RemoveParticipantRequest(msrest.serialization.Model):
@@ -5529,6 +6078,10 @@ class RemoveParticipantRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        participant_to_remove: "CommunicationIdentifierModel",
+        operation_context: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs
     ):
         """
@@ -5545,9 +6098,9 @@ class RemoveParticipantRequest(msrest.serialization.Model):
         :paramtype operation_callback_uri: str
         """
         super(RemoveParticipantRequest, self).__init__(**kwargs)
-        self.participant_to_remove = kwargs['participant_to_remove']
-        self.operation_context = kwargs.get('operation_context', None)
-        self.operation_callback_uri = kwargs.get('operation_callback_uri', None)
+        self.participant_to_remove = participant_to_remove
+        self.operation_context = operation_context
+        self.operation_callback_uri = operation_callback_uri
 
 
 class RemoveParticipantResponse(msrest.serialization.Model):
@@ -5563,6 +6116,8 @@ class RemoveParticipantResponse(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        operation_context: Optional[str] = None,
         **kwargs
     ):
         """
@@ -5570,7 +6125,7 @@ class RemoveParticipantResponse(msrest.serialization.Model):
         :paramtype operation_context: str
         """
         super(RemoveParticipantResponse, self).__init__(**kwargs)
-        self.operation_context = kwargs.get('operation_context', None)
+        self.operation_context = operation_context
 
 
 class RemoveParticipantSucceeded(msrest.serialization.Model):
@@ -5603,6 +6158,13 @@ class RemoveParticipantSucceeded(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
+        participant: Optional["CommunicationIdentifierModel"] = None,
         **kwargs
     ):
         """
@@ -5622,12 +6184,12 @@ class RemoveParticipantSucceeded(msrest.serialization.Model):
         :paramtype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
         """
         super(RemoveParticipantSucceeded, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
-        self.participant = kwargs.get('participant', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
+        self.participant = participant
 
 
 class ResultInformation(msrest.serialization.Model):
@@ -5651,6 +6213,10 @@ class ResultInformation(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        code: Optional[int] = None,
+        sub_code: Optional[int] = None,
+        message: Optional[str] = None,
         **kwargs
     ):
         """
@@ -5664,9 +6230,9 @@ class ResultInformation(msrest.serialization.Model):
         :paramtype message: str
         """
         super(ResultInformation, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.sub_code = kwargs.get('sub_code', None)
-        self.message = kwargs.get('message', None)
+        self.code = code
+        self.sub_code = sub_code
+        self.message = message
 
 
 class SendDtmfTonesCompleted(msrest.serialization.Model):
@@ -5696,6 +6262,12 @@ class SendDtmfTonesCompleted(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -5713,11 +6285,11 @@ class SendDtmfTonesCompleted(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(SendDtmfTonesCompleted, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class SendDtmfTonesFailed(msrest.serialization.Model):
@@ -5747,6 +6319,12 @@ class SendDtmfTonesFailed(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -5764,11 +6342,11 @@ class SendDtmfTonesFailed(msrest.serialization.Model):
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super(SendDtmfTonesFailed, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class SendDtmfTonesRequest(msrest.serialization.Model):
@@ -5804,6 +6382,11 @@ class SendDtmfTonesRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        tones: List[Union[str, "DtmfTone"]],
+        target_participant: "CommunicationIdentifierModel",
+        operation_context: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs
     ):
         """
@@ -5821,10 +6404,10 @@ class SendDtmfTonesRequest(msrest.serialization.Model):
         :paramtype operation_callback_uri: str
         """
         super(SendDtmfTonesRequest, self).__init__(**kwargs)
-        self.tones = kwargs['tones']
-        self.target_participant = kwargs['target_participant']
-        self.operation_context = kwargs.get('operation_context', None)
-        self.operation_callback_uri = kwargs.get('operation_callback_uri', None)
+        self.tones = tones
+        self.target_participant = target_participant
+        self.operation_context = operation_context
+        self.operation_callback_uri = operation_callback_uri
 
 
 class SendDtmfTonesResult(msrest.serialization.Model):
@@ -5840,6 +6423,8 @@ class SendDtmfTonesResult(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        operation_context: Optional[str] = None,
         **kwargs
     ):
         """
@@ -5847,7 +6432,7 @@ class SendDtmfTonesResult(msrest.serialization.Model):
         :paramtype operation_context: str
         """
         super(SendDtmfTonesResult, self).__init__(**kwargs)
-        self.operation_context = kwargs.get('operation_context', None)
+        self.operation_context = operation_context
 
 
 class SpeechOptions(msrest.serialization.Model):
@@ -5864,6 +6449,8 @@ class SpeechOptions(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        end_silence_timeout_in_ms: Optional[int] = None,
         **kwargs
     ):
         """
@@ -5872,7 +6459,7 @@ class SpeechOptions(msrest.serialization.Model):
         :paramtype end_silence_timeout_in_ms: long
         """
         super(SpeechOptions, self).__init__(**kwargs)
-        self.end_silence_timeout_in_ms = kwargs.get('end_silence_timeout_in_ms', None)
+        self.end_silence_timeout_in_ms = end_silence_timeout_in_ms
 
 
 class SpeechResult(msrest.serialization.Model):
@@ -5891,6 +6478,9 @@ class SpeechResult(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        speech: Optional[str] = None,
+        confidence: Optional[float] = None,
         **kwargs
     ):
         """
@@ -5900,8 +6490,8 @@ class SpeechResult(msrest.serialization.Model):
         :paramtype confidence: float
         """
         super(SpeechResult, self).__init__(**kwargs)
-        self.speech = kwargs.get('speech', None)
-        self.confidence = kwargs.get('confidence', None)
+        self.speech = speech
+        self.confidence = confidence
 
 
 class SsmlSource(msrest.serialization.Model):
@@ -5926,6 +6516,9 @@ class SsmlSource(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        ssml_text: str,
+        custom_voice_endpoint_id: Optional[str] = None,
         **kwargs
     ):
         """
@@ -5935,8 +6528,8 @@ class SsmlSource(msrest.serialization.Model):
         :paramtype custom_voice_endpoint_id: str
         """
         super(SsmlSource, self).__init__(**kwargs)
-        self.ssml_text = kwargs['ssml_text']
-        self.custom_voice_endpoint_id = kwargs.get('custom_voice_endpoint_id', None)
+        self.ssml_text = ssml_text
+        self.custom_voice_endpoint_id = custom_voice_endpoint_id
 
 
 class StartCallRecordingRequest(msrest.serialization.Model):
@@ -6003,6 +6596,18 @@ class StartCallRecordingRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_locator: Optional["CallLocator"] = None,
+        call_connection_id: Optional[str] = None,
+        recording_state_callback_uri: Optional[str] = None,
+        recording_content_type: Optional[Union[str, "RecordingContent"]] = None,
+        recording_channel_type: Optional[Union[str, "RecordingChannel"]] = None,
+        recording_format_type: Optional[Union[str, "RecordingFormat"]] = None,
+        audio_channel_participant_ordering: Optional[List["CommunicationIdentifierModel"]] = None,
+        channel_affinity: Optional[List["ChannelAffinity"]] = None,
+        pause_on_start: Optional[bool] = None,
+        external_storage: Optional["ExternalStorage"] = None,
+        post_processing_options: Optional["PostProcessingOptions"] = None,
         **kwargs
     ):
         """
@@ -6053,17 +6658,17 @@ class StartCallRecordingRequest(msrest.serialization.Model):
          ~azure.communication.callautomation.models.PostProcessingOptions
         """
         super(StartCallRecordingRequest, self).__init__(**kwargs)
-        self.call_locator = kwargs.get('call_locator', None)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.recording_state_callback_uri = kwargs.get('recording_state_callback_uri', None)
-        self.recording_content_type = kwargs.get('recording_content_type', None)
-        self.recording_channel_type = kwargs.get('recording_channel_type', None)
-        self.recording_format_type = kwargs.get('recording_format_type', None)
-        self.audio_channel_participant_ordering = kwargs.get('audio_channel_participant_ordering', None)
-        self.channel_affinity = kwargs.get('channel_affinity', None)
-        self.pause_on_start = kwargs.get('pause_on_start', None)
-        self.external_storage = kwargs.get('external_storage', None)
-        self.post_processing_options = kwargs.get('post_processing_options', None)
+        self.call_locator = call_locator
+        self.call_connection_id = call_connection_id
+        self.recording_state_callback_uri = recording_state_callback_uri
+        self.recording_content_type = recording_content_type
+        self.recording_channel_type = recording_channel_type
+        self.recording_format_type = recording_format_type
+        self.audio_channel_participant_ordering = audio_channel_participant_ordering
+        self.channel_affinity = channel_affinity
+        self.pause_on_start = pause_on_start
+        self.external_storage = external_storage
+        self.post_processing_options = post_processing_options
 
 
 class StartDialogRequest(msrest.serialization.Model):
@@ -6094,6 +6699,10 @@ class StartDialogRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        dialog: "BaseDialog",
+        operation_callback_uri: Optional[str] = None,
+        operation_context: Optional[str] = None,
         **kwargs
     ):
         """
@@ -6108,9 +6717,9 @@ class StartDialogRequest(msrest.serialization.Model):
         :paramtype operation_context: str
         """
         super(StartDialogRequest, self).__init__(**kwargs)
-        self.dialog = kwargs['dialog']
-        self.operation_callback_uri = kwargs.get('operation_callback_uri', None)
-        self.operation_context = kwargs.get('operation_context', None)
+        self.dialog = dialog
+        self.operation_callback_uri = operation_callback_uri
+        self.operation_context = operation_context
 
 
 class StartMediaStreamingRequest(msrest.serialization.Model):
@@ -6132,6 +6741,9 @@ class StartMediaStreamingRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        operation_callback_uri: Optional[str] = None,
+        operation_context: Optional[str] = None,
         **kwargs
     ):
         """
@@ -6144,8 +6756,8 @@ class StartMediaStreamingRequest(msrest.serialization.Model):
         :paramtype operation_context: str
         """
         super(StartMediaStreamingRequest, self).__init__(**kwargs)
-        self.operation_callback_uri = kwargs.get('operation_callback_uri', None)
-        self.operation_context = kwargs.get('operation_context', None)
+        self.operation_callback_uri = operation_callback_uri
+        self.operation_context = operation_context
 
 
 class StartRecordingFailed(msrest.serialization.Model):
@@ -6173,6 +6785,9 @@ class StartRecordingFailed(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
         **kwargs
     ):
         """
@@ -6182,8 +6797,8 @@ class StartRecordingFailed(msrest.serialization.Model):
         :paramtype correlation_id: str
         """
         super(StartRecordingFailed, self).__init__(**kwargs)
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
+        self.call_connection_id = call_connection_id
+        self.correlation_id = correlation_id
         self.recording_id = None
 
 
@@ -6212,6 +6827,11 @@ class StartTranscriptionRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        locale: Optional[str] = None,
+        speech_model_endpoint_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs
     ):
         """
@@ -6228,10 +6848,10 @@ class StartTranscriptionRequest(msrest.serialization.Model):
         :paramtype operation_callback_uri: str
         """
         super(StartTranscriptionRequest, self).__init__(**kwargs)
-        self.locale = kwargs.get('locale', None)
-        self.speech_model_endpoint_id = kwargs.get('speech_model_endpoint_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.operation_callback_uri = kwargs.get('operation_callback_uri', None)
+        self.locale = locale
+        self.speech_model_endpoint_id = speech_model_endpoint_id
+        self.operation_context = operation_context
+        self.operation_callback_uri = operation_callback_uri
 
 
 class StopMediaStreamingRequest(msrest.serialization.Model):
@@ -6253,6 +6873,9 @@ class StopMediaStreamingRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        operation_callback_uri: Optional[str] = None,
+        operation_context: Optional[str] = None,
         **kwargs
     ):
         """
@@ -6265,8 +6888,8 @@ class StopMediaStreamingRequest(msrest.serialization.Model):
         :paramtype operation_context: str
         """
         super(StopMediaStreamingRequest, self).__init__(**kwargs)
-        self.operation_callback_uri = kwargs.get('operation_callback_uri', None)
-        self.operation_context = kwargs.get('operation_context', None)
+        self.operation_callback_uri = operation_callback_uri
+        self.operation_context = operation_context
 
 
 class StopTranscriptionRequest(msrest.serialization.Model):
@@ -6288,6 +6911,9 @@ class StopTranscriptionRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        operation_context: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs
     ):
         """
@@ -6300,8 +6926,8 @@ class StopTranscriptionRequest(msrest.serialization.Model):
         :paramtype operation_callback_uri: str
         """
         super(StopTranscriptionRequest, self).__init__(**kwargs)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.operation_callback_uri = kwargs.get('operation_callback_uri', None)
+        self.operation_context = operation_context
+        self.operation_callback_uri = operation_callback_uri
 
 
 class Summarization(msrest.serialization.Model):
@@ -6324,6 +6950,8 @@ class Summarization(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        enable_summarization: bool,
         **kwargs
     ):
         """
@@ -6332,7 +6960,7 @@ class Summarization(msrest.serialization.Model):
         :paramtype enable_summarization: bool
         """
         super(Summarization, self).__init__(**kwargs)
-        self.enable_summarization = kwargs['enable_summarization']
+        self.enable_summarization = enable_summarization
 
 
 class TeamsExtensionUserIdentifierModel(msrest.serialization.Model):
@@ -6368,6 +6996,11 @@ class TeamsExtensionUserIdentifierModel(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        user_id: str,
+        tenant_id: str,
+        resource_id: str,
+        cloud: Optional[Union[str, "CommunicationCloudEnvironmentModel"]] = None,
         **kwargs
     ):
         """
@@ -6384,10 +7017,10 @@ class TeamsExtensionUserIdentifierModel(msrest.serialization.Model):
          ~azure.communication.callautomation.models.CommunicationCloudEnvironmentModel
         """
         super(TeamsExtensionUserIdentifierModel, self).__init__(**kwargs)
-        self.user_id = kwargs['user_id']
-        self.tenant_id = kwargs['tenant_id']
-        self.resource_id = kwargs['resource_id']
-        self.cloud = kwargs.get('cloud', None)
+        self.user_id = user_id
+        self.tenant_id = tenant_id
+        self.resource_id = resource_id
+        self.cloud = cloud
 
 
 class TeamsPhoneCallDetails(msrest.serialization.Model):
@@ -6435,6 +7068,16 @@ class TeamsPhoneCallDetails(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        teams_phone_caller_details: Optional["TeamsPhoneCallerDetails"] = None,
+        teams_phone_source_details: Optional["TeamsPhoneSourceDetails"] = None,
+        session_id: Optional[str] = None,
+        intent: Optional[str] = None,
+        call_topic: Optional[str] = None,
+        call_context: Optional[str] = None,
+        transcript_url: Optional[str] = None,
+        call_sentiment: Optional[str] = None,
+        suggested_actions: Optional[str] = None,
         **kwargs
     ):
         """
@@ -6466,15 +7109,15 @@ class TeamsPhoneCallDetails(msrest.serialization.Model):
         :paramtype suggested_actions: str
         """
         super(TeamsPhoneCallDetails, self).__init__(**kwargs)
-        self.teams_phone_caller_details = kwargs.get('teams_phone_caller_details', None)
-        self.teams_phone_source_details = kwargs.get('teams_phone_source_details', None)
-        self.session_id = kwargs.get('session_id', None)
-        self.intent = kwargs.get('intent', None)
-        self.call_topic = kwargs.get('call_topic', None)
-        self.call_context = kwargs.get('call_context', None)
-        self.transcript_url = kwargs.get('transcript_url', None)
-        self.call_sentiment = kwargs.get('call_sentiment', None)
-        self.suggested_actions = kwargs.get('suggested_actions', None)
+        self.teams_phone_caller_details = teams_phone_caller_details
+        self.teams_phone_source_details = teams_phone_source_details
+        self.session_id = session_id
+        self.intent = intent
+        self.call_topic = call_topic
+        self.call_context = call_context
+        self.transcript_url = transcript_url
+        self.call_sentiment = call_sentiment
+        self.suggested_actions = suggested_actions
 
 
 class TeamsPhoneCallerDetails(msrest.serialization.Model):
@@ -6518,6 +7161,14 @@ class TeamsPhoneCallerDetails(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        caller: "CommunicationIdentifierModel",
+        name: str,
+        phone_number: str,
+        record_id: Optional[str] = None,
+        screen_pop_url: Optional[str] = None,
+        is_authenticated: Optional[bool] = None,
+        additional_caller_information: Optional[Dict[str, str]] = None,
         **kwargs
     ):
         """
@@ -6539,13 +7190,13 @@ class TeamsPhoneCallerDetails(msrest.serialization.Model):
         :paramtype additional_caller_information: dict[str, str]
         """
         super(TeamsPhoneCallerDetails, self).__init__(**kwargs)
-        self.caller = kwargs['caller']
-        self.name = kwargs['name']
-        self.phone_number = kwargs['phone_number']
-        self.record_id = kwargs.get('record_id', None)
-        self.screen_pop_url = kwargs.get('screen_pop_url', None)
-        self.is_authenticated = kwargs.get('is_authenticated', None)
-        self.additional_caller_information = kwargs.get('additional_caller_information', None)
+        self.caller = caller
+        self.name = name
+        self.phone_number = phone_number
+        self.record_id = record_id
+        self.screen_pop_url = screen_pop_url
+        self.is_authenticated = is_authenticated
+        self.additional_caller_information = additional_caller_information
 
 
 class TeamsPhoneSourceDetails(msrest.serialization.Model):
@@ -6581,6 +7232,11 @@ class TeamsPhoneSourceDetails(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        source: "CommunicationIdentifierModel",
+        language: str,
+        status: str,
+        intended_targets: Optional[Dict[str, "CommunicationIdentifierModel"]] = None,
         **kwargs
     ):
         """
@@ -6598,10 +7254,10 @@ class TeamsPhoneSourceDetails(msrest.serialization.Model):
          ~azure.communication.callautomation.models.CommunicationIdentifierModel]
         """
         super(TeamsPhoneSourceDetails, self).__init__(**kwargs)
-        self.source = kwargs['source']
-        self.language = kwargs['language']
-        self.status = kwargs['status']
-        self.intended_targets = kwargs.get('intended_targets', None)
+        self.source = source
+        self.language = language
+        self.status = status
+        self.intended_targets = intended_targets
 
 
 class TextSource(msrest.serialization.Model):
@@ -6641,6 +7297,12 @@ class TextSource(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        text: str,
+        source_locale: Optional[str] = None,
+        voice_kind: Optional[Union[str, "VoiceKind"]] = None,
+        voice_name: Optional[str] = None,
+        custom_voice_endpoint_id: Optional[str] = None,
         **kwargs
     ):
         """
@@ -6662,11 +7324,11 @@ class TextSource(msrest.serialization.Model):
         :paramtype custom_voice_endpoint_id: str
         """
         super(TextSource, self).__init__(**kwargs)
-        self.text = kwargs['text']
-        self.source_locale = kwargs.get('source_locale', None)
-        self.voice_kind = kwargs.get('voice_kind', None)
-        self.voice_name = kwargs.get('voice_name', None)
-        self.custom_voice_endpoint_id = kwargs.get('custom_voice_endpoint_id', None)
+        self.text = text
+        self.source_locale = source_locale
+        self.voice_kind = voice_kind
+        self.voice_name = voice_name
+        self.custom_voice_endpoint_id = custom_voice_endpoint_id
 
 
 class Transcription(msrest.serialization.Model):
@@ -6689,6 +7351,8 @@ class Transcription(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        enable_transcription: bool,
         **kwargs
     ):
         """
@@ -6697,7 +7361,7 @@ class Transcription(msrest.serialization.Model):
         :paramtype enable_transcription: bool
         """
         super(Transcription, self).__init__(**kwargs)
-        self.enable_transcription = kwargs['enable_transcription']
+        self.enable_transcription = enable_transcription
 
 
 class TranscriptionFailed(msrest.serialization.Model):
@@ -6737,6 +7401,12 @@ class TranscriptionFailed(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -6755,11 +7425,11 @@ class TranscriptionFailed(msrest.serialization.Model):
         """
         super(TranscriptionFailed, self).__init__(**kwargs)
         self.transcription_update = None
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class TranscriptionOptions(msrest.serialization.Model):
@@ -6802,6 +7472,13 @@ class TranscriptionOptions(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        transport_url: str,
+        transport_type: Union[str, "TranscriptionTransportType"],
+        locale: str,
+        start_transcription: bool,
+        speech_model_endpoint_id: Optional[str] = None,
+        enable_intermediate_results: Optional[bool] = None,
         **kwargs
     ):
         """
@@ -6822,12 +7499,12 @@ class TranscriptionOptions(msrest.serialization.Model):
         :paramtype enable_intermediate_results: bool
         """
         super(TranscriptionOptions, self).__init__(**kwargs)
-        self.transport_url = kwargs['transport_url']
-        self.transport_type = kwargs['transport_type']
-        self.locale = kwargs['locale']
-        self.speech_model_endpoint_id = kwargs.get('speech_model_endpoint_id', None)
-        self.start_transcription = kwargs['start_transcription']
-        self.enable_intermediate_results = kwargs.get('enable_intermediate_results', None)
+        self.transport_url = transport_url
+        self.transport_type = transport_type
+        self.locale = locale
+        self.speech_model_endpoint_id = speech_model_endpoint_id
+        self.start_transcription = start_transcription
+        self.enable_intermediate_results = enable_intermediate_results
 
 
 class TranscriptionStarted(msrest.serialization.Model):
@@ -6867,6 +7544,12 @@ class TranscriptionStarted(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -6885,11 +7568,11 @@ class TranscriptionStarted(msrest.serialization.Model):
         """
         super(TranscriptionStarted, self).__init__(**kwargs)
         self.transcription_update = None
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class TranscriptionStopped(msrest.serialization.Model):
@@ -6929,6 +7612,12 @@ class TranscriptionStopped(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -6947,11 +7636,11 @@ class TranscriptionStopped(msrest.serialization.Model):
         """
         super(TranscriptionStopped, self).__init__(**kwargs)
         self.transcription_update = None
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class TranscriptionSubscription(msrest.serialization.Model):
@@ -6976,6 +7665,10 @@ class TranscriptionSubscription(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        id: Optional[str] = None,
+        state: Optional[Union[str, "TranscriptionSubscriptionState"]] = None,
+        subscribed_result_types: Optional[List[Union[str, "TranscriptionResultType"]]] = None,
         **kwargs
     ):
         """
@@ -6990,9 +7683,9 @@ class TranscriptionSubscription(msrest.serialization.Model):
          ~azure.communication.callautomation.models.TranscriptionResultType]
         """
         super(TranscriptionSubscription, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.state = kwargs.get('state', None)
-        self.subscribed_result_types = kwargs.get('subscribed_result_types', None)
+        self.id = id
+        self.state = state
+        self.subscribed_result_types = subscribed_result_types
 
 
 class TranscriptionUpdate(msrest.serialization.Model):
@@ -7019,6 +7712,9 @@ class TranscriptionUpdate(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        transcription_status: Optional[Union[str, "TranscriptionStatus"]] = None,
+        transcription_status_details: Optional[Union[str, "TranscriptionStatusDetails"]] = None,
         **kwargs
     ):
         """
@@ -7036,8 +7732,8 @@ class TranscriptionUpdate(msrest.serialization.Model):
          ~azure.communication.callautomation.models.TranscriptionStatusDetails
         """
         super(TranscriptionUpdate, self).__init__(**kwargs)
-        self.transcription_status = kwargs.get('transcription_status', None)
-        self.transcription_status_details = kwargs.get('transcription_status_details', None)
+        self.transcription_status = transcription_status
+        self.transcription_status_details = transcription_status_details
 
 
 class TranscriptionUpdated(msrest.serialization.Model):
@@ -7077,6 +7773,12 @@ class TranscriptionUpdated(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["ResultInformation"] = None,
         **kwargs
     ):
         """
@@ -7095,11 +7797,11 @@ class TranscriptionUpdated(msrest.serialization.Model):
         """
         super(TranscriptionUpdated, self).__init__(**kwargs)
         self.transcription_update = None
-        self.call_connection_id = kwargs.get('call_connection_id', None)
-        self.server_call_id = kwargs.get('server_call_id', None)
-        self.correlation_id = kwargs.get('correlation_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.result_information = kwargs.get('result_information', None)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class TransferCallResponse(msrest.serialization.Model):
@@ -7115,6 +7817,8 @@ class TransferCallResponse(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        operation_context: Optional[str] = None,
         **kwargs
     ):
         """
@@ -7122,7 +7826,7 @@ class TransferCallResponse(msrest.serialization.Model):
         :paramtype operation_context: str
         """
         super(TransferCallResponse, self).__init__(**kwargs)
-        self.operation_context = kwargs.get('operation_context', None)
+        self.operation_context = operation_context
 
 
 class TransferToParticipantRequest(msrest.serialization.Model):
@@ -7168,6 +7872,13 @@ class TransferToParticipantRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        target_participant: "CommunicationIdentifierModel",
+        operation_context: Optional[str] = None,
+        transferee: Optional["CommunicationIdentifierModel"] = None,
+        operation_callback_uri: Optional[str] = None,
+        custom_calling_context: Optional["CustomCallingContext"] = None,
+        source_caller_id_number: Optional["PhoneNumberIdentifierModel"] = None,
         **kwargs
     ):
         """
@@ -7194,12 +7905,12 @@ class TransferToParticipantRequest(msrest.serialization.Model):
          ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
         """
         super(TransferToParticipantRequest, self).__init__(**kwargs)
-        self.target_participant = kwargs['target_participant']
-        self.operation_context = kwargs.get('operation_context', None)
-        self.transferee = kwargs.get('transferee', None)
-        self.operation_callback_uri = kwargs.get('operation_callback_uri', None)
-        self.custom_calling_context = kwargs.get('custom_calling_context', None)
-        self.source_caller_id_number = kwargs.get('source_caller_id_number', None)
+        self.target_participant = target_participant
+        self.operation_context = operation_context
+        self.transferee = transferee
+        self.operation_callback_uri = operation_callback_uri
+        self.custom_calling_context = custom_calling_context
+        self.source_caller_id_number = source_caller_id_number
 
 
 class UnholdRequest(msrest.serialization.Model):
@@ -7227,6 +7938,9 @@ class UnholdRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        target_participant: "CommunicationIdentifierModel",
+        operation_context: Optional[str] = None,
         **kwargs
     ):
         """
@@ -7239,8 +7953,8 @@ class UnholdRequest(msrest.serialization.Model):
         :paramtype operation_context: str
         """
         super(UnholdRequest, self).__init__(**kwargs)
-        self.target_participant = kwargs['target_participant']
-        self.operation_context = kwargs.get('operation_context', None)
+        self.target_participant = target_participant
+        self.operation_context = operation_context
 
 
 class UnmuteParticipantsRequest(msrest.serialization.Model):
@@ -7268,6 +7982,9 @@ class UnmuteParticipantsRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        target_participants: List["CommunicationIdentifierModel"],
+        operation_context: Optional[str] = None,
         **kwargs
     ):
         """
@@ -7280,8 +7997,8 @@ class UnmuteParticipantsRequest(msrest.serialization.Model):
         :paramtype operation_context: str
         """
         super(UnmuteParticipantsRequest, self).__init__(**kwargs)
-        self.target_participants = kwargs['target_participants']
-        self.operation_context = kwargs.get('operation_context', None)
+        self.target_participants = target_participants
+        self.operation_context = operation_context
 
 
 class UnmuteParticipantsResponse(msrest.serialization.Model):
@@ -7297,6 +8014,8 @@ class UnmuteParticipantsResponse(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        operation_context: Optional[str] = None,
         **kwargs
     ):
         """
@@ -7304,7 +8023,7 @@ class UnmuteParticipantsResponse(msrest.serialization.Model):
         :paramtype operation_context: str
         """
         super(UnmuteParticipantsResponse, self).__init__(**kwargs)
-        self.operation_context = kwargs.get('operation_context', None)
+        self.operation_context = operation_context
 
 
 class UpdateDialogRequest(msrest.serialization.Model):
@@ -7335,6 +8054,10 @@ class UpdateDialogRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        dialog: "DialogUpdateBase",
+        operation_callback_uri: Optional[str] = None,
+        operation_context: Optional[str] = None,
         **kwargs
     ):
         """
@@ -7349,9 +8072,9 @@ class UpdateDialogRequest(msrest.serialization.Model):
         :paramtype operation_context: str
         """
         super(UpdateDialogRequest, self).__init__(**kwargs)
-        self.dialog = kwargs['dialog']
-        self.operation_callback_uri = kwargs.get('operation_callback_uri', None)
-        self.operation_context = kwargs.get('operation_context', None)
+        self.dialog = dialog
+        self.operation_callback_uri = operation_callback_uri
+        self.operation_context = operation_context
 
 
 class UpdateTranscriptionRequest(msrest.serialization.Model):
@@ -7379,6 +8102,11 @@ class UpdateTranscriptionRequest(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        locale: Optional[str] = None,
+        speech_model_endpoint_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs
     ):
         """
@@ -7395,10 +8123,10 @@ class UpdateTranscriptionRequest(msrest.serialization.Model):
         :paramtype operation_callback_uri: str
         """
         super(UpdateTranscriptionRequest, self).__init__(**kwargs)
-        self.locale = kwargs.get('locale', None)
-        self.speech_model_endpoint_id = kwargs.get('speech_model_endpoint_id', None)
-        self.operation_context = kwargs.get('operation_context', None)
-        self.operation_callback_uri = kwargs.get('operation_callback_uri', None)
+        self.locale = locale
+        self.speech_model_endpoint_id = speech_model_endpoint_id
+        self.operation_context = operation_context
+        self.operation_callback_uri = operation_callback_uri
 
 
 class UserConsent(msrest.serialization.Model):
@@ -7414,6 +8142,8 @@ class UserConsent(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        recording: Optional[int] = None,
         **kwargs
     ):
         """
@@ -7421,4 +8151,4 @@ class UserConsent(msrest.serialization.Model):
         :paramtype recording: int
         """
         super(UserConsent, self).__init__(**kwargs)
-        self.recording = kwargs.get('recording', None)
+        self.recording = recording

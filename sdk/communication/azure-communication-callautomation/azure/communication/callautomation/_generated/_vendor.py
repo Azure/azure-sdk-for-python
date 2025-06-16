@@ -5,21 +5,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from abc import ABC
-from typing import TYPE_CHECKING
+from azure.core.pipeline.transport import HttpRequest
 
-from ._configuration import AzureCommunicationCallAutomationServiceConfiguration
+def _convert_request(request, files=None):
+    data = request.content if not files else None
+    request = HttpRequest(method=request.method, url=request.url, headers=request.headers, data=data)
+    if files:
+        request.set_formdata_body(files)
+    return request
 
-if TYPE_CHECKING:
-    from azure.core import PipelineClient
-
-    from ._serialization import Deserializer, Serializer
-
-
-class AzureCommunicationCallAutomationServiceMixinABC(ABC):  # pylint: disable=name-too-long
-    """DO NOT use this class. It is for internal typing use only."""
-
-    _client: "PipelineClient"
-    _config: AzureCommunicationCallAutomationServiceConfiguration
-    _serialize: "Serializer"
-    _deserialize: "Deserializer"
+def _format_url_section(template, **kwargs):
+    components = template.split("/")
+    while components:
+        try:
+            return template.format(**kwargs)
+        except KeyError as key:
+            formatted_components = template.split("/")
+            components = [
+                c for c in formatted_components if "{}".format(key.args[0]) not in c
+            ]
+            template = "/".join(components)
