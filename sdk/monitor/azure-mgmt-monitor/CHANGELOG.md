@@ -1,6 +1,6 @@
 # Release History
 
-## 7.0.0b2 (2025-06-16)
+## 7.0.0b2 (2025-06-15)
 
 ### Features Added
 
