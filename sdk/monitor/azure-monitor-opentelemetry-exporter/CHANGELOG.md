@@ -9,6 +9,8 @@
 ### Bugs Fixed
 - Fix for issue #41470. Added back exception message, removed earlier due to linting errors
   ([#41512] https://github.com/Azure/azure-sdk-for-python/pull/41512)
+- Should leave ingestion to populate Device OS from User Agent
+  ([#41549] https://github.com/Azure/azure-sdk-for-python/pull/41549)
 
 ### Other Changes
 
