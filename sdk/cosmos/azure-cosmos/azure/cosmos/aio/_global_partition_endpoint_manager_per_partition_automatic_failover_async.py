@@ -20,7 +20,7 @@ from azure.cosmos._request_object import RequestObject
 from azure.cosmos._routing.routing_range import PartitionKeyRangeWrapper
 
 if TYPE_CHECKING:
-    from azure.cosmos._cosmos_client_connection import CosmosClientConnection
+    from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
 
 logger = logging.getLogger("azure.cosmos._GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover")
 
