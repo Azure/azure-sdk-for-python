@@ -16,6 +16,7 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline.transport import RequestsTransport
 from azure.storage.blob._shared.authentication import AzureSigningError
+from azure.storage.blob._shared.models import StorageErrorCode
 from azure.storage.blob import (
     BlobClient,
     BlobServiceClient,
@@ -577,5 +578,63 @@ class TestStorageRetry(StorageRecordedTestCase):
         assert ("This is likely due to an invalid shared key. Please check your shared key and try again." in
                 e.value.message)
         assert retry_counter.count == 0
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_retry_on_copy_source_error(self, **kwargs):
+        # Test that retry on timeout, server error, server busy if surfaced from x-ms-copy-source-status-code.
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        container_name = self.get_resource_name('utcontainer')
+        retry = LinearRetry(backoff=1, retry_total=3)
+        retry_counter = RetryCounter()
+        service = self._create_storage_service(
+            BlobServiceClient,
+            storage_account_name,
+            storage_account_key,
+            retry_policy=retry
+        )
+
+        def response_handler(raw_response):
+            if retry_counter.count == 0:
+                raw_response.http_response.status_code = 400
+                raw_response.http_response.headers['x-ms-copy-source-status-code'] = '408'
+                raw_response.http_response.headers['x-ms-copy-source-error-code'] = (
+                    StorageErrorCode.OPERATION_TIMED_OUT)
+            elif retry_counter.count == 1:
+                raw_response.http_response.status_code = 400
+                raw_response.http_response.headers['x-ms-copy-source-status-code'] = '500'
+                raw_response.http_response.headers['x-ms-copy-source-error-code'] = StorageErrorCode.INTERNAL_ERROR
+            elif retry_counter.count == 2:
+                raw_response.http_response.status_code = 400
+                raw_response.http_response.headers['x-ms-copy-source-status-code'] = '503'
+                raw_response.http_response.headers['x-ms-copy-source-error-code'] = StorageErrorCode.SERVER_BUSY
+
+        def assert_exception_retry_hook(**kwargs):
+            assert kwargs.get('response') is not None
+            if retry_counter.count == 0:
+                assert kwargs['response'].status_code == 400
+                assert kwargs['response'].headers['x-ms-copy-source-status-code'] == '408'
+                assert kwargs['response'].headers['x-ms-copy-source-error-code'] == (
+                    StorageErrorCode.OPERATION_TIMED_OUT)
+            elif retry_counter.count == 1:
+                assert kwargs['response'].status_code == 400
+                assert kwargs['response'].headers['x-ms-copy-source-status-code'] == '500'
+                assert kwargs['response'].headers['x-ms-copy-source-error-code'] == StorageErrorCode.INTERNAL_ERROR
+            elif retry_counter.count == 2:
+                assert kwargs['response'].status_code == 400
+                assert kwargs['response'].headers['x-ms-copy-source-status-code'] == '503'
+                assert kwargs['response'].headers['x-ms-copy-source-error-code'] == StorageErrorCode.SERVER_BUSY
+            retry_counter.simple_count(retry)
+
+        with pytest.raises(HttpResponseError):
+            service.create_container(
+                container_name,
+                raw_response_hook=response_handler,
+                retry_hook=assert_exception_retry_hook
+            )
+
+        assert retry_counter.count == 3
 
     # ------------------------------------------------------------------------------
