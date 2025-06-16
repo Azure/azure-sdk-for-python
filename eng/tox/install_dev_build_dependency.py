@@ -62,8 +62,7 @@ def get_installed_azure_packages(pkg_name_to_exclude):
 def uninstall_packages(packages):
     # This method uninstall list of given packages so dev build version can be reinstalled
     commands = [
-        sys.executable,
-        "-m",
+        "uv",
         "pip",
         "uninstall",
     ]
@@ -80,8 +79,7 @@ def install_packages(packages):
     # install list of given packages from devops feed
 
     commands = [
-        sys.executable,
-        "-m",
+        "uv",
         "pip",
         "install",
     ]

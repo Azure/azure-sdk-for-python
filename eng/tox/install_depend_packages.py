@@ -367,8 +367,7 @@ def filter_dev_requirements(
 def install_packages(packages, req_file):
     # install list of given packages from PyPI
     commands = [
-        sys.executable,
-        "-m",
+        "uv",
         "pip",
         "install",
     ]

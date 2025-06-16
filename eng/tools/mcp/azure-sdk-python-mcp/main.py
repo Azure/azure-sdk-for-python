@@ -11,6 +11,9 @@ import httpx
 from github import Github
 from mcp.server.fastmcp import FastMCP
 
+# Set default pip implementation for tox to use uv
+os.environ.setdefault('TOX_PIP_IMPL', 'uv')
+
 # Create FastMCP instance
 mcp = FastMCP("azure-sdk-python-mcp")
 
@@ -24,6 +27,7 @@ logger.addHandler(handler)
 logger.info(f"Running with Python executable: {sys.executable}")
 logger.info(f"Virtual environment path: {os.environ.get('VIRTUAL_ENV', 'Not running in a virtual environment')}")
 logger.info(f"Working directory: {os.getcwd()}")
+logger.info(f"TOX_PIP_IMPL set to: {os.environ.get('TOX_PIP_IMPL', 'not set')}")
 
 def get_latest_commit(tspurl: str) -> str:
     """Get the latest commit hash for a given TypeSpec config URL.

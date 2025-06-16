@@ -52,8 +52,7 @@ def install_from_main(setup_path: str) -> None:
             os.chdir(subdirectory)
 
             command = [
-                sys.executable,
-                "-m",
+                "uv",
                 "pip",
                 "install",
                 ".",
