@@ -27,7 +27,6 @@ class TestDnsResolverManagementDnsForwardingRulesetsOperationsAsync(AzureMgmtRec
         )
         result = [r async for r in response]
         assert result == []
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
@@ -35,4 +34,3 @@ class TestDnsResolverManagementDnsForwardingRulesetsOperationsAsync(AzureMgmtRec
         response = self.client.dns_forwarding_rulesets.list()
         result = [r async for r in response]
         assert response
-        
