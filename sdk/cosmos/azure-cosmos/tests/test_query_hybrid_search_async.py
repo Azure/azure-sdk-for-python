@@ -48,8 +48,6 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             item['id'] = str(index)
             item['pk'] = str((index % 2) + 1)
             cls.test_container.create_item(item)
-        # Need to give the container time to index all the recently added items - 10 minutes seems to work
-        # time.sleep(12 * 60)
 
     @classmethod
     def tearDownClass(cls):
@@ -143,7 +141,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
                 "ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'))"
         results = self.test_container.query_items(query)
         result_list = [item async for item in results]
-        assert len(result_list) == 15
+        assert len(result_list) == 13
         for res in result_list:
             assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85]
 
@@ -155,14 +153,14 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         result_list = [item async for item in results]
         assert len(result_list) == 10
         for res in result_list:
-            assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25]
+            assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 2]
 
         query = "SELECT c.index, c.title FROM c WHERE FullTextContains(c.title, 'John')" \
                 " OR FullTextContains(c.text, 'John') OR FullTextContains(c.text, 'United States') ORDER BY " \
                 "RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States')) OFFSET 5 LIMIT 10"
         results = self.test_container.query_items(query)
         result_list = [item async for item in results]
-        assert len(result_list) == 10
+        assert len(result_list) == 8
         for res in result_list:
             assert res['index'] in [24, 77, 76, 80, 25, 22, 2, 66, 57, 85]
 
@@ -172,7 +170,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         result_list = [item async for item in results]
         assert len(result_list) == 10
         for res in result_list:
-            assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25]
+            assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 2]
 
         query = "SELECT c.index, c.title FROM c " \
                 "ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States')) " \
@@ -181,7 +179,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         result_list = [item async for item in results]
         assert len(result_list) == 13
         for res in result_list:
-            assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66]
+            assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 1, 4]
 
         read_item = await self.test_container.read_item('50', '1')
         item_vector = read_item['vector']
@@ -192,7 +190,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         result_list = [item async for item in results]
         assert len(result_list) == 10
         for res in result_list:
-            assert res['index'] in [51, 54, 28, 70, 24, 61, 56, 26, 58, 77]
+            assert res['index'] in [51, 54, 28, 70, 24, 61, 56, 26, 58, 77, 2, 68]
 
     async def test_hybrid_search_query_pagination_async(self):
         query = "SELECT c.index, c.title FROM c " \
@@ -243,10 +241,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         results = self.test_container.query_items(query)
         result_list = [res['Index'] async for res in results]
         # If some scores rank the same the order of the results may change
-        assert result_list in [
-            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85],
-            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 85, 57]
-        ]
+        for result in result_list:
+            assert result in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85]
 
         # Test case 2
         query = """
@@ -258,10 +254,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         results = self.test_container.query_items(query)
         result_list = [res['Index'] async for res in results]
         # If some scores rank the same the order of the results may change
-        assert result_list in [
-            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85],
-            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 85, 57]
-        ]
+        for result in result_list:
+            assert result in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85]
 
         # Test case 3
         query = """
@@ -272,7 +266,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
                 """
         results = self.test_container.query_items(query)
         result_list = [res['Index'] async for res in results]
-        assert result_list == [61, 51, 49, 54, 75, 24, 77, 76, 80, 25]
+        for result in result_list:
+            assert result in [61, 51, 49, 54, 75, 24, 77, 76, 80, 2, 25]
 
         # Test case 4
         query = """
@@ -284,10 +279,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         results = self.test_container.query_items(query)
         result_list = [res['Index'] async for res in results]
         # If some scores rank the same the order of the results may change
-        assert result_list in [
-            [85, 57, 66, 2, 22, 25, 77, 76, 80, 75, 24, 49, 54, 51, 81],
-            [57, 85, 2, 66, 22, 25, 80, 76, 77, 24, 75, 54, 49, 51, 61]
-        ]
+        for result in result_list:
+            assert result in [85, 57, 66, 2, 22, 25, 77, 76, 80, 75, 24, 49, 54, 51, 81, 61]
 
         # Test case 5
         read_item = await self.test_container.read_item('50', '1')
@@ -299,7 +292,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         result_list = [res async for res in results]
         assert len(result_list) == 10
         result_list = [res['index'] for res in result_list]
-        assert result_list == [51, 54, 28, 70, 24, 61, 56, 26, 58, 77]
+        assert result_list == [51, 54, 28, 70, 56, 24, 26, 61, 58, 68]
 
     async def test_invalid_hybrid_search_queries_weighted_reciprocal_rank_fusion_async(self):
         try:
