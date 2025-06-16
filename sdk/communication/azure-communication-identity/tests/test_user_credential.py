@@ -237,22 +237,17 @@ class TestCommunicationTokenCredential(TestCase):
         # Only resource_endpoint provided
         with pytest.raises(ValueError) as excinfo:
             CommunicationTokenCredential(resource_endpoint="https://endpoint")
-        assert "Missing: token_credential, scopes" in str(excinfo.value)
+        assert "Missing: token_credential" in str(excinfo.value)
 
         # Only token_credential provided
         with pytest.raises(ValueError) as excinfo:
             CommunicationTokenCredential(token_credential=MagicMock())
-        assert "Missing: resource_endpoint, scopes" in str(excinfo.value)
+        assert "Missing: resource_endpoint" in str(excinfo.value)
 
         # Only scopes provided
         with pytest.raises(ValueError) as excinfo:
             CommunicationTokenCredential(scopes=["scope"])
         assert "Missing: resource_endpoint, token_credential" in str(excinfo.value)
-
-        # Two fields provided
-        with pytest.raises(ValueError) as excinfo:
-            CommunicationTokenCredential(resource_endpoint="https://endpoint", token_credential=MagicMock())
-        assert "Missing: scopes" in str(excinfo.value)
 
     def test_all_fields_present_calls_token_exchange(monkeypatch):
         # Patch TokenExchangeClient to our dummy

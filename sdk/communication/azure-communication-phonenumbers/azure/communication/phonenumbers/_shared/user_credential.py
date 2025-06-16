@@ -85,7 +85,7 @@ class CommunicationTokenCredential(object):
         fields_present = [resource_endpoint, token_credential]
         fields_exist = [field is not None for field in fields_present]
 
-        if token is None and any(fields_exist) and not all(fields_exist):
+        if token is None and not all(fields_exist):
             missing_fields = []
             if resource_endpoint is None:
                 missing_fields.append("resource_endpoint")
