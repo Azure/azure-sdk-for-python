@@ -301,6 +301,20 @@ class TestCommunicationTokenCredential(TestCase):
             assert token.expires_on == 9999999999
 
     @pytest.mark.asyncio
+    async def test_missing_scopes_calls_token_exchange_async(self):
+        with patch(
+                "azure.communication.identity._shared.user_credential_async.AsyncTokenExchangeClient",
+                DummyAsyncTokenExchangeClient,
+        ):
+            cred = CommunicationTokenCredential(
+                resource_endpoint="https://endpoint",
+                token_credential=MagicMock()
+            )
+            token = await cred.get_token()
+            assert token.token == "dummy"
+            assert token.expires_on == 9999999999
+
+    @pytest.mark.asyncio
     async def test_token_exchange_refreshes_from_expired_to_valid_async(self):
         # First call returns expired token on initialization of _token
         with patch(
