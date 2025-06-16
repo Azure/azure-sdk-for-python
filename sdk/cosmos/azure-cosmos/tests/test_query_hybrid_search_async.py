@@ -49,7 +49,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             item['pk'] = str((index % 2) + 1)
             cls.test_container.create_item(item)
         # Need to give the container time to index all the recently added items - 10 minutes seems to work
-        time.sleep(12 * 60)
+        # time.sleep(12 * 60)
 
     @classmethod
     def tearDownClass(cls):
