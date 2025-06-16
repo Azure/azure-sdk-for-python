@@ -6,6 +6,8 @@ parameters:
   DependsOn: Build
   DocArtifact: 'documentation'
   DevFeedName: 'public/azure-sdk-for-python'
+  PublicFeed: PyPi
+  PublicPublishEnvironment: package-publish
   TargetDocRepoOwner: ''
   TargetDocRepoName: ''
   PackageSourceOverride: "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
@@ -95,7 +97,7 @@ stages:
             - deployment: PublishPackage
               displayName: "Publish to PyPI"
               condition: and(succeeded(), ne(variables['Skip.PublishPackage'], 'true'))
-              environment: package-publish
+              environment: ${{ parameters.PublicPublishEnvironment }}
               dependsOn: TagRepository
 
               templateContext:
@@ -127,39 +129,54 @@ stages:
                           python -m pip install -r $(Pipeline.Workspace)/release_artifact/release_requirements.txt
                         displayName: Install Release Dependencies
 
+                      - ${{ if eq(parameters.PublicFeed, 'PyPi') }}:
+                        - pwsh: |
+                            $esrpDirectory = "$(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}"
+                            New-Item -ItemType Directory -Force -Path $esrpDirectory
+  
+                            Get-ChildItem -Path "$(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}" `
+                              | Where-Object { ($_.Name -like "*.tar.gz" -or $_.Name -like "*.whl") } `
+                              | Copy-Item -Destination $esrpDirectory
+  
+                            Get-ChildItem $esrpDirectory
+                          displayName: Isolate files for ESRP Publish
+  
+                        - task: EsrpRelease@9
+                          displayName: 'Publish to ESRP'
+                          inputs:
+                            ConnectedServiceName: 'Azure SDK PME Managed Identity'
+                            ClientId: '5f81938c-2544-4f1f-9251-dd9de5b8a81b'
+                            DomainTenantId: '975f013f-7f24-47e8-a7d3-abc4752bf346'
+                            UseManagedIdentity: true
+                            KeyVaultName: 'kv-azuresdk-codesign'
+                            SignCertName: 'azure-sdk-esrp-release-certificate'
+                            Intent: 'PackageDistribution'
+                            ContentType: 'PyPI'
+                            FolderLocation: $(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}
+                            Owners: $(Build.RequestedForEmail)
+                            Approvers: $(Build.RequestedForEmail)
+                            ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
+                            MainPublisher: 'ESRPRELPACMANTEST'
+                            
+                      - ${{ if ne(parameters.PublicFeed, 'PyPi') }}:
+                        - task: TwineAuthenticate@0
+                          displayName: 'Authenticate to feed: ${{parameters.PublicFeed}}'
+                          inputs:
+                            artifactFeeds: ${{parameters.PublicFeed}}
+                            
+                        - script: |
+                            set -e
+                            twine upload --repository ${{parameters.PublicFeed}} --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*.whl
+                            echo "Uploaded whl to devops feed"
+                            twine upload --repository ${{parameters.PublicFeed}} --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*.tar.gz
+                            echo "Uploaded sdist to devops feed"
+                          displayName: 'Publish package to feed: ${{parameters.PublicFeed}}'
+
                       - task: TwineAuthenticate@0
                         displayName: 'Authenticate to feed: ${{parameters.DevFeedName}}'
                         inputs:
                           artifactFeeds: ${{parameters.DevFeedName}}
-
-                      - pwsh: |
-                          $esrpDirectory = "$(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}"
-                          New-Item -ItemType Directory -Force -Path $esrpDirectory
-
-                          Get-ChildItem -Path "$(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}" `
-                            | Where-Object { ($_.Name -like "*.tar.gz" -or $_.Name -like "*.whl") } `
-                            | Copy-Item -Destination $esrpDirectory
-
-                          Get-ChildItem $esrpDirectory
-                        displayName: Isolate files for ESRP Publish
-
-                      - task: EsrpRelease@9
-                        displayName: 'Publish to ESRP'
-                        inputs:
-                          ConnectedServiceName: 'Azure SDK PME Managed Identity'
-                          ClientId: '5f81938c-2544-4f1f-9251-dd9de5b8a81b'
-                          DomainTenantId: '975f013f-7f24-47e8-a7d3-abc4752bf346'
-                          UseManagedIdentity: true
-                          KeyVaultName: 'kv-azuresdk-codesign'
-                          SignCertName: 'azure-sdk-esrp-release-certificate'
-                          Intent: 'PackageDistribution'
-                          ContentType: 'PyPI'
-                          FolderLocation: $(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}
-                          Owners: $(Build.RequestedForEmail)
-                          Approvers: $(Build.RequestedForEmail)
-                          ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
-                          MainPublisher: 'ESRPRELPACMANTEST'
-
+                          
                       - script: |
                           set -e
                           twine upload --repository ${{parameters.DevFeedName}} --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*.whl
