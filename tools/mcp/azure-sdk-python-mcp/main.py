@@ -216,7 +216,7 @@ def init_tool(tsp_config_url: str, repo_path: str) -> Dict[str, Any]:
 
 
 @mcp.tool("init_local")
-def init_local_tool(tsp_config_path: str, repo_path: str) -> Dict[str, Any]:
+def init_local_tool(tsp_config_path: str, repo_path: str, commit_id: str) -> Dict[str, Any]:
     """Initializes and subsequently generates a typespec client library directory from a local azure-rest-api-specs repo.
 
     This command is used to generate a client library from a local azure-rest-api-specs repository. No additional
@@ -225,6 +225,7 @@ def init_local_tool(tsp_config_path: str, repo_path: str) -> Dict[str, Any]:
     Args:
         tsp_config_path: The path to the local tspconfig.yaml file.
         repo_path: The path to the repository root (i.e. ./azure-sdk-for-python/).
+        commit_id: The commit ID of the local azure-rest-api-specs repository.
 
     Returns:
         A dictionary containing the result of the command."""
@@ -245,22 +246,23 @@ def init_local_tool(tsp_config_path: str, repo_path: str) -> Dict[str, Any]:
             subprocess.run(["python", "-m", "venv", ".venv"], check=True, cwd=repo_path)
 
         # install dependencies
-        result = subprocess.run(
+        subprocess.run(
             [python_interpreter, "scripts/dev_setup.py", "-p", "azure-core"],
             capture_output=True,
             text=True,
             stdin=subprocess.DEVNULL,  # Explicitly close stdin
             cwd=repo_path,
+            check=True,
         )
-        logger.info(f"Command output: {result.stdout}")
+        logger.info("Install dependencies for SDK generation")
 
         spec_folder = tsp_config_path.split("azure-rest-api-specs")[0] + "azure-rest-api-specs"
         tsp_folder = tsp_config_path.split("azure-rest-api-specs/")[1].split("/tspconfig.yaml")[0]
 
-        # get commit id from rest repo
-        commit_id = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=spec_folder).decode().strip()
-
         # create generate_input.json
+        logger.info(
+            f"Creating generate_input.json with spec folder: {spec_folder}, commit ID: {commit_id}, tsp folder: {tsp_folder}"
+        )
         generate_input = {
             "specFolder": spec_folder,
             "headSha": commit_id,
@@ -282,19 +284,21 @@ def init_local_tool(tsp_config_path: str, repo_path: str) -> Dict[str, Any]:
             text=True,
             stdin=subprocess.DEVNULL,  # Explicitly close stdin
             cwd=repo_path,
+            check=True,
         )
-        logger.info(f"generate sdk: {result.stdout}")
+        logger.info(f"generate sdk")
         result = subprocess.run(
             [python_interpreter, "-m", "packaging_tools.sdk_package", generate_tmp_path, generate_output_path],
             capture_output=True,
             text=True,
             stdin=subprocess.DEVNULL,  # Explicitly close stdin
             cwd=repo_path,
+            check=True,
         )
-        logger.info(f"package sdk: {result.stdout}")
+        logger.info(f"package sdk")
         return {"success": True, "stdout": result.stdout, "stderr": result.stderr, "code": result.returncode}
     except Exception as e:
-        logger.error(f"Failed to install dependencies: {str(e)}")
+        logger.error(f"Failed to generate sdk: {str(e)}")
         return {"success": False, "stdout": "", "stderr": str(e), "code": 1}
 
 
