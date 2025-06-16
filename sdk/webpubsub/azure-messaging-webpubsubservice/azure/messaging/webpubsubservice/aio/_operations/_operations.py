@@ -38,7 +38,7 @@ from ..._operations._operations import (
     build_web_pub_sub_service_grant_permission_request,
     build_web_pub_sub_service_group_exists_request,
     build_web_pub_sub_service_has_permission_request,
-    build_web_pub_sub_service_list_connections_in_group_request,
+    build_web_pub_sub_service_list_connections_request,
     build_web_pub_sub_service_remove_connection_from_all_groups_request,
     build_web_pub_sub_service_remove_connection_from_group_request,
     build_web_pub_sub_service_remove_user_from_all_groups_request,
@@ -707,7 +707,7 @@ class WebPubSubServiceClientOperationsMixin(  # pylint: disable=too-many-public-
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def list_connections_in_group(
+    def list_connections(
         self,
         group: str,
         *,
@@ -761,7 +761,7 @@ class WebPubSubServiceClientOperationsMixin(  # pylint: disable=too-many-public-
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_web_pub_sub_service_list_connections_in_group_request(
+                _request = build_web_pub_sub_service_list_connections_request(
                     group=group,
                     hub=self._config.hub,
                     maxpagesize=maxpagesize,

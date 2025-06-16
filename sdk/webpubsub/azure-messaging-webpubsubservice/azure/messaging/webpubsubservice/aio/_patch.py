@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 #
@@ -45,7 +46,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .._operations._operations import (
-    build_web_pub_sub_service_list_connections_in_group_request,
+    build_web_pub_sub_service_list_connections_request,
 )
 
 from .._patch import _parse_connection_string, WebPubSubServiceClientBase
@@ -77,10 +78,10 @@ class WebPubSubServiceClient(WebPubSubServiceClientBase, WebPubSubServiceClientG
         super().__init__(endpoint=endpoint, hub=hub, credential=credential, **kwargs)
 
     @distributed_trace
-    def list_connections_in_group(
+    def list_connections(
         self,
-        group: str,
         *,
+        group: str,
         top: Optional[int] = None,
         continuation_token_parameter: Optional[str] = None,
         **kwargs: Any
@@ -89,9 +90,9 @@ class WebPubSubServiceClient(WebPubSubServiceClientBase, WebPubSubServiceClientG
 
         List connections in a group.
 
-        :param group: Target group name, whose length should be greater than 0 and less than 1025.
+        :keyword group: Target group name, whose length should be greater than 0 and less than 1025.
          Required.
-        :type group: str
+        :paramtype group: str
         :keyword top: The maximum number of connections to return. If the value is not set, then all
          the connections in a group are returned. Default value is None.
         :paramtype top: int
@@ -107,6 +108,14 @@ class WebPubSubServiceClient(WebPubSubServiceClientBase, WebPubSubServiceClientG
 
         Example:
             .. code-block:: python
+
+                connections = client.list_connections(
+                    group="group_name",
+                    top=100
+                )
+
+                async for member in connections:
+                    assert member.connection_id is not None
 
 
         """
@@ -127,7 +136,7 @@ class WebPubSubServiceClient(WebPubSubServiceClientBase, WebPubSubServiceClientG
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_web_pub_sub_service_list_connections_in_group_request(
+                _request = build_web_pub_sub_service_list_connections_request(
                     group=group,
                     hub=self._config.hub,
                     maxpagesize=maxpagesize,
@@ -171,7 +180,9 @@ class WebPubSubServiceClient(WebPubSubServiceClientBase, WebPubSubServiceClientG
             list_of_elem = deserialized.get("value", [])
 
             # Convert each dictionary item to a GroupMember object
-            list_of_elem = [GroupMember(connection_id=item.get("connectionId"), user_id=item.get("userId")) for item in list_of_elem]
+            list_of_elem = [
+                GroupMember(connection_id=item.get("connectionId"), user_id=item.get("userId")) for item in list_of_elem
+            ]
 
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -211,7 +222,7 @@ class WebPubSubServiceClient(WebPubSubServiceClientBase, WebPubSubServiceClientG
         return cls(hub=hub, credential=credential, **kwargs)
 
 
-__all__ = ["WebPubSubServiceClient"]
+__all__ = ["WebPubSubServiceClient", "GroupMember"]
 
 
 def patch_sdk():

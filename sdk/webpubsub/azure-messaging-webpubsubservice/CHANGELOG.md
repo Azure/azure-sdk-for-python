@@ -3,7 +3,7 @@
 ## 1.3.0 (Unreleased)
 
 ### Features Added
-- Added new APIs "list_connections_in_group"
+- Added new APIs "list_connections"
 
 ## 1.2.2 (2025-02-28)
 

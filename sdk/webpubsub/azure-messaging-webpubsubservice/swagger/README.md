@@ -276,4 +276,9 @@ directive:
 - from: swagger-document
   where: $.paths["/api/hubs/{hub}/groups/{group}/connections"].get.parameters["0"]
   transform: $["x-ms-parameter-location"] = "client"
+
+  # Use keyword-only "group" parameter instead of putting it in the method name
+- rename-operation:
+    from: ListConnectionsInGroup
+    to: ListConnections
 ```

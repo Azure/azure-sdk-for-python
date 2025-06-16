@@ -14,7 +14,6 @@ if TYPE_CHECKING:
 
 from ._client import WebPubSubServiceClient  # type: ignore
 from ._version import VERSION
-from .models import GroupMember
 
 __version__ = VERSION
 
@@ -27,7 +26,6 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "WebPubSubServiceClient",
-    "GroupMember",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 

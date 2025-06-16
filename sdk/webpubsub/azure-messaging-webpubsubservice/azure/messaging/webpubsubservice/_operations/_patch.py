@@ -35,9 +35,10 @@ from ._operations import (
     build_web_pub_sub_service_send_to_connection_request,
     build_web_pub_sub_service_send_to_user_request,
     build_web_pub_sub_service_send_to_group_request,
-    build_web_pub_sub_service_list_connections_in_group_request,
+    build_web_pub_sub_service_list_connections_request,
 )
 from ..models import GroupMember
+
 
 class _UTC_TZ(tzinfo):
     """from https://docs.python.org/2/library/datetime.html#tzinfo-objects"""
@@ -143,7 +144,9 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         client_url = client_endpoint + path + hub
         jwt_headers = kwargs.pop("jwt_headers", {})
         if isinstance(self._config.credential, AzureKeyCredential):
-            token = get_token_by_key(endpoint, path, hub, self._config.credential.key, jwt_headers=jwt_headers, **kwargs)
+            token = get_token_by_key(
+                endpoint, path, hub, self._config.credential.key, jwt_headers=jwt_headers, **kwargs
+            )
         else:
             token = super().get_client_access_token(client_protocol=client_protocol, **kwargs).get("token")
         return {
@@ -155,7 +158,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
     get_client_access_token.metadata = {"url": "/api/hubs/{hub}/:generateToken"}  # type: ignore
 
     @distributed_trace
-    def list_connections_in_group(
+    def list_connections(
         self,
         *,
         group: str,
@@ -167,9 +170,9 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
         List connections in a group.
 
-        :param group: Target group name, whose length should be greater than 0 and less than 1025.
+        :keyword group: Target group name, whose length should be greater than 0 and less than 1025.
          Required.
-        :type group: str
+        :paramtype group: str
         :keyword top: The maximum number of connections to return. If the value is not set, then all
          the connections in a group are returned. Default value is None.
         :paramtype top: int
@@ -185,6 +188,14 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
         Example:
             .. code-block:: python
+
+                connections = client.list_connections(
+                    group="group_name",
+                    top=100
+                )
+
+                for member in connections:
+                    assert member.connection_id is not None
 
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -204,7 +215,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_web_pub_sub_service_list_connections_in_group_request(
+                _request = build_web_pub_sub_service_list_connections_request(
                     group=group,
                     hub=self._config.hub,
                     maxpagesize=maxpagesize,
@@ -248,7 +259,9 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
             list_of_elem = deserialized.get("value", [])
 
             # Convert each dictionary item to a GroupMember object
-            list_of_elem = [GroupMember(connection_id=item.get("connectionId"), user_id=item.get("userId")) for item in list_of_elem]
+            list_of_elem = [
+                GroupMember(connection_id=item.get("connectionId"), user_id=item.get("userId")) for item in list_of_elem
+            ]
 
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -923,7 +936,8 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
 
 __all__: List[str] = [
-    "WebPubSubServiceClientOperationsMixin"
+    "WebPubSubServiceClientOperationsMixin",
+    "GroupMember",
 ]  # Add all objects you want publicly available to users at this package level
 
 

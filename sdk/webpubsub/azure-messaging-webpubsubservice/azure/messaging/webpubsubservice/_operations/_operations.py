@@ -361,7 +361,7 @@ def build_web_pub_sub_service_send_to_group_request(  # pylint: disable=name-too
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
 
-def build_web_pub_sub_service_list_connections_in_group_request(  # pylint: disable=name-too-long
+def build_web_pub_sub_service_list_connections_request(  # pylint: disable=name-too-long
     group: str,
     hub: str,
     *,
@@ -1372,7 +1372,7 @@ class WebPubSubServiceClientOperationsMixin(  # pylint: disable=too-many-public-
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def list_connections_in_group(
+    def list_connections(
         self,
         group: str,
         *,
@@ -1426,7 +1426,7 @@ class WebPubSubServiceClientOperationsMixin(  # pylint: disable=too-many-public-
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_web_pub_sub_service_list_connections_in_group_request(
+                _request = build_web_pub_sub_service_list_connections_request(
                     group=group,
                     hub=self._config.hub,
                     maxpagesize=maxpagesize,

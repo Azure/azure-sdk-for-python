@@ -14,7 +14,7 @@ class TestListConnectionsInGroup(WebpubsubTest):
 
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_list_connections_in_group(self, webpubsub_connection_string, **kwargs):
+    async def test_list_connections(self, webpubsub_connection_string, **kwargs):
         # Test cases with different pagination scenarios
         test_cases = [
             {
@@ -44,7 +44,7 @@ class TestListConnectionsInGroup(WebpubsubTest):
         ]
 
         for test_case in test_cases:
-            client = self.create_client(connection_string = webpubsub_connection_string, hub='test_list_connections_in_group')
+            client = self.create_client(connection_string = webpubsub_connection_string, hub='test_list_connections')
             group_name = "group1"
             ws_clients = []
 
@@ -63,7 +63,7 @@ class TestListConnectionsInGroup(WebpubsubTest):
             actual_connection_count = 0
 
             # Get connections with pagination
-            connections = client.list_connections_in_group(
+            connections = client.list_connections(
                 group=group_name,
                 top=test_case["max_count_to_list"]
             )
