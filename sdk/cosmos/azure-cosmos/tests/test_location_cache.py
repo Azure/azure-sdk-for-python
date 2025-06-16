@@ -161,7 +161,7 @@ class TestLocationCache:
                 [location4_name],
                 [],
             ]
-            excluded_locations_on_requests_list = [None] * 5
+            excluded_locations_on_requests_list = [[]] * 5
         elif test_type == "OnRequest":
             excluded_locations_on_client_list = [[]] * 5
             excluded_locations_on_requests_list = [
