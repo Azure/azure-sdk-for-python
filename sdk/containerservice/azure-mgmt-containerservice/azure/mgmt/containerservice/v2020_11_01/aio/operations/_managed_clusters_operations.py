@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -79,7 +79,7 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.ManagedCluster"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.ManagedCluster"]:
         """Gets a list of managed clusters in the specified subscription.
 
         Gets a list of managed clusters in the specified subscription. The operation returns properties
@@ -159,7 +159,7 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ManagedCluster"]:
+    ) -> AsyncItemPaged["_models.ManagedCluster"]:
         """Lists managed clusters in the specified subscription and resource group.
 
         Lists managed clusters in the specified subscription and resource group. The operation returns

@@ -1,5 +1,11 @@
 # Release History
 
+## 10.0.1 (2025-06-04)
+
+### Other Changes
+
+- This package has been deprecated and will no longer be maintained after 03-31-2025. This package will only receive security fixes until 03-31-2025. For more information, see the [Azure Spring Apps retirement announcement](https://aka.ms/asaretirement).
+
 ## 10.0.0 (2024-10-29)
 
 ### Breaking Changes

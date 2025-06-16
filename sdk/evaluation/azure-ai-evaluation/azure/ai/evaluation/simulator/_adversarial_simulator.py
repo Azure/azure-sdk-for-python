@@ -264,12 +264,19 @@ class AdversarialSimulator:
 
         # Limit to max_simulation_results if needed
         if len(template_parameter_pairs) > max_simulation_results:
-            template_parameter_pairs = template_parameter_pairs[:max_simulation_results]
+            template_parameter_pairs = template_parameter_pairs[:max_simulation_results]        # Create a seeded random instance for jailbreak selection if randomization_seed is provided
+        jailbreak_random = None
+        if _jailbreak_type == "upia" and randomization_seed is not None:
+            jailbreak_random = random.Random(randomization_seed)
 
         # Single task append loop for all scenarios
         for template, parameter in template_parameter_pairs:
             if _jailbreak_type == "upia":
-                parameter = self._add_jailbreak_parameter(parameter, random.choice(jailbreak_dataset))
+                if jailbreak_random is not None:
+                    selected_jailbreak = jailbreak_random.choice(jailbreak_dataset)
+                else:
+                    selected_jailbreak = random.choice(jailbreak_dataset)
+                parameter = self._add_jailbreak_parameter(parameter, selected_jailbreak)
 
             tasks.append(
                 asyncio.create_task(

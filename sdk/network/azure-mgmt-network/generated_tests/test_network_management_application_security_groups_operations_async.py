@@ -26,7 +26,7 @@ class TestNetworkManagementApplicationSecurityGroupsOperationsAsync(AzureMgmtRec
             await self.client.application_security_groups.begin_delete(
                 resource_group_name=resource_group.name,
                 application_security_group_name="str",
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -39,7 +39,7 @@ class TestNetworkManagementApplicationSecurityGroupsOperationsAsync(AzureMgmtRec
         response = await self.client.application_security_groups.get(
             resource_group_name=resource_group.name,
             application_security_group_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -62,7 +62,7 @@ class TestNetworkManagementApplicationSecurityGroupsOperationsAsync(AzureMgmtRec
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -76,7 +76,7 @@ class TestNetworkManagementApplicationSecurityGroupsOperationsAsync(AzureMgmtRec
             resource_group_name=resource_group.name,
             application_security_group_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestNetworkManagementApplicationSecurityGroupsOperationsAsync(AzureMgmtRec
     @recorded_by_proxy_async
     async def test_application_security_groups_list_all(self, resource_group):
         response = self.client.application_security_groups.list_all(
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -97,7 +97,7 @@ class TestNetworkManagementApplicationSecurityGroupsOperationsAsync(AzureMgmtRec
     async def test_application_security_groups_list(self, resource_group):
         response = self.client.application_security_groups.list(
             resource_group_name=resource_group.name,
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -177,14 +177,14 @@ class _StatsbeatMetrics:
         rpId = ""
         os_type = platform.system()
         # rp, rpId
-        if _utils._is_on_app_service():
-            # Web apps
-            rp = _RP_Names.APP_SERVICE.value
-            rpId = "{}/{}".format(os.environ.get(_WEBSITE_SITE_NAME), os.environ.get(_WEBSITE_HOME_STAMPNAME, ""))
-        elif _utils._is_on_functions():
+        if _utils._is_on_functions():
             # Function apps
             rp = _RP_Names.FUNCTIONS.value
             rpId = os.environ.get(_WEBSITE_HOSTNAME, "")
+        elif _utils._is_on_app_service():
+            # Web apps
+            rp = _RP_Names.APP_SERVICE.value
+            rpId = "{}/{}".format(os.environ.get(_WEBSITE_SITE_NAME), os.environ.get(_WEBSITE_HOME_STAMPNAME, ""))
         elif _utils._is_on_aks():
             # AKS
             rp = _RP_Names.AKS.value

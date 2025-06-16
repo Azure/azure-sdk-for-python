@@ -721,8 +721,9 @@ def evaluate(
     :keyword output_path: The local folder or file path to save evaluation results to if set. If folder path is provided
           the results will be saved to a file named `evaluation_results.json` in the folder.
     :paramtype output_path: Optional[str]
-    :keyword azure_ai_project: Logs evaluation results to AI Studio if set.
-    :paramtype azure_ai_project: Optional[~azure.ai.evaluation.AzureAIProject]
+    :keyword azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint 
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :paramtype azure_ai_project: Optional[Union[str, ~azure.ai.evaluation.AzureAIProject]]
     :keyword fail_on_evaluator_errors: Whether or not the evaluation should cancel early with an EvaluationException
         if ANY evaluator fails during their evaluation.
         Defaults to false, which means that evaluations will continue regardless of failures.
@@ -1133,8 +1134,8 @@ def _map_names_to_builtins(
     ) -> Dict[str, str]:
     """
     Construct a mapping from user-supplied evaluator names to which known, built-in
-    evaluator or grader they refer to. Custom or otherwise unknown evaluators are
-    mapped to the "unknown" value.
+    evaluator or grader they refer to. Custom evaluators are excluded from the mapping
+    as we only want to track built-in evaluators and graders.
 
     :param evaluators: The dictionary of evaluators.
     :type evaluators: Dict[str, Callable]
@@ -1156,8 +1157,8 @@ def _map_names_to_builtins(
                 found_eval = True
                 break
         if not found_eval:
-            # If not found, map to "unknown"
-            name_map[name] = "unknown"
+            # Skip custom evaluators - we only want to track built-in evaluators
+            pass
     
     for  name, grader in graders.items():
         name_map[name] = grader.id

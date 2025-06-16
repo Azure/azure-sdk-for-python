@@ -33,15 +33,20 @@ class TestBackupClientTests(KeyVaultTestCase):
         set_bodiless_matcher()
         # backup the vault
         container_uri = kwargs.pop("container_uri")
-        check_result = client.begin_pre_backup(container_uri, use_managed_identity=True).result()
-        assert check_result.error is None
+        # make sure an error isn't raised by pre-backup check; i.e. ensure the backup can be done
+        client.begin_pre_backup(container_uri, use_managed_identity=True).wait()
         backup_poller = client.begin_backup(container_uri, use_managed_identity=True)
         backup_operation = backup_poller.result()
         assert backup_operation.folder_url
 
+        if self.is_live:
+            # Additional waiting to ensure backup will be available for restore. Otherwise, can get the following:
+            # "This Managed HSM hasn't been backed up within the safe time limit of 30 minutes"
+            time.sleep(15)
+
         # restore the backup
-        check_result = client.begin_pre_restore(backup_operation.folder_url, use_managed_identity=True).result()
-        assert check_result.error is None
+        # make sure an error isn't raised by pre-restore check; i.e. ensure the restore can be done
+        client.begin_pre_restore(backup_operation.folder_url, use_managed_identity=True).wait()
         restore_poller = client.begin_restore(backup_operation.folder_url, use_managed_identity=True)
         restore_poller.wait()
         if self.is_live:
@@ -65,6 +70,9 @@ class TestBackupClientTests(KeyVaultTestCase):
         assert rehydrated_operation.folder_url
         backup_operation = backup_poller.result()
         assert backup_operation.folder_url == rehydrated_operation.folder_url
+
+        if self.is_live:
+            time.sleep(15)  # Additional waiting to ensure backup will be available for restore
 
         # restore the backup
         restore_poller = client.begin_restore(folder_url=backup_operation.folder_url, use_managed_identity=True)
@@ -96,6 +104,9 @@ class TestBackupClientTests(KeyVaultTestCase):
         container_uri = kwargs.pop("container_uri")
         backup_poller = client.begin_backup(container_uri, use_managed_identity=True)
         backup_operation = backup_poller.result()
+
+        if self.is_live:
+            time.sleep(15)  # Additional waiting to ensure backup will be available for restore
 
         # restore the key
         restore_poller = client.begin_restore(backup_operation.folder_url, use_managed_identity=True, key_name=key_name)
@@ -141,6 +152,9 @@ class TestBackupClientTests(KeyVaultTestCase):
         assert late_rehydrated.status() == "Succeeded"
         late_rehydrated.wait()
 
+        if self.is_live:
+            time.sleep(15)  # Additional waiting to ensure backup will be available for restore
+
         # restore the backup
         restore_poller = client.begin_restore(backup_operation.folder_url, use_managed_identity=True)
 
@@ -172,15 +186,20 @@ class TestBackupClientTests(KeyVaultTestCase):
         # backup the vault
         container_uri = kwargs.pop("container_uri")
         sas_token = kwargs.pop("sas_token")
-        check_result = client.begin_pre_backup(container_uri, sas_token=sas_token).result()
-        assert check_result.error is None
+
+        if self.is_live and not sas_token:
+            pytest.skip("SAS token is required for live tests. Please set the BLOB_STORAGE_SAS_TOKEN environment variable.")
+
+        client.begin_pre_backup(container_uri, sas_token=sas_token).wait()
         backup_poller = client.begin_backup(container_uri, sas_token)  # Test positional SAS token for backwards compat
         backup_operation = backup_poller.result()
         assert backup_operation.folder_url
 
+        if self.is_live:
+            time.sleep(15)  # Additional waiting to ensure backup will be available for restore
+
         # restore the backup
-        check_result = client.begin_pre_restore(backup_operation.folder_url, sas_token=sas_token).result()
-        assert check_result.error is None
+        client.begin_pre_restore(backup_operation.folder_url, sas_token=sas_token).wait()
         restore_poller = client.begin_restore(backup_operation.folder_url, sas_token)  # Test positional SAS token
         restore_poller.wait()
         if self.is_live:

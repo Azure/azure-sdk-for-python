@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-agents azure-identity
+    pip install azure-ai-projects azure-ai-agents azure-identity
 
     Set this environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -27,11 +27,11 @@ USAGE:
 """
 
 import os
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import FabricTool, ListSortOrder
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
@@ -45,7 +45,9 @@ print(conn_id)
 fabric = FabricTool(connection_id=conn_id)
 
 # Create an Agent with the Fabric tool and process an Agent run
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
+
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",

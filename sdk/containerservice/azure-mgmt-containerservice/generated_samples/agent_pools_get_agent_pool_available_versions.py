@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2025-03-01/examples/AgentPoolsGetAgentPoolAvailableVersions.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2025-04-01/examples/AgentPoolsGetAgentPoolAvailableVersions.json
 if __name__ == "__main__":
     main()

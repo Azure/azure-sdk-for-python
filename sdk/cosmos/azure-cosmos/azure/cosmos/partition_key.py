@@ -26,8 +26,8 @@ import struct
 from typing import IO, Sequence, Type, Union, overload, List, cast
 from typing_extensions import Literal
 
-from ._cosmos_integers import _UInt64, _UInt128
-from ._cosmos_murmurhash3 import murmurhash3_128 as _murmurhash3_128
+from ._cosmos_integers import _UInt32, _UInt64, _UInt128
+from ._cosmos_murmurhash3 import murmurhash3_128 as _murmurhash3_128, murmurhash3_32 as _murmurhash3_32
 from ._routing.routing_range import Range as _Range
 
 
@@ -182,14 +182,47 @@ class PartitionKey(dict):
                 cast(Sequence[Union[None, bool, int, float, str, Type[NonePartitionKeyValue]]], pk_value))
 
         # else return point range
-        effective_partition_key_string =\
-            self._get_effective_partition_key_string(
-                cast(List[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]], [pk_value]))
+        if isinstance(pk_value, (list, tuple)) or (isinstance(pk_value, Sequence) and not isinstance(pk_value, str)):
+            effective_partition_key_string = self._get_effective_partition_key_string(
+                cast(Sequence[Union[None, bool, int, float, str, Type[NonePartitionKeyValue]]], pk_value))
+        else:
+            effective_partition_key_string =\
+                self._get_effective_partition_key_string(
+                    cast(List[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]], [pk_value]))
         return _Range(effective_partition_key_string, effective_partition_key_string, True, True)
 
-    def _get_effective_partition_key_for_hash_partitioning(self) -> str:
-        # We shouldn't be supporting V1
-        return ""
+    @staticmethod
+    def _truncate_for_v1_hashing(
+            value: Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]
+    ) -> Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]:
+        if isinstance(value, str):
+            return value[:100]
+        return value
+
+    @staticmethod
+    def _get_effective_partition_key_for_hash_partitioning(
+            pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]]
+    ) -> str:
+        truncated_components = []
+        # In Python, Strings are sequences, so we make sure we instead hash the entire string instead of each character
+        if isinstance(pk_value, str):
+            truncated_components.append(PartitionKey._truncate_for_v1_hashing(pk_value))
+        else:
+            truncated_components = [PartitionKey._truncate_for_v1_hashing(v) for v in pk_value]
+        with BytesIO() as ms:
+            for component in truncated_components:
+                if isinstance(component, int) and not isinstance(component, bool):
+                    component = float(int(_UInt32(component)))
+                PartitionKey._write_for_hashing(component, ms)
+
+            ms_bytes: bytes = ms.getvalue()
+            # We use Our own MurmurHash3 implementation to match the behavior of other SDKs
+            # We put into a Cosmos Integer of Unsigned 32-bit Integer, to match the behavior of other SDKs
+            hash_as_int: _UInt32 = _murmurhash3_32(bytearray(ms_bytes), 0)
+            hash_value = float(int(hash_as_int))
+
+        partition_key_components = [hash_value] + truncated_components
+        return _to_hex_encoded_binary_string_v1(partition_key_components)
 
     def _get_effective_partition_key_string(
         self,
@@ -205,16 +238,31 @@ class PartitionKey(dict):
         if kind == 'Hash':
             version = self.version or 2
             if version == 1:
-                return self._get_effective_partition_key_for_hash_partitioning()
+                return PartitionKey._get_effective_partition_key_for_hash_partitioning(pk_value)
             if version == 2:
-                return self._get_effective_partition_key_for_hash_partitioning_v2(pk_value)
+                return PartitionKey._get_effective_partition_key_for_hash_partitioning_v2(pk_value)
         elif kind == 'MultiHash':
             return self._get_effective_partition_key_for_multi_hash_partitioning_v2(pk_value)
         return _to_hex_encoded_binary_string(pk_value)
 
+    @staticmethod
+    def _write_for_hashing(
+            value: Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]],
+            writer: IO[bytes]
+    ) -> None:
+        PartitionKey._write_for_hashing_core(value, bytes([0]), writer)
+
+    @staticmethod
     def _write_for_hashing_v2(
-        self,
         value: Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]],
+        writer: IO[bytes]
+    ) -> None:
+        PartitionKey._write_for_hashing_core(value, bytes([0xFF]), writer)
+
+    @staticmethod
+    def _write_for_hashing_core(
+        value: Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]],
+        string_suffix: bytes,
         writer: IO[bytes]
     ) -> None:
         if value is True:
@@ -225,24 +273,25 @@ class PartitionKey(dict):
             writer.write(bytes([_PartitionKeyComponentType.Null]))
         elif isinstance(value, int):
             writer.write(bytes([_PartitionKeyComponentType.Number]))
-            writer.write(value.to_bytes(8, 'little'))  # assuming value is a 64-bit integer
+            # Cast to Float to ensure correct packing
+            writer.write(struct.pack('<d', float(value)))
         elif isinstance(value, float):
             writer.write(bytes([_PartitionKeyComponentType.Number]))
             writer.write(struct.pack('<d', value))
         elif isinstance(value, str):
             writer.write(bytes([_PartitionKeyComponentType.String]))
             writer.write(value.encode('utf-8'))
-            writer.write(bytes([0xFF]))
+            writer.write(string_suffix)
         elif isinstance(value, _Undefined):
             writer.write(bytes([_PartitionKeyComponentType.Undefined]))
 
+    @staticmethod
     def _get_effective_partition_key_for_hash_partitioning_v2(
-        self,
         pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]]
     ) -> str:
         with BytesIO() as ms:
             for component in pk_value:
-                self._write_for_hashing_v2(component, ms)
+                PartitionKey._write_for_hashing_v2(component, ms)
 
             ms_bytes = ms.getvalue()
             hash128 = _murmurhash3_128(bytearray(ms_bytes), _UInt128(0, 0))
@@ -255,8 +304,8 @@ class PartitionKey(dict):
 
         return ''.join('{:02X}'.format(x) for x in hash_bytes)
 
+    @staticmethod
     def _get_effective_partition_key_for_multi_hash_partitioning_v2(
-        self,
         pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]]
     ) -> str:
         sb = []
@@ -265,7 +314,7 @@ class PartitionKey(dict):
             binary_writer = ms  # In Python, you can write bytes directly to a BytesIO object
 
             # Assuming paths[i] is the correct object to call write_for_hashing_v2 on
-            self._write_for_hashing_v2(value, binary_writer)
+            PartitionKey._write_for_hashing_v2(value, binary_writer)
 
             ms_bytes = ms.getvalue()
             hash128 = _murmurhash3_128(bytearray(ms_bytes), _UInt128(0, 0))
@@ -311,6 +360,68 @@ def _to_hex_encoded_binary_string(components: Sequence[object]) -> str:
 
     return _to_hex(buffer_bytes[:ms.tell()], 0, ms.tell())
 
+def _to_hex_encoded_binary_string_v1(components: Sequence[object]) -> str:
+    ms = BytesIO()
+    for component in components:
+        if isinstance(component, (bool, int, float, str, _Infinity, _Undefined)):
+            _write_for_binary_encoding_v1(component, ms)
+        else:
+            raise TypeError(f"Unexpected type for PK component: {type(component)}")
+
+    return _to_hex(bytearray(ms.getvalue()), 0, ms.tell())
+
+def _write_for_binary_encoding_v1(
+    value: Union[bool, int, float, str, _Infinity, _Undefined],
+    binary_writer: IO[bytes]
+) -> None:
+    if isinstance(value, bool):
+        binary_writer.write(bytes([(_PartitionKeyComponentType.PTrue if value else _PartitionKeyComponentType.PFalse)]))
+
+    elif isinstance(value, _Infinity):
+        binary_writer.write(bytes([_PartitionKeyComponentType.Infinity]))
+
+    elif isinstance(value, (int, float)):  # Assuming number value is int or float
+        binary_writer.write(bytes([_PartitionKeyComponentType.Number]))
+        # For V1 Hashing we need to encode the value as a UInt64 From a Float regardless if it was an int or float
+        if isinstance(value, float):
+            payload = _UInt64(_UInt64.encode_double_as_uint64(value))
+        else:
+            payload = _UInt64(_UInt64.encode_double_as_uint64(float(value)))
+
+        # Encode first chunk with 8-bits of payload
+        binary_writer.write(bytes([int((payload >> (64 - 8)))]))
+        payload <<= 8
+
+        # Encode remaining chunks with 7 bits of payload followed by single "1" bit each.
+        byte_to_write = 0
+        first_iteration = True
+        while payload != 0:
+            if not first_iteration:
+                binary_writer.write(bytes([byte_to_write]))
+            else:
+                first_iteration = False
+
+            byte_to_write = int((payload >> (64 - 8)) | int(0x01))
+            payload <<= 7
+
+        # Except for last chunk that ends with "0" bit.
+        binary_writer.write(bytes([(byte_to_write & 0xFE)]))
+
+    elif isinstance(value, str):
+        binary_writer.write(bytes([_PartitionKeyComponentType.String]))
+        utf8_value = value.encode('utf-8')
+        short_string = len(utf8_value) <= _MaxStringBytesToAppend
+
+        for index in range(short_string and len(utf8_value) or _MaxStringBytesToAppend + 1):
+            char_byte = utf8_value[index]
+            char_byte += 1
+            binary_writer.write(bytes([char_byte]))
+
+        if short_string:
+            binary_writer.write(bytes([0x00]))
+
+    elif isinstance(value, _Undefined):
+        binary_writer.write(bytes([_PartitionKeyComponentType.Undefined]))
 
 def _write_for_binary_encoding(
     value: Union[bool, int, float, str, _Infinity, _Undefined],
