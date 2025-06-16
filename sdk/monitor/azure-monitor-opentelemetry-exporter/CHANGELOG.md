@@ -6,6 +6,8 @@
 
 - Add AMW deduplicating flag, SentToAMW, for AKS Attach
   ([#41410](https://github.com/Azure/azure-sdk-for-python/pull/41410))
+- Implement APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED env var for AKS Attach .
+  ([#41383](https://github.com/Azure/azure-sdk-for-python/pull/41383))
 
 ### Breaking Changes
 
