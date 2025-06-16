@@ -26,6 +26,7 @@ from azure.monitor.opentelemetry.exporter.export.metrics._exporter import (
     AzureMonitorMetricExporter,
     _get_metric_export_result,
 )
+from azure.monitor.opentelemetry.exporter.statsbeat._exporter import _StatsBeatExporter
 from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
 from azure.monitor.opentelemetry.exporter._utils import (
     azure_monitor_context,
@@ -84,6 +85,27 @@ class TestAzureMetricExporter(unittest.TestCase):
                     schema_url="test url",
                 )
             ]
+        )
+        cls._histogram_data_point = HistogramDataPoint(
+            attributes={
+                "test": "attribute",
+            },
+            bucket_counts=[0, 3, 4],
+            count=7,
+            explicit_bounds=[0, 5, 10, 0],
+            max=18,
+            min=1,
+            start_time_unix_nano=1646865018558419456,
+            time_unix_nano=1646865018558419457,
+            sum=31,
+        )
+        cls._number_data_point = NumberDataPoint(
+            attributes={
+                "test": "attribute",
+            },
+            start_time_unix_nano=1646865018558419456,
+            time_unix_nano=1646865018558419457,
+            value=10,
         )
 
     @classmethod
@@ -202,14 +224,7 @@ class TestAzureMetricExporter(unittest.TestCase):
     def test_point_to_envelope_partA_default(self):
         exporter = self._exporter
         resource = Resource({"service.name": "testServiceName"})
-        point = NumberDataPoint(
-            attributes={
-                "test": "attribute",
-            },
-            start_time_unix_nano=1646865018558419456,
-            time_unix_nano=1646865018558419457,
-            value=10,
-        )
+        point = self._number_data_point
         envelope = exporter._point_to_envelope(point, "test name", resource)
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE), "testServiceName")
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE), platform.node())
@@ -222,14 +237,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         exporter = self._exporter
         resource = Resource.create(attributes={"asd": "test_resource"})
         scope = InstrumentationScope("test_scope")
-        point = NumberDataPoint(
-            attributes={
-                "test": "attribute",
-            },
-            start_time_unix_nano=1646865018558419456,
-            time_unix_nano=1646865018558419457,
-            value=10,
-        )
+        point = self._number_data_point
         envelope = exporter._point_to_envelope(point, "test name", resource, scope)
         self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
@@ -246,19 +254,7 @@ class TestAzureMetricExporter(unittest.TestCase):
     def test_point_to_envelope_histogram(self):
         exporter = self._exporter
         resource = Resource.create(attributes={"asd": "test_resource"})
-        point = HistogramDataPoint(
-            attributes={
-                "test": "attribute",
-            },
-            bucket_counts=[0, 3, 4],
-            count=7,
-            explicit_bounds=[0, 5, 10, 0],
-            max=18,
-            min=1,
-            start_time_unix_nano=1646865018558419456,
-            time_unix_nano=1646865018558419457,
-            sum=31,
-        )
+        point = self._histogram_data_point
         envelope = exporter._point_to_envelope(point, "test name", resource)
         self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
@@ -271,6 +267,90 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.metrics[0].value, 31)
         self.assertEqual(envelope.data.base_data.metrics[0].count, 7)
 
+    @mock.patch.dict("os.environ", {
+        "OTEL_METRICS_EXPORTER": " foo, otlp, bar",
+        "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT": "TEST_ENDPOINT",
+    })
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_on_aks", return_value=True)
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True)
+    def test_point_to_envelope_aks_amw(self, attach_mock, aks_mock):
+        exporter = self._exporter
+        resource = Resource.create(attributes={"asd": "test_resource"})
+        scope = InstrumentationScope("test_scope")
+        point = self._number_data_point
+        envelope = exporter._point_to_envelope(point, "test name", resource, scope)
+        self.assertEqual(len(envelope.data.base_data.properties), 2)
+        self.assertEqual(envelope.data.base_data.properties["_MS.SentToAMW"], "True")
+
+    @mock.patch.dict("os.environ", {
+        "OTEL_METRICS_EXPORTER": " foo, otlp, bar",
+        "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT": "TEST_ENDPOINT",
+    })
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_on_aks", return_value=True)
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True)
+    def test_point_to_envelope_statsbeat(self, attach_mock, aks_mock):
+        exporter = _StatsBeatExporter()
+        point = self._number_data_point
+        envelope = exporter._point_to_envelope(point, "attach")
+        self.assertEqual(len(envelope.data.base_data.properties), 1)
+        self.assertNotIn("_MS.SentToAMW", envelope.data.base_data.properties)
+
+    @mock.patch.dict("os.environ", {
+        "OTEL_METRICS_EXPORTER": " foo ,otlp ,bar",
+        "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT": "TEST_ENDPOINT",
+    })
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_on_aks", return_value=False)
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True)
+    def test_point_to_envelope_otlp_no_aks(self, attach_mock, aks_mock):
+        exporter = self._exporter
+        resource = Resource.create(attributes={"asd": "test_resource"})
+        point = self._histogram_data_point
+        envelope = exporter._point_to_envelope(point, "test name", resource)
+        self.assertEqual(len(envelope.data.base_data.properties), 1)
+        self.assertNotIn("_MS.SentToAMW", envelope.data.base_data.properties)
+
+    @mock.patch.dict("os.environ", {
+        "OTEL_METRICS_EXPORTER": " foo ,otlp ,bar",
+        "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT": "TEST_ENDPOINT",
+    })
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_on_aks", return_value=True)
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=False)
+    def test_point_to_envelope_otlp_aks_no_attach(self, attach_mock, aks_mock):
+        exporter = self._exporter
+        resource = Resource.create(attributes={"asd": "test_resource"})
+        point = self._histogram_data_point
+        envelope = exporter._point_to_envelope(point, "test name", resource)
+        self.assertEqual(len(envelope.data.base_data.properties), 1)
+        self.assertNotIn("_MS.SentToAMW", envelope.data.base_data.properties)
+
+    @mock.patch.dict("os.environ", {
+        "OTEL_METRICS_EXPORTER": " foo, bar",
+        "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT": "TEST_ENDPOINT",
+    })
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_on_aks", return_value=True)
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True)
+    def test_point_to_envelope_aks_attach_no_otlp(self, attach_mock, aks_mock):
+        exporter = self._exporter
+        resource = Resource.create(attributes={"asd": "test_resource"})
+        scope = InstrumentationScope("test_scope")
+        point = self._number_data_point
+        envelope = exporter._point_to_envelope(point, "test name", resource, scope)
+        self.assertEqual(len(envelope.data.base_data.properties), 2)
+        self.assertEqual(envelope.data.base_data.properties["_MS.SentToAMW"], "False")
+
+    @mock.patch.dict("os.environ", {
+        "OTEL_METRICS_EXPORTER": " foo ,otlp ,bar",
+    })
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_on_aks", return_value=True)
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True)
+    def test_point_to_envelope_aks_attach_no_endpoint(self, attach_mock, aks_mock):
+        exporter = self._exporter
+        resource = Resource.create(attributes={"asd": "test_resource"})
+        point = self._histogram_data_point
+        envelope = exporter._point_to_envelope(point, "test name", resource)
+        self.assertEqual(len(envelope.data.base_data.properties), 2)
+        self.assertEqual(envelope.data.base_data.properties["_MS.SentToAMW"], "False")
+
     @mock.patch.dict(
         "os.environ",
         {
@@ -281,14 +361,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         exporter = self._exporter
         resource = Resource.create(attributes={"asd": "test_resource"})
         scope = InstrumentationScope("test_scope")
-        point = NumberDataPoint(
-            attributes={
-                "test": "attribute",
-            },
-            start_time_unix_nano=1646865018558419456,
-            time_unix_nano=1646865018558419457,
-            value=10,
-        )
+        point = self._number_data_point
         envelope = exporter._point_to_envelope(point, "test name", resource, scope)
         self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
@@ -328,6 +401,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_type, "MetricData")
         self.assertEqual(envelope.data.base_data.properties["_MS.MetricId"], "dependencies/duration")
         self.assertEqual(envelope.data.base_data.properties["_MS.IsAutocollected"], "True")
+        self.assertNotIn("_MS.SentToAMW", envelope.data.base_data.properties)
         self.assertEqual(envelope.data.base_data.properties["Dependency.Type"], "http")
         self.assertEqual(envelope.data.base_data.properties["Dependency.Success"], "True")
         self.assertEqual(envelope.data.base_data.properties["dependency/target"], "test_service")
@@ -366,6 +440,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_type, "MetricData")
         self.assertEqual(envelope.data.base_data.properties["_MS.MetricId"], "dependencies/duration")
         self.assertEqual(envelope.data.base_data.properties["_MS.IsAutocollected"], "True")
+        self.assertNotIn("_MS.SentToAMW", envelope.data.base_data.properties)
         self.assertEqual(envelope.data.base_data.properties["Dependency.Type"], "http")
         self.assertEqual(envelope.data.base_data.properties["Dependency.Success"], "True")
         self.assertEqual(envelope.data.base_data.properties["dependency/target"], "test_service")
@@ -401,6 +476,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_type, "MetricData")
         self.assertEqual(envelope.data.base_data.properties["_MS.MetricId"], "requests/duration")
         self.assertEqual(envelope.data.base_data.properties["_MS.IsAutocollected"], "True")
+        self.assertNotIn("_MS.SentToAMW", envelope.data.base_data.properties)
         self.assertEqual(envelope.data.base_data.properties["Request.Success"], "True")
         self.assertEqual(envelope.data.base_data.properties["request/resultCode"], "200")
         self.assertEqual(envelope.data.base_data.properties["cloud/roleInstance"], "testServiceInstanceId")
@@ -442,6 +518,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_type, "MetricData")
         self.assertEqual(envelope.data.base_data.properties["_MS.MetricId"], "requests/duration")
         self.assertEqual(envelope.data.base_data.properties["_MS.IsAutocollected"], "True")
+        self.assertNotIn("_MS.SentToAMW", envelope.data.base_data.properties)
         self.assertEqual(envelope.data.base_data.properties["Request.Success"], "True")
         self.assertEqual(envelope.data.base_data.properties["request/resultCode"], "200")
         self.assertEqual(envelope.data.base_data.properties["cloud/roleInstance"], "testServiceInstanceId")
