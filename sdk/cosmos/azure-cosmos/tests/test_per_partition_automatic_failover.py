@@ -15,11 +15,11 @@ from test_per_partition_circuit_breaker_mm import (REGION_1, REGION_2, PK_VALUE,
 
 # cspell:disable
 
-@pytest.fixture(scope="class", autouse=True)
-def setup_teardown():
-    os.environ["AZURE_COSMOS_ENABLE_PER_PARTITION_AUTOMATIC_FAILOVER"] = "True"
-    yield
-    os.environ["AZURE_COSMOS_ENABLE_PER_PARTITION_AUTOMATIC_FAILOVER"] = "False"
+# @pytest.fixture(scope="class", autouse=True)
+# def setup_teardown():
+#     os.environ["AZURE_COSMOS_ENABLE_PER_PARTITION_AUTOMATIC_FAILOVER"] = "True"
+#     yield
+#     os.environ["AZURE_COSMOS_ENABLE_PER_PARTITION_AUTOMATIC_FAILOVER"] = "False"
 
 
 def create_errors():
