@@ -18,7 +18,6 @@ from unittest_helpers import mock_response
 from unittest.mock import Mock
 from azure.communication.callautomation._utils import serialize_identifier
 
-
 class TestCallConnectionClient(unittest.TestCase):
     call_connection_id = "10000000-0000-0000-0000-000000000000"
     communication_user_id = "8:acs:123"
