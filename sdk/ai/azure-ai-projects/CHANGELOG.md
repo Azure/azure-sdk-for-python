@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b12 (Unreleased)
+## 1.0.0b12 (2025-06-16)
 
 ### Breaking changes
 
@@ -14,7 +14,6 @@ to perform chat completions with an Azure OpenAI client.
   * In method `.indexes.create_or_update()` argument `body` was renamed `index`.
   * In method `.datasets.create_or_update()` argument `body` was renamed `dataset_version`.
   * In method `.datasets.pending_upload()` argument `body` was renamed `pending_upload_request`.
-
 
 ### Bugs Fixed
 
