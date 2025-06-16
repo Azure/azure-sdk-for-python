@@ -27,27 +27,10 @@
 # --------------------------------------------------------------------------
 
 
-from collections.abc import MutableMapping
-from typing import Any, TYPE_CHECKING, Union, Optional
-import urllib.parse
+from typing import Any, TYPE_CHECKING, Union
 
 from azure.core.credentials import AzureKeyCredential
-from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import (
-    ClientAuthenticationError,
-    HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError,
-    ResourceNotModifiedError,
-    map_error,
-)
-from azure.core.rest import HttpRequest
-from azure.core.tracing.decorator import distributed_trace
-from azure.core.utils import case_insensitive_dict
 
-from .._operations._operations import (
-    build_web_pub_sub_service_list_connections_request,
-)
 
 from .._patch import _parse_connection_string, WebPubSubServiceClientBase
 from ._client import WebPubSubServiceClient as WebPubSubServiceClientGenerated
