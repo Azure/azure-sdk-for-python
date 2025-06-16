@@ -61,7 +61,7 @@
     },
     {
       "PerPartitionAutomaticFailoverTestConfig": {
-        "Ubuntu2004_313_ppaf": {
+        "Ubuntu2004_313_partition_automatic_failover": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.13",

@@ -58,7 +58,8 @@ class PartitionLevelFailoverInfo:
 
             return False
 
-class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(_GlobalPartitionEndpointManagerForCircuitBreakerAsync):
+class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
+    _GlobalPartitionEndpointManagerForCircuitBreakerAsync):
     """
     This internal class implements the logic for partition endpoint management for
     geo-replicated database accounts.
@@ -126,8 +127,7 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(_Glob
                 partition_failover_info.current_regional_endpoint = request.location_endpoint_to_route
                 self.partition_range_to_failover_info[pk_range_wrapper] = partition_failover_info
             return self._resolve_service_endpoint(request)
-        else:
-            return self._resolve_service_endpoint_for_partition_circuit_breaker(request, pk_range_wrapper)
+        return self._resolve_service_endpoint_for_partition_circuit_breaker(request, pk_range_wrapper)
 
     def compute_available_preferred_regions(
             self,

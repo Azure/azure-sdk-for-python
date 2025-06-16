@@ -17,7 +17,7 @@ from test_per_partition_automatic_failover import create_errors
 from test_per_partition_circuit_breaker_mm import REGION_1, REGION_2, PK_VALUE, BATCH, write_operations_and_errors
 from test_per_partition_circuit_breaker_mm_async import perform_write_operation
 
-# cspell:disable-file
+# cspell:disable
 
 @pytest.fixture(scope="class", autouse=True)
 def setup_teardown():
