@@ -27,6 +27,22 @@ logging.getLogger().setLevel(logging.INFO)
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 
 
+def get_pip_command():
+    """
+    Determine whether to use 'uv pip' or regular 'pip' based on environment.
+    Returns the appropriate pip command as a list.
+    
+    Uses TOX_PIP_IMPL environment variable to align with tox.ini configuration.
+    """
+    # Check TOX_PIP_IMPL environment variable (aligns with tox.ini configuration)
+    pip_impl = os.environ.get('TOX_PIP_IMPL', 'pip').lower()
+    
+    if pip_impl == 'uv':
+        return ["uv", "pip"]
+    else:
+        return ["pip"]
+
+
 def install_from_main(setup_path: str) -> None:
     path = pathlib.Path(setup_path)
     subdirectory = path.relative_to(root_dir)
@@ -51,9 +67,7 @@ def install_from_main(setup_path: str) -> None:
 
             os.chdir(subdirectory)
 
-            command = [
-                "uv",
-                "pip",
+            command = get_pip_command() + [
                 "install",
                 ".",
                 "--force-reinstall"

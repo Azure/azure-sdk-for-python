@@ -10,6 +10,7 @@
 import sys
 import argparse
 import logging
+import os
 from os import path
 from subprocess import check_call
 
@@ -30,6 +31,23 @@ EXCLUDED_PKGS = [
 DEV_INDEX_URL = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple"
 
 logging.getLogger().setLevel(logging.INFO)
+
+
+def get_pip_command():
+    """
+    Determine whether to use 'uv pip' or regular 'pip' based on environment.
+    Returns the appropriate pip command as a list.
+
+    Uses TOX_PIP_IMPL environment variable to align with tox.ini configuration.
+    """
+    # Check TOX_PIP_IMPL environment variable (aligns with tox.ini configuration)
+    pip_impl = os.environ.get('TOX_PIP_IMPL', 'pip').lower()
+    
+    if pip_impl == 'uv':
+        return ["uv", "pip"]
+    else:
+        return ["pip"]
+
 
 # This script verifies installed package version and ensure all installed pacakges are dev build version
 
@@ -61,11 +79,8 @@ def get_installed_azure_packages(pkg_name_to_exclude):
 
 def uninstall_packages(packages):
     # This method uninstall list of given packages so dev build version can be reinstalled
-    commands = [
-        "uv",
-        "pip",
-        "uninstall",
-    ]
+    commands = get_pip_command()
+    commands.append("uninstall")
 
     logging.info("Uninstalling packages: %s", packages)
     commands.extend(packages)
@@ -78,11 +93,8 @@ def uninstall_packages(packages):
 def install_packages(packages):
     # install list of given packages from devops feed
 
-    commands = [
-        "uv",
-        "pip",
-        "install",
-    ]
+    commands = get_pip_command()
+    commands.append("install")
 
     logging.info("Installing dev build version for packages: %s", packages)
     commands.extend(packages)
@@ -101,6 +113,7 @@ def install_dev_build_packages(pkg_name_to_exclude):
     azure_pkgs = get_installed_azure_packages(pkg_name_to_exclude)
     uninstall_packages(azure_pkgs)
     install_packages(azure_pkgs)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

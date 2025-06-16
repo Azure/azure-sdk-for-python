@@ -24,10 +24,12 @@ from .managed_virtual_env import ManagedVirtualEnv
 def _get_pip_command(python_exe: str) -> list:
     """
     Returns the appropriate pip command based on the environment.
-    If we're in a tox environment with uv, use 'uv pip', otherwise use 'python -m pip'.
+    Uses TOX_PIP_IMPL environment variable to determine whether to use 'uv pip' or 'python -m pip'.
     """
-    # Check if we're in a tox environment with uv by looking for TOX_ENV_NAME and checking if uv is available
-    if os.getenv("TOX_ENV_NAME") and shutil.which("uv"):
+    # Check TOX_PIP_IMPL environment variable (aligns with tox.ini configuration)
+    pip_impl = os.getenv("TOX_PIP_IMPL", "pip").lower()
+    
+    if pip_impl == "uv":
         return ["uv", "pip"]
     else:
         return [python_exe, "-m", "pip"]
