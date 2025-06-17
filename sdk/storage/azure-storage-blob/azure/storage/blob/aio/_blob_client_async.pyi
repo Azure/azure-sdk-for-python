@@ -6,6 +6,7 @@
 # pylint: skip-file
 
 from datetime import datetime
+from types import TracebackType
 from typing import (
     Any,
     AnyStr,
@@ -78,6 +79,11 @@ class BlobClient(  # type: ignore[misc]
         use_byte_buffer: Optional[bool] = None,
         **kwargs: Any
     ) -> None: ...
+    async def __aenter__(self) -> Self: ...
+    async def __aexit__(
+        self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
+    ) -> None: ...
+    async def close(self) -> None: ...
     @classmethod
     def from_blob_url(
         cls,
