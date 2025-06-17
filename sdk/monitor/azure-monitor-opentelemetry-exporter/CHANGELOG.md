@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b38 (Unreleased)
+## 1.0.0b38 (2025-06-17)
 
 ### Features Added
 
@@ -8,8 +8,6 @@
   ([#41410](https://github.com/Azure/azure-sdk-for-python/pull/41410))
 - Implement APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED env var for AKS Attach .
   ([#41383](https://github.com/Azure/azure-sdk-for-python/pull/41383))
-
-### Breaking Changes
 
 ### Bugs Fixed
 - Fix for issue #41470. Added back exception message, removed earlier due to linting errors
