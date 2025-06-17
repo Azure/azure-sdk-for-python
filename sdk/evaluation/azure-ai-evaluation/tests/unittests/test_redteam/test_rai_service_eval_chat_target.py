@@ -73,7 +73,8 @@ async def test_send_prompt_async_success(mock_evaluate, mock_prompt_request, moc
         {"query": "query", "response": "Test prompt"},
         metric_name="hate_fairness",
         project_scope=mock_azure_ai_project,
-        credential=MockCredential
+        credential=MockCredential,
+        annotation_task='content harm'
     )
 
     assert len(response.request_pieces) == 1
