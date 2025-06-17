@@ -5,13 +5,13 @@
         "name": "WebSiteManagementClient",
         "filename": "_web_site_management_client",
         "description": "WebSite Management Client.",
-        "host_value": "\"https://management.azure.com\"",
+        "host_value": null,
         "parameterized_host_template": null,
         "azure_arm": true,
         "has_public_lro_operations": true,
         "client_side_validation": false,
-        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"sdkcore\": {\"azure.mgmt.core\": [\"ARMPipelineClient\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMAutoResourceProviderRegistrationPolicy\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"local\": {\"._configuration\": [\"WebSiteManagementClientConfiguration\"], \".._serialization\": [\"Deserializer\", \"Serializer\"], \"._operations_mixin\": [\"WebSiteManagementClientOperationsMixin\"]}, \"stdlib\": {\"typing_extensions\": [\"Self\"]}}, \"typing\": {\"sdkcore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
-        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"sdkcore\": {\"azure.mgmt.core\": [\"AsyncARMPipelineClient\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"AsyncARMAutoResourceProviderRegistrationPolicy\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"local\": {\"._configuration\": [\"WebSiteManagementClientConfiguration\"], \"..._serialization\": [\"Deserializer\", \"Serializer\"], \"._operations_mixin\": [\"WebSiteManagementClientOperationsMixin\"]}, \"stdlib\": {\"typing_extensions\": [\"Self\"]}}, \"typing\": {\"sdkcore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"sdkcore\": {\"azure.mgmt.core\": [\"ARMPipelineClient\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMAutoResourceProviderRegistrationPolicy\"], \"azure.core.settings\": [\"settings\"], \"azure.mgmt.core.tools\": [\"get_arm_endpoints\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"stdlib\": {\"typing\": [\"Optional\", \"cast\"], \"typing_extensions\": [\"Self\"]}, \"local\": {\"._configuration\": [\"WebSiteManagementClientConfiguration\"], \"._utils.serialization\": [\"Deserializer\", \"Serializer\"], \"._operations_mixin\": [\"WebSiteManagementClientOperationsMixin\"]}}, \"typing\": {\"sdkcore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"sdkcore\": {\"azure.mgmt.core\": [\"AsyncARMPipelineClient\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"AsyncARMAutoResourceProviderRegistrationPolicy\"], \"azure.core.settings\": [\"settings\"], \"azure.mgmt.core.tools\": [\"get_arm_endpoints\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"stdlib\": {\"typing\": [\"Optional\", \"cast\"], \"typing_extensions\": [\"Self\"]}, \"local\": {\"._configuration\": [\"WebSiteManagementClientConfiguration\"], \".._utils.serialization\": [\"Deserializer\", \"Serializer\"], \"._operations_mixin\": [\"WebSiteManagementClientOperationsMixin\"]}}, \"typing\": {\"sdkcore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "global_parameters": {
         "sync": {
@@ -57,7 +57,7 @@
                     "method_location": "positional"
                 },
                 "base_url": {
-                    "signature": "base_url: str = \"https://management.azure.com\",",
+                    "signature": "base_url: Optional[str] = None,",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false,
@@ -80,7 +80,7 @@
                     "method_location": "positional"
                 },
                 "base_url": {
-                    "signature": "base_url: str = \"https://management.azure.com\",",
+                    "signature": "base_url: Optional[str] = None,",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false,
@@ -137,8 +137,8 @@
         "workflow_versions": "WorkflowVersionsOperations"
     },
     "operation_mixins": {
-        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Iterable\", \"Union\"]}}, \"regular\": {\"local\": {\".\": [[\"models\", \"_models\"]]}, \"stdlib\": {\"typing\": [\"IO\", \"Optional\", \"Union\"], \"io\": [\"IOBase\"]}, \"sdkcore\": {\"azure.core.paging\": [\"ItemPaged\"]}}}",
-        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"AsyncIterable\", \"Union\"]}}, \"regular\": {\"local\": {\"..\": [[\"models\", \"_models\"]]}, \"stdlib\": {\"typing\": [\"IO\", \"Optional\", \"Union\"], \"io\": [\"IOBase\"]}, \"sdkcore\": {\"azure.core.async_paging\": [\"AsyncItemPaged\"]}}}",
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Union\"]}, \"sdkcore\": {\"azure.core.paging\": [\"ItemPaged\"]}}, \"regular\": {\"stdlib\": {\"typing\": [\"IO\", \"Optional\", \"Union\"], \"io\": [\"IOBase\"]}, \"sdkcore\": {\"azure.core.paging\": [\"ItemPaged\"]}, \"local\": {\".\": [[\"models\", \"_models\"]]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Union\"]}, \"sdkcore\": {\"azure.core.async_paging\": [\"AsyncItemPaged\"]}}, \"regular\": {\"stdlib\": {\"typing\": [\"IO\", \"Optional\", \"Union\"], \"io\": [\"IOBase\"]}, \"sdkcore\": {\"azure.core.async_paging\": [\"AsyncItemPaged\"]}, \"local\": {\"..\": [[\"models\", \"_models\"]]}}}",
         "sync_mixin_typing_definitions": "",
         "async_mixin_typing_definitions": "",
         "operations": {
@@ -170,13 +170,13 @@
             },
             "list_source_controls" : {
                 "sync": {
-                    "signature": "def list_source_controls(\n    self,\n    **kwargs: Any\n) -\u003e Iterable[\"_models.SourceControl\"]:\n",
+                    "signature": "def list_source_controls(\n    self,\n    **kwargs: Any\n) -\u003e ItemPaged[\"_models.SourceControl\"]:\n",
                     "doc": "\"\"\"Gets the source controls available for Azure websites.\n\nDescription for Gets the source controls available for Azure websites.\n\n:return: An iterator like instance of either SourceControl or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2023_01_01.models.SourceControl]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "**kwargs"
                 },
                 "async": {
                     "coroutine": false,
-                    "signature": "def list_source_controls(\n    self,\n    **kwargs: Any\n) -\u003e AsyncIterable[\"_models.SourceControl\"]:\n",
+                    "signature": "def list_source_controls(\n    self,\n    **kwargs: Any\n) -\u003e AsyncItemPaged[\"_models.SourceControl\"]:\n",
                     "doc": "\"\"\"Gets the source controls available for Azure websites.\n\nDescription for Gets the source controls available for Azure websites.\n\n:return: An iterator like instance of either SourceControl or the result of cls(response)\n:rtype:\n ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2023_01_01.models.SourceControl]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "**kwargs"
                 }
@@ -209,13 +209,13 @@
             },
             "list_billing_meters" : {
                 "sync": {
-                    "signature": "def list_billing_meters(\n    self,\n    billing_location: Optional[str] = None,\n    os_type: Optional[str] = None,\n    **kwargs: Any\n) -\u003e Iterable[\"_models.BillingMeter\"]:\n",
+                    "signature": "def list_billing_meters(\n    self,\n    billing_location: Optional[str] = None,\n    os_type: Optional[str] = None,\n    **kwargs: Any\n) -\u003e ItemPaged[\"_models.BillingMeter\"]:\n",
                     "doc": "\"\"\"Gets a list of meters for a given location.\n\nDescription for Gets a list of meters for a given location.\n\n:param billing_location: Azure Location of billable resource. Default value is None.\n:type billing_location: str\n:param os_type: App Service OS type meters used for. Default value is None.\n:type os_type: str\n:return: An iterator like instance of either BillingMeter or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2023_01_01.models.BillingMeter]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "billing_location, os_type, **kwargs"
                 },
                 "async": {
                     "coroutine": false,
-                    "signature": "def list_billing_meters(\n    self,\n    billing_location: Optional[str] = None,\n    os_type: Optional[str] = None,\n    **kwargs: Any\n) -\u003e AsyncIterable[\"_models.BillingMeter\"]:\n",
+                    "signature": "def list_billing_meters(\n    self,\n    billing_location: Optional[str] = None,\n    os_type: Optional[str] = None,\n    **kwargs: Any\n) -\u003e AsyncItemPaged[\"_models.BillingMeter\"]:\n",
                     "doc": "\"\"\"Gets a list of meters for a given location.\n\nDescription for Gets a list of meters for a given location.\n\n:param billing_location: Azure Location of billable resource. Default value is None.\n:type billing_location: str\n:param os_type: App Service OS type meters used for. Default value is None.\n:type os_type: str\n:return: An iterator like instance of either BillingMeter or the result of cls(response)\n:rtype:\n ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2023_01_01.models.BillingMeter]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "billing_location, os_type, **kwargs"
                 }
@@ -223,25 +223,25 @@
             "check_name_availability" : {
                 "sync": {
                     "signature": "def check_name_availability(\n    self,\n    name: str,\n    type: Union[str, _models.CheckNameResourceTypes],\n    is_fqdn: Optional[bool] = None,\n    environment_id: Optional[str] = None,\n    **kwargs: Any\n) -\u003e _models.ResourceNameAvailability:\n",
-                    "doc": "# pylint: disable=line-too-long\n\"\"\"Check if a resource name is available.\n\nDescription for Check if a resource name is available.\n\n:param name: Resource name to verify. Required.\n:type name: str\n:param type: Resource type used for verification. Known values are: \"Site\", \"Slot\",\n \"HostingEnvironment\", \"PublishingUser\", \"Microsoft.Web/sites\", \"Microsoft.Web/sites/slots\",\n \"Microsoft.Web/hostingEnvironments\", and \"Microsoft.Web/publishingUsers\". Required.\n:type type: str or ~azure.mgmt.web.v2023_01_01.models.CheckNameResourceTypes\n:param is_fqdn: Is fully qualified domain name. Default value is None.\n:type is_fqdn: bool\n:param environment_id: Azure Resource Manager ID of the customer\u0027s selected Container Apps\n Environment on which to host the Function app. This must be of the form\n /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.App/managedEnvironments/{managedEnvironmentName}.\n Default value is None.\n:type environment_id: str\n:return: ResourceNameAvailability or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2023_01_01.models.ResourceNameAvailability\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
+                    "doc": "\"\"\"Check if a resource name is available.\n\nDescription for Check if a resource name is available.\n\n:param name: Resource name to verify. Required.\n:type name: str\n:param type: Resource type used for verification. Known values are: \"Site\", \"Slot\",\n \"HostingEnvironment\", \"PublishingUser\", \"Microsoft.Web/sites\", \"Microsoft.Web/sites/slots\",\n \"Microsoft.Web/hostingEnvironments\", and \"Microsoft.Web/publishingUsers\". Required.\n:type type: str or ~azure.mgmt.web.v2023_01_01.models.CheckNameResourceTypes\n:param is_fqdn: Is fully qualified domain name. Default value is None.\n:type is_fqdn: bool\n:param environment_id: Azure Resource Manager ID of the customer\u0027s selected Container Apps\n Environment on which to host the Function app. This must be of the form\n /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.App/managedEnvironments/{managedEnvironmentName}.\n Default value is None.\n:type environment_id: str\n:return: ResourceNameAvailability or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2023_01_01.models.ResourceNameAvailability\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "name, type, is_fqdn, environment_id, **kwargs"
                 },
                 "async": {
                     "coroutine": true,
                     "signature": "async def check_name_availability(\n    self,\n    name: str,\n    type: Union[str, _models.CheckNameResourceTypes],\n    is_fqdn: Optional[bool] = None,\n    environment_id: Optional[str] = None,\n    **kwargs: Any\n) -\u003e _models.ResourceNameAvailability:\n",
-                    "doc": "# pylint: disable=line-too-long\n\"\"\"Check if a resource name is available.\n\nDescription for Check if a resource name is available.\n\n:param name: Resource name to verify. Required.\n:type name: str\n:param type: Resource type used for verification. Known values are: \"Site\", \"Slot\",\n \"HostingEnvironment\", \"PublishingUser\", \"Microsoft.Web/sites\", \"Microsoft.Web/sites/slots\",\n \"Microsoft.Web/hostingEnvironments\", and \"Microsoft.Web/publishingUsers\". Required.\n:type type: str or ~azure.mgmt.web.v2023_01_01.models.CheckNameResourceTypes\n:param is_fqdn: Is fully qualified domain name. Default value is None.\n:type is_fqdn: bool\n:param environment_id: Azure Resource Manager ID of the customer\u0027s selected Container Apps\n Environment on which to host the Function app. This must be of the form\n /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.App/managedEnvironments/{managedEnvironmentName}.\n Default value is None.\n:type environment_id: str\n:return: ResourceNameAvailability or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2023_01_01.models.ResourceNameAvailability\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
+                    "doc": "\"\"\"Check if a resource name is available.\n\nDescription for Check if a resource name is available.\n\n:param name: Resource name to verify. Required.\n:type name: str\n:param type: Resource type used for verification. Known values are: \"Site\", \"Slot\",\n \"HostingEnvironment\", \"PublishingUser\", \"Microsoft.Web/sites\", \"Microsoft.Web/sites/slots\",\n \"Microsoft.Web/hostingEnvironments\", and \"Microsoft.Web/publishingUsers\". Required.\n:type type: str or ~azure.mgmt.web.v2023_01_01.models.CheckNameResourceTypes\n:param is_fqdn: Is fully qualified domain name. Default value is None.\n:type is_fqdn: bool\n:param environment_id: Azure Resource Manager ID of the customer\u0027s selected Container Apps\n Environment on which to host the Function app. This must be of the form\n /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.App/managedEnvironments/{managedEnvironmentName}.\n Default value is None.\n:type environment_id: str\n:return: ResourceNameAvailability or the result of cls(response)\n:rtype: ~azure.mgmt.web.v2023_01_01.models.ResourceNameAvailability\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "name, type, is_fqdn, environment_id, **kwargs"
                 }
             },
             "list_custom_host_name_sites" : {
                 "sync": {
-                    "signature": "def list_custom_host_name_sites(\n    self,\n    hostname: Optional[str] = None,\n    **kwargs: Any\n) -\u003e Iterable[\"_models.CustomHostnameSites\"]:\n",
+                    "signature": "def list_custom_host_name_sites(\n    self,\n    hostname: Optional[str] = None,\n    **kwargs: Any\n) -\u003e ItemPaged[\"_models.CustomHostnameSites\"]:\n",
                     "doc": "\"\"\"Get custom hostnames under this subscription.\n\nGet custom hostnames under this subscription.\n\n:param hostname: Specific hostname. Default value is None.\n:type hostname: str\n:return: An iterator like instance of either CustomHostnameSites or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2023_01_01.models.CustomHostnameSites]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "hostname, **kwargs"
                 },
                 "async": {
                     "coroutine": false,
-                    "signature": "def list_custom_host_name_sites(\n    self,\n    hostname: Optional[str] = None,\n    **kwargs: Any\n) -\u003e AsyncIterable[\"_models.CustomHostnameSites\"]:\n",
+                    "signature": "def list_custom_host_name_sites(\n    self,\n    hostname: Optional[str] = None,\n    **kwargs: Any\n) -\u003e AsyncItemPaged[\"_models.CustomHostnameSites\"]:\n",
                     "doc": "\"\"\"Get custom hostnames under this subscription.\n\nGet custom hostnames under this subscription.\n\n:param hostname: Specific hostname. Default value is None.\n:type hostname: str\n:return: An iterator like instance of either CustomHostnameSites or the result of cls(response)\n:rtype:\n ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2023_01_01.models.CustomHostnameSites]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "hostname, **kwargs"
                 }
@@ -261,52 +261,52 @@
             },
             "list_ase_regions" : {
                 "sync": {
-                    "signature": "def list_ase_regions(\n    self,\n    **kwargs: Any\n) -\u003e Iterable[\"_models.AseRegion\"]:\n",
+                    "signature": "def list_ase_regions(\n    self,\n    **kwargs: Any\n) -\u003e ItemPaged[\"_models.AseRegion\"]:\n",
                     "doc": "\"\"\"Get a list of available ASE regions and its supported Skus.\n\nDescription for get a list of available ASE regions and its supported Skus.\n\n:return: An iterator like instance of either AseRegion or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2023_01_01.models.AseRegion]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "**kwargs"
                 },
                 "async": {
                     "coroutine": false,
-                    "signature": "def list_ase_regions(\n    self,\n    **kwargs: Any\n) -\u003e AsyncIterable[\"_models.AseRegion\"]:\n",
+                    "signature": "def list_ase_regions(\n    self,\n    **kwargs: Any\n) -\u003e AsyncItemPaged[\"_models.AseRegion\"]:\n",
                     "doc": "\"\"\"Get a list of available ASE regions and its supported Skus.\n\nDescription for get a list of available ASE regions and its supported Skus.\n\n:return: An iterator like instance of either AseRegion or the result of cls(response)\n:rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2023_01_01.models.AseRegion]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "**kwargs"
                 }
             },
             "list_geo_regions" : {
                 "sync": {
-                    "signature": "def list_geo_regions(\n    self,\n    sku: Optional[Union[str, _models.SkuName]] = None,\n    linux_workers_enabled: Optional[bool] = None,\n    xenon_workers_enabled: Optional[bool] = None,\n    linux_dynamic_workers_enabled: Optional[bool] = None,\n    **kwargs: Any\n) -\u003e Iterable[\"_models.GeoRegion\"]:\n",
+                    "signature": "def list_geo_regions(\n    self,\n    sku: Optional[Union[str, _models.SkuName]] = None,\n    linux_workers_enabled: Optional[bool] = None,\n    xenon_workers_enabled: Optional[bool] = None,\n    linux_dynamic_workers_enabled: Optional[bool] = None,\n    **kwargs: Any\n) -\u003e ItemPaged[\"_models.GeoRegion\"]:\n",
                     "doc": "\"\"\"Get a list of available geographical regions.\n\nDescription for Get a list of available geographical regions.\n\n:param sku: Name of SKU used to filter the regions. Known values are: \"Free\", \"Shared\",\n \"Basic\", \"Standard\", \"Premium\", \"Dynamic\", \"Isolated\", \"IsolatedV2\", \"PremiumV2\", \"PremiumV3\",\n \"PremiumContainer\", \"ElasticPremium\", and \"ElasticIsolated\". Default value is None.\n:type sku: str or ~azure.mgmt.web.v2023_01_01.models.SkuName\n:param linux_workers_enabled: Specify :code:`\u003ccode\u003etrue\u003c/code\u003e` if you want to filter to only\n regions that support Linux workers. Default value is None.\n:type linux_workers_enabled: bool\n:param xenon_workers_enabled: Specify :code:`\u003ccode\u003etrue\u003c/code\u003e` if you want to filter to only\n regions that support Xenon workers. Default value is None.\n:type xenon_workers_enabled: bool\n:param linux_dynamic_workers_enabled: Specify :code:`\u003ccode\u003etrue\u003c/code\u003e` if you want to filter\n to only regions that support Linux Consumption Workers. Default value is None.\n:type linux_dynamic_workers_enabled: bool\n:return: An iterator like instance of either GeoRegion or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2023_01_01.models.GeoRegion]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "sku, linux_workers_enabled, xenon_workers_enabled, linux_dynamic_workers_enabled, **kwargs"
                 },
                 "async": {
                     "coroutine": false,
-                    "signature": "def list_geo_regions(\n    self,\n    sku: Optional[Union[str, _models.SkuName]] = None,\n    linux_workers_enabled: Optional[bool] = None,\n    xenon_workers_enabled: Optional[bool] = None,\n    linux_dynamic_workers_enabled: Optional[bool] = None,\n    **kwargs: Any\n) -\u003e AsyncIterable[\"_models.GeoRegion\"]:\n",
+                    "signature": "def list_geo_regions(\n    self,\n    sku: Optional[Union[str, _models.SkuName]] = None,\n    linux_workers_enabled: Optional[bool] = None,\n    xenon_workers_enabled: Optional[bool] = None,\n    linux_dynamic_workers_enabled: Optional[bool] = None,\n    **kwargs: Any\n) -\u003e AsyncItemPaged[\"_models.GeoRegion\"]:\n",
                     "doc": "\"\"\"Get a list of available geographical regions.\n\nDescription for Get a list of available geographical regions.\n\n:param sku: Name of SKU used to filter the regions. Known values are: \"Free\", \"Shared\",\n \"Basic\", \"Standard\", \"Premium\", \"Dynamic\", \"Isolated\", \"IsolatedV2\", \"PremiumV2\", \"PremiumV3\",\n \"PremiumContainer\", \"ElasticPremium\", and \"ElasticIsolated\". Default value is None.\n:type sku: str or ~azure.mgmt.web.v2023_01_01.models.SkuName\n:param linux_workers_enabled: Specify :code:`\u003ccode\u003etrue\u003c/code\u003e` if you want to filter to only\n regions that support Linux workers. Default value is None.\n:type linux_workers_enabled: bool\n:param xenon_workers_enabled: Specify :code:`\u003ccode\u003etrue\u003c/code\u003e` if you want to filter to only\n regions that support Xenon workers. Default value is None.\n:type xenon_workers_enabled: bool\n:param linux_dynamic_workers_enabled: Specify :code:`\u003ccode\u003etrue\u003c/code\u003e` if you want to filter\n to only regions that support Linux Consumption Workers. Default value is None.\n:type linux_dynamic_workers_enabled: bool\n:return: An iterator like instance of either GeoRegion or the result of cls(response)\n:rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2023_01_01.models.GeoRegion]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "sku, linux_workers_enabled, xenon_workers_enabled, linux_dynamic_workers_enabled, **kwargs"
                 }
             },
             "list_site_identifiers_assigned_to_host_name" : {
                 "sync": {
-                    "signature": "def list_site_identifiers_assigned_to_host_name(  # pylint: disable=name-too-long\n    self,\n    name_identifier: Union[_models.NameIdentifier, IO[bytes]],\n    **kwargs: Any\n) -\u003e Iterable[\"_models.Identifier\"]:\n",
+                    "signature": "def list_site_identifiers_assigned_to_host_name(  # pylint: disable=name-too-long\n    self,\n    name_identifier: Union[_models.NameIdentifier, IO[bytes]],\n    **kwargs: Any\n) -\u003e ItemPaged[\"_models.Identifier\"]:\n",
                     "doc": "\"\"\"List all apps that are assigned to a hostname.\n\nDescription for List all apps that are assigned to a hostname.\n\n:param name_identifier: Hostname information. Is either a NameIdentifier type or a IO[bytes]\n type. Required.\n:type name_identifier: ~azure.mgmt.web.v2023_01_01.models.NameIdentifier or IO[bytes]\n:return: An iterator like instance of either Identifier or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2023_01_01.models.Identifier]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "name_identifier, **kwargs"
                 },
                 "async": {
                     "coroutine": false,
-                    "signature": "def list_site_identifiers_assigned_to_host_name(  # pylint: disable=name-too-long\n    self,\n    name_identifier: Union[_models.NameIdentifier, IO[bytes]],\n    **kwargs: Any\n) -\u003e AsyncIterable[\"_models.Identifier\"]:\n",
+                    "signature": "def list_site_identifiers_assigned_to_host_name(  # pylint: disable=name-too-long\n    self,\n    name_identifier: Union[_models.NameIdentifier, IO[bytes]],\n    **kwargs: Any\n) -\u003e AsyncItemPaged[\"_models.Identifier\"]:\n",
                     "doc": "\"\"\"List all apps that are assigned to a hostname.\n\nDescription for List all apps that are assigned to a hostname.\n\n:param name_identifier: Hostname information. Is either a NameIdentifier type or a IO[bytes]\n type. Required.\n:type name_identifier: ~azure.mgmt.web.v2023_01_01.models.NameIdentifier or IO[bytes]\n:return: An iterator like instance of either Identifier or the result of cls(response)\n:rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2023_01_01.models.Identifier]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "name_identifier, **kwargs"
                 }
             },
             "list_premier_add_on_offers" : {
                 "sync": {
-                    "signature": "def list_premier_add_on_offers(\n    self,\n    **kwargs: Any\n) -\u003e Iterable[\"_models.PremierAddOnOffer\"]:\n",
+                    "signature": "def list_premier_add_on_offers(\n    self,\n    **kwargs: Any\n) -\u003e ItemPaged[\"_models.PremierAddOnOffer\"]:\n",
                     "doc": "\"\"\"List all premier add-on offers.\n\nDescription for List all premier add-on offers.\n\n:return: An iterator like instance of either PremierAddOnOffer or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2023_01_01.models.PremierAddOnOffer]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "**kwargs"
                 },
                 "async": {
                     "coroutine": false,
-                    "signature": "def list_premier_add_on_offers(\n    self,\n    **kwargs: Any\n) -\u003e AsyncIterable[\"_models.PremierAddOnOffer\"]:\n",
+                    "signature": "def list_premier_add_on_offers(\n    self,\n    **kwargs: Any\n) -\u003e AsyncItemPaged[\"_models.PremierAddOnOffer\"]:\n",
                     "doc": "\"\"\"List all premier add-on offers.\n\nDescription for List all premier add-on offers.\n\n:return: An iterator like instance of either PremierAddOnOffer or the result of cls(response)\n:rtype:\n ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2023_01_01.models.PremierAddOnOffer]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "**kwargs"
                 }
