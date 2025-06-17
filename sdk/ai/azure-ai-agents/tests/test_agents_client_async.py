@@ -769,8 +769,8 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             assert message2.id
             print("Created message, message ID", message2.id)
             messages2 = [m async for m in client.messages.list(thread_id=thread.id)]
-            assert messages2.__len__() == 2
-            assert messages2[0].id == message2.id or messages2[1].id == message2.id
+            assert len(messages2) == 2
+            assert any(msg.id == message2.id for msg in messages2)
 
             message3 = await client.messages.create(
                 thread_id=thread.id, role="user", content="Hello, tell me a third joke"
@@ -778,8 +778,14 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             assert message3.id
             print("Created message, message ID", message3.id)
             messages3 = [message async for message in client.messages.list(thread_id=thread.id)]
-            assert messages3.__len__() == 3
+            assert len(messages3) == 3
+            assert any(msg.id == message3.id for msg in messages3)
             assert messages3[0].id == message3.id or messages3[1].id == message3.id or messages3[2].id == message3.id
+
+            await client.messages.delete(thread_id=thread.id, message_id=message3.id)
+            messages4 = [message async for message in client.messages.list(thread_id=thread.id)]
+            assert len(messages4) == 2
+            assert not any(msg.id == message3.id for msg in messages4)
 
             # delete agent and close client
             await client.delete_agent(agent.id)

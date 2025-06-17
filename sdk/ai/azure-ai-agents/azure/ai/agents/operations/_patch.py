@@ -2194,7 +2194,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
 
     @distributed_trace
     def delete(self, vector_store_id: str, file_id: str, **kwargs: Any) -> None:
-        """Deletes a vector store file. This removes the file‐to‐store link (does not delete the file
+        """Deletes a vector store file. This removes the file-to-store link (does not delete the file
         itself).
 
         :param vector_store_id: Identifier of the vector store. Required.
@@ -2259,6 +2259,18 @@ class MessagesOperations(MessagesOperationsGenerated):
             if text_contents:
                 return text_contents[-1]
         return None
+
+    @distributed_trace
+    def delete(self, thread_id: str, message_id: str, **kwargs: Any) -> None:
+        """Deletes an existing message on an existing thread.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param message_id: Identifier of the message. Required.
+        :type message_id: str
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        super()._delete_message(thread_id=thread_id, message_id=message_id, **kwargs)
 
 
 __all__: List[str] = [
