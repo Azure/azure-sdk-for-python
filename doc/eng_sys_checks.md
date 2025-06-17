@@ -5,6 +5,7 @@
   - [Skipping a tox test environment at build queue time](#skipping-a-tox-test-environment-at-build-queue-time)
   - [Skipping entire sections of builds](#skipping-entire-sections-of-builds)
   - [The pyproject.toml](#the-pyprojecttoml)
+    - [Coverage Enforcement](#coverage-enforcement)
   - [Environment variables important to CI](#environment-variables-important-to-ci)
     - [Atomic Overrides](#atomic-overrides)
     - [Enable test logging in CI pipelines](#enable-test-logging-in-ci-pipelines)
@@ -13,6 +14,7 @@
     - [Pyright](#pyright)
     - [Verifytypes](#verifytypes)
     - [Pylint](#pylint)
+    - [Sphinx and docstring checker](#sphinx-and-docstring-checker)
     - [Bandit](#bandit)
     - [ApiStubGen](#apistubgen)
     - [black](#black)
@@ -114,6 +116,8 @@ This is the most useful skip, but the following skip variables are also supporte
   - Omit checking that a package's keywords are correctly formulated before releasing.
 - `Skip.Black`
   - Omit checking `black` in the `analyze` job.
+- `Skip.VerifyPackageClassifiers`
+  - Omit checking that the development classifiers align with the package version being shipped.
 
 ## The pyproject.toml
 

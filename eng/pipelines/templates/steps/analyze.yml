@@ -14,6 +14,14 @@ steps:
     parameters:
       ScanPath: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
 
+  - task: PythonScript@0
+    displayName: 'Check classification'
+    condition: and(succeededOrFailed(), ne(variables['Skip.VerifyPackageClassifiers'], 'true'))
+    inputs:
+      scriptPath: 'eng/scripts/verify_package_classifiers.py'
+      arguments: >-
+        "$(Build.ArtifactStagingDirectory)/PackageInfo"
+
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
     parameters:
       PackageName: "azure-template"
