@@ -95,7 +95,7 @@ stages:
 
           - ${{if ne(artifact.skipPublishPackage, 'true')}}:
             - deployment: PublishPackage
-              displayName: "Publish to ${{ parameters.Public Feed }}"
+              displayName: "Publish to ${{ parameters.PublicFeed }}"
               condition: and(succeeded(), ne(variables['Skip.PublishPackage'], 'true'))
               environment: ${{ parameters.PublicPublishEnvironment }}
               dependsOn: TagRepository
