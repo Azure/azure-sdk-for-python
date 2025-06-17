@@ -13,7 +13,7 @@ from azure.storage.blob import ContainerClient
 from typing_extensions import NotRequired, Required, TypeGuard
 from azure.ai.evaluation._legacy._adapters._errors import MissingRequiredPackage
 from azure.ai.evaluation._constants import AZURE_OPENAI_TYPE, OPENAI_TYPE
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._exceptions import ErrorMessage, ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import (
     AzureAIProject,
     AzureOpenAIModelConfiguration,
@@ -480,6 +480,163 @@ def validate_conversation(conversation):
             "User and assistant role expected as the only role in each message.",
             ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
         )
+
+def _extract_text_from_content(content):
+    text = []
+    for msg in content:
+        if 'text' in msg:
+            text.append(msg['text'])
+    return text
+
+def _get_conversation_history(query):
+    all_user_queries = []
+    cur_user_query = []
+    all_agent_responses = []
+    cur_agent_response = []
+    for msg in query:
+        if not 'role' in msg:
+            continue
+        if msg['role'] == 'user' and 'content' in msg:
+            if cur_agent_response != []:
+                all_agent_responses.append(cur_agent_response)
+                cur_agent_response = []
+            text_in_msg = _extract_text_from_content(msg['content'])
+            if text_in_msg:
+                cur_user_query.append(text_in_msg)
+
+        if msg['role'] == 'assistant' and 'content' in msg:
+            if cur_user_query !=[]:
+                all_user_queries.append(cur_user_query)
+                cur_user_query = []
+            text_in_msg = _extract_text_from_content(msg['content'])
+            if text_in_msg:
+                cur_agent_response.append(text_in_msg)
+    if cur_user_query !=[]:
+        all_user_queries.append(cur_user_query)
+    if cur_agent_response !=[]:
+        all_agent_responses.append(cur_agent_response)
+
+    if len(all_user_queries) != len(all_agent_responses) + 1:
+        raise EvaluationException(
+            message=ErrorMessage.MALFORMED_CONVERSATION_HISTORY,
+            internal_message=ErrorMessage.MALFORMED_CONVERSATION_HISTORY,
+            target=ErrorTarget.CONVERSATION_HISTORY_PARSING,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.USER_ERROR,
+        )
+
+    return {
+            'user_queries'    : all_user_queries,
+            'agent_responses' : all_agent_responses
+           }
+
+def _pretty_format_conversation_history(conversation_history):
+    """Formats the conversation history for better readability."""
+    formatted_history = ""
+    for i, (user_query, agent_response) in enumerate(zip(conversation_history['user_queries'], conversation_history['agent_responses']+[None])):
+        formatted_history+=f"User turn {i+1}:\n"
+        for msg in user_query:
+            formatted_history+="  " + "\n  ".join(msg)
+        formatted_history+="\n\n"
+        if agent_response:
+            formatted_history+=f"Agent turn {i+1}:\n"
+            for msg in agent_response:
+                formatted_history+="  " + "\n  ".join(msg)
+            formatted_history+="\n\n"
+    return formatted_history
+
+def reformat_conversation_history(query):
+    """Reformats the conversation history to a more compact representation."""
+    try:
+        conversation_history = _get_conversation_history(query)
+        return _pretty_format_conversation_history(conversation_history)
+    except:
+        # If the conversation history cannot be parsed for whatever reason (e.g. the converter format changed), the original query is returned
+        # This is a fallback to ensure that the evaluation can still proceed. However the accuracy of the evaluation will be affected.
+        # From our tests the negative impact on IntentResolution is:
+        #   Higher intra model variance (0.142 vs 0.046)
+        #   Higher inter model variance (0.345 vs 0.607)
+        #   Lower percentage of mode in Likert scale (73.4% vs 75.4%)
+        #   Lower pairwise agreement between LLMs (85% vs 90% at the pass/fail level with threshold of 3)
+        return query
+
+def _get_agent_response(agent_response_msgs, include_tool_messages=False):
+    """Extracts formatted agent response including text, and optionally tool calls/results."""
+    agent_response_text = []
+    tool_results = {}
+
+    # First pass: collect tool results
+    if include_tool_messages:
+        for msg in agent_response_msgs:
+            if msg.get("role") == "tool" and "tool_call_id" in msg:
+                for content in msg.get("content", []):
+                    if content.get("type") == "tool_result":
+                        result = content.get("tool_result")
+                        tool_results[msg["tool_call_id"]] = f'[TOOL_RESULT] {result}'
+
+    # Second pass: parse assistant messages and tool calls
+    for msg in agent_response_msgs:
+        if 'role' in msg and  msg.get("role") == "assistant" and "content" in msg:
+            text = _extract_text_from_content(msg["content"])
+            if text:
+                agent_response_text.extend(text)
+
+            if include_tool_messages:
+                for content in msg.get("content", []):
+                    if content.get("type") == "tool_call":
+                        tc = content.get("tool_call", {})
+                        func_name = tc.get("function", {}).get("name", "unknown_function")
+                        args = tc.get("function", {}).get("arguments", {})
+                        args_str = ", ".join(f'{k}="{v}"' for k, v in args.items())
+                        call_line = f'[TOOL_CALL] {func_name}({args_str})'
+                        agent_response_text.append(call_line)
+
+                        tool_call_id = tc.get("id")
+                        if tool_call_id in tool_results:
+                            agent_response_text.append(tool_results[tool_call_id])
+
+    return agent_response_text
+
+def reformat_agent_response(response, include_tool_messages=False):
+    try:
+        if not response:
+            return ""
+        agent_response = _get_agent_response(response, include_tool_messages=include_tool_messages)
+        if not agent_response:
+            # If no message could be extracted, likely the format changed, fallback to the original response in that case
+            return response  # fallback to raw
+        return "\n".join(agent_response)
+    except Exception:
+        # If the agent response cannot be parsed for whatever reason (e.g. the converter format changed), the original response is returned
+        # This is a fallback to ensure that the evaluation can still proceed. See comments on reformat_conversation_history for more details.
+        return response  # fallback to raw
+
+def reformat_tool_definitions(tool_definitions):
+    output_lines = ["TOOL_DEFINITIONS:"]
+    for tool in tool_definitions:
+        output_lines.append(f"Tool: {tool['name']}")
+        output_lines.append(f"Description: {tool['description']}")
+        output_lines.append("Parameters:")
+        properties = tool.get("parameters", {}).get("properties", {})
+        for param_name, param_info in properties.items():
+            param_type = param_info.get("type", "unknown")
+            param_desc = param_info.get("description", "")
+            output_lines.append(f"  - {param_name} ({param_type}): {param_desc}")
+        output_lines.append("")  # blank line between tools
+    return "\n".join(output_lines)
+
+# def _get_agent_response(agent_response_msgs):
+
+#     """Extracts the text from the agent response content."""
+#     agent_response_text = []
+#     for msg in agent_response_msgs:
+#         if 'role' in msg and msg['role'] == 'assistant' and 'content' in msg:
+#             text = _extract_text_from_content(msg['content'])
+#             if text:
+#                 agent_response_text.extend(text)
+#     return agent_response_text
+
+
 
 def upload(path: str, container_client: ContainerClient, logger=None):
     """Upload files or directories to Azure Blob Storage using a container client.
