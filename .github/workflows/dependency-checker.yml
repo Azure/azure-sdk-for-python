@@ -17,7 +17,7 @@ jobs:
           python-version: 3.11
         
       - name: Install Dependencies
-        run: pip install packaging requests
+        run: pip install packaging==25.0 requests==2.32.4
 
       - name: Run Script
         run: python sdk/ml/azure-ai-ml/scripts/major_updates.py
