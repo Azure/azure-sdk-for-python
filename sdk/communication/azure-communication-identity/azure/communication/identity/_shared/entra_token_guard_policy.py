@@ -6,7 +6,7 @@
 
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.pipeline import PipelineRequest
-from .entra_token_guard_policy_utils import EntraTokenGuardUtils
+import token_utils
 
 
 class EntraTokenGuardPolicy(HTTPPolicy):
@@ -18,8 +18,8 @@ class EntraTokenGuardPolicy(HTTPPolicy):
         self._response_cache = None
 
     def send(self, request: PipelineRequest):
-        cache_valid, token = EntraTokenGuardUtils.is_entra_token_cache_valid(self._entra_token_cache, request)
-        if cache_valid and EntraTokenGuardUtils.is_acs_token_cache_valid(self._response_cache):
+        cache_valid, token = token_utils.is_entra_token_cache_valid(self._entra_token_cache, request)
+        if cache_valid and token_utils.is_acs_token_cache_valid(self._response_cache):
             response = self._response_cache
         else:
             self._entra_token_cache = token

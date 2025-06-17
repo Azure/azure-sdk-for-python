@@ -14,9 +14,9 @@ from azure.core.pipeline import AsyncPipeline, PipelineResponse
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.credentials_async import AsyncTokenCredential
-from .entra_token_guard_policy_async import EntraTokenGuardPolicy
-from .token_exchange_utils import TokenExchangeUtils
 from azure.core.pipeline.policies import AsyncRetryPolicy
+from .entra_token_guard_policy_async import EntraTokenGuardPolicy
+import token_utils
 
 
 class TokenExchangeClient:
@@ -54,7 +54,7 @@ class TokenExchangeClient:
         return AsyncPipeline(policies=policies, transport=AioHttpTransport())
 
     async def exchange_entra_token(self) -> AccessToken:
-        message = TokenExchangeUtils.create_request_message(self._resource_endpoint, self._scopes)
+        message = token_utils.create_request_message(self._resource_endpoint, self._scopes)
         response = await self._pipeline.run(message)
         return await self._parse_access_token_from_response(response)
 
@@ -66,7 +66,7 @@ class TokenExchangeClient:
                 access_token_json = data["accessToken"]
                 token = access_token_json["token"]
                 expires_on = access_token_json["expiresOn"]
-                expires_on_epoch = TokenExchangeUtils.parse_expires_on(expires_on, response)
+                expires_on_epoch = token_utils.parse_expires_on(expires_on, response)
                 if expires_on_epoch is None:
                     raise ClientAuthenticationError("Failed to parse 'expiresOn' value from access token response")
                 return AccessToken(token, expires_on_epoch)

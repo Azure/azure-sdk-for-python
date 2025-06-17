@@ -4,7 +4,6 @@
 
 ### Features Added
 
-- Introduced support for `CommunicationTokenCredential` with `resource_endpoint`, `token_credential` and `scopes`, allowing an Entra user with a Teams license to use Teams Phone Extensibility features through the Azure Communication Services resource.
 - Added support for a new communication identifier `TeamsExtensionUserIdentifier`.
     - New identifier maps rawIds with format `8:acs:{resourceId}_{tenantId}_{userId}`.
     - With this version, rawId starting with `8:acs` may be either `CommunicationUserIdentifier` or new `TeamsExtensionUserIdentifier`.
