@@ -24,13 +24,13 @@ DatabaseAccount with multiple writable and readable locations.
 """
 import collections
 import logging
-from typing import Set, Mapping
+from typing import Set, Mapping, OrderedDict, Dict
 from typing import List
 from urllib.parse import urlparse
 
 from . import documents, _base as base
 from .http_constants import ResourceType
-from .documents import _OperationType
+from .documents import _OperationType, ConnectionPolicy
 from ._request_object import RequestObject
 
 # pylint: disable=protected-access
@@ -44,8 +44,8 @@ class EndpointOperationType(object):
 
 class RegionalRoutingContext(object):
     def __init__(self, primary_endpoint: str, alternate_endpoint: str):
-        self.primary_endpoint = primary_endpoint
-        self.alternate_endpoint = alternate_endpoint
+        self.primary_endpoint: str = primary_endpoint
+        self.alternate_endpoint: str = alternate_endpoint
 
     def set_primary(self, endpoint: str):
         self.primary_endpoint = endpoint
@@ -72,7 +72,7 @@ def get_endpoints_by_location(new_locations,
                               writes,
                               use_multiple_write_locations):
     # construct from previous object
-    regional_routing_context_by_location = collections.OrderedDict()
+    regional_routing_context_by_location: OrderedDict[str, RegionalRoutingContext] = collections.OrderedDict()
     parsed_locations = []
 
 
@@ -157,20 +157,24 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         default_endpoint,
         connection_policy,
     ):
-        self.default_regional_routing_context = RegionalRoutingContext(default_endpoint, default_endpoint)
-        self.effective_preferred_locations = []
-        self.enable_multiple_writable_locations = False
-        self.write_regional_routing_contexts = [self.default_regional_routing_context]
-        self.read_regional_routing_contexts = [self.default_regional_routing_context]
-        self.location_unavailability_info_by_endpoint = {}
-        self.last_cache_update_time_stamp = 0
-        self.account_read_regional_routing_contexts_by_location = {} # pylint: disable=name-too-long
-        self.account_write_regional_routing_contexts_by_location = {} # pylint: disable=name-too-long
-        self.account_locations_by_read_endpoints = {} # pylint: disable=name-too-long
-        self.account_locations_by_write_endpoints = {} # pylint: disable=name-too-long
-        self.account_write_locations = []
-        self.account_read_locations = []
-        self.connection_policy = connection_policy
+        self.default_regional_routing_context: RegionalRoutingContext = RegionalRoutingContext(default_endpoint,
+                                                                                               default_endpoint)
+        self.enable_multiple_writable_locations: bool = False
+        self.write_regional_routing_contexts: List[RegionalRoutingContext] = [self.default_regional_routing_context]
+        self.read_regional_routing_contexts: List[RegionalRoutingContext] = [self.default_regional_routing_context]
+        self.location_unavailability_info_by_endpoint: Dict[str, Dict[str, Set[EndpointOperationType]]] = {}
+        self.last_cache_update_time_stamp: int = 0
+        self.account_read_regional_routing_contexts_by_location: Dict[str, RegionalRoutingContext] = {} # pylint: disable=name-too-long
+        self.account_write_regional_routing_contexts_by_location: Dict[str, RegionalRoutingContext] = {} # pylint: disable=name-too-long
+        self.account_locations_by_read_endpoints: Dict[str, str] = {} # pylint: disable=name-too-long
+        self.account_locations_by_write_endpoints: Dict[str, str] = {} # pylint: disable=name-too-long
+        self.account_write_locations: List[str] = []
+        self.account_read_locations: List[str] = []
+        self.connection_policy: ConnectionPolicy = connection_policy
+        if self.connection_policy.PreferredLocations:
+            self.effective_preferred_locations: List[str] = self.connection_policy.PreferredLocations
+        else:
+            self.effective_preferred_locations: List[str] = []
 
     def get_write_regional_routing_contexts(self):
         return self.write_regional_routing_contexts
@@ -433,14 +437,9 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
         # if preferred locations is empty and the default endpoint is a global endpoint,
         # we should use the read locations from gateway as effective preferred locations
-        if self.connection_policy.PreferredLocations:
-            self.effective_preferred_locations = self.connection_policy.PreferredLocations
-        elif any(
-                context.get_primary() == self.default_regional_routing_context.get_primary()
-                for context in self.account_read_regional_routing_contexts_by_location.values()
-        ):
+        if not self.effective_preferred_locations and self.is_regional_endpoint():
             self.effective_preferred_locations = []
-        else:
+        elif not self.effective_preferred_locations:
             self.effective_preferred_locations = self.account_read_locations
 
         self.write_regional_routing_contexts = self.get_preferred_regional_routing_contexts(
@@ -497,6 +496,13 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             regional_endpoints.append(fallback_endpoint)
 
         return regional_endpoints
+
+    # if the endpoint is returned from the gateway in the account topology, it is a regional endpoint
+    def is_regional_endpoint(self) -> bool:
+        return any(
+            context.get_primary() == self.default_regional_routing_context.get_primary()
+            for context in self.account_read_regional_routing_contexts_by_location.values()
+        )
 
     def can_use_multiple_write_locations(self):
         return self.connection_policy.UseMultipleWriteLocations and self.enable_multiple_writable_locations

@@ -6,6 +6,7 @@ from typing import List
 
 import pytest
 import pytest_asyncio
+from azure.core.exceptions import ServiceRequestError
 
 import test_config
 from azure.cosmos import DatabaseAccount, _location_cache
@@ -13,6 +14,7 @@ from azure.cosmos._location_cache import RegionalRoutingContext
 
 from azure.cosmos.aio import _global_endpoint_manager_async, _cosmos_client_connection_async, CosmosClient
 from _fault_injection_transport_async import FaultInjectionTransportAsync
+from azure.cosmos.exceptions import CosmosHttpResponseError
 from test_circuit_breaker_emulator import COLLECTION
 from test_effective_preferred_locations import REGION_1, REGION_2, REGION_3, ACCOUNT_REGIONS, construct_item, error
 
@@ -59,7 +61,13 @@ class TestPreferredLocationsAsync:
     TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
     partition_key = test_config.TestConfig.TEST_CONTAINER_PARTITION_KEY
 
-    async def setup_method_with_custom_transport(self, custom_transport, default_endpoint=host, **kwargs):
+    async def setup_method_with_custom_transport(self, custom_transport, error_lambda, default_endpoint=host, **kwargs):
+        uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
+        predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
+                               (FaultInjectionTransportAsync.predicate_targets_region(r, uri_down) or
+                               FaultInjectionTransportAsync.predicate_targets_region(r, self.host)))
+        custom_transport.add_fault(predicate,
+                                   error_lambda)
         client = CosmosClient(default_endpoint,
                               self.master_key,
                               multiple_write_locations=True,
@@ -107,30 +115,51 @@ class TestPreferredLocationsAsync:
 
     @pytest.mark.cosmosMultiRegion
     @pytest.mark.parametrize("error", error())
-    async def test_no_preferred_locations_with_errors_async(self, setup, error):
+    async def test_read_no_preferred_locations_with_errors_async(self, setup, error):
         container = setup[COLLECTION]
         item_to_read = construct_item()
         await container.create_item(item_to_read)
 
         # setup fault injection so that first account region fails
         custom_transport = FaultInjectionTransportAsync()
-        uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
         expected = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
             0,
             error
         ))
-        predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
-                               FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
-        custom_transport.add_fault(predicate,
-                                   error_lambda)
         try:
-            fault_setup = await self.setup_method_with_custom_transport(custom_transport=custom_transport)
-            fault_cont = fault_setup["col"]
-            resp = await fault_cont.read_item(item=item_to_read["id"], partition_key=item_to_read[self.partition_key])
-            request = resp.get_response_headers()["_request"]
+            fault_setup = await self.setup_method_with_custom_transport(custom_transport=custom_transport, error_lambda=error_lambda)
+            fault_container = fault_setup["col"]
+            response = await fault_container.read_item(item=item_to_read["id"], partition_key=item_to_read[self.partition_key])
+            request = response.get_response_headers()["_request"]
             # Validate the response comes from another region meaning that the account locations were used
             assert request.url.startswith(expected)
+
+            # should fail if using excluded locations because no where to failover to
+            with pytest.raises(CosmosHttpResponseError):
+                await fault_container.read_item(item=item_to_read["id"], partition_key=item_to_read[self.partition_key], excluded_locations=[REGION_2])
+
+        finally:
+            await fault_setup["client"].close()
+
+    @pytest.mark.cosmosMultiRegion
+    async def test_write_no_preferred_locations_with_errors_async(self, setup):
+        # setup fault injection so that first account region fails
+        custom_transport = FaultInjectionTransportAsync()
+        expected = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
+        error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_region_down())
+
+        try:
+            fault_setup = await self.setup_method_with_custom_transport(custom_transport=custom_transport, error_lambda=error_lambda)
+            fault_container = fault_setup["col"]
+            response = await fault_container.create_item(body=construct_item())
+            request = response.get_response_headers()["_request"]
+            # Validate the response comes from another region meaning that the account locations were used
+            assert request.url.startswith(expected)
+
+            # should fail if using excluded locations because no where to failover to
+            with pytest.raises(ServiceRequestError):
+                await fault_container.create_item(body=construct_item(), excluded_locations=[REGION_2])
 
         finally:
             await fault_setup["client"].close()
