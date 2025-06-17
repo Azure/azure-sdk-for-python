@@ -1,15 +1,16 @@
 # Release History
 
-## 1.0.0b12 (2025-06-16)
+## 1.0.0b12 (Unreleased)
 
 ### Breaking changes
 
 * These 3 methods on `AIProjectClient` were removed: `.inference.get_chat_completions_client()`,
-`.inference.get_embeddings_client()`, `.inference.get_image_embeddings_client()`. They no longer provide much
-value. To see how you can easily get an authenticated `azure-ai-inference` client for your AI Foundry Project, see
-the updated samples in the folder `samples\inference`. For example,
-[sample_chat_completions_with_azure_ai_inference_client.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/inference/sample_chat_completions_with_azure_ai_inference_client.py). Alternatively, us the `.inference.get_azure_openai_client()` method
-to perform chat completions with an Azure OpenAI client.
+`.inference.get_embeddings_client()`, `.inference.get_image_embeddings_client()`.
+To see how you can still easily get an authenticated `azure-ai-inference` client for your AI Foundry Project, see
+the updated samples in the folder `samples\inference\azure-ai-inference`. For example,
+`sample_chat_completions_with_azure_ai_inference_client.py`. Alternatively, us the `.inference.get_azure_openai_client()` method
+to get an authenticated `AzureOpenAI` client from the `openai` package, and perform chat completions. See samples
+in the folder `samples\inference\azure-openai`.
 * Method argument name changes:
   * In method `.indexes.create_or_update()` argument `body` was renamed `index`.
   * In method `.datasets.create_or_update()` argument `body` was renamed `dataset_version`.
@@ -19,12 +20,17 @@ to perform chat completions with an Azure OpenAI client.
 
 * Fix to package function `enable_telemetry()` to correctly instrument `azure-ai-agents`.
 
+### Sample updates
+
+* Per mentioned above, the samples in the `samples\inference` folder were updated. They were moved into two new
+sub-folders, one showing usage of AzureOpenAI client (no change there). The other showing usage of the
+clients from the `azure-ai-inference` package (changes were made there).
+
 ### Other
 
 * Set dependency on `azure-ai-agents` version `1.0.0` or above,
 now that we have a stable release of the Agents package.
 
-### Sample updates
 
 ## 1.0.0b11 (2025-05-15)
 
