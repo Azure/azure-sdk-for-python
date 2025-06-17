@@ -10,7 +10,6 @@
 import sys
 import argparse
 import logging
-import os
 from os import path
 from subprocess import check_call
 
@@ -96,7 +95,6 @@ def install_dev_build_packages(pkg_name_to_exclude):
     azure_pkgs = get_installed_azure_packages(pkg_name_to_exclude)
     uninstall_packages(azure_pkgs)
     install_packages(azure_pkgs)
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
