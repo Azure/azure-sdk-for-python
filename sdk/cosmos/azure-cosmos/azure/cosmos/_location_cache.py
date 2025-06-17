@@ -66,11 +66,11 @@ class RegionalRoutingContext(object):
     def __str__(self):
         return "Primary: " + self.primary_endpoint + ", Alternate: " + self.alternate_endpoint
 
-def get_endpoints_by_location(new_locations,
-                              old_endpoints_by_location,
-                              default_regional_endpoint,
-                              writes,
-                              use_multiple_write_locations):
+def get_endpoints_by_location(new_locations: List[Dict[str, str]],
+                              old_regional_routing_contexts_by_location: Dict[str, RegionalRoutingContext],
+                              default_regional_endpoint: RegionalRoutingContext,
+                              writes: bool,
+                              use_multiple_write_locations: bool):
     # construct from previous object
     regional_routing_context_by_location: OrderedDict[str, RegionalRoutingContext] = collections.OrderedDict()
     parsed_locations = []
@@ -87,8 +87,8 @@ def get_endpoints_by_location(new_locations,
                 parsed_locations.append(new_location["name"])
                 if not writes or use_multiple_write_locations:
                     regional_object = RegionalRoutingContext(region_uri, region_uri)
-                elif new_location["name"] in old_endpoints_by_location:
-                    regional_object = old_endpoints_by_location[new_location["name"]]
+                elif new_location["name"] in old_regional_routing_contexts_by_location:
+                    regional_object = old_regional_routing_contexts_by_location[new_location["name"]]
                     current = regional_object.get_primary()
                     # swap the previous with current and current with new region_uri received from the gateway
                     if current != region_uri:
@@ -154,11 +154,12 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
     def __init__(
         self,
-        default_endpoint,
-        connection_policy,
+        default_endpoint: str,
+        connection_policy: ConnectionPolicy,
     ):
         self.default_regional_routing_context: RegionalRoutingContext = RegionalRoutingContext(default_endpoint,
                                                                                                default_endpoint)
+        self.effective_preferred_locations: List[str] = []
         self.enable_multiple_writable_locations: bool = False
         self.write_regional_routing_contexts: List[RegionalRoutingContext] = [self.default_regional_routing_context]
         self.read_regional_routing_contexts: List[RegionalRoutingContext] = [self.default_regional_routing_context]
@@ -171,10 +172,6 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         self.account_write_locations: List[str] = []
         self.account_read_locations: List[str] = []
         self.connection_policy: ConnectionPolicy = connection_policy
-        if self.connection_policy.PreferredLocations:
-            self.effective_preferred_locations: List[str] = self.connection_policy.PreferredLocations
-        else:
-            self.effective_preferred_locations: List[str] = []
 
     def get_write_regional_routing_contexts(self):
         return self.write_regional_routing_contexts
@@ -383,7 +380,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         return True
 
     def mark_endpoint_unavailable(
-            self, unavailable_endpoint: str, unavailable_operation_type: str, refresh_cache: bool):
+            self, unavailable_endpoint: str, unavailable_operation_type: EndpointOperationType, refresh_cache: bool):
         logger.warning("Marking %s unavailable for %s ",
                        unavailable_endpoint,
                        unavailable_operation_type)
@@ -437,7 +434,9 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
         # if preferred locations is empty and the default endpoint is a global endpoint,
         # we should use the read locations from gateway as effective preferred locations
-        if not self.effective_preferred_locations and self.is_default_endpoint_regional():
+        if self.connection_policy.PreferredLocations:
+            self.effective_preferred_locations = self.connection_policy.PreferredLocations
+        elif self.is_default_endpoint_regional():
             self.effective_preferred_locations = []
         elif not self.effective_preferred_locations:
             self.effective_preferred_locations = self.account_read_locations
