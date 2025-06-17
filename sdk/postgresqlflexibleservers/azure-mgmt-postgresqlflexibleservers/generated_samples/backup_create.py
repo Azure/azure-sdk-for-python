@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -33,11 +34,11 @@ def main():
     response = client.backups.begin_create(
         resource_group_name="TestGroup",
         server_name="postgresqltestserver",
-        backup_name="backup_20210615T160516",
+        backup_name="backup_20250303T160516",
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2024-08-01/examples/BackupCreate.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2025-01-01-preview/examples/BackupCreate.json
 if __name__ == "__main__":
     main()

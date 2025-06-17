@@ -95,7 +95,65 @@ To interact with these resources, one should be familiar with the following SDK 
 
 ### Thread safety
 
-We do not guarantee that the ServiceBusClient, ServiceBusSender, and ServiceBusReceiver are thread-safe. We do not recommend reusing these instances across threads. It is up to the running application to use these classes in a thread-safe manner.
+We do not guarantee that the `ServiceBusClient`, `ServiceBusSender`, and `ServiceBusReceiver` are thread-safe or coroutine-safe. We do not recommend reusing these instances across threads or sharing them between coroutines. It is up to the running application to use these classes in a concurrency-safe manner.
+
+The data model type, `ServiceBusMessageBatch` is not thread-safe or coroutine-safe. It should not be shared across threads nor used concurrently with client methods.
+
+For scenarios requiring concurrent sending from multiple threads, ensure proper thread-safety management using mechanisms like `threading.Lock()`. **Note:** Native async APIs should be used instead of running in a `ThreadPoolExecutor`, if possible.
+```python
+import threading
+from concurrent.futures import ThreadPoolExecutor
+from azure.servicebus import ServiceBusClient, ServiceBusMessage
+from azure.identity import DefaultAzureCredential
+
+SERVICE_BUS_NAMESPACE = "<your-namespace>.servicebus.windows.net"
+QUEUE_NAME = "<your-queue-name>"
+
+lock = threading.Lock()
+
+def send_batch(sender_id, sender):
+    with lock:
+        messages = [ServiceBusMessage(f"Message {i} from sender {sender_id}") for i in range(10)]
+        sender.send_messages(messages)
+        print(f"Sender {sender_id} sent messages.")
+
+credential = DefaultAzureCredential()
+client = ServiceBusClient(fully_qualified_namespace=SERVICE_BUS_NAMESPACE, credential=credential)
+
+with client:
+    sender = client.get_queue_sender(queue_name=QUEUE_NAME)
+    with sender:
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            for i in range(5):
+                executor.submit(send_batch, i, sender)
+```
+
+For scenarios requiring concurrent sending in asyncio applications, ensure proper coroutine-safety management using mechanisms like `asyncio.Lock()`.
+```python
+import asyncio
+from azure.servicebus.aio import ServiceBusClient
+from azure.servicebus import ServiceBusMessage
+from azure.identity.aio import DefaultAzureCredential
+
+SERVICE_BUS_NAMESPACE = "<your-namespace>.servicebus.windows.net"
+QUEUE_NAME = "<your-queue-name>"
+
+lock = asyncio.Lock()
+
+async def send_batch(sender_id, sender):
+    async with lock:
+        messages = [ServiceBusMessage(f"Message {i} from sender {sender_id}") for i in range(10)]
+        await sender.send_messages(messages)
+        print(f"Sender {sender_id} sent messages.")
+
+credential = DefaultAzureCredential()
+client = ServiceBusClient(fully_qualified_namespace=SERVICE_BUS_NAMESPACE, credential=credential)
+
+async with client:
+    sender = client.get_queue_sender(queue_name=QUEUE_NAME)
+    async with sender:
+        await asyncio.gather(*(send_batch(i, sender) for i in range(5)))
+```
 
 ## Examples
 

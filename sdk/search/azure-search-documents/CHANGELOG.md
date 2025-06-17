@@ -1,6 +1,18 @@
 # Release History
 
-## 11.6.0b12 (Unreleased)
+## 11.6.0b13 (Unreleased)
+
+### Features Added
+
+- Added `azure.search.documents.models.DebugInfo`.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 11.6.0b12 (2025-05-14)
 
 ### Features Added
 
@@ -38,9 +50,9 @@
     - `azure.search.documents.indexes.models.RankingOrder`
     - `azure.search.documents.indexes.models.SearchIndexPermissionFilterOption`
 
-### Breaking Changes
-
 ### Bugs Fixed
+
+- Fixed the issue batching in upload_documents() did not work.    #40157
 
 ### Other Changes
 

@@ -39,13 +39,12 @@ from typing import (
 from ._enums import AgentStreamEvent, AzureAISearchQueryType
 from ._models import (
     AISearchIndexResource,
-    AzureAISearchResource,
+    AzureAISearchToolResource,
     AzureAISearchToolDefinition,
     AzureFunctionDefinition,
     AzureFunctionStorageQueue,
     AzureFunctionToolDefinition,
     AzureFunctionBinding,
-    BingCustomSearchToolDefinition,
     BingGroundingToolDefinition,
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
@@ -60,22 +59,24 @@ from ._models import (
     MessageTextFileCitationAnnotation,
     MessageTextUrlCitationAnnotation,
     MessageTextFilePathAnnotation,
-    MicrosoftFabricToolDefinition,
     OpenApiAuthDetails,
     OpenApiToolDefinition,
     OpenApiFunctionDefinition,
     RequiredFunctionToolCall,
     RunStep,
     RunStepDeltaChunk,
-    BingCustomSearchConfiguration,
-    BingCustomSearchConfigurationList,
     BingGroundingSearchConfiguration,
-    BingGroundingSearchConfigurationList,
+    BingGroundingSearchToolParameters,
+    BingCustomSearchToolDefinition,
+    BingCustomSearchConfiguration,
+    BingCustomSearchToolParameters,
     SharepointToolDefinition,
+    SharepointGroundingToolParameters,
+    ToolConnection,
+    MicrosoftFabricToolDefinition,
+    FabricDataAgentToolParameters,
     SubmitToolOutputsAction,
     ThreadRun,
-    ToolConnection,
-    ToolConnectionList,
     ToolDefinition,
     ToolResources,
     MessageDeltaTextContent,
@@ -659,7 +660,7 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
         :return: ToolResources populated with azure_ai_search associated resources.
         :rtype: ToolResources
         """
-        return ToolResources(azure_ai_search=AzureAISearchResource(index_list=self.index_list))
+        return ToolResources(azure_ai_search=AzureAISearchToolResource(index_list=self.index_list))
 
     def execute(self, tool_call: Any):
         """
@@ -851,7 +852,7 @@ class AzureFunctionTool(Tool[AzureFunctionToolDefinition]):
 class ConnectionTool(Tool[ToolDefinitionT]):
     """
     A tool that requires connection ids.
-    Used as base class for Bing Grounding, Sharepoint, and Microsoft Fabric
+    Used as base class for Sharepoint and Microsoft Fabric
     """
 
     def __init__(self, connection_id: str):
@@ -859,7 +860,17 @@ class ConnectionTool(Tool[ToolDefinitionT]):
         Initialize ConnectionTool with a connection_id.
 
         :param connection_id: Connection ID used by tool. All connection tools allow only one connection.
+        :raises ValueError: If the connection id is invalid.
         """
+        if not _is_valid_connection_id(connection_id):
+            raise ValueError(
+                "Connection ID '"
+                + connection_id
+                + "' does not fit the format:"
+                + "'/subscriptions/<subscription_id>/resourceGroups/<resource_group_name>/"
+                + "providers/<provider_name>/accounts/<account_name>/projects/<project_name>/connections/<connection_name>'"
+            )
+
         self.connection_ids = [ToolConnection(connection_id=connection_id)]
 
     @property
@@ -882,15 +893,29 @@ class BingGroundingTool(Tool[BingGroundingToolDefinition]):
 
     def __init__(self, connection_id: str, market: str = "", set_lang: str = "", count: int = 5, freshness: str = ""):
         """
-        Initialize Bing Custom Search with a connection_id.
+        Initialize Bing Grounding tool with a connection_id.
 
-        :param connection_id: Connection ID used by tool. Bing Custom Search tools allow only one connection.
-        :param market:
-        :param set_lang:
-        :param count:
-        :param freshness:
+        :param connection_id: Connection ID used by tool. Bing Grounding tools allow only one connection.
+        :param market: The market where the results come from.
+        :param set_lang: The language to use for user interface strings when calling Bing API.
+        :param count: The number of search results to return in the Bing API response.
+        :param freshness: Filter search results by a specific time range.
+        :raises ValueError: If the connection id is invalid.
+
+        .. seealso::
+           `Bing Web Search API Query Parameters <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters>`_
         """
-        self.connection_ids = [
+
+        if not _is_valid_connection_id(connection_id):
+            raise ValueError(
+                "Connection ID '"
+                + connection_id
+                + "' does not fit the format:"
+                + "'/subscriptions/<subscription_id>/resourceGroups/<resource_group_name>/"
+                + "providers/<provider_name>/accounts/<account_name>/projects/<project_name>/connections/<connection_name>'"
+            )
+
+        self._search_configurations = [
             BingGroundingSearchConfiguration(
                 connection_id=connection_id, market=market, set_lang=set_lang, count=count, freshness=freshness
             )
@@ -905,7 +930,7 @@ class BingGroundingTool(Tool[BingGroundingToolDefinition]):
         """
         return [
             BingGroundingToolDefinition(
-                bing_grounding=BingGroundingSearchConfigurationList(search_configurations=self.connection_ids)
+                bing_grounding=BingGroundingSearchToolParameters(search_configurations=self._search_configurations)
             )
         ]
 
@@ -927,25 +952,46 @@ class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
     A tool that searches for information using Bing Custom Search.
     """
 
-    def __init__(self, connection_id: str, instance_name: str):
+    def __init__(
+        self,
+        connection_id: str,
+        instance_name: str,
+        market: str = "",
+        set_lang: str = "",
+        count: int = 5,
+        freshness: str = "",
+    ):
         """
         Initialize Bing Custom Search with a connection_id.
 
         :param connection_id: Connection ID used by tool. Bing Custom Search tools allow only one connection.
         :param instance_name: Config instance name used by tool.
+        :param market: The market where the results come from.
+        :param set_lang: The language to use for user interface strings when calling Bing API.
+        :param count: The number of search results to return in the Bing API response.
+        :param freshness: Filter search results by a specific time range.
         """
-        self.connection_ids = [BingCustomSearchConfiguration(connection_id=connection_id, instance_name=instance_name)]
+        self._search_configurations = [
+            BingCustomSearchConfiguration(
+                connection_id=connection_id,
+                instance_name=instance_name,
+                market=market,
+                set_lang=set_lang,
+                count=count,
+                freshness=freshness,
+            )
+        ]
 
     @property
     def definitions(self) -> List[BingCustomSearchToolDefinition]:
         """
-        Get the Bing grounding tool definitions.
+        Get the Bing Custom Search tool definitions.
 
         :rtype: List[ToolDefinition]
         """
         return [
             BingCustomSearchToolDefinition(
-                bing_custom_search=BingCustomSearchConfigurationList(search_configurations=self.connection_ids)
+                bing_custom_search=BingCustomSearchToolParameters(search_configurations=self._search_configurations)
             )
         ]
 
@@ -960,6 +1006,44 @@ class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
 
     def execute(self, tool_call: Any) -> Any:
         pass
+
+
+class FabricTool(ConnectionTool[MicrosoftFabricToolDefinition]):
+    """
+    A tool that searches for information using Microsoft Fabric.
+    """
+
+    @property
+    def definitions(self) -> List[MicrosoftFabricToolDefinition]:
+        """
+        Get the Microsoft Fabric tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [
+            MicrosoftFabricToolDefinition(
+                fabric_dataagent=FabricDataAgentToolParameters(connection_list=self.connection_ids)
+            )
+        ]
+
+
+class SharepointTool(ConnectionTool[SharepointToolDefinition]):
+    """
+    A tool that searches for information using Sharepoint.
+    """
+
+    @property
+    def definitions(self) -> List[SharepointToolDefinition]:
+        """
+        Get the Sharepoint tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [
+            SharepointToolDefinition(
+                sharepoint_grounding=SharepointGroundingToolParameters(connection_list=self.connection_ids)
+            )
+        ]
 
 
 class ConnectedAgentTool(Tool[ConnectedAgentToolDefinition]):
@@ -1005,36 +1089,6 @@ class ConnectedAgentTool(Tool[ConnectedAgentToolDefinition]):
         :param Any tool_call: The tool call to execute.
         :type tool_call: Any
         """
-
-
-class FabricTool(ConnectionTool[MicrosoftFabricToolDefinition]):
-    """
-    A tool that searches for information using Microsoft Fabric.
-    """
-
-    @property
-    def definitions(self) -> List[MicrosoftFabricToolDefinition]:
-        """
-        Get the Microsoft Fabric tool definitions.
-
-        :rtype: List[ToolDefinition]
-        """
-        return [MicrosoftFabricToolDefinition(fabric_dataagent=ToolConnectionList(connection_list=self.connection_ids))]
-
-
-class SharepointTool(ConnectionTool[SharepointToolDefinition]):
-    """
-    A tool that searches for information using Sharepoint.
-    """
-
-    @property
-    def definitions(self) -> List[SharepointToolDefinition]:
-        """
-        Get the Sharepoint tool definitions.
-
-        :rtype: List[ToolDefinition]
-        """
-        return [SharepointToolDefinition(sharepoint_grounding=ToolConnectionList(connection_list=self.connection_ids))]
 
 
 class FileSearchTool(Tool[FileSearchToolDefinition]):
@@ -1222,7 +1276,7 @@ class BaseToolSet:
         Safely converts a dictionary into a ToolResources instance.
 
         :param resources: A dictionary of tool resources. Should be a mapping
-            accepted by ~azure.ai.agents.models.AzureAISearchResource
+            accepted by ~azure.ai.agents.models.AzureAISearchToolResource
         :type resources: Dict[str, Any]
         :return: A ToolResources instance.
         :rtype: ToolResources
@@ -1323,29 +1377,27 @@ class AsyncToolSet(BaseToolSet):
                 + "Please use AsyncFunctionTool instead and provide sync and/or async function(s)."
             )
 
+    async def _execute_single_tool_call(self, tool_call: Any):
+        try:
+            tool = self.get_tool(AsyncFunctionTool)
+            output = await tool.execute(tool_call)
+            return {"tool_call_id": tool_call.id, "output": str(output)}
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            return {"tool_call_id": tool_call.id, "output": str(e)}
+
     async def execute_tool_calls(self, tool_calls: List[Any]) -> Any:
         """
-        Execute a tool of the specified type with the provided tool calls.
+        Execute a tool of the specified type with the provided tool calls concurrently.
 
         :param List[Any] tool_calls: A list of tool calls to execute.
         :return: The output of the tool operations.
         :rtype: Any
         """
-        tool_outputs = []
 
-        for tool_call in tool_calls:
-            try:
-                if tool_call.type == "function":
-                    tool = self.get_tool(AsyncFunctionTool)
-                    output = await tool.execute(tool_call)
-                    tool_output = {
-                        "tool_call_id": tool_call.id,
-                        "output": str(output),
-                    }
-                    tool_outputs.append(tool_output)
-            except Exception as e:  # pylint: disable=broad-exception-caught
-                tool_output = {"tool_call_id": tool_call.id, "output": str(e)}
-                tool_outputs.append(tool_output)
+        # Execute all tool calls concurrently
+        tool_outputs = await asyncio.gather(
+            *[self._execute_single_tool_call(tc) for tc in tool_calls if tc.type == "function"]
+        )
 
         return tool_outputs
 
@@ -1790,6 +1842,30 @@ class AgentRunStream(Generic[BaseAgentEventHandlerT]):
             close_method()
 
 
+def _is_valid_connection_id(connection_id: str) -> bool:
+    """
+    Validates if a string matches the Azure connection resource ID format.
+
+    The expected format is:
+    "/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP>/
+    providers/<AZURE_PROVIDER>/accounts/<ACCOUNT_NAME>/projects/<PROJECT_NAME>/
+    connections/<CONNECTION_NAME>"
+
+    :param connection_id: The connection ID string to validate
+    :type connection_id: str
+    :return: True if the string matches the expected format, False otherwise
+    :rtype: bool
+    """
+    pattern = (
+        r"^/subscriptions/[^/]+/resourceGroups/[^/]+/providers/[^/]+/accounts/[^/]+/projects/[^/]+/connections/[^/]+$"
+    )
+
+    # Check if the string matches the pattern
+    if re.match(pattern, connection_id):
+        return True
+    return False
+
+
 __all__: List[str] = [
     "AgentEventHandler",
     "AgentRunStream",
@@ -1806,11 +1882,11 @@ __all__: List[str] = [
     "FileSearchTool",
     "FunctionTool",
     "OpenApiTool",
-    "BingCustomSearchTool",
     "BingGroundingTool",
-    "StreamEventData",
-    "SharepointTool",
     "FabricTool",
+    "SharepointTool",
+    "BingCustomSearchTool",
+    "StreamEventData",
     "AzureAISearchTool",
     "Tool",
     "ToolSet",

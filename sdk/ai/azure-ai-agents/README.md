@@ -1,17 +1,19 @@
 <!-- PIPY LONG DESCRIPTION BEGIN -->
 # Azure AI Agents client library for Python
 
-Use the AI Agents client library (in preview) to:
+Use the AI Agents client library to:
 
-* **Develop Agents using the Azure AI Agents Service**, leveraging an extensive ecosystem of models, tools, and capabilities from OpenAI, Microsoft, and other LLM providers. The Azure AI Agents Service enables the building of Agents for a wide range of generative AI use cases. The package is currently in preview.
-* **Enable OpenTelemetry tracing**.
+* **Develop Agents using the Azure AI Agents Service**, leveraging an extensive ecosystem of models, tools, and capabilities from OpenAI, Microsoft, and other LLM providers. The Azure AI Agents Service enables the building of Agents for a wide range of generative AI use cases.
+* **Note:** While this package can be used independently, we recommend using the Azure AI Projects client library (azure-ai-projects) for an enhanced experience. 
+The Projects library provides simplified access to advanced functionality, such as creating and managing agents, enumerating AI models, working with datasets and 
+managing search indexes, evaluating generative AI performance, and enabling OpenTelemetry tracing.
 
-[Product documentation](https://aka.ms/azsdk/azure-ai-projects/product-doc)
+[Product documentation](https://aka.ms/azsdk/azure-ai-agents/product-doc)
 | [Samples][samples]
-| [API reference documentation](https://aka.ms/azsdk/azure-ai-projects/python/reference)
-| [Package (PyPI)](https://aka.ms/azsdk/azure-ai-projects/python/package)
-| [SDK source code](https://aka.ms/azsdk/azure-ai-projects/python/code)
-| [AI Starter Template](https://aka.ms/azsdk/azure-ai-projects/python/ai-starter-template)
+| [API reference documentation](https://aka.ms/azsdk/azure-ai-agents/python/reference)
+| [Package (PyPI)](https://aka.ms/azsdk/azure-ai-agents/python/package)
+| [SDK source code](https://aka.ms/azsdk/azure-ai-agents/python/code)
+| [AI Starter Template](https://aka.ms/azsdk/azure-ai-agents/python/ai-starter-template)
 
 ## Reporting issues
 
@@ -122,12 +124,11 @@ Here is an example of how to create an Agent:
 <!-- SNIPPET:sample_agents_basics.create_agent -->
 
 ```python
-
-    agent = agents_client.create_agent(
-        model=os.environ["MODEL_DEPLOYMENT_NAME"],
-        name="my-agent",
-        instructions="You are helpful agent",
-    )
+agent = agents_client.create_agent(
+    model=os.environ["MODEL_DEPLOYMENT_NAME"],
+    name="my-agent",
+    instructions="You are helpful agent",
+)
 ```
 
 <!-- END SNIPPET -->
@@ -298,7 +299,8 @@ conn_id = os.environ["AZURE_BING_CONNECTION_ID"]
 bing = BingGroundingTool(connection_id=conn_id)
 
 # Create agent with the bing tool and process agent run
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
@@ -328,7 +330,14 @@ ai_search = AzureAISearchTool(
 )
 
 # Create agent with AI search tool and process agent run
-with agents_client:
+project_client = AIProjectClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
+    credential=DefaultAzureCredential(),
+)
+
+with project_client:
+    agents_client = project_client.agents
+
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
@@ -372,9 +381,9 @@ for message in messages:
 
 You can enhance your Agents by defining callback functions as function tools. These can be provided to `create_agent` via either the `toolset` parameter or the combination of `tools` and `tool_resources`. Here are the distinctions:
 
-For more details about requirements and specification of functions, refer to [Function Tool Specifications](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/FunctionTool.md)
+For more details about requirements and specification of functions, refer to [Function Tool Specifications](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/FunctionTool.md)
 
-Here is an example to use [user functions](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/user_functions.py) in `toolset`:
+Here is an example to use [user functions](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/utils/user_functions.py) in `toolset`:
 <!-- SNIPPET:sample_agents_stream_eventhandler_with_toolset.create_agent_with_function_tool -->
 
 ```python
@@ -393,7 +402,7 @@ agent = agents_client.create_agent(
 
 <!-- END SNIPPET -->
 
-For asynchronous functions, you must import `AgentsClient` from `azure.ai.agents.aio` and use `AsyncFunctionTool`.   Here is an example using [asynchronous user functions](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/async_samples/user_async_functions.py):
+For asynchronous functions, you must import `AgentsClient` from `azure.ai.agents.aio` and use `AsyncFunctionTool`.   Here is an example using [asynchronous user functions](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_async/sample_agents_functions_async.py):
 
 ```python
 from azure.ai.agents.aio import AgentsClient
@@ -418,8 +427,8 @@ agent = await agents_client.create_agent(
 
 <!-- END SNIPPET -->
 
-Notice that if `enable_auto_function_calls` is called, the SDK will invoke the functions automatically during `create_and_process` or streaming.  If you prefer to execute them manually, refer to [`sample_agents_stream_eventhandler_with_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_stream_eventhandler_with_functions.py) or 
-[`sample_agents_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_functions.py)
+Notice that if `enable_auto_function_calls` is called, the SDK will invoke the functions automatically during `create_and_process` or streaming.  If you prefer to execute them manually, refer to [`sample_agents_stream_eventhandler_with_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_streaming/sample_agents_stream_eventhandler_with_functions.py) or
+[`sample_agents_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_tools/sample_agents_functions.py)
 
 ### Create Agent With Azure Function Call
 
@@ -481,30 +490,35 @@ import json
 
 app = func.FunctionApp()
 
-@app.function_name(name="GetWeather")
-@app.queue_trigger(arg_name="inputQueue",
-                   queue_name="input",
-                   connection="DEPLOYMENT_STORAGE_CONNECTION_STRING")
-@app.queue_output(arg_name="outputQueue",
-                  queue_name="output",
-                  connection="DEPLOYMENT_STORAGE_CONNECTION_STRING")
-def queue_trigger(inputQueue: func.QueueMessage, outputQueue: func.Out[str]):
+
+@app.function_name(name="Foo")
+@app.queue_trigger(
+    arg_name="arguments",
+    queue_name="azure-function-foo-input",
+    connection="AzureWebJobsStorage")
+@app.queue_output(
+    arg_name="outputQueue",
+    queue_name="azure-function-tool-output",
+    connection="AzureWebJobsStorage")
+def foo(arguments: func.QueueMessage, outputQueue: func.Out[str]) -> None:
+    """
+    The function, answering question.
+
+    :param arguments: The arguments, containing json serialized request.
+    :param outputQueue: The output queue to write messages to.
+    """
+    
+    parsed_args = json.loads(arguments.get_body().decode('utf-8'))
     try:
-        messagepayload = json.loads(inputQueue.get_body().decode("utf-8"))
-        location = messagepayload["location"]
-        weather_result = f"Weather is 82 degrees and sunny in {location}."
-
-        response_message = {
-            "Value": weather_result,
-            "CorrelationId": messagepayload["CorrelationId"]
+        response = {
+            "Value": "Bar",
+            "CorrelationId": parsed_args['CorrelationId']
         }
-
-        outputQueue.set(json.dumps(response_message))
-
-        logger.info(f"Sent message to output queue with message {response_message}")
+        outputQueue.set(json.dumps(response))
+        logging.info(f'The function returns the following message: {json.dumps(response)}')
     except Exception as e:
         logging.error(f"Error processing message: {e}")
-        return
+        raise
 ```
 
 > **Important:** Both input and output payloads must contain the `CorrelationId`, which must match in request and response.
@@ -520,8 +534,6 @@ To deploy your function to Azure properly, follow Microsoft's official documenta
 **Summary of required steps:**
 
 - Use the Azure CLI or Azure Portal to create an Azure Function App.
-- Enable System Managed Identity for your Azure Function App.
-- Assign appropriate permissions to your Azure Function App identity as outlined in the Role Assignments section below
 - Create input and output queues in Azure Storage.
 - Deploy your Function code.
 
@@ -534,30 +546,19 @@ To ensure that your Azure Function deployment functions correctly:
 1. Place the following style message manually into the input queue (`input`):
 
 {
-  "location": "Seattle",
   "CorrelationId": "42"
 }
 
 Check the output queue (`output`) and validate the structured message response:
 
 {
-  "Value": "The weather in Seattle is sunny and warm.",
+  "Value": "Bar",
   "CorrelationId": "42"
 }
 
 ---
 
 **Required Role Assignments (IAM Configuration)**
-
-Clearly assign the following Azure IAM roles to ensure correct permissions:
-
-1. **Azure Function App's identity:**
-   - Enable system managed identity through Azure Function App > Settings > Identity.
-   - Add permission to storage account:
-     - Go to **Storage Account > Access control (IAM)** and add role assignment:
-       - `Storage Queue Data Contributor` assigned to Azure Function managed identity
-
-2. **Azure AI Project Identity:**
 
 Ensure your Azure AI Project identity has the following storage account permissions:
 - `Storage Account Contributor`
@@ -592,7 +593,7 @@ Below is an example of how to create an Azure Logic App utility tool and registe
 ```python
 
 # Create the agents client
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
@@ -653,7 +654,9 @@ openapi_tool.add_definition(
 )
 
 # Create agent with OpenApi tool and process agent run
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
+
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
@@ -663,6 +666,7 @@ with agents_client:
 ```
 
 <!-- END SNIPPET -->
+
 
 ### Create an Agent with Fabric
 
@@ -681,7 +685,9 @@ print(conn_id)
 fabric = FabricTool(connection_id=conn_id)
 
 # Create an Agent with the Fabric tool and process an Agent run
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
+
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
@@ -912,7 +918,7 @@ message = agents_client.messages.create(
 
 To process your message, you can use `runs.create`, `runs.create_and_process`, or `runs.stream`.
 
-`create_run` requests the Agent to process the message without polling for the result. If you are using `function tools` regardless as `toolset` or not, your code is responsible for polling for the result and acknowledging the status of `Run`. When the status is `requires_action`, your code is responsible for calling the function tools. For a code sample, visit [`sample_agents_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_functions.py).
+`runs.create` requests the Agent to process the message without polling for the result. If you are using `function tools`, your code is responsible for polling for the result and acknowledging the status of `Run`. When the status is `requires_action`, your code is responsible for calling the function tools. For a code sample, visit [`sample_agents_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_tools/sample_agents_functions.py).
 
 Here is an example of `runs.create` and poll until the run is completed:
 
@@ -930,9 +936,19 @@ while run.status in ["queued", "in_progress", "requires_action"]:
 
 <!-- END SNIPPET -->
 
-To have the SDK poll on your behalf and call `function tools`, use the `create_and_process` method. Note that `function tools` will only be invoked if they are provided as `toolset` during the `create_agent` call.
+To have the SDK poll on your behalf and call `function tools`, supply your function implementations through `enable_auto_function_calls` along with `runs.create_and_process` method .
 
 Here is an example:
+
+```python
+functions = FunctionTool(user_functions)
+
+toolset = ToolSet()
+toolset.add(functions)
+
+# To enable tool calls executed automatically
+agents_client.enable_auto_function_calls(toolset)
+```
 
 <!-- SNIPPET:sample_agents_run_with_toolset.create_and_process_run -->
 
@@ -942,9 +958,9 @@ run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.
 
 <!-- END SNIPPET -->
 
-With streaming, polling need not be considered. If `function tools` are provided as `toolset` during the `create_agent` call, they will be invoked by the SDK.
+With streaming, polling need not be considered. If `function tools` were added to the agents, you should decide to have the function tools called manually or automatically.  Please visit [`manual function call sample`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_streaming/sample_agents_stream_eventhandler_with_functions.py) or [`automatic function call sample`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_streaming/sample_agents_stream_iteration_with_toolset.py).    
 
-Here is an example of streaming:
+Here is a basic example of streaming:
 
 <!-- SNIPPET:sample_agents_basics_stream_iteration.iterate_stream -->
 
@@ -1024,7 +1040,7 @@ with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id, event_han
 
 <!-- END SNIPPET -->
 
-As you can see, this SDK parses the events and produces various event types similar to OpenAI agents. In your use case, you might not be interested in handling all these types and may decide to parse the events on your own. To achieve this, please refer to [override base event handler](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_stream_with_base_override_eventhandler.py).
+As you can see, this SDK parses the events and produces various event types similar to OpenAI agents. In your use case, you might not be interested in handling all these types and may decide to parse the events on your own. To achieve this, please refer to [override base event handler](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_streaming/sample_agents_stream_with_base_override_eventhandler.py).
 
 ```
 Note: Multiple streaming processes may be chained behind the scenes.
@@ -1169,19 +1185,15 @@ from opentelemetry import trace
 from azure.monitor.opentelemetry import configure_azure_monitor
 
 # Enable Azure Monitor tracing
-application_insights_connection_string = os.environ["AI_APPINSIGHTS_CONNECTION_STRING"]
+application_insights_connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 configure_azure_monitor(connection_string=application_insights_connection_string)
-
-# enable additional instrumentations
-from azure.ai.agents.telemetry import enable_telemetry
-
-enable_telemetry()
 
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
 with tracer.start_as_current_span(scenario):
-    with agents_client:
+    with project_client:
+        agents_client = project_client.agents
 ```
 
 <!-- END SNIPPET -->
@@ -1259,9 +1271,9 @@ To report an issue with the client library, or request additional features, plea
 
 ## Next steps
 
-Have a look at the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples) folder, containing fully runnable Python code for synchronous and asynchronous clients.
+Have a look at the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents/samples) folder, containing fully runnable Python code for synchronous and asynchronous clients.
 
-Explore the [AI Starter Template](https://aka.ms/azsdk/azure-ai-projects/python/ai-starter-template). This template creates an Azure AI Foundry hub, project and connected resources including Azure OpenAI Service, AI Search and more. It also deploys a simple chat application to Azure Container Apps.
+Explore the [AI Starter Template](https://aka.ms/azsdk/azure-ai-agents/python/ai-starter-template). This template creates an Azure AI Foundry hub, project and connected resources including Azure OpenAI Service, AI Search and more. It also deploys a simple chat application to Azure Container Apps.
 
 ## Contributing
 

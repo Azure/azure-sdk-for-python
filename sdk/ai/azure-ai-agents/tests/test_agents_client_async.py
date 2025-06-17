@@ -16,6 +16,7 @@ import sys
 import io
 import time
 
+
 from azure.ai.agents.aio import AgentsClient
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -57,7 +58,7 @@ from azure.ai.agents.models import (
 # TODO clean this up / get rid of anything not in use
 
 """
-issues I've noticed with the code: 
+issues I've noticed with the code:
     delete_thread(thread.id) fails
     cancel_thread(thread.id) expires/times out occasionally
     added time.sleep() to the beginning of my last few tests to avoid limits
@@ -159,7 +160,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         for agent in agents:
             await client.delete_agent(agent.id)
         assert client.list_agents().data.__len__() == 0
-       
+
         # close client
         await client.close()
     """
@@ -334,20 +335,20 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                 model="gpt-4o", name="my-agent", instructions="You are helpful agent"
             )
         assert client.list_agents().data.__len__() == list_length + 1
-        assert client.list_agents().data[0].id == agent.id 
+        assert client.list_agents().data[0].id == agent.id
 
         # create second agent and check that it appears in the list
         agent2 = await client.create_agent(model="gpt-4o", name="my-agent2", instructions="You are helpful agent")
         assert client.list_agents().data.__len__() == list_length + 2
-        assert client.list_agents().data[0].id == agent.id or client.list_agents().data[1].id == agent.id 
+        assert client.list_agents().data[0].id == agent.id or client.list_agents().data[1].id == agent.id
 
-        # delete agents and check list 
+        # delete agents and check list
         await client.delete_agent(agent.id)
         assert client.list_agents().data.__len__() == list_length + 1
-        assert client.list_agents().data[0].id == agent2.id 
+        assert client.list_agents().data[0].id == agent2.id
 
         client.delete_agent(agent2.id)
-        assert client.list_agents().data.__len__() == list_length 
+        assert client.list_agents().data.__len__() == list_length
         print("Deleted agents")
 
         # close client
@@ -602,10 +603,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # delete thread
-            deletion_status = await client.threads.delete(thread.id)
-            assert deletion_status.id == thread.id
-            assert deletion_status.deleted == True
-            print("Deleted thread, thread ID", deletion_status.id)
+            await client.threads.delete(thread.id)
 
             # delete agent and close client
             await client.delete_agent(agent.id)
@@ -1125,7 +1123,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
     """
     # TODO another, but check that the number of runs decreases after cancelling runs
-    # TODO can each thread only support one run? 
+    # TODO can each thread only support one run?
     # test listing runs
     @agentClientPreparer()
     @recorded_by_proxy_async
@@ -1783,7 +1781,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         assert run.status == RunStatus.COMPLETED, run.last_error.message
         assert run.parallel_tool_calls == use_parallel_runs
 
-        assert (await client.delete_agent(agent.id)).deleted, "The agent was not deleted"
+        await client.delete_agent(agent.id)
         messages = [m async for m in client.messages.list(thread_id=run.thread_id)]
         assert messages, "The data from the agent was not received."
 
@@ -2056,7 +2054,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                 steps = await client.run_steps.list(
                     thread_id=thread.id, run_id=run.id
                 )
-            assert steps["data"].__len__() > 0 
+            assert steps["data"].__len__() > 0
 
             assert run.status == "completed"
             print("Run completed")
@@ -2747,8 +2745,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             ), '"bar" not found in any agent text message'
 
             # Delete the agent once done
-            result = await client.delete_agent(agent.id)
-            assert result.deleted, "The agent was not deleted."
+            await client.delete_agent(agent.id)
 
     @agentClientPreparer()
     @recorded_by_proxy_async
@@ -2789,7 +2786,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                 )
             assert run.status in RunStatus.COMPLETED, run.last_error
 
-            assert (await client.delete_agent(agent.id)).deleted, "The agent was not deleted"
+            await client.delete_agent(agent.id)
             messages = [m async for m in client.messages.list(thread_id=thread.id)]
             assert messages, "The data from the agent was not received."
 
@@ -2944,8 +2941,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             assert run.status == RunStatus.COMPLETED, run.last_error.message
 
-            del_agent = await ai_client.delete_agent(agent.id)
-            assert del_agent.deleted
+            await ai_client.delete_agent(agent.id)
 
             messages = [m async for m in ai_client.messages.list(thread_id=thread.id)]
 
@@ -3003,7 +2999,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             credential=credential,
             connection=bad_connection_string,
         )
-        
+
         # attempt to create agent with bad client
         exception_caught = False
         try:
@@ -3018,7 +3014,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                 assert "failed to resolve 'foo.bar.some-domain.ms'" in e.message.lower()
             else:
                 assert "No such host is known" and "foo.bar.some-domain.ms" in str(e)
-        
+
         # close client and confirm an exception was caught
         await client.close()
         assert exception_caught

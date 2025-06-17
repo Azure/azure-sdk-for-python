@@ -142,6 +142,8 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     headers = dict(default_headers)
     options = options or {}
 
+    # Generate a new activity ID for each request client side.
+    headers[http_constants.HttpHeaders.ActivityId] = GenerateGuidId()
     if cosmos_client_connection.UseMultipleWriteLocations:
         headers[http_constants.HttpHeaders.AllowTentativeWrites] = "true"
 
@@ -344,7 +346,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     return headers
 
 
-def GetResourceIdOrFullNameFromLink(resource_link: str) -> Optional[str]:
+def GetResourceIdOrFullNameFromLink(resource_link: str) -> str:
     """Gets resource id or full name from resource link.
 
     :param str resource_link:
@@ -377,7 +379,7 @@ def GetResourceIdOrFullNameFromLink(resource_link: str) -> Optional[str]:
         # request in form
         # /[resourceType]/[resourceId]/ .... /[resourceType]/[resourceId]/.
         return str(path_parts[-2])
-    return None
+    raise ValueError("Failed Parsing ResourceID from link: {0}".format(resource_link))
 
 
 def GenerateGuidId() -> str:
@@ -877,8 +879,8 @@ def _format_batch_operations(
     return final_operations
 
 
-def _set_properties_cache(properties: Dict[str, Any]) -> Dict[str, Any]:
+def _build_properties_cache(properties: Dict[str, Any], container_link: str) -> Dict[str, Any]:
     return {
         "_self": properties.get("_self", None), "_rid": properties.get("_rid", None),
-        "partitionKey": properties.get("partitionKey", None)
+        "partitionKey": properties.get("partitionKey", None), "container_link": container_link
     }
