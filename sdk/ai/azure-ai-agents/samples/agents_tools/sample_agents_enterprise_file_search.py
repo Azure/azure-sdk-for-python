@@ -12,27 +12,29 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-agents azure-identity azure-ai-ml
+    pip install azure-ai-projects azure-ai-agents azure-identity azure-ai-ml
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - the Azure AI Agents endpoint.
-    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+                          page of your Azure AI Foundry portal.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
     3) AZURE_BLOB_URI - The URI of the blob storage where the file is uploaded. In the format:
          azureml://subscriptions/{subscription-id}/resourcegroups/{resource-group-name}/workspaces/{workspace-name}/datastores/{datastore-name}/paths/{path-to-file}
 """
 
 import os
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import FileSearchTool, ListSortOrder, VectorStoreDataSource, VectorStoreDataSourceAssetType
 from azure.identity import DefaultAzureCredential
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
 
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
 
     # [START upload_file_and_create_agent_with_file_search]
     # We will upload the local file to Azure and will use it for vector store creation.

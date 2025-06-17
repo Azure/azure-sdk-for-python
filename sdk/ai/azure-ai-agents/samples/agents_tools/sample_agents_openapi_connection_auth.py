@@ -8,7 +8,7 @@
 FILE: sample_agents_openapi_connection_auth.py
 
 DESCRIPTION:
-    This sample demonstrates how to use agent operations with the 
+    This sample demonstrates how to use agent operations with the
     OpenAPI tool from the Azure Agents service using a synchronous client, using
     custom key authentication against the TripAdvisor API.
     To learn more about OpenAPI specs, visit https://learn.microsoft.com/openapi
@@ -25,23 +25,24 @@ USAGE:
 
     Save that connection name as the PROJECT_OPENAPI_CONNECTION_NAME environment variable
 
-    pip install azure-ai-agents azure-identity jsonref
+    pip install azure-ai-projects azure-ai-agents azure-identity jsonref
 
     Set this environment variables with your own values:
-    PROJECT_ENDPOINT - the Azure AI Agents endpoint.
+    PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+                       page of your Azure AI Foundry portal.
     OPENAPI_CONNECTION_ID - the connection ID for the OpenAPI connection, taken from Azure AI Foundry.
     MODEL_DEPLOYMENT_NAME - name of the model deployment in the project to use Agents against
 """
 
 import os
 import jsonref
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import OpenApiTool, OpenApiConnectionAuthDetails, OpenApiConnectionSecurityScheme
 
 asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/tripadvisor_openapi.json"))
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
@@ -63,7 +64,9 @@ openapi = OpenApiTool(
 )
 
 # Create an Agent with OpenApi tool and process Agent run
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
+
     agent = agents_client.create_agent(
         model=model_name, name="my-agent", instructions="You are a helpful agent", tools=openapi.definitions
     )

@@ -24,6 +24,8 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
     - Send event data batch to a specific partition determined by partition key
     - Send event data batch to a specific partition by partition id
     - Send event data batch with customized properties
+    - Send events concurrently with proper thread/coroutine safety practices
+      - **Note**: EventHub clients are not thread-safe or coroutine-safe
 
 - [send_stream.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/sync_samples/send_stream.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/async_samples/send_stream_async.py)) - Examples to do streaming sending:
     - Send in a stream

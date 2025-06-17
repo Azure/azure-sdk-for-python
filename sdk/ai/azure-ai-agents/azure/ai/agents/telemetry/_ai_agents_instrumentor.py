@@ -604,6 +604,13 @@ class _AIAgentsInstrumentorPreview:
                 span.add_attribute(GEN_AI_USAGE_INPUT_TOKENS, run.usage.prompt_tokens)
                 span.add_attribute(GEN_AI_USAGE_OUTPUT_TOKENS, run.usage.completion_tokens)
 
+            if run.last_error:
+                span.span_instance.set_status(
+                    StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
+                    run.last_error.message,
+                )
+                span.add_attribute(ERROR_TYPE, run.last_error.code)
+
     @staticmethod
     def agent_api_response_to_str(response_format: Any) -> Optional[str]:
         """
@@ -837,16 +844,7 @@ class _AIAgentsInstrumentorPreview:
                 result = function(*args, **kwargs)
                 span.add_attribute(GEN_AI_AGENT_ID, result.id)
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -886,16 +884,7 @@ class _AIAgentsInstrumentorPreview:
                 result = await function(*args, **kwargs)
                 span.add_attribute(GEN_AI_AGENT_ID, result.id)
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -914,16 +903,7 @@ class _AIAgentsInstrumentorPreview:
                 result = function(*args, **kwargs)
                 span.add_attribute(GEN_AI_THREAD_ID, result.get("id"))
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -942,16 +922,7 @@ class _AIAgentsInstrumentorPreview:
                 result = await function(*args, **kwargs)
                 span.add_attribute(GEN_AI_THREAD_ID, result.get("id"))
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -979,16 +950,7 @@ class _AIAgentsInstrumentorPreview:
                 result = function(*args, **kwargs)
                 span.add_attribute(GEN_AI_MESSAGE_ID, result.get("id"))
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -1016,16 +978,7 @@ class _AIAgentsInstrumentorPreview:
                 result = await function(*args, **kwargs)
                 span.add_attribute(GEN_AI_MESSAGE_ID, result.get("id"))
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -1068,18 +1021,12 @@ class _AIAgentsInstrumentorPreview:
         with span:
             try:
                 result = function(*args, **kwargs)
+                if result:
+                    span.add_attribute(GEN_AI_THREAD_RUN_ID, result.get("id"))
+
                 self.set_end_run(span, result)
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -1122,25 +1069,57 @@ class _AIAgentsInstrumentorPreview:
         with span:
             try:
                 result = await function(*args, **kwargs)
-                if span.span_instance.is_recording:
-                    span.add_attribute(GEN_AI_THREAD_RUN_STATUS, self._status_to_string(result.status))
-                    span.add_attribute(GEN_AI_THREAD_RUN_ID, self._status_to_string(result.id))
-                    span.add_attribute(GEN_AI_RESPONSE_MODEL, result.model)
-                    if result.usage:
-                        span.add_attribute(GEN_AI_USAGE_INPUT_TOKENS, result.usage.prompt_tokens)
-                        span.add_attribute(GEN_AI_USAGE_OUTPUT_TOKENS, result.usage.completion_tokens)
-                        span.add_attribute(GEN_AI_MESSAGE_ID, result.get("id"))
+                if result:
+                    span.add_attribute(GEN_AI_THREAD_RUN_ID, result.get("id"))
+
+                self.set_end_run(span, result)
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
+                raise
+
+        return result
+
+    def trace_get_run(self, operation_name, function, *args, **kwargs):
+        server_address = self.get_server_address_from_arg(args[0])
+        thread_id = kwargs.get("thread_id")
+        run_id = kwargs.get("run_id")
+
+        span = start_span(operation_name, server_address=server_address, thread_id=thread_id, run_id=run_id)
+
+        if span is None:
+            return function(*args, **kwargs)
+
+        with span:
+            try:
+                result = function(*args, **kwargs)
+                if result:
+                    span.add_attribute(GEN_AI_AGENT_ID, result.agent_id)
+
+                self.set_end_run(span, result)
+            except Exception as exc:
+                self.record_error(span, exc)
+                raise
+
+        return result
+
+    async def trace_get_run_async(self, operation_name, function, *args, **kwargs):
+        server_address = self.get_server_address_from_arg(args[0])
+        thread_id = kwargs.get("thread_id")
+        run_id = kwargs.get("run_id")
+
+        span = start_span(operation_name, server_address=server_address, thread_id=thread_id, run_id=run_id)
+
+        if span is None:
+            return await function(*args, **kwargs)
+
+        with span:
+            try:
+                result = await function(*args, **kwargs)
+                if result:
+                    span.add_attribute(GEN_AI_AGENT_ID, result.agent_id)
+                self.set_end_run(span, result)
+            except Exception as exc:
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -1172,16 +1151,7 @@ class _AIAgentsInstrumentorPreview:
                 if not isinstance(result, AgentRunStream):
                     self.set_end_run(span, result)
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -1213,16 +1183,7 @@ class _AIAgentsInstrumentorPreview:
                 if not isinstance(result, AsyncAgentRunStream):
                     self.set_end_run(span, result)
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -1236,20 +1197,11 @@ class _AIAgentsInstrumentorPreview:
         if span is None:
             return function(*args, **kwargs)
 
-        with span.change_context(span.span_instance):
+        with span.change_context(span):
             try:
                 result = function(*args, **kwargs)
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -1263,20 +1215,11 @@ class _AIAgentsInstrumentorPreview:
         if span is None:
             return await function(*args, **kwargs)
 
-        with span.change_context(span.span_instance):
+        with span.change_context(span):
             try:
                 result = await function(*args, **kwargs)
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -1318,21 +1261,12 @@ class _AIAgentsInstrumentorPreview:
         if span is None:
             return function(*args, **kwargs)
 
-        with span.change_context(span.span_instance):
+        with span.change_context(span):
             try:
                 kwargs["event_handler"] = self.wrap_handler(event_handler, span)
                 result = function(*args, **kwargs)
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -1376,21 +1310,12 @@ class _AIAgentsInstrumentorPreview:
 
         # TODO: how to keep span active in the current context without existing?
         # TODO: dummy span for none
-        with span.change_context(span.span_instance):
+        with span.change_context(span):
             try:
                 kwargs["event_handler"] = self.wrap_async_handler(event_handler, span)
                 result = await function(*args, **kwargs)
             except Exception as exc:
-                # Set the span status to error
-                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
-                    span.span_instance.set_status(
-                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                        description=str(exc),
-                    )
-                module = getattr(exc, "__module__", "")
-                module = module if module != "builtins" else ""
-                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                self._set_attributes(span, ("error.type", error_type))
+                self.record_error(span, exc)
                 raise
 
         return result
@@ -1454,10 +1379,6 @@ class _AIAgentsInstrumentorPreview:
         handler: "Optional[AgentEventHandler]" = None,
         span: "Optional[AbstractSpan]" = None,
     ) -> "Optional[AgentEventHandler]":
-        # Do not create a handler wrapper if we do not have handler in the first place.
-        if not handler:
-            return None
-
         if isinstance(handler, _AgentEventHandlerTraceWrapper):
             return handler
 
@@ -1471,10 +1392,6 @@ class _AIAgentsInstrumentorPreview:
         handler: "Optional[AsyncAgentEventHandler]" = None,
         span: "Optional[AbstractSpan]" = None,
     ) -> "Optional[AsyncAgentEventHandler]":
-        # Do not create a handler wrapper if we do not have handler in the first place.
-        if not handler:
-            return None
-
         if isinstance(handler, _AsyncAgentEventHandlerTraceWrapper):
             return handler
 
@@ -1541,7 +1458,13 @@ class _AIAgentsInstrumentorPreview:
             if class_function_name.startswith("RunsOperations.create"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_create_run(OperationName.START_THREAD_RUN, function, *args, **kwargs)
+            if class_function_name.startswith("RunsOperations.get"):
+                kwargs.setdefault("merge_span", True)
+                return self.trace_get_run(OperationName.GET_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("RunsOperations.create_and_process"):
+                kwargs.setdefault("merge_span", True)
+                return self.trace_create_run(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
+            if class_function_name.startswith("AgentsClient.create_thread_and_run"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_create_run(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("RunsOperations.submit_tool_outputs"):
@@ -1611,7 +1534,13 @@ class _AIAgentsInstrumentorPreview:
             if class_function_name.startswith("RunsOperations.create"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_create_run_async(OperationName.START_THREAD_RUN, function, *args, **kwargs)
+            if class_function_name.startswith("RunsOperations.get"):
+                kwargs.setdefault("merge_span", True)
+                return await self.trace_get_run_async(OperationName.GET_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("RunsOperations.create_and_process"):
+                kwargs.setdefault("merge_span", True)
+                return await self.trace_create_run_async(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
+            if class_function_name.startswith("AgentsClient.create_thread_and_run"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_create_run_async(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("RunsOperations.submit_tool_outputs"):
@@ -1720,6 +1649,13 @@ class _AIAgentsInstrumentorPreview:
             (
                 "azure.ai.agents.operations",
                 "RunsOperations",
+                "get",
+                TraceType.AGENTS,
+                "get_run",
+            ),
+            (
+                "azure.ai.agents.operations",
+                "RunsOperations",
                 "create_and_process",
                 TraceType.AGENTS,
                 "create_and_process",
@@ -1751,6 +1687,13 @@ class _AIAgentsInstrumentorPreview:
                 "stream",
                 TraceType.AGENTS,
                 "stream",
+            ),
+            (
+                "azure.ai.agents",
+                "AgentsClient",
+                "create_thread_and_run",
+                TraceType.AGENTS,
+                "create_thread_and_run",
             ),
             # Switching off the instrumentation for list method as it requires
             # monkey patching inside pageable class.
@@ -1808,6 +1751,13 @@ class _AIAgentsInstrumentorPreview:
             (
                 "azure.ai.agents.aio.operations",
                 "RunsOperations",
+                "get",
+                TraceType.AGENTS,
+                "get_run",
+            ),
+            (
+                "azure.ai.agents.aio.operations",
+                "RunsOperations",
                 "create_and_process",
                 TraceType.AGENTS,
                 "create_and_process_run",
@@ -1839,6 +1789,13 @@ class _AIAgentsInstrumentorPreview:
                 "stream",
                 TraceType.AGENTS,
                 "stream",
+            ),
+            (
+                "azure.ai.agents.aio",
+                "AgentsClient",
+                "create_thread_and_run",
+                TraceType.AGENTS,
+                "create_thread_and_run",
             ),
             # Switching off the instrumentation for list method as it requires
             # monkey patching inside async pageable class.
@@ -1971,6 +1928,18 @@ class _AIAgentsInstrumentorPreview:
         """
         return _trace_agents_content
 
+    def record_error(self, span, exc):
+        # Set the span status to error
+        if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
+            span.span_instance.set_status(
+                StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
+                description=str(exc),
+            )
+        module = getattr(exc, "__module__", "")
+        module = module if module != "builtins" else ""
+        error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
+        self._set_attributes(span, ("error.type", error_type))
+
 
 class _AgentEventHandlerTraceWrapper(AgentEventHandler):
     def __init__(
@@ -1998,22 +1967,30 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
                 response_iterator=response_iterator,
                 submit_tool_outputs=submit_tool_outputs,
             )
+        else:
+            super().initialize(
+                response_iterator=response_iterator,
+                submit_tool_outputs=submit_tool_outputs,
+            )
 
     def __next__(self) -> Any:
         if self.inner_handler:
             event_bytes = self.inner_handler.__next_impl__()
             return self._process_event(event_bytes.decode("utf-8"))
-        return None
+        return super().__next__()
 
     # pylint: disable=R1710
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return self.inner_handler.on_message_delta(delta)  # type: ignore
+        return super().on_message_delta(delta)  # type: ignore
 
     def on_thread_message(self, message: "ThreadMessage") -> None:  # type: ignore[func-returns-value]
         retval = None
         if self.inner_handler:
             retval = self.inner_handler.on_thread_message(message)  # type: ignore
+        else:
+            retval = super().on_thread_message(message)  # pylint: disable=assignment-from-none # type: ignore
 
         if message.status in {"completed", "incomplete"}:
             self.last_message = message
@@ -2025,6 +2002,8 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
 
         if self.inner_handler:
             retval = self.inner_handler.on_thread_run(run)  # type: ignore
+        else:
+            retval = super().on_thread_run(run)  # pylint: disable=assignment-from-none # type: ignore
         self.last_run = run
 
         return retval  # type: ignore
@@ -2033,6 +2012,8 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         retval = None
         if self.inner_handler:
             retval = self.inner_handler.on_run_step(step)  # type: ignore
+        else:
+            retval = super().on_run_step(step)  # pylint: disable=assignment-from-none # type: ignore
 
         if (
             step.type == "tool_calls"
@@ -2058,19 +2039,23 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
     def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return self.inner_handler.on_run_step_delta(delta)  # type: ignore
+        return super().on_run_step_delta(delta)  # type: ignore
 
     def on_error(self, data: str) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return self.inner_handler.on_error(data)  # type: ignore
+        return super().on_error(data)  # type: ignore
 
     def on_done(self) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return self.inner_handler.on_done()  # type: ignore
+        return super().on_done()  # type: ignore
         # it could be called multiple tines (for each step) __exit__
 
     def on_unhandled_event(self, event_type: str, event_data: Any) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return self.inner_handler.on_unhandled_event(event_type, event_data)  # type: ignore
+        return super().on_unhandled_event(event_type, event_data)  # type: ignore
 
     # pylint: enable=R1710
 
@@ -2116,6 +2101,11 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
                 response_iterator=response_iterator,
                 submit_tool_outputs=submit_tool_outputs,
             )
+        else:
+            super().initialize(
+                response_iterator=response_iterator,
+                submit_tool_outputs=submit_tool_outputs,
+            )
 
     # cspell:disable-next-line
     async def __anext__(self) -> Any:
@@ -2123,16 +2113,21 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
             # cspell:disable-next-line
             event_bytes = await self.inner_handler.__anext_impl__()
             return await self._process_event(event_bytes.decode("utf-8"))
+        # cspell:disable-next-line
+        return await super().__anext__()
 
     # pylint: disable=R1710
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return await self.inner_handler.on_message_delta(delta)  # type: ignore
+        return await super().on_message_delta(delta)  # type: ignore
 
     async def on_thread_message(self, message: "ThreadMessage") -> None:  # type: ignore[func-returns-value]
         retval = None
         if self.inner_handler:
             retval = await self.inner_handler.on_thread_message(message)  # type: ignore
+        else:
+            retval = await super().on_thread_message(message)  # type: ignore
 
         if message.status in {"completed", "incomplete"}:
             self.last_message = message
@@ -2144,6 +2139,8 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
 
         if self.inner_handler:
             retval = await self.inner_handler.on_thread_run(run)  # type: ignore
+        else:
+            retval = await super().on_thread_run(run)  # type: ignore
         self.last_run = run
 
         return retval  # type: ignore
@@ -2152,6 +2149,8 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
         retval = None
         if self.inner_handler:
             retval = await self.inner_handler.on_run_step(step)  # type: ignore
+        else:
+            retval = await super().on_run_step(step)  # type: ignore
 
         if (
             step.type == "tool_calls"
@@ -2177,19 +2176,23 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
     async def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return await self.inner_handler.on_run_step_delta(delta)  # type: ignore
+        return await super().on_run_step_delta(delta)  # type: ignore
 
     async def on_error(self, data: str) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return await self.inner_handler.on_error(data)  # type: ignore
+        return await super().on_error(data)  # type: ignore
 
     async def on_done(self) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return await self.inner_handler.on_done()  # type: ignore
+        return await super().on_done()  # type: ignore
         # it could be called multiple tines (for each step) __exit__
 
     async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return await self.inner_handler.on_unhandled_event(event_type, event_data)  # type: ignore
+        return await super().on_unhandled_event(event_type, event_data)  # type: ignore
 
     # pylint: enable=R1710
 
@@ -2197,13 +2200,6 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
         if not self.ended:
             self.ended = True
             self.instrumentor.set_end_run(self.span, self.last_run)
-
-            if self.last_run and self.last_run.last_error:
-                self.span.set_status(
-                    StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
-                    self.last_run.last_error.message,
-                )
-                self.span.add_attribute(ERROR_TYPE, self.last_run.last_error.code)
 
             self.span.__exit__(exc_type, exc_val, exc_tb)
             self.span.finish()

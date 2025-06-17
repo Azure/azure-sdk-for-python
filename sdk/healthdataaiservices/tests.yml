@@ -3,7 +3,13 @@ trigger: none
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
   parameters:
+    BuildTargetingString: azure-health-deidentification
     ServiceDirectory: healthdataaiservices
+    Clouds: Public
+    CloudConfig:
+      Public:
+        MatrixReplace:
+          - TestSamples=.*/true
     EnvVars:
       AZURE_SKIP_LIVE_RECORDING: 'True'
       AZURE_TEST_RUN_LIVE: 'true'

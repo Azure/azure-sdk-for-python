@@ -3579,4 +3579,5 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         blob_data = await (await blob_client.download_blob(validate_content=True)).read()
         assert blob_data == b"Hello Async World!"  # data is fixed by mock transport
+
 # ------------------------------------------------------------------------------

@@ -7,7 +7,7 @@
   "matrix": {
     "Agent": {
       "macos-latest": { "OSVmImage": "env:MACVMIMAGE", "Pool": "env:MACPOOL" },
-      "ubuntu-20.04": { "OSVmImage": "env:LINUXVMIMAGE", "Pool": "env:LINUXPOOL" }
+      "ubuntu-24.04": { "OSVmImage": "env:LINUXVMIMAGE", "Pool": "env:LINUXPOOL" }
     },
     "PythonVersion": [ "3.9", "3.11", "3.10" ],
     "CoverageArg": "--disablecov",
@@ -16,7 +16,7 @@
   "include": [
     {
       "CoverageConfig": {
-        "ubuntu2004_39_coverage": {
+        "ubuntu2404_39_coverage": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.9",
@@ -27,7 +27,7 @@
     },
     {
       "Config": {
-        "Ubuntu2004_312": {
+        "Ubuntu2404_312": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.12",
@@ -38,7 +38,7 @@
     },
     {
       "Config": {
-        "pyrit_Ubuntu2004_310": {
+        "pyrit_Ubuntu2404_310": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.10",
