@@ -4,7 +4,7 @@
 
 ### Bugs Fixed
 
-- Significant improvements to IntentResolution evaluator. New version has lower intra model variance (0.046 vs 0.118), lower inter model variance (0.345 vs 0.688), is nearly 2x faster to execute and is significantly cheaper as the prompt has fewer input tokens (only the text in the query and response are passed to evaluation) and also produces fewer output tokens
+- Significant improvements to IntentResolution evaluator. New version has less variance, is nearly 2x faster and consumes fewer tokens.
 
 - Fixed MeteorScoreEvaluator and other threshold-based evaluators returning incorrect binary results due to integer conversion of decimal scores. Previously, decimal scores like 0.9375 were incorrectly converted to integers (0) before threshold comparison, causing them to fail even when above the threshold. [#41415](https://github.com/Azure/azure-sdk-for-python/issues/41415)
 
