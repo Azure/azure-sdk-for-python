@@ -500,9 +500,11 @@ class ComponentOperations(_ScopeDependentOperations):
                 )
                 return component.version, component._to_rest_object()
         except ResourceNotFoundError as e:
-            logger.info("Failed to get component version, %s", e)
+            logger.info("Failed to get component version")
+            logger.debug("%s", e)
         except Exception as e:  # pylint: disable=W0718
-            logger.error("Failed to compare client_component_hash, %s", e)
+            logger.error("Failed to compare client_component_hash")
+            logger.debug("%s", e)
 
         return current_version, rest_component_resource
 
