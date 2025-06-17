@@ -2,7 +2,7 @@
 
 import os, glob, json, argparse, logging
 
-from typing import List, Tuple
+from typing import List
 
 from ci_tools.parsing import ParsedSetup
 from ci_tools.functions import verify_package_classifiers
@@ -81,7 +81,7 @@ if __name__ == "__main__":
 
         if not (classifier_result[0]):
             logging.error(classifier_result[1])
-            package_filed = True
+            package_failed = True
 
     if package_failed:
         logging.error("Some packages failed the classifier verification. Check outputs above.")
