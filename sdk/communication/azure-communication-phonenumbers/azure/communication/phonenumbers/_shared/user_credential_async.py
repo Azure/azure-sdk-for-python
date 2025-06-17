@@ -9,6 +9,7 @@ import asyncio
 from asyncio import Condition, Lock, Event
 from datetime import timedelta
 from typing import Any, Optional, overload, Awaitable, Callable
+from azure.core.credentials_async import AsyncTokenCredential
 import sys
 from .utils import get_current_utc_as_int
 from .utils import create_access_token
