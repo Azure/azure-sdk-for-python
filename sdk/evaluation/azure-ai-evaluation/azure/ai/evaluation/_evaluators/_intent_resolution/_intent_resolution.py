@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 import os
 import math
+import logging
 from typing import Dict, Union, List, Optional
 
 from typing_extensions import overload, override
@@ -12,6 +13,8 @@ from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._model_configurations import Conversation, Message
 from ..._common.utils import check_score_is_valid, reformat_conversation_history, reformat_agent_response
 from azure.ai.evaluation._common._experimental import experimental
+
+logger = logging.getLogger(__name__)
 
 @experimental
 class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
@@ -136,8 +139,8 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 target=ErrorTarget.INTENT_RESOLUTION_EVALUATOR,
             )
         # reformat query and response to the format expected by the prompty flow
-        eval_input['query'] = reformat_conversation_history(eval_input["query"])
-        eval_input['response'] = reformat_agent_response(eval_input["response"])
+        eval_input['query'] = reformat_conversation_history(eval_input["query"], logger)
+        eval_input['response'] = reformat_agent_response(eval_input["response"], logger)
 
         llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         # llm_output should always be a dictionary because the response_format of prompty is set to json_object, but checking anyway
@@ -162,4 +165,6 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                         }
             return response_dict
         # If llm_output is not a dictionary, return NaN for the score. This should never happen
+        if logger:
+            logger.warning("LLM output is not a dictionary, returning NaN for the score.")
         return {self._result_key: math.nan}

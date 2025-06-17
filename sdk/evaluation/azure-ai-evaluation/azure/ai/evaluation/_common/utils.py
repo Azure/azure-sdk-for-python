@@ -545,7 +545,7 @@ def _pretty_format_conversation_history(conversation_history):
             formatted_history+="\n\n"
     return formatted_history
 
-def reformat_conversation_history(query):
+def reformat_conversation_history(query, logger = None):
     """Reformats the conversation history to a more compact representation."""
     try:
         conversation_history = _get_conversation_history(query)
@@ -558,6 +558,8 @@ def reformat_conversation_history(query):
         #   Higher inter model variance (0.345 vs 0.607)
         #   Lower percentage of mode in Likert scale (73.4% vs 75.4%)
         #   Lower pairwise agreement between LLMs (85% vs 90% at the pass/fail level with threshold of 3)
+        if logger:
+            logger.warning(f"Conversation history could not be parsed, falling back to original query: {query}")
         return query
 
 def _get_agent_response(agent_response_msgs):
@@ -570,18 +572,22 @@ def _get_agent_response(agent_response_msgs):
                 agent_response_text.extend(text)
     return agent_response_text
 
-def reformat_agent_response(response):
+def reformat_agent_response(response, logger = None):
     try:
         if response is None or response == []:
             return ""
         agent_response = _get_agent_response(response)
         if agent_response == []:
             # If no message could be extracted, likely the format changed, fallback to the original response in that case
+            if logger:
+                logger.warning(f"Empty agent response extracted, likely due to input schema change. Falling back to using the original response: {response}")
             return response
         return "\n".join(agent_response)
     except:
         # If the agent response cannot be parsed for whatever reason (e.g. the converter format changed), the original response is returned
         # This is a fallback to ensure that the evaluation can still proceed. See comments on reformat_conversation_history for more details.
+        if logger:
+            logger.warning(f"Agent response could not be parsed, falling back to original response: {response}")
         return response
 
 def upload(path: str, container_client: ContainerClient, logger=None):
