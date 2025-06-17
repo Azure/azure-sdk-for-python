@@ -116,8 +116,6 @@ class JobRouterAdministrationClientOperationsMixin(
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: ExceptionPolicy. The ExceptionPolicy is compatible with MutableMapping
         :rtype: ~azure.communication.jobrouter.models.ExceptionPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -154,8 +152,6 @@ class JobRouterAdministrationClientOperationsMixin(
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: ExceptionPolicy. The ExceptionPolicy is compatible with MutableMapping
         :rtype: ~azure.communication.jobrouter.models.ExceptionPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -192,8 +188,6 @@ class JobRouterAdministrationClientOperationsMixin(
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: ExceptionPolicy. The ExceptionPolicy is compatible with MutableMapping
         :rtype: ~azure.communication.jobrouter.models.ExceptionPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
