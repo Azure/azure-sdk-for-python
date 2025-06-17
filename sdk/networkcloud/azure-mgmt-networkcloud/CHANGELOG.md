@@ -1,5 +1,43 @@
 # Release History
 
+## 2.1.0 (2025-06-16)
+
+### Features Added
+
+  - Model `AgentPool` added property `etag`
+  - Model `BareMetalMachine` added property `etag`
+  - Model `BareMetalMachineKeySet` added property `etag`
+  - Model `BmcKeySet` added property `etag`
+  - Model `CloudServicesNetwork` added property `etag`
+  - Model `Cluster` added property `etag`
+  - Model `Cluster` added property `analytics_output_settings`
+  - Model `Cluster` added property `secret_archive_settings`
+  - Model `Cluster` added property `vulnerability_scanning_settings`
+  - Model `ClusterManager` added property `etag`
+  - Model `ClusterMetricsConfiguration` added property `etag`
+  - Model `ClusterPatchParameters` added property `analytics_output_settings`
+  - Model `ClusterPatchParameters` added property `secret_archive_settings`
+  - Model `ClusterPatchParameters` added property `vulnerability_scanning_settings`
+  - Model `Console` added property `etag`
+  - Model `KubernetesCluster` added property `etag`
+  - Model `KubernetesClusterFeature` added property `etag`
+  - Model `L2Network` added property `etag`
+  - Model `L3Network` added property `etag`
+  - Enum `OsDiskCreateOption` added member `PERSISTENT`
+  - Model `Rack` added property `etag`
+  - Model `StorageAppliance` added property `etag`
+  - Enum `StorageApplianceDetailedStatus` added member `DEGRADED`
+  - Model `TrunkedNetwork` added property `etag`
+  - Model `VirtualMachine` added property `etag`
+  - Model `VirtualMachine` added property `console_extended_location`
+  - Enum `VirtualMachineDeviceModelType` added member `T3`
+  - Model `Volume` added property `etag`
+  - Added model `AnalyticsOutputSettings`
+  - Added model `SecretArchiveSettings`
+  - Added model `VulnerabilityScanningSettings`
+  - Added enum `VulnerabilityScanningSettingsContainerScan`
+  - Added model `VulnerabilityScanningSettingsPatch`
+
 ## 2.1.0b1 (2025-04-21)
 
 ### Features Added

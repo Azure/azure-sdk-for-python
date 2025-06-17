@@ -21,12 +21,12 @@ class TestHybridComputeManagementNetworkSecurityPerimeterConfigurationsOperation
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_by_private_link_scope(self, resource_group):
+    async def test_network_security_perimeter_configurations_get_by_private_link_scope(self, resource_group):
         response = await self.client.network_security_perimeter_configurations.get_by_private_link_scope(
             resource_group_name=resource_group.name,
             scope_name="str",
             perimeter_name="str",
-            api_version="2024-07-31-preview",
+            api_version="2025-02-19-preview",
         )
 
         # please add some check logic here by yourself
@@ -34,11 +34,11 @@ class TestHybridComputeManagementNetworkSecurityPerimeterConfigurationsOperation
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_private_link_scope(self, resource_group):
+    async def test_network_security_perimeter_configurations_list_by_private_link_scope(self, resource_group):
         response = self.client.network_security_perimeter_configurations.list_by_private_link_scope(
             resource_group_name=resource_group.name,
             scope_name="str",
-            api_version="2024-07-31-preview",
+            api_version="2025-02-19-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,13 +46,15 @@ class TestHybridComputeManagementNetworkSecurityPerimeterConfigurationsOperation
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_reconcile_for_private_link_scope(self, resource_group):
+    async def test_network_security_perimeter_configurations_begin_reconcile_for_private_link_scope(
+        self, resource_group
+    ):
         response = await (
             await self.client.network_security_perimeter_configurations.begin_reconcile_for_private_link_scope(
                 resource_group_name=resource_group.name,
                 scope_name="str",
                 perimeter_name="str",
-                api_version="2024-07-31-preview",
+                api_version="2025-02-19-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

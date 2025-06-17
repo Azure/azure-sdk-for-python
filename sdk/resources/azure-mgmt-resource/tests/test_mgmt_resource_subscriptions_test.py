@@ -13,7 +13,7 @@
 
 import unittest
 
-import azure.mgmt.resource
+import azure.mgmt.resource.subscriptions
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 import pytest
 
@@ -22,7 +22,7 @@ import pytest
 class TestMgmtResourceSubscriptions(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
-        self.subscriptions_client = self.create_mgmt_client(azure.mgmt.resource.SubscriptionClient)
+        self.subscriptions_client = self.create_mgmt_client(azure.mgmt.resource.subscriptions.SubscriptionClient)
 
     @recorded_by_proxy
     def test_subscriptions(self):

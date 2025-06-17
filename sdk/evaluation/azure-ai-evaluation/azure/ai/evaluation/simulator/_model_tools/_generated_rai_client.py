@@ -20,8 +20,9 @@ import ast
 class GeneratedRAIClient:
     """Client for the Responsible AI Service using the auto-generated MachineLearningServicesClient.
     
-    :param azure_ai_project: The scope of the Azure AI project. It contains subscription id, resource group, and project name.
-    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
+    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint 
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :type azure_ai_project: Union[str, ~azure.ai.evaluation.AzureAIProject]
     :param token_manager: The token manager
     :type token_manager: ~azure.ai.evaluation.simulator._model_tools._identity_manager.APITokenManager
     """

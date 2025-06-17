@@ -142,7 +142,7 @@ class CertificateProperties(object):
         self._vault_id = KeyVaultCertificateIdentifier(self._id)
         self._x509_thumbprint = kwargs.pop("x509_thumbprint", None)
         self._tags = kwargs.pop("tags", None)
-        self._preserve_cert_order = kwargs.pop("preserve_cert_order", False)
+        self._preserve_order = kwargs.pop("preserve_order", False)
 
     def __repr__(self) -> str:
         return f"<CertificateProperties [{self._x509_thumbprint.hex().upper()}]>"[:1024]
@@ -160,7 +160,7 @@ class CertificateProperties(object):
             cert_id=certificate_bundle.id,
             x509_thumbprint=certificate_bundle.x509_thumbprint,
             tags=certificate_bundle.tags,
-            preserve_cert_order=certificate_bundle.preserve_cert_order,
+            preserve_order=certificate_bundle.preserve_cert_order,
         )
 
     @classmethod
@@ -301,14 +301,14 @@ class CertificateProperties(object):
         return self._vault_id.version
 
     @property
-    def preserve_certificate_order(self) -> Optional[bool]:
+    def preserve_order(self) -> Optional[bool]:
         """Whether the certificate order should be preserved.
 
         :returns: Specifies whether the certificate chain preserves its original order. The default value is False, 
             which sets the leaf certificate at index 0.
         :rtype: bool or None
         """
-        return self._preserve_cert_order
+        return self._preserve_order
 
 
 class KeyVaultCertificate(object):
@@ -485,7 +485,7 @@ class CertificateOperation(object):
     :type target: str or None
     :param request_id: Identifier for the certificate operation.
     :type request_id: str or None
-    :param bool preserve_cert_order: Specifies whether the certificate chain preserves its original order. The default
+    :param bool preserve_order: Specifies whether the certificate chain preserves its original order. The default
         value is False, which sets the leaf certificate at index 0.
     """
 
@@ -502,7 +502,7 @@ class CertificateOperation(object):
         error: Optional[CertificateOperationError] = None,
         target: Optional[str] = None,
         request_id: Optional[str] = None,
-        preserve_cert_order: Optional[bool] = False,
+        preserve_order: Optional[bool] = False,
     ) -> None:
         self._id = cert_operation_id
         self._vault_id = parse_key_vault_id(cert_operation_id) if cert_operation_id else None
@@ -516,7 +516,7 @@ class CertificateOperation(object):
         self._error = error
         self._target = target
         self._request_id = request_id
-        self._preserve_cert_order = preserve_cert_order
+        self._preserve_order = preserve_order
 
     def __repr__(self) -> str:
         return f"<CertificateOperation [{self.id}]>"[:1024]
@@ -550,7 +550,7 @@ class CertificateOperation(object):
             ),
             target=certificate_operation_bundle.target,
             request_id=certificate_operation_bundle.request_id,
-            preserve_cert_order=certificate_operation_bundle.preserve_cert_order,
+            preserve_order=certificate_operation_bundle.preserve_cert_order,
         )
 
     @property
@@ -671,14 +671,14 @@ class CertificateOperation(object):
         return self._request_id
 
     @property
-    def preserve_certificate_order(self) -> Optional[bool]:
+    def preserve_order(self) -> Optional[bool]:
         """Whether the certificate order should be preserved.
 
         :returns: Specifies whether the certificate chain preserves its original order. The default value is False,
             which sets the leaf certificate at index 0.
         :rtype: bool or None
         """
-        return self._preserve_cert_order
+        return self._preserve_order
 
 
 class CertificatePolicy(object):
