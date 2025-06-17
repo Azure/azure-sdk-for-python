@@ -32,7 +32,7 @@ pr:
 
 parameters:
   - name: ReleaseToDevOpsOnly
-    displayName: 'Release package to DevOps feed instead of Nuget.org'
+    displayName: 'Release package to DevOps feed instead of PyPi'
     type: boolean
     default: false
   - name: AutoApproveRelease
