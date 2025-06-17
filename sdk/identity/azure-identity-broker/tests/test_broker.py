@@ -15,6 +15,8 @@ import msal
 
 
 def test_interactive_browser_broker_cred():
+    import sys
+    assert sys.platform == 'linux'
     cred = InteractiveBrowserBrokerCredential()
     assert cred._get_app()._enable_broker
 
