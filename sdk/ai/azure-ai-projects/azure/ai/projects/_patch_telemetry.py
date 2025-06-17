@@ -25,7 +25,6 @@ def enable_telemetry(
     Following instrumentations are enabled (when corresponding packages are installed):
 
     - Azure AI Agents (`azure-ai-agents`)
-    - Azure AI Inference (`azure-ai-inference`)
     - OpenAI (`opentelemetry-instrumentation-openai-v2`)
     - Langchain (`opentelemetry-instrumentation-langchain`)
 
@@ -58,17 +57,6 @@ def enable_telemetry(
         logger.warning(
             "Azure SDK tracing plugin is not installed. "
             + "Please install it using 'pip install azure-core-tracing-opentelemetry'"
-        )
-
-    try:
-        from azure.ai.inference.tracing import AIInferenceInstrumentor  # type: ignore
-
-        inference_instrumentor = AIInferenceInstrumentor()
-        if not inference_instrumentor.is_instrumented():
-            inference_instrumentor.instrument()
-    except ModuleNotFoundError:
-        logger.warning(
-            "Could not call `AIInferenceInstrumentor().instrument()` since `azure-ai-inference` is not installed"
         )
 
     try:
