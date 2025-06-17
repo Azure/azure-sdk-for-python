@@ -29,7 +29,7 @@ class CommunicationTokenCredential(object):
     :keyword str resource_endpoint: The endpoint URL of the resource to authenticate against.
     :keyword token_credential: The credential to use for token exchange.
     :paramtype token_credential: ~azure.core.credentials.TokenCredential
-    :keyword list[str] scopes: The scopes to request during the token exchange.
+    :keyword list[str] scopes: The scopes to request during the token exchange. If not provided, a default value will be used: https://communication.azure.com/clients/.default
 
     :raises: TypeError if paramater 'token' is not a string
     :raises: ValueError if the 'proactive_refresh' is enabled without providing the 'token_refresher' callable.

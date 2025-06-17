@@ -16,7 +16,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline.policies import RetryPolicy
 from .entra_token_guard_policy import EntraTokenGuardPolicy
-from .token_exchange_utils import TokenExchangeUtils
+import token_utils
 
 
 class TokenExchangeClient:
@@ -26,7 +26,6 @@ class TokenExchangeClient:
     :param credential: The credential to use for token exchange.
     :param scopes: The scopes to request during the token exchange.
     :keyword transport: Optional transport to use for the pipeline.
-    :keyword api_version: Optional API version to use for requests.
     """
 
     # pylint: disable=client-method-missing-type-annotations
@@ -53,7 +52,7 @@ class TokenExchangeClient:
         return Pipeline(policies=policies, transport=RequestsTransport())
 
     def exchange_entra_token(self) -> AccessToken:
-        message = TokenExchangeUtils.create_request_message(self._resource_endpoint, self._scopes)
+        message = token_utils.create_request_message(self._resource_endpoint, self._scopes)
         response = self._pipeline.run(message)
         return self._parse_access_token_from_response(response)
 
@@ -65,12 +64,12 @@ class TokenExchangeClient:
                 access_token_json = data["accessToken"]
                 token = access_token_json["token"]
                 expires_on = access_token_json["expiresOn"]
-                expires_on_epoch = TokenExchangeUtils.parse_expires_on(expires_on, response)
+                expires_on_epoch = token_utils.parse_expires_on(expires_on, response)
                 if expires_on_epoch is None:
-                    raise ClientAuthenticationError("Failed to parse 'expiresOn' value from access token response")
+                    raise ValueError("Failed to parse 'expiresOn' value from access token response")
                 return AccessToken(token, expires_on_epoch)
             except Exception as ex:
-                raise ClientAuthenticationError("Failed to parse access token from response") from ex
+                raise ValueError("Failed to parse access token from response") from ex
         else:
             raise HttpResponseError(
                 message="Failed to exchange Entra token for ACS token",
