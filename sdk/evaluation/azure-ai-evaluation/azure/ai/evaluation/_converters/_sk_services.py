@@ -1,3 +1,9 @@
+import json
+from datetime import datetime, timezone
+from typing import Any, Dict, List, Tuple, Optional
+
+from azure.ai.evaluation._common._experimental import experimental
+
 from semantic_kernel.contents import (
     AuthorRole,
     TextContent,
@@ -10,12 +16,6 @@ from semantic_kernel.agents import (
     ChatCompletionAgent,
     ChatHistoryAgentThread,
 )
-
-from datetime import datetime, timezone
-
-from azure.ai.evaluation._common._experimental import experimental
-
-from typing import Any, Dict, List, Tuple
 
 from ._models import (
     Message,
@@ -142,7 +142,7 @@ class SKAgentConverter:
             messages.append(
                 ChatMessageContent(
                     role=AuthorRole.SYSTEM,
-                    contents=[TextContent(agent.instructions)],
+                    items=[TextContent(text=agent.instructions)],
                 )
             )
 
@@ -332,10 +332,101 @@ class SKAgentConverter:
             agent=agent,
         )
 
-        res = {
-            "query": query,
-            "response": response,
-            "tool_definitions": tool_definitions,
-        }
+        result = EvaluatorData(
+            query=query,
+            response=response,
+            tool_definitions=tool_definitions,
+        )
 
-        return res
+        return json.loads(result.to_json())
+
+    async def prepare_evaluation_data(
+        self,
+        threads: List[ChatHistoryAgentThread],
+        agent: ChatCompletionAgent,
+        filename: Optional[str] = None,
+    ) -> List[dict]:
+        """
+        Prepares evaluation data for a list of threads and optionally writes it to a file.
+
+        :param threads: List of ChatHistoryAgentThread objects.
+        :type threads: List[ChatHistoryAgentThread]
+        :param agent: The ChatCompletionAgent being evaluated.
+        :type agent: ChatCompletionAgent
+        :param filename: Optional file path to save evaluation data as JSONL.
+        :type filename: Optional[str]
+        :return: List of evaluation data dictionaries.
+        :rtype: List[dict]
+        """
+
+        all_eval_data: List[dict] = []
+
+        for thread in threads:
+            thread_data = await self._prepare_single_thread_evaluation_data(
+                thread, agent
+            )
+            all_eval_data.extend(thread_data)
+
+        if filename:
+            with open(filename, "w", encoding="utf-8") as f:
+                for item in all_eval_data:
+                    f.write(json.dumps(item) + "\n")
+
+        return all_eval_data
+
+    async def _prepare_single_thread_evaluation_data(
+        self,
+        thread: ChatHistoryAgentThread,
+        agent: ChatCompletionAgent,
+    ) -> List[dict]:
+        """
+        Prepares evaluation data for a single thread.
+
+        :param thread: A ChatHistoryAgentThread object.
+        :type thread: ChatHistoryAgentThread
+        :param agent: The ChatCompletionAgent being evaluated.
+        :type agent: ChatCompletionAgent
+        :return: A list of evaluation data dictionaries for the thread.
+        :rtype: List[dict]
+        """
+        thread_eval_data: List[dict] = []
+        turn_indices = await self._get_turn_indices(thread)
+
+        for turn_index in turn_indices:
+            try:
+                eval_dict = await self.convert(thread, agent, turn_index)
+                thread_eval_data.append(eval_dict)
+            except Exception as e:
+                print(
+                    f"Warning: Failed to convert thread '{getattr(thread, 'id', 'unknown')}' at turn {turn_index}: {e}"
+                )
+
+        return thread_eval_data
+
+    async def _get_turn_indices(self, thread: ChatHistoryAgentThread) -> List[int]:
+        """
+        Determines all complete turn indices in a thread.
+
+        :param thread: The ChatHistoryAgentThread to analyze.
+        :type thread: ChatHistoryAgentThread
+        :return: A list of valid turn indices (0-based).
+        :rtype: List[int]
+        """
+        messages = [msg async for msg in thread.get_messages()]
+
+        is_output = False
+        turn_count = 0
+        indices = []
+
+        for msg in messages:
+            curr_is_output = self._is_output_role(msg.role)
+
+            # We assume a turn ends when an output role follows an input.
+            if not is_output and curr_is_output:
+                indices.append(turn_count)
+                turn_count += 1
+                is_output = True
+            elif not curr_is_output:
+                is_output = False
+
+        return indices
