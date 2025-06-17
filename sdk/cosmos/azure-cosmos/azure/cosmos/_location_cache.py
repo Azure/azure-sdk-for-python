@@ -437,7 +437,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
         # if preferred locations is empty and the default endpoint is a global endpoint,
         # we should use the read locations from gateway as effective preferred locations
-        if not self.effective_preferred_locations and self.is_regional_endpoint():
+        if not self.effective_preferred_locations and self.is_default_endpoint_regional():
             self.effective_preferred_locations = []
         elif not self.effective_preferred_locations:
             self.effective_preferred_locations = self.account_read_locations
@@ -498,7 +498,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         return regional_endpoints
 
     # if the endpoint is returned from the gateway in the account topology, it is a regional endpoint
-    def is_regional_endpoint(self) -> bool:
+    def is_default_endpoint_regional(self) -> bool:
         return any(
             context.get_primary() == self.default_regional_routing_context.get_primary()
             for context in self.account_read_regional_routing_contexts_by_location.values()
