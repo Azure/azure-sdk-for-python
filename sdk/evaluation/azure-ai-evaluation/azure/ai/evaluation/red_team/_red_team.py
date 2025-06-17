@@ -1560,7 +1560,7 @@ class RedTeam:
                                                         risk_value = risk.value
                                                         if f"outputs.{risk_value}.{risk_value}" in r or f"outputs.{risk_value}.{risk_value}_reason" in r:
                                                             risk_assessment[risk_value] = {
-                                                                "severity_label": r[f"outputs.{risk_value}.{risk_value}"] if f"outputs.{risk_value}.{risk_value}" in r else None,
+                                                                "severity_label": r[f"outputs.{risk_value}.{risk_value}"] if f"outputs.{risk_value}.{risk_value}" in r else r[f"outputs.{risk_value}.{risk_value}_result"] if f"outputs.{risk_value}.{risk_value}_result" in r else None,
                                                                 "reason": r[f"outputs.{risk_value}.{risk_value}_reason"] if f"outputs.{risk_value}.{risk_value}_reason" in r else None
                                                             }
                                         
