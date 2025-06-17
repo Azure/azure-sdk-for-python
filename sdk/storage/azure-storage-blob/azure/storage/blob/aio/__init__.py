@@ -76,7 +76,7 @@ async def upload_blob_to_url(
     :returns: Blob-updated property dict (Etag and last modified)
     :rtype: dict[str, Any]
     """
-    async with BlobClient.from_blob_url(blob_url, credential=credential) as client:  # pylint: disable=not-async-context-manager
+    async with BlobClient.from_blob_url(blob_url, credential=credential) as client:
         return await cast(BlobClient, client).upload_blob(
             data=data,
             blob_type=BlobType.BLOCKBLOB,
@@ -92,7 +92,7 @@ async def _download_to_stream(client, handle, **kwargs):
 async def download_blob_from_url(
     blob_url: str,
     output: str,
-    credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None, # pylint: disable=line-too-long
+    credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
     **kwargs: Any
 ) -> None:
     """Download the contents of a blob to a local file or stream.
@@ -142,7 +142,7 @@ async def download_blob_from_url(
     :rtype: None
     """
     overwrite = kwargs.pop('overwrite', False)
-    async with BlobClient.from_blob_url(blob_url, credential=credential) as client:  # pylint: disable=not-async-context-manager
+    async with BlobClient.from_blob_url(blob_url, credential=credential) as client:
         if hasattr(output, 'write'):
             await _download_to_stream(client, output, **kwargs)
         else:
