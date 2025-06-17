@@ -41,6 +41,9 @@ class AzureOpenAIScoreModelGrader(AzureOpenAIGrader):
     :type name: str
     :param range: The range of the score. Defaults to [0, 1].
     :type range: Optional[List[float]]
+    :param pass_threshold: Score threshold for pass/fail classification. 
+        Defaults to midpoint of range.
+    :type pass_threshold: Optional[float]
     :param sampling_params: The sampling parameters for the model.
     :type sampling_params: Optional[Dict[str, Any]]
     :param kwargs: Additional keyword arguments to pass to the grader.
@@ -59,9 +62,26 @@ class AzureOpenAIScoreModelGrader(AzureOpenAIGrader):
         model: str,
         name: str,
         range: Optional[List[float]] = None,
+        pass_threshold: Optional[float] = None,
         sampling_params: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ):
+        # Validate range and pass_threshold
+        if range is not None:
+            if len(range) != 2 or range[0] >= range[1]:
+                raise ValueError("range must be a list of two numbers [min, max] where min < max")
+        else:
+            range = [0.0, 1.0]  # Default range
+            
+        if pass_threshold is not None:
+            if range and (pass_threshold < range[0] or pass_threshold > range[1]):
+                raise ValueError(f"pass_threshold {pass_threshold} must be within range {range}")
+        else:
+            pass_threshold = (range[0] + range[1]) / 2  # Default to midpoint
+            
+        # Store pass_threshold as instance attribute
+        self.pass_threshold = pass_threshold
+
         # Create OpenAI ScoreModelGrader instance
         grader_kwargs = {
             "input": input,
