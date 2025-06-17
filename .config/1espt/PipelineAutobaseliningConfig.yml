@@ -38,18 +38,18 @@ pipelines:
     retail:
       binary:
         credscan:
-          lastModifiedDate: 2025-01-30
+          lastModifiedDate: 2025-06-17
         binskim:
-          lastModifiedDate: 2025-02-26
+          lastModifiedDate: 2025-06-17
         spotbugs:
-          lastModifiedDate: 2025-01-30
+          lastModifiedDate: 2025-06-17
       source:
         credscan:
-          lastModifiedDate: 2025-02-03
+          lastModifiedDate: 2025-06-17
         psscriptanalyzer:
-          lastModifiedDate: 2025-02-03
+          lastModifiedDate: 2025-06-17
         armory:
-          lastModifiedDate: 2025-02-03
+          lastModifiedDate: 2025-06-17
   7156:
     retail:
       binary:
