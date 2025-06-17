@@ -26,7 +26,6 @@ class TokenExchangeClient:
     :param credential: The credential to use for token exchange.
     :param scopes: The scopes to request during the token exchange.
     :keyword transport: Optional transport to use for the pipeline.
-    :keyword api_version: Optional API version to use for requests.
     """
 
     # pylint: disable=client-method-missing-type-annotations
@@ -67,10 +66,10 @@ class TokenExchangeClient:
                 expires_on = access_token_json["expiresOn"]
                 expires_on_epoch = token_utils.parse_expires_on(expires_on, response)
                 if expires_on_epoch is None:
-                    raise ClientAuthenticationError("Failed to parse 'expiresOn' value from access token response")
+                    raise ValueError("Failed to parse 'expiresOn' value from access token response")
                 return AccessToken(token, expires_on_epoch)
             except Exception as ex:
-                raise ClientAuthenticationError("Failed to parse access token from response") from ex
+                raise ValueError("Failed to parse access token from response") from ex
         else:
             raise HttpResponseError(
                 message="Failed to exchange Entra token for ACS token",
