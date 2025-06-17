@@ -5,7 +5,7 @@ import os, glob, json, argparse, logging
 from typing import List, Tuple
 
 from ci_tools.parsing import ParsedSetup
-from ci_tools.function import verify_package_classifiers
+from ci_tools.functions import verify_package_classifiers
 
 root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
