@@ -936,9 +936,9 @@ class TestModelDump:
     def test_model_dump_nested_models(self):
         """Test model_dump with nested HybridModel objects"""
 
-        model = models.HybridDog(name="Wall-E", species="dog", breed="Corgi", is_best_boy=True)
+        model = models.HybridDog(name="Wall-E", species="dog", breed="Pitbull", is_best_boy=True)
         result = model_dump(model)
-        expected = {"name": "Wall-E", "species": "dog", "breed": "Corgi", "isBestBoy": True}
+        expected = {"name": "Wall-E", "species": "dog", "breed": "Pitbull", "isBestBoy": True}
         assert result == expected
 
     def test_model_dump_with_lists(self):
@@ -1060,20 +1060,56 @@ class TestModelDump:
         }
         assert result == expected
 
+    def test_model_dump_polymorphic(self):
+        """Test model_dump where an attribute can be polymorphic."""
+        model = models.Salmon(
+            age=3,
+            life_partner=models.SawShark(age=5),
+            friends=[
+                models.Salmon(age=2, life_partner=models.Salmon(age=1)),
+                models.GoblinShark(age=4),
+            ],
+            hate={
+                "key1": models.Salmon(age=6),
+                "key2": models.GoblinShark(age=7),
+            },
+        )
+        result = model_dump(model)
+        expected = {
+            "age": 3,
+            "kind": "salmon",
+            "lifePartner": {"age": 5, "kind": "shark", "sharkType": "saw"},
+            "friends": [
+                {"age": 2, "kind": "salmon", "lifePartner": {"age": 1, "kind": "salmon"}},
+                {"age": 4, "kind": "shark", "sharkType": "goblin"},
+            ],
+            "hate": {
+                "key1": {"age": 6, "kind": "salmon"},
+                "key2": {"age": 7, "kind": "shark", "sharkType": "goblin"},
+            },
+        }
+
     def test_model_dump_error_cases(self):
         """Test model_dump error handling"""
         # Test with non-model object
-        with pytest.raises(TypeError, match="Expected a Model instance"):
+        with pytest.raises(TypeError, match="provided model is not a TypeSpec generated model instance"):
             model_dump({"not": "a model"})
 
-        with pytest.raises(TypeError, match="Expected a Model instance"):
+        with pytest.raises(TypeError, match="provided model is not a TypeSpec generated model instance"):
             model_dump("string")
+
+        model = models.MsrestResource(
+            name="Test Resource",
+            description="This is a test resource",
+        )
+        with pytest.raises(TypeError, match="provided model is not a TypeSpec generated model instance"):
+            model_dump(model)
 
         # Test with object that doesn't have _is_model attribute
         class NotAModel:
             pass
 
-        with pytest.raises(TypeError, match="Expected a Model instance"):
+        with pytest.raises(TypeError, match="provided model is not a TypeSpec generated model instance"):
             model_dump(NotAModel())
 
     def test_model_dump_empty_model(self):
