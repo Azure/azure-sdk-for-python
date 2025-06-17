@@ -925,5 +925,5 @@ def verify_package_classifiers(package_name: str, package_version: str, package_
         except (IndexError, ValueError):
             return False, f"{package_name} has version {package_version} and is a GA release, but failed to pull a status number from status '{c}'. Expecting format identical to 'Development Status :: 5 - Production'."
         if num < 5:
-            return False, f"{package_name} has version {package_version} and is a GA release, but had development status '{c}'. Expecting a development classifer that is equal or greater than 'Development Status :: 5 - Production'."
+            return False, f"{package_name} has version {package_version} and is a GA release, but had development status '{c}'. Expecting a development classifier that is equal or greater than 'Development Status :: 5 - Production'."
     return True, None
