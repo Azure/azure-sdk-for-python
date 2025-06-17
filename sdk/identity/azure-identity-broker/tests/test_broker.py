@@ -14,9 +14,8 @@ from azure.identity.broker import InteractiveBrowserBrokerCredential, PopTokenRe
 import msal
 
 
+@pytest.mark.skipif(sys.platform.startswith("linux"), reason="linux requires manual setup to install InTune to make it work")
 def test_interactive_browser_broker_cred():
-    import sys
-    assert sys.platform == 'linux'
     cred = InteractiveBrowserBrokerCredential()
     assert cred._get_app()._enable_broker
 
