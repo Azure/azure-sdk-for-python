@@ -127,19 +127,6 @@ class StorageAccountHostsMixin(object):
         self._sdk_moniker = f"storage-{service}/{VERSION}"
         self._config, self._pipeline = self._create_pipeline(self.credential, sdk_moniker=self._sdk_moniker, **kwargs)
 
-    def __enter__(self):
-        self._client.__enter__()
-        return self
-
-    def __exit__(self, *args):
-        self._client.__exit__(*args)
-
-    def close(self) -> None:
-        """This method is to close the sockets opened by the client.
-        It need not be used when using with a context manager.
-        """
-        self._client.close()
-
     @property
     def url(self) -> str:
         """The full endpoint URL to this entity, including SAS token if used.
