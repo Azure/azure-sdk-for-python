@@ -13,6 +13,7 @@ dependencies = [
     "pylint>=3.3.7",
     "tox>=4.26.0",
     "httpx>=0.24.0",
+    "tox-uv>=1.26.0",
 ]
 
 [project.scripts]
