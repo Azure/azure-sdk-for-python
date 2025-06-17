@@ -1,5 +1,3 @@
-import os, tempfile, shutil
-
 import pytest
 
 from ci_tools.functions import verify_package_classifiers
