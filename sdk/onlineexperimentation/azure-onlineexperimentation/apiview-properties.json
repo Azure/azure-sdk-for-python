@@ -19,9 +19,14 @@
         "azure.onlineexperimentation.models.ExperimentMetricType": "Azure.Analytics.OnlineExperimentation.ExperimentMetricType",
         "azure.onlineexperimentation.models.DiagnosticCode": "Azure.Analytics.OnlineExperimentation.DiagnosticCode",
         "azure.onlineexperimentation.OnlineExperimentationClient.get_metric": "Azure.Analytics.OnlineExperimentation.getMetric",
+        "azure.onlineexperimentation.aio.OnlineExperimentationClient.get_metric": "Azure.Analytics.OnlineExperimentation.getMetric",
         "azure.onlineexperimentation.OnlineExperimentationClient.create_or_update_metric": "Azure.Analytics.OnlineExperimentation.createOrUpdateMetric",
+        "azure.onlineexperimentation.aio.OnlineExperimentationClient.create_or_update_metric": "Azure.Analytics.OnlineExperimentation.createOrUpdateMetric",
         "azure.onlineexperimentation.OnlineExperimentationClient.validate_metric": "Azure.Analytics.OnlineExperimentation.validateMetric",
+        "azure.onlineexperimentation.aio.OnlineExperimentationClient.validate_metric": "Azure.Analytics.OnlineExperimentation.validateMetric",
         "azure.onlineexperimentation.OnlineExperimentationClient.delete_metric": "Azure.Analytics.OnlineExperimentation.deleteMetric",
-        "azure.onlineexperimentation.OnlineExperimentationClient.list_metrics": "Azure.Analytics.OnlineExperimentation.listMetrics"
+        "azure.onlineexperimentation.aio.OnlineExperimentationClient.delete_metric": "Azure.Analytics.OnlineExperimentation.deleteMetric",
+        "azure.onlineexperimentation.OnlineExperimentationClient.list_metrics": "Azure.Analytics.OnlineExperimentation.listMetrics",
+        "azure.onlineexperimentation.aio.OnlineExperimentationClient.list_metrics": "Azure.Analytics.OnlineExperimentation.listMetrics"
     }
 }

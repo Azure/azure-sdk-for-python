@@ -395,3 +395,26 @@ def test_start_span_with_start_time(tracing_helper):
     finished_spans = tracing_helper.exporter.get_finished_spans()
     assert len(finished_spans) == 2
     assert finished_spans[1].start_time == start_time
+
+
+def test_tracer_with_custom_context(tracing_helper):
+    """Test that the tracer can start a span with a custom context."""
+    tracer = get_tracer()
+    assert tracer
+
+    with tracer.start_as_current_span(name="foo-span") as foo_span:
+        foo_trace_context = tracer.get_trace_context()
+
+    assert "traceparent" in foo_trace_context
+
+    with tracer.start_as_current_span(name="bar-span", context=dict(foo_trace_context)) as bar_span:
+        pass
+
+    finished_spans = tracing_helper.exporter.get_finished_spans()
+    assert len(finished_spans) == 2
+    assert finished_spans[0].name == "foo-span"
+    assert finished_spans[1].name == "bar-span"
+    assert finished_spans[1].context.trace_id == finished_spans[0].context.trace_id
+
+    # foo_span should be the parent of bar_span
+    assert finished_spans[1].parent.span_id == finished_spans[0].context.span_id
