@@ -19,7 +19,7 @@ from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 
 from ci_tools.parsing import ParsedSetup, parse_require
-from ci_tools.functions import compare_python_version, handle_incompatible_minimum_dev_reqs
+from ci_tools.functions import compare_python_version, handle_incompatible_minimum_dev_reqs, get_pip_command
 
 from typing import List
 
@@ -28,23 +28,6 @@ NEW_DEV_REQ_FILE = "new_dev_requirements.txt"
 PKGS_TXT_FILE = "packages.txt"
 
 logging.getLogger().setLevel(logging.INFO)
-
-
-def get_pip_command():
-    """
-    Determine whether to use 'uv pip' or regular 'pip' based on environment.
-    Returns the appropriate pip command as a list.
-    
-    Uses TOX_PIP_IMPL environment variable to align with tox.ini configuration.
-    """
-    # Check TOX_PIP_IMPL environment variable (aligns with tox.ini configuration)
-    pip_impl = os.environ.get('TOX_PIP_IMPL', 'pip').lower()
-    
-    if pip_impl == 'uv':
-        return ["uv", "pip"]
-    else:
-        return [sys.executable, "-m", "pip"]
-
 
 # GENERIC_OVERRIDES dictionaries pair a specific dependency with a MINIMUM or MAXIMUM inclusive bound.
 # During LATEST and MINIMUM dependency checks, we sometimes need to ignore versions for various compatibility

@@ -22,26 +22,10 @@ import tempfile
 from ci_tools.parsing import ParsedSetup
 from ci_tools.environment_exclusions import is_check_enabled, is_typing_ignored
 from ci_tools.variables import in_ci
+from ci_tools.functions import get_pip_command
 
 logging.getLogger().setLevel(logging.INFO)
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
-
-
-def get_pip_command():
-    """
-    Determine whether to use 'uv pip' or regular 'pip' based on environment.
-    Returns the appropriate pip command as a list.
-    
-    Uses TOX_PIP_IMPL environment variable to align with tox.ini configuration.
-    """
-    # Check TOX_PIP_IMPL environment variable (aligns with tox.ini configuration)
-    pip_impl = os.environ.get('TOX_PIP_IMPL', 'pip').lower()
-    
-    if pip_impl == 'uv':
-        return ["uv", "pip"]
-    else:
-        return [sys.executable, "-m", "pip"]
-
 
 def install_from_main(setup_path: str) -> None:
     path = pathlib.Path(setup_path)

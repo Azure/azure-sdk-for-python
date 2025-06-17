@@ -20,7 +20,7 @@ common_task_path = path.abspath(path.join(root_dir, "scripts", "devops_tasks"))
 sys.path.append(common_task_path)
 
 from common_tasks import get_installed_packages
-from ci_tools.functions import discover_targeted_packages
+from ci_tools.functions import discover_targeted_packages, get_pip_command
 from ci_tools.parsing import ParsedSetup
 
 EXCLUDED_PKGS = [
@@ -31,23 +31,6 @@ EXCLUDED_PKGS = [
 DEV_INDEX_URL = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple"
 
 logging.getLogger().setLevel(logging.INFO)
-
-
-def get_pip_command():
-    """
-    Determine whether to use 'uv pip' or regular 'pip' based on environment.
-    Returns the appropriate pip command as a list.
-
-    Uses TOX_PIP_IMPL environment variable to align with tox.ini configuration.
-    """
-    # Check TOX_PIP_IMPL environment variable (aligns with tox.ini configuration)
-    pip_impl = os.environ.get('TOX_PIP_IMPL', 'pip').lower()
-    
-    if pip_impl == 'uv':
-        return ["uv", "pip"]
-    else:
-        return [sys.executable, "-m", "pip"]
-
 
 # This script verifies installed package version and ensure all installed pacakges are dev build version
 
