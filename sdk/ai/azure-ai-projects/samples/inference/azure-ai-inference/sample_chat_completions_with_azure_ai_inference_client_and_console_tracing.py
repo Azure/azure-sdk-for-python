@@ -6,9 +6,10 @@
 
 """
 DESCRIPTION:
-    Given an AI Foundry Project endpoint, this sample demonstrates how to get an authenticated 
+    Given an AI Foundry Project endpoint, this sample demonstrates how to get an authenticated
     ChatCompletionsClient from the azure.ai.inference package and perform one chat completion
-    operation. It also shows how to turn on local tracing.
+    operation. It also shows how to turn on local console tracing using the helper functions
+    in file azure_ai_inference_telemetry_helper.py.
     For more information on the azure.ai.inference package see https://pypi.org/project/azure-ai-inference/.
 
 USAGE:
@@ -39,17 +40,17 @@ import os
 import sys
 from urllib.parse import urlparse
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects import enable_telemetry
 from azure.ai.inference import ChatCompletionsClient
 from azure.ai.inference.models import UserMessage
-
-# Enable console tracing.
-# or, if you have local OTLP endpoint running, change it to
-# enable_telemetry(destination="http://localhost:4317")
-enable_telemetry(destination=sys.stdout)
+from azure_ai_inference_telemetry_helper import azure_ai_inference_telemetry_helper
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
+
+# Enables telemetry collection with OpenTelemetry for Azure AI Inference client (azure-ai-inference).
+# or, if you have local OTLP endpoint running, change it to
+# azure_ai_inference_telemetry_helper(destination="http://localhost:4317")
+azure_ai_inference_telemetry_helper(destination=sys.stdout)
 
 # Project endpoint has the form:   https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>
 # Inference endpoint has the form: https://<your-ai-services-account-name>.services.ai.azure.com/models

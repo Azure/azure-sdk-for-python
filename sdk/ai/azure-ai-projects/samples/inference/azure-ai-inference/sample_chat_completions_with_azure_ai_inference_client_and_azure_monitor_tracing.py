@@ -8,8 +8,8 @@
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to get an authenticated 
     ChatCompletionsClient from the azure.ai.inference package and perform one chat completion
-    operation. The client is already instrumented to upload traces to Azure Monitor. View the results
-    in the "Tracing" tab in your Azure AI Foundry project page.
+    operation. The helper functions in file azure_ai_inference_telemetry_helper.py are used by this sample. 
+    View the results in the "Tracing" tab in your Azure AI Foundry project page.
     For more information on the azure.ai.inference package see https://pypi.org/project/azure-ai-inference/.
 
 USAGE:
@@ -30,17 +30,21 @@ USAGE:
 import os
 from urllib.parse import urlparse
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient, enable_telemetry
+from azure.ai.projects import AIProjectClient
 from azure.ai.inference import ChatCompletionsClient
 from azure.ai.inference.models import UserMessage
 from azure.monitor.opentelemetry import configure_azure_monitor
-
-# Enable additional instrumentations for openai and langchain
-# which are not included by Azure Monitor out of the box
-enable_telemetry()
+from azure_ai_inference_telemetry_helper import azure_ai_inference_telemetry_helper
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
+
+# Enables telemetry collection with OpenTelemetry for Azure AI Inference client (azure-ai-inference).
+# Alternatively, if you want to show traces on the console, you can use:
+# azure_ai_inference_telemetry_helper(destination=sys.stdout)
+# Or, if you have local OTLP endpoint running, change it to
+# azure_ai_inference_telemetry_helper(destination="http://localhost:4317")
+azure_ai_inference_telemetry_helper()
 
 with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
