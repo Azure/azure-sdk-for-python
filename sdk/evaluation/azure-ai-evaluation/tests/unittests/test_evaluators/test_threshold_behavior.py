@@ -219,3 +219,48 @@ class TestRougeThresholdBehavior:
         assert mock_result["rouge_precision_result"] == EVALUATION_PASS_FAIL_MAPPING[True]
         assert mock_result["rouge_recall_result"] == EVALUATION_PASS_FAIL_MAPPING[True]
         assert mock_result["rouge_f1_score_result"] == EVALUATION_PASS_FAIL_MAPPING[True]
+
+
+@pytest.mark.unittest
+class TestActualThresholdBehavior:
+    """Tests for actual threshold behavior in evaluators without mocking - to validate float vs int conversion bug fix."""
+
+    def test_meteor_score_decimal_threshold_behavior(self):
+        """Test that MeteorScoreEvaluator correctly handles decimal scores for threshold comparison."""
+        # This test validates the fix for the bug where int(score_value) was used instead of float(score_value)
+        evaluator = MeteorScoreEvaluator(threshold=0.5)
+        
+        # Using identical strings should give a high METEOR score (> 0.5)
+        result = evaluator(ground_truth="Hello world", response="Hello world")
+        
+        # The score should be > 0.5 and result should be "pass" 
+        assert result["meteor_score"] > 0.5
+        assert result["meteor_result"] == "pass"
+        assert result["meteor_threshold"] == 0.5
+
+    def test_bleu_score_decimal_threshold_behavior(self):
+        """Test that BleuScoreEvaluator correctly handles decimal scores for threshold comparison."""
+        # This test validates the fix for the bug where int(score_value) was used instead of float(score_value)
+        evaluator = BleuScoreEvaluator(threshold=0.1)
+        
+        # Using identical strings should give a BLEU score > 0.1
+        result = evaluator(ground_truth="Hello world", response="Hello world")
+        
+        # The score should be > 0.1 and result should be "pass"
+        assert result["bleu_score"] > 0.1
+        assert result["bleu_result"] == "pass"
+        assert result["bleu_threshold"] == 0.1
+
+    def test_meteor_score_threshold_boundary_cases(self):
+        """Test MeteorScoreEvaluator threshold boundary cases."""
+        # Test where score should be just above threshold
+        evaluator_low = MeteorScoreEvaluator(threshold=0.1)
+        result_low = evaluator_low(ground_truth="Hello world", response="Hello world")
+        assert result_low["meteor_score"] > 0.1
+        assert result_low["meteor_result"] == "pass"
+        
+        # Test where threshold is set very high - should fail
+        evaluator_high = MeteorScoreEvaluator(threshold=1.0)
+        result_high = evaluator_high(ground_truth="Hello world", response="Hello world")
+        assert result_high["meteor_score"] < 1.0
+        assert result_high["meteor_result"] == "fail"

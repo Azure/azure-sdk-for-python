@@ -26,7 +26,6 @@ class TestDnsResolverManagementDnsResolverPoliciesOperations(AzureMgmtRecordedTe
         )
         result = [r for r in response]
         assert result == []
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
@@ -34,4 +33,3 @@ class TestDnsResolverManagementDnsResolverPoliciesOperations(AzureMgmtRecordedTe
         response = self.client.dns_resolver_policies.list()
         result = [r for r in response]
         assert response
-        

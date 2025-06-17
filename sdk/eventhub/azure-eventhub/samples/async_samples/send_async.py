@@ -7,6 +7,9 @@
 
 """
 Examples to show sending events with different options to an Event Hub asynchronously.
+
+WARNING: EventHubProducerClient and EventDataBatch are not coroutine-safe.
+Do not share these instances between coroutines without proper coroutine-safe management using mechanisms like asyncio.Lock.
 """
 
 import time
@@ -87,6 +90,34 @@ async def send_event_data_list(producer):
         print("Sending error: ", eh_err)
 
 
+
+async def send_concurrent_with_shared_client_and_lock():
+    """
+    Example showing concurrent sending with a shared client using asyncio.Lock.
+    """
+    send_lock = asyncio.Lock()
+    
+    producer = EventHubProducerClient.from_connection_string(
+        conn_str=CONNECTION_STR,
+        eventhub_name=EVENTHUB_NAME,
+    )
+
+    async def send_with_lock(task_id):
+        try:
+            # Use lock to ensure coroutine-safe sending
+            async with send_lock:
+                batch = await producer.create_batch()
+                batch.add(EventData(f"Synchronized message from coroutine {task_id}"))
+                await producer.send_batch(batch)
+                print(f"Coroutine {task_id} sent synchronized message successfully")
+        except Exception as e:
+            print(f"Coroutine {task_id} failed: {e}")
+
+    async with producer:
+        # Use asyncio.gather to run coroutines concurrently with lock synchronization
+        await asyncio.gather(*[send_with_lock(i) for i in range(3)])
+
+
 async def run():
 
     producer = EventHubProducerClient.from_connection_string(
@@ -102,6 +133,14 @@ async def run():
         await send_event_data_list(producer)
 
 
-start_time = time.time()
-asyncio.run(run())
-print("Send messages in {} seconds.".format(time.time() - start_time))
+async def main():
+    start_time = time.time()
+    await run()
+    print("Send messages in {} seconds.".format(time.time() - start_time))
+
+
+    print("\nDemonstrating concurrent sending with shared client and locks...")
+    await send_concurrent_with_shared_client_and_lock()
+
+
+asyncio.run(main())
