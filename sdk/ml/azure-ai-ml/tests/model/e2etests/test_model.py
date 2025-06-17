@@ -30,7 +30,7 @@ def artifact_path(tmpdir_factory) -> str:  # type: ignore
     return str(file_name)
 
 
-# previous bodiless_matcher fixture doesn't take effect because of
+# previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
 
 @pytest.mark.e2etest
