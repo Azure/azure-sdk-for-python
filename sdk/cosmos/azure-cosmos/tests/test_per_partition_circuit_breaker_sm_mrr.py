@@ -15,7 +15,7 @@ from azure.cosmos._partition_health_tracker import HEALTH_STATUS, UNHEALTHY_TENT
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport import FaultInjectionTransport
 from test_per_partition_circuit_breaker_mm import create_doc, write_operations_and_errors, operations, REGION_1, \
-    REGION_2, PK_VALUE, perform_write_operation, perform_read_operation, READ, CREATE, validate_stats
+    REGION_2, PK_VALUE, perform_write_operation, perform_read_operation, CREATE, READ, validate_stats
 
 COLLECTION = "created_collection"
 

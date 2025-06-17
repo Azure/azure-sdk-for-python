@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.web import WebSiteManagementClient
+from azure.mgmt.web.v2024_11_01 import WebSiteManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -23,7 +23,7 @@ class TestWebSiteManagementDomainsOperations(AzureMgmtRecordedTestCase):
     def test_domains_check_availability(self, resource_group):
         response = self.client.domains.check_availability(
             identifier={"name": "str"},
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestWebSiteManagementDomainsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_domains_list(self, resource_group):
         response = self.client.domains.list(
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -43,7 +43,7 @@ class TestWebSiteManagementDomainsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_domains_get_control_center_sso_request(self, resource_group):
         response = self.client.domains.get_control_center_sso_request(
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestWebSiteManagementDomainsOperations(AzureMgmtRecordedTestCase):
     def test_domains_list_recommendations(self, resource_group):
         response = self.client.domains.list_recommendations(
             parameters={"keywords": "str", "maxDomainRecommendations": 0},
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -65,7 +65,7 @@ class TestWebSiteManagementDomainsOperations(AzureMgmtRecordedTestCase):
     def test_domains_list_by_resource_group(self, resource_group):
         response = self.client.domains.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -77,7 +77,7 @@ class TestWebSiteManagementDomainsOperations(AzureMgmtRecordedTestCase):
         response = self.client.domains.get(
             resource_group_name=resource_group.name,
             domain_name="str",
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -194,7 +194,7 @@ class TestWebSiteManagementDomainsOperations(AzureMgmtRecordedTestCase):
                 "targetDnsType": "str",
                 "type": "str",
             },
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -206,7 +206,7 @@ class TestWebSiteManagementDomainsOperations(AzureMgmtRecordedTestCase):
         response = self.client.domains.delete(
             resource_group_name=resource_group.name,
             domain_name="str",
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -321,7 +321,7 @@ class TestWebSiteManagementDomainsOperations(AzureMgmtRecordedTestCase):
                 "targetDnsType": "str",
                 "type": "str",
             },
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -333,7 +333,7 @@ class TestWebSiteManagementDomainsOperations(AzureMgmtRecordedTestCase):
         response = self.client.domains.list_ownership_identifiers(
             resource_group_name=resource_group.name,
             domain_name="str",
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -346,7 +346,7 @@ class TestWebSiteManagementDomainsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             domain_name="str",
             name="str",
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -366,7 +366,7 @@ class TestWebSiteManagementDomainsOperations(AzureMgmtRecordedTestCase):
                 "ownershipId": "str",
                 "type": "str",
             },
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -379,7 +379,7 @@ class TestWebSiteManagementDomainsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             domain_name="str",
             name="str",
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -399,7 +399,7 @@ class TestWebSiteManagementDomainsOperations(AzureMgmtRecordedTestCase):
                 "ownershipId": "str",
                 "type": "str",
             },
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -411,7 +411,7 @@ class TestWebSiteManagementDomainsOperations(AzureMgmtRecordedTestCase):
         response = self.client.domains.renew(
             resource_group_name=resource_group.name,
             domain_name="str",
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -423,7 +423,7 @@ class TestWebSiteManagementDomainsOperations(AzureMgmtRecordedTestCase):
         response = self.client.domains.transfer_out(
             resource_group_name=resource_group.name,
             domain_name="str",
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
