@@ -64,7 +64,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
         partition_key_definition = properties["partitionKey"]
         partition_key = PartitionKey(path=partition_key_definition["paths"],
                                      kind=partition_key_definition["kind"],
-                                     version=partition_key_definition["version"])
+                                     version=partition_key_definition.get("version", 2))
 
         if HttpHeaders.PartitionKey in request.headers:
             partition_key_value = request.headers[HttpHeaders.PartitionKey]

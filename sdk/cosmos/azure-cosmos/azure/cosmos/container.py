@@ -67,7 +67,7 @@ def get_partition_key_from_properties(container_properties: Dict[str, Any]) -> P
     return PartitionKey(
         path=partition_key_definition["paths"],
         kind=partition_key_definition["kind"],
-        version=partition_key_definition["version"])
+        version=partition_key_definition.get("version", 2))
 
 def is_prefix_partition_key(container_properties: Dict[str, Any], partition_key: PartitionKeyType) -> bool:
     partition_key_obj: PartitionKey = get_partition_key_from_properties(container_properties)

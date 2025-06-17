@@ -156,7 +156,7 @@ class ContainerProxy:
         partition_key = PartitionKey(
             path=partition_key_definition["paths"],
             kind=partition_key_definition["kind"],
-            version=partition_key_definition["version"])
+            version=partition_key_definition.get("version", 2))
 
         return partition_key._get_epk_range_for_partition_key(partition_key_value)
 
