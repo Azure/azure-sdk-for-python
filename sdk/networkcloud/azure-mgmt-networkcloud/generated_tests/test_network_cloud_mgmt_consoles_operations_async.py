@@ -25,7 +25,7 @@ class TestNetworkCloudMgmtConsolesOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.consoles.list_by_virtual_machine(
             resource_group_name=resource_group.name,
             virtual_machine_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestNetworkCloudMgmtConsolesOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             virtual_machine_name="str",
             console_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -59,6 +59,7 @@ class TestNetworkCloudMgmtConsolesOperationsAsync(AzureMgmtRecordedTestCase):
                     "sshPublicKey": {"keyData": "str"},
                     "detailedStatus": "str",
                     "detailedStatusMessage": "str",
+                    "etag": "str",
                     "expiration": "2020-02-20 00:00:00",
                     "id": "str",
                     "name": "str",
@@ -76,7 +77,7 @@ class TestNetworkCloudMgmtConsolesOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "virtualMachineAccessId": "str",
                 },
-                api_version="2024-10-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -91,7 +92,7 @@ class TestNetworkCloudMgmtConsolesOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 virtual_machine_name="str",
                 console_name="str",
-                api_version="2024-10-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -106,7 +107,7 @@ class TestNetworkCloudMgmtConsolesOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 virtual_machine_name="str",
                 console_name="str",
-                api_version="2024-10-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
