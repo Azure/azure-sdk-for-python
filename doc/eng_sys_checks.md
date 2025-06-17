@@ -116,8 +116,6 @@ This is the most useful skip, but the following skip variables are also supporte
   - Omit checking that a package's keywords are correctly formulated before releasing.
 - `Skip.Black`
   - Omit checking `black` in the `analyze` job.
-- `Skip.VerifyPackageClassifiers`
-  - Omit checking that the development classifiers align with the package version being shipped.
 
 ## The pyproject.toml
 
