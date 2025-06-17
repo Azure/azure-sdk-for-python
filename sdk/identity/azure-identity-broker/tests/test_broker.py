@@ -14,13 +14,11 @@ from azure.identity.broker import InteractiveBrowserBrokerCredential, PopTokenRe
 import msal
 
 
-@pytest.mark.skipif(not sys.platform.startswith("win"), reason="tests Windows-specific behavior")
 def test_interactive_browser_broker_cred():
     cred = InteractiveBrowserBrokerCredential()
     assert cred._get_app()._enable_broker
 
 
-@pytest.mark.skipif(not sys.platform.startswith("win"), reason="tests Windows-specific behavior")
 def test_interactive_browser_broker_cred_signed_in_account():
     with patch("msal.broker._signin_silently", Mock(return_value="token")) as mock_signin_silently:
         try:
