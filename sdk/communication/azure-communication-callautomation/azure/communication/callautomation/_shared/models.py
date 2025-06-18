@@ -164,7 +164,7 @@ class PhoneNumberIdentifier:
             props = {"value": value, "is_anonymous": is_anonymous}
             if has_asserted_id:
                 props["asserted_id"] = phone_number[asserted_id_index:]
-            self.properties = PhoneNumberProperties(**props)
+            self.properties = PhoneNumberProperties(**props)  # type: ignore
         else:
             self.properties = PhoneNumberProperties(value=value)
         self.raw_id = raw_id if raw_id is not None else self._format_raw_id(self.properties)
