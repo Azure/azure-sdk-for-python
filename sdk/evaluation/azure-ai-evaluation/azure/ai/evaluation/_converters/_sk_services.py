@@ -21,8 +21,8 @@ from ._models import (
     Message,
     SystemMessage,
     UserMessage,
-    ToolMessage,
-    AssistantMessage,
+    SKToolMessage,
+    SKAssistantMessage,
     ToolDefinition,
     ToolCall,
     EvaluatorData,
@@ -70,6 +70,7 @@ class SKAgentConverter:
             filtered_tool = {
                 "name": tool["name"],
                 "description": tool.get("description"),  # or "No description",
+                "type": "function",  # TODO: hardcoded for now.
                 "parameters": {
                     "type": "object",  # Is this always the case?
                     "properties": {},  # Will be filled in below
@@ -87,7 +88,8 @@ class SKAgentConverter:
 
         return final_tools
 
-    def _get_tool_definitons(self, agent: ChatCompletionAgent) -> list:
+    @staticmethod
+    def _get_tool_definitons(agent: ChatCompletionAgent) -> list:
         """
         Get tool definitions from the agent's plugins.
         :param agent: The ChatCompletionAgent from which to retrieve tool definitions.
@@ -106,16 +108,60 @@ class SKAgentConverter:
 
         return functions
 
+    @staticmethod
     def _extract_function_tool_definitions(
-        self, agent: ChatCompletionAgent
+        agent: ChatCompletionAgent,
     ) -> List[ToolDefinition]:
         """Get and transform tool definitions from the agent."""
-        tool_definitions = self._get_tool_definitons(agent)
-        return self._transform_tool_definitions(tool_definitions)
+        tool_definitions = SKAgentConverter._get_tool_definitons(agent)
+        return SKAgentConverter._transform_tool_definitions(tool_definitions)
 
     @staticmethod
     def _is_output_role(role):
         return role in (AuthorRole.ASSISTANT, AuthorRole.TOOL)
+
+    @staticmethod
+    async def _get_messages_from_thread(
+        thread: ChatHistoryAgentThread,
+    ) -> List[ChatMessageContent]:
+        """
+        Get messages from a thread.
+        :param thread: The ChatHistoryAgentThread to get messages from.
+        :type thread: ChatHistoryAgentThread
+        :return: A list of ChatMessageContent objects.
+        :rtype: List[ChatMessageContent]
+        """
+        return [msg async for msg in thread.get_messages()]
+
+    @staticmethod
+    async def _get_messages_from_thread_with_agent(
+        thread: ChatHistoryAgentThread,
+        agent: ChatCompletionAgent = None,
+    ) -> List[ChatMessageContent]:
+        """
+        Get messages from a thread with agent instructions included as a system message if available.
+        :param thread: The ChatHistoryAgentThread to get messages from.
+        :type thread: ChatHistoryAgentThread
+        :param agent: The ChatCompletionAgent to use.
+        :type agent: ChatCompletionAgent
+        :return: A list of ChatMessageContent objects.
+        :rtype: List[ChatMessageContent]
+        """
+        messages: List[ChatMessageContent] = []
+
+        # If agent is provided, with instructions, add it as a system message
+        if agent and agent.instructions:
+            messages.append(
+                ChatMessageContent(
+                    role=AuthorRole.SYSTEM,
+                    items=[TextContent(text=agent.instructions)],
+                )
+            )
+
+        thread_messages = await SKAgentConverter._get_messages_from_thread(thread)
+        messages.extend(thread_messages)
+
+        return messages
 
     @staticmethod
     async def _convert_thread_to_eval_schema(
@@ -135,37 +181,35 @@ class SKAgentConverter:
         :rtype: dict
         """
 
-        messages: List[ChatMessageContent] = []
-
-        # If agent is provided, with instructions, add it as a system message
-        if agent and agent.instructions:
-            messages.append(
-                ChatMessageContent(
-                    role=AuthorRole.SYSTEM,
-                    items=[TextContent(text=agent.instructions)],
-                )
+        messages: List[ChatMessageContent] = (
+            await SKAgentConverter._get_messages_from_thread_with_agent(
+                thread=thread,
+                agent=agent,
             )
-
-        thread_messages = [msg async for msg in thread.get_messages()]
-        messages.extend(thread_messages)
-
-        return await SKAgentConverter._convert_messages_to_schema_new(
-            messages=messages,
-            turn_index=turn_index,
         )
 
-    @staticmethod
-    async def _convert_messages_to_schema_new(
-        messages: List[ChatMessageContent],
-        turn_index: int,
-    ) -> Tuple[List[Message], List[Message]]:
+        turns = SKAgentConverter._extract_turns_from_messages(
+            messages, turn_index_to_stop=turn_index
+        )
 
+        if turn_index >= len(turns):
+            raise ValueError(
+                f"Turn {turn_index} not found. Only {len(turns)} turns exist."
+            )
+
+        return turns[turn_index]
+
+    @staticmethod
+    def _extract_turns_from_messages(
+        messages: List[ChatMessageContent],
+        turn_index_to_stop: Optional[int] = None,
+    ) -> List[Tuple[List[Message], List[Message]]]:
+        turns = []
         query: List[Message] = []
         response: List[Message] = []
 
         queued_items = []
         is_queued_output = None
-        current_turn = -1
 
         for msg in messages:
             curr_items = SKAgentConverter._process_message_items(msg)
@@ -192,29 +236,38 @@ class SKAgentConverter:
 
             # Transition from output → input = End of a turn
             if is_queued_output and not curr_is_output:
-                current_turn += 1
-                if current_turn == turn_index:
-                    response = queued_items
+                # Transition from output to input: end of turn
+                response = list(queued_items)
+                turns.append((query, response))
+                # New turn's query would be the whole previous
+                query = list(query) + response
+                if turn_index_to_stop is not None and len(turns) > turn_index_to_stop:
                     break
-                else:
-                    query.extend(queued_items)
-
                 queued_items = curr_items
                 is_queued_output = False
 
-        # Handle final turn if it ended on assistant/tool messages
-        if not response and queued_items and is_queued_output:
-            current_turn += 1
-            if current_turn == turn_index:
-                response = queued_items
-                return query, response
+        # Handle if final message(s) are assistant/tool messages
+        if queued_items and is_queued_output:
+            response = list(queued_items)
+            turns.append((query, response))
 
-        if not response:
+        return turns
+
+    @staticmethod
+    def _convert_messages_to_schema_new(
+        messages: List[ChatMessageContent], turn_index: int
+    ) -> Tuple[List[Message], List[Message]]:
+        """
+        Converts messages to schema for a specific turn.
+        """
+        turns = SKAgentConverter._extract_turns_from_messages(
+            messages, turn_index_to_stop=turn_index
+        )
+        if turn_index >= len(turns):
             raise ValueError(
-                f"Turn {turn_index} not found in the thread. Thread has {current_turn + 1} turns."
+                f"Turn {turn_index} not found. Only {len(turns)} turns exist."
             )
-
-        return query, response
+        return turns[turn_index]
 
     @staticmethod
     def _process_message_items(message: ChatMessageContent) -> List[Message]:
@@ -269,9 +322,9 @@ class SKAgentConverter:
             elif message.role == AuthorRole.USER:
                 convert_message = UserMessage(**message_dict)
             elif message.role == AuthorRole.ASSISTANT:
-                convert_message = AssistantMessage(**message_dict)
+                convert_message = SKAssistantMessage(**message_dict)
             elif message.role == AuthorRole.TOOL:
-                convert_message = ToolMessage(**message_dict)
+                convert_message = SKToolMessage(**message_dict)
             else:
                 raise ValueError(f"Unknown role: {message.role}")
 
@@ -320,7 +373,7 @@ class SKAgentConverter:
         """
 
         tool_definitions: List[ToolDefinition] = (
-            self._extract_function_tool_definitions(agent)
+            SKAgentConverter._extract_function_tool_definitions(agent)
         )
 
         if not thread:
@@ -390,20 +443,37 @@ class SKAgentConverter:
         :rtype: List[dict]
         """
         thread_eval_data: List[dict] = []
-        turn_indices = await self._get_turn_indices(thread)
 
-        for turn_index in turn_indices:
-            try:
-                eval_dict = await self.convert(thread, agent, turn_index)
-                thread_eval_data.append(eval_dict)
-            except Exception as e:
-                print(
-                    f"Warning: Failed to convert thread '{getattr(thread, 'id', 'unknown')}' at turn {turn_index}: {e}"
-                )
+        tool_definitions: List[ToolDefinition] = (
+            self._extract_function_tool_definitions(agent)
+        )
+
+        if not thread:
+            raise ValueError("Thread cannot be None")
+
+        messages: List[ChatMessageContent] = (
+            await SKAgentConverter._get_messages_from_thread_with_agent(
+                thread=thread,
+                agent=agent,
+            )
+        )
+
+        turns = SKAgentConverter._extract_turns_from_messages(messages)
+
+        for query, response in turns:
+
+            turn_eval_data = EvaluatorData(
+                query=query,
+                response=response,
+                tool_definitions=tool_definitions,
+            )
+
+            thread_eval_data.append(json.loads(turn_eval_data.to_json()))
 
         return thread_eval_data
 
-    async def _get_turn_indices(self, thread: ChatHistoryAgentThread) -> List[int]:
+    @staticmethod
+    async def _get_thread_turn_indices(thread: ChatHistoryAgentThread) -> List[int]:
         """
         Determines all complete turn indices in a thread.
 
@@ -412,21 +482,22 @@ class SKAgentConverter:
         :return: A list of valid turn indices (0-based).
         :rtype: List[int]
         """
-        messages = [msg async for msg in thread.get_messages()]
 
-        is_output = False
-        turn_count = 0
-        indices = []
+        messages: List[ChatMessageContent] = (
+            await SKAgentConverter._get_messages_from_thread(thread)
+        )
+        if not messages:
+            return []
 
-        for msg in messages:
-            curr_is_output = self._is_output_role(msg.role)
+        # Extract turns from the messages
+        turns = SKAgentConverter._extract_turns_from_messages(messages)
 
-            # We assume a turn ends when an output role follows an input.
-            if not is_output and curr_is_output:
-                indices.append(turn_count)
-                turn_count += 1
-                is_output = True
-            elif not curr_is_output:
-                is_output = False
+        # Return indices of valid turns
+        return SKAgentConverter._get_turn_indices(messages) if turns else []
 
-        return indices
+    @staticmethod
+    def _get_turn_indices(messages: List[ChatMessageContent]) -> List[int]:
+        """
+        Returns a list of valid turn indices.
+        """
+        return list(range(len(SKAgentConverter._extract_turns_from_messages(messages))))

@@ -139,6 +139,19 @@ class ToolMessage(Message):
     tool_call_id: Optional[str] = None
 
 
+class SKToolMessage(Message):
+    """Represents a tool message in the context of a Semantic Kernel (SK) agent.
+
+    :param role: The role of the message sender, which is always 'tool'.
+    :type role: str
+    :param tool_call_id: The ID of the tool call associated with the message. Optional.
+    :type tool_call_id: Optional[str]
+    """
+
+    role: str = _TOOL
+    tool_call_id: Optional[str] = None
+    
+
 class AssistantMessage(Message):
     """Represents an assistant message.
 
@@ -151,6 +164,14 @@ class AssistantMessage(Message):
     run_id: str
     role: str = _AGENT
 
+class SKAssistantMessage(Message):
+    """Represents an assistant message in the context of a Semantic Kernel (SK) agent.
+
+    :param role: The role of the message sender, which is always 'assistant'.
+    :type role: str
+    """
+
+    role: str = _AGENT
 
 class ToolDefinition(BaseModel):
     """Represents a tool definition that will be used in the agent.
