@@ -100,24 +100,28 @@ class PartitionKey(dict):
     This constructor supports multiple overloads:
 
     1. **Single Partition Key**:
-       - **Parameters**:
-         - `path` (str): The path of the partition key.
-         - `kind` (Literal["Hash"], optional): The kind of partition key. Defaults to "Hash".
-         - `version` (int, optional): The version of the partition key. Defaults to 2.
-       - **Example**:
+
+       **Parameters**:
+        - `path` (str): The path of the partition key.
+        - `kind` (Literal["Hash"], optional): The kind of partition key. Defaults to "Hash".
+        - `version` (int, optional): The version of the partition key. Defaults to 2.
+
+       **Example**:
          >>> pk = PartitionKey(path="/id")
 
     2. **Hierarchical Partition Key**:
-       - **Parameters**:
-         - `path` (List[str]): A list of paths representing the partition key, supporting up to three hierarchical levels.
-         - `kind` (Literal["MultiHash"], optional): The kind of partition key. Defaults to "MultiHash".
-         - `version` (int, optional): The version of the partition key. Defaults to 2.
-       - **Example**:
+
+       **Parameters**:
+        - `path` (List[str]): A list of paths representing the partition key, supporting up to three hierarchical levels.
+        - `kind` (Literal["MultiHash"], optional): The kind of partition key. Defaults to "MultiHash".
+        - `version` (int, optional): The version of the partition key. Defaults to 2.
+
+       **Example**:
          >>> pk = PartitionKey(path=["/id", "/category"], kind="MultiHash")
 
     :ivar str path: The path(s) of the partition key.
-    :ivar str kind: The kind of partition key (e.g., "Hash" or "MultiHash").
-    :ivar int version: The version of the partition key.
+    :ivar str kind: The kind of partition key ("Hash" or "MultiHash") (default: "Hash").
+    :ivar int version: The version of the partition key (default: 2).
     """
 
     @overload
