@@ -60,9 +60,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
         # get relevant information from container cache to get the overlapping ranges
         container_link = properties["container_link"]
         partition_key_definition = properties["partitionKey"]
-        partition_key = PartitionKey(path=partition_key_definition["paths"],
-                                     kind=partition_key_definition["kind"],
-                                     version=partition_key_definition["version"])
+        partition_key = PartitionKey(partition_key_definition)
 
         if HttpHeaders.PartitionKey in request.headers:
             partition_key_value = request.headers[HttpHeaders.PartitionKey]

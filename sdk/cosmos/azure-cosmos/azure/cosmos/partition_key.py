@@ -23,7 +23,8 @@
 from io import BytesIO
 import binascii
 import struct
-from typing import IO, Sequence, Type, Union, overload, List, cast
+from typing import IO, Sequence, Type, Union, overload, List, cast, Dict, Any
+
 from typing_extensions import Literal
 
 from ._cosmos_integers import _UInt32, _UInt64, _UInt128
@@ -93,13 +94,38 @@ class _Infinity:
 class PartitionKey(dict):
     """Key used to partition a container into logical partitions.
 
-    See https://learn.microsoft.com/azure/cosmos-db/partitioning-overview#choose-partitionkey
-    for information on how to choose partition keys.
+See https://learn.microsoft.com/azure/cosmos-db/partitioning-overview#choose-partitionkey
+for information on how to choose partition keys.
 
-    :ivar str path: The path of the partition key
-    :ivar str kind: What kind of partition key is being defined (default: "Hash")
-    :ivar int version: The version of the partition key (default: 2)
-    """
+This constructor supports multiple overloads:
+
+1. **Single Partition Key**:
+   - **Parameters**:
+     - `path` (str): The path of the partition key.
+     - `kind` (Literal["Hash"], optional): The kind of partition key. Defaults to "Hash".
+     - `version` (int, optional): The version of the partition key. Defaults to 2.
+   - **Example**:
+     >>> pk = PartitionKey(path="/id")
+
+2. **Hierarchical Partition Key**:
+   - **Parameters**:
+     - `path` (List[str]): A list of paths representing the partition key, supporting up to three hierarchical levels.
+     - `kind` (Literal["MultiHash"], optional): The kind of partition key. Defaults to "MultiHash".
+     - `version` (int, optional): The version of the partition key. Defaults to 2.
+   - **Example**:
+     >>> pk = PartitionKey(path=["/id", "/category"], kind="MultiHash")
+
+3. **Partition Key Definition**:
+   - **Parameters**:
+     - `partition_key_definition` (Union[PartitionKey, Dict[str, Any]]): A dictionary or `PartitionKey`
+        object defining the partition key, including `path`, `kind`, and `version`.
+   - **Example**:
+     >>> pk = PartitionKey(partition_key_definition={"path": "/id", "kind": "Hash", "version": 1})
+
+:ivar str path: The path(s) of the partition key.
+:ivar str kind: The kind of partition key (e.g., "Hash" or "MultiHash").
+:ivar int version: The version of the partition key.
+"""
 
     @overload
     def __init__(self, path: List[str], *, kind: Literal["MultiHash"] = "MultiHash", version: int = 2) -> None:
@@ -109,10 +135,23 @@ class PartitionKey(dict):
     def __init__(self, path: str, *, kind: Literal["Hash"] = "Hash", version: int = 2) -> None:
         ...
 
+    @overload
+    def __init__(self, partition_key_definition: Union["PartitionKey", Dict[str, Any]]) -> None:
+        ...
+
     def __init__(self, *args, **kwargs):
-        path = args[0] if args else kwargs['path']
-        kind = args[1] if len(args) > 1 else kwargs.get('kind', 'Hash' if isinstance(path, str) else 'MultiHash')
-        version = args[2] if len(args) > 2 else kwargs.get('version', 2)
+        if (args and len(args) == 1 and isinstance(args[0],
+                                                   (dict, PartitionKey))) or 'partition_key_definition' in kwargs:
+            # If a single dictionary or PartitionKey object is passed, use it as the partition key definition
+            partition_key_definition = args[0] if args else kwargs.get("partition_key_definition", {})
+            path = partition_key_definition.get('path')
+            kind = partition_key_definition.get('kind', 'Hash')
+            # When Partition Key Definition is Passed, if no version is available then default to 1
+            version = partition_key_definition.get('version', 1)
+        else:
+            path = args[0] if args else kwargs['path']
+            kind = args[1] if len(args) > 1 else kwargs.get('kind', 'Hash' if isinstance(path, str) else 'MultiHash')
+            version = args[2] if len(args) > 2 else kwargs.get('version', 2)
         super().__init__(paths=[path] if isinstance(path, str) else path, kind=kind, version=version)
 
     def __repr__(self) -> str:

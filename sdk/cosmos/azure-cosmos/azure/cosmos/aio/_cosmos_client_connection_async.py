@@ -2956,9 +2956,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         partition_key_obj = None
         if cont_prop and partition_key_value is not None:
             partition_key_definition = cont_prop["partitionKey"]
-            partition_key_obj = PartitionKey(path=partition_key_definition["paths"],
-                                             kind=partition_key_definition["kind"],
-                                             version=partition_key_definition["version"])
+            partition_key_obj = PartitionKey(partition_key_definition)
             is_prefix_partition_query = partition_key_obj._is_prefix_partition_key(partition_key_value)
 
         if is_prefix_partition_query and partition_key_obj:

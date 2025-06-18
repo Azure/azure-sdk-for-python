@@ -64,10 +64,7 @@ PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, 
 
 def get_partition_key_from_properties(container_properties: Dict[str, Any]) -> PartitionKey:
     partition_key_definition = container_properties["partitionKey"]
-    return PartitionKey(
-        path=partition_key_definition["paths"],
-        kind=partition_key_definition["kind"],
-        version=partition_key_definition["version"])
+    return PartitionKey(partition_key_definition)
 
 def is_prefix_partition_key(container_properties: Dict[str, Any], partition_key: PartitionKeyType) -> bool:
     partition_key_obj: PartitionKey = get_partition_key_from_properties(container_properties)
