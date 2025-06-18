@@ -34,7 +34,7 @@ source <env_name>/bin/activate
 
 ## TYPESPEC SDK GENERATION - COMPLETE WORKFLOW
 
-For instructions on generating SDKs using Typespec, refer to /typespec-generation
+For instructions on generating SDKs using Typespec, refer to /typespec-generation and follow the steps found there.
 
 ---
 
