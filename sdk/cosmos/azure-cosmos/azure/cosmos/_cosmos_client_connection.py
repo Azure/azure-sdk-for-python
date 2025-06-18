@@ -3168,7 +3168,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             # Default to empty Dictionary, but unlikely to be empty as we first check if we have it in kwargs
             pk_properties: Union[PartitionKey, Dict] = kwargs.pop("partitionKeyDefinition", {})
             partition_key_definition = _get_partition_key_from_partition_key_definition(pk_properties)
-            partition_key_value = pk_properties.get("partition_key")
+            partition_key_value: Sequence[
+                Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]] = cast(
+                Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]],
+                pk_properties.get("partition_key")
+            )
             feedrangeEPK = partition_key_definition._get_epk_range_for_prefix_partition_key(
                 partition_key_value
             )  # cspell:disable-line
