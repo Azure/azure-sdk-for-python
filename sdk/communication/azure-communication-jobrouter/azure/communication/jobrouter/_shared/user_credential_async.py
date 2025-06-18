@@ -60,9 +60,6 @@ class CommunicationTokenCredential(object):
         :param proactive_refresh: Whether to refresh the token proactively.
         :param kwargs: Additional keyword arguments.
         """
-        # pylint: disable=W0233
-        self.__init__(token, token_refresher=token_refresher, proactive_refresh=proactive_refresh, **kwargs)  #
-
     @overload
     def __init__(
         self,
@@ -80,8 +77,6 @@ class CommunicationTokenCredential(object):
         :param scopes: The scopes to request during the token exchange.
         :param kwargs: Additional keyword arguments.
         """
-        # pylint: disable=W0233
-        self.__init__(resource_endpoint=resource_endpoint, token_credential=token_credential, scopes=scopes, **kwargs)
 
     def __init__(self, token: Optional[str] = None, **kwargs: Any):
         resource_endpoint = kwargs.pop("resource_endpoint", None)
