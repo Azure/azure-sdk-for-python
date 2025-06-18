@@ -974,6 +974,16 @@ class TestCRUDContainerOperations(unittest.TestCase):
         retrieve_throughput = collection.get_throughput()
         assert getattr(retrieve_throughput, "offer_throughput") == getattr(new_throughput, "offer_throughput")
 
+    def test_negative_replace_throughput_with_all_configs_set(self):
+        created_db = self.databaseForTest
+        collection = created_db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
+
+        new_throughput = ThroughputProperties(offer_throughput=2500, auto_scale_max_throughput=4000, auto_scale_increment_percent=5)
+        try:
+            collection.replace_throughput(new_throughput)
+        except KeyError as e:
+            pass
+
     def _MockExecuteFunction(self, function, *args, **kwargs):
         if HttpHeaders.PartitionKey in args[4].headers:
             self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey])
