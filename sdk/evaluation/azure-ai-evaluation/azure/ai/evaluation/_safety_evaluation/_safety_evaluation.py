@@ -185,47 +185,57 @@ class _SafetyEvaluation:
         :type direct_attack: bool
         """
 
-        ## Define callback
-        async def callback(
-            messages: List[Dict],
-            stream: bool = False,
-            session_state: Optional[str] = None,
-            context: Optional[Dict] = None,
-        ) -> dict:
-            messages_list = messages["messages"]  # type: ignore
-            latest_message = messages_list[-1]
-            application_input = latest_message["content"]
-            context = latest_message.get("context", None)
-            latest_context = None
-            try:
-                is_async = self._is_async_function(target)
-                if self._check_target_returns_context(target):
-                    if is_async:
-                        response, latest_context = await target(query=application_input)
+        ## Check if target is already a callback-style function
+        if self._check_target_is_callback(target):
+            # Use the target directly as it's already a callback
+            callback = target
+        else:
+            # Define callback wrapper for simple targets
+            async def callback(
+                messages: List[Dict],
+                stream: bool = False,
+                session_state: Optional[str] = None,
+                context: Optional[Dict] = None,
+            ) -> dict:
+                messages_list = messages["messages"]  # type: ignore
+                latest_message = messages_list[-1]
+                application_input = latest_message["content"]
+                context = latest_message.get("context", None)
+                latest_context = None
+                try:
+                    is_async = self._is_async_function(target)
+                    if self._check_target_returns_context(target):
+                        if is_async:
+                            response, latest_context = await target(
+                                query=application_input
+                            )
+                        else:
+                            response, latest_context = target(
+                                query=application_input
+                            )
                     else:
-                        response, latest_context = target(query=application_input)
-                else:
-                    if is_async:
-                        response = await target(query=application_input)
-                    else:
-                        response = target(query=application_input)
-            except Exception as e:
-                response = f"Something went wrong {e!s}"
+                        if is_async:
+                            response = await target(query=application_input)
+                        else:
+                            response = target(query=application_input)
+                except Exception as e:
+                    response = f"Something went wrong {e!s}"
 
-            ## We format the response to follow the openAI chat protocol format
-            formatted_response = {
-                "content": response,
-                "role": "assistant",
-                "context": latest_context if latest_context else context,
-            }
-            ## NOTE: In the future, instead of appending to messages we should just return `formatted_response`
-            messages["messages"].append(formatted_response)  # type: ignore
-            return {
-                "messages": messages_list,
-                "stream": stream,
-                "session_state": session_state,
-                "context": latest_context if latest_context else context,
-            }
+                ## We format the response to follow the openAI chat protocol
+                formatted_response = {
+                    "content": response,
+                    "role": "assistant",
+                    "context": latest_context if latest_context else context,
+                }
+                ## NOTE: In the future, instead of appending to messages we
+                ## should just return `formatted_response`
+                messages["messages"].append(formatted_response)  # type: ignore
+                return {
+                    "messages": messages_list,
+                    "stream": stream,
+                    "session_state": session_state,
+                    "context": latest_context if latest_context else context,
+                }
 
         ## Run simulator
         simulator = None
@@ -564,7 +574,7 @@ class _SafetyEvaluation:
     def _check_target_is_callback(target: Callable) -> bool:
         sig = inspect.signature(target)
         param_names = list(sig.parameters.keys())
-        return 'messages' in param_names and 'stream' in param_names and 'session_state' in param_names and 'context' in param_names
+        return 'messages' in param_names and 'session_state' in param_names and 'context' in param_names
 
     def _validate_inputs(
             self,
@@ -589,9 +599,26 @@ class _SafetyEvaluation:
         """ 
         if not callable(target):
             self._validate_model_config(target)
-        elif not self._check_target_returns_str(target): 
-            self.logger.error(f"Target function {target} does not return a string.")
-            msg = f"Target function {target} does not return a string."
+        elif (not self._check_target_is_callback(target) and
+              not self._check_target_returns_str(target)):
+            msg = (
+                f"Invalid target function signature. The target function must be either:\n\n"
+                f"1. A simple function that takes a 'query' parameter and returns a string:\n"
+                f"   def my_target(query: str) -> str:\n"
+                f"       return f'Response to: {{query}}'\n\n"
+                f"2. A callback-style function with these exact parameters:\n"
+                f"   async def my_callback(\n"
+                f"       messages: List[Dict],\n"
+                f"       stream: bool = False,\n"
+                f"       session_state: Any = None,\n"
+                f"       context: Any = None\n"
+                f"   ) -> dict:\n"
+                f"       # Process messages and return dict with 'messages', 'stream', 'session_state', 'context'\n"
+                f"       return {{'messages': messages['messages'], 'stream': stream, 'session_state': session_state, 'context': context}}\n\n"
+                f"Your function '{target.__name__}' does not match either pattern. "
+                f"Please check the function signature and return type."
+            )
+            self.logger.error(msg)
             raise EvaluationException(
                 message=msg,
                 internal_message=msg,
@@ -798,6 +825,7 @@ class _SafetyEvaluation:
                 source_text=source_text,
                 direct_attack=_SafetyEvaluator.DIRECT_ATTACK in evaluators,
                 randomization_seed=randomization_seed,
+                concurrent_async_tasks=concurrent_async_tasks,
             )
         elif data_path:
             data_paths = {Path(data_path).stem: data_path}
