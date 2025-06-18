@@ -72,7 +72,7 @@
       },
       "ArmConfig": {
         "MultiRegion": {
-          "ArmTemplateParameters": "@{ defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true; perPartitionAutomaticFailoverEnabled = 'True' }"
+          "ArmTemplateParameters": "@{ defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true;}"
         }
       }
     },

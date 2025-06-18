@@ -15,9 +15,6 @@ param location string = resourceGroup().location
 @description('Whether Per Partition Circuit Breaker should be enabled.')
 param circuitBreakerEnabled string = 'False'
 
-@description('Whether Per Partition Automatic Failover should be enabled.')
-param perPartitionAutomaticFailoverEnabled string = 'False'
-
 @description('The api version to be used by Bicep to create resources')
 param apiVersion string = '2023-04-15'
 
@@ -108,6 +105,5 @@ resource accountName_roleAssignmentId 'Microsoft.DocumentDB/databaseAccounts/sql
 }
 
 output AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER string = circuitBreakerEnabled
-output AZURE_COSMOS_ENABLE_PER_PARTITION_AUTOMATIC_FAILOVER string = perPartitionAutomaticFailoverEnabled
 output ACCOUNT_HOST string = reference(resourceId, apiVersion).documentEndpoint
 output ACCOUNT_KEY string = listKeys(resourceId, apiVersion).primaryMasterKey

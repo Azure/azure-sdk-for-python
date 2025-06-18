@@ -1,12 +1,12 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-import os
 import unittest
 import uuid
 
 import asyncio
+
 import pytest
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 import test_config
 from azure.core.pipeline.transport._aiohttp import AioHttpTransport
@@ -26,11 +26,10 @@ from test_per_partition_circuit_breaker_mm_async import perform_write_operation
 class TestPerPartitionAutomaticFailoverAsync:
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey
-    connectionPolicy = test_config.TestConfig.connectionPolicy
-    TEST_DATABASE_ID = "test_config.TestConfig.TEST_DATABASE_ID"
+    TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_MULTI_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
-    async def setup_method_with_custom_transport(self, custom_transport: AioHttpTransport, default_endpoint=host, **kwargs):
+    async def setup_method_with_custom_transport(self, custom_transport: Optional[AioHttpTransport], default_endpoint=host, **kwargs):
         container_id = kwargs.pop("container_id", None)
         if not container_id:
             container_id = self.TEST_CONTAINER_MULTI_PARTITION_ID

@@ -36,8 +36,7 @@ def create_errors():
 class TestPerPartitionAutomaticFailover:
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey
-    connectionPolicy = test_config.TestConfig.connectionPolicy
-    TEST_DATABASE_ID = "test_config.TestConfig.TEST_DATABASE_ID"
+    TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_MULTI_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
     def setup_method_with_custom_transport(self, custom_transport, default_endpoint=host, **kwargs):

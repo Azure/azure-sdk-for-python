@@ -76,7 +76,7 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover(_GlobalPar
             return False
 
         # TODO: This check here needs to be verified once we test against a live account with the config enabled.
-        if not self._database_account_cache._EnablePerPartitionFailoverBehavior:
+        if not self._database_account_cache or not self._database_account_cache._EnablePerPartitionFailoverBehavior:
             return False
 
         # if we have at most one region available in the account, we cannot do per partition automatic failover

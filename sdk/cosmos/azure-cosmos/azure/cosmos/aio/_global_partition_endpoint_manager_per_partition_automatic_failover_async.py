@@ -5,13 +5,11 @@
 endpoint manager, since enabling per partition automatic failover also enables the circuit breaker logic.
 """
 import logging
-import os
 import threading
 
 from typing import Dict, Set, TYPE_CHECKING, Optional
 
 from azure.cosmos.http_constants import ResourceType
-from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.aio._global_partition_endpoint_manager_circuit_breaker_async import \
     _GlobalPartitionEndpointManagerForCircuitBreakerAsync
 from azure.cosmos.documents import _OperationType
@@ -77,7 +75,7 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
             return False
 
         # TODO: This check here needs to be verified once we test against a live account with the config enabled.
-        if not self._database_account_cache._EnablePerPartitionFailoverBehavior:
+        if not self._database_account_cache or not self._database_account_cache._EnablePerPartitionFailoverBehavior:
             return False
 
         # if we have at most one region available in the account, we cannot do per partition automatic failover
