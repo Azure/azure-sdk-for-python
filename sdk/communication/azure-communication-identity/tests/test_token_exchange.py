@@ -50,11 +50,11 @@ class TestTokenExchangeClient:
     def test_parse_access_token_from_response_invalid_json(self):
         client = TokenExchangeClient("https://endpoint", MagicMock())
         dummy_response = DummyPipelineResponse(content="not json")
-        with pytest.raises(ClientAuthenticationError):
+        with pytest.raises(ValueError):
             client._parse_access_token_from_response(dummy_response)
 
     def test_parse_access_token_from_response_missing_fields(self):
         client = TokenExchangeClient("https://endpoint", MagicMock())
         dummy_response = DummyPipelineResponse(content='{"invalid": "data"}')
-        with pytest.raises(ClientAuthenticationError):
+        with pytest.raises(ValueError):
             client._parse_access_token_from_response(dummy_response)
