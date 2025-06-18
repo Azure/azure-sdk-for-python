@@ -201,6 +201,8 @@ def get_configs(keyvault_secret_url):
     configs.append(create_config_setting("tag_no_value", "\0", "no value", tags={"a": ""}))
     # Configuration with different tag
     configs.append(create_config_setting("different_tag", "\0", "different", tags={"different": "tag"}))
+    # Configuration with null tag
+    configs.append(create_config_setting("null_tag", "\0", "null tag", tags={"tag": None}))
     if keyvault_secret_url:
         configs.append(
             create_config_setting(

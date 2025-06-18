@@ -48,10 +48,10 @@ class TestSettingSelector:
         """Test that appropriate exceptions are raised for invalid tag filters."""
         # Non-list tag filters
         with pytest.raises(TypeError, match="tag_filters must be a list of strings."):
-            SettingSelector(key_filter="*", tag_filters="tag=value") #type:ignore
+            SettingSelector(key_filter="*", tag_filters="tag=value")  # type:ignore
 
         with pytest.raises(TypeError, match="tag_filters must be a list of strings."):
-            SettingSelector(key_filter="*", tag_filters={"tag": "value"}) #type:ignore
+            SettingSelector(key_filter="*", tag_filters={"tag": "value"})  # type:ignore
 
         # Empty tag filter
         with pytest.raises(ValueError, match="Tag filter cannot be an empty string or None."):

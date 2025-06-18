@@ -152,6 +152,16 @@ class TestTagFilters(AppConfigTestCase):
         # Feature flags shouldn't be available with non-existent tag filter
         assert len(config_client[FEATURE_MANAGEMENT_KEY]["feature_flags"]) == 0
 
+    @recorded_by_proxy
+    @app_config_decorator
+    def test_tag_filter_with_null_value(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
+        """Test filtering by tag with null value."""
+        selects = {SettingSelector(key_filter="*", tag_filters=["tag=\0"])}
+        config_client = self.create_client(
+            appconfiguration_connection_string,
+            selects=selects,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+        )
 
         # Should include settings with tag "null_tag" having null value
         assert "null_tag" in config_client

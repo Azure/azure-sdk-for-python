@@ -71,7 +71,6 @@ class SettingSelector:
         self.tag_filters = tag_filters
 
 
-
 class WatchKey(NamedTuple):
     key: str
     label: str = EMPTY_LABEL
