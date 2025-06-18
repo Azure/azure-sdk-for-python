@@ -1,25 +1,37 @@
-import asyncio
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+import json
+import threading
 import time
 import os
-from datetime import timedelta
-from typing import Dict, Any
-from azure.communication.callautomation.aio import (
-    CallAutomationClient as CallAutomationClientAsync,
-    CallConnectionClient as CallConnectionClientAsync,
-)
-from azure.communication.callautomation._shared.models import CommunicationUserIdentifier, identifier_from_raw_id
-from azure.communication.callautomation._models import ChannelAffinity
-from azure.communication.identity import CommunicationIdentityClient
+import inspect
+from datetime import datetime, timedelta
+from typing import Dict, Any, List, Optional
+
+import requests
+from azure.servicebus import ServiceBusClient
+from azure.identity import AzureCliCredential
 from devtools_testutils import AzureRecordedTestCase, is_live
 from devtools_testutils.helpers import get_test_id
 
-from azure.identity import AzureCliCredential
-from azure.communication.phonenumbers.aio import PhoneNumbersClient
-from azure.servicebus.aio import ServiceBusClient
+from azure.communication.callautomation import (
+    CommunicationIdentifierKind,
+    CommunicationIdentifier
+)
+from azure.communication.callautomation.aio import (
+    CallAutomationClient,
+    CallConnectionClient
+)
+from azure.communication.callautomation._shared.models import identifier_from_raw_id
+from azure.communication.identity import CommunicationIdentityClient
+from azure.communication.phonenumbers import PhoneNumbersClient
 
 class CallAutomationRecordedTestCaseAsync(AzureRecordedTestCase):
     @classmethod
-    async def setup_class(cls):
+    def setup_class(cls):
         if is_live():
             print("Live Test")
             cls.connection_str = os.environ.get('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
@@ -49,174 +61,255 @@ class CallAutomationRecordedTestCaseAsync(AzureRecordedTestCase):
         cls.wait_for_event_flags = []
         cls.event_store: Dict[str, Dict[str, Any]] = {}
         cls.event_to_save: Dict[str, Dict[str, Any]] = {}
-        cls.open_call_connections: Dict[str, CallConnectionClientAsync] = {}
+        cls.open_call_connections: Dict[str, CallConnectionClient] = {}
 
     @classmethod
-    async def teardown_class(cls):
+    def teardown_class(cls):
+        cls.wait_for_event_flags.clear()
         for cc in cls.open_call_connections.values():
-            await cc.hang_up(is_for_everyone=True)
+            cc.hang_up(is_for_everyone=True)
 
-    async def setup_method(self, method):
+    def setup_method(self, method):
+        self.test_name = get_test_id().split("/")[-1]
         self.event_store: Dict[str, Dict[str, Any]] = {}
+        self.event_to_save: Dict[str, Dict[str, Any]] = {}
+        self._prepare_events_recording()
+        pass
 
-    async def teardown_method(self, method):
+    def teardown_method(self, method):
+        self._record_method_events()
         self.event_store: Dict[str, Dict[str, Any]] = {}
+        self.event_to_save: Dict[str, Dict[str, Any]] = {}
+        pass
 
-    async def check_for_event_async(self, event_type: str, call_connection_id: str, wait_time: timedelta) -> Any:
-        # Dummy async event checker for demonstration
-        timeout = time.time() + wait_time.total_seconds()
-        while time.time() < timeout:
-            event = self.event_store.pop(event_type, None)
-            if event:
-                return event
-            await asyncio.sleep(1)
+    @staticmethod
+    def _format_string(s) -> str:
+        s1 = f"{s[:12]}-{s[12:16]}-{s[16:20]}-{s[20:24]}-{s[24:36]}"
+        s2 = f"{s[36:44]}-{s[44:48]}-{s[48:52]}-{s[52:56]}-{s[56:]}"
+        return f"{s1}_{s2}"
+
+    @staticmethod
+    def _parse_ids_from_identifier(identifier: CommunicationIdentifier) -> str:
+        if identifier is None:
+            raise ValueError("Identifier cannot be None")
+        elif identifier.kind == CommunicationIdentifierKind.COMMUNICATION_USER:
+            return CallAutomationRecordedTestCaseAsync._format_string("".join(filter(str.isalnum, identifier.raw_id)))
+        elif identifier.kind == CommunicationIdentifierKind.PHONE_NUMBER:
+            return identifier.raw_id
+        else:
+            raise ValueError("Identifier type not supported")
+
+    @staticmethod
+    def _event_key_gen(event_type: str) -> str:
+        return event_type
+
+    @staticmethod
+    def _unique_key_gen(
+        caller_identifier: CommunicationIdentifier, receiver_identifier: CommunicationIdentifier
+    ) -> str:
+        return CallAutomationRecordedTestCaseAsync._parse_ids_from_identifier(
+            caller_identifier
+        ) + CallAutomationRecordedTestCaseAsync._parse_ids_from_identifier(receiver_identifier)
+
+    def _get_test_event_file_name(self):
+        script_dir = os.path.dirname(os.path.realpath(__file__))
+        file_path = os.path.join(script_dir, "events", f"{self.test_name}.event.json")
+        return file_path
+
+    def _message_awaiter(self, unique_id) -> None:
+        service_bus_receiver = self.service_bus_client.get_queue_receiver(queue_name=unique_id)
+        while unique_id in self.wait_for_event_flags:
+            received_messages = service_bus_receiver.receive_messages(max_wait_time=20)
+            for msg in received_messages:
+                body_bytes = b"".join(msg.body)
+                body_str = body_bytes.decode("utf-8")
+                mapper = json.loads(body_str)
+                if "incomingCallContext" in mapper:
+                    caller = identifier_from_raw_id(mapper["from"]["rawId"])
+                    receiver = identifier_from_raw_id(mapper["to"]["rawId"])
+                    unique_id = self._unique_key_gen(caller, receiver)
+                    key = self._event_key_gen("IncomingCall")
+                    print("EventRegistration(IncomingCall):" + key)
+                    self.event_store[key] = mapper
+                    self.event_to_save[key] = mapper
+                else:
+                    if isinstance(mapper, list):
+                        mapper = mapper[0]
+                    if mapper["type"]:
+                        key = self._event_key_gen(mapper["type"].split(".")[-1])
+                        print("EventRegistration:" + key)
+                        self.event_store[key] = mapper
+                        self.event_to_save[key] = mapper
+                service_bus_receiver.complete_message(msg)
+            time.sleep(1)
+        return
+
+    def _prepare_events_recording(self) -> None:
+        # only load during playback
+        if not is_live():
+            file_path = self._get_test_event_file_name()
+            try:
+                with open(file_path, "r") as json_file:
+                    self.event_store = json.load(json_file)
+            except IOError as e:
+                raise SystemExit(f"File write operation failed: {e}")
+
+    def _record_method_events(self) -> None:
+        # only save during live
+        if is_live():
+            file_path = self._get_test_event_file_name()
+            try:
+                keys_to_redact = ["incomingCallContext", "callerDisplayName"]
+                redacted_dict  = self.redact_by_key(self.event_to_save, keys_to_redact)
+                with open(file_path, "w") as json_file:
+                    json.dump(redacted_dict, json_file)
+            except IOError as e:
+                raise SystemExit(f"File write operation failed: {e}")
+
+    def check_for_event(self, event_type: str, call_connection_id: str, wait_time: timedelta) -> Any:
+        key = self._event_key_gen(event_type)
+        time_out_time = datetime.now() + wait_time
+        while datetime.now() < time_out_time:
+            popped_event = self.event_store.pop(key, None)
+            if popped_event is not None:
+                print(f"Matching Event Found [{key}]")
+                return popped_event
+            time.sleep(1)
         return None
 
-    async def establish_callconnection_voip_async(self, caller, target) -> tuple:
-        # Create async call automation client for the caller
-        client = CallAutomationClientAsync.from_connection_string(self.connection_str, source=caller)
-
-        # Generate a unique_id for the call (mimic sync logic if needed)
-        unique_id = f"{caller.raw_id}_{target.raw_id}"
-
-        # Use a callback URL 
-        callback_url = f"{self.dispatcher_callback}?q={unique_id}"
-
-        # Create the call asynchronously
-        create_call_result = await client.create_call(target_participant=target, callback_url=callback_url)
-
-        # Create async call connection client
-        call_connection = CallConnectionClientAsync.from_connection_string(self.connection_str, create_call_result.call_connection_id)
-
-        # Store the connection for later cleanup
-        self.open_call_connections[unique_id] = call_connection
-
-        # Return unique_id (for event correlation), call_connection, and None for compatibility
-        return unique_id, call_connection, None
-
-    async def terminate_call_async(self, call_connection_id) -> None:
-        call_connection = self.open_call_connections.pop(call_connection_id, None)
-        if call_connection:
-            await call_connection.hang_up(is_for_everyone=True)
-    
-    async def establish_callconnection_voip_connect_call_async(self, caller, target):
-        """
-        Async version of establish_callconnection_voip_connect_call.
-        Returns: unique_id, call_connection, _, call_automation_client, callback_url
-        """
-        # Create async call automation client for the caller
-        call_automation_client = CallAutomationClientAsync.from_connection_string(self.connection_str, source=caller)
-
-        # Generate a unique_id for the call
-        unique_id = f"{caller.raw_id}_{target.raw_id}"
-
-        # Use a callback URL
-        callback_url = f"{self.dispatcher_callback}?q={unique_id}"
-
-        # Create the call asynchronously
-        create_call_result = await call_automation_client.create_call(target_participant=target, callback_url=callback_url)
-
-        # Create async call connection client
-        call_connection = CallConnectionClientAsync.from_connection_string(self.connection_str, create_call_result.call_connection_id)
-
-        # Store the connection for later cleanup
-        self.open_call_connections[unique_id] = call_connection
-
-        # Return all needed values for the test
-        return unique_id, call_connection, None, call_automation_client, callback_url
-
-    # If get_call_properties is not async, wrap it
-    async def get_call_properties_async(self, call_connection):
-        # If get_call_properties is async, just await it
-        if hasattr(call_connection, "get_call_properties") and asyncio.iscoroutinefunction(call_connection.get_call_properties):
-            return await call_connection.get_call_properties()
-        # Otherwise, run in thread
-        loop = asyncio.get_event_loop()
-        return await loop.run_in_executor(None, call_connection.get_call_properties)
-
-    # If connect_call is not async, wrap it
-    async def connect_call_async(self, call_automation_client, server_call_id, callback_url):
-        if hasattr(call_automation_client, "connect_call") and asyncio.iscoroutinefunction(call_automation_client.connect_call):
-            return await call_automation_client.connect_call(server_call_id=server_call_id, callback_url=callback_url)
-        loop = asyncio.get_event_loop()
-        return await loop.run_in_executor(None, call_automation_client.connect_call, server_call_id, callback_url)
-
-    async def establish_callconnection_voip_answercall_withcustomcontext_async(self, caller, target):
-        """
-        Async version of establish_callconnection_voip_answercall_withcustomcontext.
-        Returns: unique_id, call_connection, None
-        """
-        # Create async call automation client for the caller
-        client = CallAutomationClientAsync.from_connection_string(self.connection_str, source=caller)
-
-        # Generate a unique_id for the call
-        unique_id = f"{caller.raw_id}_{target.raw_id}"
-
-        # Use a callback URL
-        callback_url = f"{self.dispatcher_callback}?q={unique_id}"
-
-        # Here you would add any custom context logic if needed
-        # For demonstration, we'll assume a custom context parameter is passed
-        custom_context = {"key": "value"}  # Replace with actual context if needed
-
-        # Create the call asynchronously with custom context
-        create_call_result = await client.create_call(
-            target_participant=target,
-            callback_url=callback_url,
-            custom_context=custom_context
+    async def establish_callconnection_voip(self, caller, target, *, cognitive_service_enabled: Optional[bool] = False) -> tuple:
+        return await self._establish_callconnection(
+            caller, target, cognitive_service_enabled=cognitive_service_enabled
         )
 
-        # Create async call connection client
-        call_connection = AsyncCallConnectionClient.from_connection_string(
-            self.connection_str, create_call_result.call_connection_id
+    async def establish_callconnection_pstn(self, caller, target) -> tuple:
+        return await self._establish_callconnection(caller, target, is_pstn=True)
+
+    async def establish_callconnection_voip_answercall_withcustomcontext(self, caller, target) -> tuple:
+        return await self._establish_callconnection(caller, target, custom_context=True)
+
+    async def establish_callconnection_voip_with_streaming_options(self, caller, target, options, is_transcription) -> tuple:
+        return await self._establish_callconnection(
+            caller, target, options=options, is_transcription=is_transcription
         )
 
-        # Store the connection for later cleanup
-        self.open_call_connections[unique_id] = call_connection
+    async def establish_callconnection_voip_connect_call(self, caller, target) -> tuple:
+        return await self._establish_callconnection(caller, target, connect_call=True)
 
-        # Return unique_id, call_connection, and None for compatibility
-        return unique_id, call_connection, None
+    async def _establish_callconnection(self, caller, target, cognitive_service_enabled: Optional[bool] = False, is_pstn: bool = False, custom_context: bool = False, options=None, is_transcription: bool = False, connect_call: bool = False) -> tuple:
+        call_automation_client_caller = self._create_call_automation_client(caller)
+        call_automation_client_target = self._create_call_automation_client(target)
 
-    async def start_recording_with_call_connection_id_async(self, call_automation_client, call_connection_id, callback_url, target_participant_id="testId"):
-        target_participant = CommunicationUserIdentifier(target_participant_id)
-        channel_affinity = ChannelAffinity(target_participant=target_participant, channel=0)
-        # If start_recording is async, await it; otherwise, run in executor
-        if hasattr(call_automation_client, "start_recording") and asyncio.iscoroutinefunction(call_automation_client.start_recording):
-            return await call_automation_client.start_recording(
-                call_connection_id=call_connection_id,
-                recording_state_callback_url=callback_url,
-                channel_affinity=[channel_affinity]
+        unique_id = self._unique_key_gen(caller, target)
+        if is_live():
+            self._subscribe_to_dispatcher(unique_id)
+
+        callback_url = f"{self.dispatcher_callback}?q={unique_id}"
+        create_call_result = await self._create_call(
+            call_automation_client_caller, caller, target, unique_id, cognitive_service_enabled, is_pstn, options, is_transcription
+        )
+        caller_connection_id = self._validate_create_call_result(create_call_result)
+
+        incoming_call_context = await self._wait_for_incoming_call(unique_id)
+        answer_call_result = await self._answer_call(call_automation_client_target, incoming_call_context, custom_context)
+
+        call_connection_caller = self._create_call_connection_client(caller_connection_id)
+        call_connection_target = self._create_call_connection_client(answer_call_result.call_connection_id)
+        self.open_call_connections[unique_id] = call_connection_caller
+
+        if connect_call:
+            return unique_id, call_connection_caller, call_connection_target, call_automation_client_caller, callback_url
+
+        return unique_id, call_connection_caller, call_connection_target
+
+    def _create_call_automation_client(self, source):
+        return CallAutomationClient.from_connection_string(self.connection_str, source=source)
+
+    def _subscribe_to_dispatcher(self, unique_id):
+        dispatcher_url = f"{self.dispatcher_endpoint}/api/servicebuscallback/subscribe?q={unique_id}"
+        response = requests.post(dispatcher_url)
+
+        if response is None:
+            raise ValueError("Response cannot be None")
+
+        print(f"Subscription to dispatcher of {unique_id}: {response.status_code}")
+
+        self.wait_for_event_flags.append(unique_id)
+        thread = threading.Thread(target=self._message_awaiter, args=(unique_id,))
+        thread.start()
+
+    async def _create_call(self, client, caller, target, unique_id, cognitive_service_enabled, is_pstn, options, is_transcription):
+        if is_pstn:
+            return await client.create_call(
+                target_participant=target,
+                source_caller_id_number=caller,
+                callback_url=f"{self.dispatcher_callback}?q={unique_id}",
             )
-        loop = asyncio.get_event_loop()
-        return await loop.run_in_executor(
-            None,
-            call_automation_client.start_recording,
-            call_connection_id,
-            callback_url,
-            [channel_affinity]
-        )
-
-    async def stop_recording_async(self, call_automation_client, recording_id):
-        if hasattr(call_automation_client, "stop_recording") and asyncio.iscoroutinefunction(call_automation_client.stop_recording):
-            return await call_automation_client.stop_recording(recording_id=recording_id)
-        loop = asyncio.get_event_loop()
-        return await loop.run_in_executor(None, call_automation_client.stop_recording, recording_id)
-
-    async def start_recording_with_server_call_id_async(self, call_automation_client, server_call_id, callback_url, target_participant_id="testId"):
-        target_participant = CommunicationUserIdentifier(target_participant_id)
-        channel_affinity = ChannelAffinity(target_participant=target_participant, channel=0)
-        # If start_recording is async, await it; otherwise, run in executor
-        if hasattr(call_automation_client, "start_recording") and asyncio.iscoroutinefunction(call_automation_client.start_recording):
-            return await call_automation_client.start_recording(
-                server_call_id=server_call_id,
-                recording_state_callback_url=callback_url,
-                channel_affinity=[channel_affinity]
+        elif options:
+            return await client.create_call(
+                target_participant=target,
+                callback_url=f"{self.dispatcher_callback}?q={unique_id}",
+                media_streaming=options if not is_transcription else None,
+                transcription=options if is_transcription else None,
+                cognitive_services_endpoint=self.cognitive_service_endpoint if is_transcription else None
             )
-        loop = asyncio.get_event_loop()
-        return await loop.run_in_executor(
-            None,
-            call_automation_client.start_recording,
-            server_call_id,
-            callback_url,
-            [channel_affinity]
-        )
+        else:
+            return await client.create_call(
+                target_participant=target,
+                callback_url=f"{self.dispatcher_callback}?q={unique_id}",
+                cognitive_services_endpoint=self.cognitive_service_endpoint if cognitive_service_enabled else None
+            )
+
+    def _validate_create_call_result(self, result):
+        if result is None:
+            raise ValueError("Invalid create_call_result")
+
+        caller_connection_id = result.call_connection_id
+        if caller_connection_id is None:
+            raise ValueError("Caller connection ID is None")
+
+        return caller_connection_id
+
+    def _wait_for_incoming_call(self, unique_id):
+        incoming_call_event = self.check_for_event("IncomingCall", unique_id, timedelta(seconds=30))
+        if incoming_call_event is None:
+            raise ValueError("incoming_call_event is None")
+        return incoming_call_event["incomingCallContext"]
+
+    async def _answer_call(self, client, context, custom_context):
+        if custom_context:
+            result = await client.answer_call(
+                incoming_call_context=context, callback_url=self.dispatcher_callback, voip_headers={"foo": "bar"}
+            )
+        else:
+            result = await client.answer_call(
+                incoming_call_context=context, callback_url=self.dispatcher_callback
+            )
+        if result is None:
+            raise ValueError("Invalid answer_call result")
+        return result
+
+    def _create_call_connection_client(self, connection_id):
+        return CallConnectionClient.from_connection_string(self.connection_str, connection_id)
+
+    async def terminate_call(self, unique_id) -> None:
+        try:
+            call_connection = self.open_call_connections.pop(unique_id, None)
+            if call_connection is not None:
+                await call_connection.hang_up(is_for_everyone=True)
+                disconnected_event = self.check_for_event(
+                    "CallDisconnected", call_connection._call_connection_id, timedelta(seconds=15)
+                )
+                if disconnected_event is None:
+                    raise ValueError("Receiver CallDisconnected event is None")
+        finally:
+            while unique_id in self.wait_for_event_flags:
+                self.wait_for_event_flags.remove(unique_id)
+            pass
+
+    def redact_by_key(self, data: Dict[str, Dict[str, any]], keys_to_redact: List[str]) -> Dict[str, Dict[str, any]]:
+        for _, inner_dict in data.items():
+            for key in keys_to_redact:
+                if key in inner_dict:
+                    inner_dict[key] = "REDACTED"
+        return data

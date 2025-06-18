@@ -179,7 +179,7 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
         return self._establish_callconnection(
             caller, target, cognitive_service_enabled=cognitive_service_enabled
         )
-
+    
     def establish_callconnection_pstn(self, caller, target) -> tuple:
         return self._establish_callconnection(caller, target, is_pstn=True)
 
@@ -204,7 +204,7 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
 
         callback_url = f"{self.dispatcher_callback}?q={unique_id}"
         create_call_result = self._create_call(
-            call_automation_client_caller, target, unique_id, cognitive_service_enabled, is_pstn, options, is_transcription
+            call_automation_client_caller, caller, target, unique_id, cognitive_service_enabled, is_pstn, options, is_transcription
         )
         caller_connection_id = self._validate_create_call_result(create_call_result)
 
@@ -236,7 +236,7 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
         thread = threading.Thread(target=self._message_awaiter, args=(unique_id,))
         thread.start()
 
-    def _create_call(self, client, target, unique_id, cognitive_service_enabled, is_pstn, options, is_transcription):
+    def _create_call(self, client, caller, target, unique_id, cognitive_service_enabled, is_pstn, options, is_transcription):
         if is_pstn:
             return client.create_call(
                 target_participant=target,
