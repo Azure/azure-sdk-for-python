@@ -12,7 +12,7 @@ param testApplicationOid string
 @description('A new GUID used to identify the role assignment')
 param roleNameGuid string = newGuid()
 
-resource digitaltwin 'Microsoft.DigitalTwins/digitalTwinsInstances@2022-05-31' = {
+resource digitaltwin 'Microsoft.DigitalTwins/digitalTwinsInstances@2023-10-31' = {
   name: baseName
   location: location
   identity: {
