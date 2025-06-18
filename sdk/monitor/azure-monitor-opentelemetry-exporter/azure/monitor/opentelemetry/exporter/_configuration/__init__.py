@@ -7,10 +7,9 @@ import requests
 from threading import Lock
 
 from azure.monitor.opentelemetry.exporter._constants import (
+    _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
     _ONE_SETTINGS_PYTHON_KEY,
     _ONE_SETTINGS_URL,
-    _ONE_SETTINGS_CNAME,
-    _ONE_SETTINGS_PATH
 )
 
 # Set up logger
@@ -22,9 +21,10 @@ class _ConfigurationManager:
     
     _instance = None
     _instance_lock = Lock()
+    _config_lock = Lock()
     _settings_lock = Lock()
     _etag = None
-    _refresh_interval = None
+    _refresh_interval = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
     _settings_cache: Dict[str, str] = {}  # TODO: refresh every 30 minutes
     
     def __new__(cls):
@@ -33,28 +33,43 @@ class _ConfigurationManager:
                 cls._instance = super(_ConfigurationManager, cls).__new__(cls)
             return cls._instance
     
-    def get_configuration(self, query_dict: Optional[Dict[str, str]] = None) -> Optional[Dict[str, str]]:
-        """Get configuration from OneSettings with optional query parameters."""
+    def get_configuration_and_refresh_interval(self, query_dict: Optional[Dict[str, str]] = None) -> float:
+        """Get configuration from OneSettings with optional query parameters.
+        The cache witll be updated with the latest settings if available.
+        
+        Args:
+            query_dict (Optional[Dict[str, str]]): Optional dictionary of query parameters to include
+
+        """
         query_dict = query_dict or {}
         headers = {}
-        if self._etag:
-            headers = {
-                "If-None-Match": self._etag,
-            }
-        if self._refresh_interval:
-            headers["x-ms-onesetinterval"] = self._refresh_interval
+        with self._config_lock:
+            if self._etag:
+                headers = {
+                    "If-None-Match": self._etag,
+                }
+            if self._refresh_interval:
+                headers["x-ms-onesetinterval"] = str(self._refresh_interval)
         try:
             url = _ONE_SETTINGS_URL
             result = requests.get(url, params=query_dict, headers=headers, timeout=10)
             result.raise_for_status()  # Raises an exception for 4XX/5XX responses
             if result:
                 if result.headers:
-                    self._etag = result.headers.get("ETag")
-                    self._refresh_interval = result.headers.get("x-ms-onesetinterval")
+                    with self._config_lock:
+                        # Update the ETag and refresh interval from the response headers
+                        self._etag = result.headers.get("ETag")
+                        refresh_interval = result.headers.get("x-ms-onesetinterval")
+                        try:
+                            self._refresh_interval = float(refresh_interval)
+                        except (ValueError, TypeError):
+                            logger.warning("Invalid refresh interval format: %s", self._refresh_interval)
+                            # If the refresh interval is invalid, return the default value
+                            self._refresh_interval = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
                 # Check if the response is a 304 Not Modified
-                # Use cached result if settings not modified
+                # Cache stays the same in this case
                 if result.status_code == 304:
-                    return self._settings_cache
+                    pass
                 # Check if the response is a 200 OK
                 elif result.status_code == 200:
                     if result.content:
@@ -66,36 +81,45 @@ class _ConfigurationManager:
                                 self._settings_cache.clear()
                                 for key, value in settings.items():
                                     self._settings_cache[key] = value
-                            return self._settings_cache
-                return None
+                elif result.status_code == 400:
+                    logger.warning("Bad request to OneSettings: %s", result.content)
+                elif result.status_code == 404:
+                    logger.warning("OneSettings configuration not found: %s", result.content)
+                elif result.status_code == 414:
+                    logger.warning("OneSettings request URI too long: %s", result.content)
+                elif result.status_code == 500:
+                    logger.warning("Internal server error from OneSettings: %s", result.content)
             else:
                 logger.warning("No settings found in OneSettings response")
-                return None
         except requests.exceptions.RequestException as ex:
             logger.warning("Failed to fetch configuration from OneSettings: %s", str(ex))
-            return None
         except json.JSONDecodeError as ex:
             logger.warning("Failed to parse OneSettings response: %s", str(ex))
-            return None
         except Exception as ex:
             logger.warning("Unexpected error while fetching configuration: %s", str(ex))
-        return None
+        finally:
+            return self._refresh_interval
     
-    def get_python_configuration(self) -> Optional[Dict[str, str]]:
-        """Get a specific configuration value by key from the python namespace."""
-        with self._settings_lock:
-            if self._settings_cache:
-                return self._settings_cache
+    def get_python_configuration_and_refresh_interval(self) -> float:
+        """Get configurations from the python namespace."""
         targeting = {
             "namespaces": _ONE_SETTINGS_PYTHON_KEY,
         }
-        result = self.get_configuration(targeting)
+        result = self.get_configuration_and_refresh_interval(targeting)
         return result
+    
+    def get_cache(self) -> Dict[str, str]:
+        """Get cached configuration settings."""
+        with self._settings_lock:
+            return self._settings_cache.copy()
 
 
-def _get_configuration_from_one_settings() -> Optional[Union[str, int, float, bool, Dict]]:
-    return _ConfigurationManager().get_python_configuration()
+def _update_configuration_and_get_refresh_interval() -> float:
+    return _ConfigurationManager().get_python_configuration_and_refresh_interval()
 
+def _get_configuration() -> Optional[Dict[str, str]]:
+    """Get cached configuration settings."""
+    return _ConfigurationManager().get_cache()
 
 def _get_is_feature_enabled(key: str) -> bool:
     """Check if feature is enabled."""

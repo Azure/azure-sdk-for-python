@@ -10,6 +10,9 @@
 
 ### Other Changes
 
+- Configuration manager/worker fetch via OneSettings part 1
+  ([#41549] https://github.com/Azure/azure-sdk-for-python/pull/41549)
+
 ## 1.0.0b38 (2025-06-17)
 
 ### Features Added

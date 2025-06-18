@@ -74,6 +74,7 @@ _ONE_SETTINGS_PROD_URL = "https://settings.data.microsoft.com/settings/v3.0/Azur
 _ONE_SETTINGS_PYTHON_KEY = "python"
 _ONE_SETTINGS_CNAME = "https://settings.sdk.monitor.azure.com"
 _ONE_SETTINGS_PATH = "/settings/v3.0/AzureMonitorSDK/AzMonSDKDynamicConfiguration"
+_ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS = 1800  # 30 minutes
 
 # Statsbeat
 
