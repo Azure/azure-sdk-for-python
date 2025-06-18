@@ -6,7 +6,7 @@
 
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.pipeline import PipelineRequest
-import token_utils
+from . import token_utils
 
 
 class EntraTokenGuardPolicy(HTTPPolicy):

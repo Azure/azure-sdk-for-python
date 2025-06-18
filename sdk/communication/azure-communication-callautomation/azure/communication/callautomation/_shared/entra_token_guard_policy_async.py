@@ -6,7 +6,7 @@
 
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.pipeline import PipelineRequest
-import token_utils
+from . import token_utils
 
 
 class EntraTokenGuardPolicy(AsyncHTTPPolicy):

@@ -16,7 +16,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline.policies import RetryPolicy
 from .entra_token_guard_policy import EntraTokenGuardPolicy
-import token_utils
+from . import token_utils
 
 
 class TokenExchangeClient:
