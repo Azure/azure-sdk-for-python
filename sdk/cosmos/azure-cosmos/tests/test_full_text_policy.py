@@ -71,6 +71,24 @@ class TestFullTextPolicy(unittest.TestCase):
         assert properties["fullTextPolicy"] == full_text_policy_no_paths
         self.test_db.delete_container(created_container.id)
 
+        # Create a container with a full text policy with a given path containing only default language
+        full_text_policy_no_langs = {
+            "defaultLanguage": "en-US",
+            "fullTextPaths": [
+                {
+                    "path": "/abstract"
+                }
+            ]
+        }
+        created_container = self.test_db.create_container(
+            id='full_text_container' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/id"),
+            full_text_policy=full_text_policy_no_langs,
+        )
+        properties = created_container.read()
+        assert properties["fullTextPolicy"] == full_text_policy_no_langs
+        self.test_db.delete_container(created_container.id)
+
     def test_replace_full_text_container(self):
         # Replace a container without a full text policy and full text indexing policy
 
@@ -155,26 +173,6 @@ class TestFullTextPolicy(unittest.TestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
             assert "The Full Text Policy contains an invalid Path: abstract" in e.http_error_message
-
-        # Pass a full text policy without language attached to the path
-        full_text_policy_no_langs = {
-            "defaultLanguage": "en-US",
-            "fullTextPaths": [
-                {
-                    "path": "/abstract"
-                }
-            ]
-        }
-        try:
-            self.test_db.create_container(
-                id='full_text_container',
-                partition_key=PartitionKey(path="/id"),
-                full_text_policy=full_text_policy_no_langs
-            )
-            pytest.fail("Container creation should have failed for lack of language.")
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == 400
-            assert "The Full Text Policy contains invalid syntax" in e.http_error_message
 
         # Pass a full text policy with an unsupported default language
         full_text_policy_wrong_default = {
