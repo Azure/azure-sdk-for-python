@@ -216,7 +216,7 @@ def init_tool(tsp_config_url: str, repo_path: str) -> Dict[str, Any]:
 
 
 @mcp.tool("init_local")
-def init_local_tool(tsp_config_path: str, repo_path: str, commit_id: str) -> Dict[str, Any]:
+def init_local_tool(tsp_config_path: str, repo_path: str, commit_id: str, venv_path: str) -> Dict[str, Any]:
     """Initializes and subsequently generates a typespec client library directory from a local azure-rest-api-specs repo.
 
     This command is used to generate a client library from a local azure-rest-api-specs repository. No additional
@@ -226,6 +226,7 @@ def init_local_tool(tsp_config_path: str, repo_path: str, commit_id: str) -> Dic
         tsp_config_path: The path to the local tspconfig.yaml file.
         repo_path: The path to the repository root (i.e. ./azure-sdk-for-python/).
         commit_id: The commit ID of the local azure-rest-api-specs repository.
+        venv_path: The path to the virtual environment (i.e. ./azure-sdk-for-python/.venv/).
 
     Returns:
         A dictionary containing the result of the command."""
@@ -235,16 +236,10 @@ def init_local_tool(tsp_config_path: str, repo_path: str, commit_id: str) -> Dic
 
     # install dependencies
     if os.name == "nt":
-        python_interpreter = os.path.join(repo_path, ".venv", "Scripts", "python.exe")
+        python_interpreter = os.path.join(venv_path, "Scripts", "python.exe")
     else:
-        python_interpreter = os.path.join(repo_path, ".venv", "bin", "python")
+        python_interpreter = os.path.join(venv_path, "bin", "python")
     try:
-        # create .venv if it does not exist
-        venv_path = os.path.join(repo_path, ".venv")
-        if not os.path.exists(venv_path):
-            logger.info(f"Creating virtual environment at {venv_path}")
-            subprocess.run(["python", "-m", "venv", ".venv"], check=True, cwd=repo_path)
-
         # install dependencies
         subprocess.run(
             [python_interpreter, "scripts/dev_setup.py", "-p", "azure-core"],
