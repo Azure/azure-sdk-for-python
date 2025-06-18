@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.resource.resources.v2022_09_01 import ResourceManagementClient
+from azure.mgmt.resource.resources import ResourceManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -24,7 +25,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
         response = self.client.deployments.begin_delete_at_scope(
             scope="str",
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -36,7 +37,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
         response = self.client.deployments.check_existence_at_scope(
             scope="str",
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -53,9 +54,25 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                     "mode": "str",
                     "debugSetting": {"detailLevel": "str"},
                     "expressionEvaluationOptions": {"scope": "str"},
+                    "extensionConfigs": {
+                        "str": {
+                            "str": {
+                                "keyVaultReference": {
+                                    "keyVault": {"id": "str"},
+                                    "secretName": "str",
+                                    "secretVersion": "str",
+                                },
+                                "type": "str",
+                                "value": {},
+                            }
+                        }
+                    },
+                    "externalInputDefinitions": {"str": {"kind": "str", "config": {}}},
+                    "externalInputs": {"str": {"value": {}}},
                     "onErrorDeployment": {"deploymentName": "str", "type": "str"},
                     "parameters": {
                         "str": {
+                            "expression": "str",
                             "reference": {"keyVault": {"id": "str"}, "secretName": "str", "secretVersion": "str"},
                             "value": {},
                         }
@@ -69,11 +86,16 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                         "relativePath": "str",
                         "uri": "str",
                     },
+                    "validationLevel": "str",
+                },
+                "identity": {
+                    "type": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
                 "location": "str",
                 "tags": {"str": "str"},
             },
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -85,7 +107,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
         response = self.client.deployments.get_at_scope(
             scope="str",
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -97,7 +119,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
         response = self.client.deployments.cancel_at_scope(
             scope="str",
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -114,9 +136,25 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                     "mode": "str",
                     "debugSetting": {"detailLevel": "str"},
                     "expressionEvaluationOptions": {"scope": "str"},
+                    "extensionConfigs": {
+                        "str": {
+                            "str": {
+                                "keyVaultReference": {
+                                    "keyVault": {"id": "str"},
+                                    "secretName": "str",
+                                    "secretVersion": "str",
+                                },
+                                "type": "str",
+                                "value": {},
+                            }
+                        }
+                    },
+                    "externalInputDefinitions": {"str": {"kind": "str", "config": {}}},
+                    "externalInputs": {"str": {"value": {}}},
                     "onErrorDeployment": {"deploymentName": "str", "type": "str"},
                     "parameters": {
                         "str": {
+                            "expression": "str",
                             "reference": {"keyVault": {"id": "str"}, "secretName": "str", "secretVersion": "str"},
                             "value": {},
                         }
@@ -130,11 +168,16 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                         "relativePath": "str",
                         "uri": "str",
                     },
+                    "validationLevel": "str",
+                },
+                "identity": {
+                    "type": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
                 "location": "str",
                 "tags": {"str": "str"},
             },
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -146,7 +189,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
         response = self.client.deployments.export_template_at_scope(
             scope="str",
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -157,7 +200,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
     def test_deployments_list_at_scope(self, resource_group):
         response = self.client.deployments.list_at_scope(
             scope="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -168,7 +211,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
     def test_deployments_begin_delete_at_tenant_scope(self, resource_group):
         response = self.client.deployments.begin_delete_at_tenant_scope(
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -179,7 +222,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
     def test_deployments_check_existence_at_tenant_scope(self, resource_group):
         response = self.client.deployments.check_existence_at_tenant_scope(
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -196,9 +239,25 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                     "mode": "str",
                     "debugSetting": {"detailLevel": "str"},
                     "expressionEvaluationOptions": {"scope": "str"},
+                    "extensionConfigs": {
+                        "str": {
+                            "str": {
+                                "keyVaultReference": {
+                                    "keyVault": {"id": "str"},
+                                    "secretName": "str",
+                                    "secretVersion": "str",
+                                },
+                                "type": "str",
+                                "value": {},
+                            }
+                        }
+                    },
+                    "externalInputDefinitions": {"str": {"kind": "str", "config": {}}},
+                    "externalInputs": {"str": {"value": {}}},
                     "onErrorDeployment": {"deploymentName": "str", "type": "str"},
                     "parameters": {
                         "str": {
+                            "expression": "str",
                             "reference": {"keyVault": {"id": "str"}, "secretName": "str", "secretVersion": "str"},
                             "value": {},
                         }
@@ -212,10 +271,11 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                         "relativePath": "str",
                         "uri": "str",
                     },
+                    "validationLevel": "str",
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -226,7 +286,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
     def test_deployments_get_at_tenant_scope(self, resource_group):
         response = self.client.deployments.get_at_tenant_scope(
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -237,7 +297,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
     def test_deployments_cancel_at_tenant_scope(self, resource_group):
         response = self.client.deployments.cancel_at_tenant_scope(
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -254,9 +314,25 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                     "mode": "str",
                     "debugSetting": {"detailLevel": "str"},
                     "expressionEvaluationOptions": {"scope": "str"},
+                    "extensionConfigs": {
+                        "str": {
+                            "str": {
+                                "keyVaultReference": {
+                                    "keyVault": {"id": "str"},
+                                    "secretName": "str",
+                                    "secretVersion": "str",
+                                },
+                                "type": "str",
+                                "value": {},
+                            }
+                        }
+                    },
+                    "externalInputDefinitions": {"str": {"kind": "str", "config": {}}},
+                    "externalInputs": {"str": {"value": {}}},
                     "onErrorDeployment": {"deploymentName": "str", "type": "str"},
                     "parameters": {
                         "str": {
+                            "expression": "str",
                             "reference": {"keyVault": {"id": "str"}, "secretName": "str", "secretVersion": "str"},
                             "value": {},
                         }
@@ -270,10 +346,11 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                         "relativePath": "str",
                         "uri": "str",
                     },
+                    "validationLevel": "str",
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -290,9 +367,25 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                     "mode": "str",
                     "debugSetting": {"detailLevel": "str"},
                     "expressionEvaluationOptions": {"scope": "str"},
+                    "extensionConfigs": {
+                        "str": {
+                            "str": {
+                                "keyVaultReference": {
+                                    "keyVault": {"id": "str"},
+                                    "secretName": "str",
+                                    "secretVersion": "str",
+                                },
+                                "type": "str",
+                                "value": {},
+                            }
+                        }
+                    },
+                    "externalInputDefinitions": {"str": {"kind": "str", "config": {}}},
+                    "externalInputs": {"str": {"value": {}}},
                     "onErrorDeployment": {"deploymentName": "str", "type": "str"},
                     "parameters": {
                         "str": {
+                            "expression": "str",
                             "reference": {"keyVault": {"id": "str"}, "secretName": "str", "secretVersion": "str"},
                             "value": {},
                         }
@@ -306,10 +399,11 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                         "relativePath": "str",
                         "uri": "str",
                     },
+                    "validationLevel": "str",
                     "whatIfSettings": {"resultFormat": "str"},
                 },
             },
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -320,7 +414,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
     def test_deployments_export_template_at_tenant_scope(self, resource_group):
         response = self.client.deployments.export_template_at_tenant_scope(
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -330,7 +424,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_deployments_list_at_tenant_scope(self, resource_group):
         response = self.client.deployments.list_at_tenant_scope(
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -342,7 +436,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
         response = self.client.deployments.begin_delete_at_management_group_scope(
             group_id="str",
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -354,7 +448,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
         response = self.client.deployments.check_existence_at_management_group_scope(
             group_id="str",
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -372,9 +466,25 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                     "mode": "str",
                     "debugSetting": {"detailLevel": "str"},
                     "expressionEvaluationOptions": {"scope": "str"},
+                    "extensionConfigs": {
+                        "str": {
+                            "str": {
+                                "keyVaultReference": {
+                                    "keyVault": {"id": "str"},
+                                    "secretName": "str",
+                                    "secretVersion": "str",
+                                },
+                                "type": "str",
+                                "value": {},
+                            }
+                        }
+                    },
+                    "externalInputDefinitions": {"str": {"kind": "str", "config": {}}},
+                    "externalInputs": {"str": {"value": {}}},
                     "onErrorDeployment": {"deploymentName": "str", "type": "str"},
                     "parameters": {
                         "str": {
+                            "expression": "str",
                             "reference": {"keyVault": {"id": "str"}, "secretName": "str", "secretVersion": "str"},
                             "value": {},
                         }
@@ -388,10 +498,11 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                         "relativePath": "str",
                         "uri": "str",
                     },
+                    "validationLevel": "str",
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -403,7 +514,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
         response = self.client.deployments.get_at_management_group_scope(
             group_id="str",
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -415,7 +526,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
         response = self.client.deployments.cancel_at_management_group_scope(
             group_id="str",
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -433,9 +544,25 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                     "mode": "str",
                     "debugSetting": {"detailLevel": "str"},
                     "expressionEvaluationOptions": {"scope": "str"},
+                    "extensionConfigs": {
+                        "str": {
+                            "str": {
+                                "keyVaultReference": {
+                                    "keyVault": {"id": "str"},
+                                    "secretName": "str",
+                                    "secretVersion": "str",
+                                },
+                                "type": "str",
+                                "value": {},
+                            }
+                        }
+                    },
+                    "externalInputDefinitions": {"str": {"kind": "str", "config": {}}},
+                    "externalInputs": {"str": {"value": {}}},
                     "onErrorDeployment": {"deploymentName": "str", "type": "str"},
                     "parameters": {
                         "str": {
+                            "expression": "str",
                             "reference": {"keyVault": {"id": "str"}, "secretName": "str", "secretVersion": "str"},
                             "value": {},
                         }
@@ -449,10 +576,11 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                         "relativePath": "str",
                         "uri": "str",
                     },
+                    "validationLevel": "str",
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -470,9 +598,25 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                     "mode": "str",
                     "debugSetting": {"detailLevel": "str"},
                     "expressionEvaluationOptions": {"scope": "str"},
+                    "extensionConfigs": {
+                        "str": {
+                            "str": {
+                                "keyVaultReference": {
+                                    "keyVault": {"id": "str"},
+                                    "secretName": "str",
+                                    "secretVersion": "str",
+                                },
+                                "type": "str",
+                                "value": {},
+                            }
+                        }
+                    },
+                    "externalInputDefinitions": {"str": {"kind": "str", "config": {}}},
+                    "externalInputs": {"str": {"value": {}}},
                     "onErrorDeployment": {"deploymentName": "str", "type": "str"},
                     "parameters": {
                         "str": {
+                            "expression": "str",
                             "reference": {"keyVault": {"id": "str"}, "secretName": "str", "secretVersion": "str"},
                             "value": {},
                         }
@@ -486,10 +630,11 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                         "relativePath": "str",
                         "uri": "str",
                     },
+                    "validationLevel": "str",
                     "whatIfSettings": {"resultFormat": "str"},
                 },
             },
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -501,7 +646,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
         response = self.client.deployments.export_template_at_management_group_scope(
             group_id="str",
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -512,7 +657,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
     def test_deployments_list_at_management_group_scope(self, resource_group):
         response = self.client.deployments.list_at_management_group_scope(
             group_id="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -523,7 +668,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
     def test_deployments_begin_delete_at_subscription_scope(self, resource_group):
         response = self.client.deployments.begin_delete_at_subscription_scope(
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -534,7 +679,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
     def test_deployments_check_existence_at_subscription_scope(self, resource_group):
         response = self.client.deployments.check_existence_at_subscription_scope(
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -550,9 +695,25 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                     "mode": "str",
                     "debugSetting": {"detailLevel": "str"},
                     "expressionEvaluationOptions": {"scope": "str"},
+                    "extensionConfigs": {
+                        "str": {
+                            "str": {
+                                "keyVaultReference": {
+                                    "keyVault": {"id": "str"},
+                                    "secretName": "str",
+                                    "secretVersion": "str",
+                                },
+                                "type": "str",
+                                "value": {},
+                            }
+                        }
+                    },
+                    "externalInputDefinitions": {"str": {"kind": "str", "config": {}}},
+                    "externalInputs": {"str": {"value": {}}},
                     "onErrorDeployment": {"deploymentName": "str", "type": "str"},
                     "parameters": {
                         "str": {
+                            "expression": "str",
                             "reference": {"keyVault": {"id": "str"}, "secretName": "str", "secretVersion": "str"},
                             "value": {},
                         }
@@ -566,11 +727,16 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                         "relativePath": "str",
                         "uri": "str",
                     },
+                    "validationLevel": "str",
+                },
+                "identity": {
+                    "type": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
                 "location": "str",
                 "tags": {"str": "str"},
             },
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -581,7 +747,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
     def test_deployments_get_at_subscription_scope(self, resource_group):
         response = self.client.deployments.get_at_subscription_scope(
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -592,7 +758,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
     def test_deployments_cancel_at_subscription_scope(self, resource_group):
         response = self.client.deployments.cancel_at_subscription_scope(
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -608,9 +774,25 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                     "mode": "str",
                     "debugSetting": {"detailLevel": "str"},
                     "expressionEvaluationOptions": {"scope": "str"},
+                    "extensionConfigs": {
+                        "str": {
+                            "str": {
+                                "keyVaultReference": {
+                                    "keyVault": {"id": "str"},
+                                    "secretName": "str",
+                                    "secretVersion": "str",
+                                },
+                                "type": "str",
+                                "value": {},
+                            }
+                        }
+                    },
+                    "externalInputDefinitions": {"str": {"kind": "str", "config": {}}},
+                    "externalInputs": {"str": {"value": {}}},
                     "onErrorDeployment": {"deploymentName": "str", "type": "str"},
                     "parameters": {
                         "str": {
+                            "expression": "str",
                             "reference": {"keyVault": {"id": "str"}, "secretName": "str", "secretVersion": "str"},
                             "value": {},
                         }
@@ -624,11 +806,16 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                         "relativePath": "str",
                         "uri": "str",
                     },
+                    "validationLevel": "str",
+                },
+                "identity": {
+                    "type": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
                 "location": "str",
                 "tags": {"str": "str"},
             },
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -644,9 +831,25 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                     "mode": "str",
                     "debugSetting": {"detailLevel": "str"},
                     "expressionEvaluationOptions": {"scope": "str"},
+                    "extensionConfigs": {
+                        "str": {
+                            "str": {
+                                "keyVaultReference": {
+                                    "keyVault": {"id": "str"},
+                                    "secretName": "str",
+                                    "secretVersion": "str",
+                                },
+                                "type": "str",
+                                "value": {},
+                            }
+                        }
+                    },
+                    "externalInputDefinitions": {"str": {"kind": "str", "config": {}}},
+                    "externalInputs": {"str": {"value": {}}},
                     "onErrorDeployment": {"deploymentName": "str", "type": "str"},
                     "parameters": {
                         "str": {
+                            "expression": "str",
                             "reference": {"keyVault": {"id": "str"}, "secretName": "str", "secretVersion": "str"},
                             "value": {},
                         }
@@ -660,11 +863,12 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                         "relativePath": "str",
                         "uri": "str",
                     },
+                    "validationLevel": "str",
                     "whatIfSettings": {"resultFormat": "str"},
                 },
                 "location": "str",
             },
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -675,7 +879,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
     def test_deployments_export_template_at_subscription_scope(self, resource_group):
         response = self.client.deployments.export_template_at_subscription_scope(
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -685,7 +889,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_deployments_list_at_subscription_scope(self, resource_group):
         response = self.client.deployments.list_at_subscription_scope(
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -697,7 +901,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
         response = self.client.deployments.begin_delete(
             resource_group_name=resource_group.name,
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -709,7 +913,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
         response = self.client.deployments.check_existence(
             resource_group_name=resource_group.name,
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -726,9 +930,25 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                     "mode": "str",
                     "debugSetting": {"detailLevel": "str"},
                     "expressionEvaluationOptions": {"scope": "str"},
+                    "extensionConfigs": {
+                        "str": {
+                            "str": {
+                                "keyVaultReference": {
+                                    "keyVault": {"id": "str"},
+                                    "secretName": "str",
+                                    "secretVersion": "str",
+                                },
+                                "type": "str",
+                                "value": {},
+                            }
+                        }
+                    },
+                    "externalInputDefinitions": {"str": {"kind": "str", "config": {}}},
+                    "externalInputs": {"str": {"value": {}}},
                     "onErrorDeployment": {"deploymentName": "str", "type": "str"},
                     "parameters": {
                         "str": {
+                            "expression": "str",
                             "reference": {"keyVault": {"id": "str"}, "secretName": "str", "secretVersion": "str"},
                             "value": {},
                         }
@@ -742,11 +962,16 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                         "relativePath": "str",
                         "uri": "str",
                     },
+                    "validationLevel": "str",
+                },
+                "identity": {
+                    "type": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
                 "location": "str",
                 "tags": {"str": "str"},
             },
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -758,7 +983,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
         response = self.client.deployments.get(
             resource_group_name=resource_group.name,
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -770,7 +995,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
         response = self.client.deployments.cancel(
             resource_group_name=resource_group.name,
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -787,9 +1012,25 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                     "mode": "str",
                     "debugSetting": {"detailLevel": "str"},
                     "expressionEvaluationOptions": {"scope": "str"},
+                    "extensionConfigs": {
+                        "str": {
+                            "str": {
+                                "keyVaultReference": {
+                                    "keyVault": {"id": "str"},
+                                    "secretName": "str",
+                                    "secretVersion": "str",
+                                },
+                                "type": "str",
+                                "value": {},
+                            }
+                        }
+                    },
+                    "externalInputDefinitions": {"str": {"kind": "str", "config": {}}},
+                    "externalInputs": {"str": {"value": {}}},
                     "onErrorDeployment": {"deploymentName": "str", "type": "str"},
                     "parameters": {
                         "str": {
+                            "expression": "str",
                             "reference": {"keyVault": {"id": "str"}, "secretName": "str", "secretVersion": "str"},
                             "value": {},
                         }
@@ -803,11 +1044,16 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                         "relativePath": "str",
                         "uri": "str",
                     },
+                    "validationLevel": "str",
+                },
+                "identity": {
+                    "type": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
                 "location": "str",
                 "tags": {"str": "str"},
             },
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -824,9 +1070,25 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                     "mode": "str",
                     "debugSetting": {"detailLevel": "str"},
                     "expressionEvaluationOptions": {"scope": "str"},
+                    "extensionConfigs": {
+                        "str": {
+                            "str": {
+                                "keyVaultReference": {
+                                    "keyVault": {"id": "str"},
+                                    "secretName": "str",
+                                    "secretVersion": "str",
+                                },
+                                "type": "str",
+                                "value": {},
+                            }
+                        }
+                    },
+                    "externalInputDefinitions": {"str": {"kind": "str", "config": {}}},
+                    "externalInputs": {"str": {"value": {}}},
                     "onErrorDeployment": {"deploymentName": "str", "type": "str"},
                     "parameters": {
                         "str": {
+                            "expression": "str",
                             "reference": {"keyVault": {"id": "str"}, "secretName": "str", "secretVersion": "str"},
                             "value": {},
                         }
@@ -840,11 +1102,12 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                         "relativePath": "str",
                         "uri": "str",
                     },
+                    "validationLevel": "str",
                     "whatIfSettings": {"resultFormat": "str"},
                 },
                 "location": "str",
             },
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -856,7 +1119,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
         response = self.client.deployments.export_template(
             resource_group_name=resource_group.name,
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -867,7 +1130,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
     def test_deployments_list_by_resource_group(self, resource_group):
         response = self.client.deployments.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -878,7 +1141,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
     def test_deployments_calculate_template_hash(self, resource_group):
         response = self.client.deployments.calculate_template_hash(
             template={},
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself

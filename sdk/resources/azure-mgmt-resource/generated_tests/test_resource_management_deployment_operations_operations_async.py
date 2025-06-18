@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.resource.resources.v2022_09_01.aio import ResourceManagementClient
+from azure.mgmt.resource.resources.aio import ResourceManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -26,7 +26,7 @@ class TestResourceManagementDeploymentOperationsOperationsAsync(AzureMgmtRecorde
             scope="str",
             deployment_name="str",
             operation_id="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestResourceManagementDeploymentOperationsOperationsAsync(AzureMgmtRecorde
         response = self.client.deployment_operations.list_at_scope(
             scope="str",
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestResourceManagementDeploymentOperationsOperationsAsync(AzureMgmtRecorde
         response = await self.client.deployment_operations.get_at_tenant_scope(
             deployment_name="str",
             operation_id="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -61,7 +61,7 @@ class TestResourceManagementDeploymentOperationsOperationsAsync(AzureMgmtRecorde
     async def test_deployment_operations_list_at_tenant_scope(self, resource_group):
         response = self.client.deployment_operations.list_at_tenant_scope(
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -74,7 +74,7 @@ class TestResourceManagementDeploymentOperationsOperationsAsync(AzureMgmtRecorde
             group_id="str",
             deployment_name="str",
             operation_id="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestResourceManagementDeploymentOperationsOperationsAsync(AzureMgmtRecorde
         response = self.client.deployment_operations.list_at_management_group_scope(
             group_id="str",
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -98,7 +98,7 @@ class TestResourceManagementDeploymentOperationsOperationsAsync(AzureMgmtRecorde
         response = await self.client.deployment_operations.get_at_subscription_scope(
             deployment_name="str",
             operation_id="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -109,7 +109,7 @@ class TestResourceManagementDeploymentOperationsOperationsAsync(AzureMgmtRecorde
     async def test_deployment_operations_list_at_subscription_scope(self, resource_group):
         response = self.client.deployment_operations.list_at_subscription_scope(
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -122,7 +122,7 @@ class TestResourceManagementDeploymentOperationsOperationsAsync(AzureMgmtRecorde
             resource_group_name=resource_group.name,
             deployment_name="str",
             operation_id="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -134,7 +134,7 @@ class TestResourceManagementDeploymentOperationsOperationsAsync(AzureMgmtRecorde
         response = self.client.deployment_operations.list(
             resource_group_name=resource_group.name,
             deployment_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

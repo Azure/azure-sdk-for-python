@@ -1,5 +1,77 @@
 # Release History
 
+## 25.0.0 (2025-06-18)
+
+### Features Added
+
+  - Client `ApplicationClient` added operation group `applications`
+  - Client `ApplicationClient` added operation group `application_definitions`
+  - Client `ApplicationClient` added operation group `jit_requests`
+  - Client `FeatureClient` added operation group `features`
+  - Client `FeatureClient` added operation group `subscription_feature_registrations`
+  - Client `SubscriptionClient` added operation group `operations`
+  - Client `SubscriptionClient` added operation group `subscriptions`
+  - Client `SubscriptionClient` added operation group `tenants`
+  - Client `PolicyClient` added operation group `data_policy_manifests`
+  - Client `PolicyClient` added operation group `policy_exemptions`
+  - Client `PolicyClient` added operation group `variables`
+  - Client `PolicyClient` added operation group `variable_values`
+  - Added model `Alias`
+  - Added model `AliasPath`
+  - Added enum `AliasPathAttributes`
+  - Added model `AliasPathMetadata`
+  - Added enum `AliasPathTokenType`
+  - Added model `AliasPattern`
+  - Added enum `AliasPatternType`
+  - Added enum `AliasType`
+  - Added enum `AssignmentScopeValidation`
+  - Added model `DataEffect`
+  - Added model `DataManifestCustomResourceFunctionDefinition`
+  - Added model `DataPolicyManifest`
+  - Added model `DataPolicyManifestListResult`
+  - Added enum `ExemptionCategory`
+  - Added model `PolicyExemption`
+  - Added model `PolicyExemptionListResult`
+  - Added model `PolicyExemptionUpdate`
+  - Added model `PolicyVariableColumn`
+  - Added model `PolicyVariableValueColumnValue`
+  - Added model `ResourceTypeAliases`
+  - Added model `Variable`
+  - Added model `VariableListResult`
+  - Added model `VariableValue`
+  - Added model `VariableValueListResult`
+  - Added model `DataPolicyManifestsOperations`
+  - Added model `PolicyExemptionsOperations`
+  - Added model `VariableValuesOperations`
+  - Added model `VariablesOperations`
+
+### Breaking Changes
+
+  - Client `ApplicationClient` deleted or renamed instance variable `api_version`
+  - Method `ApplicationClient.__init__` deleted or renamed its parameter `api_version` of kind `positional_or_keyword`
+  - Method `ApplicationClient.__init__` deleted or renamed its parameter `profile` of kind `positional_or_keyword`
+  - Deleted or renamed client method `ApplicationClient.models`
+  - Client `FeatureClient` deleted or renamed instance variable `api_version`
+  - Method `FeatureClient.__init__` deleted or renamed its parameter `api_version` of kind `positional_or_keyword`
+  - Method `FeatureClient.__init__` deleted or renamed its parameter `profile` of kind `positional_or_keyword`
+  - Deleted or renamed client method `FeatureClient.models`
+  - Method `ManagementLinkClient.__init__` deleted or renamed its parameter `api_version` of kind `positional_or_keyword`
+  - Method `ManagementLinkClient.__init__` deleted or renamed its parameter `profile` of kind `positional_or_keyword`
+  - Deleted or renamed client method `ManagementLinkClient.models`
+  - Method `ManagementLockClient.__init__` deleted or renamed its parameter `api_version` of kind `positional_or_keyword`
+  - Method `ManagementLockClient.__init__` deleted or renamed its parameter `profile` of kind `positional_or_keyword`
+  - Deleted or renamed client method `ManagementLockClient.models`
+  - Method `PolicyClient.__init__` deleted or renamed its parameter `api_version` of kind `positional_or_keyword`
+  - Method `PolicyClient.__init__` deleted or renamed its parameter `profile` of kind `positional_or_keyword`
+  - Deleted or renamed client method `PolicyClient.models`
+  - Method `ResourceManagementClient.__init__` deleted or renamed its parameter `api_version` of kind `positional_or_keyword`
+  - Method `ResourceManagementClient.__init__` deleted or renamed its parameter `profile` of kind `positional_or_keyword`
+  - Deleted or renamed client method `ResourceManagementClient.models`
+  - Client `SubscriptionClient` deleted or renamed instance variable `api_version`
+  - Method `SubscriptionClient.__init__` deleted or renamed its parameter `api_version` of kind `positional_or_keyword`
+  - Method `SubscriptionClient.__init__` deleted or renamed its parameter `profile` of kind `positional_or_keyword`
+  - Deleted or renamed client method `SubscriptionClient.models`
+
 ## 24.0.0 (2025-06-16)
 
 ### Features Added
