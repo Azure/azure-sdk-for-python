@@ -6,10 +6,10 @@
 
 
 import json
+from datetime import datetime, timezone
 from typing import Tuple, Any, List, Optional
 from dateutil import parser as dateutil_parser  # type: ignore
 from azure.core.exceptions import HttpResponseError
-from datetime import datetime, timezone
 
 TEAMS_EXTENSION_SCOPE_PREFIX = "https://auth.msft.communication.azure.com/"
 COMMUNICATION_CLIENTS_SCOPE_PREFIX = "https://communication.azure.com/clients/"
@@ -87,5 +87,5 @@ def is_acs_token_cache_valid(response_cache):
         expires_on_dt = dateutil_parser.parse(expires_on)
         return datetime.now(timezone.utc) < expires_on_dt
     except (KeyError, ValueError, json.JSONDecodeError):
-        raise ValueError(
+        raise ValueError(  # pylint: disable=W0707
                 "Invalid token response")

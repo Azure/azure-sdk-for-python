@@ -12,7 +12,7 @@ from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import AsyncPipeline, PipelineResponse
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
+from azure.core.exceptions import HttpResponseError
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AsyncRetryPolicy
 from .entra_token_guard_policy_async import EntraTokenGuardPolicy
@@ -28,6 +28,7 @@ class TokenExchangeClient:
     :keyword transport: Optional transport to use for the pipeline.
     """
 
+    # pylint: disable=C4748
     # pylint: disable=client-method-missing-type-annotations
     def __init__(
         self,

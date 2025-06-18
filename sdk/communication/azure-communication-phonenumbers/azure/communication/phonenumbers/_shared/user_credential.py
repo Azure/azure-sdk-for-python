@@ -22,16 +22,17 @@ class CommunicationTokenCredential(object):
     :paramtype token_refresher: Callable[[], AccessToken]
     :keyword bool proactive_refresh: Whether to refresh the token proactively or not.
      If the proactive refreshing is enabled ('proactive_refresh' is true), the credential will use
-     a background thread to attempt to refresh the token within 10 minutes before the cached token expires,
-     the proactive refresh will request a new token by calling the 'token_refresher' callback.
+     a background thread to attempt to refresh the token within 10 minutes before the cached token expires.
+     The proactive refresh will request a new token by calling the 'token_refresher' callback.
      When 'proactive_refresh' is enabled, the Credential object must be either run within a context manager
      or the 'close' method must be called once the object usage has been finished.
     :keyword str resource_endpoint: The endpoint URL of the resource to authenticate against.
     :keyword token_credential: The credential to use for token exchange.
     :paramtype token_credential: ~azure.core.credentials.TokenCredential
-    :keyword list[str] scopes: The scopes to request during the token exchange. If not provided, a default value will be used: https://communication.azure.com/clients/.default
+    :keyword list[str] scopes: The scopes to request during the token exchange. If not provided,
+     a default value will be used: https://communication.azure.com/clients/.default
 
-    :raises: TypeError if paramater 'token' is not a string
+    :raises: TypeError if parameter 'token' is not a string
     :raises: ValueError if the 'proactive_refresh' is enabled without providing the 'token_refresher' callable.
     """
 
@@ -55,6 +56,7 @@ class CommunicationTokenCredential(object):
         :param proactive_refresh: Whether to refresh the token proactively.
         :param kwargs: Additional keyword arguments.
         """
+        # pylint: disable=W0233
         self.__init__(token, token_refresher=token_refresher, proactive_refresh=proactive_refresh, **kwargs)
 
     @overload
@@ -74,6 +76,7 @@ class CommunicationTokenCredential(object):
         :param scopes: The scopes to request during the token exchange.
         :param kwargs: Additional keyword arguments.
         """
+        # pylint: disable=W0233
         self.__init__(resource_endpoint=resource_endpoint, token_credential=token_credential, scopes=scopes, **kwargs)
 
     def __init__(self, token: Optional[str] = None, **kwargs: Any):
