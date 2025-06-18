@@ -501,7 +501,7 @@ def _get_partition_key_from_partition_key_definition(
     partition_key_definition: Union[Dict[str, Any], "PartitionKey"]
 ) -> "PartitionKey":
     """Internal method to create a PartitionKey instance from a dictionary or PartitionKey object."""
-    path: Union[List[str], str] = partition_key_definition.get("path", "")
-    kind: str = partition_key_definition.get("kind", "Hash")
+    path = partition_key_definition.get("paths", "")
+    kind = partition_key_definition.get("kind", "Hash")
     version: int = partition_key_definition.get("version", 1)  # Default to version 1 if not provided
     return PartitionKey(path=path, kind=kind, version=version)
