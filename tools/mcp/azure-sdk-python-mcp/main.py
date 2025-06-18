@@ -248,6 +248,12 @@ def init_local_tool(tsp_config_path: str, repo_path: str, commit_id: str, venv_p
             stdin=subprocess.DEVNULL,  # Explicitly close stdin
             cwd=repo_path,
         )
+        subprocess.run(
+            [python_interpreter, "-m", "pip", "install", "tox"],
+            capture_output=True,
+            text=True,
+            stdin=subprocess.DEVNULL,  # Explicitly close stdin
+        )
         logger.info("Install dependencies for SDK generation")
 
         spec_folder = tsp_config_path.split("azure-rest-api-specs")[0] + "azure-rest-api-specs"

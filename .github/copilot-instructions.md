@@ -93,7 +93,7 @@ ACTION: Use azure-sdk-python-mcp sdk generation server tools (init, init_local)
 TIMING: ALWAYS inform user before starting: "This SDK generation step will take approximately 5-6 minutes to complete."
 IF local path provided:
     1. Get commit id of local tspconfig.yaml path
-    2. Ask user to provide virtual environment path. If not, help create virtual environment
+    2. Ask user to provide virtual environment path. If not, help create virtual environment wih command `python -m venv <env_name>`
     3. Use local mcp tools to generate SDK
 IF commands fail:
     ANALYZE error messages
