@@ -427,9 +427,8 @@ def get_version_py(setup_path: str) -> Optional[str]:
     Given the path to pyproject.toml or setup.py, attempts to find a (_)version.py file and return its location.
     """
     file_path, _ = os.path.split(setup_path)
-    # Find path to _version.py recursively in azure folder of package
-    azure_root_path = os.path.join(file_path, "azure")
-    for root, _, files in os.walk(azure_root_path):
+    # Find path to _version.py recursively
+    for root, _, files in os.walk(file_path):
         if VERSION_PY in files:
             return os.path.join(root, VERSION_PY)
         elif OLD_VERSION_PY in files:

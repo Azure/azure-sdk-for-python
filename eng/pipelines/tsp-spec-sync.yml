@@ -3,7 +3,6 @@ trigger: none
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
   parameters:
-    oneESTemplateTag: ${{ parameters.oneESTemplateTag }}
     stages:
       - stage: TspSpecSync
         jobs:
@@ -30,9 +29,9 @@ extends:
                 displayName: 'Configure Git'
 
               - script: |
-                  tsp-client update --local-spec-repo ../../specs/scratch/
+                  tsp-client update --local-spec-repo ../../specs/modeltypes
                 displayName: 'Run TSP Client Update'
-                workingDirectory: ./sdk/core/azure-core/tests/specs_sdk/scratch
+                workingDirectory: '$(Build.SourcesDirectory)/sdk/core/azure-core/tests/specs_sdk/modeltypes'
 
               - script: |
                   changes=$(git status --porcelain)
@@ -54,4 +53,4 @@ extends:
 
                     Generated from workflow triggered by PR #$(System.PullRequest.PullRequestNumber).
                   CommitMsg: 'Auto-update TSP client generated code'
-                condition: eq(variables['hasChanges'], 'true')
+
