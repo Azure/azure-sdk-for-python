@@ -51,7 +51,7 @@ from ..partition_key import (
     NonePartitionKeyValue,
     _return_undefined_or_empty_partition_key,
     _Empty,
-    _Undefined, PartitionKey,
+    _Undefined,
     _get_partition_key_from_partition_key_definition
 )
 

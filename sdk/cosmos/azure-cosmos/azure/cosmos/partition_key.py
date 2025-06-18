@@ -112,7 +112,7 @@ class PartitionKey(dict):
     2. **Hierarchical Partition Key**:
 
        **Parameters**:
-        - `path` (List[str]): A list of paths representing the partition key, supporting up to three hierarchical levels.
+        - `path` (List[str]): A list of paths representing the partition key, supports up to three hierarchical levels.
         - `kind` (Literal["MultiHash"], optional): The kind of partition key. Defaults to "MultiHash".
         - `version` (int, optional): The version of the partition key. Defaults to 2.
 
@@ -500,7 +500,13 @@ def _write_for_binary_encoding(
 def _get_partition_key_from_partition_key_definition(
     partition_key_definition: Union[Dict[str, Any], "PartitionKey"]
 ) -> "PartitionKey":
-    """Internal method to create a PartitionKey instance from a dictionary or PartitionKey object."""
+    """Internal method to create a PartitionKey instance from a dictionary or PartitionKey object.
+
+    :param partition_key_definition: A dictionary or PartitionKey object containing the partition key definition.
+    :type partition_key_definition: Union[Dict[str, Any], PartitionKey]
+    :return: A PartitionKey instance created from the provided definition.
+    :rtype: PartitionKey
+    """
     path = partition_key_definition.get("paths", "")
     kind = partition_key_definition.get("kind", "Hash")
     version: int = partition_key_definition.get("version", 1)  # Default to version 1 if not provided
