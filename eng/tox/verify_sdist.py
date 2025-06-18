@@ -156,10 +156,10 @@ if __name__ == "__main__":
         if verify_sdist_pytyped(pkg_dir, pkg_details.namespace, pkg_details.package_data, pkg_details.include_package_data):
             logging.info(f"Py.typed setup.py kwargs are set properly: {pkg_details.name}")
         else:
-            logging.error(f"Verified py.typed {pkg_details.name}. Check messages above.")
+            logging.error(f"Py.typed verification failed for package {pkg_details.name}. Check messages above.")
             error_occurred = True
 
-    if pkg_details.name in EXCLUDED_CLASSIFICATION_PACKAGES and "-nspkg" not in pkg_details.name:
+    if pkg_details.name not in EXCLUDED_CLASSIFICATION_PACKAGES and "-nspkg" not in pkg_details.name:
         logging.info(f"Verifying package classifiers: {pkg_details.name}")
 
         status, message = verify_package_classifiers(pkg_details.name, pkg_details.version, pkg_details.classifiers)

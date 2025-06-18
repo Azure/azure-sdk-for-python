@@ -900,7 +900,7 @@ def verify_package_classifiers(package_name: str, package_version: str, package_
     :param str package_name: The name of the package being verified. Used for detail in the error response.
     :param str package_version: The version of the package being verified.
     :param List[str] package_classifiers: The classifiers of the package being verified.
-
+    :returns: A tuple, (x, y), where x is whether the package version matches its classifiers, and y is an error message or None.
     """
 
     dev_status = parse(package_version)
@@ -923,7 +923,7 @@ def verify_package_classifiers(package_name: str, package_version: str, package_
             # or Development Status :: 7 - Inactive
             num = int(c.split("::")[1].split("-")[0].strip())
         except (IndexError, ValueError):
-            return False, f"{package_name} has version {package_version} and is a GA release, but failed to pull a status number from status '{c}'. Expecting format identical to 'Development Status :: 5 - Production'."
+            return False, f"{package_name} has version {package_version} and is a GA release, but failed to pull a status number from status '{c}'. Expecting format identical to 'Development Status :: 5 - Production/Stable'."
         if num < 5:
-            return False, f"{package_name} has version {package_version} and is a GA release, but had development status '{c}'. Expecting a development classifier that is equal or greater than 'Development Status :: 5 - Production'."
+            return False, f"{package_name} has version {package_version} and is a GA release, but had development status '{c}'. Expecting a development classifier that is equal or greater than 'Development Status :: 5 - Production/Stable'."
     return True, None

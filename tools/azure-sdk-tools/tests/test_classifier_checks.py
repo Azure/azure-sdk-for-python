@@ -7,7 +7,7 @@ from ci_tools.functions import verify_package_classifiers
     "package_name, package_version, package_classifiers, expected_result",
     [
         ("a", "1.0.0", ["Development Status :: 4 - Beta"], False),
-        ("b", "1.0.0", ["Development Status :: 5 - Production"], True),
+        ("b", "1.0.0", ["Development Status :: 5 - Production/Stable"], True),
         ("b", "1.0.0a1", ["Development Status :: 5 - Production"], False),
         ("b", "1.0.0a1", ["Development Status :: 4 - Beta"], True),
         ("c", "1.0.0b1", ["Development Status :: 4 - Beta"], True),
