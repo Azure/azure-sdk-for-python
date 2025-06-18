@@ -4,18 +4,22 @@ from typing import Any, Dict, List, Tuple, Optional
 
 from azure.ai.evaluation._common._experimental import experimental
 
-from semantic_kernel.contents import (
-    AuthorRole,
-    TextContent,
-    FunctionCallContent,
-    FunctionResultContent,
-)
-from semantic_kernel.contents.chat_message_content import ChatMessageContent
+try:
+    from semantic_kernel.contents import (
+        AuthorRole,
+        TextContent,
+        FunctionCallContent,
+        FunctionResultContent,
+    )
+    from semantic_kernel.contents.chat_message_content import ChatMessageContent
 
-from semantic_kernel.agents import (
-    ChatCompletionAgent,
-    ChatHistoryAgentThread,
-)
+    from semantic_kernel.agents import (
+        ChatCompletionAgent,
+        ChatHistoryAgentThread,
+    )
+except ImportError:
+    pass
+    raise ImportError()
 
 from ._models import (
     Message,
@@ -34,6 +38,14 @@ class SKAgentConverter:
     """
     A converter for SK agent data.
     """
+
+    def __init__(self):
+        try:
+            import semantic_kernel as sk
+        except ImportError as e:
+            raise ImportError(
+                "semantic_kernel package is not installed. Please install it to use SKAgentConverter."
+            ) from e
 
     @staticmethod
     def _transform_tool_definitions(
