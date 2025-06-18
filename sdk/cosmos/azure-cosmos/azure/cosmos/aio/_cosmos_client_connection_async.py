@@ -71,7 +71,6 @@ from .. import _session
 from .. import _utils
 from ..partition_key import (
     _Undefined,
-    PartitionKey,
     _return_undefined_or_empty_partition_key,
     NonePartitionKeyValue, _Empty,
     _get_partition_key_from_partition_key_definition
