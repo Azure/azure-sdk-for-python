@@ -230,6 +230,7 @@ class ChatClient(object):  # pylint: disable=client-accepts-api-version-keyword
 
     def close(self):
         # type: () -> None
+        """Close the ChatClient."""
         self._client.close()
 
     def __enter__(self):

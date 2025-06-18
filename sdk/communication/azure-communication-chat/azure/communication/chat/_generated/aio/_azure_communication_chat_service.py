@@ -93,6 +93,7 @@ class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-versi
         return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:
+        """Close the client."""
         await self._client.close()
 
     async def __aenter__(self) -> "AzureCommunicationChatService":

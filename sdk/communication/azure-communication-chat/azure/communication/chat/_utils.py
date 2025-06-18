@@ -10,6 +10,7 @@ def _to_utc_datetime(value):
 
 
 def return_response(response, deserialized, _):  # pylint: disable=unused-argument
+    """Return response tuple."""
     return response, deserialized
 
 

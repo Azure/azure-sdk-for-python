@@ -208,6 +208,7 @@ class ChatClient(object):  # pylint: disable=client-accepts-api-version-keyword
         return await self._client.chat.delete_chat_thread(thread_id, **kwargs)
 
     async def close(self) -> None:
+        """Close the ChatClient."""
         await self._client.close()
 
     async def __aenter__(self) -> "ChatClient":

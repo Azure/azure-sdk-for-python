@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines,too-many-statements,missing-function-docstring
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10,7 +10,6 @@ import datetime
 from io import IOBase
 from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
 import urllib.parse
-import uuid
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -39,6 +38,7 @@ _SERIALIZER.client_side_validation = False
 
 
 def build_create_chat_thread_request(*, repeatability_request_id: Optional[str] = None, **kwargs: Any) -> HttpRequest:
+    """Build HTTP request for creating a chat thread."""
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -67,6 +67,7 @@ def build_create_chat_thread_request(*, repeatability_request_id: Optional[str] 
 def build_list_chat_threads_request(
     *, max_page_size: Optional[int] = None, start_time: Optional[datetime.datetime] = None, **kwargs: Any
 ) -> HttpRequest:
+    """Build HTTP request for listing chat threads."""
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -90,6 +91,7 @@ def build_list_chat_threads_request(
 
 
 def build_delete_chat_thread_request(chat_thread_id: str, **kwargs: Any) -> HttpRequest:
+    """Build HTTP request for deleting a chat thread."""
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 

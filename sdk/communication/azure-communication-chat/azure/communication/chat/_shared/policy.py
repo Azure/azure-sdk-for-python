@@ -117,4 +117,5 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
         return request
 
     def on_request(self, request):
+        """Called to sign the request."""
         self._sign_request(request)

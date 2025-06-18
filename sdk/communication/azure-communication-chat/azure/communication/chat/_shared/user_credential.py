@@ -139,6 +139,7 @@ class CommunicationTokenCredential(object):
         self.close()
 
     def close(self) -> None:
+        """Close the credential and cancel any pending refreshes."""
         if self._timer is not None:
             self._timer.cancel()
         self._timer = None

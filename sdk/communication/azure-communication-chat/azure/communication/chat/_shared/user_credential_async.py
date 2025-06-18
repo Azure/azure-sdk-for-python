@@ -144,6 +144,7 @@ class CommunicationTokenCredential(object):
         await self.close()
 
     async def close(self) -> None:
+        """Close the credential and cancel any pending refreshes."""
         if self._timer is not None:
             self._timer.cancel()
         self._timer = None

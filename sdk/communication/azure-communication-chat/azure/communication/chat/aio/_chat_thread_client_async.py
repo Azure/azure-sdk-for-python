@@ -503,6 +503,7 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
         )
 
     async def close(self) -> None:
+        """Close the ChatThreadClient."""
         await self._client.close()
 
     async def __aenter__(self) -> "ChatThreadClient":

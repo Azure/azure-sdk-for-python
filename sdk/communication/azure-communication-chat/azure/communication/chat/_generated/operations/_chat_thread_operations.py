@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines,too-many-statements,missing-function-docstring
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -40,6 +40,7 @@ _SERIALIZER.client_side_validation = False
 def build_list_chat_read_receipts_request(
     chat_thread_id: str, *, max_page_size: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
+    """Build HTTP request for listing chat read receipts."""
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -68,6 +69,7 @@ def build_list_chat_read_receipts_request(
 
 
 def build_send_chat_read_receipt_request(chat_thread_id: str, **kwargs: Any) -> HttpRequest:
+    """Build HTTP request for sending a chat read receipt."""
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -95,6 +97,7 @@ def build_send_chat_read_receipt_request(chat_thread_id: str, **kwargs: Any) -> 
 
 
 def build_send_chat_message_request(chat_thread_id: str, **kwargs: Any) -> HttpRequest:
+    """Build HTTP request for sending a chat message."""
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -128,6 +131,7 @@ def build_list_chat_messages_request(
     start_time: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
+    """Build HTTP request for listing chat messages."""
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 

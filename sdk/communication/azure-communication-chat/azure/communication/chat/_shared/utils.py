@@ -26,6 +26,7 @@ def _convert_datetime_to_utc_int(input_datetime) -> int:
 
 
 def parse_connection_str(conn_str: Optional[str]) -> Tuple[str, str]:
+    """Parse connection string into endpoint and access key."""
     if conn_str is None:
         raise ValueError("Connection string is undefined.")
     endpoint = None
@@ -51,10 +52,12 @@ def parse_connection_str(conn_str: Optional[str]) -> Tuple[str, str]:
 
 
 def get_current_utc_time() -> str:
+    """Get current UTC time as formatted string."""
     return str(datetime.now(tz=TZ_UTC).strftime("%a, %d %b %Y %H:%M:%S ")) + "GMT"
 
 
 def get_current_utc_as_int() -> int:
+    """Get current UTC time as integer."""
     current_utc_datetime = datetime.utcnow()
     return _convert_datetime_to_utc_int(current_utc_datetime)
 
