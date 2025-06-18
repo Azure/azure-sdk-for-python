@@ -15,6 +15,7 @@ from testcase import (
     has_feature_flag,
     create_config_setting,
 )
+from azure.appconfiguration.provider._constants import NULL_CHAR
 
 
 class TestTagFilters(AppConfigTestCase):
@@ -156,7 +157,7 @@ class TestTagFilters(AppConfigTestCase):
     @app_config_decorator
     def test_tag_filter_with_null_value(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         """Test filtering by tag with null value."""
-        selects = {SettingSelector(key_filter="*", tag_filters=["tag=\0"])}
+        selects = {SettingSelector(key_filter="*", tag_filters=["tag=" + NULL_CHAR])}
         config_client = self.create_client(
             appconfiguration_connection_string,
             selects=selects,

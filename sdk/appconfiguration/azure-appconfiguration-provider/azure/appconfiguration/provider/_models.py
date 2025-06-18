@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 from typing import Optional, Callable, TYPE_CHECKING, Union, Awaitable, Mapping, Any, NamedTuple, List
-from ._constants import EMPTY_LABEL
+from ._constants import NULL_CHAR
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -43,19 +43,19 @@ class SettingSelector:
     """
     Selects a set of configuration settings from Azure App Configuration.
 
-    :keyword key_filter: A filter to select configuration settings based on their keys.
+    :keyword key_filter:A filter to select configuration settings and feature flags based on their keys.
     :type key_filter: str
-    :keyword label_filter: A filter to select configuration settings based on their labels. Default is value is
-     EMPTY_LABEL i.e. (No Label) as seen in the portal.
+    :keyword label_filter: A filter to select configuration settings and feature flags based on their labels. Default is value is
+     \0 i.e. (No Label) as seen in the portal.
     :type label_filter: Optional[str]
-    :keyword tag_filters: A filter to select configuration settings based on their tags. This is a list of strings
+    :keyword tag_filters: A filter to select configuration settings and feature flags based on their tags. This is a list of strings
      that will be used to match tags on the configuration settings. Reserved characters (\\*, \\, ,) must be escaped
      with backslash if they are part of the value.
     :type tag_filters: Optional[List[str]]
     """
 
     def __init__(
-        self, *, key_filter: str, label_filter: Optional[str] = EMPTY_LABEL, tag_filters: Optional[List[str]] = None
+        self, *, key_filter: str, label_filter: Optional[str] = NULL_CHAR, tag_filters: Optional[List[str]] = None
     ):
         if tag_filters is not None:
             if not isinstance(tag_filters, list):
@@ -73,4 +73,4 @@ class SettingSelector:
 
 class WatchKey(NamedTuple):
     key: str
-    label: str = EMPTY_LABEL
+    label: str = NULL_CHAR

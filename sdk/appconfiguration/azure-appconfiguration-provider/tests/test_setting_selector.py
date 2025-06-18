@@ -6,7 +6,7 @@
 
 import pytest
 from azure.appconfiguration.provider._models import SettingSelector
-from azure.appconfiguration.provider._constants import EMPTY_LABEL
+from azure.appconfiguration.provider._constants import NULL_CHAR
 
 
 class TestSettingSelector:
@@ -17,7 +17,7 @@ class TestSettingSelector:
         # Basic initialization with key_filter only
         selector = SettingSelector(key_filter="*")
         assert selector.key_filter == "*"
-        assert selector.label_filter == EMPTY_LABEL
+        assert selector.label_filter == NULL_CHAR
         assert selector.tag_filters is None
 
         # Initialization with all parameters
@@ -90,4 +90,4 @@ class TestSettingSelector:
         assert selector.label_filter == ""
 
         selector = SettingSelector(key_filter="*", tag_filters=["tag=value"])
-        assert selector.label_filter == EMPTY_LABEL
+        assert selector.label_filter == NULL_CHAR
