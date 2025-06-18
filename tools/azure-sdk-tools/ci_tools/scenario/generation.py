@@ -73,6 +73,7 @@ def create_package_and_install(
     )
 
     target_package = ParsedSetup.from_path(setup_py_path)
+    logging.info(f"At runtime, we got version {target_package.version} from the target package {target_package.name} on disk.")
 
     # ensure that discovered packages are always copied to the distribution directory regardless of other factors
     for built_package in discovered_packages:
