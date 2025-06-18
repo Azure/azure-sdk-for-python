@@ -27,7 +27,7 @@ import re
 import base64
 import json
 import time
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Tuple
 
 from ._version import VERSION
 
@@ -76,3 +76,30 @@ def get_index_metrics_info(delimited_string: Optional[str]) -> Dict[str, Any]:
 
 def current_time_millis() -> int:
     return int(round(time.time() * 1000))
+
+def add_args_to_kwargs(
+        arg_names: Tuple[str, ...],
+        args: Tuple[Any, ...],
+        kwargs: Dict[str, Any]
+    ) -> None:
+    """Add positional arguments(args) to keyword argument dictionary(kwargs) using names in arg_names as keys.
+    """
+
+    if len(args) > len(arg_names):
+        raise IndexError(f"Positional argument is out of range. Expected {len(arg_names)} arguments, "
+                         f"but got {len(args)} instead. Please review argument list in API documentation.")
+
+    for name, arg in zip(arg_names, args):
+        if name in kwargs:
+            raise KeyError(f"{name} cannot be used as positional and keyword argument at the same time.")
+
+        kwargs[name] = arg
+
+def verify_exclusive_arguments(exclusive_keys, **kwargs: Any) -> None:
+    """Verify if exclusive arguments are present in kwargs.
+    """
+    count = sum(1 for key in exclusive_keys if key in kwargs and kwargs[key] is not None)
+
+    if count > 1:
+        raise ValueError(
+            "partition_key_range_id, partition_key, feed_range are exclusive parameters, please only set one of them")
