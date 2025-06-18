@@ -22,49 +22,13 @@ from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, List, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 # fmt: off
-
-def build_add_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
-    tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
-
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/models')
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    if traceparent is not None:
-        header_parameters['traceparent'] = _SERIALIZER.header("traceparent", traceparent, 'str')
-    if tracestate is not None:
-        header_parameters['tracestate'] = _SERIALIZER.header("tracestate", tracestate, 'str')
-    if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="POST",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
 
 def build_list_request(
     **kwargs  # type: Any
@@ -73,20 +37,14 @@ def build_list_request(
     api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
     traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
     tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
-    dependencies_for = kwargs.pop('dependencies_for', None)  # type: Optional[List[str]]
-    include_model_definition = kwargs.pop('include_model_definition', False)  # type: Optional[bool]
     max_items_per_page = kwargs.pop('max_items_per_page', None)  # type: Optional[int]
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/models')
+    url = kwargs.pop("template_url", '/jobs/imports')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    if dependencies_for is not None:
-        query_parameters['dependenciesFor'] = [_SERIALIZER.query("dependencies_for", q, 'str') if q is not None else '' for q in dependencies_for]
-    if include_model_definition is not None:
-        query_parameters['includeModelDefinition'] = _SERIALIZER.query("include_model_definition", include_model_definition, 'bool')
     query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
@@ -108,49 +66,7 @@ def build_list_request(
     )
 
 
-def build_get_by_id_request(
-    id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
-    traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
-    tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
-    include_model_definition = kwargs.pop('include_model_definition', False)  # type: Optional[bool]
-
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/models/{id}')
-    path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, 'str'),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    if include_model_definition is not None:
-        query_parameters['includeModelDefinition'] = _SERIALIZER.query("include_model_definition", include_model_definition, 'bool')
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    if traceparent is not None:
-        header_parameters['traceparent'] = _SERIALIZER.header("traceparent", traceparent, 'str')
-    if tracestate is not None:
-        header_parameters['tracestate'] = _SERIALIZER.header("tracestate", tracestate, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_update_request(
+def build_add_request(
     id,  # type: str
     **kwargs  # type: Any
 ):
@@ -162,7 +78,7 @@ def build_update_request(
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/models/{id}')
+    url = kwargs.pop("template_url", '/jobs/imports/{id}')
     path_format_arguments = {
         "id": _SERIALIZER.url("id", id, 'str'),
     }
@@ -184,7 +100,46 @@ def build_update_request(
     header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
-        method="PATCH",
+        method="PUT",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_get_by_id_request(
+    id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+    traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
+    tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/jobs/imports/{id}')
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if traceparent is not None:
+        header_parameters['traceparent'] = _SERIALIZER.header("traceparent", traceparent, 'str')
+    if tracestate is not None:
+        header_parameters['tracestate'] = _SERIALIZER.header("tracestate", tracestate, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
         url=url,
         params=query_parameters,
         headers=header_parameters,
@@ -203,7 +158,7 @@ def build_delete_request(
 
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/models/{id}')
+    url = kwargs.pop("template_url", '/jobs/imports/{id}')
     path_format_arguments = {
         "id": _SERIALIZER.url("id", id, 'str'),
     }
@@ -230,9 +185,48 @@ def build_delete_request(
         **kwargs
     )
 
+
+def build_cancel_request(
+    id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+    traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
+    tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/jobs/imports/{id}/cancel')
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if traceparent is not None:
+        header_parameters['traceparent'] = _SERIALIZER.header("traceparent", traceparent, 'str')
+    if tracestate is not None:
+        header_parameters['tracestate'] = _SERIALIZER.header("tracestate", tracestate, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
 # fmt: on
-class DigitalTwinModelsOperations(object):
-    """DigitalTwinModelsOperations operations.
+class ImportJobsOperations(object):
+    """ImportJobsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -254,134 +248,31 @@ class DigitalTwinModelsOperations(object):
         self._config = config
 
     @distributed_trace
-    def add(
-        self,
-        models,  # type: List[Any]
-        digital_twin_models_add_options=None,  # type: Optional["_models.DigitalTwinModelsAddOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List["_models.DigitalTwinsModelData"]
-        """Uploads one or more models. When any error occurs, no models are uploaded.
-        Status codes:
-
-
-        * 201 Created
-        * 400 Bad Request
-
-          * DTDLParserError - The models provided are not valid DTDL.
-          * InvalidArgument - The model id is invalid.
-          * LimitExceeded - The maximum number of model ids allowed in 'dependenciesFor' has been
-        reached.
-          * ModelVersionNotSupported - The version of DTDL used is not supported.
-
-        * 409 Conflict
-
-          * ModelAlreadyExists - The model provided already exists.
-
-        :param models: An array of models to add.
-        :type models: list[any]
-        :param digital_twin_models_add_options: Parameter group.
-        :type digital_twin_models_add_options:
-         ~azure.digitaltwins.core.models.DigitalTwinModelsAddOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: list of DigitalTwinsModelData, or the result of cls(response)
-        :rtype: list[~azure.digitaltwins.core.models.DigitalTwinsModelData]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.DigitalTwinsModelData"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        _traceparent = None
-        _tracestate = None
-        if digital_twin_models_add_options is not None:
-            _traceparent = digital_twin_models_add_options.traceparent
-            _tracestate = digital_twin_models_add_options.tracestate
-        json = self._serialize.body(models, '[object]')
-
-        request = build_add_request(
-            api_version=api_version,
-            content_type=content_type,
-            json=json,
-            traceparent=_traceparent,
-            tracestate=_tracestate,
-            template_url=self.add.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize('[DigitalTwinsModelData]', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    add.metadata = {'url': '/models'}  # type: ignore
-
-
-    @distributed_trace
     def list(
         self,
-        dependencies_for=None,  # type: Optional[List[str]]
-        include_model_definition=False,  # type: Optional[bool]
-        digital_twin_models_list_options=None,  # type: Optional["_models.DigitalTwinModelsListOptions"]
+        import_jobs_list_options=None,  # type: Optional["_models.ImportJobsListOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.PagedDigitalTwinsModelDataCollection"]
-        """Retrieves model metadata and, optionally, model definitions.
+        # type: (...) -> Iterable["_models.ImportJobCollection"]
+        """Retrieves all import jobs.
         Status codes:
 
 
-        * 200 OK
-        * 400 Bad Request
+        * 200 OK.
 
-          * InvalidArgument - The model id is invalid.
-          * LimitExceeded - The maximum number of model ids allowed in 'dependenciesFor' has been
-        reached.
-
-        * 404 Not Found
-
-          * ModelNotFound - The model was not found.
-
-        :param dependencies_for: If specified, only return the set of the specified models along with
-         their dependencies. If omitted, all models are retrieved.
-        :type dependencies_for: list[str]
-        :param include_model_definition: When true the model definition will be returned as part of the
-         result.
-        :type include_model_definition: bool
-        :param digital_twin_models_list_options: Parameter group.
-        :type digital_twin_models_list_options:
-         ~azure.digitaltwins.core.models.DigitalTwinModelsListOptions
+        :param import_jobs_list_options: Parameter group.
+        :type import_jobs_list_options: ~azure.digitaltwins.core.models.ImportJobsListOptions
         :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PagedDigitalTwinsModelDataCollection or the result
-         of cls(response)
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.digitaltwins.core.models.PagedDigitalTwinsModelDataCollection]
+        :return: An iterator like instance of either ImportJobCollection or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.core.models.ImportJobCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PagedDigitalTwinsModelDataCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ImportJobCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -391,17 +282,15 @@ class DigitalTwinModelsOperations(object):
                 _traceparent = None
                 _tracestate = None
                 _max_items_per_page = None
-                if digital_twin_models_list_options is not None:
-                    _traceparent = digital_twin_models_list_options.traceparent
-                    _tracestate = digital_twin_models_list_options.tracestate
-                    _max_items_per_page = digital_twin_models_list_options.max_items_per_page
+                if import_jobs_list_options is not None:
+                    _traceparent = import_jobs_list_options.traceparent
+                    _tracestate = import_jobs_list_options.tracestate
+                    _max_items_per_page = import_jobs_list_options.max_items_per_page
                 
                 request = build_list_request(
                     api_version=api_version,
                     traceparent=_traceparent,
                     tracestate=_tracestate,
-                    dependencies_for=dependencies_for,
-                    include_model_definition=include_model_definition,
                     max_items_per_page=_max_items_per_page,
                     template_url=self.list.metadata['url'],
                 )
@@ -412,17 +301,15 @@ class DigitalTwinModelsOperations(object):
                 _traceparent = None
                 _tracestate = None
                 _max_items_per_page = None
-                if digital_twin_models_list_options is not None:
-                    _traceparent = digital_twin_models_list_options.traceparent
-                    _tracestate = digital_twin_models_list_options.tracestate
-                    _max_items_per_page = digital_twin_models_list_options.max_items_per_page
+                if import_jobs_list_options is not None:
+                    _traceparent = import_jobs_list_options.traceparent
+                    _tracestate = import_jobs_list_options.tracestate
+                    _max_items_per_page = import_jobs_list_options.max_items_per_page
                 
                 request = build_list_request(
                     api_version=api_version,
                     traceparent=_traceparent,
                     tracestate=_tracestate,
-                    dependencies_for=dependencies_for,
-                    include_model_definition=include_model_definition,
                     max_items_per_page=_max_items_per_page,
                     template_url=next_link,
                 )
@@ -432,7 +319,7 @@ class DigitalTwinModelsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("PagedDigitalTwinsModelDataCollection", pipeline_response)
+            deserialized = self._deserialize("ImportJobCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -455,48 +342,117 @@ class DigitalTwinModelsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/models'}  # type: ignore
+    list.metadata = {'url': '/jobs/imports'}  # type: ignore
+
+    @distributed_trace
+    def add(
+        self,
+        id,  # type: str
+        import_job,  # type: "_models.ImportJob"
+        import_jobs_add_options=None,  # type: Optional["_models.ImportJobsAddOptions"]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.ImportJob"
+        """Creates an import job.
+        Status codes:
+
+
+        * 201 Created
+        * 400 Bad Request
+
+          * JobLimitReached - The maximum number of import jobs allowed has been reached.
+          * ValidationFailed - The import job request is not valid.
+
+        :param id: The id for the import job. The id is unique within the service and case sensitive.
+        :type id: str
+        :param import_job: The import job being added.
+        :type import_job: ~azure.digitaltwins.core.models.ImportJob
+        :param import_jobs_add_options: Parameter group.
+        :type import_jobs_add_options: ~azure.digitaltwins.core.models.ImportJobsAddOptions
+        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ImportJob, or the result of cls(response)
+        :rtype: ~azure.digitaltwins.core.models.ImportJob
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ImportJob"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _traceparent = None
+        _tracestate = None
+        if import_jobs_add_options is not None:
+            _traceparent = import_jobs_add_options.traceparent
+            _tracestate = import_jobs_add_options.tracestate
+        json = self._serialize.body(import_job, 'ImportJob')
+
+        request = build_add_request(
+            id=id,
+            api_version=api_version,
+            content_type=content_type,
+            json=json,
+            traceparent=_traceparent,
+            tracestate=_tracestate,
+            template_url=self.add.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('ImportJob', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    add.metadata = {'url': '/jobs/imports/{id}'}  # type: ignore
+
 
     @distributed_trace
     def get_by_id(
         self,
         id,  # type: str
-        include_model_definition=False,  # type: Optional[bool]
-        digital_twin_models_get_by_id_options=None,  # type: Optional["_models.DigitalTwinModelsGetByIdOptions"]
+        import_jobs_get_by_id_options=None,  # type: Optional["_models.ImportJobsGetByIdOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.DigitalTwinsModelData"
-        """Retrieves model metadata and optionally the model definition.
+        # type: (...) -> "_models.ImportJob"
+        """Retrieves an import job.
         Status codes:
 
 
         * 200 OK
-        * 400 Bad Request
-
-          * InvalidArgument - The model id is invalid.
-          * MissingArgument - The model id was not provided.
-
         * 404 Not Found
 
-          * ModelNotFound - The model was not found.
+          * ImportJobNotFound - The import job was not found.
 
-        :param id: The id for the model. The id is globally unique and case sensitive.
+        :param id: The id for the import job. The id is unique within the service and case sensitive.
         :type id: str
-        :param include_model_definition: When true the model definition will be returned as part of the
-         result.
-        :type include_model_definition: bool
-        :param digital_twin_models_get_by_id_options: Parameter group.
-        :type digital_twin_models_get_by_id_options:
-         ~azure.digitaltwins.core.models.DigitalTwinModelsGetByIdOptions
+        :param import_jobs_get_by_id_options: Parameter group.
+        :type import_jobs_get_by_id_options: ~azure.digitaltwins.core.models.ImportJobsGetByIdOptions
         :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DigitalTwinsModelData, or the result of cls(response)
-        :rtype: ~azure.digitaltwins.core.models.DigitalTwinsModelData
+        :return: ImportJob, or the result of cls(response)
+        :rtype: ~azure.digitaltwins.core.models.ImportJob
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DigitalTwinsModelData"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ImportJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -506,16 +462,15 @@ class DigitalTwinModelsOperations(object):
 
         _traceparent = None
         _tracestate = None
-        if digital_twin_models_get_by_id_options is not None:
-            _traceparent = digital_twin_models_get_by_id_options.traceparent
-            _tracestate = digital_twin_models_get_by_id_options.tracestate
+        if import_jobs_get_by_id_options is not None:
+            _traceparent = import_jobs_get_by_id_options.traceparent
+            _tracestate = import_jobs_get_by_id_options.tracestate
 
         request = build_get_by_id_request(
             id=id,
             api_version=api_version,
             traceparent=_traceparent,
             tracestate=_tracestate,
-            include_model_definition=include_model_definition,
             template_url=self.get_by_id.metadata['url'],
         )
         request = _convert_request(request)
@@ -529,133 +484,38 @@ class DigitalTwinModelsOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('DigitalTwinsModelData', pipeline_response)
+        deserialized = self._deserialize('ImportJob', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_by_id.metadata = {'url': '/models/{id}'}  # type: ignore
-
-
-    @distributed_trace
-    def update(
-        self,
-        id,  # type: str
-        update_model,  # type: List[Any]
-        digital_twin_models_update_options=None,  # type: Optional["_models.DigitalTwinModelsUpdateOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Updates the metadata for a model.
-        Status codes:
-
-
-        * 204 No Content
-        * 400 Bad Request
-
-          * InvalidArgument - The model id is invalid.
-          * JsonPatchInvalid - The JSON Patch provided is invalid.
-          * MissingArgument - The model id was not provided.
-
-        * 404 Not Found
-
-          * ModelNotFound - The model was not found.
-
-        * 409 Conflict
-
-          * ModelReferencesNotDecommissioned - The model refers to models that are not decommissioned.
-
-        :param id: The id for the model. The id is globally unique and case sensitive.
-        :type id: str
-        :param update_model: An update specification described by JSON Patch. Only the decommissioned
-         property can be replaced.
-        :type update_model: list[any]
-        :param digital_twin_models_update_options: Parameter group.
-        :type digital_twin_models_update_options:
-         ~azure.digitaltwins.core.models.DigitalTwinModelsUpdateOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
-        content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
-
-        _traceparent = None
-        _tracestate = None
-        if digital_twin_models_update_options is not None:
-            _traceparent = digital_twin_models_update_options.traceparent
-            _tracestate = digital_twin_models_update_options.tracestate
-        json = self._serialize.body(update_model, '[object]')
-
-        request = build_update_request(
-            id=id,
-            api_version=api_version,
-            content_type=content_type,
-            json=json,
-            traceparent=_traceparent,
-            tracestate=_tracestate,
-            template_url=self.update.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    update.metadata = {'url': '/models/{id}'}  # type: ignore
+    get_by_id.metadata = {'url': '/jobs/imports/{id}'}  # type: ignore
 
 
     @distributed_trace
     def delete(
         self,
         id,  # type: str
-        digital_twin_models_delete_options=None,  # type: Optional["_models.DigitalTwinModelsDeleteOptions"]
+        import_jobs_delete_options=None,  # type: Optional["_models.ImportJobsDeleteOptions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Deletes a model. A model can only be deleted if no other models reference it.
+        """Deletes an import job. This is simply used to remove a job id, so it may be reused later. It
+        can not be used to stop entities from being imported.
         Status codes:
 
 
         * 204 No Content
         * 400 Bad Request
 
-          * InvalidArgument - The model id is invalid.
-          * MissingArgument - The model id was not provided.
+          * ValidationFailed - The import job request is not valid.
 
-        * 404 Not Found
-
-          * ModelNotFound - The model was not found.
-
-        * 409 Conflict
-
-          * ModelReferencesNotDeleted - The model refers to models that are not deleted.
-
-        :param id: The id for the model. The id is globally unique and case sensitive.
+        :param id: The id for the import job. The id is unique within the service and case sensitive.
         :type id: str
-        :param digital_twin_models_delete_options: Parameter group.
-        :type digital_twin_models_delete_options:
-         ~azure.digitaltwins.core.models.DigitalTwinModelsDeleteOptions
+        :param import_jobs_delete_options: Parameter group.
+        :type import_jobs_delete_options: ~azure.digitaltwins.core.models.ImportJobsDeleteOptions
         :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
@@ -674,9 +534,9 @@ class DigitalTwinModelsOperations(object):
 
         _traceparent = None
         _tracestate = None
-        if digital_twin_models_delete_options is not None:
-            _traceparent = digital_twin_models_delete_options.traceparent
-            _tracestate = digital_twin_models_delete_options.tracestate
+        if import_jobs_delete_options is not None:
+            _traceparent = import_jobs_delete_options.traceparent
+            _tracestate = import_jobs_delete_options.tracestate
 
         request = build_delete_request(
             id=id,
@@ -699,5 +559,79 @@ class DigitalTwinModelsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/models/{id}'}  # type: ignore
+    delete.metadata = {'url': '/jobs/imports/{id}'}  # type: ignore
+
+
+    @distributed_trace
+    def cancel(
+        self,
+        id,  # type: str
+        import_jobs_cancel_options=None,  # type: Optional["_models.ImportJobsCancelOptions"]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.ImportJob"
+        """Cancels an import job that is currently running. Service will stop any import operations
+        triggered by the current import job that are in progress, and go to a cancelled state. Please
+        note that this will leave your instance in an unknown state as there won't be any rollback
+        operation.
+        Status codes:
+
+
+        * 200 Request Accepted
+        * 400 Bad Request
+
+          * ValidationFailed - The import job request is not valid.
+
+        :param id: The id for the import job. The id is unique within the service and case sensitive.
+        :type id: str
+        :param import_jobs_cancel_options: Parameter group.
+        :type import_jobs_cancel_options: ~azure.digitaltwins.core.models.ImportJobsCancelOptions
+        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ImportJob, or the result of cls(response)
+        :rtype: ~azure.digitaltwins.core.models.ImportJob
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ImportJob"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+
+        _traceparent = None
+        _tracestate = None
+        if import_jobs_cancel_options is not None:
+            _traceparent = import_jobs_cancel_options.traceparent
+            _tracestate = import_jobs_cancel_options.tracestate
+
+        request = build_cancel_request(
+            id=id,
+            api_version=api_version,
+            traceparent=_traceparent,
+            tracestate=_tracestate,
+            template_url=self.cancel.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('ImportJob', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    cancel.metadata = {'url': '/jobs/imports/{id}/cancel'}  # type: ignore
 

@@ -10,10 +10,14 @@ from ._digital_twin_models_operations import DigitalTwinModelsOperations
 from ._query_operations import QueryOperations
 from ._digital_twins_operations import DigitalTwinsOperations
 from ._event_routes_operations import EventRoutesOperations
+from ._import_jobs_operations import ImportJobsOperations
+from ._delete_jobs_operations import DeleteJobsOperations
 
 __all__ = [
     'DigitalTwinModelsOperations',
     'QueryOperations',
     'DigitalTwinsOperations',
     'EventRoutesOperations',
+    'ImportJobsOperations',
+    'DeleteJobsOperations',
 ]

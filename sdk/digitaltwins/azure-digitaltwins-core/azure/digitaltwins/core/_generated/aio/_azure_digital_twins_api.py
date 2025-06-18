@@ -7,16 +7,15 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
-
-from msrest import Deserializer, Serializer
+from typing import Any, Awaitable, Optional, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import AzureDigitalTwinsAPIConfiguration
-from .operations import DigitalTwinModelsOperations, DigitalTwinsOperations, EventRoutesOperations, QueryOperations
+from .operations import DeleteJobsOperations, DigitalTwinModelsOperations, DigitalTwinsOperations, EventRoutesOperations, ImportJobsOperations, QueryOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -34,22 +33,38 @@ class AzureDigitalTwinsAPI:
     :vartype digital_twins: azure.digitaltwins.core.aio.operations.DigitalTwinsOperations
     :ivar event_routes: EventRoutesOperations operations
     :vartype event_routes: azure.digitaltwins.core.aio.operations.EventRoutesOperations
+    :ivar import_jobs: ImportJobsOperations operations
+    :vartype import_jobs: azure.digitaltwins.core.aio.operations.ImportJobsOperations
+    :ivar delete_jobs: DeleteJobsOperations operations
+    :vartype delete_jobs: azure.digitaltwins.core.aio.operations.DeleteJobsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param base_url: Service URL. Default value is "https://digitaltwins-hostname".
+    :param operation_id: ID for the operation's status monitor. The ID is generated if header was
+     not passed by the client.
+    :type operation_id: str
+    :param timeout_in_minutes: Desired timeout for the delete job. Once the specified timeout is
+     reached, service will stop any delete operations triggered by the current delete job that are
+     in progress, and go to a failed state. Please note that this will leave your instance in an
+     unknown state as there won't be any rollback operation.
+    :type timeout_in_minutes: int
+    :param base_url: Service URL. Default value is 'https://digitaltwins-hostname'.
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-10-31". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
         self,
         credential: "AsyncTokenCredential",
+        operation_id: Optional[str] = None,
+        timeout_in_minutes: Optional[int] = None,
         base_url: str = "https://digitaltwins-hostname",
         **kwargs: Any
     ) -> None:
-        self._config = AzureDigitalTwinsAPIConfiguration(credential=credential, **kwargs)
+        self._config = AzureDigitalTwinsAPIConfiguration(credential=credential, operation_id=operation_id, timeout_in_minutes=timeout_in_minutes, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -60,6 +75,8 @@ class AzureDigitalTwinsAPI:
         self.query = QueryOperations(self._client, self._config, self._serialize, self._deserialize)
         self.digital_twins = DigitalTwinsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.event_routes = EventRoutesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.import_jobs = ImportJobsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.delete_jobs = DeleteJobsOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def _send_request(
