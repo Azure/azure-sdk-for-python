@@ -191,6 +191,16 @@ def get_configs(keyvault_secret_url):
             tags={"a": "b"},
         )
     )
+    # Configuration with multiple tags
+    configs.append(create_config_setting("multi_tagged", "\0", "multi tagged value", tags={"a": "b", "c": "d"}))
+    # Configuration with tag that has special characters
+    configs.append(create_config_setting("special_chars", "\0", "special", tags={"special@tag": "special:value"}))
+    # Configuration with no tags
+    configs.append(create_config_setting("no_tags", "\0", "no tags"))
+    # Configuration with tag that has no value
+    configs.append(create_config_setting("tag_no_value", "\0", "no value", tags={"a": ""}))
+    # Configuration with different tag
+    configs.append(create_config_setting("different_tag", "\0", "different", tags={"different": "tag"}))
     if keyvault_secret_url:
         configs.append(
             create_config_setting(

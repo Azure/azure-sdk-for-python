@@ -60,58 +60,16 @@ class SettingSelector:
         if tag_filters is not None:
             if not isinstance(tag_filters, list):
                 raise TypeError("tag_filters must be a list of strings.")
-            if len(tag_filters) > 5:
-                raise ValueError("tag_filters cannot be longer than 5 items.")
             for tag in tag_filters:
                 if not tag:
                     raise ValueError("Tag filter cannot be an empty string or None.")
                 if not isinstance(tag, str) or "=" not in tag or tag.startswith("="):
                     raise ValueError("Tag filter " + tag + ' does not follow the format "tagName=tagValue".')
-                # Check for unescaped reserved characters
-                self._validate_tag_filter_escaping(tag)
 
         self.key_filter = key_filter
         self.label_filter = label_filter
         self.tag_filters = tag_filters
 
-    def _validate_tag_filter_escaping(self, tag: str) -> None:
-        """
-        Validate that reserved characters are properly escaped in tag filters.
-        Reserved characters: *, \\, ,
-        These must be escaped with backslash if they are part of the value.
-
-        :param tag: The tag filter string to validate.
-        :type tag: str
-        :raises ValueError: If an unescaped reserved character is found in the tag filter.
-        :raises ValueError: If the tag filter ends with an incomplete escape sequence.
-        """
-        reserved_chars = {"*", ","}  # Note: backslash is handled separately
-        i = 0
-        just_escaped = False
-
-        while i < len(tag):
-            just_escaped = False
-            char = tag[i]
-
-            if char == "\\":
-                # Handle escape sequences
-                if i + 1 >= len(tag):
-                    raise ValueError(
-                        f"Tag filter '{tag}' ends with incomplete escape sequence. "
-                        f"Backslash at end of string must be escaped as '\\\\'."
-                    )
-                just_escaped = True
-                i += 1
-                char = tag[i]
-
-            if char in reserved_chars and not just_escaped:
-                # Found unescaped reserved character
-                raise ValueError(
-                    f"Tag filter '{tag}' contains unescaped reserved character '{char}'. "
-                    f"Reserved characters (*, \\, ,) must be escaped with backslash."
-                )
-
-            i += 1
 
 
 class WatchKey(NamedTuple):
