@@ -32,7 +32,7 @@ class CommunicationTokenCredential(object):
      or the 'close' method must be called once the object usage has been finished.
     :keyword str resource_endpoint: The endpoint URL of the resource to authenticate against.
     :keyword token_credential: The credential to use for token exchange.
-    :paramtype token_credential: ~azure.core.credentials.TokenCredential
+    :paramtype token_credential: ~azure.core.credentials.AsyncTokenCredential
     :keyword list[str] scopes: The scopes to request during the token exchange.  If not provided, a default value will be used: https://communication.azure.com/clients/.default
 
     :raises: TypeError if paramater 'token' is not a string

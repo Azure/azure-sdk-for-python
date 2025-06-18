@@ -39,7 +39,6 @@ class TokenExchangeClient:
         self._resource_endpoint = resource_endpoint
         self._scopes = scopes or ["https://communication.azure.com/clients/.default"]
         self._credential = credential
-        self._api_version = kwargs.get("api_version", None)
         pipeline_transport = kwargs.get("transport", None)
         self._pipeline = self._create_pipeline_from_options(pipeline_transport)
 
