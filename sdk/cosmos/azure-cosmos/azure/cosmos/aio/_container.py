@@ -51,7 +51,8 @@ from ..partition_key import (
     NonePartitionKeyValue,
     _return_undefined_or_empty_partition_key,
     _Empty,
-    _Undefined, PartitionKey
+    _Undefined, PartitionKey,
+    _get_partition_key_from_partition_key_definition
 )
 
 __all__ = ("ContainerProxy",)
@@ -153,7 +154,7 @@ class ContainerProxy:
             feed_options: Optional[Dict[str, Any]] = None) -> Range:
         container_properties = await self._get_properties_with_options(feed_options)
         partition_key_definition = container_properties["partitionKey"]
-        partition_key = PartitionKey(partition_key_definition)
+        partition_key = _get_partition_key_from_partition_key_definition(partition_key_definition)
 
         return partition_key._get_epk_range_for_partition_key(partition_key_value)
 

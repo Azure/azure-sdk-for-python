@@ -3,8 +3,9 @@ import uuid
 import pytest
 from azure.cosmos.aio import CosmosClient
 import test_config
-from azure.cosmos.partition_key import PartitionKey
+from azure.cosmos.partition_key import PartitionKey, _get_partition_key_from_partition_key_definition
 
+@pytest.mark.cosmosEmulator
 @pytest.mark.asyncio
 class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
     """Test change feed with different partition key variations (async version)."""
@@ -247,7 +248,7 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
                                                                "in the partition key definition.")
 
             # Create a PartitionKey instance from the definition and validate
-            partition_key_instance = PartitionKey(partition_key_definition)
+            partition_key_instance = _get_partition_key_from_partition_key_definition(partition_key_definition)
             assert partition_key_instance.kind == "Hash", "Partition key kind mismatch."
             assert partition_key_instance.version == 1, "Partition key version mismatch."
 

@@ -73,7 +73,8 @@ from ..partition_key import (
     _Undefined,
     PartitionKey,
     _return_undefined_or_empty_partition_key,
-    NonePartitionKeyValue, _Empty
+    NonePartitionKeyValue, _Empty,
+    _get_partition_key_from_partition_key_definition
 )
 from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
@@ -2956,7 +2957,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         partition_key_obj = None
         if cont_prop and partition_key_value is not None:
             partition_key_definition = cont_prop["partitionKey"]
-            partition_key_obj = PartitionKey(partition_key_definition)
+            partition_key_obj = _get_partition_key_from_partition_key_definition(partition_key_definition)
             is_prefix_partition_query = partition_key_obj._is_prefix_partition_key(partition_key_value)
 
         if is_prefix_partition_query and partition_key_obj:

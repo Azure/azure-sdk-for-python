@@ -50,7 +50,8 @@ from .partition_key import (
     PartitionKey,
     _Empty,
     _Undefined,
-    _return_undefined_or_empty_partition_key
+    _return_undefined_or_empty_partition_key,
+    _get_partition_key_from_partition_key_definition
 )
 from .scripts import ScriptsProxy
 
@@ -64,7 +65,7 @@ PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, 
 
 def get_partition_key_from_properties(container_properties: Dict[str, Any]) -> PartitionKey:
     partition_key_definition = container_properties["partitionKey"]
-    return PartitionKey(partition_key_definition)
+    return _get_partition_key_from_partition_key_definition(partition_key_definition)
 
 def is_prefix_partition_key(container_properties: Dict[str, Any], partition_key: PartitionKeyType) -> bool:
     partition_key_obj: PartitionKey = get_partition_key_from_properties(container_properties)
