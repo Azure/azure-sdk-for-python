@@ -50,7 +50,7 @@ class AzureDigitalTwinsAPI(object):
     :type timeout_in_minutes: int
     :param base_url: Service URL. Default value is 'https://digitaltwins-hostname'.
     :type base_url: str
-    :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+    :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no

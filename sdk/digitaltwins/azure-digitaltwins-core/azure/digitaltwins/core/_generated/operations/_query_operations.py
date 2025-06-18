@@ -33,7 +33,7 @@ def build_query_twins_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
     tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
@@ -116,7 +116,7 @@ class QueryOperations(object):
         :type query_specification: ~azure.digitaltwins.core.models.QuerySpecification
         :param query_twins_options: Parameter group.
         :type query_twins_options: ~azure.digitaltwins.core.models.QueryTwinsOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -130,7 +130,7 @@ class QueryOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _traceparent = None

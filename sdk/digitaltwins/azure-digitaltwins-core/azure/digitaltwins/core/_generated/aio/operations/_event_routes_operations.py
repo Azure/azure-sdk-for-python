@@ -60,7 +60,7 @@ class EventRoutesOperations:
 
         :param event_routes_list_options: Parameter group.
         :type event_routes_list_options: ~azure.digitaltwins.core.models.EventRoutesListOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -70,7 +70,7 @@ class EventRoutesOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.digitaltwins.core.models.EventRouteCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventRouteCollection"]
         error_map = {
@@ -164,7 +164,7 @@ class EventRoutesOperations:
         :type id: str
         :param event_routes_get_by_id_options: Parameter group.
         :type event_routes_get_by_id_options: ~azure.digitaltwins.core.models.EventRoutesGetByIdOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -178,7 +178,7 @@ class EventRoutesOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         _traceparent = None
         _tracestate = None
@@ -240,7 +240,7 @@ class EventRoutesOperations:
         :type event_route: ~azure.digitaltwins.core.models.DigitalTwinsEventRoute
         :param event_routes_add_options: Parameter group.
         :type event_routes_add_options: ~azure.digitaltwins.core.models.EventRoutesAddOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -254,7 +254,7 @@ class EventRoutesOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _traceparent = None
@@ -310,7 +310,7 @@ class EventRoutesOperations:
         :type id: str
         :param event_routes_delete_options: Parameter group.
         :type event_routes_delete_options: ~azure.digitaltwins.core.models.EventRoutesDeleteOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -324,7 +324,7 @@ class EventRoutesOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         _traceparent = None
         _tracestate = None

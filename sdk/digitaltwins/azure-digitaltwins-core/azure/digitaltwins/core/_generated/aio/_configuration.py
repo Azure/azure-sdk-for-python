@@ -29,7 +29,7 @@ class AzureDigitalTwinsAPIConfiguration(Configuration):
     :type operation_id: str
     :param timeout_in_minutes: Desired timeout for the delete job. Once the specified timeout is reached, service will stop any delete operations triggered by the current delete job that are in progress, and go to a failed state. Please note that this will leave your instance in an unknown state as there won't be any rollback operation.
     :type timeout_in_minutes: int
-    :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -41,7 +41,7 @@ class AzureDigitalTwinsAPIConfiguration(Configuration):
         **kwargs: Any
     ) -> None:
         super(AzureDigitalTwinsAPIConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

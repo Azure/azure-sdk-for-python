@@ -60,7 +60,7 @@ class ImportJobsOperations:
 
         :param import_jobs_list_options: Parameter group.
         :type import_jobs_list_options: ~azure.digitaltwins.core.models.ImportJobsListOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -69,7 +69,7 @@ class ImportJobsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.digitaltwins.core.models.ImportJobCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ImportJobCollection"]
         error_map = {
@@ -167,7 +167,7 @@ class ImportJobsOperations:
         :type import_job: ~azure.digitaltwins.core.models.ImportJob
         :param import_jobs_add_options: Parameter group.
         :type import_jobs_add_options: ~azure.digitaltwins.core.models.ImportJobsAddOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -181,7 +181,7 @@ class ImportJobsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _traceparent = None
@@ -241,7 +241,7 @@ class ImportJobsOperations:
         :type id: str
         :param import_jobs_get_by_id_options: Parameter group.
         :type import_jobs_get_by_id_options: ~azure.digitaltwins.core.models.ImportJobsGetByIdOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -255,7 +255,7 @@ class ImportJobsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         _traceparent = None
         _tracestate = None
@@ -312,7 +312,7 @@ class ImportJobsOperations:
         :type id: str
         :param import_jobs_delete_options: Parameter group.
         :type import_jobs_delete_options: ~azure.digitaltwins.core.models.ImportJobsDeleteOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -326,7 +326,7 @@ class ImportJobsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         _traceparent = None
         _tracestate = None
@@ -381,7 +381,7 @@ class ImportJobsOperations:
         :type id: str
         :param import_jobs_cancel_options: Parameter group.
         :type import_jobs_cancel_options: ~azure.digitaltwins.core.models.ImportJobsCancelOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -395,7 +395,7 @@ class ImportJobsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         _traceparent = None
         _tracestate = None

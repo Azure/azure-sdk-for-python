@@ -59,7 +59,7 @@ class DeleteJobsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         _traceparent = None
         _tracestate = None
@@ -117,7 +117,7 @@ class DeleteJobsOperations:
 
         :param delete_jobs_add_options: Parameter group.
         :type delete_jobs_add_options: ~azure.digitaltwins.core.models.DeleteJobsAddOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -133,7 +133,7 @@ class DeleteJobsOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.digitaltwins.core.models.DeleteJob]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeleteJob"]
         lro_delay = kwargs.pop(
@@ -192,7 +192,7 @@ class DeleteJobsOperations:
 
         :param delete_jobs_list_options: Parameter group.
         :type delete_jobs_list_options: ~azure.digitaltwins.core.models.DeleteJobsListOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -201,7 +201,7 @@ class DeleteJobsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.digitaltwins.core.models.DeleteJobCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeleteJobCollection"]
         error_map = {
@@ -295,7 +295,7 @@ class DeleteJobsOperations:
         :type id: str
         :param delete_jobs_get_by_id_options: Parameter group.
         :type delete_jobs_get_by_id_options: ~azure.digitaltwins.core.models.DeleteJobsGetByIdOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -309,7 +309,7 @@ class DeleteJobsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         _traceparent = None
         _tracestate = None

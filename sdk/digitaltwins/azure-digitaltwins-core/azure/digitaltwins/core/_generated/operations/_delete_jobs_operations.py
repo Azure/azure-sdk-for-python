@@ -36,7 +36,7 @@ def build_add_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
     traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
     tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
     operation_id = kwargs.pop('operation_id', None)  # type: Optional[str]
@@ -75,7 +75,7 @@ def build_list_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
     traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
     tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
     max_items_per_page = kwargs.pop('max_items_per_page', None)  # type: Optional[int]
@@ -112,7 +112,7 @@ def build_get_by_id_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
     traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
     tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
 
@@ -180,7 +180,7 @@ class DeleteJobsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         _traceparent = None
         _tracestate = None
@@ -239,7 +239,7 @@ class DeleteJobsOperations(object):
 
         :param delete_jobs_add_options: Parameter group.
         :type delete_jobs_add_options: ~azure.digitaltwins.core.models.DeleteJobsAddOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -254,7 +254,7 @@ class DeleteJobsOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.digitaltwins.core.models.DeleteJob]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeleteJob"]
         lro_delay = kwargs.pop(
@@ -314,7 +314,7 @@ class DeleteJobsOperations(object):
 
         :param delete_jobs_list_options: Parameter group.
         :type delete_jobs_list_options: ~azure.digitaltwins.core.models.DeleteJobsListOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -322,7 +322,7 @@ class DeleteJobsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.core.models.DeleteJobCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeleteJobCollection"]
         error_map = {
@@ -417,7 +417,7 @@ class DeleteJobsOperations(object):
         :type id: str
         :param delete_jobs_get_by_id_options: Parameter group.
         :type delete_jobs_get_by_id_options: ~azure.digitaltwins.core.models.DeleteJobsGetByIdOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -431,7 +431,7 @@ class DeleteJobsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         _traceparent = None
         _tracestate = None

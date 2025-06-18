@@ -71,7 +71,7 @@ class DigitalTwinsOperations:
         :param digital_twins_get_by_id_options: Parameter group.
         :type digital_twins_get_by_id_options:
          ~azure.digitaltwins.core.models.DigitalTwinsGetByIdOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -85,7 +85,7 @@ class DigitalTwinsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         _traceparent = None
         _tracestate = None
@@ -154,7 +154,7 @@ class DigitalTwinsOperations:
         :type twin: any
         :param digital_twins_add_options: Parameter group.
         :type digital_twins_add_options: ~azure.digitaltwins.core.models.DigitalTwinsAddOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -168,7 +168,7 @@ class DigitalTwinsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _traceparent = None
@@ -243,7 +243,7 @@ class DigitalTwinsOperations:
         :type id: str
         :param digital_twins_delete_options: Parameter group.
         :type digital_twins_delete_options: ~azure.digitaltwins.core.models.DigitalTwinsDeleteOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -257,7 +257,7 @@ class DigitalTwinsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         _traceparent = None
         _tracestate = None
@@ -327,7 +327,7 @@ class DigitalTwinsOperations:
         :type patch_document: list[any]
         :param digital_twins_update_options: Parameter group.
         :type digital_twins_update_options: ~azure.digitaltwins.core.models.DigitalTwinsUpdateOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -341,7 +341,7 @@ class DigitalTwinsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
         content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
 
         _traceparent = None
@@ -414,7 +414,7 @@ class DigitalTwinsOperations:
         :param digital_twins_get_relationship_by_id_options: Parameter group.
         :type digital_twins_get_relationship_by_id_options:
          ~azure.digitaltwins.core.models.DigitalTwinsGetRelationshipByIdOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -428,7 +428,7 @@ class DigitalTwinsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         _traceparent = None
         _tracestate = None
@@ -508,7 +508,7 @@ class DigitalTwinsOperations:
         :param digital_twins_add_relationship_options: Parameter group.
         :type digital_twins_add_relationship_options:
          ~azure.digitaltwins.core.models.DigitalTwinsAddRelationshipOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -522,7 +522,7 @@ class DigitalTwinsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _traceparent = None
@@ -603,7 +603,7 @@ class DigitalTwinsOperations:
         :param digital_twins_delete_relationship_options: Parameter group.
         :type digital_twins_delete_relationship_options:
          ~azure.digitaltwins.core.models.DigitalTwinsDeleteRelationshipOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -617,7 +617,7 @@ class DigitalTwinsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         _traceparent = None
         _tracestate = None
@@ -697,7 +697,7 @@ class DigitalTwinsOperations:
         :param digital_twins_update_relationship_options: Parameter group.
         :type digital_twins_update_relationship_options:
          ~azure.digitaltwins.core.models.DigitalTwinsUpdateRelationshipOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -711,7 +711,7 @@ class DigitalTwinsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
         content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
 
         _traceparent = None
@@ -783,7 +783,7 @@ class DigitalTwinsOperations:
         :param digital_twins_list_relationships_options: Parameter group.
         :type digital_twins_list_relationships_options:
          ~azure.digitaltwins.core.models.DigitalTwinsListRelationshipsOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -793,7 +793,7 @@ class DigitalTwinsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.digitaltwins.core.models.RelationshipCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RelationshipCollection"]
         error_map = {
@@ -890,7 +890,7 @@ class DigitalTwinsOperations:
         :param digital_twins_list_incoming_relationships_options: Parameter group.
         :type digital_twins_list_incoming_relationships_options:
          ~azure.digitaltwins.core.models.DigitalTwinsListIncomingRelationshipsOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -900,7 +900,7 @@ class DigitalTwinsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.digitaltwins.core.models.IncomingRelationshipCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.IncomingRelationshipCollection"]
         error_map = {
@@ -1007,7 +1007,7 @@ class DigitalTwinsOperations:
         :param digital_twins_send_telemetry_options: Parameter group.
         :type digital_twins_send_telemetry_options:
          ~azure.digitaltwins.core.models.DigitalTwinsSendTelemetryOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1021,7 +1021,7 @@ class DigitalTwinsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _traceparent = None
@@ -1100,7 +1100,7 @@ class DigitalTwinsOperations:
         :param digital_twins_send_component_telemetry_options: Parameter group.
         :type digital_twins_send_component_telemetry_options:
          ~azure.digitaltwins.core.models.DigitalTwinsSendComponentTelemetryOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1114,7 +1114,7 @@ class DigitalTwinsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _traceparent = None
@@ -1182,7 +1182,7 @@ class DigitalTwinsOperations:
         :param digital_twins_get_component_options: Parameter group.
         :type digital_twins_get_component_options:
          ~azure.digitaltwins.core.models.DigitalTwinsGetComponentOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1196,7 +1196,7 @@ class DigitalTwinsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         _traceparent = None
         _tracestate = None
@@ -1275,7 +1275,7 @@ class DigitalTwinsOperations:
         :param digital_twins_update_component_options: Parameter group.
         :type digital_twins_update_component_options:
          ~azure.digitaltwins.core.models.DigitalTwinsUpdateComponentOptions
-        :keyword api_version: Api Version. The default value is "2023-10-31". Note that overriding this
+        :keyword api_version: Api Version. The default value is "2022-05-31". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1289,7 +1289,7 @@ class DigitalTwinsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-10-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
         content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
 
         _traceparent = None
