@@ -50,7 +50,8 @@ class SettingSelector:
     :type label_filter: Optional[str]
     :keyword tag_filters: A filter to select configuration settings and feature flags based on their tags. This is a list of strings
      that will be used to match tags on the configuration settings. Reserved characters (\\*, \\, ,) must be escaped
-     with backslash if they are part of the value.
+     with backslash if they are part of the value. Tag filters must follow the format "tagName=tagValue", for empty values use
+     "tagName=" and for null values use "tagName=\0".
     :type tag_filters: Optional[List[str]]
     """
 
