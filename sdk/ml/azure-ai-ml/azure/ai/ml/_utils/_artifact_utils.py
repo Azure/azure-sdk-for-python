@@ -239,7 +239,7 @@ class ArtifactCache:
             try:
                 self._redirect_artifacts_tool_path(organization)
             except Exception as e:  # pylint: disable=W0718
-                _logger.warning("Redirect artifacts tool path failed, details: %s", e)
+                _logger.debug("Redirect artifacts tool path failed, details: %s", e)
 
             retries += 1
             result = subprocess.run(

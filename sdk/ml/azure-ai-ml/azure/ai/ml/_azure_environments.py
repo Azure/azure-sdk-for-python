@@ -297,7 +297,7 @@ def _get_clouds_by_metadata_url(metadata_url: str) -> Dict[str, Dict[str, str]]:
             )
             return cli_cloud_dict
     except Exception as ex:  # pylint: disable=broad-except
-        module_logger.warning(
+        module_logger.debug(
             "Error: Azure ML was unable to load cloud metadata from the url specified by %s. %s. "
             "This may be due to a misconfiguration of networking controls. Azure Machine Learning Python "
             "SDK requires outbound access to Azure Resource Manager. Please contact your networking team "
@@ -330,7 +330,7 @@ def _convert_arm_to_cli(arm_cloud_metadata) -> Dict[str, Dict[str, str]]:
                 EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT: registry_discovery_url,
             }
         except KeyError as ex:
-            module_logger.warning("Property on cloud not found in arm cloud metadata: %s", ex)
+            module_logger.debug("Property on cloud not found in arm cloud metadata: %s", ex)
             continue
     return cli_cloud_metadata_dict
 
