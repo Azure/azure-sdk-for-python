@@ -298,13 +298,12 @@ def _get_clouds_by_metadata_url(metadata_url: str) -> Dict[str, Dict[str, str]]:
             return cli_cloud_dict
     except Exception as ex:  # pylint: disable=broad-except
         module_logger.warning(
-            "Error: Azure ML was unable to load cloud metadata from the url specified by %s. "
+            "Error: Azure ML was unable to load cloud metadata from the specified URL. "
             "This may be due to a misconfiguration of networking controls. Azure Machine Learning Python "
             "SDK requires outbound access to Azure Resource Manager. Please contact your networking team "
             "to configure outbound access to Azure Resource Manager on both Network Security Group and "
             "Firewall. For more details on required configurations, see "
-            "https://learn.microsoft.com/azure/machine-learning/how-to-access-azureml-behind-firewall.",
-            metadata_url,
+            "https://learn.microsoft.com/azure/machine-learning/how-to-access-azureml-behind-firewall."
         )
         module_logger.debug("Exception details: %s", ex)
         return {}

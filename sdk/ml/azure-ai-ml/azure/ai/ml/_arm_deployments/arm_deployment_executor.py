@@ -120,6 +120,7 @@ class ArmDeploymentExecutor(object):
             else:
                 return poller
         except Exception as ex:
+            module_logger.debug("Polling hit an exception")
             raise ex
 
         if error is not None:
