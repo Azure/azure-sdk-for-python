@@ -1,8 +1,10 @@
 # Release History
 
-## 0.0.0(it should be stable) (2025-06-26)
+## 23.0.1 (2025-06-26)
 
+### Other Changes
 
+  - Fix for StorageTaskAssignmentsOperations
 
 ## 23.0.0 (2025-05-15)
 
