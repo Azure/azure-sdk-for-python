@@ -66,7 +66,7 @@ class CommunicationTokenCredential(object):
         *,
         resource_endpoint: str,
         token_credential: AsyncTokenCredential,
-        scopes: list[str],
+        scopes: Optional[list[str]] = None,
         **kwargs: Any
     ):
         """

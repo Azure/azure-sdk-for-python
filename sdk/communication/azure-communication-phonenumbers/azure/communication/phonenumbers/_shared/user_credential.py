@@ -41,12 +41,12 @@ class CommunicationTokenCredential(object):
 
     @overload
     def __init__(
-            self,
-            token: str,
-            *,
-            token_refresher: Optional[Callable[[], AccessToken]] = None,
-            proactive_refresh: bool = False,
-            **kwargs: Any
+        self,
+        token: str,
+        *,
+        token_refresher: Optional[Callable[[], AccessToken]] = None,
+        proactive_refresh: bool = False,
+        **kwargs: Any
     ):
         """
         Initializes the CommunicationTokenCredential.
@@ -59,12 +59,12 @@ class CommunicationTokenCredential(object):
 
     @overload
     def __init__(
-            self,
-            *,
-            resource_endpoint: str,
-            token_credential: TokenCredential,
-            scopes: list[str],
-            **kwargs: Any
+        self,
+        *,
+        resource_endpoint: str,
+        token_credential: TokenCredential,
+        scopes: Optional[list[str]] = None,
+        **kwargs: Any
     ):
         """
         Initializes the CommunicationTokenCredential using token exchange.
