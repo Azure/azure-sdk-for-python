@@ -299,8 +299,8 @@ stages:
             dependsOn: PublishPackage
 
             pool:
-              image: azsdk-pool
-              name: ubuntu-24.04
+              image: ubuntu-24.04
+              name: azsdk-pool
               os: linux
 
             steps:
