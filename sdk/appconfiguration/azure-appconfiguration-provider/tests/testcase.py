@@ -7,7 +7,8 @@
 from devtools_testutils import AzureRecordedTestCase
 from azure.appconfiguration import AzureAppConfigurationClient, ConfigurationSetting, FeatureFlagConfigurationSetting
 from azure.appconfiguration.provider import SettingSelector, load, AzureAppConfigurationKeyVaultOptions
-from test_constants import FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_KEY, NULL_CHAR
+from azure.appconfiguration.provider._constants import NULL_CHAR
+from test_constants import FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_KEY
 
 
 class AppConfigTestCase(AzureRecordedTestCase):
