@@ -92,6 +92,10 @@ While most use cases involve just one collection per Confidential Ledger, we pro
 
 Ledger entries are retrieved by their `collectionId`. The Confidential Ledger will always assume a constant, service-determined `collectionId` for entries written without a `collectionId` specified.
 
+### Tags
+SDK versions based on `2024-12-09-preview` or newer support tags. 
+They allow for improved management of data within a collection by acting as secondary keys to a collection of data. Tags are limited to 64 character strings. 
+
 ### Users
 Users are managed directly with the Confidential Ledger instead of through Azure. Users may be AAD-based, identified by their AAD object id, or certificate-based, identified by their PEM certificate fingerprint.
 
@@ -302,6 +306,54 @@ ranged_result = ledger_client.list_ledger_entries(
 )
 for entry in ranged_result:
     print(f'Contents at {entry["transactionId"]}: {entry["contents"]}')
+```
+### Using Collections and Tags
+
+In order to specify a collection ID, the user has to specify the collectionID parameter during write request.
+
+```python
+sample_entry = {"contents": "Secret recipe ingredients...!"}
+append_result = ledger_client.create_ledger_entry(entry=sample_entry, collection_id="icecream-flavors")
+```
+The transaction can then be retrieved by specifying the `collection ID` and the `transaction ID` during a read operation or by specifying just the collection ID in `list` operations.
+
+```python
+# Get the latest transaction in a collection
+get_result = ledger_client.get_ledger_entry(collection_id="icecream-flavors")
+```
+```python
+# Get one specific in a collection
+list_result = ledger_client.get_ledger_entry(transaction_id=2.68,collection_id="icecream-flavors")
+```
+```python
+# Get all entries in a collection
+list_result = ledger_client.list_ledger_entries(collection_id="icecream-flavors")
+for entry in list_result:
+    print(f"Transaction ID: {entry['transactionId']}")
+    print(f"Contents: {entry['contents']}")
+```
+
+It's also possible to get a list of entries within a collection by specifying both the collection ID and a range of Transaction ID parameters.
+
+```python
+list_result = ledger_client.list_ledger_entries(from_transaction_id=2.1, to_transaction_id=2.50, collection_id="icecream-flavors")
+```
+
+
+In order to use tags inside a collection, tags parameter needs to be specified. 
+
+```python
+# multiple tags can be specified using commas.
+append_result = ledger_client.create_ledger_entry(entry=sample_entry, collection_id="icecream-flavors", tags="chocolate,vanilla")
+```
+
+Retrieving entries can be done as before:
+```python
+# Get all entries in a collection which has a specified tag. Only one tag is supported per query during a Read operation. Only list/ranged operations are supported with tags.  
+list_result = ledger_client.list_ledger_entries(collection_id="icecream-flavors", tag="chocolate")
+for entry in list_result:
+    print(f"Transaction ID: {entry['transactionId']}")
+    print(f"Contents: {entry['contents']}")
 ```
 
 ### Managing users
