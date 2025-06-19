@@ -172,7 +172,7 @@ class BaseExporter:
             from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import collect_statsbeat_metrics
 
             collect_statsbeat_metrics(self)
-        
+
         # Initialize customer statsbeat if enabled
         self._customer_statsbeat_metrics = None
         if self._should_collect_customer_statsbeat():
@@ -182,7 +182,9 @@ class BaseExporter:
                     'endpoint_url': self._endpoint,
                     'network_collection_interval': kwargs.get('statsbeat_interval', 900000)
                 })
-                self._customer_statsbeat_metrics = CustomerStatsbeatMetrics(statsbeat_options)
+                # Use the get_customer_statsbeat_metrics function to avoid circular imports
+                CustomerStatsbeatMetricsClass = get_customer_statsbeat_metrics()
+                self._customer_statsbeat_metrics = CustomerStatsbeatMetricsClass(statsbeat_options)
                 # Connect storage with customer statsbeat if storage exists
                 if self.storage:
                     self.storage._customer_statsbeat_metrics = self._customer_statsbeat_metrics
