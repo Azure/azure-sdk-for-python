@@ -1,14 +1,9 @@
 ## Release History
 
-### 4.13.0b2 (Unreleased)
-
-#### Features Added
-
-#### Breaking Changes
+### 4.13.0b2 (2025-06-18)
 
 #### Bugs Fixed
-
-#### Other Changes
+- Fixed issue where key error would occur when getting properties from a container using legacy hash v1 as they may not always contain version property in the partition key definition. See [PR 41639](https://github.com/Azure/azure-sdk-for-python/pull/41639)
 
 ### 4.13.0b1 (2025-06-05)
 
