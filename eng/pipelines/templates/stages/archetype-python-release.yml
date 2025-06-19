@@ -342,7 +342,7 @@ stages:
         displayName: "Publish package to daily feed"
         condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
         pool:
-          image: ubuntu-240.04
+          image: ubuntu-24.04
           name: azsdk-pool
           os: linux
         steps:
