@@ -90,7 +90,7 @@ def version_set_dev_main() -> None:
     for target_package in target_packages:
         try:
             new_version = get_dev_version(target_package.version, build_id)
-            print(f"Proccessing {target_package.name}.")
+            print(f"Processing {target_package.name}.")
             process_requires(target_package.setup_filename, True)
             set_version_py(target_package.setup_filename, new_version)
             set_dev_classifier(target_package.setup_filename, new_version)
