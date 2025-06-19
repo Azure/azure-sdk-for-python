@@ -9,11 +9,10 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Union, Optional, Dict, List, IO, overload, MutableMapping
-import urllib.parse
+from typing import Any, Union, Optional, Dict, List, IO, overload
 
 from azure.core.credentials import AzureKeyCredential
-from azure.core.async_paging import AsyncItemPaged, AsyncList
+from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -22,15 +21,14 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
     map_error,
 )
-from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
+
 from ._operations import (
     WebPubSubServiceClientOperationsMixin as WebPubSubServiceClientOperationsMixinGenerated,
     JSON,
-    build_web_pub_sub_service_list_connections_request,
     build_web_pub_sub_service_send_to_all_request,
     build_web_pub_sub_service_send_to_connection_request,
     build_web_pub_sub_service_send_to_user_request,
@@ -175,91 +173,36 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
 
         """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        paged_json = super().list_connections(
+            group=group,
+            top=top,
+            continuation_token_parameter=continuation_token_parameter,
+            **kwargs
+        )
 
-        maxpagesize = kwargs.pop("maxpagesize", None)
-        cls = kwargs.pop("cls", None)
+        class GroupMemberPaged(AsyncItemPaged):
+            def __aiter__(self_inner):
+                async def generator():
+                    async for item in paged_json:
+                        yield GroupMember(
+                            connection_id=item.get("connectionId"),
+                            user_id=item.get("userId")
+                        )
+                return generator()
 
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+            def by_page(self_inner, continuation_token: Optional[str] = None):
+                async def page_generator():
+                    async for page in paged_json.by_page(continuation_token=continuation_token):
+                        async def group_member_page():
+                            async for item in page:
+                                yield GroupMember(
+                                    connection_id=item.get("connectionId"),
+                                    user_id=item.get("userId")
+                                )
+                        yield group_member_page()
+                return page_generator()
 
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_web_pub_sub_service_list_connections_request(
-                    group=group,
-                    hub=self._config.hub,
-                    maxpagesize=maxpagesize,
-                    top=top,
-                    continuation_token_parameter=continuation_token_parameter,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized.get("value", [])
-
-            # Convert each dictionary item to a GroupMember object
-            list_of_elem = [
-                GroupMember(connection_id=item.get("connectionId"), user_id=item.get("userId")) for item in list_of_elem
-            ]
-
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
+        return GroupMemberPaged()
 
 
     @overload

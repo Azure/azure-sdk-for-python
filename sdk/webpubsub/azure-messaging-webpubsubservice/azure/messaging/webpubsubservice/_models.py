@@ -1,6 +1,4 @@
 from typing import Optional
-import json
-
 
 class GroupMember:
     """Represents a member in a group.
@@ -34,4 +32,4 @@ class GroupMember:
         return self._user_id
 
     def __repr__(self) -> str:
-        return json.dumps({"connection_id": self._connection_id, "user_id": self._user_id})
+        return f"GroupMember(connection_id={self._connection_id!r}, user_id={self._user_id!r}, id={id(self)})"[:1024]

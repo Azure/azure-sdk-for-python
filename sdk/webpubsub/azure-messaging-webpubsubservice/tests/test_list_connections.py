@@ -4,17 +4,21 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import pytest
 from websockets import connect as ws_connect
 from testcase import WebpubsubTest, WebpubsubPowerShellPreparer
 from devtools_testutils import recorded_by_proxy
 
-@pytest.mark.asyncio
 class TestListConnections(WebpubsubTest):
 
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy
-    async def test_list_connections(self, **kwargs):
+    def test_list_connections(self, **kwargs):
+        # The Azure SDK test preparers (like WebpubsubPowerShellPreparer and recorded_by_proxy) are not fully compatible with async test functions out of the box.
+        # Use asyncio to work around the issue
+        import asyncio
+        asyncio.run(self._test_list_connections_impl(**kwargs))
+
+    async def _test_list_connections_impl(self, **kwargs):
         webpubsub_connection_string = kwargs.get("webpubsub_connection_string")
         # Test cases with different pagination scenarios
         test_cases = [
