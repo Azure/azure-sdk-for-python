@@ -27,8 +27,8 @@ stages:
             condition: ne(variables['Skip.TagRepository'], 'true')
 
             pool:
-              image: azsdk-pool-mms-ubuntu-2004-1espt
-              name: azsdk-pool-mms-ubuntu-2004-general
+              image: ubuntu-24.04
+              name: azsdk-pool
               os: linux
 
             steps:
@@ -112,8 +112,8 @@ stages:
                   targetPath: $(Pipeline.Workspace)/packages_extended
 
               pool:
-                image: azsdk-pool-mms-ubuntu-2004-1espt
-                name: azsdk-pool-mms-ubuntu-2004-general
+                image: ubuntu-24.04
+                name: azsdk-pool
                 os: linux
 
               strategy:
@@ -133,14 +133,14 @@ stages:
                         - pwsh: |
                             $esrpDirectory = "$(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}"
                             New-Item -ItemType Directory -Force -Path $esrpDirectory
-  
+
                             Get-ChildItem -Path "$(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}" `
                               | Where-Object { ($_.Name -like "*.tar.gz" -or $_.Name -like "*.whl") } `
                               | Copy-Item -Destination $esrpDirectory
-  
+
                             Get-ChildItem $esrpDirectory
                           displayName: Isolate files for ESRP Publish
-  
+
                         - task: EsrpRelease@9
                           displayName: 'Publish to ESRP'
                           inputs:
@@ -157,13 +157,13 @@ stages:
                             Approvers: $(Build.RequestedForEmail)
                             ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
                             MainPublisher: 'ESRPRELPACMANTEST'
-                            
+
                       - ${{ if ne(parameters.PublicFeed, 'PyPi') }}:
                         - task: TwineAuthenticate@0
                           displayName: 'Authenticate to feed: ${{parameters.PublicFeed}}'
                           inputs:
                             artifactFeeds: ${{parameters.PublicFeed}}
-                            
+
                         - script: |
                             set -e
                             twine upload --repository ${{parameters.PublicFeed}} --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*.whl
@@ -176,7 +176,7 @@ stages:
                         displayName: 'Authenticate to feed: ${{parameters.DevFeedName}}'
                         inputs:
                           artifactFeeds: ${{parameters.DevFeedName}}
-                          
+
                       - script: |
                           set -e
                           twine upload --repository ${{parameters.DevFeedName}} --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*.whl
@@ -190,8 +190,8 @@ stages:
             dependsOn: PublishPackage
 
             pool:
-              image: azsdk-pool-mms-ubuntu-2004-1espt
-              name: azsdk-pool-mms-ubuntu-2004-general
+              image: ubuntu-24.04
+              name: azsdk-pool
               os: linux
 
             steps:
@@ -221,8 +221,8 @@ stages:
               dependsOn: PublishPackage
 
               pool:
-                name: azsdk-pool-mms-win-2022-general
-                image: azsdk-pool-mms-win-2022-1espt
+                name: azsdk-pool
+                image: windows-2022
                 os: windows
 
               steps:
@@ -259,8 +259,8 @@ stages:
               dependsOn: PublishPackage
 
               pool:
-                image: azsdk-pool-mms-ubuntu-2004-1espt
-                name: azsdk-pool-mms-ubuntu-2004-general
+                image: ubuntu-24.04
+                name: azsdk-pool
                 os: linux
 
               steps:
@@ -299,8 +299,8 @@ stages:
             dependsOn: PublishPackage
 
             pool:
-              image: azsdk-pool-mms-ubuntu-2004-1espt
-              name: azsdk-pool-mms-ubuntu-2004-general
+              image: azsdk-pool
+              name: ubuntu-24.04
               os: linux
 
             steps:
@@ -342,8 +342,8 @@ stages:
         displayName: "Publish package to daily feed"
         condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
         pool:
-          image: azsdk-pool-mms-ubuntu-2004-1espt
-          name: azsdk-pool-mms-ubuntu-2004-general
+          image: ubuntu-240.04
+          name: azsdk-pool
           os: linux
         steps:
         - download: current
@@ -380,8 +380,8 @@ stages:
         dependsOn: PublishPackages
         condition: and(succeeded(), or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal'))))
         pool:
-          image: azsdk-pool-mms-ubuntu-2004-1espt
-          name: azsdk-pool-mms-ubuntu-2004-general
+          image: ubuntu-24.04
+          name: azsdk-pool
           os: linux
         steps:
           - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
