@@ -6,10 +6,11 @@
 
 """
 DESCRIPTION:
-    Given an AIProjectClient, this sample demonstrates how to get an authenticated 
+    Given an AIProjectClient, this sample demonstrates how to get an authenticated
     ChatCompletionsClient from the azure.ai.inference package and perform one chat completion
-    operation. The helper functions in file azure_ai_inference_telemetry_helper.py are used by this sample. 
-    View the results in the "Tracing" tab in your Azure AI Foundry project page.
+    operation.
+    The client is instrumented to upload OpenTelemetry traces to Azure Monitor. View the uploaded traces
+    in the "Tracing" tab in your Azure AI Foundry project page.
     For more information on the azure.ai.inference package see https://pypi.org/project/azure-ai-inference/.
 
 USAGE:
@@ -34,44 +35,36 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.inference import ChatCompletionsClient
 from azure.ai.inference.models import UserMessage
 from azure.monitor.opentelemetry import configure_azure_monitor
-from azure_ai_inference_telemetry_helper import azure_ai_inference_telemetry_helper
+from opentelemetry import trace
+
+file_name = os.path.basename(__file__)
+tracer = trace.get_tracer(__name__)
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
-# Enables telemetry collection with OpenTelemetry for Azure AI Inference client (azure-ai-inference).
-# Alternatively, if you want to show traces on the console, you can use:
-# azure_ai_inference_telemetry_helper(destination=sys.stdout)
-# Or, if you have local OTLP endpoint running, change it to
-# azure_ai_inference_telemetry_helper(destination="http://localhost:4317")
-azure_ai_inference_telemetry_helper()
+with tracer.start_as_current_span(file_name):
 
-with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
+    with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
-    with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
+        with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
-        # Enable Azure Monitor tracing
-        application_insights_connection_string = project_client.telemetry.get_connection_string()
-        if not application_insights_connection_string:
-            print("Application Insights was not enabled for this project.")
-            print("Enable it via the 'Tracing' tab in your AI Foundry project page.")
-            exit()
+            application_insights_connection_string = project_client.telemetry.get_connection_string()
+            configure_azure_monitor(connection_string=application_insights_connection_string)
 
-        configure_azure_monitor(connection_string=application_insights_connection_string)
+        # Project endpoint has the form:   https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>
+        # Inference endpoint has the form: https://<your-ai-services-account-name>.services.ai.azure.com/models
+        # Strip the "/api/projects/<your-project-name>" part and replace with "/models":
+        inference_endpoint = f"https://{urlparse(endpoint).netloc}/models"
 
-    # Project endpoint has the form:   https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>
-    # Inference endpoint has the form: https://<your-ai-services-account-name>.services.ai.azure.com/models
-    # Strip the "/api/projects/<your-project-name>" part and replace with "/models":
-    inference_endpoint = f"https://{urlparse(endpoint).netloc}/models"
+        with ChatCompletionsClient(
+            endpoint=inference_endpoint,
+            credential=credential,
+            credential_scopes=["https://ai.azure.com/.default"],
+        ) as client:
 
-    with ChatCompletionsClient(
-        endpoint=inference_endpoint,
-        credential=credential,
-        credential_scopes=["https://ai.azure.com/.default"],
-    ) as client:
+            response = client.complete(
+                model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
+            )
 
-        response = client.complete(
-            model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
-        )
-
-        print(response.choices[0].message.content)
+            print(response.choices[0].message.content)

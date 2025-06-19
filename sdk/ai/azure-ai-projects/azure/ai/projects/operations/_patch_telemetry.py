@@ -29,6 +29,7 @@ class TelemetryOperations:
     def __init__(self, outer_instance: "azure.ai.projects.AIProjectClient") -> None:  # type: ignore[name-defined]
         self._outer_instance = outer_instance
 
+    # TODO: Give a more detailed name to this method.
     @distributed_trace
     def get_connection_string(self) -> str:
         """Get the Application Insights connection string associated with the Project's Application Insights resource.

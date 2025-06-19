@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects openai opentelemetry-sdk opentelemetry-instrumentation-openai-v2
+    pip install azure-ai-projects openai opentelemetry-sdk opentelemetry-instrumentation-openai-v2 httpx
 
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
@@ -37,32 +37,44 @@ ALTERNATIVE USAGE:
 """
 
 import os
-import sys
-from azure.ai.projects import AIProjectClient, enable_telemetry
+from azure.core.settings import settings
+from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
+from opentelemetry import trace
+from opentelemetry.instrumentation.openai_v2 import OpenAIInstrumentor
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
+from opentelemetry.sdk.trace import TracerProvider
 
-# Enable console tracing.
-# or, if you have local OTLP endpoint running, change it to
-# enable_telemetry(destination="http://localhost:4317")
-enable_telemetry(destination=sys.stdout)
+settings.tracing_implementation = "opentelemetry"
+
+span_exporter = ConsoleSpanExporter()
+tracer_provider = TracerProvider()
+tracer_provider.add_span_processor(SimpleSpanProcessor(span_exporter))
+trace.set_tracer_provider(tracer_provider)
+tracer = trace.get_tracer(__name__)
+file_name = os.path.basename(__file__)
+
+OpenAIInstrumentor().instrument()
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
-with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
+with tracer.start_as_current_span(file_name):
 
-    with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
+    with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
-        with project_client.inference.get_azure_openai_client(api_version="2024-10-21") as client:
+        with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
-            response = client.chat.completions.create(
-                model=model_deployment_name,
-                messages=[
-                    {
-                        "role": "user",
-                        "content": "How many feet are in a mile?",
-                    },
-                ],
-            )
+            with project_client.inference.get_azure_openai_client(api_version="2024-10-21") as client:
 
-            print(response.choices[0].message.content)
+                response = client.chat.completions.create(
+                    model=model_deployment_name,
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": "How many feet are in a mile?",
+                        },
+                    ],
+                )
+
+                print(response.choices[0].message.content)
