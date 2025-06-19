@@ -41,13 +41,13 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
             :caption: Initialize and call a SimilarityEvaluator with a four-gram rouge type.
 
     .. admonition:: Example using Azure AI Project URL:
-        
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
             :start-after: [START similarity_evaluator]
             :end-before: [END similarity_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call SimilarityEvaluator using Azure AI Project URL in the following format 
+            :caption: Initialize and call SimilarityEvaluator using Azure AI Project URL in the following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     .. admonition:: Example:
@@ -85,7 +85,7 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
             threshold=threshold,
-            _higher_is_better=self._higher_is_better
+            _higher_is_better=self._higher_is_better,
         )
 
     # Ignoring a mypy error about having only 1 overload function.

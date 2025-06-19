@@ -39,15 +39,15 @@ class F1ScoreEvaluator(EvaluatorBase):
             :caption: Initialize and call an F1ScoreEvaluator.
 
     .. admonition:: Example using Azure AI Project URL:
-                
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
             :start-after: [START f1_score_evaluator]
             :end-before: [END f1_score_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call F1ScoreEvaluator using Azure AI Project URL in following format 
+            :caption: Initialize and call F1ScoreEvaluator using Azure AI Project URL in following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
-    
+
     .. admonition:: Example with Threshold:
 
         .. literalinclude:: ../samples/evaluation_samples_threshold.py
@@ -147,7 +147,7 @@ class F1ScoreEvaluator(EvaluatorBase):
             if f1_result <= self._threshold:
                 binary_result = True
         return {
-            "f1_score": f1_result, 
+            "f1_score": f1_result,
             "f1_result": EVALUATION_PASS_FAIL_MAPPING[binary_result],
             "f1_threshold": self._threshold,
         }

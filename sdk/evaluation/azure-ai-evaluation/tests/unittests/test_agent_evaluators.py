@@ -21,13 +21,10 @@ class TestEvaluate:
                     "parameters": {
                         "type": "object",
                         "properties": {
-                            "location": {
-                                "type": "string",
-                                "description": "The location to fetch weather for."
-                            }
-                        }
-                    }
-                }
+                            "location": {"type": "string", "description": "The location to fetch weather for."}
+                        },
+                    },
+                },
             )
 
         # Test with missing tool_definitions
@@ -39,14 +36,9 @@ class TestEvaluate:
                     "tool_call": {
                         "id": "call_K21dwOxgCN2syn4qjutMVV7Z",
                         "type": "function",
-                    "function": {
-                        "name": "fetch_weather",
-                        "arguments": {
-                            "location": "Tokyo"
-                        }
-                    }
-                    }
-                }
+                        "function": {"name": "fetch_weather", "arguments": {"location": "Tokyo"}},
+                    },
+                },
             )
         assert "Tool definitions must be provided." in str(exc_info.value)
 
@@ -55,18 +47,15 @@ class TestEvaluate:
             tool_call_accuracy(
                 query="Where is the Eiffel Tower?",
                 tool_definitions={
-		            "name": "fetch_weather",
-		            "description": "Fetches the weather information for the specified location.",
-		            "parameters": {
-			            "type": "object",
-			            "properties": {
-                            "location": {
-                                "type": "string",
-                                "description": "The location to fetch weather for."
-                            }
-			            }
-		            }
-	            }
+                    "name": "fetch_weather",
+                    "description": "Fetches the weather information for the specified location.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "location": {"type": "string", "description": "The location to fetch weather for."}
+                        },
+                    },
+                },
             )
 
         assert "Either response or tool_calls must be provided." in str(exc_info.value)
@@ -82,16 +71,15 @@ class TestEvaluate:
                     "parameters": {
                         "type": "object",
                         "properties": {
-                            "location": {
-                                "type": "string",
-                                "description": "The location to fetch weather for."
-                            }
-                        }
-                    }
-                }
+                            "location": {"type": "string", "description": "The location to fetch weather for."}
+                        },
+                    },
+                },
             )
 
-        assert "response does not have tool calls. Either provide tool_calls or response with tool calls." in str(exc_info.value)
+        assert "response does not have tool calls. Either provide tool_calls or response with tool calls." in str(
+            exc_info.value
+        )
 
         # Test tool_calls provided but missing response
         with pytest.raises(EvaluationException) as exc_info:
@@ -105,13 +93,10 @@ class TestEvaluate:
                     "parameters": {
                         "type": "object",
                         "properties": {
-                            "location": {
-                                "type": "string",
-                                "description": "The location to fetch weather for."
-                            }
-                        }
-                    }
-                }
+                            "location": {"type": "string", "description": "The location to fetch weather for."}
+                        },
+                    },
+                },
             )
 
             assert "Tool definition not found" in str(exc_info.value)

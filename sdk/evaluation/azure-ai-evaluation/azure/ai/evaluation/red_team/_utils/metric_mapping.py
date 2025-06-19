@@ -1,6 +1,7 @@
 """
 Mapping utilities for metrics and risk categories in Red Team Agent.
 """
+
 from .._attack_objective_generator import _InternalRiskCategory, RiskCategory
 from azure.ai.evaluation._constants import EvaluationMetrics, _InternalEvaluationMetrics
 from azure.ai.evaluation._common.constants import Tasks, _InternalAnnotationTasks
@@ -25,15 +26,18 @@ RISK_CATEGORY_ANNOTATION_TASK_MAP = {
     _InternalRiskCategory.ECI: _InternalAnnotationTasks.ECI,
     RiskCategory.CodeVulnerability: Tasks.CODE_VULNERABILITY,
 }
+
+
 def get_metric_from_risk_category(risk_category: RiskCategory) -> str:
     """Get the appropriate evaluation metric for a given risk category.
-    
+
     :param risk_category: The risk category to map to an evaluation metric
     :type risk_category: RiskCategory
     :return: The corresponding evaluation metric
     :rtype: str
     """
     return RISK_CATEGORY_METRIC_MAP.get(risk_category, EvaluationMetrics.HATE_FAIRNESS)
+
 
 def get_annotation_task_from_risk_category(risk_category: RiskCategory) -> str:
     """

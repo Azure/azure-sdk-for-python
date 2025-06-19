@@ -28,7 +28,7 @@ from azure.ai.evaluation import (
 from azure.ai.evaluation._constants import (
     DEFAULT_EVALUATION_RESULTS_FILE_NAME,
     _AggregationType,
-    EvaluationRunProperties
+    EvaluationRunProperties,
 )
 from azure.ai.evaluation._evaluate._evaluate import (
     _aggregate_metrics,
@@ -76,9 +76,11 @@ def evaluate_test_data_jsonl_file():
 def evaluate_test_data_conversion_jsonl_file():
     return _get_file("evaluate_test_data_conversation.jsonl")
 
+
 @pytest.fixture
 def evaluate_test_data_alphanumeric():
     return _get_file("evaluate_test_data_alphanumeric.jsonl")
+
 
 @pytest.fixture
 def questions_file():
@@ -98,6 +100,7 @@ def questions_answers_file():
 @pytest.fixture
 def questions_answers_basic_file():
     return _get_file("questions_answers_basic.jsonl")
+
 
 @pytest.fixture
 def questions_answers_korean_file():
@@ -437,8 +440,8 @@ class TestEvaluate:
         column_mappings_with_numbers = {
             "response": "${data.response123}",
             "query": "${data.query456}",
-            "context": "${data.context789}"
-        } # This should not raise an exception with the updated regex for column mapping format validation
+            "context": "${data.context789}",
+        }  # This should not raise an exception with the updated regex for column mapping format validation
         # The test passes if no exception about "Unexpected references" is raised
         result = evaluate(
             data=evaluate_test_data_alphanumeric,
@@ -448,9 +451,9 @@ class TestEvaluate:
                     "column_mapping": column_mappings_with_numbers,
                 }
             },
-            fail_on_evaluator_errors=False
+            fail_on_evaluator_errors=False,
         )
-        
+
         # Verify that the test completed without errors related to column mapping format
         # The test data has the fields with numeric characters, so it should work correctly
         assert result is not None
@@ -906,7 +909,7 @@ class TestEvaluate:
             )
 
         assert "Evaluation target failed to produce any results. Please check the logs at " in str(exc_info.value)
-    
+
     def test_evaluate_korean_characters_result(self, questions_answers_korean_file):
         output_path = "eval_test_results_korean.jsonl"
 
@@ -942,9 +945,10 @@ class TestEvaluate:
         # Test with splits (dump of test map is 66 characters long)
         result = _convert_name_map_into_property_entries(test_map, segment_length=40)
         assert result[EvaluationRunProperties.NAME_MAP_LENGTH] == 2
-        combined_strings = (result[f"{EvaluationRunProperties.NAME_MAP}_0"] + 
-                            result[f"{EvaluationRunProperties.NAME_MAP}_1"])
-        #breakpoint()
+        combined_strings = (
+            result[f"{EvaluationRunProperties.NAME_MAP}_0"] + result[f"{EvaluationRunProperties.NAME_MAP}_1"]
+        )
+        # breakpoint()
         assert result[f"{EvaluationRunProperties.NAME_MAP}_0"] == map_dump[0:40]
         assert result[f"{EvaluationRunProperties.NAME_MAP}_1"] == map_dump[40:]
         assert combined_strings == map_dump
@@ -952,15 +956,17 @@ class TestEvaluate:
         # Test with exact split
         result = _convert_name_map_into_property_entries(test_map, segment_length=22)
         assert result[EvaluationRunProperties.NAME_MAP_LENGTH] == 3
-        combined_strings = (result[f"{EvaluationRunProperties.NAME_MAP}_0"] + 
-                            result[f"{EvaluationRunProperties.NAME_MAP}_1"] + 
-                            result[f"{EvaluationRunProperties.NAME_MAP}_2"])
+        combined_strings = (
+            result[f"{EvaluationRunProperties.NAME_MAP}_0"]
+            + result[f"{EvaluationRunProperties.NAME_MAP}_1"]
+            + result[f"{EvaluationRunProperties.NAME_MAP}_2"]
+        )
         assert result[f"{EvaluationRunProperties.NAME_MAP}_0"] == map_dump[0:22]
         assert result[f"{EvaluationRunProperties.NAME_MAP}_1"] == map_dump[22:44]
         assert result[f"{EvaluationRunProperties.NAME_MAP}_2"] == map_dump[44:]
         assert combined_strings == map_dump
 
         # Test failure case
-        result = _convert_name_map_into_property_entries(test_map, segment_length=10, max_segments = 1)
+        result = _convert_name_map_into_property_entries(test_map, segment_length=10, max_segments=1)
         assert result[EvaluationRunProperties.NAME_MAP_LENGTH] == -1
         assert len(result) == 1

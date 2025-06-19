@@ -34,7 +34,7 @@ class GleuScoreEvaluator(EvaluatorBase):
             :language: python
             :dedent: 8
             :caption: Initialize and call a GleuScoreEvaluator.
-    
+
     .. admonition:: Example with Threshold:
 
         .. literalinclude:: ../samples/evaluation_samples_threshold.py
@@ -45,13 +45,13 @@ class GleuScoreEvaluator(EvaluatorBase):
             :caption: Initialize with threshold and call a GleuScoreEvaluator.
 
     .. admonition:: Example using Azure AI Project URL:
-                
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
             :start-after: [START gleu_score_evaluator]
             :end-before: [END gleu_score_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call GleuScoreEvaluator using Azure AI Project URL in the following format 
+            :caption: Initialize and call GleuScoreEvaluator using Azure AI Project URL in the following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
     """
 
