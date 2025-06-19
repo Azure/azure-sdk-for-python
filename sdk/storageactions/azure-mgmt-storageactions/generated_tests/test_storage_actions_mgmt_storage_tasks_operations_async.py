@@ -41,8 +41,8 @@ class TestStorageActionsMgmtStorageTasksOperationsAsync(AzureMgmtRecordedTestCas
                                 "operations": [
                                     {
                                         "name": "str",
-                                        "onFailure": "break",
-                                        "onSuccess": "continue",
+                                        "onFailure": "str",
+                                        "onSuccess": "str",
                                         "parameters": {"str": "str"},
                                     }
                                 ],
@@ -51,8 +51,8 @@ class TestStorageActionsMgmtStorageTasksOperationsAsync(AzureMgmtRecordedTestCas
                                 "operations": [
                                     {
                                         "name": "str",
-                                        "onFailure": "break",
-                                        "onSuccess": "continue",
+                                        "onFailure": "str",
+                                        "onSuccess": "str",
                                         "parameters": {"str": "str"},
                                     }
                                 ]
@@ -131,8 +131,8 @@ class TestStorageActionsMgmtStorageTasksOperationsAsync(AzureMgmtRecordedTestCas
                                 "operations": [
                                     {
                                         "name": "str",
-                                        "onFailure": "break",
-                                        "onSuccess": "continue",
+                                        "onFailure": "str",
+                                        "onSuccess": "str",
                                         "parameters": {"str": "str"},
                                     }
                                 ],
@@ -141,16 +141,16 @@ class TestStorageActionsMgmtStorageTasksOperationsAsync(AzureMgmtRecordedTestCas
                                 "operations": [
                                     {
                                         "name": "str",
-                                        "onFailure": "break",
-                                        "onSuccess": "continue",
+                                        "onFailure": "str",
+                                        "onSuccess": "str",
                                         "parameters": {"str": "str"},
                                     }
                                 ]
                             },
                         },
+                        "creationTimeInUtc": "2020-02-20 00:00:00",
                         "description": "str",
                         "enabled": bool,
-                        "creationTimeInUtc": "2020-02-20 00:00:00",
                         "provisioningState": "str",
                         "taskVersion": 0,
                     },
