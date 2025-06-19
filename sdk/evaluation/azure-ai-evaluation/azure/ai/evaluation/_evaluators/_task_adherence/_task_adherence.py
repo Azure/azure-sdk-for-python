@@ -56,7 +56,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
 
     _PROMPTY_FILE = "task_adherence.prompty"
-    _RESULT_KEY = "task_adherence"
+    _RESULT_KEY = "task_adherence_v2"
     _OPTIONAL_PARAMS = ["tool_definitions"]
 
     _DEFAULT_TASK_ADHERENCE_SCORE = 3
@@ -142,9 +142,9 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.TASK_ADHERENCE_EVALUATOR,
             )
-        eval_input['query'] = reformat_conversation_history(eval_input["query"])
+        eval_input['query'] = reformat_conversation_history(eval_input["query"], include_system_messages=True)
         eval_input['response'] = reformat_agent_response(eval_input["response"], include_tool_messages=True)
-        if "tool_definitions" in eval_input:
+        if "tool_definitions" in eval_input and eval_input["tool_definitions"] is not None:
             eval_input['tool_definitions'] = reformat_tool_definitions(eval_input["tool_definitions"])
         llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         if isinstance(llm_output, dict):

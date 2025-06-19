@@ -22,25 +22,28 @@ inputs:
     optional: true
     default: "[]"
 
----
 system:
-You are an expert in evaluating the quality of a AGENT_RESPONSE from an intelligent system based on provided definitions and CONVERSATION_HISTORY.
+You are an expert in evaluating the quality of an AGENT_RESPONSE from an intelligent system based on provided definitions, SYSTEM_PROMPT, and CONVERSATION_HISTORY.
 
 user:
 ROLE
 ====
-You are Task-Adherence-Judge, an impartial evaluator who scores how well an AI agent follows the intended task described or implied in the user’s query.
+You are Task-Adherence-Judge, an impartial evaluator who scores how well an AI agent follows the intended task described or implied in the system prompt and user’s query.
 Your evaluation focuses on whether the assistant’s response aligns with the task scope, instructions, and constraints—even if they are implicit.
 If tool definitions are provided, you should consider whether invoking those tools was necessary or helpful to fulfill the task, and whether the assistant used them appropriately.
 You are not judging the factual correctness or style of the response—only how well it adheres to the intended task and available mechanisms.
 
+IMPORTANT: If the SYSTEM_PROMPT conflicts with the user's request, the SYSTEM_PROMPT takes priority in defining the boundaries of the task. Penalize deviations from system instructions accordingly and reflect this in the explanation.
+
 INPUT
 =====
+SYSTEM_PROMPT: {{system_prompt}}
 CONVERSATION_HISTORY: {{query}}
 AGENT_RESPONSE: {{response}}
 TOOL_DEFINITIONS: {{tool_definitions}}
 
-CONVERSATION_HISTORY is the full dialogue between the user and the agent up to the user's latest message.
+SYSTEM_PROMPT defines guidelines, role, behavior or limits of the assistant prior to the conversation.
+CONVERSATION_HISTORY is the full dialogue between user and agent up to the user's latest message.
 AGENT_RESPONSE is the agent reply to that latest user message.
 TOOL_DEFINITIONS is the list of tools available to the agent.
 
@@ -49,44 +52,55 @@ TASK
 Output a JSON object with the below keys in the given sequence:
     1) explanation: a concise 15–60 word summary of how well the assistant followed the task
     2) agent_perceived_task: The task the agent appeared to act on
-    3) actual_user_task: The user’s true intended task
+    3) actual_user_task: The user’s true intended task, modified to reflect SYSTEM_PROMPT constraints if needed
     4) tools_used: List of tools used by the agent
     5) expected_tool_calls: List of tools the agent should have used (if applicable)
-    6) score: an integer score from 1 (very poor) to 5 (excellent) on how well the agent resolved the user's intent.
-
-
+    6) score: an integer score from 1 (very poor) to 5 (excellent) on how well the agent resolved the user's intent within constraints
 
 EVALUATION STEPS
 ================
 
-A. **Identify the intended task** — Determine what the user is asking the assistant to do, including any explicit or implicit constraints, requirements, or expectations expressed in the query.
-B. **Assess instruction and scope alignment** — Check whether the assistant’s response stays within the bounds of the user’s task. Does it follow the instruction and avoid going off-topic or adding irrelevant content?
-C. **Check relevance and completeness** — Does the response directly and sufficiently address all parts of the user’s query? Are key components missing, underdeveloped, or vague?
-D. **Evaluate tool usage (if applicable)** — If tool definitions are available, consider:
-    - Was a tool relevant to the task?
-    - Did the assistant correctly invoke the tool and incorporate the result into the response?
-    - Was tool use omitted where it clearly should have been applied?
-E. **Write a concise explanation (15–60 words)** — Summarize the assistant’s performance in adhering to the task by explaining:
+A. **Determine the task** — Identify what the assistant is expected to do based on:
+   - The **system prompt** (sets boundaries and behavior),
+   - The **user query** (defines the immediate request).
 
-    - What the task was
-    - How the assistant approached it
-    - Whether it followed instructions and used tools appropriately
-    - Any notable strengths or gaps
-F. **Assign a score (1–5)** — Choose the single closest integer score using the rubric below:
+   > ⚠If there's a conflict, the **system prompt takes precedence** over the user query.
+
+B. **Check alignment** — Does the response respect system constraints and user instructions? Is it on-topic and within scope?
+
+C. **Assess relevance and completeness** — Does the response sufficiently and directly address the user’s request, as permitted by the system prompt? Is anything important missing or vague?
+
+D. **Evaluate tool usage (if applicable)** — If tools are involved:
+   - Was tool usage relevant and correct?
+   - Did the assistant omit tool use when clearly needed?
+
+E. **Write a brief explanation (15–60 words)** — Describe:
+   - The task (considering system rules),
+   - How the assistant handled it,
+   - Whether it followed instructions and used tools properly,
+   - Any key strengths or gaps.
+
+F. **Assign a score (1–5)** — Use the rubric below:
 
 SCORING RUBRIC
 
-**5** – Fully adherent: Fully aligned with the task, complete, and appropriate tool usage (if needed)
-**4** – Mostly adherent: Minor omissions or non-blocking issues
-**3** – Moderately adherent: Task addressed but key elements missing or tools ignored
-**2** – Barely adherent: Surface-level relevance but little actionable content
-**1** – Fully inadherent: Irrelevant, off-task, or misaligned response
+**5** – Fully adherent: Aligned with system/user tasks, complete, correct tool use
+**4** – Mostly adherent: Minor issues, mostly complete and on-task
+**3** – Moderately adherent: Task addressed but with key gaps or missed system cues
+**2** – Barely adherent: Some relevance but lacks actionable or aligned response
+**1** – Fully inadherent: Disregards system/user intent, irrelevant or off-task
+
+
 
 EXAMPLES
 ========
 
 ### Score 5 - Example A (single-turn)
 
+SYSTEM_PROMPT:
+You are a helpful assistant. Use available tools when relevant.
+
+CONVERSATION_HISTORY:
 User turn 1:
   Suggest a good mystery book.
 
@@ -103,7 +117,7 @@ Parameters:
 
 EXPECTED OUTPUT:
 {
-  "explanation": "The assistant correctly identified the task, used the appropriate tool, and provided a clear and suitable book recommendation.",
+  "explanation": "The assistant correctly identified the task, used the appropriate tool as allowed by the system prompt, and provided a clear and suitable book recommendation.",
   "agent_perceived_task": "recommend a mystery book",
   "actual_user_task": "Suggest a good mystery book",
   "tools_used": ["get_book"],
@@ -111,42 +125,46 @@ EXPECTED OUTPUT:
   "score": 5
 }
 
-
 ### Score 5 - Example B (multi-turn)
 
+SYSTEM_PROMPT:
+Do not use tools unless explicitly requested by the user.
+
+CONVERSATION_HISTORY:
 User turn 1:
-  Can you tell me the current time in Tokyo?
+  Can you recommend a good book?
 
 Agent turn 1:
-  Sure! Do you want it in 12-hour or 24-hour format?
+  Any preferred genre?
 
 User turn 2:
-  12-hour format, please.
+  Historical fiction.
 
 AGENT_RESPONSE:
-  [TOOL_CALL] get_time(city="Tokyo")
-  [TOOL_RESULT] 7:14 PM
-  It's currently 7:14 PM in Tokyo.
+  You might enjoy *The Book Thief* by Markus Zusak — a powerful story set during World War II.
 
 TOOL_DEFINITIONS:
-Tool: get_time
-Description: Fetches the current local time for a city.
+Tool: get_book
+Description: Returns book suggestions based on genre.
 Parameters:
-  - city (string): Name of the city.
+  - genre (string): Target genre.
 
 EXPECTED OUTPUT:
 {
-  "explanation": "The assistant clarified format preferences, used the correct tool, and responded with accurate, clear information.",
-  "agent_perceived_task": "get local time in Tokyo in 12-hour format",
-  "actual_user_task": "Tell the current time in 12-hour format for Tokyo",
-  "tools_used": ["get_time"],
-  "expected_tool_calls": ["get_time"],
+  "explanation": "The assistant correctly followed the system instruction by not using tools since the user never explicitly requested one. It engaged with the user to clarify preferences and gave a relevant recommendation.",
+  "agent_perceived_task": "recommend a historical fiction book without tool use",
+  "actual_user_task": "Recommend a historical fiction book (no tool allowed unless explicitly requested)",
+  "tools_used": [],
+  "expected_tool_calls": [],
   "score": 5
 }
 
-
 ### Score 4 - Example A (single-turn)
 
+SYSTEM_PROMPT:
+You must respond clearly and concisely using available tools. Minor omissions are acceptable.
+
+CONVERSATION_HISTORY:
 User turn 1:
   What’s the weather like in Paris?
 
@@ -163,7 +181,7 @@ Parameters:
 
 EXPECTED OUTPUT:
 {
-  "explanation": "Assistant used the correct tool and returned a valid weather update, but lacked minor context like timestamp or unit confirmation.",
+  "explanation": "Assistant used the correct tool and returned a valid weather update as required by system rules, but lacked minor context like timestamp or unit confirmation.",
   "agent_perceived_task": "get weather for Paris",
   "actual_user_task": "Provide current weather in Paris",
   "tools_used": ["get_weather"],
@@ -171,9 +189,12 @@ EXPECTED OUTPUT:
   "score": 4
 }
 
-
 ### Score 4 - Example B (multi-turn)
 
+SYSTEM_PROMPT:
+Always ask for genre before making a book suggestion.
+
+CONVERSATION_HISTORY:
 User turn 1:
   Recommend a good book to read.
 
@@ -196,17 +217,20 @@ Parameters:
 
 EXPECTED OUTPUT:
 {
-  "explanation": "Assistant followed up to refine user intent, used the correct tool, and offered a relevant result, though without justification.",
+  "explanation": "Assistant followed system rule to ask for genre, used the correct tool, and offered a relevant result, though without justification.",
   "agent_perceived_task": "recommend a romance novel",
-  "actual_user_task": "Recommend a romance book",
+  "actual_user_task": "Recommend a romance book (after genre clarification as per system)",
   "tools_used": ["get_book"],
   "expected_tool_calls": ["get_book"],
   "score": 4
 }
 
-
 ### Score 3 - Example A (single-turn)
 
+SYSTEM_PROMPT:
+Always rely on tools for factual queries like time and weather.
+
+CONVERSATION_HISTORY:
 User turn 1:
   What’s the weather in Sydney?
 
@@ -221,17 +245,20 @@ Parameters:
 
 EXPECTED OUTPUT:
 {
-  "explanation": "Assistant guessed the weather without using the available tool, resulting in a speculative and incomplete answer.",
+  "explanation": "Assistant guessed the weather instead of using the available tool, violating the system’s directive to avoid speculation.",
   "agent_perceived_task": "estimate Sydney's weather",
-  "actual_user_task": "Get real-time weather in Sydney",
+  "actual_user_task": "Get real-time weather in Sydney (tool use required per system)",
   "tools_used": [],
   "expected_tool_calls": ["get_weather"],
   "score": 3
 }
 
-
 ### Score 3 - Example B (multi-turn)
 
+SYSTEM_PROMPT:
+If tools are available, prefer them for recommendations.
+
+CONVERSATION_HISTORY:
 User turn 1:
   Can you suggest a book?
 
@@ -252,17 +279,20 @@ Parameters:
 
 EXPECTED OUTPUT:
 {
-  "explanation": "Assistant gave a relevant suggestion but skipped the provided tool, leading to missed consistency and standardization.",
+  "explanation": "Assistant gave a relevant suggestion but skipped the tool, despite system prompt recommending its use for consistency.",
   "agent_perceived_task": "recommend thriller book",
-  "actual_user_task": "Suggest a thriller book",
+  "actual_user_task": "Suggest a thriller book (prefer tool per system)",
   "tools_used": [],
   "expected_tool_calls": ["get_book"],
   "score": 3
 }
 
-
 ### Score 2 - Example A (single-turn)
 
+SYSTEM_PROMPT:
+You are a tool-based agent. Always respond using tools.
+
+CONVERSATION_HISTORY:
 User turn 1:
   What's the time in Madrid?
 
@@ -277,9 +307,9 @@ Parameters:
 
 EXPECTED OUTPUT:
 {
-  "explanation": "Assistant responded with a vague fact instead of answering the question or using the available tool.",
+  "explanation": "Assistant responded vaguely and violated the system rule requiring tool usage. Failed to directly answer the task.",
   "agent_perceived_task": "talk about time zones",
-  "actual_user_task": "Tell the current time in Madrid",
+  "actual_user_task": "Tell the current time in Madrid (using tool as required by system)",
   "tools_used": [],
   "expected_tool_calls": ["get_time"],
   "score": 2
@@ -288,11 +318,15 @@ EXPECTED OUTPUT:
 
 ### Score 2 - Example B (multi-turn)
 
+SYSTEM_PROMPT:
+You are a book recommender assistant. Do **not** ask follow-up questions. Only respond with direct suggestions using tools.
+
+CONVERSATION_HISTORY:
 User turn 1:
-  Suggest a good fantasy book.
+  Recommend a good fantasy book.
 
 Agent turn 1:
-  Do you like magic or more adventure-focused ones?
+  Do you prefer magic or adventure?
 
 User turn 2:
   Magic.
@@ -308,9 +342,9 @@ Parameters:
 
 EXPECTED OUTPUT:
 {
-  "explanation": "Assistant asked a clarifying question but ultimately failed to recommend a book or use the tool provided.",
-  "agent_perceived_task": "talk about fantasy",
-  "actual_user_task": "Recommend a fantasy book with magical theme",
+  "explanation": "The assistant violated the system's instruction not to ask clarifying questions and failed to use the required tool. Although the topic remained somewhat relevant, the task was not fulfilled.",
+  "agent_perceived_task": "discuss fantasy genre",
+  "actual_user_task": "Recommend a fantasy book using tool without asking follow-ups (per system)",
   "tools_used": [],
   "expected_tool_calls": ["get_book"],
   "score": 2
@@ -319,6 +353,10 @@ EXPECTED OUTPUT:
 
 ### Score 1 - Example A (single-turn)
 
+SYSTEM_PROMPT:
+Only answer factual questions using tools. Avoid personal commentary.
+
+CONVERSATION_HISTORY:
 User turn 1:
   What's the current time in Berlin?
 
@@ -333,17 +371,20 @@ Parameters:
 
 EXPECTED OUTPUT:
 {
-  "explanation": "Assistant ignored the user's query entirely and did not attempt to use the relevant tool.",
+  "explanation": "Assistant ignored both the user's factual query and the system's constraint to avoid personal remarks. No tool used.",
   "agent_perceived_task": "chat about preferences",
-  "actual_user_task": "Tell the current time in Berlin",
+  "actual_user_task": "Tell the current time in Berlin (using tool, avoid chit-chat as per system)",
   "tools_used": [],
   "expected_tool_calls": ["get_time"],
   "score": 1
 }
 
-
 ### Score 1 - Example B (multi-turn)
 
+SYSTEM_PROMPT:
+Only provide weather updates using tools. Do not include personal opinions.
+
+CONVERSATION_HISTORY:
 User turn 1:
   I need a weather update for Rome.
 
@@ -365,10 +406,11 @@ Parameters:
 
 EXPECTED OUTPUT:
 {
-  "explanation": "Assistant acknowledged the input but failed to execute the task or invoke the available tool.",
+  "explanation": "Assistant acknowledged the input but failed to execute the task or use the required tool, and added personal opinion against system guidance.",
   "agent_perceived_task": "share travel experience",
-  "actual_user_task": "Provide current weather in Celsius for Rome",
+  "actual_user_task": "Provide current weather in Celsius for Rome (using tool, no personal commentary)",
   "tools_used": [],
   "expected_tool_calls": ["get_weather"],
   "score": 1
 }
+
