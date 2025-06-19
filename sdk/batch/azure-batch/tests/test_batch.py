@@ -186,8 +186,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
             vm_size=DEFAULT_VM_SIZE,
             network_configuration=network_config,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.BatchVmImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
-                node_agent_sku_id="batch.node.ubuntu 18.04",
+                image_reference=models.BatchVmImageReference(publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"),
+                node_agent_sku_id="batch.node.ubuntu 22.04",
             ),
         )
         await self.assertBatchError(
@@ -209,7 +209,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                     "/images/FakeImage"
                     "/versions/version"
                 ),
-                node_agent_sku_id="batch.node.ubuntu 18.04",
+                node_agent_sku_id="batch.node.ubuntu 22.04",
             ),
         )
         await self.assertBatchError("InvalidPropertyValue", client.create_pool, pool=test_image_pool, timeout=45)
@@ -220,8 +220,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
             id=self.get_resource_name("batch_disk_"),
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.BatchVmImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
-                node_agent_sku_id="batch.node.ubuntu 18.04",
+                image_reference=models.BatchVmImageReference(publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"),
+                node_agent_sku_id="batch.node.ubuntu 22.04",
                 data_disks=[data_disk],
             ),
             target_node_communication_mode=models.BatchNodeCommunicationMode.CLASSIC,
@@ -240,11 +240,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
             id=self.get_resource_name("batch_ade_"),
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.BatchVmImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
+                image_reference=models.BatchVmImageReference(publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"),
                 disk_encryption_configuration=models.DiskEncryptionConfiguration(
                     targets=[models.DiskEncryptionTarget.TEMPORARY_DISK]
                 ),
-                node_agent_sku_id="batch.node.ubuntu 18.04",
+                node_agent_sku_id="batch.node.ubuntu 22.04",
             ),
         )
         response = await wrap_result(client.create_pool(test_ade_pool))
@@ -326,8 +326,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
             id=self.get_resource_name("batch_paas_"),
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
-                node_agent_sku_id="batch.node.ubuntu 18.04",
-                image_reference=models.BatchVmImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
+                node_agent_sku_id="batch.node.ubuntu 22.04",
+                image_reference=models.BatchVmImageReference(publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"),
             ),
             start_task=models.BatchStartTask(
                 command_line='cmd.exe /c "echo hello world"',
@@ -366,7 +366,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert pool.id == test_paas_pool.id
         assert pool.state == models.BatchPoolState.ACTIVE
         assert pool.allocation_state == models.AllocationState.STEADY
-        # assert pool.vm_configuration.node_agent_sku_id == "batch.node.ubuntu 18.04"
+        # assert pool.vm_configuration.node_agent_sku_id == "batch.node.ubuntu 22.04"
         assert pool.vm_size == DEFAULT_VM_SIZE
         assert pool.start_task is None
         assert pool.metadata is not None
@@ -539,8 +539,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
             )
         )
         virtual_machine_config = models.VirtualMachineConfiguration(
-            node_agent_sku_id="batch.node.ubuntu 18.04",
-            image_reference=models.BatchVmImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
+            node_agent_sku_id="batch.node.ubuntu 22.04",
+            image_reference=models.BatchVmImageReference(publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"),
         )
         pool = models.BatchPoolCreateOptions(
             id=self.get_resource_name("batch_network_"),
@@ -680,9 +680,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
             auto_upgrade_minor_version=True,
         )
         virtual_machine_config = models.VirtualMachineConfiguration(
-            node_agent_sku_id="batch.node.ubuntu 18.04",
+            node_agent_sku_id="batch.node.ubuntu 22.04",
             extensions=[extension],
-            image_reference=models.BatchVmImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
+            image_reference=models.BatchVmImageReference(publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"),
         )
         batch_pool = models.BatchPoolCreateOptions(
             id=self.get_resource_name("batch_network_"),
@@ -1099,11 +1099,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 virtual_machine_configuration=models.VirtualMachineConfiguration(
                     image_reference=models.BatchVmImageReference(
                         publisher="Canonical",
-                        offer="UbuntuServer",
-                        sku="18.04-LTS",
+                        offer="0001-com-ubuntu-server-jammy",
+                        sku="22_04-lts",
                         version="latest",
                     ),
-                    node_agent_sku_id="batch.node.ubuntu 18.04",
+                    node_agent_sku_id="batch.node.ubuntu 22.04",
                 ),
             ),
         )
