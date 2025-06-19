@@ -67,7 +67,7 @@ def create_package_and_install(
     if cache_dir:
         commands_options.extend(["--cache-dir", cache_dir])
 
-    target_package = ParsedSetup.from_path(setup_py_path)
+    target_package = ParsedSetup.from_path(target_setup)
 
     discovered_packages = discover_packages(
         target_setup, distribution_directory, target_setup, package_type, force_create
