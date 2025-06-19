@@ -322,8 +322,8 @@ The transaction can then be retrieved by specifying the `collection ID` and the 
 get_result = ledger_client.get_ledger_entry(collection_id="icecream-flavors")
 ```
 ```python
-# Get one specific in a collection
-list_result = ledger_client.get_ledger_entry(transaction_id=2.68,collection_id="icecream-flavors")
+# Get a specific entry in a collection
+list_result = ledger_client.get_ledger_entry(transaction_id=2.68, collection_id="icecream-flavors")
 ```
 ```python
 # Get all entries in a collection

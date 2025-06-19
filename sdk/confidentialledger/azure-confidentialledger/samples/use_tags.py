@@ -7,8 +7,8 @@
 """
 FILE: use_tags.py
 DESCRIPTION:
-    This sample demonstrates how to use tags inside a in Confidential Ledger. In this sample, we write
-    ledger entries to a collections using different tags. Tags may be used to group semantically or
+    This sample demonstrates how to use tags inside a Confidential Ledger. In this sample, we write
+    ledger entries to a collection using different tags. Tags may be used to group semantically or
     logically related ledger entries within a collection.
 USAGE:
     python use_tags.py
