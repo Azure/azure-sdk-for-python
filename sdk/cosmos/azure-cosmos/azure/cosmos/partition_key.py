@@ -23,7 +23,8 @@
 from io import BytesIO
 import binascii
 import struct
-from typing import IO, Sequence, Type, Union, overload, List, cast
+from typing import IO, Sequence, Type, Union, overload, List, cast, Dict, Any
+
 from typing_extensions import Literal
 
 from ._cosmos_integers import _UInt32, _UInt64, _UInt128
@@ -96,9 +97,31 @@ class PartitionKey(dict):
     See https://learn.microsoft.com/azure/cosmos-db/partitioning-overview#choose-partitionkey
     for information on how to choose partition keys.
 
-    :ivar str path: The path of the partition key
-    :ivar str kind: What kind of partition key is being defined (default: "Hash")
-    :ivar int version: The version of the partition key (default: 2)
+    This constructor supports multiple overloads:
+
+    1. **Single Partition Key**:
+
+       **Parameters**:
+        - `path` (str): The path of the partition key.
+        - `kind` (Literal["Hash"], optional): The kind of partition key. Defaults to "Hash".
+        - `version` (int, optional): The version of the partition key. Defaults to 2.
+
+       **Example**:
+         >>> pk = PartitionKey(path="/id")
+
+    2. **Hierarchical Partition Key**:
+
+       **Parameters**:
+        - `path` (List[str]): A list of paths representing the partition key, supports up to three hierarchical levels.
+        - `kind` (Literal["MultiHash"], optional): The kind of partition key. Defaults to "MultiHash".
+        - `version` (int, optional): The version of the partition key. Defaults to 2.
+
+       **Example**:
+         >>> pk = PartitionKey(path=["/id", "/category"], kind="MultiHash")
+
+    :ivar str path: The path(s) of the partition key.
+    :ivar str kind: The kind of partition key ("Hash" or "MultiHash") (default: "Hash").
+    :ivar int version: The version of the partition key (default: 2).
     """
 
     @overload
@@ -472,3 +495,19 @@ def _write_for_binary_encoding(
 
     elif isinstance(value, _Undefined):
         binary_writer.write(bytes([_PartitionKeyComponentType.Undefined]))
+
+
+def _get_partition_key_from_partition_key_definition(
+    partition_key_definition: Union[Dict[str, Any], "PartitionKey"]
+) -> "PartitionKey":
+    """Internal method to create a PartitionKey instance from a dictionary or PartitionKey object.
+
+    :param partition_key_definition: A dictionary or PartitionKey object containing the partition key definition.
+    :type partition_key_definition: Union[Dict[str, Any], PartitionKey]
+    :return: A PartitionKey instance created from the provided definition.
+    :rtype: PartitionKey
+    """
+    path = partition_key_definition.get("paths", "")
+    kind = partition_key_definition.get("kind", "Hash")
+    version: int = partition_key_definition.get("version", 1)  # Default to version 1 if not provided
+    return PartitionKey(path=path, kind=kind, version=version)

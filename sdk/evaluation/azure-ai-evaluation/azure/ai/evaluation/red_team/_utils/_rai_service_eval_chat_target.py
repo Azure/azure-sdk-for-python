@@ -15,7 +15,7 @@ from azure.ai.evaluation.simulator._model_tools._generated_rai_client import Gen
 from pyrit.models import PromptRequestResponse, construct_response_from_request
 from pyrit.prompt_target import PromptChatTarget
 from .constants import USER_AGENT
-from .metric_mapping import get_metric_from_risk_category
+from .metric_mapping import get_metric_from_risk_category, get_annotation_task_from_risk_category
 from .._attack_objective_generator import RiskCategory
 
 
@@ -51,16 +51,17 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
         thing_to_eval = prompt_request.request_pieces[0].to_dict()['original_value']
 
         thing_to_eval_qr = {
-            "query":"",
+            "query":"query",
             "response": thing_to_eval
         }
 
         metric_name = get_metric_from_risk_category(self.risk_category)
-        
+        annotation_task = get_annotation_task_from_risk_category(self.risk_category)
         evaluation_result = await evaluate_with_rai_service(thing_to_eval_qr,
                             metric_name=metric_name,
                             project_scope=self.azure_ai_project,
-                            credential=self.credential)
+                            credential=self.credential,
+                            annotation_task=annotation_task,)
         self.logger.info(f"Evaluation result: {evaluation_result}")
         
         # Extract the relevant data from evaluation_result
