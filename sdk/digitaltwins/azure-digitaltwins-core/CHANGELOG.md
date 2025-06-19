@@ -1,16 +1,11 @@
 # Release History
 
-## 1.2.1 (Unreleased)
+## 1.3.0 (2025-06-18)
 
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Updated service API version to use API version 2023-10-31 by default.
 
 ## 1.2.0 (2022-05-31)
+
  - GA release
 
 ## 1.2.0b1 (2022-03-31)
