@@ -30,7 +30,7 @@ from .._constants import (
     DEFAULT_OAI_EVAL_RUN_NAME
 )
 from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig
-from .._user_agent import USER_AGENT
+from .._user_agent import UserAgentSingleton
 from ._batch_run import (
     EvalRunContext,
     CodeClient,
@@ -997,7 +997,7 @@ def _preprocess_data(
         batch_run_client = RunSubmitterClient()
         batch_run_data = input_data_df
     elif kwargs.pop("_use_pf_client", True):
-        batch_run_client = ProxyClient(user_agent=USER_AGENT)
+        batch_run_client = ProxyClient(user_agent=UserAgentSingleton().value)
         # Ensure the absolute path is passed to pf.run, as relative path doesn't work with
         # multiple evaluators. If the path is already absolute, abspath will return the original path.
         batch_run_data = os.path.abspath(data)
