@@ -27,12 +27,12 @@ import re
 import base64
 import json
 import time
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from ._version import VERSION
 
 
-def get_user_agent(suffix: Optional[str]) -> str:
+def get_user_agent(suffix: Optional[str] = None) -> str:
     os_name = safe_user_agent_header(platform.platform())
     python_version = safe_user_agent_header(platform.python_version())
     user_agent = "azsdk-python-cosmos/{} Python/{} ({})".format(VERSION, python_version, os_name)
@@ -40,7 +40,7 @@ def get_user_agent(suffix: Optional[str]) -> str:
         user_agent += f" {suffix}"
     return user_agent
 
-def get_user_agent_async(suffix: Optional[str]) -> str:
+def get_user_agent_async(suffix: Optional[str] = None) -> str:
     os_name = safe_user_agent_header(platform.platform())
     python_version = safe_user_agent_header(platform.python_version())
     user_agent = "azsdk-python-cosmos-async/{} Python/{} ({})".format(VERSION, python_version, os_name)
@@ -49,7 +49,7 @@ def get_user_agent_async(suffix: Optional[str]) -> str:
     return user_agent
 
 
-def safe_user_agent_header(s: Optional[str]) -> str:
+def safe_user_agent_header(s: Optional[str] = None) -> str:
     if s is None:
         s = "unknown"
     # remove all white spaces
@@ -59,7 +59,7 @@ def safe_user_agent_header(s: Optional[str]) -> str:
     return s
 
 
-def get_index_metrics_info(delimited_string: Optional[str]) -> Dict[str, Any]:
+def get_index_metrics_info(delimited_string: Optional[str] = None) -> Dict[str, Any]:
     if delimited_string is None:
         return {}
     try:
@@ -78,7 +78,7 @@ def current_time_millis() -> int:
     return int(round(time.time() * 1000))
 
 def add_args_to_kwargs(
-        arg_names: Tuple[str, ...],
+        arg_names: List[str],
         args: Tuple[Any, ...],
         kwargs: Dict[str, Any]
     ) -> None:
@@ -86,20 +86,20 @@ def add_args_to_kwargs(
     """
 
     if len(args) > len(arg_names):
-        raise IndexError(f"Positional argument is out of range. Expected {len(arg_names)} arguments, "
+        raise ValueError(f"Positional argument is out of range. Expected {len(arg_names)} arguments, "
                          f"but got {len(args)} instead. Please review argument list in API documentation.")
 
     for name, arg in zip(arg_names, args):
         if name in kwargs:
-            raise KeyError(f"{name} cannot be used as positional and keyword argument at the same time.")
-
+            raise ValueError(f"{name} cannot be used as positional and keyword argument at the same time.")
         kwargs[name] = arg
 
-def verify_exclusive_arguments(exclusive_keys, **kwargs: Any) -> None:
+def verify_exclusive_arguments(
+        exclusive_keys: List[str],
+        **kwargs: Dict[str, Any]) -> None:
     """Verify if exclusive arguments are present in kwargs.
     """
-    count = sum(1 for key in exclusive_keys if key in kwargs and kwargs[key] is not None)
+    keys_in_kwargs = [key for key in exclusive_keys if key in kwargs and kwargs[key] is not None]
 
-    if count > 1:
-        raise ValueError(
-            "partition_key_range_id, partition_key, feed_range are exclusive parameters, please only set one of them")
+    if len(keys_in_kwargs) > 1:
+        raise ValueError(f"{', '.join(keys_in_kwargs)} are exclusive parameters, please only set one of them")

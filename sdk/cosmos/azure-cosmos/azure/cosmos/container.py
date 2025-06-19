@@ -837,8 +837,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 :caption: Parameterized query to get all products that have been discontinued:
         """
         # Add positional arguments to keyword argument to support backward compatibility.
-        original_positional_arg_names = ("query", "parameters", "partition_key", "enable_cross_partition_query",
-                                         "max_item_count", "enable_scan_in_query", "populate_query_metrics")
+        original_positional_arg_names = ["query", "parameters", "partition_key", "enable_cross_partition_query",
+                                         "max_item_count", "enable_scan_in_query", "populate_query_metrics"]
         utils.add_args_to_kwargs(original_positional_arg_names, args, kwargs)
         feed_options = build_options(kwargs)
         container_properties = self._get_properties_with_options(feed_options)
