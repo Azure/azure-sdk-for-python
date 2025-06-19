@@ -7,7 +7,8 @@ import logging
 import os
 import random
 import subprocess
-
+import time
+from azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat_types import DropCode, TelemetryType
 from azure.monitor.opentelemetry.exporter._utils import PeriodicTask
 
 logger = logging.getLogger(__name__)
@@ -110,6 +111,10 @@ class LocalFileStorage:
             self._maintenance_task.start()
         else:
             logger.error("Could not set secure permissions on storage folder, local storage is disabled.")
+        self._customer_statsbeat_metrics = None
+
+    def set_customer_statsbeat_metrics(self, customer_statsbeat_metrics):
+        self._customer_statsbeat_metrics = customer_statsbeat_metrics
 
     def close(self):
         if self._enabled:
@@ -182,9 +187,36 @@ class LocalFileStorage:
         return None
 
     def put(self, data, lease_period=None):
-        if not self._enabled:
+        # Create path if it doesn't exist
+        metrics = self._customer_statsbeat_metrics
+        try:
+            if not self._enabled:
+                return None
+        except Exception as ex:
+            # Track read-only filesystem errors
+            if metrics:
+                exception_message = str(ex)
+                for item in data:
+                    telemetry_type = self._get_telemetry_type(item)
+                    metrics.count_dropped_items(
+                        1, 
+                        DropCode.CLIENT_READONLY,
+                        telemetry_type,
+                        exception_message[:100]  # Truncate to avoid high cardinality
+                    )
+            logger.warning("Error creating storage directory: %s", ex)
             return None
+        # Check storage capacity
         if not self._check_storage_size():
+            # If storage is full and metrics are available, track dropped items
+            if metrics:
+                for item in data:
+                    telemetry_type = self._get_telemetry_type(item)
+                    metrics.count_dropped_items(
+                        1,
+                        DropCode.CLIENT_PERSISTENCE_CAPACITY,
+                        telemetry_type
+                    )
             return None
         blob = LocalFileBlob(
             os.path.join(
@@ -197,7 +229,20 @@ class LocalFileStorage:
         )
         if lease_period is None:
             lease_period = self._lease_period
-        return blob.put(data, lease_period=lease_period)
+        result = blob.put(data, lease_period=lease_period)
+        
+        # Track storage failures if put failed
+        if result is None and metrics:
+            for item in data:
+                telemetry_type = self._get_telemetry_type(item)
+                metrics.count_dropped_items(
+                    1,
+                    DropCode.CLIENT_EXCEPTION,
+                    telemetry_type,
+                    "Failed to write to storage"
+                )
+        
+        return result
 
     def _check_and_set_folder_permissions(self):
         """
@@ -277,3 +322,81 @@ class LocalFileStorage:
         else:
             user = os.getlogin()
         return user
+
+    def get_items(self, batch_size=50, customer_statsbeat_metrics=None):
+        # Use the metrics object passed in or the one set on this instance
+        metrics = customer_statsbeat_metrics or self._customer_statsbeat_metrics
+
+        try:
+            cursor = self.gets()
+            items = []
+            for _ in range(batch_size):
+                try:
+                    item = next(cursor)
+                    items.append(item)
+                except StopIteration:
+                    break
+
+            # Filter out expired items
+            now = time.time()
+            valid_items = []
+            expired_items = []
+
+            for item in items:
+                timestamp = item.get("time")
+                if not timestamp or (now - self._parse_timestamp(timestamp)) < self._retention_period:
+                    valid_items.append(item)
+                else:
+                    expired_items.append(item)
+
+            # Track expired items
+            if metrics and expired_items:
+                for item in expired_items:
+                    telemetry_type = self._get_telemetry_type(item)
+                    metrics.count_dropped_items(
+                        1,
+                        DropCode.CLIENT_EXPIRED_DATA,
+                        telemetry_type,
+                    )
+
+            return valid_items
+        except Exception as ex:
+            # Existing exception handling
+            logger.warning("Error getting items from local storage: %s", ex)
+            return []
+
+    def _get_telemetry_type(self, item):
+        try:
+            # Map from Azure Monitor envelope types to TelemetryType enum
+            type_map = {
+                "Microsoft.ApplicationInsights.Event": TelemetryType.CUSTOM_EVENT,
+                "Microsoft.ApplicationInsights.Metric": TelemetryType.CUSTOM_METRIC,
+                "Microsoft.ApplicationInsights.RemoteDependency": TelemetryType.DEPENDENCY,
+                "Microsoft.ApplicationInsights.Exception": TelemetryType.EXCEPTION,
+                "Microsoft.ApplicationInsights.PageView": TelemetryType.PAGE_VIEW,
+                "Microsoft.ApplicationInsights.Message": TelemetryType.TRACE,
+                "Microsoft.ApplicationInsights.Request": TelemetryType.REQUEST,
+                "Microsoft.ApplicationInsights.PerformanceCounter": TelemetryType.PERFORMANCE_COUNTER,
+                "Microsoft.ApplicationInsights.Availability": TelemetryType.AVAILABILITY,
+            }
+
+            base_type = item.get("data", {}).get("baseType")
+            return type_map.get(base_type, TelemetryType.UNKNOWN)
+        except (AttributeError, KeyError):
+            return TelemetryType.UNKNOWN
+
+    def _parse_timestamp(self, timestamp_str):
+        """Parse timestamp string to Unix timestamp.
+        
+        Args:
+            timestamp_str: ISO format timestamp string
+            
+        Returns:
+            Unix timestamp (seconds since epoch)
+        """
+        try:
+            dt = datetime.datetime.fromisoformat(timestamp_str.replace('Z', '+00:00'))
+            return dt.timestamp()
+        except (ValueError, AttributeError):
+            # If parsing fails, return current time to avoid filtering out the item
+            return time.time()
