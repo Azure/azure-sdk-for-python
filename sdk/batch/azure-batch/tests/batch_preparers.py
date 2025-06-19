@@ -197,9 +197,9 @@ class PoolPreparer(AzureMgmtPreparer):
                 deployment = models.DeploymentConfiguration(
                     virtual_machine_configuration=models.VirtualMachineConfiguration(
                         image_reference=models.ImageReference(
-                            publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"
+                            publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"
                         ),
-                        node_agent_sku_id="batch.node.ubuntu 18.04",
+                        node_agent_sku_id="batch.node.ubuntu 22.04",
                     )
                 )
             inboundpool_config = models.InboundNatPool(
@@ -297,9 +297,9 @@ class JobPreparer(AzureMgmtPreparer):
                     vm_size="standard_d2_v2",
                     virtual_machine_configuration=azure.batch.models.VirtualMachineConfiguration(
                         image_reference=azure.batch.models.BatchVmImageReference(
-                            publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"
+                            publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"
                         ),
-                        node_agent_sku_id="batch.node.ubuntu 18.04",
+                        node_agent_sku_id="batch.node.ubuntu 22.04", # TODO: make it 22.04 after testing
                     ),
                 ),
             )
