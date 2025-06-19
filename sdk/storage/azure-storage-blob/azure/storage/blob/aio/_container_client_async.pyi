@@ -54,10 +54,8 @@ from .._models import (
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 
-class ContainerClient(   # type: ignore[misc]
-    AsyncStorageAccountHostsMixin,
-    StorageAccountHostsMixin,
-    StorageEncryptionMixin
+class ContainerClient(  # type: ignore[misc]
+    AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin
 ):
     account_name: str
     container_name: str

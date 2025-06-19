@@ -48,10 +48,7 @@ from ._models import (
 )
 from ._shared.base_client import StorageAccountHostsMixin
 
-class ContainerClient(
-    StorageAccountHostsMixin,
-    StorageEncryptionMixin
-):
+class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     account_name: str
     container_name: str
     def __init__(
