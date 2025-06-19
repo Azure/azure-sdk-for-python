@@ -6,9 +6,9 @@
 
 * These 3 methods on `AIProjectClient` were removed: `.inference.get_chat_completions_client()`,
 `.inference.get_embeddings_client()`, `.inference.get_image_embeddings_client()`.
-To see how you can still easily get an authenticated `azure-ai-inference` client for your AI Foundry Project, see
-the updated samples in the folder `samples\inference\azure-ai-inference`. For example,
-`sample_chat_completions_with_azure_ai_inference_client.py`. Alternatively, us the `.inference.get_azure_openai_client()` method
+For guidance on obtaining an authenticated `azure-ai-inference` client for your AI Foundry Project,
+refer to the updated samples in the `samples\inference\azure-ai-inference` directory. For example,
+`sample_chat_completions_with_azure_ai_inference_client.py`. Alternatively, use the `.inference.get_azure_openai_client()` method
 to get an authenticated `AzureOpenAI` client from the `openai` package, and perform chat completions. See samples
 in the folder `samples\inference\azure-openai`.
 * Method argument name changes:
@@ -30,7 +30,6 @@ clients from the `azure-ai-inference` package (changes were made there).
 
 * Set dependency on `azure-ai-agents` version `1.0.0` or above,
 now that we have a stable release of the Agents package.
-
 
 ## 1.0.0b11 (2025-05-15)
 

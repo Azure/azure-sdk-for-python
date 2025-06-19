@@ -36,6 +36,7 @@ from opentelemetry import trace
 from azure.monitor.opentelemetry import configure_azure_monitor
 
 from opentelemetry.instrumentation.openai_v2 import OpenAIInstrumentor
+
 OpenAIInstrumentor().instrument()
 
 file_name = os.path.basename(__file__)

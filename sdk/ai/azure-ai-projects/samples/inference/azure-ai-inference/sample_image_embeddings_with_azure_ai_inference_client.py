@@ -6,7 +6,7 @@
 
 """
 DESCRIPTION:
-    Given an AI Foundry Project endpoint, this sample demonstrates how to get an authenticated 
+    Given an AI Foundry Project endpoint, this sample demonstrates how to get an authenticated
     ImageEmbeddingsClient from the azure.ai.inference package, and perform one image
     embeddings operation. For more information on the azure.ai.inference package see
     https://pypi.org/project/azure-ai-inference/.

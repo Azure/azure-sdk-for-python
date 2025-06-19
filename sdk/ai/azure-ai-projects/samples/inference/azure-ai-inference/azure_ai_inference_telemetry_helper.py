@@ -12,6 +12,7 @@ from typing import Union, Any, TextIO, cast
 
 logger = logging.getLogger(__name__)
 
+
 def azure_ai_inference_telemetry_helper(
     *, destination: Union[TextIO, str, None] = None, **kwargs  # pylint: disable=unused-argument
 ) -> None:
@@ -58,6 +59,7 @@ def azure_ai_inference_telemetry_helper(
         logger.warning(
             "Could not call `AIInferenceInstrumentor().instrument()` since `azure-ai-inference` is not installed"
         )
+
 
 # Helper functions to enable OpenTelemetry, used by both sync and async clients
 def _get_trace_exporter(destination: Union[TextIO, str, None]) -> Any:
