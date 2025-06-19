@@ -38,6 +38,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
     throughput = 400
     TEST_DATABASE_ID = configs.TEST_DATABASE_ID
     TEST_CONTAINER_ID = "Single-partition-container-without-throughput-async"
+    MAX_TIME = 60 * 7  # 7 minutes for the test to complete, should be enough for partition split to complete
 
     @classmethod
     def setUpClass(cls):
@@ -77,10 +78,10 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
         print("initial check succeeded, now reading offer until replacing is done")
         offer = await self.container.get_throughput()
         while True:
-            if time.time() - start_time > 60 * 25:  # timeout test at 25 minutes
-                unittest.skip("Partition split didn't complete in time.")
+            if time.time() - start_time > self.MAX_TIME:  # timeout test at 25 minutes
+                self.skipTest("Partition split didn't complete in time.")
             if offer.properties['content'].get('isOfferReplacePending', False):
-                time.sleep(10)
+                time.sleep(30)  # wait for the offer to be replaced, check every 30 seconds
                 offer = await self.container.get_throughput()
             else:
                 print("offer replaced successfully, took around {} seconds".format(time.time() - offer_time))
