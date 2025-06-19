@@ -25,7 +25,7 @@ class TestNetworkManagementServiceEndpointPolicyDefinitionsOperations(AzureMgmtR
             resource_group_name=resource_group.name,
             service_endpoint_policy_name="str",
             service_endpoint_policy_definition_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestNetworkManagementServiceEndpointPolicyDefinitionsOperations(AzureMgmtR
             resource_group_name=resource_group.name,
             service_endpoint_policy_name="str",
             service_endpoint_policy_definition_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -61,7 +61,7 @@ class TestNetworkManagementServiceEndpointPolicyDefinitionsOperations(AzureMgmtR
                 "serviceResources": ["str"],
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -73,7 +73,7 @@ class TestNetworkManagementServiceEndpointPolicyDefinitionsOperations(AzureMgmtR
         response = self.client.service_endpoint_policy_definitions.list_by_resource_group(
             resource_group_name=resource_group.name,
             service_endpoint_policy_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

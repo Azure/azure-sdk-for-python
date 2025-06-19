@@ -14,10 +14,11 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-agents azure-identity azure-monitor-opentelemetry
+    pip install azure-ai-projects azure-ai-agents azure-identity azure-monitor-opentelemetry
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - the Azure AI Agents endpoint.
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+                          page of your Azure AI Foundry portal.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
     3) AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
@@ -28,12 +29,12 @@ USAGE:
        can be found in the `sample_telemetry.py` file in the azure-ai-projects telemetry samples.
 """
 
-import os, time
-from azure.ai.agents import AgentsClient
+import os
+from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import ListSortOrder
 from azure.identity import DefaultAzureCredential
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
@@ -46,20 +47,13 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 application_insights_connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 configure_azure_monitor(connection_string=application_insights_connection_string)
 
-try:
-    from azure.ai.agents.telemetry import AIAgentsInstrumentor
-
-    agents_instrumentor = AIAgentsInstrumentor()
-    if not agents_instrumentor.is_instrumented():
-        agents_instrumentor.instrument()
-except Exception as exc:  # pylint: disable=broad-exception-caught
-    print(f"Could not call `AIAgentsInstrumentor().instrument()`. Exception: {exc}")
-
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
 with tracer.start_as_current_span(scenario):
-    with agents_client:
+    with project_client:
+        agents_client = project_client.agents
+
         # [END enable_tracing]
         agent = agents_client.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"], name="my-agent", instructions="You are helpful agent"

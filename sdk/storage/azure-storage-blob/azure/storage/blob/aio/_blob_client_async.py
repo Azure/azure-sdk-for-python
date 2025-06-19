@@ -196,6 +196,22 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
         self._configure_encryption(kwargs)
 
+    async def __aenter__(self) -> Self:
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *args) -> None:
+        await self._client.__aexit__(*args)
+
+    async def close(self) -> None:
+        """This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+
+        :return: None
+        :rtype: None
+        """
+        await self._client.close()
+
     def _format_url(self, hostname: str) -> str:
         return _format_url(
             container_name=self.container_name,
@@ -228,7 +244,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :type credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]]  # pylint: disable=line-too-long
+        :type credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials_async.AsyncTokenCredential or
+            str or dict[str, str] or None
         :param str snapshot:
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`create_snapshot`. If specified, this will override
@@ -238,7 +258,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
-        :returns: A Blob client.
+        :return: A Blob client.
         :rtype: ~azure.storage.blob.BlobClient
         """
         account_url, container_name, blob_name, path_snapshot = _from_blob_url(blob_url=blob_url, snapshot=snapshot)
@@ -276,13 +296,17 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :type credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]]  # pylint: disable=line-too-long
+        :type credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials_async.AsyncTokenCredential or
+            str or dict[str, str] or None
         :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
             specifies the version of the blob to operate on.
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
-        :returns: A Blob client.
+        :return: A Blob client.
         :rtype: ~azure.storage.blob.BlobClient
 
         .. admonition:: Example:
@@ -309,7 +333,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         The information can also be retrieved if the user has a SAS to a container or blob.
         The keys in the returned dictionary include 'sku_name' and 'account_kind'.
 
-        :returns: A dict of account information (SKU and account type).
+        :return: A dict of account information (SKU and account type).
         :rtype: dict(str, str)
         """
         try:
@@ -430,7 +454,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
                  ACLs are bypassed and full permissions are granted. User must also have required RBAC permission.
 
         :paramtype source_token_intent: Literal['backup']
-        :returns: Response from creating a new block blob for a given URL.
+        :return: Response from creating a new block blob for a given URL.
         :rtype: Dict[str, Any]
         """
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
@@ -581,7 +605,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             the timeout will apply to each call individually.
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
-        :returns: Blob-updated property dict (Etag and last modified)
+        :return: Blob-updated property dict (Etag and last modified)
         :rtype: dict[str, Any]
 
         .. admonition:: Example:
@@ -726,7 +750,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             the timeout will apply to each call individually.
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
-        :returns: A streaming object (StorageStreamDownloader)
+        :return: A streaming object (StorageStreamDownloader)
         :rtype: ~azure.storage.blob.aio.StorageStreamDownloader
 
         .. admonition:: Example:
@@ -853,7 +877,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timeouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: A streaming object (BlobQueryReader)
+        :return: A streaming object (BlobQueryReader)
         :rtype: ~azure.storage.blob.aio.BlobQueryReader
         """
         error_cls = kwargs.pop("error_cls", BlobQueryError)
@@ -905,7 +929,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         and retains the blob for a specified number of days.
         After the specified number of days, the blob's data is removed from the service during garbage collection.
         Soft deleted blob is accessible through :func:`~ContainerClient.list_blobs()` specifying `include=['deleted']`
-        option. Soft-deleted blob can be restored using :func:`undelete` operation.
+        option. Soft-deleted blob can be restored using :func:`~BlobClient.undelete_blob()` operation.
 
         :param str delete_snapshots:
             Required if the blob has associated snapshots. Values include:
@@ -953,6 +977,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
+        :return: None
         :rtype: None
 
         .. admonition:: Example:
@@ -991,6 +1016,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
+        :return: None
         :rtype: None
 
         .. admonition:: Example:
@@ -1022,7 +1048,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: boolean
+        :return: boolean
         :rtype: bool
         """
         version_id = get_version_id(self.version_id, kwargs)
@@ -1092,7 +1118,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: BlobProperties
+        :return: BlobProperties
         :rtype: ~azure.storage.blob.BlobProperties
 
         .. admonition:: Example:
@@ -1180,7 +1206,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: Blob-updated property dict (Etag and last modified)
+        :return: Blob-updated property dict (Etag and last modified)
         :rtype: Dict[str, Any]
         """
         options = _set_http_headers_options(content_settings=content_settings, **kwargs)
@@ -1247,7 +1273,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: Blob-updated property dict (Etag and last modified)
+        :return: Blob-updated property dict (Etag and last modified)
         :rtype: Dict[str, Union[str, datetime]]
         """
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
@@ -1283,7 +1309,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: Key value pairs of blob tags.
+        :return: Key value pairs of blob tags.
         :rtype: Dict[str, str]
         """
 
@@ -1309,7 +1335,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: Key value pairs of blob tags.
+        :return: Key value pairs of blob tags.
         :rtype: Dict[str, str]
         """
 
@@ -1334,7 +1360,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: Key value pairs of blob tags.
+        :return: Key value pairs of blob tags.
         :rtype: Dict[str, Union[str, datetime, bool]]
         """
 
@@ -1431,7 +1457,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: Blob-updated property dict (Etag and last modified).
+        :return: Blob-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
         if self.require_encryption or (self.key_encryption_key is not None):
@@ -1527,7 +1553,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: Blob-updated property dict (Etag and last modified).
+        :return: Blob-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
         if self.require_encryption or (self.key_encryption_key is not None):
@@ -1607,7 +1633,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: Blob-updated property dict (Snapshot ID, Etag, and last modified).
+        :return: Blob-updated property dict (Snapshot ID, Etag, and last modified).
         :rtype: dict[str, Any]
 
         .. admonition:: Example:
@@ -1813,7 +1839,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
 
             .. versionadded:: 12.10.0
 
-        :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
+        :return: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
         :rtype: dict[str, Union[str, ~datetime.datetime]]
 
         .. admonition:: Example:
@@ -1852,6 +1878,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             The copy operation to abort. This can be either an ID, or an
             instance of BlobProperties.
         :type copy_id: str or ~azure.storage.blob.BlobProperties
+        :return: None
         :rtype: None
 
         .. admonition:: Example:
@@ -1918,7 +1945,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: A BlobLeaseClient object.
+        :return: A BlobLeaseClient object.
         :rtype: ~azure.storage.blob.aio.BlobLeaseClient
 
         .. admonition:: Example:
@@ -1967,6 +1994,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.aio.BlobLeaseClient or str
+        :return: None
         :rtype: None
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -2034,7 +2062,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: Blob property dict.
+        :return: Blob property dict.
         :rtype: Dict[str, Any]
         """
         if self.require_encryption or (self.key_encryption_key is not None):
@@ -2109,7 +2137,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
                  ACLs are bypassed and full permissions are granted. User must also have required RBAC permission.
 
         :paramtype source_token_intent: Literal['backup']
-        :returns: Blob property dict.
+        :return: Blob property dict.
         :rtype: Dict[str, Any]
         """
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
@@ -2155,7 +2183,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: A tuple of two lists - committed and uncommitted blocks
+        :return: A tuple of two lists - committed and uncommitted blocks
         :rtype: Tuple[List[BlobBlock], List[BlobBlock]]
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -2268,7 +2296,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: Blob-updated property dict (Etag and last modified).
+        :return: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
         if self.require_encryption or (self.key_encryption_key is not None):
@@ -2310,6 +2338,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.aio.BlobLeaseClient or str
+        :return: None
         :rtype: None
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -2365,7 +2394,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: Blob-updated property dict (Etag and last modified)
+        :return: Blob-updated property dict (Etag and last modified)
         :rtype: Dict[str, Any]
         """
         version_id = get_version_id(self.version_id, kwargs)
@@ -2398,7 +2427,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: Key value pairs of blob tags.
+        :return: Key value pairs of blob tags.
         :rtype: Dict[str, str]
         """
         version_id = get_version_id(self.version_id, kwargs)
@@ -2470,7 +2499,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns:
+        :return:
             A tuple of two lists of page ranges as dictionaries with 'start' and 'end' keys.
             The first element are filled page ranges, the 2nd element is cleared page ranges.
         :rtype: tuple(list(dict(str, str), list(dict(str, str))
@@ -2563,7 +2592,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: An iterable (auto-paging) of PageRange.
+        :return: An iterable (auto-paging) of PageRange.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.PageRange]
         """
         results_per_page = kwargs.pop('results_per_page', None)
@@ -2646,7 +2675,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns:
+        :return:
             A tuple of two lists of page ranges as dictionaries with 'start' and 'end' keys.
             The first element are filled page ranges, the 2nd element is cleared page ranges.
         :rtype: tuple(list(dict(str, str), list(dict(str, str))
@@ -2711,7 +2740,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: Blob-updated property dict (Etag and last modified).
+        :return: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
         options = _set_sequence_number_options(sequence_number_action, sequence_number=sequence_number, **kwargs)
@@ -2767,7 +2796,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: Blob-updated property dict (Etag and last modified).
+        :return: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
@@ -2863,7 +2892,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: Blob-updated property dict (Etag and last modified).
+        :return: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
         if self.require_encryption or (self.key_encryption_key is not None):
@@ -2994,7 +3023,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
                  ACLs are bypassed and full permissions are granted. User must also have required RBAC permission.
 
         :paramtype source_token_intent: Literal['backup']
-        :returns: Response after uploading pages from specified URL.
+        :return: Response after uploading pages from specified URL.
         :rtype: Dict[str, Any]
         """
 
@@ -3075,7 +3104,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: Blob-updated property dict (Etag and last modified).
+        :return: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
         if self.require_encryption or (self.key_encryption_key is not None):
@@ -3172,7 +3201,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
+        :return: Blob-updated property dict (Etag, last modified, append offset, committed block count).
         :rtype: dict(str, Any)
         """
         if self.require_encryption or (self.key_encryption_key is not None):
@@ -3296,7 +3325,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
                  ACLs are bypassed and full permissions are granted. User must also have required RBAC permission.
 
         :paramtype source_token_intent: Literal['backup']
-        :returns: Result after appending a new block.
+        :return: Result after appending a new block.
         :rtype: Dict[str, Union[str, datetime, int]]
         """
         if self.require_encryption or (self.key_encryption_key is not None):
@@ -3354,7 +3383,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
+        :return: Blob-updated property dict (Etag, last modified, append offset, committed block count).
         :rtype: dict(str, Any)
         """
         if self.require_encryption or (self.key_encryption_key is not None):
@@ -3370,7 +3399,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
 
         The container need not already exist. Defaults to current blob's credentials.
 
-        :returns: A ContainerClient.
+        :return: A ContainerClient.
         :rtype: ~azure.storage.blob.ContainerClient
 
         .. admonition:: Example:

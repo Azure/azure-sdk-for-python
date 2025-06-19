@@ -13,17 +13,18 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-agents azure-identity opentelemetry-sdk azure-core-tracing-opentelemetry
+    pip install azure-ai-projects azure-ai-agents azure-identity opentelemetry-sdk azure-core-tracing-opentelemetry
 
     If you want to export telemetry to OTLP endpoint (such as Aspire dashboard
     https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/standalone?tabs=bash)
     install:
 
-    pip install opentelemetry-exporter-otlp-proto-grpc
+    pip install azure-ai-projects opentelemetry-exporter-otlp-proto-grpc
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - the Azure AI Agents endpoint.
-    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+                          page of your Azure AI Foundry portal.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
     3) AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
        messages, which may contain personal data. False by default.
@@ -36,7 +37,7 @@ settings.tracing_implementation = "opentelemetry"
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import (
     AgentEventHandler,
@@ -62,7 +63,7 @@ AIAgentsInstrumentor().instrument()
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
@@ -101,7 +102,10 @@ scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
 with tracer.start_as_current_span(scenario):
-    with agents_client:
+
+    with project_client:
+        agents_client = project_client.agents
+
         # Create an agent and run stream with event handler
         agent = agents_client.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"], name="my-agent", instructions="You are a helpful agent"

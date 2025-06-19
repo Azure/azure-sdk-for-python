@@ -25,7 +25,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
     host = config.host
     masterKey = config.masterKey
     connectionPolicy = config.connectionPolicy
-    TEST_CONTAINER_ID = "Full Text Container " + str(uuid.uuid4())
+    TEST_CONTAINER_ID = "FullTextContainer-" + str(uuid.uuid4())
 
     @classmethod
     def setUpClass(cls):
@@ -38,7 +38,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         cls.sync_client = CosmosSyncClient(cls.host, cls.masterKey)
         cls.test_db = cls.sync_client.create_database(str(uuid.uuid4()))
         cls.test_container = cls.test_db.create_container(
-            id="FTS" + cls.TEST_CONTAINER_ID,
+            id=cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_2_PARTITIONS,
             indexing_policy=test_config.get_full_text_indexing_policy(path="/text"),
@@ -48,8 +48,6 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             item['id'] = str(index)
             item['pk'] = str((index % 2) + 1)
             cls.test_container.create_item(item)
-        # Need to give the container time to index all the recently added items - 10 minutes seems to work
-        time.sleep(10 * 60)
 
     @classmethod
     def tearDownClass(cls):
@@ -79,7 +77,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         try:
             query = "SELECT TOP 10 c.index FROM c WHERE FullTextContains(c.title, 'John')" \
-                    " ORDER BY RANK FullTextScore(c.title, ['John']) DESC"
+                    " ORDER BY RANK FullTextScore(c.title, 'John') DESC"
             results = self.test_container.query_items(query)
             [item async for item in results]
             pytest.fail("Attempting to set an ordering direction in a full text score query should fail.")
@@ -90,7 +88,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         try:
             query = "SELECT TOP 10 c.index FROM c WHERE FullTextContains(c.title, 'John')" \
-                    " ORDER BY RANK RRF(FullTextScore(c.title, ['John']), VectorDistance(c.vector, [1,2,3])) DESC"
+                    " ORDER BY RANK RRF(FullTextScore(c.title, 'John'), VectorDistance(c.vector, [1,2,3])) DESC"
             results = self.test_container.query_items(query)
             [item async for item in results]
             pytest.fail("Attempting to set an ordering direction in a hybrid search query should fail.")
@@ -103,7 +101,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         os.environ["AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS"] = "0"
         try:
             query = "SELECT TOP 1 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \
-                    "FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, ['John'])"
+                    "FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, 'John')"
             results = self.test_container.query_items(query)
             [item async for item in results]
             pytest.fail("Config was not applied properly.")
@@ -115,7 +113,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_hybrid_search_queries_async(self):
         query = "SELECT TOP 10 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \
-                "FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, ['John'])"
+                "FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, 'John')"
         results = self.test_container.query_items(query)
         result_list = [item async for item in results]
         assert len(result_list) == 3
@@ -123,7 +121,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             assert res['index'] in [2, 85, 57]
 
         query = "SELECT TOP 10 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John')" \
-                " OR FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, ['John'])"
+                " OR FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, 'John')"
         results = self.test_container.query_items(query)
         result_list = [item async for item in results]
         assert len(result_list) == 3
@@ -131,7 +129,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             assert res['index'] in [2, 85, 57]
 
         query = "SELECT c.index, c.title FROM c WHERE FullTextContains(c.title, 'John')" \
-                " OR FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, ['John']) OFFSET 1 LIMIT 5"
+                " OR FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, 'John') OFFSET 1 LIMIT 5"
         results = self.test_container.query_items(query)
         result_list = [item async for item in results]
         assert len(result_list) == 2
@@ -140,63 +138,63 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         query = "SELECT TOP 20 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \
                 "FullTextContains(c.text, 'John') OR FullTextContains(c.text, 'United States') " \
-                "ORDER BY RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States']))"
+                "ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'))"
         results = self.test_container.query_items(query)
         result_list = [item async for item in results]
-        assert len(result_list) == 15
+        assert len(result_list) == 13
         for res in result_list:
             assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85]
 
         query = "SELECT TOP 10 c.index, c.title FROM c WHERE " \
                 "FullTextContains(c.title, 'John') OR FullTextContains(c.text, 'John') OR " \
-                "FullTextContains(c.text, 'United States') ORDER BY RANK RRF(FullTextScore(c.title, ['John'])," \
-                " FullTextScore(c.text, ['United States']))"
+                "FullTextContains(c.text, 'United States') ORDER BY RANK RRF(FullTextScore(c.title, 'John')," \
+                " FullTextScore(c.text, 'United States'))"
         results = self.test_container.query_items(query)
         result_list = [item async for item in results]
         assert len(result_list) == 10
         for res in result_list:
-            assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25]
+            assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 2]
 
         query = "SELECT c.index, c.title FROM c WHERE FullTextContains(c.title, 'John')" \
                 " OR FullTextContains(c.text, 'John') OR FullTextContains(c.text, 'United States') ORDER BY " \
-                "RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States'])) OFFSET 5 LIMIT 10"
+                "RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States')) OFFSET 5 LIMIT 10"
         results = self.test_container.query_items(query)
         result_list = [item async for item in results]
-        assert len(result_list) == 10
+        assert len(result_list) == 8
         for res in result_list:
             assert res['index'] in [24, 77, 76, 80, 25, 22, 2, 66, 57, 85]
 
         query = "SELECT TOP 10 c.index, c.title FROM c " \
-                "ORDER BY RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States']))"
+                "ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'))"
         results = self.test_container.query_items(query)
         result_list = [item async for item in results]
         assert len(result_list) == 10
         for res in result_list:
-            assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25]
+            assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 2]
 
         query = "SELECT c.index, c.title FROM c " \
-                "ORDER BY RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States'])) " \
+                "ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States')) " \
                 "OFFSET 0 LIMIT 13"
         results = self.test_container.query_items(query)
         result_list = [item async for item in results]
         assert len(result_list) == 13
         for res in result_list:
-            assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66]
+            assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 1, 4]
 
         read_item = await self.test_container.read_item('50', '1')
         item_vector = read_item['vector']
         query = "SELECT c.index, c.title FROM c " \
-                "ORDER BY RANK RRF(FullTextScore(c.text, ['United States']), VectorDistance(c.vector, {})) " \
+                "ORDER BY RANK RRF(FullTextScore(c.text, 'United States'), VectorDistance(c.vector, {})) " \
                 "OFFSET 0 LIMIT 10".format(item_vector)
         results = self.test_container.query_items(query)
         result_list = [item async for item in results]
         assert len(result_list) == 10
         for res in result_list:
-            assert res['index'] in [51, 54, 28, 70, 24, 61, 56, 26, 58, 77]
+            assert res['index'] in [51, 54, 28, 70, 24, 61, 56, 26, 58, 77, 2, 68]
 
     async def test_hybrid_search_query_pagination_async(self):
         query = "SELECT c.index, c.title FROM c " \
-                "ORDER BY RANK RRF(FullTextScore(c.title, ['John']), FullTextScore(c.text, ['United States'])) " \
+                "ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States')) " \
                 "OFFSET 0 LIMIT 13"
         query_iterable = self.test_container.query_items(query, max_item_count=5)
         all_fetched_res = []
@@ -213,7 +211,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         item_vector = item['vector']
         response_hook = test_config.ResponseHookCaller()
         query = "SELECT c.index, c.title FROM c " \
-                "ORDER BY RANK RRF(FullTextScore(c.text, ['United States']), VectorDistance(c.vector, {})) " \
+                "ORDER BY RANK RRF(FullTextScore(c.text, 'United States'), VectorDistance(c.vector, {})) " \
                 "OFFSET 0 LIMIT 10".format(item_vector)
         results = self.test_container.query_items(query, response_hook=response_hook)
         result_list = [item async for item in results]
@@ -225,12 +223,153 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         item_vector = item['vector']
         response_hook = test_config.ResponseHookCaller()
         query = "SELECT c.index, c.title FROM c " \
-                "ORDER BY RANK RRF(FullTextScore(c.text, ['United States']), VectorDistance(c.vector, {})) " \
+                "ORDER BY RANK RRF(FullTextScore(c.text, 'United States'), VectorDistance(c.vector, {})) " \
                 "OFFSET 0 LIMIT 10".format(item_vector)
         results = self.test_container.query_items(query, partition_key='1', response_hook=response_hook)
         result_list = [item async for item in results]
         assert len(result_list) == 10
         assert response_hook.count == 1
+
+    async def test_hybrid_search_weighted_reciprocal_rank_fusion_async(self):
+        # Test case 1
+        query = """
+                    SELECT TOP 15 c.index AS Index, c.title AS Title, c.text AS Text
+                    FROM c
+                    WHERE FullTextContains(c.title, 'John') OR FullTextContains(c.text, 'John') OR FullTextContains(c.text, 'United States')
+                    ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [1, 1])
+                """
+        results = self.test_container.query_items(query)
+        result_list = [res['Index'] async for res in results]
+        # If some scores rank the same the order of the results may change
+        for result in result_list:
+            assert result in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85]
+
+        # Test case 2
+        query = """
+                    SELECT TOP 15 c.index AS Index, c.title AS Title, c.text AS Text
+                    FROM c
+                    WHERE FullTextContains(c.title, 'John') OR FullTextContains(c.text, 'John') OR FullTextContains(c.text, 'United States')
+                    ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [10, 10])
+                """
+        results = self.test_container.query_items(query)
+        result_list = [res['Index'] async for res in results]
+        # If some scores rank the same the order of the results may change
+        for result in result_list:
+            assert result in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85]
+
+        # Test case 3
+        query = """
+                    SELECT TOP 10 c.index AS Index, c.title AS Title, c.text AS Text
+                    FROM c
+                    WHERE FullTextContains(c.title, 'John') OR FullTextContains(c.text, 'John') OR FullTextContains(c.text, 'United States')
+                    ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [0.1, 0.1])
+                """
+        results = self.test_container.query_items(query)
+        result_list = [res['Index'] async for res in results]
+        for result in result_list:
+            assert result in [61, 51, 49, 54, 75, 24, 77, 76, 80, 2, 25]
+
+        # Test case 4
+        query = """
+                    SELECT TOP 15 c.index AS Index, c.title AS Title, c.text AS Text
+                    FROM c
+                    WHERE FullTextContains(c.title, 'John') OR FullTextContains(c.text, 'John') OR FullTextContains(c.text, 'United States')
+                    ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [-1, -1])
+                """
+        results = self.test_container.query_items(query)
+        result_list = [res['Index'] async for res in results]
+        # If some scores rank the same the order of the results may change
+        for result in result_list:
+            assert result in [85, 57, 66, 2, 22, 25, 77, 76, 80, 75, 24, 49, 54, 51, 81, 61]
+
+        # Test case 5
+        read_item = await self.test_container.read_item('50', '1')
+        item_vector = read_item['vector']
+        query = "SELECT c.index, c.title FROM c " \
+                "ORDER BY RANK RRF(FullTextScore(c.text, 'United States'), VectorDistance(c.vector, {}), [1,1]) " \
+                "OFFSET 0 LIMIT 10".format(item_vector)
+        results = self.test_container.query_items(query)
+        result_list = [res async for res in results]
+        assert len(result_list) == 10
+        result_list = [res['index'] for res in result_list]
+        assert result_list == [51, 54, 28, 70, 56, 24, 26, 61, 58, 68]
+
+    async def test_invalid_hybrid_search_queries_weighted_reciprocal_rank_fusion_async(self):
+        try:
+            query = "SELECT c.index, RRF(VectorDistance(c.vector, [1,2,3]), FullTextScore(c.text, 'test') FROM c"
+            results = self.test_container.query_items(query)
+            [item async for item in results]
+            pytest.fail("Attempting to project RRF in a query should fail.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
+
+    async def test_weighted_vs_non_weighted_reciprocal_rank_fusion_async(self):
+        # Non-weighted RRF query
+        query_non_weighted = """
+            SELECT TOP 10 c.index, c.title FROM c
+            ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'))
+        """
+        results_non_weighted = self.test_container.query_items(query_non_weighted)
+        result_list_non_weighted = [res['index'] async for res in results_non_weighted]
+
+        # Weighted RRF query with equal weights
+        query_weighted_equal = """
+            SELECT TOP 10 c.index, c.title FROM c
+            ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [1, 1])
+        """
+        results_weighted_equal = self.test_container.query_items(query_weighted_equal)
+        result_list_weighted_equal = [res['index'] async for res in results_weighted_equal]
+
+        # Weighted RRF query with different direction weights
+        query_weighted_different = """
+            SELECT TOP 10 c.index, c.title FROM c
+            ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [1, -0.5])
+        """
+        results_weighted_different = self.test_container.query_items(query_weighted_different)
+        result_list_weighted_different = [res['index'] async for res in results_weighted_different]
+
+        # Assertions
+        assert result_list_non_weighted == result_list_weighted_equal, "Non-weighted and equally weighted RRF results should match."
+        assert result_list_non_weighted != result_list_weighted_different, "Non-weighted and differently direction weighted RRF results should not match."
+
+    async def test_weighted_reciprocal_rank_fusion_with_missing_or_extra_weights_async(self):
+        try:
+            # Weighted RRF query with one weight missing
+            query_missing_weight = """
+                SELECT TOP 10 c.index, c.title FROM c
+                ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [1])
+            """
+            res = self.test_container.query_items(query_missing_weight)
+            [item async for item in res]
+            pytest.fail("Query with missing weights should fail.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
+
+        try:
+            # Weighted RRF query with an extra weight
+            query_extra_weight = """
+                SELECT TOP 10 c.index, c.title FROM c
+                ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [1, 1, 1])
+            """
+            results_extra_weight = self.test_container.query_items(query_extra_weight)
+            [item async for item in results_extra_weight]
+            pytest.fail("Query with extra weights should fail.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
+
+    async def test_weighted_reciprocal_rank_fusion_with_response_hook_async(self):
+        response_hook = test_config.ResponseHookCaller()
+        query_weighted_rrf = """
+            SELECT TOP 10 c.index, c.title FROM c
+            ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [1, 0.5])
+        """
+        results = self.test_container.query_items(query_weighted_rrf, response_hook=response_hook)
+        result_list = [item async for item in results]
+        assert len(result_list) == 10
+        assert response_hook.count > 0  # Ensure the response hook was called
+
+
+
 
 
 if __name__ == "__main__":

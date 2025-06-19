@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 from .._serialization import Serializer, Deserializer
-from typing import Any, AsyncIterable
+from typing import Any
 
 from azure.core.async_paging import AsyncItemPaged
 
@@ -21,7 +21,7 @@ class FeatureClientOperationsMixin(object):
     def list_operations(
         self,
         **kwargs: Any
-    ) -> AsyncIterable["_models.Operation"]:
+    ) -> AsyncItemPaged["_models.Operation"]:
         """Lists all of the available Microsoft.Features REST API operations.
 
         :return: An iterator like instance of either Operation or the result of cls(response)

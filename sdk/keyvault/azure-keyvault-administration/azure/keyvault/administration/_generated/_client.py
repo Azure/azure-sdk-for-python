@@ -15,7 +15,7 @@ from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import KeyVaultClientConfiguration
-from ._serialization import Deserializer, Serializer
+from ._utils.serialization import Deserializer, Serializer
 from .operations import KeyVaultClientOperationsMixin, RoleAssignmentsOperations, RoleDefinitionsOperations
 
 if TYPE_CHECKING:
@@ -26,16 +26,18 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):
     """The key vault client performs cryptographic key operations and vault operations against the Key
     Vault service.
 
-    :ivar role_assignments: RoleAssignmentsOperations operations
-    :vartype role_assignments: azure.keyvault.administration._generated.operations.RoleAssignmentsOperations
     :ivar role_definitions: RoleDefinitionsOperations operations
-    :vartype role_definitions: azure.keyvault.administration._generated.operations.RoleDefinitionsOperations
+    :vartype role_definitions:
+     azure.keyvault.administration._generated.operations.RoleDefinitionsOperations
+    :ivar role_assignments: RoleAssignmentsOperations operations
+    :vartype role_assignments:
+     azure.keyvault.administration._generated.operations.RoleAssignmentsOperations
     :param vault_base_url: Required.
     :type vault_base_url: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "7.6-preview.2". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Default value is "7.6". Note
+     that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -44,6 +46,7 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):
     def __init__(self, vault_base_url: str, credential: "TokenCredential", **kwargs: Any) -> None:
         _endpoint = "{vaultBaseUrl}"
         self._config = KeyVaultClientConfiguration(vault_base_url=vault_base_url, credential=credential, **kwargs)
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -66,10 +69,10 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.role_assignments = RoleAssignmentsOperations(
+        self.role_definitions = RoleDefinitionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.role_definitions = RoleDefinitionsOperations(
+        self.role_assignments = RoleAssignmentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

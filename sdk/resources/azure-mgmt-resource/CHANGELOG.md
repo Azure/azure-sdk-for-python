@@ -1,5 +1,40 @@
 # Release History
 
+## 24.0.0 (2025-06-16)
+
+### Features Added
+
+  - Model Deployment has a new parameter identity
+  - Model DeploymentParameter has a new parameter expression
+  - Model DeploymentProperties has a new parameter external_input_definitions
+  - Model DeploymentProperties has a new parameter external_inputs
+  - Model DeploymentWhatIfProperties has a new parameter external_input_definitions
+  - Model DeploymentWhatIfProperties has a new parameter external_inputs
+  - Model WhatIfChange has a new parameter extension
+
+### Breaking Changes
+
+  - The `deploymentstacks` module has been separated from the `azure-mgmt-resource` package into independent package `azure-mgmt-resource-deploymentstacks`
+  - The `deploymentscripts` module has been separated from the `azure-mgmt-resource` package into independent package `azure-mgmt-resource-deploymentscripts` 
+  - The `templatespecs` module has been separated from the `azure-mgmt-resource` package into independent package `azure-mgmt-resource-templatespecs`
+  - If you previously imported these modules using statements like `from azure.mgmt.resource import DeploymentStacksClient`, you'll need to update your code to `from azure.mgmt.resource.deploymentstacks import DeploymentStacksClient`. If you were already using the fully qualified import path, no changes are required. This applies to all three modules: `deploymentstacks`, `deploymentscripts`, and `templatespecs`.
+
+## 23.4.0 (2025-05-19)
+
+### Features Added
+
+  - Model DeploymentProperties has a new parameter extension_configs
+  - Model DeploymentPropertiesExtended has a new parameter extensions
+  - Model DeploymentWhatIfProperties has a new parameter extension_configs
+  - Model ResourceReference has a new parameter api_version
+  - Model ResourceReference has a new parameter extension
+  - Model ResourceReference has a new parameter identifiers
+  - Model ResourceReference has a new parameter resource_type
+  - Model TargetResource has a new parameter api_version
+  - Model TargetResource has a new parameter extension
+  - Model TargetResource has a new parameter identifiers
+  - Model TargetResource has a new parameter symbolic_name
+
 ## 23.3.0 (2025-02-24)
 
 ### Features Added

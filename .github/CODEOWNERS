@@ -1,19 +1,6 @@
 # Instructions for CODEOWNERS file format and automatic build failure notifications:
 # https://github.com/Azure/azure-sdk/blob/main/docs/policies/opensource.md#codeowners
 
-################
-# Orphaned paths
-################
-# As of 1/26/2023 these paths have no owners:
-
-# /**
-# /.devcontainer/
-# /.vscode/
-# /conda-releaselogs/
-# /doc/
-# /scripts/
-# /tools/
-
 ###########
 # SDK
 ###########
@@ -264,7 +251,7 @@
 
 # PRLabel: %AI Agents
 # ServiceLabel: %AI Agents %Service Attention
-/sdk/ai/azure-ai-agents/                                             @dargilco @jhakulin
+/sdk/ai/azure-ai-agents/                                             @dargilco @jhakulin @trangevi @glharper @nick863 @howieleung
 
 # PRLabel: %AI Projects
 # ServiceLabel: %AI Projects %Service Attention
@@ -319,6 +306,10 @@
 /sdk/mixedreality/azure-mixedreality-authentication/                 @RamonArguelles
 /sdk/remoterendering/                                                @FlorianBorn71
 
+# ServiceLabel: %Online Experimentation
+# PRLabel: %Online Experimentation
+/sdk/onlineexperimentation/                                          @Azure/azure-sdk-write-onlineexperimentation
+
 # ServiceLabel: %OpenAI
 # ServiceOwners: @trrwilson
 
@@ -358,7 +349,7 @@
 # ServiceOwners:  @mattgotteiner
 
 # PRLabel: %Search
-/sdk/search/                                                         @xiangyan99
+/sdk/search/                                                         @xiangyan99 @Azure/azsdk-search
 
 # PRLabel: %Service Fabric
 /sdk/servicefabric/                                                  @QingChenmsft @samedder
@@ -390,19 +381,19 @@
 # PRLabel: %Health Deidentification
 /sdk/healthdataaiservices/                                           @alexathomases @Azure/healthdatadeidentification
 
-# AzureSdkOwners: @catalinaperalta
+# AzureSdkOwners: @bojunehsu @vkurpad
 # ServiceLabel: %Cognitive - Form Recognizer
 # ServiceOwners: @bojunehsu @vkurpad
 
 # PRLabel: %Cognitive - Form Recognizer
-/sdk/formrecognizer/                                                 @catalinaperalta
+/sdk/formrecognizer/                                                 @bojunehsu @vkurpad
 
-# AzureSdkOwners: @YalinLi0312
+# AzureSdkOwners: @bojunehsu @vkurpad
 # ServiceLabel: %Document Intelligence
 # ServiceOwners: @bojunehsu @vkurpad
 
 # PRLabel: %Document Intelligence
-/sdk/documentintelligence/                                           @YalinLi0312
+/sdk/documentintelligence/                                           @bojunehsu @vkurpad
 
 # AzureSdkOwners: @xiangyan99
 # ServiceLabel: %Cognitive - Metrics Advisor
@@ -421,7 +412,7 @@
 /sdk/translation/azure-ai-translation-text/                          @MikeyMCZ
 
 # PRLabel: %Cognitive - Language
-/sdk/cognitivelanguage/                                              @kristapratico @quentinRobinson @wangyuantao
+/sdk/cognitivelanguage/                                              @quentinRobinson @wangyuantao
 
 # PRLabel: %Cognitive - Personalizer
 /sdk/personalizer/                                                   @sharathmalladi
@@ -837,9 +828,8 @@
 # Management Plane
 /**/*mgmt*/                                                          @ChenxiJiang333 @msyyc
 
-
 ###########
-# Eng Sys
+# Eng Sys and other
 ###########
 /eng/                                                                @scbedd @weshaggard @benbp
 /eng/common/                                                         @Azure/azure-sdk-eng
@@ -848,13 +838,20 @@
 /sdk/pullrequest.yml                                                 @scbedd @weshaggard @benbp
 
 /.config/1espt/                                                      @benbp @weshaggard
+/.devcontainer/                                                      @scbedd @mccoyp @benbp @weshaggard
+/.vscode/                                                            @scbedd @mccoyp @benbp @weshaggard
 
 /tools/                                                              @scbedd @mccoyp
+/scripts/                                                            @scbedd @mccoyp
+/scripts/breaking_changes_checker/                                   @catalinaperalta
+/doc/                                                                @scbedd @mccoyp
+/conda/                                                              @scbedd @xiangyan99 @lmazuel
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
 /eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312 @kristapratico
 /eng/common/pipelines/codeowners-linter.yml                          @lmazuel @mccoyp
+/eng/pipelines/docindex.yml                                          @danieljurek @scbedd @weshaggard @benbp
 
 # Add approvers for typespec-python emitter version updates
 /eng/emitter-package.json                                            @mccoyp @catalinaperalta @kristapratico @iscai-msft

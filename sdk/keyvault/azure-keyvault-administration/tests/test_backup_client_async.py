@@ -31,17 +31,20 @@ class TestBackupClientTests(KeyVaultTestCase):
         set_bodiless_matcher()
         # backup the vault
         container_uri = kwargs.pop("container_uri")
+        # make sure an error isn't raised by pre-backup check; i.e. ensure the backup can be done
         check_poller = await client.begin_pre_backup(container_uri, use_managed_identity=True)
-        check_result = await check_poller.result()
-        assert check_result.error is None
+        await check_poller.wait()
         backup_poller = await client.begin_backup(container_uri, use_managed_identity=True)
         backup_operation = await backup_poller.result()
         assert backup_operation.folder_url
 
+        if self.is_live:
+            await asyncio.sleep(15)  # Additional waiting to ensure backup will be available for restore
+
         # restore the backup
+        # make sure an error isn't raised by pre-restore check; i.e. ensure the restore can be done
         check_poller = await client.begin_pre_restore(backup_operation.folder_url, use_managed_identity=True)
-        check_result = await check_poller.result()
-        assert check_result.error is None
+        await check_poller.wait()
         restore_poller = await client.begin_restore(backup_operation.folder_url, use_managed_identity=True)
         await restore_poller.wait()
         if self.is_live:
@@ -61,6 +64,9 @@ class TestBackupClientTests(KeyVaultTestCase):
         # create a new poller from a continuation token
         token = backup_poller.continuation_token()
         rehydrated = await client.begin_backup(container_uri, use_managed_identity=True, continuation_token=token)
+
+        if self.is_live:
+            await asyncio.sleep(15)  # Additional waiting to ensure backup will be available for restore
 
         rehydrated_operation = await rehydrated.result()
         assert rehydrated_operation.folder_url
@@ -98,6 +104,9 @@ class TestBackupClientTests(KeyVaultTestCase):
         backup_poller = await client.begin_backup(container_uri, use_managed_identity=True)
         backup_operation = await backup_poller.result()
 
+        if self.is_live:
+            await asyncio.sleep(15)  # Additional waiting to ensure backup will be available for restore
+
         # restore the key
         restore_poller = await client.begin_restore(
             backup_operation.folder_url, use_managed_identity=True, key_name=key_name
@@ -120,7 +129,7 @@ class TestBackupClientTests(KeyVaultTestCase):
         # backup the vault
         container_uri = kwargs.pop("container_uri")
         backup_poller = await client.begin_backup(container_uri, use_managed_identity=True)
-        
+
         # create a new poller from a continuation token
         token = backup_poller.continuation_token()
         rehydrated = await client.begin_backup(container_uri, use_managed_identity=True, continuation_token=token)
@@ -142,6 +151,9 @@ class TestBackupClientTests(KeyVaultTestCase):
         late_rehydrated = await client.begin_backup(container_uri, use_managed_identity=True, continuation_token=token)
         assert late_rehydrated.status() == "Succeeded"
         await late_rehydrated.wait()
+
+        if self.is_live:
+            await asyncio.sleep(15)  # Additional waiting to ensure backup will be available for restore
 
         # restore the backup
         restore_poller = await client.begin_restore(backup_operation.folder_url, use_managed_identity=True)
@@ -175,12 +187,18 @@ class TestBackupClientTests(KeyVaultTestCase):
         # backup the vault
         container_uri = kwargs.pop("container_uri")
         sas_token = kwargs.pop("sas_token")
+
+        if self.is_live and not sas_token:
+            pytest.skip("SAS token is required for live tests. Please set the BLOB_STORAGE_SAS_TOKEN environment variable.")
+
         check_poller = await client.begin_pre_backup(container_uri, sas_token=sas_token)
-        check_result = await check_poller.result()
-        assert check_result.error is None
+        await check_poller.wait()
         backup_poller = await client.begin_backup(container_uri, sas_token)
         backup_operation = await backup_poller.result()
         assert backup_operation.folder_url
+
+        if self.is_live:
+            await asyncio.sleep(15)  # Additional waiting to ensure backup will be available for restore
 
         # restore the backup
         check_poller = await client.begin_pre_restore(backup_operation.folder_url, sas_token=sas_token)

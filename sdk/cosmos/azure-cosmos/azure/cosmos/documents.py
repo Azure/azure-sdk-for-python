@@ -339,6 +339,7 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
     __defaultRequestTimeout: int = 5  # seconds
     __defaultDBAConnectionTimeout: int = 3  # seconds
     __defaultReadTimeout: int = 65  # seconds
+    __defaultRecoveryReadTimeout: int = 6  # seconds
     __defaultDBAReadTimeout: int = 3 # seconds
     __defaultMaxBackoff: int = 1 # seconds
 
@@ -347,6 +348,9 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         self.RequestTimeout: int = self.__defaultRequestTimeout
         self.DBAConnectionTimeout: int = self.__defaultDBAConnectionTimeout
         self.ReadTimeout: int = self.__defaultReadTimeout
+        # The request timeout for a request trying to recover a unavailable partition
+        # This is only applicable if circuit breaker is enabled
+        self.RecoveryReadTimeout: int = self.__defaultRecoveryReadTimeout
         self.DBAReadTimeout: int = self.__defaultDBAReadTimeout
         self.MaxBackoff: int = self.__defaultMaxBackoff
         self.ConnectionMode: int = ConnectionMode.Gateway
@@ -438,7 +442,7 @@ class _QueryFeature:
     NonStreamingOrderBy: Literal["NonStreamingOrderBy"] = "NonStreamingOrderBy"
     HybridSearch: Literal["HybridSearch"] = "HybridSearch"
     CountIf: Literal["CountIf"] = "CountIf"
-
+    WeightedRankFusion: Literal["WeightedRankFusion"] = "WeightedRankFusion"
 
 class _DistinctType:
     NoneType: Literal["None"] = "None"

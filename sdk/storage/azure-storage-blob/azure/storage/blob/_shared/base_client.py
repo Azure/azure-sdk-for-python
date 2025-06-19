@@ -127,78 +127,70 @@ class StorageAccountHostsMixin(object):
         self._sdk_moniker = f"storage-{service}/{VERSION}"
         self._config, self._pipeline = self._create_pipeline(self.credential, sdk_moniker=self._sdk_moniker, **kwargs)
 
-    def __enter__(self):
-        self._client.__enter__()
-        return self
-
-    def __exit__(self, *args):
-        self._client.__exit__(*args)
-
-    def close(self):
-        """This method is to close the sockets opened by the client.
-        It need not be used when using with a context manager.
-        """
-        self._client.close()
-
     @property
-    def url(self):
+    def url(self) -> str:
         """The full endpoint URL to this entity, including SAS token if used.
 
         This could be either the primary endpoint,
         or the secondary endpoint depending on the current :func:`location_mode`.
 
-        :returns: The full endpoint URL to this entity, including SAS token if used.
+        :return: The full endpoint URL to this entity, including SAS token if used.
         :rtype: str
         """
-        return self._format_url(self._hosts[self._location_mode])
+        return self._format_url(self._hosts[self._location_mode])   # type: ignore
 
     @property
-    def primary_endpoint(self):
+    def primary_endpoint(self) -> str:
         """The full primary endpoint URL.
 
+        :return: The full primary endpoint URL.
         :rtype: str
         """
-        return self._format_url(self._hosts[LocationMode.PRIMARY])
+        return self._format_url(self._hosts[LocationMode.PRIMARY])  # type: ignore
 
     @property
-    def primary_hostname(self):
+    def primary_hostname(self) -> str:
         """The hostname of the primary endpoint.
 
+        :return: The hostname of the primary endpoint.
         :rtype: str
         """
         return self._hosts[LocationMode.PRIMARY]
 
     @property
-    def secondary_endpoint(self):
+    def secondary_endpoint(self) -> str:
         """The full secondary endpoint URL if configured.
 
         If not available a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
         `secondary_hostname` keyword argument on instantiation.
 
+        :return: The full secondary endpoint URL.
         :rtype: str
-        :raise ValueError:
+        :raise ValueError: If no secondary endpoint is configured.
         """
         if not self._hosts[LocationMode.SECONDARY]:
             raise ValueError("No secondary host configured.")
-        return self._format_url(self._hosts[LocationMode.SECONDARY])
+        return self._format_url(self._hosts[LocationMode.SECONDARY])    # type: ignore
 
     @property
-    def secondary_hostname(self):
+    def secondary_hostname(self) -> Optional[str]:
         """The hostname of the secondary endpoint.
 
         If not available this will be None. To explicitly specify a secondary hostname, use the optional
         `secondary_hostname` keyword argument on instantiation.
 
+        :return: The hostname of the secondary endpoint, or None if not configured.
         :rtype: Optional[str]
         """
         return self._hosts[LocationMode.SECONDARY]
 
     @property
-    def location_mode(self):
+    def location_mode(self) -> str:
         """The location mode that the client is currently using.
 
         By default this will be "primary". Options include "primary" and "secondary".
 
+        :return: The current location mode.
         :rtype: str
         """
 
@@ -303,7 +295,7 @@ class StorageAccountHostsMixin(object):
         """Given a series of request, do a Storage batch call.
 
         :param HttpRequest reqs: A collection of HttpRequest objects.
-        :returns: An iterator of HttpResponse objects.
+        :return: An iterator of HttpResponse objects.
         :rtype: Iterator[HttpResponse]
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
