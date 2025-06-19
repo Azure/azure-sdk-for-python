@@ -69,6 +69,8 @@ _AZURE_MONITOR_DISTRO_VERSION_ARG = "distro_version"
 _MICROSOFT_CUSTOM_EVENT_NAME = "microsoft.custom_event.name"
 
 # Statsbeat
+## Customer Facing Statsbeat
+_APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW = "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW"
 
 # (OpenTelemetry metric name, Statsbeat metric name)
 _ATTACH_METRIC_NAME = ("attach", "Attach")
