@@ -4,10 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 # pylint: disable=line-too-long,R,no-member
-"""Customize generated code here.
 
-Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
-"""
 import io
 import logging
 import sys
@@ -16,18 +13,10 @@ from typing import Union, Any, TextIO, cast
 logger = logging.getLogger(__name__)
 
 
-# TODO: what about `set AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED=true`?
-def enable_telemetry(
+def azure_ai_inference_telemetry_helper(
     *, destination: Union[TextIO, str, None] = None, **kwargs  # pylint: disable=unused-argument
 ) -> None:
-    """Enables telemetry collection with OpenTelemetry for Azure AI clients and popular GenAI libraries.
-
-    Following instrumentations are enabled (when corresponding packages are installed):
-
-    - Azure AI Agents (`azure-ai-agents`)
-    - Azure AI Inference (`azure-ai-inference`)
-    - OpenAI (`opentelemetry-instrumentation-openai-v2`)
-    - Langchain (`opentelemetry-instrumentation-langchain`)
+    """Enables telemetry collection with OpenTelemetry for Azure AI Inference client (azure-ai-inference).
 
     The recording of prompt and completion messages is disabled by default. To enable it, set the
     `AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED` environment variable to `true`.
@@ -71,38 +60,8 @@ def enable_telemetry(
             "Could not call `AIInferenceInstrumentor().instrument()` since `azure-ai-inference` is not installed"
         )
 
-    try:
-        from azure.ai.agents.telemetry import AIAgentsInstrumentor  # pylint: disable=import-error,no-name-in-module
 
-        agents_instrumentor = AIAgentsInstrumentor()
-        if not agents_instrumentor.is_instrumented():
-            agents_instrumentor.instrument()
-    except Exception as exc:  # pylint: disable=broad-exception-caught
-        logger.warning("Could not call `AIAgentsInstrumentor().instrument()`", exc_info=exc)
-
-    try:
-        from opentelemetry.instrumentation.openai_v2 import OpenAIInstrumentor  # type: ignore
-
-        OpenAIInstrumentor().instrument()
-    except ModuleNotFoundError:
-        logger.warning(
-            "Could not call `OpenAIInstrumentor().instrument()` since "
-            + "`opentelemetry-instrumentation-openai-v2` is not installed"
-        )
-
-    try:
-        from opentelemetry.instrumentation.langchain import LangchainInstrumentor  # type: ignore
-
-        print("Calling LangchainInstrumentor().instrument()")
-        LangchainInstrumentor().instrument()
-    except ModuleNotFoundError:
-        logger.warning(
-            "Could not call LangchainInstrumentor().instrument()` since "
-            + "`opentelemetry-instrumentation-langchain` is not installed"
-        )
-
-
-# Internal helper functions to enable OpenTelemetry, used by both sync and async clients
+# Helper functions to enable OpenTelemetry, used by both sync and async clients
 def _get_trace_exporter(destination: Union[TextIO, str, None]) -> Any:
     if isinstance(destination, str):
         # `destination` is the OTLP endpoint

@@ -11,7 +11,6 @@ resources in your Azure AI Foundry Project. Use it to:
 * **Create and enumerate Search Indexes** using the `.indexes` operations.
 * **Read a Prompty file or string** and render messages for inference clients, using the `PromptTemplate` class.
 * **Run Evaluations** to assess the performance of generative AI applications, using the `evaluations` operations.
-* **Enable OpenTelemetry tracing** using the `enable_telemetry` function.
 
 The client library uses version `2025-05-15-preview` of the AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects/rest-api-reference).
 

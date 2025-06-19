@@ -14,7 +14,6 @@ from azure.ai.agents import AgentsClient
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations, InferenceOperations
 from ._patch_prompts import PromptTemplate
-from ._patch_telemetry import enable_telemetry
 
 _console_logging_enabled: bool = os.environ.get("ENABLE_AZURE_AI_PROJECTS_CONSOLE_LOGGING", "False").lower() in (
     "true",
@@ -133,7 +132,6 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 __all__: List[str] = [
     "AIProjectClient",
     "PromptTemplate",
-    "enable_telemetry",
 ]  # Add all objects you want publicly available to users at this package level
 
 

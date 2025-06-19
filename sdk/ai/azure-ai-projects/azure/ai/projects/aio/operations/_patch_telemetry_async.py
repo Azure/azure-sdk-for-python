@@ -33,6 +33,7 @@ class TelemetryOperations:
     def __init__(self, outer_instance: "azure.ai.projects.aio.AIProjectClient") -> None:  # type: ignore[name-defined]
         self._outer_instance = outer_instance
 
+    # TODO: Give a more detailed name to this method.
     @distributed_trace_async
     async def get_connection_string(self) -> str:
         """Get the Application Insights connection string associated with the Project's Application Insights resource.
@@ -44,6 +45,7 @@ class TelemetryOperations:
         """
         if not self._connection_string:
 
+            # TODO
             # TODO: Two REST APIs calls can be replaced by one if we have had REST API for get_with_credentials(connection_type=ConnectionType.APPLICATION_INSIGHTS)
             # Returns an empty Iterable if no connections exits.
             connections: AsyncIterable[Connection] = self._outer_instance.connections.list(

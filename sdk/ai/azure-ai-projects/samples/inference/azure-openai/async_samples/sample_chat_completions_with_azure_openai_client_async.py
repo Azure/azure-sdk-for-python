@@ -6,7 +6,7 @@
 
 """
 DESCRIPTION:
-    Given an AIProjectClient, this sample demonstrates how to get an authenticated 
+    Given an AIProjectClient, this sample demonstrates how to get an authenticated
     AsyncAzureOpenAI client from the openai package, and perform one chat completions
     operation.
 

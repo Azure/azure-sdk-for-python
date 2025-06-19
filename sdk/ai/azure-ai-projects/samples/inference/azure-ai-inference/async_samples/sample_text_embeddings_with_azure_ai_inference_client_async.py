@@ -6,13 +6,13 @@
 
 """
 DESCRIPTION:
-    Given an AI Foundry Project endpoint, this sample demonstrates how to get an authenticated 
-    async ChatCompletionsClient from the azure.ai.inference package, and perform one
-    chat completions operation. For more information on the azure.ai.inference package see
+    Given an AI Foundry Project endpoint, this sample demonstrates how to get an authenticated
+    async EmbeddingsClient from the azure.ai.inference package, and perform one text
+    embeddings operation. For more information on the azure.ai.inference package see
     https://pypi.org/project/azure-ai-inference/.
 
 USAGE:
-    python sample_chat_completions_with_azure_ai_inference_client_async.py
+    python sample_text_embeddings_with_azure_ai_inference_client_async.py
 
     Before running the sample:
 
@@ -28,8 +28,7 @@ import os
 import asyncio
 from urllib.parse import urlparse
 from azure.identity.aio import DefaultAzureCredential
-from azure.ai.inference.aio import ChatCompletionsClient
-from azure.ai.inference.models import UserMessage
+from azure.ai.inference.aio import EmbeddingsClient
 
 
 async def main():
@@ -44,16 +43,22 @@ async def main():
 
     async with DefaultAzureCredential() as credential:
 
-        async with ChatCompletionsClient(
+        async with EmbeddingsClient(
             endpoint=inference_endpoint,
             credential=credential,
             credential_scopes=["https://ai.azure.com/.default"],
         ) as client:
 
-            response = await client.complete(
-                model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
+            response = await client.embed(
+                model=model_deployment_name, input=["first phrase", "second phrase", "third phrase"]
             )
-            print(response.choices[0].message.content)
+
+            for item in response.data:
+                length = len(item.embedding)
+                print(
+                    f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
+                    f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+                )
 
 
 if __name__ == "__main__":
