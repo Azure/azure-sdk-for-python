@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -70,7 +70,7 @@ class Operations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.Operation"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Operation"]:
         """List the operations for the provider.
 
         :return: An iterator like instance of Operation
@@ -827,7 +827,7 @@ class OrganizationsOperations:
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.OrganizationResource"]:
+    ) -> AsyncItemPaged["_models.OrganizationResource"]:
         """List OrganizationResource resources by resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -916,7 +916,7 @@ class OrganizationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.OrganizationResource"]:
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.OrganizationResource"]:
         """List OrganizationResource resources by subscription ID.
 
         :return: An iterator like instance of OrganizationResource
