@@ -4,22 +4,18 @@ from typing import Any, Dict, List, Tuple, Optional
 
 from azure.ai.evaluation._common._experimental import experimental
 
-try:
-    from semantic_kernel.contents import (
-        AuthorRole,
-        TextContent,
-        FunctionCallContent,
-        FunctionResultContent,
-    )
-    from semantic_kernel.contents.chat_message_content import ChatMessageContent
+from semantic_kernel.contents import (
+    AuthorRole,
+    TextContent,
+    FunctionCallContent,
+    FunctionResultContent,
+)
+from semantic_kernel.contents.chat_message_content import ChatMessageContent
 
-    from semantic_kernel.agents import (
-        ChatCompletionAgent,
-        ChatHistoryAgentThread,
-    )
-except ImportError:
-    pass
-    raise ImportError()
+from semantic_kernel.agents import (
+    ChatCompletionAgent,
+    ChatHistoryAgentThread,
+)
 
 from ._models import (
     Message,
