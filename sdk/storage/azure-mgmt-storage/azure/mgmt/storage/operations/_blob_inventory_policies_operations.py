@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -206,7 +206,7 @@ class BlobInventoryPoliciesOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: StorageManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -495,7 +495,7 @@ class BlobInventoryPoliciesOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, account_name: str, **kwargs: Any
-    ) -> Iterable["_models.BlobInventoryPolicy"]:
+    ) -> ItemPaged["_models.BlobInventoryPolicy"]:
         """Gets the blob inventory policy associated with the specified storage account.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The

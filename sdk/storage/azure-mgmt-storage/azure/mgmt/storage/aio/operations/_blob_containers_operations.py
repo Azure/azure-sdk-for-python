@@ -8,20 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import (
-    Any,
-    AsyncIterable,
-    AsyncIterator,
-    Callable,
-    Dict,
-    IO,
-    Literal,
-    Optional,
-    TypeVar,
-    Union,
-    cast,
-    overload,
-)
+from typing import Any, AsyncIterator, Callable, Dict, IO, Literal, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -97,7 +84,7 @@ class BlobContainersOperations:
         filter: Optional[str] = None,
         include: Optional[Union[str, _models.ListContainersInclude]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ListContainerItem"]:
+    ) -> AsyncItemPaged["_models.ListContainerItem"]:
         """Lists all containers and does not support a prefix like data plane. Also SRP today does not
         return continuation token.
 

@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Literal, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Literal, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -160,7 +160,7 @@ class BlobServicesOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: StorageManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -170,7 +170,7 @@ class BlobServicesOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, account_name: str, **kwargs: Any
-    ) -> Iterable["_models.BlobServiceProperties"]:
+    ) -> ItemPaged["_models.BlobServiceProperties"]:
         """List blob services of storage account. It returns a collection of one object named default.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
