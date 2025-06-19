@@ -6,23 +6,18 @@ from typing_extensions import TypeAlias
 
 
 try:
-    from promptflow.core._flow import AsyncPrompty as _AsyncPrompty
-    from promptflow._sdk.entities._flows import FlexFlow as _FlexFlow
-    from promptflow._sdk.entities._flows.dag import Flow as _Flow
+    from promptflow.core._flow import AsyncPrompty
+    from promptflow._sdk.entities._flows import FlexFlow
+    from promptflow._sdk.entities._flows.dag import Flow
 except ImportError:
-    from azure.ai.evaluation._legacy.prompty import AsyncPrompty as _AsyncPrompty
+    from azure.ai.evaluation._legacy.prompty import AsyncPrompty
 
-    class _FlexFlow:
+    class FlexFlow:
         pass
 
-    _FlexFlow.__name__ = "FlexFlow"
+    FlexFlow.__name__ = "FlexFlow"
 
-    class _Flow:
+    class Flow:
         name: str
 
-    _Flow.__name__ = "Flow"
-
-
-AsyncPrompty: TypeAlias = _AsyncPrompty
-FlexFlow: TypeAlias = _FlexFlow
-Flow: TypeAlias = _Flow
+    Flow.__name__ = "Flow"

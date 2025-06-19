@@ -113,9 +113,8 @@ class AzureEnvironmentClient:
             cloud = _KNOWN_AZURE_ENVIRONMENTS.get(name) or case_insensitive_match(_KNOWN_AZURE_ENVIRONMENTS, name)
             if cloud:
                 return cloud
-            default_endpoint = (_KNOWN_AZURE_ENVIRONMENTS
-                .get(_DEFAULT_AZURE_ENV_NAME, {})
-                .get("resource_manager_endpoint"))
+            default_cloud = _KNOWN_AZURE_ENVIRONMENTS.get(_DEFAULT_AZURE_ENV_NAME)
+            default_endpoint = default_cloud.get("resource_manager_endpoint") if default_cloud else None
 
         metadata_url = self.get_default_metadata_url(default_endpoint)
         clouds = await self.get_clouds_async(metadata_url=metadata_url, update_cached=update_cached)
@@ -155,7 +154,8 @@ class AzureEnvironmentClient:
     @staticmethod
     async def _get_registry_discovery_url_async(cloud_name: str, cloud_suffix: str) -> str:
         async with _ASYNC_LOCK:
-            discovery_url = _KNOWN_AZURE_ENVIRONMENTS.get(cloud_name, {}).get("registry_discovery_endpoint")
+            cloud_metadata = _KNOWN_AZURE_ENVIRONMENTS.get(cloud_name)
+            discovery_url = cloud_metadata.get("registry_discovery_endpoint") if cloud_metadata else None
             if discovery_url:
                 return discovery_url
 

@@ -3,17 +3,17 @@ import json
 
 from pydantic import BaseModel
 
-from typing import List, Optional, Union
+from typing import List, Optional, Union, TYPE_CHECKING, Any
 
 # Models moved in a later version of agents SDK, so try a few different locations
-try:
-    from azure.ai.projects.models import RunStepFunctionToolCall
-except ImportError:
-    pass
-try:
-    from azure.ai.agents.models import RunStepFunctionToolCall
-except ImportError:
-    pass
+if TYPE_CHECKING:
+    try:
+        from azure.ai.projects.models import RunStepFunctionToolCall
+    except ImportError:
+        try:
+            from azure.ai.agents.models import RunStepFunctionToolCall
+        except ImportError:
+            RunStepFunctionToolCall = Any
 
 # Message roles constants.
 _SYSTEM = "system"
@@ -244,14 +244,16 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
         # Treat built-in tools separately.  Object models may be unique so handle each case separately
         # Just converting to dicts here rather than custom serializers for simplicity for now.
         # Don't fail if we run into a newly seen tool, just skip
-        if tool_call.details["type"] == "code_interpreter":
-            arguments = {"input": tool_call.details.code_interpreter.input}
-        elif tool_call.details["type"] == "bing_grounding":
-            arguments = {"requesturl": tool_call.details["bing_grounding"]["requesturl"]}
-        elif tool_call.details["type"] == "file_search":
-            options = tool_call.details["file_search"]["ranking_options"]
+        if hasattr(tool_call.details, "type") and tool_call.details.type == "code_interpreter":  # type: ignore
+            arguments = {"input": getattr(tool_call.details, "code_interpreter", {}).get("input", "")}  # type: ignore
+        elif hasattr(tool_call.details, "type") and tool_call.details.type == "bing_grounding":  # type: ignore
+            bing_grounding = getattr(tool_call.details, "bing_grounding", {})  # type: ignore
+            arguments = {"requesturl": bing_grounding.get("requesturl", "")}
+        elif hasattr(tool_call.details, "type") and tool_call.details.type == "file_search":  # type: ignore
+            file_search = getattr(tool_call.details, "file_search", {})  # type: ignore
+            options = file_search.get("ranking_options", {})
             arguments = {
-                "ranking_options": {"ranker": options["ranker"], "score_threshold": options["score_threshold"]}
+                "ranking_options": {"ranker": options.get("ranker", ""), "score_threshold": options.get("score_threshold", 0)}
             }
         elif tool_call.details["type"] == "azure_ai_search":
             arguments = {"input": tool_call.details["azure_ai_search"]["input"]}
@@ -276,46 +278,52 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
     # assistant's action of calling the tool.
     messages.append(AssistantMessage(run_id=run_id, content=[to_dict(content_tool_call)], createdAt=tool_call.created))
 
+    output = None
     if hasattr(tool_call.details, _FUNCTION):
-        output = safe_loads(tool_call.details.function["output"])
+        output = safe_loads(getattr(tool_call.details, "function", {}).get("output", ""))  # type: ignore
     else:
         try:
             # Some built-ins may have output, others may not
             # Try to retrieve it, but if we don't find anything, skip adding the message
             # Just manually converting to dicts for easy serialization for now rather than custom serializers
-            if tool_call.details.type == _CODE_INTERPRETER:
-                output = tool_call.details.code_interpreter.outputs
-            elif tool_call.details.type == _BING_GROUNDING:
+            if hasattr(tool_call.details, "type") and tool_call.details.type == _CODE_INTERPRETER:  # type: ignore
+                output = getattr(tool_call.details, "code_interpreter", {}).get("outputs", [])  # type: ignore
+            elif hasattr(tool_call.details, "type") and tool_call.details.type == _BING_GROUNDING:  # type: ignore
                 return messages  # not supported yet from bing grounding tool
-            elif tool_call.details.type == _FILE_SEARCH:
+            elif hasattr(tool_call.details, "type") and tool_call.details.type == _FILE_SEARCH:  # type: ignore
+                file_search_results = getattr(tool_call.details, "file_search", {}).get("results", [])  # type: ignore
                 output = [
                     {
-                        "file_id": result.file_id,
-                        "file_name": result.file_name,
-                        "score": result.score,
-                        "content": result.content,
+                        "file_id": getattr(result, "file_id", ""),
+                        "file_name": getattr(result, "file_name", ""),
+                        "score": getattr(result, "score", 0),
+                        "content": getattr(result, "content", ""),
                     }
-                    for result in tool_call.details.file_search.results
+                    for result in file_search_results
                 ]
-            elif tool_call.details.type == _AZURE_AI_SEARCH:
-                output = tool_call.details.azure_ai_search["output"]
-            elif tool_call.details.type == _FABRIC_DATAAGENT:
-                output = tool_call.details.fabric_dataagent["output"]
+            elif hasattr(tool_call.details, "type") and tool_call.details.type == _AZURE_AI_SEARCH:  # type: ignore
+                azure_ai_search = getattr(tool_call.details, "azure_ai_search", {})  # type: ignore
+                output = azure_ai_search.get("output", "")
+            elif hasattr(tool_call.details, "type") and tool_call.details.type == _FABRIC_DATAAGENT:  # type: ignore
+                fabric_dataagent = getattr(tool_call.details, "fabric_dataagent", {})  # type: ignore
+                output = fabric_dataagent.get("output", "")
         except:
             return messages
 
-    # Now, onto the tool result, which only includes the result of the function call.
-    content_tool_call_result = {"type": _TOOL_RESULT, _TOOL_RESULT: output}
+    # Only add tool result if we have output
+    if output is not None:
+        # Now, onto the tool result, which only includes the result of the function call.
+        content_tool_call_result = {"type": _TOOL_RESULT, _TOOL_RESULT: output}
 
-    # Since this is a tool's action of returning, we put it as a tool message.
-    messages.append(
-        ToolMessage(
-            run_id=run_id,
-            tool_call_id=tool_call_id,
-            content=[to_dict(content_tool_call_result)],
-            createdAt=tool_call.completed,
+        # Since this is a tool's action of returning, we put it as a tool message.
+        messages.append(
+            ToolMessage(
+                run_id=run_id,
+                tool_call_id=tool_call_id,
+                content=[to_dict(content_tool_call_result)],
+                createdAt=tool_call.completed,
+            )
         )
-    )
     return messages
 
 
