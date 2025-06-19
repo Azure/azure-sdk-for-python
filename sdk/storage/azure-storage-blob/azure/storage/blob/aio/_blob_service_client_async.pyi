@@ -41,11 +41,8 @@ from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.models import UserDelegationKey
 
-
 class BlobServiceClient(  # type: ignore [misc]
-    AsyncStorageAccountHostsMixin,
-    StorageAccountHostsMixin,
-    StorageEncryptionMixin
+    AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin
 ):  # pylint: disable=client-accepts-api-version-keyword
     def __init__(  # pylint: disable=super-init-not-called
         self,
@@ -65,9 +62,7 @@ class BlobServiceClient(  # type: ignore [misc]
         max_chunk_get_size: int = 4 * 1024 * 1024,
         audience: Optional[str] = None,
         **kwargs: Any
-    ) -> None:
-        ...
-
+    ) -> None: ...
     @classmethod
     def from_connection_string(
         cls,
@@ -87,29 +82,17 @@ class BlobServiceClient(  # type: ignore [misc]
         max_chunk_get_size: int = 4 * 1024 * 1024,
         audience: Optional[str] = None,
         **kwargs: Any
-    ) -> Self:
-        ...
-
+    ) -> Self: ...
     @distributed_trace_async
     async def get_user_delegation_key(
-        self,
-        key_start_time: datetime,
-        key_expiry_time: datetime,
-        *,
-        timeout: Optional[int] = None,
-        **kwargs: Any
-    ) -> UserDelegationKey:
-        ...
-
+        self, key_start_time: datetime, key_expiry_time: datetime, *, timeout: Optional[int] = None, **kwargs: Any
+    ) -> UserDelegationKey: ...
     @distributed_trace_async
     async def get_account_information(self, **kwargs: Any) -> Dict[str, str]: ...
-
     @distributed_trace_async
     async def get_service_stats(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]: ...
-
     @distributed_trace_async
     async def get_service_properties(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]: ...
-
     @distributed_trace_async
     async def set_service_properties(
         self,
@@ -121,9 +104,7 @@ class BlobServiceClient(  # type: ignore [misc]
         delete_retention_policy: Optional[RetentionPolicy] = None,
         static_website: Optional[StaticWebsite] = None,
         **kwargs: Any
-    ) -> None:
-        ...
-
+    ) -> None: ...
     @distributed_trace
     def list_containers(
         self,
@@ -135,9 +116,7 @@ class BlobServiceClient(  # type: ignore [misc]
         results_per_page: Optional[int] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged[ContainerProperties]:
-        ...
-
+    ) -> AsyncItemPaged[ContainerProperties]: ...
     @distributed_trace
     def find_blobs_by_tags(
         self,
@@ -146,9 +125,7 @@ class BlobServiceClient(  # type: ignore [misc]
         results_per_page: Optional[int] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged[FilteredBlob]:
-        ...
-
+    ) -> AsyncItemPaged[FilteredBlob]: ...
     @distributed_trace_async
     async def create_container(
         self,
@@ -159,9 +136,7 @@ class BlobServiceClient(  # type: ignore [misc]
         container_encryption_scope: Optional[Union[dict, ContainerEncryptionScope]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> ContainerClient:
-        ...
-
+    ) -> ContainerClient: ...
     @distributed_trace_async
     async def delete_container(
         self,
@@ -174,9 +149,7 @@ class BlobServiceClient(  # type: ignore [misc]
         match_condition: Optional[MatchConditions] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> None:
-        ...
-
+    ) -> None: ...
     @distributed_trace_async
     async def _rename_container(
         self,
@@ -186,9 +159,7 @@ class BlobServiceClient(  # type: ignore [misc]
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> ContainerClient:
-        ...
-
+    ) -> ContainerClient: ...
     @distributed_trace_async
     async def undelete_container(
         self,
@@ -197,11 +168,8 @@ class BlobServiceClient(  # type: ignore [misc]
         *,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> ContainerClient:
-        ...
-
+    ) -> ContainerClient: ...
     def get_container_client(self, container: Union[ContainerProperties, str]) -> ContainerClient: ...
-
     def get_blob_client(
         self,
         container: Union[ContainerProperties, str],
@@ -210,5 +178,4 @@ class BlobServiceClient(  # type: ignore [misc]
         *,
         version_id: Optional[str] = None,
         **kwargs: Any
-    ) -> BlobClient:
-        ...
+    ) -> BlobClient: ...

@@ -37,8 +37,9 @@ from ._models import (
 from ._shared.base_client import StorageAccountHostsMixin
 from ._shared.models import UserDelegationKey
 
-
-class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: disable=client-accepts-api-version-keyword
+class BlobServiceClient(
+    StorageAccountHostsMixin, StorageEncryptionMixin
+):  # pylint: disable=client-accepts-api-version-keyword
     def __init__(  # pylint: disable=super-init-not-called
         self,
         account_url: str,
@@ -57,9 +58,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
         max_chunk_get_size: int = 4 * 1024 * 1024,
         audience: Optional[str] = None,
         **kwargs: Any
-    ) -> None:
-        ...
-
+    ) -> None: ...
     @classmethod
     def from_connection_string(
         cls,
@@ -79,29 +78,17 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
         max_chunk_get_size: int = 4 * 1024 * 1024,
         audience: Optional[str] = None,
         **kwargs: Any
-    ) -> Self:
-        ...
-
+    ) -> Self: ...
     @distributed_trace
     def get_user_delegation_key(
-        self,
-        key_start_time: datetime,
-        key_expiry_time: datetime,
-        *,
-        timeout: Optional[int] = None,
-        **kwargs: Any
-    ) -> UserDelegationKey:
-        ...
-
+        self, key_start_time: datetime, key_expiry_time: datetime, *, timeout: Optional[int] = None, **kwargs: Any
+    ) -> UserDelegationKey: ...
     @distributed_trace
     def get_account_information(self, **kwargs: Any) -> Dict[str, str]: ...
-
     @distributed_trace
     def get_service_stats(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]: ...
-
     @distributed_trace
     def get_service_properties(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]: ...
-
     @distributed_trace
     def set_service_properties(
         self,
@@ -115,9 +102,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
         *,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> None:
-        ...
-
+    ) -> None: ...
     @distributed_trace
     def list_containers(
         self,
@@ -129,9 +114,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
         results_per_page: Optional[int] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> ItemPaged[ContainerProperties]:
-        ...
-
+    ) -> ItemPaged[ContainerProperties]: ...
     @distributed_trace
     def find_blobs_by_tags(
         self,
@@ -140,9 +123,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
         results_per_page: Optional[int] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> ItemPaged[FilteredBlob]:
-        ...
-
+    ) -> ItemPaged[FilteredBlob]: ...
     @distributed_trace
     def create_container(
         self,
@@ -153,9 +134,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
         container_encryption_scope: Optional[Union[dict, ContainerEncryptionScope]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> ContainerClient:
-        ...
-
+    ) -> ContainerClient: ...
     @distributed_trace
     def delete_container(
         self,
@@ -168,9 +147,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
         match_condition: Optional[MatchConditions] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> None:
-        ...
-
+    ) -> None: ...
     @distributed_trace
     def _rename_container(
         self,
@@ -180,9 +157,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> ContainerClient:
-        ...
-
+    ) -> ContainerClient: ...
     @distributed_trace
     def undelete_container(
         self,
@@ -191,11 +166,8 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
         *,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> ContainerClient:
-        ...
-
+    ) -> ContainerClient: ...
     def get_container_client(self, container: Union[ContainerProperties, str]) -> ContainerClient: ...
-
     def get_blob_client(
         self,
         container: Union[ContainerProperties, str],
@@ -203,5 +175,4 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # py
         snapshot: Optional[Union[Dict[str, Any], str]] = None,
         *,
         version_id: Optional[str] = None
-    ) -> BlobClient:
-        ...
+    ) -> BlobClient: ...
