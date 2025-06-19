@@ -1030,10 +1030,9 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         collection = created_db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         new_throughput = ThroughputProperties(offer_throughput=2500, auto_scale_max_throughput=4000, auto_scale_increment_percent=5)
-        try:
+
+        with pytest.raises(KeyError):
             await collection.replace_throughput(new_throughput)
-        except KeyError as e:
-            pass
 
     async def _mock_execute_function(self, function, *args, **kwargs):
         if HttpHeaders.PartitionKey in args[4].headers:
