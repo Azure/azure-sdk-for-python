@@ -1,5 +1,15 @@
 ## Release History
 
+### 4.13.0b3 (Unreleased)
+
+#### Features Added
+
+#### Breaking Changes
+
+#### Bugs Fixed
+
+#### Other Changes
+
 ### 4.13.0b2 (2025-06-18)
 
 #### Bugs Fixed
