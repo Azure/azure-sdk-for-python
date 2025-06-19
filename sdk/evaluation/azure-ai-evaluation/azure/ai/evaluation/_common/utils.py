@@ -544,7 +544,7 @@ def _pretty_format_conversation_history(conversation_history):
     """Formats the conversation history for better readability."""
     formatted_history = ""
     if 'system_message' in conversation_history and conversation_history['system_message'] is not None:
-        formatted_history += "System Message:\n"
+        formatted_history += "SYSTEM MESSAGE:\n"
         formatted_history += "  " + conversation_history['system_message'] + "\n\n"
     for i, (user_query, agent_response) in enumerate(
             zip(conversation_history['user_queries'], conversation_history['agent_responses'] + [None])):
