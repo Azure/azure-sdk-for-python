@@ -9,4 +9,4 @@ azure-mgmt-compute
 -e ../../applicationinsights/azure-mgmt-applicationinsights
 -e ../../logic/azure-mgmt-logic
 
-../../identity/azure-identity
+-e ../../identity/azure-identity

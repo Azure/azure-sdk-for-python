@@ -307,7 +307,7 @@ class TestUtils:
                 "content": [{"type": "text", "text": "What is the weather?"}]
             },
             {
-                "role": "assistant", 
+                "role": "assistant",
                 "content": [{"type": "text", "text": "It's sunny today."}]
             },
             {
@@ -315,7 +315,7 @@ class TestUtils:
                 "content": [{"type": "text", "text": "Will it rain tomorrow?"}]
             }
         ]
-        
+
         result = _get_conversation_history(query)
         expected = {
             'user_queries': [[["What is the weather?"]], [["Will it rain tomorrow?"]]],
@@ -340,7 +340,7 @@ class TestUtils:
                 ]
             }
         ]
-        
+
         # there is an assertion because there is one user query ["Hello", "How are you?"] and one agent response ["Hi there!", "I'm doing well, thanks."]
         # the user query length needs to be one more than the agent response length
         with pytest.raises(EvaluationException, match=str(ErrorMessage.MALFORMED_CONVERSATION_HISTORY)):
@@ -357,11 +357,11 @@ class TestUtils:
                 "content": [{"type": "text", "text": "First answer"}]
             },
             {
-                "role": "user", 
+                "role": "user",
                 "content": [{"type": "text", "text": "Second question"}]
             }
         ]
-        
+
         result = _get_conversation_history(query)
         expected = {
             'user_queries': [[["First question"]], [["Second question"]]],
@@ -379,7 +379,7 @@ class TestUtils:
                 "content": [{"type": "text", "text": "Has role"}]
             }
         ]
-        
+
         result = _get_conversation_history(query)
         expected = {
             'user_queries': [[["Has role"]]],
@@ -395,7 +395,7 @@ class TestUtils:
                 "content": [{"type": "text", "text": "Has content"}]
             }
         ]
-        
+
         result = _get_conversation_history(query)
         expected = {
             'user_queries': [[["Has content"]]],
@@ -409,7 +409,7 @@ class TestUtils:
             'user_queries': [[["What is the weather?"]], [["Will it rain tomorrow?"]]],
             'agent_responses': [[["It's sunny today."]]]
         }
-        
+
         result = _pretty_format_conversation_history(conversation_history)
         expected = (
             "User turn 1:\n"
@@ -426,7 +426,7 @@ class TestUtils:
             'user_queries': [[["Hello", "How are you?"]]],
             'agent_responses': [[["Hi there!", "I'm doing well, thanks."]]]
         }
-        
+
         result = _pretty_format_conversation_history(conversation_history)
         expected = (
             "User turn 1:\n"
@@ -453,7 +453,7 @@ class TestUtils:
                 "content": [{"type": "text", "text": "Tell me more."}]
             }
         ]
-        
+
         result = reformat_conversation_history(query)
         expected = (
             "User turn 1:\n"
@@ -482,7 +482,7 @@ class TestUtils:
                 ]
             }
         ]
-        
+
         result = _get_agent_response(agent_response_msgs)
         assert result == ["Hello!", "How can I help you?"]
 
@@ -493,11 +493,11 @@ class TestUtils:
                 "content": [{"type": "text", "text": "First response"}]
             },
             {
-                "role": "assistant", 
+                "role": "assistant",
                 "content": [{"type": "text", "text": "Second response"}]
             }
         ]
-        
+
         result = _get_agent_response(agent_response_msgs)
         assert result == ["First response", "Second response"]
 
@@ -512,7 +512,7 @@ class TestUtils:
                 "content": [{"type": "text", "text": "Assistant message"}]
             }
         ]
-        
+
         result = _get_agent_response(agent_response_msgs)
         assert result == ["Assistant message"]
 
@@ -529,7 +529,7 @@ class TestUtils:
                 "content": [{"type": "text", "text": "Valid message"}]
             }
         ]
-        
+
         result = _get_agent_response(agent_response_msgs)
         assert result == ["Valid message"]
 
@@ -545,7 +545,7 @@ class TestUtils:
                 ]
             }
         ]
-        
+
         result = reformat_agent_response(response)
         assert result == "Hello!\nHow can I help you?"
 
@@ -588,7 +588,7 @@ class TestUtils:
                 "content": [{"type": "text", "text": "Response without user query"}]
             }
         ]
-        
+
         with pytest.raises(EvaluationException, match=str(ErrorMessage.MALFORMED_CONVERSATION_HISTORY)):
             _get_conversation_history(query_with_unbalanced_turns)
 
@@ -600,7 +600,7 @@ class TestUtils:
             {"text": " world"}
         ]
         assert _extract_text_from_content(content) == ["Hello", " world"]
-        
+
         # Test with mixed content (text and non-text)
         content = [
             {"text": "Hello"},
@@ -608,10 +608,10 @@ class TestUtils:
             {"text": " world"}
         ]
         assert _extract_text_from_content(content) == ["Hello", " world"]
-        
+
         # Test with empty list
         assert _extract_text_from_content([]) == []
-        
+
         # Test with non-text items only
         content = [
             {"type": "image", "url": "image.jpg"},
@@ -627,14 +627,14 @@ class TestUtils:
             {"role": "assistant", "content": [{"text": "Hi there!"}]},
             {"role": "user", "content": [{"text": "How are you?"}]}
         ]
-        
+
         result = _get_conversation_history(conversation)
         expected = {
             'user_queries': [[["Hello"]], [["How are you?"]]],
             'agent_responses': [[["Hi there!"]]]
         }
         assert result == expected
-        
+
         conversation = []
         with pytest.raises(EvaluationException, match=str(ErrorMessage.MALFORMED_CONVERSATION_HISTORY)):
             _get_conversation_history(conversation)
@@ -646,7 +646,7 @@ class TestUtils:
             'user_queries': [[["Hello"]], [["How are you?"]]],
             'agent_responses': [[["Hi there!"]]]
         }
-        
+
         formatted = _pretty_format_conversation_history(conversation_history)
         assert "User turn 1:" in formatted
         assert "Hello" in formatted
@@ -663,12 +663,12 @@ class TestUtils:
             {"role": "assistant", "content": [{"text": "It's sunny today."}]},
             {"role": "user", "content": [{"text": "Will it rain tomorrow?"}]}
         ]
-        
+
         # Test reformatting
         formatted = reformat_conversation_history(conversation)
         assert isinstance(formatted, str)
         assert "User turn" in formatted
-        
+
         # Test fallback behavior with malformed conversation
         malformed_conversation = {"invalid": "data"}
         formatted = reformat_conversation_history(malformed_conversation)
@@ -682,13 +682,13 @@ class TestUtils:
             {"role": "user", "content": [{"text": "Hi"}]},
             {"role": "assistant", "content": [{"text": "How can I help?"}]}
         ]
-        
+
         result = _get_agent_response(messages)
         assert result == ["Hello!", "How can I help?"]
-        
+
         # Test with empty list
         assert _get_agent_response([]) == []
-        
+
         # Test with no assistant messages
         messages = [{"role": "user", "content": [{"text": "Hello"}]}]
         assert _get_agent_response(messages) == []
@@ -700,13 +700,13 @@ class TestUtils:
             {"role": "assistant", "content": [{"text": "Hello!"}]},
             {"role": "assistant", "content": [{"text": "How can I help?"}]}
         ]
-        
+
         formatted = reformat_agent_response(response)
         assert formatted == "Hello!\nHow can I help?"
-        
+
         # Test with empty response
         assert reformat_agent_response([]) == ""
-        
+
         # Test fallback behavior
         malformed_response = {"invalid": "structure"}
         formatted = reformat_agent_response(malformed_response)
@@ -714,7 +714,7 @@ class TestUtils:
 
     def test_utility_functions_edge_cases(self):
         """Test edge cases and error handling for utility functions."""
-        
+
         # Test _extract_text_from_content with malformed data
         malformed_content = [
             {"missing_text": "Hello"},
@@ -723,19 +723,17 @@ class TestUtils:
         # Should handle gracefully and extract what it can
         result = _extract_text_from_content(malformed_content)
         assert result == ["world"]
-        
+
         # Test functions with very large inputs
         large_content = [{"text": "x" * 1000}] * 10
         result = _extract_text_from_content(large_content)
         assert len(result) == 10
         assert all(len(text) == 1000 for text in result)
-        
+
         # Test with unicode content
         unicode_content = [{"text": "Hello 世界 🌍"}]
         result = _extract_text_from_content(unicode_content)
         assert result == ["Hello 世界 🌍"]
-
-    import pytest
 
     def test_reformat_agent_response_with_tool_calls(self):
         response = [
@@ -813,3 +811,4 @@ class TestUtils:
 
         result = reformat_tool_definitions(tool_definitions)
         assert result.strip() == expected.strip()
+

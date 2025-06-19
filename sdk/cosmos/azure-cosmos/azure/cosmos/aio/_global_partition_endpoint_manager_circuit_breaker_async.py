@@ -23,7 +23,7 @@
 """
 from typing import TYPE_CHECKING, Optional
 
-from azure.cosmos import PartitionKey
+from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition
 from azure.cosmos._global_partition_endpoint_manager_circuit_breaker_core import \
     _GlobalPartitionEndpointManagerForCircuitBreakerCore
 from azure.cosmos._routing.routing_range import PartitionKeyRangeWrapper, Range
@@ -60,9 +60,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
         # get relevant information from container cache to get the overlapping ranges
         container_link = properties["container_link"]
         partition_key_definition = properties["partitionKey"]
-        partition_key = PartitionKey(path=partition_key_definition["paths"],
-                                     kind=partition_key_definition["kind"],
-                                     version=partition_key_definition["version"])
+        partition_key = _get_partition_key_from_partition_key_definition(partition_key_definition)
 
         if HttpHeaders.PartitionKey in request.headers:
             partition_key_value = request.headers[HttpHeaders.PartitionKey]
