@@ -69,7 +69,6 @@ def create_package_and_install(
         commands_options.extend(["--cache-dir", cache_dir])
 
     target_package = ParsedSetup.from_path(setup_py_path)
-    logging.info(f"At runtime, we got version {target_package.version} from the target package {target_package.name} on disk.")
 
     discovered_packages = discover_packages(
         setup_py_path, distribution_directory, target_setup, package_type, force_create
