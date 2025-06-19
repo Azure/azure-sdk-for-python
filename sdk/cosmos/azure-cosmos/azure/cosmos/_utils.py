@@ -83,6 +83,12 @@ def add_args_to_kwargs(
         kwargs: Dict[str, Any]
     ) -> None:
     """Add positional arguments(args) to keyword argument dictionary(kwargs) using names in arg_names as keys.
+    To be backward-compatible, some expected positional arguments has to be allowed. This method will verify number of
+    maximum positional arguments and add them to the keyword argument dictionary(kwargs)
+
+    :param List[str] arg_names: The names of positional arguments.
+    :param Tuple[Any, ...] args: The tuple of positional arguments.
+    :param Dict[str, Any] kwargs: The dictionary of keyword arguments as reference. This dictionary will be updated.
     """
 
     if len(args) > len(arg_names):
@@ -98,6 +104,11 @@ def verify_exclusive_arguments(
         exclusive_keys: List[str],
         **kwargs: Dict[str, Any]) -> None:
     """Verify if exclusive arguments are present in kwargs.
+    For some Cosmos SDK APIs, some arguments are exclusive, or cannot be used at the same time. This method will verify
+    that and raise an error if exclusive arguments are present.
+
+    :param List[str] exclusive_keys: The names of exclusive arguments.
+    :param Dict[str, Any] kwargs: The dictionary of keyword arguments.
     """
     keys_in_kwargs = [key for key in exclusive_keys if key in kwargs and kwargs[key] is not None]
 

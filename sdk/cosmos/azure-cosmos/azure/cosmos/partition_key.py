@@ -23,7 +23,7 @@
 from io import BytesIO
 import binascii
 import struct
-from typing import IO, Sequence, Type, Union, overload, List, cast
+from typing import Any, IO, Sequence, Type, Union, overload, List, cast, Dict
 from typing_extensions import Literal
 
 from ._cosmos_integers import _UInt32, _UInt64, _UInt128
@@ -96,6 +96,8 @@ class _Undefined:
 class _Infinity:
     """Represents infinity value for partitionKey."""
 
+PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]],
+                         Type[NonePartitionKeyValue], _Empty, _Undefined]
 
 class PartitionKey(dict):
     """Key used to partition a container into logical partitions.
@@ -109,13 +111,13 @@ class PartitionKey(dict):
     """
 
     @overload
-    def __init__(self, path: List[str], *, kind: Literal["MultiHash"] = PartitionKeyKind.MULTI_HASH,
+    def __init__(self, path: List[str], *, kind: Literal["MultiHash"] = "MultiHash",
                  version: int = PartitionKeyVersion.V2
     ) -> None:
         ...
 
     @overload
-    def __init__(self, path: str, *, kind: Literal["Hash"] = PartitionKeyKind.HASH,
+    def __init__(self, path: str, *, kind: Literal["Hash"] = "Hash",
                  version:int = PartitionKeyVersion.V2
     ) -> None:
         ...
@@ -187,7 +189,7 @@ class PartitionKey(dict):
 
     def _get_epk_range_for_partition_key(
             self,
-            pk_value: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]] # pylint: disable=line-too-long
+            pk_value: PartitionKeyType # pylint: disable=line-too-long
     ) -> _Range:
         if self._is_prefix_partition_key(pk_value):
             return self._get_epk_range_for_prefix_partition_key(
@@ -348,7 +350,7 @@ class PartitionKey(dict):
 
     def _is_prefix_partition_key(
             self,
-            partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]) -> bool:  # pylint: disable=line-too-long
+            partition_key: PartitionKeyType) -> bool:  # pylint: disable=line-too-long
         if self.kind != PartitionKeyKind.MULTI_HASH:
             return False
         ret = ((isinstance(partition_key, Sequence) and
@@ -490,3 +492,10 @@ def _write_for_binary_encoding(
 
     elif isinstance(value, _Undefined):
         binary_writer.write(bytes([_PartitionKeyComponentType.Undefined]))
+
+def build_partition_key_from_properties(container_properties: Dict[str, Any]) -> PartitionKey:
+    partition_key_definition = container_properties["partitionKey"]
+    return PartitionKey(
+        path=partition_key_definition["paths"],
+        kind=partition_key_definition["kind"],
+        version=partition_key_definition["version"])

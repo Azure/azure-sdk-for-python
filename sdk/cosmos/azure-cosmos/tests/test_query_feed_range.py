@@ -1,15 +1,12 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-import os
+import pytest
+import test_config
 import unittest
 import uuid
 
-import pytest
-
 from azure.cosmos import CosmosClient
-import test_config
-
 from itertools import combinations
 from typing import List, Mapping, Set
 

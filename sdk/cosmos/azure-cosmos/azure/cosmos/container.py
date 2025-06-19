@@ -49,6 +49,8 @@ from .offer import Offer, ThroughputProperties
 from .partition_key import (
     NonePartitionKeyValue,
     PartitionKey,
+    PartitionKeyType,
+    build_partition_key_from_properties,
     _Empty,
     _Undefined,
     _return_undefined_or_empty_partition_key
@@ -61,23 +63,14 @@ __all__ = ("ContainerProxy",)
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
-PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
-
-def get_partition_key_from_properties(container_properties: Dict[str, Any]) -> PartitionKey:
-    partition_key_definition = container_properties["partitionKey"]
-    return PartitionKey(
-        path=partition_key_definition["paths"],
-        kind=partition_key_definition["kind"],
-        version=partition_key_definition["version"])
-
 def is_prefix_partition_key(container_properties: Dict[str, Any], partition_key: PartitionKeyType) -> bool:
-    partition_key_obj: PartitionKey = get_partition_key_from_properties(container_properties)
+    partition_key_obj: PartitionKey = build_partition_key_from_properties(container_properties)
     return partition_key_obj._is_prefix_partition_key(partition_key)
 
 def get_epk_range_for_partition_key(
         container_properties: Dict[str, Any],
         partition_key_value: PartitionKeyType) -> Range:
-    partition_key_obj: PartitionKey = get_partition_key_from_properties(container_properties)
+    partition_key_obj: PartitionKey = build_partition_key_from_properties(container_properties)
     return partition_key_obj._get_epk_range_for_partition_key(partition_key_value)
 
 class ContainerProxy:  # pylint: disable=too-many-public-methods
@@ -154,7 +147,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def _set_partition_key(
         self,
         partition_key: PartitionKeyType
-    ) -> Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined]:
+    ) -> PartitionKeyType:
         if partition_key == NonePartitionKeyValue:
             return _return_undefined_or_empty_partition_key(self.is_system_key)
         return cast(Union[str, int, float, bool, List[Union[str, int, float, bool]]], partition_key)
@@ -629,6 +622,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         name is "products," and is aliased as "p" for easier referencing in
         the WHERE clause.
 
+        :param str query: The Azure Cosmos DB SQL query to execute.
         :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
             response. Valid values are positive integers.
             A value of 0 is the same as not passing a value (default no limit).
@@ -659,7 +653,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword str query: The Azure Cosmos DB SQL query to execute.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword str session_token: Token for use with Session consistency.
@@ -713,6 +706,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         name is "products," and is aliased as "p" for easier referencing in
         the WHERE clause.
 
+        :param str query: The Azure Cosmos DB SQL query to execute.
         :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
             response. Valid values are positive integers.
             A value of 0 is the same as not passing a value (default no limit).
@@ -742,7 +736,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword str query: The Azure Cosmos DB SQL query to execute.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword str session_token: Token for use with Session consistency.
@@ -781,6 +774,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         name is "products," and is aliased as "p" for easier referencing in
         the WHERE clause.
 
+        :param Any args: args
         :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
             response. Valid values are positive integers.
             A value of 0 is the same as not passing a value (default no limit).
@@ -841,6 +835,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                                          "max_item_count", "enable_scan_in_query", "populate_query_metrics"]
         utils.add_args_to_kwargs(original_positional_arg_names, args, kwargs)
         feed_options = build_options(kwargs)
+
+        # Get container property and init client container caches
         container_properties = self._get_properties_with_options(feed_options)
 
         # Update 'feed_options' from 'kwargs'
@@ -871,18 +867,18 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         # Set range filters for query. Options are either 'feed_range' or 'partition_key'
         utils.verify_exclusive_arguments(["feed_range", "partition_key"], **kwargs)
-        partition_key = None
-        if "feed_range" in kwargs:
-            feed_options["feedRange"] = kwargs.pop("feed_range", None)
-        elif "partition_key" in kwargs:
-            partition_key = kwargs.pop("partition_key")
-            partition_key_value = self._set_partition_key(partition_key)
-            if is_prefix_partition_key(container_properties, partition_key):
-                kwargs["isPrefixPartitionQuery"] = True
-                kwargs["partitionKeyDefinition"] = container_properties["partitionKey"]
-                kwargs["partitionKeyDefinition"]["partition_key"] = partition_key_value
+        if "feed_range" not in kwargs and "partition_key" in kwargs:
+            partition_key_value = self._set_partition_key(kwargs.pop("partition_key"))
+            partition_key_obj = build_partition_key_from_properties(container_properties)
+            if partition_key_obj._is_prefix_partition_key(partition_key_value):
+                kwargs["prefix_partition_key_object"] = partition_key_obj
+                kwargs["prefix_partition_key_value"] = partition_key_value
             else:
+                # Add to feed_options, only when feed_range not given and partition_key was not prefixed partition_key
                 feed_options["partitionKey"] = partition_key_value
+
+        # Set 'partition_key' for QueryItems method. This can be 'None' if feed range or prefix partition key was set
+        partition_key = feed_options.get("partitionKey")
 
         # Set 'response_hook'
         response_hook = kwargs.pop("response_hook", None)
