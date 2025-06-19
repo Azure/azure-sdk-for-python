@@ -334,8 +334,9 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
             raise ex
         except Exception as ex:
             error_message = json.dumps(obj.as_dict(), indent=2) if obj else None
-            module_logger.info(
-                "Exception: %s.\n%s\nUnable to parse the job resource: %s.\n",
+            module_logger.info("Unable to parse the job resource")
+            module_logger.debug(
+                "Exception: %s.\n%s\nUnable to parse the job resource: %s.",
                 ex,
                 traceback.format_exc(),
                 error_message,
