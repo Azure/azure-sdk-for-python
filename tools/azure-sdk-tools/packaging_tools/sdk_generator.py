@@ -352,15 +352,14 @@ def main(generate_input, generate_output):
     if len(result) == 0 and len(readme_and_tsp) > 1:
         raise Exception("No package is generated, please check the log for details")
 
-    # Now run the packaging phase that was previously in sdk_package.py
+    # Process packages directly after generation
+    sdk_folder = "."
+    final_result = {"packages": []}
+    
     if len(result) == 0:
         _LOGGER.info("No packages to process, returning empty result")
-        final_result = {"packages": []}
     else:
-        _LOGGER.info("Starting packaging phase...")
-        
-        sdk_folder = "."
-        final_result = {"packages": []}
+        _LOGGER.info(f"Processing {len(result)} generated packages...")
         
         for package in result.values():
             package_name = package["packageName"]
