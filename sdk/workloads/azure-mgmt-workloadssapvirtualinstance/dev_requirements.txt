@@ -1,5 +1,5 @@
 -e ../../../tools/azure-sdk-tools
-../../identity/azure-identity
+-e ../../identity/azure-identity
 azure-mgmt-msi
 azure-mgmt-authorization
 azure-mgmt-network

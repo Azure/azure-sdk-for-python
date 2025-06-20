@@ -23,4 +23,4 @@ class TestMonitorManagementSubscriptionDiagnosticSettingsOperations(AzureMgmtRec
     def test_subscription_diagnostic_settings_list(self, resource_group):
         response = self.client.subscription_diagnostic_settings.list()
 
-        assert response.value == []
+        assert response

@@ -10,6 +10,7 @@ import time
 
 from azure.cosmos import CosmosClient
 
+
 class MockHandler(logging.Handler):
     def __init__(self):
         super(MockHandler, self).__init__()
@@ -47,11 +48,6 @@ L0 = "Default"
 L1 = "West US 3"
 L2 = "West US"
 L3 = "East US 2"
-
-# L0 = "Default"
-# L1 = "East US 2"
-# L2 = "East US"
-# L3 = "West US 2"
 
 CLIENT_ONLY_TEST_DATA = [
     # preferred_locations, client_excluded_locations, excluded_locations_request
@@ -123,22 +119,23 @@ def read_item_test_data():
     ]
     return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data)
 
+
 def write_item_test_data():
     client_only_output_data = [
-        [L1],   #0
-        [L2],   #1
-        [L0],   #2
-        [L1]    #3
+        [L1],  # 0
+        [L2],  # 1
+        [L0],  # 2
+        [L1],  # 3
     ]
     client_and_request_output_data = [
-        [L2],   #0
-        [L2],   #1
-        [L2],   #2
-        [L0],   #3
-        [L0],   #4
-        [L1],   #5
-        [L1],   #6
-        [L1],   #7
+        [L2],  # 0
+        [L2],  # 1
+        [L2],  # 2
+        [L0],  # 3
+        [L0],  # 4
+        [L1],  # 5
+        [L1],  # 6
+        [L1],  # 7
     ]
     return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data)
 
@@ -355,7 +352,7 @@ class TestExcludedLocations:
             # Single write
             verify_endpoint(MOCK_HANDLER.messages, client, expected_locations, multiple_write_locations)
 
-    @pytest.mark.parametrize('test_data', write_item_test_data())
+    @pytest.mark.parametrize('test_data', read_and_write_item_test_data())
     def test_patch_item(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -380,7 +377,7 @@ class TestExcludedLocations:
             # get location from mock_handler
             verify_endpoint(MOCK_HANDLER.messages, client, expected_locations, multiple_write_locations)
 
-    @pytest.mark.parametrize('test_data', write_item_test_data())
+    @pytest.mark.parametrize('test_data', read_and_write_item_test_data())
     def test_execute_item_batch(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data

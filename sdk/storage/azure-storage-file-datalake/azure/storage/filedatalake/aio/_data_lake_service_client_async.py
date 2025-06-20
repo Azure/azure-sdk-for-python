@@ -126,19 +126,23 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
         self._loop = kwargs.get('loop', None)
 
     async def __aenter__(self) -> Self:
-        await super(DataLakeServiceClient, self).__aenter__()
+        await self._client.__aenter__()
         await self._blob_service_client.__aenter__()
         return self
 
     async def __aexit__(self, *args: Any) -> None:
-        await self._blob_service_client.close()
-        await super(DataLakeServiceClient, self).__aexit__(*args)
+        await self._blob_service_client.__aexit__(*args)
+        await self._client.__aexit__(*args)
 
-    async def close(self) -> None:
+    async def close(self) -> None:  # type: ignore
         """ This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
+
+        :return: None
+        :rtype: None
         """
-        await self.__aexit__()
+        await self._blob_service_client.close()
+        await self._client.close()
 
     def _format_url(self, hostname: str) -> str:
         """Format the endpoint URL according to hostname.
