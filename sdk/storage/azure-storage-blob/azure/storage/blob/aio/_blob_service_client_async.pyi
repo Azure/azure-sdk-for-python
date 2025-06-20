@@ -3,9 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=unused-argument
+# pylint: skip-file
 
 from datetime import datetime
+from types import TracebackType
 from typing import (
     Any,
     Dict,
@@ -43,8 +44,8 @@ from .._shared.models import UserDelegationKey
 
 class BlobServiceClient(  # type: ignore [misc]
     AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin
-):  # pylint: disable=client-accepts-api-version-keyword
-    def __init__(  # pylint: disable=super-init-not-called
+):
+    def __init__(
         self,
         account_url: str,
         credential: Optional[
@@ -63,6 +64,11 @@ class BlobServiceClient(  # type: ignore [misc]
         audience: Optional[str] = None,
         **kwargs: Any
     ) -> None: ...
+    async def __aenter__(self) -> Self: ...
+    async def __aexit__(
+        self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
+    ) -> None: ...
+    async def close(self) -> None: ...
     @classmethod
     def from_connection_string(
         cls,
