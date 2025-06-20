@@ -73,7 +73,8 @@ from .partition_key import (
     _Empty,
     PartitionKey,
     _return_undefined_or_empty_partition_key,
-    NonePartitionKeyValue
+    NonePartitionKeyValue,
+    _get_partition_key_from_partition_key_definition
 )
 
 PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
@@ -3176,11 +3177,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             # here get the over lapping ranges
             # Default to empty Dictionary, but unlikely to be empty as we first check if we have it in kwargs
             pk_properties: Union[PartitionKey, Dict] = kwargs.pop("partitionKeyDefinition", {})
-            partition_key_definition = PartitionKey(
-                path=pk_properties["paths"],
-                kind=pk_properties["kind"],
-                version=pk_properties["version"])
-            partition_key_value = pk_properties["partition_key"]
+            partition_key_definition = _get_partition_key_from_partition_key_definition(pk_properties)
+            partition_key_value: Sequence[
+                Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]] = cast(
+                Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]],
+                pk_properties.get("partition_key")
+            )
             feedrangeEPK = partition_key_definition._get_epk_range_for_prefix_partition_key(
                 partition_key_value
             )  # cspell:disable-line
