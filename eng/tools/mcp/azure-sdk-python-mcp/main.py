@@ -153,7 +153,7 @@ def verify_setup_tool(command_path: str, tox_ini_path: str) -> Dict[str, Any]:
     :param str tox_ini_path: Path to the tox.ini file. (i.e. ./azure-sdk-for-python/eng/tox/tox.ini)
     """
 
-    def verify_installation(command: List[str], name: str) -> Dict[str, Any]:
+    def verify_installation(command: List[str], name: str, advice: str = "") -> Dict[str, Any]:
         """Helper function to verify installation of a tool."""
         logger.info(f"Checking installation of {name}")
         result = run_command(command, cwd=command_path)
@@ -161,7 +161,7 @@ def verify_setup_tool(command_path: str, tox_ini_path: str) -> Dict[str, Any]:
         if not result["success"]:
             return {
                 "success": False,
-                "message": f"{name} is not installed or not available in PATH.",
+                "message": f"{name} is not installed or not available in PATH.{advice}",
                 "details": {"stdout": result["stdout"], "stderr": result["stderr"], "exit_code": result["code"]},
             }
 
@@ -173,7 +173,11 @@ def verify_setup_tool(command_path: str, tox_ini_path: str) -> Dict[str, Any]:
         "node": verify_installation(["node", "--version"], "Node.js"),
         "python": verify_installation(["python", "--version"], "Python"),
         "tox": verify_installation(["tox", "--version", "-c", tox_ini_path], "tox"),
-        "tsp-client": verify_installation(["tsp-client", "--version"], "TypeSpec Client Generator CLI"),
+        "tsp-client": verify_installation(
+            ["tsp-client", "--version"],
+            "TypeSpec Client Generator CLI",
+            "Install it with `npm install -g @azure-tools/typespec-client-generator-cli`",
+        ),
     }
 
     return results
@@ -342,7 +346,8 @@ def check_library_health(library_name: str) -> Dict[str, Any]:
 
 # Run the MCP server
 def main():
-    mcp.run(transport='stdio')
+    mcp.run(transport="stdio")
+
 
 if __name__ == "__main__":
     main()
