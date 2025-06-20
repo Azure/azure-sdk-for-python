@@ -174,13 +174,18 @@ class CheckFile:
         if self._next_version is None:
             self._next_version = self.calculate_next_version()
         return self._next_version
-
-    # Use the template to update readme and setup by packaging_tools
-    @return_origin_path
-    def check_file_with_packaging_tool(self):
-
-        os.chdir(Path(f"sdk/{self.sdk_folder}"))
-        title = ""
+    
+    @property
+    def extract_client_title_from_init(self) -> str:
+        """
+        Extract the client title from a package's __init__.py file.
+        
+        Args:
+            package_name (str): The package name (e.g., "azure-mgmt-compute")
+            
+        Returns:
+            str: The client title if found, empty string otherwise
+        """
         init_file = Path(self.whole_package_name) / self.whole_package_name.replace("-", "/") / "__init__.py"
         try:
             with open(init_file, "r") as f:
@@ -195,10 +200,18 @@ class CheckFile:
                             # Extract the value
                             for elt in node.value.elts:
                                 if isinstance(elt, ast.Constant) and elt.value.endswith("Client"):
-                                    title = elt.value
-                                    break
+                                    return elt.value
         except Exception as e:
             _LOGGER.info(f"Failed to extract title from {init_file}: {e}")
+        
+        return ""
+
+    # Use the template to update readme and setup by packaging_tools
+    @return_origin_path
+    def check_file_with_packaging_tool(self):
+
+        os.chdir(Path(f"sdk/{self.sdk_folder}"))
+        title = self.extract_client_title_from_init
 
         if not title:
             _LOGGER.info(f"Can not find the title for {self.whole_package_name}")
