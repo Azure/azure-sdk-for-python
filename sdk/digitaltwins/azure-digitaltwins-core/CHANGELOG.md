@@ -4,8 +4,6 @@
 
 - Updated service API version to use API version 2023-10-31 by default.
 
-## 1.2.1 (2025-06-20)
-
 ## 1.2.0 (2022-05-31)
 
  - GA release
