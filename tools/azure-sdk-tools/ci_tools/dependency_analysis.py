@@ -152,7 +152,7 @@ def dump_packages(data_pkgs: Dict[str, Dict[str, Any]]) -> Dict[str, Dict[str, A
 def resolve_lib_deps(dump_data: Dict[str, Dict[str, Any]], data_pkgs: Dict[str, Dict[str, Any]], pkg_id: str) -> None:
     for dep in dump_data[pkg_id]["deps"]:
         dep_req = Requirement(dep["name"] + dep["version"])
-        if dep["name"] in data_pkgs and data_pkgs[dep["name"]]["version"] in dep_req:
+        if dep["name"] in data_pkgs and data_pkgs[dep["name"]]["version"] in dep_req.specifier:
             # If the internal package version matches the dependency spec,
             # rewrite the dep version to match the internal package version
             dep["version"] = data_pkgs[dep["name"]]["version"]
