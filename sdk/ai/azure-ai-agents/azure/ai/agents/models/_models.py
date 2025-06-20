@@ -235,8 +235,8 @@ class AgentsNamedToolChoice(_Model):
 
     :ivar type: the type of tool. If type is ``function``, the function name must be set. Required.
      Known values are: "function", "code_interpreter", "file_search", "bing_grounding",
-     "fabric_dataagent", "sharepoint_grounding", "azure_ai_search", "bing_custom_search", and
-     "connected_agent".
+     "fabric_dataagent", "sharepoint_grounding", "azure_ai_search", "bing_custom_search",
+     "connected_agent", "browser_automation", and "deep_research".
     :vartype type: str or ~azure.ai.agents.models.AgentsNamedToolChoiceType
     :ivar function: The name of the function to call.
     :vartype function: ~azure.ai.agents.models.FunctionName
@@ -248,7 +248,7 @@ class AgentsNamedToolChoice(_Model):
     """the type of tool. If type is ``function``, the function name must be set. Required. Known
      values are: \"function\", \"code_interpreter\", \"file_search\", \"bing_grounding\",
      \"fabric_dataagent\", \"sharepoint_grounding\", \"azure_ai_search\", \"bing_custom_search\",
-     and \"connected_agent\"."""
+     \"connected_agent\", \"browser_automation\", and \"deep_research\"."""
     function: Optional["_models.FunctionName"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the function to call."""
 
@@ -511,9 +511,10 @@ class ToolDefinition(_Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureAISearchToolDefinition, AzureFunctionToolDefinition, BingCustomSearchToolDefinition,
-    BingGroundingToolDefinition, CodeInterpreterToolDefinition, ConnectedAgentToolDefinition,
-    MicrosoftFabricToolDefinition, FileSearchToolDefinition, FunctionToolDefinition,
-    OpenApiToolDefinition, SharepointToolDefinition
+    BingGroundingToolDefinition, BrowserAutomationToolDefinition, CodeInterpreterToolDefinition,
+    ConnectedAgentToolDefinition, DeepResearchToolDefinition, MicrosoftFabricToolDefinition,
+    FileSearchToolDefinition, FunctionToolDefinition, OpenApiToolDefinition,
+    SharepointToolDefinition
 
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
@@ -883,6 +884,34 @@ class BingCustomSearchToolParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
+class BingGroundingConnectionInformation(_Model):
+    """The connection resource ID for the Bing grounding resource.
+
+    :ivar connection_id: The connection ID for the Bing grounding connection. Required.
+    :vartype connection_id: str
+    """
+
+    connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The connection ID for the Bing grounding connection. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class BingGroundingSearchConfiguration(_Model):
     """Search configuration for Bing Grounding.
 
@@ -1003,6 +1032,100 @@ class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type="bing_grounding", **kwargs)
+
+
+class BrowserAutomationDetails(_Model):
+    """The details of the browser automation tool.
+
+    :ivar connection: Information about the remote browser to be used for automation. Required.
+    :vartype connection: ~azure.ai.agents.models.BrowserAutomationRemoteBrowserConnection
+    """
+
+    connection: "_models.BrowserAutomationRemoteBrowserConnection" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Information about the remote browser to be used for automation. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection: "_models.BrowserAutomationRemoteBrowserConnection",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BrowserAutomationRemoteBrowserConnection(_Model):
+    """The connection ID containing information about the remote browser.
+
+    :ivar connection_id: The connection ID for the remote browser. Required.
+    :vartype connection_id: str
+    """
+
+    connection_id: str = rest_field(name="id", visibility=["read", "create", "update", "delete", "query"])
+    """The connection ID for the remote browser. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BrowserAutomationToolDefinition(ToolDefinition, discriminator="browser_automation"):
+    """The input definition information for a Browser Automation tool as used to configure an agent.
+
+    :ivar type: The object type, which is always 'browser_automation'. Required. Default value is
+     "browser_automation".
+    :vartype type: str
+    :ivar browser_automation: The browser_automation tool definition configuration. Required.
+    :vartype browser_automation: ~azure.ai.agents.models.BrowserAutomationDetails
+    """
+
+    type: Literal["browser_automation"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'browser_automation'. Required. Default value is
+     \"browser_automation\"."""
+    browser_automation: "_models.BrowserAutomationDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The browser_automation tool definition configuration. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        browser_automation: "_models.BrowserAutomationDetails",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="browser_automation", **kwargs)
 
 
 class CodeInterpreterToolDefinition(ToolDefinition, discriminator="code_interpreter"):
@@ -1148,6 +1271,81 @@ class ConnectedAgentToolDefinition(ToolDefinition, discriminator="connected_agen
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type="connected_agent", **kwargs)
+
+
+class DeepResearchDetails(_Model):
+    """The details of the Deep Research tool.
+
+    :ivar deep_research_model_deployment_name: The deep research model deployment name. Required.
+    :vartype deep_research_model_deployment_name: str
+    :ivar bing_grounding_connections: The array containing Bing grounding connection IDs to enhance
+     deep research capabilities. Required.
+    :vartype bing_grounding_connections:
+     list[~azure.ai.agents.models.BingGroundingConnectionInformation]
+    """
+
+    deep_research_model_deployment_name: str = rest_field(
+        name="deep_research_model", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The deep research model deployment name. Required."""
+    bing_grounding_connections: List["_models.BingGroundingConnectionInformation"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The array containing Bing grounding connection IDs to enhance deep research capabilities.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        deep_research_model_deployment_name: str,
+        bing_grounding_connections: List["_models.BingGroundingConnectionInformation"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DeepResearchToolDefinition(ToolDefinition, discriminator="deep_research"):
+    """The input definition information for a Deep Research tool as used to configure an agent.
+
+    :ivar type: The object type, which is always 'deep_research'. Required. Default value is
+     "deep_research".
+    :vartype type: str
+    :ivar deep_research: The deep_research tool definition configuration. Required.
+    :vartype deep_research: ~azure.ai.agents.models.DeepResearchDetails
+    """
+
+    type: Literal["deep_research"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'deep_research'. Required. Default value is \"deep_research\"."""
+    deep_research: "_models.DeepResearchDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The deep_research tool definition configuration. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        deep_research: "_models.DeepResearchDetails",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="deep_research", **kwargs)
 
 
 class FabricDataAgentToolParameters(_Model):
@@ -3677,8 +3875,9 @@ class RunStepToolCall(_Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RunStepAzureAISearchToolCall, RunStepBingCustomSearchToolCall, RunStepBingGroundingToolCall,
-    RunStepCodeInterpreterToolCall, RunStepMicrosoftFabricToolCall, RunStepFileSearchToolCall,
-    RunStepFunctionToolCall, RunStepOpenAPIToolCall, RunStepSharepointToolCall
+    RunStepBrowserAutomationToolCall, RunStepCodeInterpreterToolCall, RunStepDeepResearchToolCall,
+    RunStepMicrosoftFabricToolCall, RunStepFileSearchToolCall, RunStepFunctionToolCall,
+    RunStepOpenAPIToolCall, RunStepSharepointToolCall
 
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
@@ -3830,6 +4029,133 @@ class RunStepBingGroundingToolCall(RunStepToolCall, discriminator="bing_groundin
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type="bing_grounding", **kwargs)
+
+
+class RunStepBrowserAutomationToolCall(RunStepToolCall, discriminator="browser_automation"):
+    """A record of a call to a Browser Automation tool, issued by the model in evaluation of a defined
+    tool, that represents
+    executed automated browser operations.
+
+    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
+     Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'browser_automation'. Required. Default value is
+     "browser_automation".
+    :vartype type: str
+    :ivar browser_automation: The detailed information about the automated browser tasks performed
+     by the model. Required.
+    :vartype browser_automation: ~azure.ai.agents.models.RunStepBrowserAutomationToolCallDetails
+    """
+
+    type: Literal["browser_automation"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'browser_automation'. Required. Default value is
+     \"browser_automation\"."""
+    browser_automation: "_models.RunStepBrowserAutomationToolCallDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The detailed information about the automated browser tasks performed by the model. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        browser_automation: "_models.RunStepBrowserAutomationToolCallDetails",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="browser_automation", **kwargs)
+
+
+class RunStepBrowserAutomationToolCallDetails(_Model):
+    """The detailed information about the automated browser tasks performed by the model.
+
+    :ivar input: The input provided by the model to the browser automation tool. Required.
+    :vartype input: str
+    :ivar output: The final output for the browser automation tool. Required.
+    :vartype output: str
+    :ivar steps: The intermediate browser goals taken to achieve the final user goal. Required.
+    :vartype steps: list[~azure.ai.agents.models.RunStepBrowserAutomationToolStepDetail]
+    """
+
+    input: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The input provided by the model to the browser automation tool. Required."""
+    output: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The final output for the browser automation tool. Required."""
+    steps: List["_models.RunStepBrowserAutomationToolStepDetail"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The intermediate browser goals taken to achieve the final user goal. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        input: str,
+        output: str,
+        steps: List["_models.RunStepBrowserAutomationToolStepDetail"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RunStepBrowserAutomationToolStepDetail(_Model):
+    """The details of each step taken by the browser automation tool to achieve the final user goal.
+
+    :ivar last_step_result: The evaluated result of the previous step that'll help the model decide
+     what to do next. Required.
+    :vartype last_step_result: str
+    :ivar current_state: The model interpretation of the current state of the browser after the
+     action for the current step has been performed. Required.
+    :vartype current_state: str
+    :ivar next_step: The model decision summary of the next step to be performed to reach closer to
+     the final user goal. Required.
+    :vartype next_step: str
+    """
+
+    last_step_result: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The evaluated result of the previous step that'll help the model decide what to do next.
+     Required."""
+    current_state: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model interpretation of the current state of the browser after the action for the current
+     step has been performed. Required."""
+    next_step: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model decision summary of the next step to be performed to reach closer to the final user
+     goal. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        last_step_result: str,
+        current_state: str,
+        next_step: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class RunStepCodeInterpreterToolCallOutput(_Model):
@@ -4065,6 +4391,81 @@ class RunStepCompletionUsage(_Model):
         completion_tokens: int,
         prompt_tokens: int,
         total_tokens: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RunStepDeepResearchToolCall(RunStepToolCall, discriminator="deep_research"):
+    """A record of a call to a Deep Research tool, issued by the model in evaluation of a defined
+    tool, that represents
+    executed deep research operations.
+
+    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
+     Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'deep_research'. Required. Default value is
+     "deep_research".
+    :vartype type: str
+    :ivar deep_research: The detailed information about the automated browser tasks performed by
+     the model. Required.
+    :vartype deep_research: ~azure.ai.agents.models.RunStepDeepResearchToolCallDetails
+    """
+
+    type: Literal["deep_research"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'deep_research'. Required. Default value is \"deep_research\"."""
+    deep_research: "_models.RunStepDeepResearchToolCallDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The detailed information about the automated browser tasks performed by the model. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        deep_research: "_models.RunStepDeepResearchToolCallDetails",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="deep_research", **kwargs)
+
+
+class RunStepDeepResearchToolCallDetails(_Model):
+    """The detailed information about the deep research tasks performed by the model.
+
+    :ivar input: The input provided by the model to the deep research tool. Required.
+    :vartype input: str
+    :ivar output: The final output for the deep research tool.
+    :vartype output: str
+    """
+
+    input: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The input provided by the model to the deep research tool. Required."""
+    output: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The final output for the deep research tool."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        input: str,
+        output: Optional[str] = None,
     ) -> None: ...
 
     @overload
