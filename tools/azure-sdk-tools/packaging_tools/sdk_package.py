@@ -51,9 +51,9 @@ def main(generate_input, generate_output):
         try:
             md_output = execute_func_with_timeout(change_log_func)
         except multiprocessing.TimeoutError:
-            md_output = "change log generation was timeout!!!"
+            md_output = "change log generation was timeout!!! You need to write it manually!!!"
         except:
-            md_output = "change log generation failed!!!"
+            md_output = "change log generation failed!!! You need to write it manually!!!"
         finally:
             for file in ["stable.json", "current.json"]:
                 file_path = Path(sdk_folder, prefolder, package_name, file)

@@ -19,7 +19,7 @@ from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 
 from ci_tools.parsing import ParsedSetup, parse_require
-from ci_tools.functions import compare_python_version, handle_incompatible_minimum_dev_reqs
+from ci_tools.functions import compare_python_version, handle_incompatible_minimum_dev_reqs, get_pip_command
 
 from typing import List
 
@@ -366,12 +366,8 @@ def filter_dev_requirements(
 
 def install_packages(packages, req_file):
     # install list of given packages from PyPI
-    commands = [
-        sys.executable,
-        "-m",
-        "pip",
-        "install",
-    ]
+    commands = get_pip_command()
+    commands.append("install")
 
     if packages:
         commands.extend(packages)
