@@ -762,8 +762,32 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.result_code, "0")
 
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
-        self.assertEqual(envelope.data.base_data.type, "az.ai.inference")
+        self.assertEqual(envelope.data.base_data.type, "GenAI | az.ai.inference")
         self.assertEqual(len(envelope.data.base_data.properties), 1)
+        
+    def test_span_to_envelope_client_internal_genai_type(self):
+        exporter = self._exporter
+        start_time = 1575494316027613500
+        end_time = start_time + 1001000000
+
+        span = trace._Span(
+            name="genai-test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            attributes={
+                "gen_ai.system": "az.ai.inference",
+            },
+            kind=SpanKind.INTERNAL,
+        )
+        span.start(start_time=start_time)
+        span.end(end_time=end_time)
+        span._status = Status(status_code=StatusCode.UNSET)
+        envelope = exporter._span_to_envelope(span)
+
+        self.assertEqual(envelope.data.base_data.type, "GenAI | az.ai.inference")
 
     def test_span_to_envelope_client_azure(self):
         exporter = self._exporter

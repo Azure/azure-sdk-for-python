@@ -407,7 +407,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     span.attributes,
                 )
             elif gen_ai_attributes.GEN_AI_SYSTEM in span.attributes:  # GenAI
-                data.type = span.attributes[gen_ai_attributes.GEN_AI_SYSTEM]
+                data.type = "GenAI | {}".format(span.attributes[gen_ai_attributes.GEN_AI_SYSTEM])
             else:
                 data.type = "N/A"
         elif span.kind is SpanKind.PRODUCER:  # Messaging
@@ -428,6 +428,8 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             data.type = "InProc"
             if _AZURE_SDK_NAMESPACE_NAME in span.attributes:
                 data.type += " | {}".format(span.attributes[_AZURE_SDK_NAMESPACE_NAME])
+            elif gen_ai_attributes.GEN_AI_SYSTEM in span.attributes:  # GenAI
+                data.type = "GenAI | {}".format(span.attributes[gen_ai_attributes.GEN_AI_SYSTEM])
         # Apply truncation
         # See https://github.com/MohanGsk/ApplicationInsights-Home/tree/master/EndpointSpecs/Schemas/Bond
         if data.name:
