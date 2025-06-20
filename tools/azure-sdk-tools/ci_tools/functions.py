@@ -374,7 +374,7 @@ def process_requires(setup_py_path: str, is_dev_build: bool = False):
     # Find package requirements that are not available on PyPI
     requirement_to_update = {}
     for req in azure_requirements:
-        pkg_name = req.key
+        pkg_name = req.name
         spec = SpecifierSet(str(req).replace(pkg_name, ""))
 
         if not is_required_version_on_pypi(pkg_name, spec) or is_dev_build:

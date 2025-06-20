@@ -68,7 +68,7 @@ def get_lib_deps(base_dir: str) -> Tuple[Dict[str, Dict[str, Any]], Dict[str, Di
 
             for req in requires:
                 req_obj = parse_require(req)
-                req_name = req_obj.key
+                req_name = req_obj.name
                 spec = req_obj.specifier if len(req_obj.specifier) else None
                 if spec is None:
                     spec = ""
@@ -100,7 +100,7 @@ def get_wheel_deps(wheel_dir: str) -> Tuple[Dict[str, Dict[str, Any]], Dict[str,
                     req = re.sub(r"[\s\(\)]", "", req)  # Version specifiers appear in parentheses
                     req_obj = parse_require(req)
 
-                    req_name = req_obj.key
+                    req_name = req_obj.name
                     spec = req_obj.specifier if len(req_obj.specifier) else None
                     if spec is None:
                         spec = ""
