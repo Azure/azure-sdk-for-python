@@ -2,9 +2,6 @@ name: Copilot Setup Steps
 
 on: workflow_dispatch
 
-env:
-  COPILOT_AGENT_FIREWALL_ALLOW_LIST: https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/
-
 jobs:
   copilot-setup-steps:
     runs-on: ubuntu-latest
