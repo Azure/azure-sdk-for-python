@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import argparse
-import ast
 from datetime import datetime
 import glob
 import io
@@ -8,7 +7,6 @@ import json
 import os
 import re
 import sys
-import textwrap
 from typing import List, Set, Dict, Tuple, Any
 
 try:
@@ -16,8 +14,9 @@ try:
 except:
     from collections.abc import Sized
 
-from pkg_resources import Requirement
-from packaging.specifiers import SpecifierSet, Version
+from packaging.requirements import Requirement
+from packaging.specifiers import SpecifierSet
+from packaging.version import Version
 from ci_tools.variables import discover_repo_root
 from ci_tools.functions import discover_targeted_packages
 from ci_tools.parsing import ParsedSetup, parse_require
@@ -30,7 +29,7 @@ except:
     pass  # we only technically require this when outputting the rendered report
 
 
-def get_known_versions(package_name: str) -> List[str]:
+def get_known_versions(package_name: str) -> List[Version]:
     client = PyPIClient()
     return client.get_ordered_versions(package_name)
 
@@ -60,8 +59,8 @@ def get_lib_deps(base_dir: str) -> Tuple[Dict[str, Dict[str, Any]], Dict[str, Di
     packages = {}
     dependencies = {}
     for lib_dir in discover_targeted_packages("azure*", base_dir):
+        setup_path = os.path.join(lib_dir, "setup.py")
         try:
-            setup_path = os.path.join(lib_dir, "setup.py")
             parsed = ParsedSetup.from_path(setup_path)
             lib_name, version, requires = parsed.name, parsed.version, parsed.requires
 
@@ -152,7 +151,7 @@ def dump_packages(data_pkgs: Dict[str, Dict[str, Any]]) -> Dict[str, Dict[str, A
 
 def resolve_lib_deps(dump_data: Dict[str, Dict[str, Any]], data_pkgs: Dict[str, Dict[str, Any]], pkg_id: str) -> None:
     for dep in dump_data[pkg_id]["deps"]:
-        dep_req = Requirement.parse(dep["name"] + dep["version"])
+        dep_req = Requirement(dep["name"] + dep["version"])
         if dep["name"] in data_pkgs and data_pkgs[dep["name"]]["version"] in dep_req:
             # If the internal package version matches the dependency spec,
             # rewrite the dep version to match the internal package version
