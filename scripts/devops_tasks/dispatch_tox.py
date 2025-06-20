@@ -113,6 +113,7 @@ In the case of an environment invoking `pytest`, results can be collected in a j
     )
 
     args = parser.parse_args()
+    os.environ.setdefault('TOX_PIP_IMPL', 'uv pip')
 
     # We need to support both CI builds of everything and individual service
     # folders. This logic allows us to do both.
