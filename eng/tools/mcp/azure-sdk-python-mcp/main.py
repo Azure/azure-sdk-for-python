@@ -267,9 +267,9 @@ def init_local_tool(tsp_config_path: str, repo_path: str, commit_id: str, venv_p
             "repoHttpsUrl": "https://github.com/Azure/azure-rest-api-specs",
             "relatedTypeSpecProjectFolder": [tsp_folder],
         }
-        generate_input_path = os.path.join(repo_path, ".venv/generate_input.json")
-        generate_output_path = os.path.join(repo_path, ".venv/generate_output.json")
-        generate_tmp_path = os.path.join(repo_path, ".venv/tmp.json")
+        generate_input_path = os.path.join(venv_path, "generate_input.json")
+        generate_output_path = os.path.join(venv_path, "generate_output.json")
+        generate_tmp_path = os.path.join(venv_path, "tmp.json")
         with open(generate_input_path, "w") as f:
             json.dump(generate_input, f, indent=2)
         with open(generate_tmp_path, "w") as f:
