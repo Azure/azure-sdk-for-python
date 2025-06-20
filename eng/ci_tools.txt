@@ -15,6 +15,7 @@ typing-extensions==4.12.2
 pyproject-api==1.8.0
 cibuildwheel==2.16.5
 importlib-metadata==8.5.0
+build==1.2.2
 
 # requirements leveraged for testing
 pytest==8.3.5

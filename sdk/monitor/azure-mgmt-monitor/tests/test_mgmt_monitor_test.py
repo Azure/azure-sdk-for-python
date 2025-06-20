@@ -14,6 +14,7 @@ from azure.core.exceptions import HttpResponseError
 
 AZURE_LOCATION = "eastus"
 
+
 @pytest.mark.live_test_only
 class TestMgmtMonitor(AzureMgmtRecordedTestCase):
 

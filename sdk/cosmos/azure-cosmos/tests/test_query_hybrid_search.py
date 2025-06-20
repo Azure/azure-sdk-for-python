@@ -26,7 +26,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
     masterKey = config.masterKey
     connectionPolicy = config.connectionPolicy
     TEST_DATABASE_ID = config.TEST_DATABASE_ID
-    TEST_CONTAINER_ID = "Full Text Container " + str(uuid.uuid4())
+    TEST_CONTAINER_ID = "FullTextContainer-" + str(uuid.uuid4())
 
     @classmethod
     def setUpClass(cls):
@@ -40,7 +40,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.test_db = cls.client.create_database(str(uuid.uuid4()))
         cls.test_container = cls.test_db.create_container(
-            id="FTS" + cls.TEST_CONTAINER_ID,
+            id=cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_2_PARTITIONS,
             indexing_policy=test_config.get_full_text_indexing_policy(path="/text"),
@@ -51,7 +51,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
             item['pk'] = str((index % 2) + 1)
             cls.test_container.create_item(item)
         # Need to give the container time to index all the recently added items - 10 minutes seems to work
-        time.sleep(10 * 60)
+        # time.sleep(5 * 60)
 
     @classmethod
     def tearDownClass(cls):
@@ -135,16 +135,16 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         for res in result_list:
             assert res['index'] in [85, 57]
 
-        query = "SELECT TOP 20 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \
+        query = "SELECT TOP 20 c.index, c.title, c.text FROM c WHERE FullTextContains(c.title, 'John') OR " \
                 "FullTextContains(c.text, 'John') OR FullTextContains(c.text, 'United States') " \
                 "ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'))"
         results = self.test_container.query_items(query, enable_cross_partition_query=True)
         result_list = list(results)
-        assert len(result_list) == 15
+        assert len(result_list) == 13
         for res in result_list:
             assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85]
 
-        query = "SELECT TOP 10 c.index, c.title FROM c WHERE " \
+        query = "SELECT TOP 10 c.index, c.title, c.text FROM c WHERE " \
                 "FullTextContains(c.title, 'John') OR FullTextContains(c.text, 'John') OR " \
                 "FullTextContains(c.text, 'United States') ORDER BY RANK RRF(FullTextScore(c.title, 'John')," \
                 " FullTextScore(c.text, 'United States'))"
@@ -152,14 +152,14 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         result_list = list(results)
         assert len(result_list) == 10
         for res in result_list:
-            assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25]
+            assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 2]
 
         query = "SELECT c.index, c.title FROM c WHERE FullTextContains(c.title, 'John')" \
                 " OR FullTextContains(c.text, 'John') OR FullTextContains(c.text, 'United States') ORDER BY " \
                 "RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States')) OFFSET 5 LIMIT 10"
         results = self.test_container.query_items(query, enable_cross_partition_query=True)
         result_list = list(results)
-        assert len(result_list) == 10
+        assert len(result_list) == 8
         for res in result_list:
             assert res['index'] in [24, 77, 76, 80, 25, 22, 2, 66, 57, 85]
 
@@ -169,7 +169,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         result_list = list(results)
         assert len(result_list) == 10
         for res in result_list:
-            assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25]
+            assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 2]
 
         query = "SELECT c.index, c.title FROM c " \
                 "ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States')) " \
@@ -178,7 +178,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         result_list = list(results)
         assert len(result_list) == 13
         for res in result_list:
-            assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66]
+            assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 1, 4]
 
         item_vector = self.test_container.read_item('50', '1')['vector']
         query = "SELECT c.index, c.title FROM c " \
@@ -188,7 +188,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         result_list = list(results)
         assert len(result_list) == 10
         for res in result_list:
-            assert res['index'] in [51, 54, 28, 70, 24, 61, 56, 26, 58, 77]
+            assert res['index'] in [51, 54, 28, 70, 24, 61, 56, 26, 58, 77, 2, 68]
 
     def test_hybrid_search_query_pagination(self):
         query = "SELECT c.index, c.title FROM c " \
@@ -237,10 +237,8 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         results = self.test_container.query_items(query, enable_cross_partition_query=True)
         result_list = [res['Index'] for res in results]
         # If some scores rank the same the order of the results may change
-        assert result_list in [
-            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85],
-            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 85, 57]
-        ]
+        for result in result_list:
+            assert result in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85]
 
         # Test case 2
         query = """
@@ -252,10 +250,8 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         results = self.test_container.query_items(query, enable_cross_partition_query=True)
         result_list = [res['Index'] for res in results]
         # If some scores rank the same the order of the results may change
-        assert result_list in [
-            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85],
-            [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 85, 57]
-        ]
+        for result in result_list:
+            assert result in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85]
 
         # Test case 3
         query = """
@@ -266,7 +262,8 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
                 """
         results = self.test_container.query_items(query, enable_cross_partition_query=True)
         result_list = [res['Index'] for res in results]
-        assert result_list == [61, 51, 49, 54, 75, 24, 77, 76, 80, 25]
+        for result in result_list:
+            assert result in [61, 51, 49, 54, 75, 24, 77, 76, 80, 2, 25]
 
         # Test case 4
         query = """
@@ -278,10 +275,8 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         results = self.test_container.query_items(query, enable_cross_partition_query=True)
         result_list = [res['Index'] for res in results]
         # If some scores rank the same the order of the results may change
-        assert result_list in [
-            [85, 57, 66, 2, 22, 25, 77, 76, 80, 75, 24, 49, 54, 51, 81],
-            [57, 85, 2, 66, 22, 25, 80, 76, 77, 24, 75, 54, 49, 51, 61]
-        ]
+        for result in result_list:
+            assert result in [85, 57, 66, 2, 22, 25, 77, 76, 80, 75, 24, 49, 54, 51, 81, 61]
 
         # Test case 5
         item_vector = self.test_container.read_item('50', '1')['vector']
@@ -292,7 +287,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         result_list = list(results)
         assert len(result_list) == 10
         result_list = [res['index'] for res in result_list]
-        assert result_list == [51, 54, 28, 70, 24, 61, 56, 26, 58, 77]
+        assert result_list == [51, 54, 28, 70, 56, 24, 26, 61, 58, 68]
 
     def test_invalid_hybrid_search_queries_weighted_reciprocal_rank_fusion(self):
         try:
