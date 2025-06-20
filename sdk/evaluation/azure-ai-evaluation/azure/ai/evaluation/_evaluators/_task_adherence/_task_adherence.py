@@ -3,15 +3,18 @@
 # ---------------------------------------------------------
 import os
 import math
+import logging
 from typing import Dict, Union, List, Optional
 
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
-from azure.ai.evaluation._common.utils import reformat_conversation_history, reformat_agent_response, reformat_tool_definitions
+from ..._common.utils import reformat_conversation_history, reformat_agent_response, reformat_tool_definitions
 from azure.ai.evaluation._model_configurations import Message
 from azure.ai.evaluation._common._experimental import experimental
+
+logger = logging.getLogger(__name__)
 
 @experimental
 class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
@@ -142,10 +145,10 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.TASK_ADHERENCE_EVALUATOR,
             )
-        eval_input['query'] = reformat_conversation_history(eval_input["query"], include_system_messages=True)
-        eval_input['response'] = reformat_agent_response(eval_input["response"], include_tool_messages=True)
+        eval_input['query'] = reformat_conversation_history(eval_input["query"], logger, include_system_messages=True)
+        eval_input['response'] = reformat_agent_response(eval_input["response"], logger, include_tool_messages=True)
         if "tool_definitions" in eval_input and eval_input["tool_definitions"] is not None:
-            eval_input['tool_definitions'] = reformat_tool_definitions(eval_input["tool_definitions"])
+            eval_input['tool_definitions'] = reformat_tool_definitions(eval_input["tool_definitions"], logger)
         llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         if isinstance(llm_output, dict):
             score = float(llm_output.get("score", math.nan))
@@ -158,5 +161,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_reason": reason,
                 f"{self._result_key}_additional_details": llm_output
             }
+        if logger:
+            logger.warning("LLM output is not a dictionary, returning NaN for the score.")
         return {self._result_key: math.nan}
 
