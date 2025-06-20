@@ -220,7 +220,7 @@ def init_tool(tsp_config_url: str, repo_path: str) -> Dict[str, Any]:
 
 
 @mcp.tool("init_local")
-def init_local_tool(tsp_config_path: str, repo_path: str, commit_id: str, venv_path: str) -> Dict[str, Any]:
+def init_local_tool(tsp_config_path: str, repo_path: str, commit_id: str) -> Dict[str, Any]:
     """Initializes and subsequently generates a typespec client library directory from a local azure-rest-api-specs repo.
 
     This command is used to generate a client library from a local azure-rest-api-specs repository. No additional
@@ -230,23 +230,19 @@ def init_local_tool(tsp_config_path: str, repo_path: str, commit_id: str, venv_p
         tsp_config_path: The path to the local tspconfig.yaml file.
         repo_path: The path to the repository root (i.e. ./azure-sdk-for-python/).
         commit_id: The commit ID of the local azure-rest-api-specs repository.
-        venv_path: The path to the virtual environment (i.e. ./azure-sdk-for-python/.venv/).
 
     Returns:
         A dictionary containing the result of the command."""
     # Prepare arguments for the CLI command
     tsp_config_path = Path(tsp_config_path).resolve().as_posix()
     repo_path = Path(repo_path).resolve().as_posix()
+    venv_path = os.getenv("VIRTUAL_ENV", os.path.join(repo_path, ".venv"))
 
     # install dependencies
-    if os.name == "nt":
-        python_interpreter = os.path.join(venv_path, "Scripts", "python.exe")
-    else:
-        python_interpreter = os.path.join(venv_path, "bin", "python")
     try:
         # install dependencies
         subprocess.run(
-            [python_interpreter, "scripts/dev_setup.py", "-p", "azure-core"],
+            [sys.executable, "scripts/dev_setup.py", "-p", "azure-core"],
             capture_output=True,
             text=True,
             stdin=subprocess.DEVNULL,  # Explicitly close stdin
@@ -276,28 +272,50 @@ def init_local_tool(tsp_config_path: str, repo_path: str, commit_id: str, venv_p
             json.dump({}, f, indent=2)
 
         # generate SDK
-        result = subprocess.run(
-            [python_interpreter, "-m", "packaging_tools.sdk_generator", generate_input_path, generate_tmp_path],
-            capture_output=True,
-            text=True,
-            stdin=subprocess.DEVNULL,  # Explicitly close stdin
-            cwd=repo_path,
-            check=True,
-        )
-        logger.info(f"generate sdk successfully")
-        result = subprocess.run(
-            [python_interpreter, "-m", "packaging_tools.sdk_package", generate_tmp_path, generate_output_path],
-            capture_output=True,
-            text=True,
-            stdin=subprocess.DEVNULL,  # Explicitly close stdin
-            cwd=repo_path,
-            check=True,
-        )
-        log_path = os.path.join(venv_path, "log.txt")
+        try:
+            result = subprocess.run(
+                [sys.executable, "-m", "packaging_tools.sdk_generator", generate_input_path, generate_tmp_path],
+                capture_output=True,
+                text=True,
+                stdin=subprocess.DEVNULL,  # Explicitly close stdin
+                cwd=repo_path,
+                check=True,
+            )
+        except subprocess.CalledProcessError as e:
+            log_path = os.path.join(venv_path, "generate_log.txt")
+            with open(log_path, "w") as log_file:
+                log_file.write("generate log output:\n" + e.output + "\ns generate log stderr:\n" + e.stderr)
+            return {
+                "success": False,
+                "stdout": "",
+                "stderr": f"Failed to generate SDK. Detailed log is saved to {log_path}",
+                "code": 1,
+            }
         with open(log_path, "w") as log_file:
-            log_file.write(result.stdout + "\n" + result.stderr)
+            log_file.write("generate log output:\n" + result.stdout + "\ns generate log stderr:\n" + result.stderr)
+        logger.info(f"generate sdk successfully!")
+        try:
+            result = subprocess.run(
+                [sys.executable, "-m", "packaging_tools.sdk_package", generate_tmp_path, generate_output_path],
+                capture_output=True,
+                text=True,
+                stdin=subprocess.DEVNULL,  # Explicitly close stdin
+                cwd=repo_path,
+                check=True,
+            )
+        except subprocess.CalledProcessError as e:
+            with open(log_path, "a") as log_file:
+                log_file.write("\npackage log output:\n" + e.output + "\npackage log stderr:\n" + e.stderr)
+            return {
+                "success": False,
+                "stdout": "",
+                "stderr": f"Failed to package SDK. Detailed log is saved to {log_path}",
+                "code": 1,
+            }
+        with open(log_path, "a") as log_file:
+            log_file.write("package log output:\n" + result.stdout + "\npackage log stderr:\n" + result.stderr)
         logger.info(f"package sdk successfully! Detailed log is saved to {log_path}")
-        return {"success": True, "stdout": result.stdout, "stderr": result.stderr, "code": result.returncode}
+        return {"success": True, "stdout": f"Succeed to generate sdk and detailed log is saved to {log_path}", "stderr": "", "code": 0}
     except Exception as e:
         logger.error(f"Failed to generate sdk: {str(e)}")
         return {"success": False, "stdout": "", "stderr": str(e), "code": 1}
