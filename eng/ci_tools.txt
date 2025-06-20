@@ -6,6 +6,7 @@ virtualenv==20.29.3
 wheel==0.45.1
 packaging==24.2
 tox==4.24.2
+tox-uv==1.25.0
 pathlib2==2.3.7.post1
 doc-warden==0.7.2
 beautifulsoup4==4.13.3
