@@ -5,37 +5,33 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: get_sip_trunks_sample_async.py
+FILE: set_sip_domain_sample_async.py
 DESCRIPTION:
-    This sample shows the usage of asynchronous SIP routing client for retrieving the collection of
-    currently configured SIP trunks.
+    This sample shows the usage of asynchronous SIP routing client for setting the configuration
+    of a single SIP domain.
 
 USAGE:
-    python get_sip_trunks_sample_async.py
-        Set the environment variables with your own values before running the sample:
+    python set_sip_domain_sample_async.py
+    Set the environment variables with your own values before running the sample:
     1) COMMUNICATION_SAMPLES_CONNECTION_STRING - the connection string in your ACS account
+    2) COMMUNICATION_SAMPLES_DOMAIN_FQDN - FQDN of SipDomain object to be set
 """
 
 import os
 import asyncio
 from azure.communication.phonenumbers.siprouting.aio import SipRoutingClient
+from azure.communication.phonenumbers.siprouting import SipDomain
 
 connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
+fqdn = os.getenv("COMMUNICATION_SAMPLES_DOMAIN_FQDN")
 client = SipRoutingClient.from_connection_string(connection_string)
+new_domain = SipDomain(fqdn=fqdn, enabled=True)
 
 
-async def get_sip_trunks_sample():
+async def set_sip_domain_sample():
     async with client:
-        sip_trunks = client.list_trunks()
-
-        async for trunk in sip_trunks:
-            print(trunk.fqdn)
-            print(trunk.sip_signaling_port)
-            print(trunk.enabled)
-            print(trunk.direct_transfer)
-            print(trunk.privacy_header)
-            print(trunk.ip_address_version)
+        await client.set_domain(new_domain)
 
 
 if __name__ == "__main__":
-    asyncio.run(get_sip_trunks_sample())
+    asyncio.run(set_sip_domain_sample())
