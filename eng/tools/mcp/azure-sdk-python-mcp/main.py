@@ -272,6 +272,7 @@ def init_local_tool(tsp_config_path: str, repo_path: str, commit_id: str) -> Dic
             json.dump({}, f, indent=2)
 
         # generate SDK
+        log_path = os.path.join(venv_path, "log.txt")
         try:
             result = subprocess.run(
                 [sys.executable, "-m", "packaging_tools.sdk_generator", generate_input_path, generate_tmp_path],
@@ -282,7 +283,6 @@ def init_local_tool(tsp_config_path: str, repo_path: str, commit_id: str) -> Dic
                 check=True,
             )
         except subprocess.CalledProcessError as e:
-            log_path = os.path.join(venv_path, "generate_log.txt")
             with open(log_path, "w") as log_file:
                 log_file.write("generate log output:\n" + e.output + "\ns generate log stderr:\n" + e.stderr)
             return {
