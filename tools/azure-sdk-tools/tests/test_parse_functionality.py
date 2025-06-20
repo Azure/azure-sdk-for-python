@@ -31,10 +31,10 @@ def test_parse_require():
 
     for scenario in test_scenarios:
         result = parse_require(scenario[0])
-        assert result.key is not None
+        assert result.name is not None
         if scenario[2] is not None:
             assert len(result.specifier) != 0
-        assert result.key == scenario[1]
+        assert result.name == scenario[1]
         assert str(result.specifier) == (scenario[2] or "")
 
 
@@ -44,7 +44,7 @@ def test_parse_require_with_no_spec():
     for scenario in spec_scenarios:
         result = parse_require(scenario)
 
-        assert result.key == scenario.replace("_", "-")
+        assert result.name == scenario.replace("_", "-")
         assert len(result.specifier) == 0
 
 
