@@ -5,16 +5,13 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_sharepoint.py
-
 DESCRIPTION:
-    This sample demonstrates how to use agent operations with the
-    Sharepoint tool from the Azure Agents service using a synchronous client.
-    The sharepoint tool is currently available only to whitelisted customers.
-    For access and onboarding instructions, please contact azureagents-preview@microsoft.com.
+    This sample demonstrates how to use Agent operations with the Deep Research tool from
+    the Azure Agents service using a synchronous client.
+    For more information on the Deep Research tool, see: TBD
 
 USAGE:
-    python sample_agents_sharepoint.py
+    python sample_agents_deep_research.py
 
     Before running the sample:
 
@@ -23,28 +20,34 @@ USAGE:
     Set this environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
                           page of your Azure AI Foundry portal.
-    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the TBD AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
-    3) SHAREPOINT_CONNECTION_ID  - The ID of the Sharepoint connection, in the format of:
+    3) DEEP_RESEARCH_MODEL_DEPLOYMENT_NAME - The deployment name of the Deep Research AI model, as found under the "Name" column in
+       the "Models + endpoints" tab in your Azure AI Foundry project.
+    4) TBD: BING_CUSTOM_CONNECTION_ID - The ID of the Bing Custom Search connection, in the format of:
        /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace-name}/connections/{connection-name}
 """
 
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.agents.models import SharepointTool
+from azure.ai.agents.models import DeepResearchTool
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
 
-conn_id = os.environ["SHAREPOINT_CONNECTION_ID"]
+# [START create_agent_with_deep_research_tool]
+conn_id = os.environ["AZURE_BING_CONNECTION_ID"]
 
-# Initialize Sharepoint tool with connection id
-sharepoint = SharepointTool(connection_id=conn_id)
+# Initialize a Deep Research tool with Bing Connection ID and Deep Research model deployment name
+deep_research_tool = DeepResearchTool(
+    bing_grounding_connection_id=conn_id,
+    deep_research_model=os.environ["DEEP_RESEARCH_MODEL_DEPLOYMENT_NAME"],
+)
 
-# Create agent with Sharepoint tool and process agent run
+# Create Agent with the Deep Research tool and process Agent run
 with project_client:
     agents_client = project_client.agents
 
@@ -52,8 +55,9 @@ with project_client:
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
         instructions="You are a helpful agent",
-        tools=sharepoint.definitions,
+        tools=deep_research_tool.definitions,
     )
+    # [END create_agent_with_deep_research_tool]]
     print(f"Created agent, ID: {agent.id}")
 
     # Create thread for communication
@@ -64,18 +68,18 @@ with project_client:
     message = agents_client.messages.create(
         thread_id=thread.id,
         role="user",
-        content="Hello, summarize the key points of the <sharepoint_resource_document>",
+        content="TBD",
     )
     print(f"Created message, ID: {message.id}")
 
-    # Create and process agent run in thread with tools
+    # Create and process Agent run in thread with tools
     run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
     print(f"Run finished with status: {run.status}")
 
     if run.status == "failed":
         print(f"Run failed: {run.last_error}")
 
-    # Delete the agent when done
+    # Delete the Agent when done
     agents_client.delete_agent(agent.id)
     print("Deleted agent")
 
@@ -83,5 +87,7 @@ with project_client:
     messages = agents_client.messages.list(thread_id=thread.id)
     for msg in messages:
         if msg.text_messages:
-            last_text = msg.text_messages[-1]
-            print(f"{msg.role}: {last_text.text.value}")
+            for text_message in msg.text_messages:
+                print(f"Agent response: {text_message.text.value}")
+            for annotation in msg.url_citation_annotations:
+                print(f"URL Citation: [{annotation.url_citation.title}]({annotation.url_citation.url})")
