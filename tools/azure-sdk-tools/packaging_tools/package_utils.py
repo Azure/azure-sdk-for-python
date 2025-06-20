@@ -40,8 +40,11 @@ def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
         raise e
     _LOGGER.info(f"Breaking change detector output: {output}")
     result = [l for l in output.split("\n")]
-    begin = result.index("===== changelog start =====")
-    end = result.index("===== changelog end =====")
+    try:
+        begin = result.index("===== changelog start =====")
+        end = result.index("===== changelog end =====")
+    except ValueError:
+        raise Exception("\n".join(result))
     return "\n".join(result[begin + 1 : end]).strip()
 
 
