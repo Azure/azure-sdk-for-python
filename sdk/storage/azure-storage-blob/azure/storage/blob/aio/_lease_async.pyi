@@ -14,11 +14,7 @@ from ._blob_client_async import BlobClient
 from ._container_client_async import ContainerClient
 
 class BlobLeaseClient:
-    def __init__(
-        self,
-        client: Union[BlobClient, ContainerClient],
-        lease_id: Optional[str] = None
-    ) -> None: ...
+    def __init__(self, client: Union[BlobClient, ContainerClient], lease_id: Optional[str] = None) -> None: ...
     @distributed_trace_async
     async def acquire(
         self,

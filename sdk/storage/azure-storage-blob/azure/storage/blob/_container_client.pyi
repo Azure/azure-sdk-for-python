@@ -6,6 +6,7 @@
 # pylint: skip-file
 
 from datetime import datetime
+from types import TracebackType
 from typing import (
     Any,
     AnyStr,
@@ -48,10 +49,7 @@ from ._models import (
 )
 from ._shared.base_client import StorageAccountHostsMixin
 
-class ContainerClient(
-    StorageAccountHostsMixin,
-    StorageEncryptionMixin
-):
+class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     account_name: str
     container_name: str
     def __init__(
@@ -74,6 +72,11 @@ class ContainerClient(
         use_byte_buffer: Optional[bool] = None,
         **kwargs: Any,
     ) -> None: ...
+    def __enter__(self) -> Self: ...
+    def __exit__(
+        self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
+    ) -> None: ...
+    def close(self) -> None: ...
     @classmethod
     def from_container_url(
         cls,
