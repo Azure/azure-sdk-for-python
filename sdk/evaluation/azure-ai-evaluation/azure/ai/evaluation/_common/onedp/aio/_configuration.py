@@ -6,9 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING, Union
+from typing import Any, TYPE_CHECKING
 
-from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 
 from .._version import VERSION
@@ -23,22 +22,23 @@ class AIProjectClientConfiguration:  # pylint: disable=too-many-instance-attribu
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: Project endpoint in the form of:
-     https://<aiservices-id>.services.ai.azure.com/api/projects/<project-name>. Required.
+    :param endpoint: Project endpoint. In the form
+     "https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/_project"
+     if your Foundry Hub has only one Project, or to use the default Project in your Hub. Or in the
+     form
+     "https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>"
+     if you want to explicitly
+     specify the Foundry Project name. Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a key
-     credential type or a token credential type. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials_async.AsyncTokenCredential
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2025-05-15-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(
-        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
-    ) -> None:
+    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         api_version: str = kwargs.pop("api_version", "2025-05-15-preview")
 
         if endpoint is None:
@@ -49,17 +49,10 @@ class AIProjectClientConfiguration:  # pylint: disable=too-many-instance-attribu
         self.endpoint = endpoint
         self.credential = credential
         self.api_version = api_version
-        self.credential_scopes = kwargs.pop("credential_scopes", ["https://ai.azure.com/.default"])
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://cognitiveservices.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "ai-projects-onedp/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
-
-    def _infer_policy(self, **kwargs):
-        if isinstance(self.credential, AzureKeyCredential):
-            return policies.AzureKeyCredentialPolicy(self.credential, "Authorization", prefix="Bearer", **kwargs)
-        if hasattr(self.credential, "get_token"):
-            return policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
-        raise TypeError(f"Unsupported credential: {self.credential}")
 
     def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
@@ -72,4 +65,6 @@ class AIProjectClientConfiguration:  # pylint: disable=too-many-instance-attribu
         self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = self._infer_policy(**kwargs)
+            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(
+                self.credential, *self.credential_scopes, **kwargs
+            )

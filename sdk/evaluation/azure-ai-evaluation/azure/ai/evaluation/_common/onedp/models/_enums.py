@@ -14,24 +14,92 @@ class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Strategies for attacks."""
 
     EASY = "easy"
-    """Represents a default set of easy complexity attacks. Easy complexity attack strategies are
-    defined as attacks that do not require any Large Language Model to convert or orchestrate."""
+    """Represents a default set of easy complexity attacks. Easy complexity attacks require less
+    effort, such as translation of a prompt into some encoding, and does not require any Large
+    Language Model to convert or orchestrate."""
+    MODERATE = "moderate"
+    """Represents a default set of moderate complexity attacks. Moderate complexity attacks require
+    having access to resources such as another generative AI model."""
+    DIFFICULT = "difficult"
+    """Represents a default set of difficult complexity attacks. Difficult complexity attacks include
+    attacks that require access to significant resources and effort to execute an attack such as
+    knowledge of search-based algorithms in addition to a generative AI model."""
     ASCII_ART = "ascii_art"
-    """Represents ASCII art, a graphic design technique that uses printable characters."""
+    """Generates visual art using ASCII characters, often used for creative or obfuscation purposes."""
     ASCII_SMUGGLER = "ascii_smuggler"
-    """Represents ASCII smuggling, a technique for encoding or hiding data."""
+    """Conceals data within ASCII characters, making it harder to detect."""
     ATBASH = "atbash"
-    """Represents the Atbash cipher, a substitution cipher that reverses the alphabet."""
+    """Implements the Atbash cipher, a simple substitution cipher where each letter is mapped to its
+    reverse."""
     BASE64 = "base64"
-    """Represents Base64 encoding, a method for encoding binary data as text."""
+    """Encodes binary data into a text format using Base64, commonly used for data transmission."""
     BINARY = "binary"
-    """Represents binary encoding, a representation of data in binary format."""
+    """Converts text into binary code, representing data in a series of 0s and 1s."""
     CAESAR = "caesar"
-    """Represents the Caesar cipher, a substitution cipher that shifts characters."""
+    """Applies the Caesar cipher, a substitution cipher that shifts characters by a fixed number of
+    positions."""
     CHARACTER_SPACE = "character_space"
-    """Represents character space manipulation, a technique involving spacing between characters."""
+    """Alters text by adding spaces between characters, often used for obfuscation."""
     JAILBREAK = "jailbreak"
-    """Represents character swapping, a technique for rearranging characters in text."""
+    """Injects specially crafted prompts to bypass AI safeguards, known as User Injected Prompt
+    Attacks (UPIA)."""
+    ANSII_ATTACK = "ansii_attack"
+    """Utilizes ANSI escape sequences to manipulate text appearance and behavior."""
+    CHARACTER_SWAP = "character_swap"
+    """Swaps characters within text to create variations or obfuscate the original content."""
+    SUFFIX_APPEND = "suffix_append"
+    """Appends an adversarial suffix to the prompt."""
+    STRING_JOIN = "string_join"
+    """Joins multiple strings together, often used for concatenation or obfuscation."""
+    UNICODE_CONFUSABLE = "unicode_confusable"
+    """Uses Unicode characters that look similar to standard characters, creating visual confusion."""
+    UNICODE_SUBSTITUTION = "unicode_substitution"
+    """Substitutes standard characters with Unicode equivalents, often for obfuscation."""
+    DIACRITIC = "diacritic"
+    """Adds diacritical marks to characters, changing their appearance and sometimes their meaning."""
+    FLIP = "flip"
+    """Flips characters from front to back, creating a mirrored effect."""
+    LEETSPEAK = "leetspeak"
+    """Transforms text into Leetspeak, a form of encoding that replaces letters with similar-looking
+    numbers or symbols."""
+    ROT13 = "rot13"
+    """Applies the ROT13 cipher, a simple substitution cipher that shifts characters by 13 positions."""
+    MORSE = "morse"
+    """Encodes text into Morse code, using dots and dashes to represent characters."""
+    URL = "url"
+    """Encodes text into URL format."""
+    BASELINE = "baseline"
+    """Represents the baseline direct adversarial probing, which is used by attack strategies as the
+    attack objective."""
+
+
+class ChatRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A description of the intended purpose of a message within a chat completions interaction."""
+
+    SYSTEM = "system"
+    """The role that instructs or sets the behavior of the assistant."""
+    DEVELOPER = "developer"
+    """The role that provides instructions to the model prioritized ahead of user messages."""
+    USER = "user"
+    """The role that provides input for chat completions."""
+    ASSISTANT = "assistant"
+    """The role that provides responses to system-instructed, user-prompted input."""
+    TOOL = "tool"
+    """The role that represents extension tool activity within a chat completions operation."""
+
+
+class CompletionsFinishReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Representation of the manner in which a completions response concluded."""
+
+    STOPPED = "stop"
+    """Completions ended normally and reached its end of token generation."""
+    TOKEN_LIMIT_REACHED = "length"
+    """Completions exhausted available token limits before generation could complete."""
+    CONTENT_FILTERED = "content_filter"
+    """Completions generated a response that was identified as potentially sensitive per content
+    moderation policies."""
+    TOOL_CALLS = "tool_calls"
+    """Completion ended with the model calling a provided tool for output."""
 
 
 class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -42,7 +110,7 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AZURE_BLOB_STORAGE = "AzureBlob"
     """Azure Blob Storage, with specified container"""
     AZURE_STORAGE_ACCOUNT = "AzureStorageAccount"
-    """Azure Blob Storage, with container not specified (used by Assistants)"""
+    """Azure Blob Storage, with container not specified (used by Agents)"""
     AZURE_AI_SEARCH = "CognitiveSearch"
     """Azure AI Search"""
     COSMOS_DB = "CosmosDB"
