@@ -10,6 +10,7 @@ import shutil
 import re
 import os
 from functools import partial
+import multiprocessing
 
 try:
     # py 311 adds this library natively
@@ -38,6 +39,7 @@ from .generate_utils import (
     del_outdated_generated_files,
 )
 from .conf import CONF_NAME
+from .package_utils import create_package, change_log_generate, extract_breaking_change, get_version_info, check_file
 
 logging.basicConfig(
     stream=sys.stdout,
@@ -45,6 +47,11 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %X",
 )
 _LOGGER = logging.getLogger(__name__)
+
+
+def execute_func_with_timeout(func, timeout: int = 900) -> Any:
+    """Execute function with timeout"""
+    return multiprocessing.Pool(processes=1).apply_async(func).get(timeout)
 
 
 def is_multiapi_package(python_md_content: List[str]) -> bool:
@@ -345,8 +352,113 @@ def main(generate_input, generate_output):
     if len(result) == 0 and len(readme_and_tsp) > 1:
         raise Exception("No package is generated, please check the log for details")
 
+    # Now run the packaging phase that was previously in sdk_package.py
+    _LOGGER.info("Starting packaging phase...")
+    
+    sdk_folder = "."
+    final_result = {"packages": []}
+    
+    for package in result.values():
+        package_name = package["packageName"]
+        prefolder = package["path"][0]
+        
+        # Changelog generation
+        last_version, last_stable_release = get_version_info(package_name, package["tagIsStable"])
+        change_log_func = partial(
+            change_log_generate,
+            package_name,
+            last_version,
+            package["tagIsStable"],
+            last_stable_release=last_stable_release,
+            prefolder=prefolder,
+            is_multiapi=package["isMultiapi"],
+        )
+
+        changelog_generation_start_time = time.time()
+        try:
+            md_output = execute_func_with_timeout(change_log_func)
+        except multiprocessing.TimeoutError:
+            md_output = "change log generation was timeout!!! You need to write it manually!!!"
+        except:
+            md_output = "change log generation failed!!! You need to write it manually!!!"
+        finally:
+            for file in ["stable.json", "current.json"]:
+                file_path = Path(sdk_folder, prefolder, package_name, file)
+                if file_path.exists():
+                    os.remove(file_path)
+                    _LOGGER.info(f"Remove {file_path} which is temp file to generate changelog.")
+
+        _LOGGER.info(f"changelog generation cost time: {int(time.time() - changelog_generation_start_time)} seconds")
+        package["changelog"] = {
+            "content": md_output,
+            "hasBreakingChange": "Breaking Changes" in md_output,
+            "breakingChangeItems": extract_breaking_change(md_output),
+        }
+        package["version"] = last_version
+
+        _LOGGER.info(f"[PACKAGE]({package_name})[CHANGELOG]:{md_output}")
+        
+        # Generate api stub File
+        folder_name = package["path"][0]
+
+        if package["runInPipeline"]:
+            apiview_start_time = time.time()
+            try:
+                package_path = Path(sdk_folder, folder_name, package_name)
+                check_call(
+                    [
+                        "python",
+                        "-m",
+                        "pip",
+                        "install",
+                        "-r",
+                        "../../../eng/apiview_reqs.txt",
+                        "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi"
+                        "/simple/",
+                    ],
+                    cwd=package_path,
+                    timeout=600,
+                )
+                check_call(["apistubgen", "--pkg-path", "."], cwd=package_path, timeout=600)
+                for file in os.listdir(package_path):
+                    if "_python.json" in file and package_name in file:
+                        package["apiViewArtifact"] = str(Path(package_path, file))
+            except Exception as e:
+                _LOGGER.debug(f"Fail to generate ApiView token file for {package_name}: {e}")
+            _LOGGER.info(f"apiview generation cost time: {int(time.time() - apiview_start_time)} seconds")
+        else:
+            _LOGGER.info("Skip ApiView generation for package that does not run in pipeline.")
+
+        # check generated files and update package["version"]
+        if package_name.startswith("azure-mgmt-"):
+            try:
+                check_file(package)
+            except Exception as e:
+                _LOGGER.error(f"Fail to check generated files for {package_name}: {e}")
+
+        # Built package
+        create_package(prefolder, package_name)
+        dist_path = Path(sdk_folder, folder_name, package_name, "dist")
+        package["artifacts"] = [str(dist_path / package_file) for package_file in os.listdir(dist_path)]
+        for artifact in package["artifacts"]:
+            if ".whl" in artifact:
+                package["language"] = "Python"
+                break
+        # Installation package
+        package["installInstructions"] = {
+            "full": "You can install the use using pip install of the artifacts.",
+            "lite": f"pip install {package_name}",
+        }
+        package["result"] = "succeeded"
+        package["packageFolder"] = package["path"][0]
+        final_result["packages"].append(package)
+
     with open(generate_output, "w") as writer:
-        json.dump(result, writer)
+        json.dump(final_result, writer)
+
+    _LOGGER.info(
+        f"Congratulations! Succeed to build package for {[p['packageName'] for p in final_result['packages']]}. And you shall be able to see the generated code when running 'git status'."
+    )
 
 
 def generate_main():

@@ -165,10 +165,8 @@ class CodegenTestPR:
         print_check(f"python -m packaging_tools.sdk_generator {self.autorest_result} {self.autorest_result}")
 
         generate_result = self.get_autorest_result()
-        self.tag_is_stable = list(generate_result.values())[0]["tagIsStable"]
+        self.tag_is_stable = generate_result["packages"][0]["tagIsStable"]
         log(f"tag_is_stable is {self.tag_is_stable}")
-
-        print_check(f"python -m packaging_tools.sdk_package {self.autorest_result} {self.autorest_result}")
 
     def get_package_name_with_autorest_result(self):
         generate_result = self.get_autorest_result()
