@@ -1,4 +1,5 @@
 import os
+import ast
 import time
 import importlib
 from typing import Optional, Tuple, Dict, Any, List
@@ -177,17 +178,31 @@ class CheckFile:
     # Use the template to update readme and setup by packaging_tools
     @return_origin_path
     def check_file_with_packaging_tool(self):
-        module = importlib.import_module(self.whole_package_name.replace("-", "."))
-        title = ""
-        for item in getattr(module, "__all__", []):
-            if item.endswith("Client"):
-                title = item
-                break
-
-        if not title:
-            _LOGGER.info(f"Can not find the title in {self.whole_package_name}")
 
         os.chdir(Path(f"sdk/{self.sdk_folder}"))
+        title = ""
+        init_file = Path(self.whole_package_name) / self.whole_package_name.replace("-", "/") / "__init__.py"
+        try:
+            with open(init_file, "r") as f:
+                content = f.read()
+            tree = ast.parse(content)
+            # Look for __all__ assignment
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Assign):
+                    # Check if any target is __all__
+                    for target in node.targets:
+                        if isinstance(target, ast.Name) and target.id == "__all__" and isinstance(node.value, ast.List):
+                            # Extract the value
+                            for elt in node.value.elts:
+                                if isinstance(elt, ast.Constant) and elt.value.endswith("Client"):
+                                    title = elt.value
+                                    break
+        except Exception as e:
+            _LOGGER.info(f"Failed to extract title from {init_file}: {e}")
+
+        if not title:
+            _LOGGER.info(f"Can not find the title for {self.whole_package_name}")
+
         # add `title` and update `is_stable` in sdk_packaging.toml
         toml = Path(self.whole_package_name) / "sdk_packaging.toml"
         stable_config = f'is_stable = {"true" if self.tag_is_stable and self.next_version != "1.0.0b1" else "false"}\n'
@@ -338,14 +353,14 @@ class CheckFile:
         os.chdir(Path("sdk") / self.sdk_folder / self.whole_package_name)
         # Configure and ensure pyproject.toml exists with required settings
         toml_path = Path("pyproject.toml")
-        
+
         # Default configurations to enforce
         default_configs = {
             "breaking": "false",
             "pyright": "false",
             "mypy": "false",
         }
-        
+
         # Create new pyproject.toml if it doesn't exist
         if not toml_path.exists():
             with open(toml_path, "w") as file:
@@ -354,27 +369,27 @@ class CheckFile:
                     file.write(f"{key} = {value}\n")
                 _LOGGER.info("Created pyproject.toml with default configurations")
             return
-            
+
         # If file exists, ensure all required configurations are present
         def edit_toml(content: List[str]):
             # Track if we have the [tool.azure-sdk-build] section
             has_section = False
             config_exists = {key: False for key in default_configs}
-            
+
             # Check for existing configurations and section
             for i, line in enumerate(content):
                 if "[tool.azure-sdk-build]" in line:
                     has_section = True
-                
+
                 # Check for each configuration
                 for key in default_configs:
                     if f"{key} = " in line:
                         config_exists[key] = True
-            
+
             # Add section if it doesn't exist
             if not has_section:
                 content.append("\n[tool.azure-sdk-build]\n")
-                
+
             # Add missing configurations
             for key, value in default_configs.items():
                 if not config_exists[key]:
