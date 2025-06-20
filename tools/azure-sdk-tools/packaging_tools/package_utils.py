@@ -7,7 +7,7 @@ import logging
 from subprocess import check_call, CalledProcessError, getoutput
 from .generate_utils import return_origin_path
 from packaging.version import Version
-
+from . import build_packaging
 from .change_log import main as change_log_main
 
 DEFAULT_DEST_FOLDER = "./dist"
@@ -211,7 +211,7 @@ class CheckFile:
         else:
             _LOGGER.info(f"{os.getcwd()}/{toml} does not exist")
 
-        check_call(f"python -m packaging_tools --build-conf {self.whole_package_name}", shell=True)
+        build_packaging(output_folder=".", packages=[self.whole_package_name], build_conf=True)
         _LOGGER.info("packaging_tools --build-conf successfully")
 
     def sdk_code_path(self) -> str:
