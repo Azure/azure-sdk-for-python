@@ -14,24 +14,63 @@ class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Strategies for attacks."""
 
     EASY = "easy"
-    """Represents a default set of easy complexity attacks. Easy complexity attack strategies are
-    defined as attacks that do not require any Large Language Model to convert or orchestrate."""
+    """Represents a default set of easy complexity attacks. Easy complexity attacks require less
+    effort, such as translation of a prompt into some encoding, and does not require any Large
+    Language Model to convert or orchestrate."""
+    MODERATE = "moderate"
+    """Represents a default set of moderate complexity attacks. Moderate complexity attacks require
+    having access to resources such as another generative AI model."""
+    DIFFICULT = "difficult"
+    """Represents a default set of difficult complexity attacks. Difficult complexity attacks include
+    attacks that require access to significant resources and effort to execute an attack such as
+    knowledge of search-based algorithms in addition to a generative AI model."""
     ASCII_ART = "ascii_art"
-    """Represents ASCII art, a graphic design technique that uses printable characters."""
+    """Generates visual art using ASCII characters, often used for creative or obfuscation purposes."""
     ASCII_SMUGGLER = "ascii_smuggler"
-    """Represents ASCII smuggling, a technique for encoding or hiding data."""
+    """Conceals data within ASCII characters, making it harder to detect."""
     ATBASH = "atbash"
-    """Represents the Atbash cipher, a substitution cipher that reverses the alphabet."""
+    """Implements the Atbash cipher, a simple substitution cipher where each letter is mapped to its
+    reverse."""
     BASE64 = "base64"
-    """Represents Base64 encoding, a method for encoding binary data as text."""
+    """Encodes binary data into a text format using Base64, commonly used for data transmission."""
     BINARY = "binary"
-    """Represents binary encoding, a representation of data in binary format."""
+    """Converts text into binary code, representing data in a series of 0s and 1s."""
     CAESAR = "caesar"
-    """Represents the Caesar cipher, a substitution cipher that shifts characters."""
+    """Applies the Caesar cipher, a substitution cipher that shifts characters by a fixed number of
+    positions."""
     CHARACTER_SPACE = "character_space"
-    """Represents character space manipulation, a technique involving spacing between characters."""
+    """Alters text by adding spaces between characters, often used for obfuscation."""
     JAILBREAK = "jailbreak"
-    """Represents character swapping, a technique for rearranging characters in text."""
+    """Injects specially crafted prompts to bypass AI safeguards, known as User Injected Prompt
+    Attacks (UPIA)."""
+    ANSII_ATTACK = "ansii_attack"
+    """Utilizes ANSI escape sequences to manipulate text appearance and behavior."""
+    CHARACTER_SWAP = "character_swap"
+    """Swaps characters within text to create variations or obfuscate the original content."""
+    SUFFIX_APPEND = "suffix_append"
+    """Appends an adversarial suffix to the prompt."""
+    STRING_JOIN = "string_join"
+    """Joins multiple strings together, often used for concatenation or obfuscation."""
+    UNICODE_CONFUSABLE = "unicode_confusable"
+    """Uses Unicode characters that look similar to standard characters, creating visual confusion."""
+    UNICODE_SUBSTITUTION = "unicode_substitution"
+    """Substitutes standard characters with Unicode equivalents, often for obfuscation."""
+    DIACRITIC = "diacritic"
+    """Adds diacritical marks to characters, changing their appearance and sometimes their meaning."""
+    FLIP = "flip"
+    """Flips characters from front to back, creating a mirrored effect."""
+    LEETSPEAK = "leetspeak"
+    """Transforms text into Leetspeak, a form of encoding that replaces letters with similar-looking
+    numbers or symbols."""
+    ROT13 = "rot13"
+    """Applies the ROT13 cipher, a simple substitution cipher that shifts characters by 13 positions."""
+    MORSE = "morse"
+    """Encodes text into Morse code, using dots and dashes to represent characters."""
+    URL = "url"
+    """Encodes text into URL format."""
+    BASELINE = "baseline"
+    """Represents the baseline direct adversarial probing, which is used by attack strategies as the
+    attack objective."""
 
 
 class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -42,7 +81,7 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AZURE_BLOB_STORAGE = "AzureBlob"
     """Azure Blob Storage, with specified container"""
     AZURE_STORAGE_ACCOUNT = "AzureStorageAccount"
-    """Azure Blob Storage, with container not specified (used by Assistants)"""
+    """Azure Blob Storage, with container not specified (used by Agents)"""
     AZURE_AI_SEARCH = "CognitiveSearch"
     """Azure AI Search"""
     COSMOS_DB = "CosmosDB"
@@ -99,37 +138,13 @@ class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Managed Azure Search"""
 
 
-class ListViewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """List View Type Definition."""
-
-    ACTIVE_ONLY = "ActiveOnly"
-    """List only active items."""
-    ARCHIVED_ONLY = "ArchivedOnly"
-    """List only archived items."""
-    ALL = "All"
-    """List all items."""
-
-
 class PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of pending upload."""
 
     NONE = "None"
     """No pending upload."""
-    TEMPORARY_BLOB_REFERENCE = "TemporaryBlobReference"
-    """Temporary Blob Reference is the only supported type."""
-
-
-class ResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of Evaluation result."""
-
-    BENCHMARK = "Benchmark"
-    """Benchmark result"""
-    EVALUATION = "Evaluation"
-    """Evaluations Result"""
-    REDTEAM = "Redteam"
-    """Red Team Result"""
-    SIMULATION = "Simulation"
-    """Simulation Result"""
+    BLOB_REFERENCE = "BlobReference"
+    """Blob Reference is the only supported type."""
 
 
 class RiskCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -143,20 +158,3 @@ class RiskCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents content of a sexual nature."""
     SELF_HARM = "SelfHarm"
     """Represents content related to self-harm."""
-    PROTECTED_MATERIAL = "ProtectedMaterial"
-    """Represents content involving protected material."""
-    CODE_VULNERABILITY = "CodeVulnerability"
-    """Represents content related to code vulnerabilities."""
-    UNGROUNDED_ATTRIBUTES = "UngroundedAttributes"
-    """Represents content with ungrounded attributes."""
-
-
-class SimulationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Simulation type."""
-
-    DEFAULT = "Default"
-    """Default simulation type."""
-    CUSTOM_PERSONA = "CustomPersona"
-    """Custom persona simulation type."""
-    HARM_TURN_GENERATOR = "HarmTurnGenerator"
-    """Harm turn generator simulation type."""
