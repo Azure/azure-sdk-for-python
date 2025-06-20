@@ -174,15 +174,15 @@ class CheckFile:
         if self._next_version is None:
             self._next_version = self.calculate_next_version()
         return self._next_version
-    
+
     @property
     def extract_client_title_from_init(self) -> str:
         """
         Extract the client title from a package's __init__.py file.
-        
+
         Args:
             package_name (str): The package name (e.g., "azure-mgmt-compute")
-            
+
         Returns:
             str: The client title if found, empty string otherwise
         """
@@ -203,7 +203,7 @@ class CheckFile:
                                     return elt.value
         except Exception as e:
             _LOGGER.info(f"Failed to extract title from {init_file}: {e}")
-        
+
         return ""
 
     # Use the template to update readme and setup by packaging_tools
