@@ -14,12 +14,12 @@ from ci_tools.functions import (
     discover_prebuilt_package,
     pip_install,
     pip_uninstall,
+    get_pip_command,
 )
 from ci_tools.build import cleanup_build_artifacts, create_package
 from ci_tools.parsing import ParsedSetup, parse_require
 from ci_tools.functions import get_package_from_repo_or_folder, find_whl, get_pip_list_output, pytest
 from .managed_virtual_env import ManagedVirtualEnv
-
 
 def prepare_environment(package_folder: str, venv_directory: str, env_name: str) -> str:
     """
@@ -112,10 +112,8 @@ def create_package_and_install(
                         "Found {} azure requirement(s): {}".format(len(azure_requirements), azure_requirements)
                     )
 
-                    download_command = [
-                        python_exe,
-                        "-m",
-                        "pip",
+                    pip_cmd = get_pip_command(python_exe)
+                    download_command = pip_cmd + [
                         "download",
                         "-d",
                         tmp_dl_folder,
@@ -174,7 +172,8 @@ def create_package_and_install(
                             for package_name in non_present_reqs
                         ]
 
-            commands = [python_exe, "-m", "pip", "install", built_pkg_path]
+            pip_cmd = get_pip_command(python_exe)
+            commands = pip_cmd + ["install", built_pkg_path]
             commands.extend(additional_downloaded_reqs)
             commands.extend(commands_options)
 
