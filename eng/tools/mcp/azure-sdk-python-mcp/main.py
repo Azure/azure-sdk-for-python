@@ -293,7 +293,10 @@ def init_local_tool(tsp_config_path: str, repo_path: str, commit_id: str, venv_p
             cwd=repo_path,
             check=True,
         )
-        logger.info(f"package sdk successfully: {result.stdout}")
+        log_path = os.path.join(venv_path, "log.txt")
+        with open(log_path, "w") as log_file:
+            log_file.write(result.stdout + "\n" + result.stderr)
+        logger.info(f"package sdk successfully! Detailed log is saved to {log_path}")
         return {"success": True, "stdout": result.stdout, "stderr": result.stderr, "code": result.returncode}
     except Exception as e:
         logger.error(f"Failed to generate sdk: {str(e)}")
