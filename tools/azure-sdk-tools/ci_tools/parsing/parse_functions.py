@@ -392,6 +392,7 @@ def parse_pyproject(
     python_requires = project_config.get("requires-python")
     requires = project_config.get("dependencies")
     is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x).name in NEW_REQ_PACKAGES), requires))
+
     name_space = name.replace("-", ".")
     package_data = get_value_from_dict(toml_dict, "tool.setuptools.package-data", None)
     include_package_data = get_value_from_dict(toml_dict, "tool.setuptools.include-package-data", True)
