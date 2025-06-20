@@ -1,4 +1,5 @@
 import os
+import ast
 import time
 import importlib
 from typing import Optional, Tuple, Dict, Any, List
@@ -7,7 +8,7 @@ import logging
 from subprocess import check_call, CalledProcessError, getoutput
 from .generate_utils import return_origin_path
 from packaging.version import Version
-
+from . import build_packaging
 from .change_log import main as change_log_main
 
 DEFAULT_DEST_FOLDER = "./dist"
@@ -28,7 +29,7 @@ def create_package(prefolder, name, dest_folder=DEFAULT_DEST_FOLDER):
 @return_origin_path
 def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
     os.chdir(package_folder)
-    cmd = "tox run -c ../../../eng/tox/tox.ini --root . -e breaking --  --changelog "
+    cmd = "python -m tox run -c ../../../eng/tox/tox.ini --root . -e breaking --  --changelog "
     if lastest_pypi_version:
         cmd += "--latest-pypi-version"
     try:
@@ -39,8 +40,11 @@ def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
         raise e
     _LOGGER.info(f"Breaking change detector output: {output}")
     result = [l for l in output.split("\n")]
-    begin = result.index("===== changelog start =====")
-    end = result.index("===== changelog end =====")
+    try:
+        begin = result.index("===== changelog start =====")
+        end = result.index("===== changelog end =====")
+    except ValueError:
+        raise Exception("\n".join(result))
     return "\n".join(result[begin + 1 : end]).strip()
 
 
@@ -165,28 +169,59 @@ class CheckFile:
         self.version_suggestion = ""
 
     @property
+    def pprint_name(self) -> str:
+        return " ".join([word.capitalize() for word in self.package_name.split("-")])
+
+    @property
     def next_version(self) -> str:
         if self._next_version is None:
             self._next_version = self.calculate_next_version()
         return self._next_version
 
+    @property
+    def extract_client_title_from_init(self) -> str:
+        """
+        Extract the client title from a package's __init__.py file.
+
+        Args:
+            package_name (str): The package name (e.g., "azure-mgmt-compute")
+
+        Returns:
+            str: The client title if found, empty string otherwise
+        """
+        init_file = Path(self.whole_package_name) / self.whole_package_name.replace("-", "/") / "__init__.py"
+        try:
+            with open(init_file, "r") as f:
+                content = f.read()
+            tree = ast.parse(content)
+            # Look for __all__ assignment
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Assign):
+                    # Check if any target is __all__
+                    for target in node.targets:
+                        if isinstance(target, ast.Name) and target.id == "__all__" and isinstance(node.value, ast.List):
+                            # Extract the value
+                            for elt in node.value.elts:
+                                if isinstance(elt, ast.Constant) and elt.value.endswith("Client"):
+                                    return elt.value
+        except Exception as e:
+            _LOGGER.info(f"Failed to extract title from {init_file}: {e}")
+
+        return ""
+
     # Use the template to update readme and setup by packaging_tools
     @return_origin_path
     def check_file_with_packaging_tool(self):
-        module = importlib.import_module(self.whole_package_name.replace("-", "."))
-        title = ""
-        for item in getattr(module, "__all__", []):
-            if item.endswith("Client"):
-                title = item
-                break
-
-        if not title:
-            _LOGGER.info(f"Can not find the title in {self.whole_package_name}")
 
         os.chdir(Path(f"sdk/{self.sdk_folder}"))
+        title = self.extract_client_title_from_init
+
+        if not title:
+            _LOGGER.info(f"Can not find the title for {self.whole_package_name}")
+
         # add `title` and update `is_stable` in sdk_packaging.toml
         toml = Path(self.whole_package_name) / "sdk_packaging.toml"
-        stable_config = "is_stable = " + ("true" if self.tag_is_stable else "false") + "\n"
+        stable_config = f'is_stable = {"true" if self.tag_is_stable and self.next_version != "1.0.0b1" else "false"}\n'
         if toml.exists():
 
             def edit_toml(content: List[str]):
@@ -207,24 +242,23 @@ class CheckFile:
         else:
             _LOGGER.info(f"{os.getcwd()}/{toml} does not exist")
 
-        check_call(f"python -m packaging_tools --build-conf {self.whole_package_name}", shell=True)
+        build_packaging(output_folder=".", packages=[self.whole_package_name], build_conf=True)
         _LOGGER.info("packaging_tools --build-conf successfully")
 
     def sdk_code_path(self) -> str:
         return str(Path(f"sdk/{self.sdk_folder}/{self.whole_package_name}"))
 
     def check_pprint_name(self):
-        pprint_name = self.package_name.capitalize()
 
         def edit_file_for_pprint_name(content: List[str]):
             for i in range(0, len(content)):
-                content[i] = content[i].replace("MyService", pprint_name)
+                content[i] = content[i].replace("MyService", self.pprint_name)
 
         for file in os.listdir(self.sdk_code_path()):
             file_path = str(Path(self.sdk_code_path()) / file)
             if os.path.isfile(file_path):
                 modify_file(file_path, edit_file_for_pprint_name)
-        _LOGGER.info(f' replace "MyService" with "{pprint_name}" successfully ')
+        _LOGGER.info(f' replace "MyService" with "{self.pprint_name}" successfully ')
 
     def check_sdk_readme(self):
         sdk_readme = str(Path(f"sdk/{self.sdk_folder}/{self.whole_package_name}/README.md"))
@@ -232,7 +266,7 @@ class CheckFile:
         def edit_sdk_readme(content: List[str]):
             for i in range(0, len(content)):
                 if content[i].find("MyService") > 0:
-                    content[i] = content[i].replace("MyService", self.package_name.capitalize())
+                    content[i] = content[i].replace("MyService", self.pprint_name)
 
         modify_file(sdk_readme, edit_sdk_readme)
 
@@ -325,7 +359,7 @@ class CheckFile:
 
     def check_dev_requirement(self):
         file = Path(f"sdk/{self.sdk_folder}/{self.whole_package_name}/dev_requirements.txt")
-        content = ["-e ../../../tools/azure-sdk-tools\n", "../../identity/azure-identity\n"]
+        content = ["-e ../../../tools/azure-sdk-tools\n", "-e ../../identity/azure-identity\naiohttp\n"]
         if not file.exists():
             with open(file, "w") as file_out:
                 file_out.writelines(content)
@@ -333,24 +367,52 @@ class CheckFile:
     @return_origin_path
     def check_pyproject_toml(self):
         os.chdir(Path("sdk") / self.sdk_folder / self.whole_package_name)
-        # add `breaking = false` in pyproject.toml
-        toml = Path("pyproject.toml")
-        if not toml.exists():
-            with open(toml, "w") as file:
-                file.write("[tool.azure-sdk-build]\nbreaking = false\n")
-                _LOGGER.info("create pyproject.toml")
+        # Configure and ensure pyproject.toml exists with required settings
+        toml_path = Path("pyproject.toml")
 
+        # Default configurations to enforce
+        default_configs = {
+            "breaking": "false",
+            "pyright": "false",
+            "mypy": "false",
+        }
+
+        # Create new pyproject.toml if it doesn't exist
+        if not toml_path.exists():
+            with open(toml_path, "w") as file:
+                file.write("[tool.azure-sdk-build]\n")
+                for key, value in default_configs.items():
+                    file.write(f"{key} = {value}\n")
+                _LOGGER.info("Created pyproject.toml with default configurations")
+            return
+
+        # If file exists, ensure all required configurations are present
         def edit_toml(content: List[str]):
-            has_breaking = False
-            for line in content:
-                if "breaking = false" in line:
-                    has_breaking = True
-                    break
-            if not has_breaking:
-                _LOGGER.info("add breaking = false to pyproject.toml")
-                content.append("breaking = false\n")
+            # Track if we have the [tool.azure-sdk-build] section
+            has_section = False
+            config_exists = {key: False for key in default_configs}
 
-        modify_file(str(toml), edit_toml)
+            # Check for existing configurations and section
+            for i, line in enumerate(content):
+                if "[tool.azure-sdk-build]" in line:
+                    has_section = True
+
+                # Check for each configuration
+                for key in default_configs:
+                    if f"{key} = " in line:
+                        config_exists[key] = True
+
+            # Add section if it doesn't exist
+            if not has_section:
+                content.append("\n[tool.azure-sdk-build]\n")
+
+            # Add missing configurations
+            for key, value in default_configs.items():
+                if not config_exists[key]:
+                    _LOGGER.info(f"Adding {key} = {value} to pyproject.toml")
+                    content.append(f"{key} = {value}\n")
+
+        modify_file(str(toml_path), edit_toml)
 
     def run(self):
         self.check_file_with_packaging_tool()

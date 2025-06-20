@@ -32,7 +32,7 @@ extends:
     TestProxy: true
     BuildDocs: true
     TestTimeoutInMinutes: 60
-    # The job "Test ubuntu2004_pypy39" in the "python - ai" pipeline hangs and eventually times out.
+    # The job "Test ubuntu2404_pypy39" in the "python - ai" pipeline hangs and eventually times out.
     # Disable it until the issue is understood.
     MatrixFilters:
       - PythonVersion=^(?!pypy3).*

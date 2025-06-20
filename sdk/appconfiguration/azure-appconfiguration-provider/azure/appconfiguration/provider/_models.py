@@ -3,8 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from typing import Optional, Callable, TYPE_CHECKING, Union, Awaitable, Mapping, Any, NamedTuple
-from ._constants import EMPTY_LABEL
+from typing import Optional, Callable, TYPE_CHECKING, Union, Awaitable, Mapping, Any, NamedTuple, List
+from ._constants import NULL_CHAR
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -17,7 +17,7 @@ class AzureAppConfigurationKeyVaultOptions:
         *,
         credential: Optional[Union["TokenCredential", "AsyncTokenCredential"]] = None,
         client_configs: Optional[Mapping[str, Mapping[str, Any]]] = None,
-        secret_resolver: Optional[Union[Callable[[str], str], Callable[[str], Awaitable[str]]]] = None
+        secret_resolver: Optional[Union[Callable[[str], str], Callable[[str], Awaitable[str]]]] = None,
     ):
         """
         Options for connecting to Key Vault.
@@ -43,18 +43,35 @@ class SettingSelector:
     """
     Selects a set of configuration settings from Azure App Configuration.
 
-    :keyword key_filter: A filter to select configuration settings based on their keys.
+    :keyword key_filter:A filter to select configuration settings and feature flags based on their keys.
     :type key_filter: str
-    :keyword label_filter: A filter to select configuration settings based on their labels. Default is value is
-     EMPTY_LABEL i.e. (No Label) as seen in the portal.
+    :keyword label_filter: A filter to select configuration settings and feature flags based on their labels. Default
+    is value is \0 i.e. (No Label) as seen in the portal.
     :type label_filter: Optional[str]
+    :keyword tag_filters: A filter to select configuration settings and feature flags based on their tags. This is a
+    list of strings that will be used to match tags on the configuration settings. Reserved characters (\\*, \\, ,)
+    must be escaped with backslash if they are part of the value. Tag filters must follow the format
+    "tagName=tagValue", for empty values use "tagName=" and for null values use "tagName=\\0".
+    :type tag_filters: Optional[List[str]]
     """
 
-    def __init__(self, *, key_filter: str, label_filter: Optional[str] = EMPTY_LABEL):
+    def __init__(
+        self, *, key_filter: str, label_filter: Optional[str] = NULL_CHAR, tag_filters: Optional[List[str]] = None
+    ):
+        if tag_filters is not None:
+            if not isinstance(tag_filters, list):
+                raise TypeError("tag_filters must be a list of strings.")
+            for tag in tag_filters:
+                if not tag:
+                    raise ValueError("Tag filter cannot be an empty string or None.")
+                if not isinstance(tag, str) or "=" not in tag or tag.startswith("="):
+                    raise ValueError("Tag filter " + tag + ' does not follow the format "tagName=tagValue".')
+
         self.key_filter = key_filter
         self.label_filter = label_filter
+        self.tag_filters = tag_filters
 
 
 class WatchKey(NamedTuple):
     key: str
-    label: str = EMPTY_LABEL
+    label: str = NULL_CHAR

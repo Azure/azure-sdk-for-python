@@ -51,9 +51,9 @@ def main(generate_input, generate_output):
         try:
             md_output = execute_func_with_timeout(change_log_func)
         except multiprocessing.TimeoutError:
-            md_output = "change log generation was timeout!!!"
+            md_output = "change log generation was timeout!!! You need to write it manually!!!"
         except:
-            md_output = "change log generation failed!!!"
+            md_output = "change log generation failed!!! You need to write it manually!!!"
         finally:
             for file in ["stable.json", "current.json"]:
                 file_path = Path(sdk_folder, prefolder, package_name, file)
@@ -72,30 +72,34 @@ def main(generate_input, generate_output):
         _LOGGER.info(f"[PACKAGE]({package_name})[CHANGELOG]:{md_output}")
         # Generate api stub File
         folder_name = package["path"][0]
-        apiview_start_time = time.time()
-        try:
-            package_path = Path(sdk_folder, folder_name, package_name)
-            check_call(
-                [
-                    "python",
-                    "-m",
-                    "pip",
-                    "install",
-                    "-r",
-                    "../../../eng/apiview_reqs.txt",
-                    "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi"
-                    "/simple/",
-                ],
-                cwd=package_path,
-                timeout=600,
-            )
-            check_call(["apistubgen", "--pkg-path", "."], cwd=package_path, timeout=600)
-            for file in os.listdir(package_path):
-                if "_python.json" in file and package_name in file:
-                    package["apiViewArtifact"] = str(Path(package_path, file))
-        except Exception as e:
-            _LOGGER.debug(f"Fail to generate ApiView token file for {package_name}: {e}")
-        _LOGGER.info(f"apiview generation cost time: {int(time.time() - apiview_start_time)} seconds")
+
+        if package["runInPipeline"]:
+            apiview_start_time = time.time()
+            try:
+                package_path = Path(sdk_folder, folder_name, package_name)
+                check_call(
+                    [
+                        "python",
+                        "-m",
+                        "pip",
+                        "install",
+                        "-r",
+                        "../../../eng/apiview_reqs.txt",
+                        "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi"
+                        "/simple/",
+                    ],
+                    cwd=package_path,
+                    timeout=600,
+                )
+                check_call(["apistubgen", "--pkg-path", "."], cwd=package_path, timeout=600)
+                for file in os.listdir(package_path):
+                    if "_python.json" in file and package_name in file:
+                        package["apiViewArtifact"] = str(Path(package_path, file))
+            except Exception as e:
+                _LOGGER.debug(f"Fail to generate ApiView token file for {package_name}: {e}")
+            _LOGGER.info(f"apiview generation cost time: {int(time.time() - apiview_start_time)} seconds")
+        else:
+            _LOGGER.info("Skip ApiView generation for package that does not run in pipeline.")
 
         # check generated files and update package["version"]
         if package_name.startswith("azure-mgmt-"):

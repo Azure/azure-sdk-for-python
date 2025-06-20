@@ -58,6 +58,7 @@ if TYPE_CHECKING:
         MuteParticipantsResult as MuteParticipantsResultRest,
         SendDtmfTonesResult as SendDtmfTonesResultRest,
         CancelAddParticipantResponse as CancelAddParticipantResultRest,
+        MoveParticipantsResponse as MoveParticipantsResponseRest,
     )
 
 
@@ -832,6 +833,50 @@ class RemoveParticipantResult:
     @classmethod
     def _from_generated(cls, remove_participant_result_generated: "RemoveParticipantResultRest"):
         return cls(operation_context=remove_participant_result_generated.operation_context)
+
+
+class MoveParticipantsResult:
+    """The response payload for moving participants to the call.
+
+    :keyword participants: List of current participants in the call.
+    :paramtype participants: list[~azure.communication.callautomation.CallParticipant]
+    :keyword operation_context: The operation context provided by client.
+    :paramtype operation_context: str
+    :keyword from_call: The CallConnectionId for the call you want to move the participant from.
+    :paramtype from_call: str
+    """
+
+    participants: Optional[List[CallParticipant]]
+    """List of current participants in the call."""
+    operation_context: Optional[str]
+    """The operation context provided by client."""
+    from_call: Optional[str]
+    """The CallConnectionId for the call you want to move the participant from."""
+
+    def __init__(
+        self,
+        *,
+        participants: Optional[List[CallParticipant]] = None,
+        operation_context: Optional[str] = None,
+        from_call: Optional[str] = None,
+    ) -> None:
+        self.participants = participants
+        self.operation_context = operation_context
+        self.from_call = from_call
+
+    @classmethod
+    def _from_generated(cls, move_participants_result_generated: "MoveParticipantsResponseRest"):
+        participants = None
+        if move_participants_result_generated.participants:
+            participants = [
+                CallParticipant._from_generated(participant)  # pylint:disable=protected-access
+                for participant in move_participants_result_generated.participants
+            ]
+        return cls(
+            participants=participants,
+            operation_context=move_participants_result_generated.operation_context,
+            from_call=move_participants_result_generated.from_call,
+        )
 
 
 class TransferCallResult:

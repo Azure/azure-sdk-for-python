@@ -199,7 +199,7 @@ class ExponentialRetry(AsyncStorageRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        :param Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
+        :param Dict[str, Any] settings: The configurable values pertaining to the backoff time.
         :return:
             An integer indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
@@ -251,7 +251,7 @@ class LinearRetry(AsyncStorageRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        :param Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
+        :param Dict[str, Any] settings: The configurable values pertaining to the backoff time.
         :return:
             An integer indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.

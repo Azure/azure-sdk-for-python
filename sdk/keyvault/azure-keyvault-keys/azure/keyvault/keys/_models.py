@@ -68,6 +68,7 @@ class KeyAttestation:
 
     def __init__(
         self,
+        *,
         certificate_pem_file: Optional[bytes] = None,
         private_key_attestation: Optional[bytes] = None,
         public_key_attestation: Optional[bytes] = None,
