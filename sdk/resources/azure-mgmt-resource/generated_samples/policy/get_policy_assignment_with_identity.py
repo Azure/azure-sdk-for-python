@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/resources/resource-manager/Microsoft.Authorization/stable/2022-06-01/examples/getPolicyAssignmentWithIdentity.json
+# x-ms-original-file: specification/resources/resource-manager/Microsoft.Authorization/stable/2023-04-01/examples/getPolicyAssignmentWithIdentity.json
 if __name__ == "__main__":
     main()
