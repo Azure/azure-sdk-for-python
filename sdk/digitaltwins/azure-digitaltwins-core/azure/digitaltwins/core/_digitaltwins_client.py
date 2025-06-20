@@ -49,7 +49,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
             endpoint = 'https://' + endpoint
         self._client = AzureDigitalTwinsAPI(
             credential=credential,
-            base_url=endpoint,
+            endpoint=endpoint,
             sdk_moniker=SDK_MONIKER,
             **kwargs
         )
