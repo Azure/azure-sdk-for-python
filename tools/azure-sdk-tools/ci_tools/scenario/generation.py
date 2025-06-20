@@ -51,7 +51,6 @@ def create_package_and_install(
 
     commands_options = []
     built_pkg_path = ""
-    setup_py_path = os.path.join(target_setup, "setup.py")
     additional_downloaded_reqs = []
 
     if not os.path.exists(distribution_directory):
@@ -68,10 +67,10 @@ def create_package_and_install(
     if cache_dir:
         commands_options.extend(["--cache-dir", cache_dir])
 
-    target_package = ParsedSetup.from_path(setup_py_path)
+    target_package = ParsedSetup.from_path(target_setup)
 
     discovered_packages = discover_packages(
-        setup_py_path, distribution_directory, target_setup, package_type, force_create
+        target_setup, distribution_directory, target_setup, package_type, force_create
     )
 
     # ensure that discovered packages are always copied to the distribution directory regardless of other factors
@@ -104,7 +103,7 @@ def create_package_and_install(
                 logging.info("Installing {w} from fresh built package.".format(w=built_package))
 
             if not pre_download_disabled:
-                requirements = ParsedSetup.from_path(os.path.join(os.path.abspath(target_setup), "setup.py")).requires
+                requirements = ParsedSetup.from_path(os.path.join(os.path.abspath(target_setup))).requires
                 azure_requirements = [req.split(";")[0] for req in requirements if req.startswith("azure-")]
 
                 if azure_requirements:
