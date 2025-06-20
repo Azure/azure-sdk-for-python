@@ -230,6 +230,7 @@ class CodegenTestPR:
             "azure-mgmt-resource-deploymentstacks",
             "azure-mgmt-resource-templatespecs",
             "azure-mgmt-resource-deploymentscripts",
+            "azure-mgmt-resource-deployments",
         ]:
             return
         if self.from_swagger:
