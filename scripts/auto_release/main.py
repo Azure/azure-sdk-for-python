@@ -223,6 +223,14 @@ class CodegenTestPR:
         if self.whole_package_name in [
             "azure-mgmt-mysqlflexibleservers",
             "azure-mgmt-postgresqlflexibleservers",
+            "azure-mgmt-kubernetesconfiguration-extensiontypes",
+            "azure-mgmt-kubernetesconfiguration-extensions",
+            "azure-mgmt-kubernetesconfiguration-fluxconfigurations",
+            "azure-mgmt-kubernetesconfiguration-privatelinkscopes",
+            "azure-mgmt-resource-deploymentstacks",
+            "azure-mgmt-resource-templatespecs",
+            "azure-mgmt-resource-deploymentscripts",
+            "azure-mgmt-resource-deployments",
         ]:
             return
         if self.from_swagger:

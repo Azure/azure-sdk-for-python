@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -41,6 +42,8 @@ from ._private_link_resources_operations import PrivateLinkResourcesOperations  
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations  # type: ignore
 from ._private_link_scoped_resources_operations import PrivateLinkScopedResourcesOperations  # type: ignore
 from ._subscription_diagnostic_settings_operations import SubscriptionDiagnosticSettingsOperations  # type: ignore
+from ._azure_monitor_workspaces_operations import AzureMonitorWorkspacesOperations  # type: ignore
+from ._monitor_operations_operations import MonitorOperationsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -76,6 +79,8 @@ __all__ = [
     "PrivateEndpointConnectionsOperations",
     "PrivateLinkScopedResourcesOperations",
     "SubscriptionDiagnosticSettingsOperations",
+    "AzureMonitorWorkspacesOperations",
+    "MonitorOperationsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

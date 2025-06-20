@@ -66,6 +66,8 @@ def strategy_converter_map() -> Dict[Any, Union[PromptConverter, List[PromptConv
         AttackStrategy.UnicodeSubstitution: UnicodeSubstitutionConverter(),
         AttackStrategy.Url: UrlConverter(),
         AttackStrategy.Jailbreak: None,
+        AttackStrategy.MultiTurn: None,
+        AttackStrategy.Crescendo: None,
     }
 
 

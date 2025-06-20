@@ -9,7 +9,7 @@
 
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -44,9 +44,9 @@ class SubResource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
 
 
 class AgentPool(SubResource):
@@ -333,7 +333,7 @@ class AgentPool(SubResource):
         self.type_properties_type = type_properties_type
         self.mode = mode
         self.orchestrator_version = orchestrator_version
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.availability_zones = availability_zones
         self.enable_node_public_ip = enable_node_public_ip
         self.scale_set_priority = scale_set_priority
@@ -388,9 +388,9 @@ class AgentPoolAvailableVersions(_serialization.Model):
          list[~azure.mgmt.containerservice.v2020_03_01.models.AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.agent_pool_versions = agent_pool_versions
 
 
@@ -460,7 +460,7 @@ class AgentPoolListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class AgentPoolUpgradeProfile(_serialization.Model):
@@ -522,9 +522,9 @@ class AgentPoolUpgradeProfile(_serialization.Model):
          list[~azure.mgmt.containerservice.v2020_03_01.models.AgentPoolUpgradeProfilePropertiesUpgradesItem]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.kubernetes_version = kubernetes_version
         self.os_type = os_type
         self.upgrades = upgrades
@@ -738,12 +738,12 @@ class BaseManagedCluster(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.identity = identity
-        self.provisioning_state = None
-        self.max_agent_pools = None
+        self.provisioning_state: Optional[str] = None
+        self.max_agent_pools: Optional[int] = None
         self.kubernetes_version = kubernetes_version
         self.dns_prefix = dns_prefix
-        self.fqdn = None
-        self.private_fqdn = None
+        self.fqdn: Optional[str] = None
+        self.private_fqdn: Optional[str] = None
         self.agent_pool_profiles = agent_pool_profiles
         self.linux_profile = linux_profile
         self.windows_profile = windows_profile
@@ -1043,7 +1043,7 @@ class ContainerServiceMasterProfile(_serialization.Model):
         self.vnet_subnet_id = vnet_subnet_id
         self.first_consecutive_static_ip = first_consecutive_static_ip
         self.storage_profile = storage_profile
-        self.fqdn = None
+        self.fqdn: Optional[str] = None
 
 
 class ContainerServiceNetworkProfile(_serialization.Model):
@@ -1251,7 +1251,7 @@ class ContainerServiceVMDiagnostics(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.enabled = enabled
-        self.storage_uri = None
+        self.storage_uri: Optional[str] = None
 
 
 class CredentialResult(_serialization.Model):
@@ -1278,8 +1278,8 @@ class CredentialResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.value = None
+        self.name: Optional[str] = None
+        self.value: Optional[bytes] = None
 
 
 class CredentialResults(_serialization.Model):
@@ -1302,7 +1302,7 @@ class CredentialResults(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.kubeconfigs = None
+        self.kubeconfigs: Optional[List["_models.CredentialResult"]] = None
 
 
 class Resource(_serialization.Model):
@@ -1347,9 +1347,9 @@ class Resource(_serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
 
@@ -1588,12 +1588,12 @@ class ManagedCluster(Resource, BaseManagedCluster):
             **kwargs
         )
         self.identity = identity
-        self.provisioning_state = None
-        self.max_agent_pools = None
+        self.provisioning_state: Optional[str] = None
+        self.max_agent_pools: Optional[int] = None
         self.kubernetes_version = kubernetes_version
         self.dns_prefix = dns_prefix
-        self.fqdn = None
-        self.private_fqdn = None
+        self.fqdn: Optional[str] = None
+        self.private_fqdn: Optional[str] = None
         self.agent_pool_profiles = agent_pool_profiles
         self.linux_profile = linux_profile
         self.windows_profile = windows_profile
@@ -1609,9 +1609,9 @@ class ManagedCluster(Resource, BaseManagedCluster):
         self.disk_encryption_set_id = disk_encryption_set_id
         self.identity_profile = identity_profile
         self.sku = sku
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
 
@@ -1773,7 +1773,7 @@ class ManagedClusterAddonProfile(_serialization.Model):
         super().__init__(**kwargs)
         self.enabled = enabled
         self.config = config
-        self.identity = None
+        self.identity: Optional["_models.ManagedClusterAddonProfileIdentity"] = None
 
 
 class UserAssignedIdentity(_serialization.Model):
@@ -2096,7 +2096,7 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
         self.type = type
         self.mode = mode
         self.orchestrator_version = orchestrator_version
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.availability_zones = availability_zones
         self.enable_node_public_ip = enable_node_public_ip
         self.scale_set_priority = scale_set_priority
@@ -2470,8 +2470,8 @@ class ManagedClusterIdentity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.containerservice.v2020_03_01.models.ResourceIdentityType
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
 
 
@@ -2502,7 +2502,7 @@ class ManagedClusterListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class ManagedClusterLoadBalancerProfile(_serialization.Model):
@@ -2961,9 +2961,9 @@ class ManagedClusterUpgradeProfile(_serialization.Model):
          list[~azure.mgmt.containerservice.v2020_03_01.models.ManagedClusterPoolUpgradeProfile]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.control_plane_profile = control_plane_profile
         self.agent_pool_profiles = agent_pool_profiles
 
@@ -3044,7 +3044,7 @@ class OperationListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
+        self.value: Optional[List["_models.OperationValue"]] = None
 
 
 class OperationValue(_serialization.Model):
@@ -3087,12 +3087,12 @@ class OperationValue(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.origin = None
-        self.name = None
-        self.operation = None
-        self.resource = None
-        self.description = None
-        self.provider = None
+        self.origin: Optional[str] = None
+        self.name: Optional[str] = None
+        self.operation: Optional[str] = None
+        self.resource: Optional[str] = None
+        self.description: Optional[str] = None
+        self.provider: Optional[str] = None
 
 
 class ResourceReference(_serialization.Model):

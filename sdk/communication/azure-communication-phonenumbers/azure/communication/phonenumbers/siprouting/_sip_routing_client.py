@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any, List
+from typing import TYPE_CHECKING, List, Any
 from urllib.parse import urlparse
 
 from azure.core.tracing.decorator import distributed_trace
@@ -41,7 +41,6 @@ class SipRoutingClient(object):
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
-
     def __init__(
         self,
         endpoint: str,
@@ -74,7 +73,7 @@ class SipRoutingClient(object):
         cls,
         conn_str: str,
         **kwargs: Any
-    )-> "SipRoutingClient":
+    ) -> "SipRoutingClient":
         """Factory method for creating client from connection string.
 
         :param str conn_str: Connection string containing endpoint and credentials.
@@ -89,7 +88,7 @@ class SipRoutingClient(object):
         self,
         trunk_fqdn: str,
         **kwargs: Any
-    )-> SipTrunk:
+    ) -> SipTrunk:
         """Retrieve a single SIP trunk.
 
         :param trunk_fqdn: FQDN of the desired SIP trunk.
@@ -111,7 +110,7 @@ class SipRoutingClient(object):
         self,
         trunk: SipTrunk,
         **kwargs: Any
-    )-> None:
+    ) -> None:
         """Modifies SIP trunk with the given FQDN. If it doesn't exist, adds a new trunk.
 
         :param trunk: Trunk object to be set.
@@ -130,7 +129,7 @@ class SipRoutingClient(object):
         self,
         trunk_fqdn: str,
         **kwargs: Any
-    )-> None:
+    ) -> None:
         """Deletes SIP trunk.
 
         :param trunk_fqdn: FQDN of the trunk to be deleted.
@@ -148,7 +147,7 @@ class SipRoutingClient(object):
     def list_trunks(
         self,
         **kwargs: Any
-    )-> ItemPaged[SipTrunk]:
+    ) -> ItemPaged[SipTrunk]:
         """Retrieves the currently configured SIP trunks.
         
         :returns: Current SIP trunks configuration.
@@ -168,8 +167,9 @@ class SipRoutingClient(object):
 
     @distributed_trace
     def list_routes(
-        self, **kwargs: Any
-    )-> ItemPaged[SipTrunkRoute]:
+        self,
+        **kwargs: Any
+    ) -> ItemPaged[SipTrunkRoute]:
         """Retrieves the currently configured SIP routes.
 
         :returns: Current SIP routes configuration.
@@ -192,7 +192,7 @@ class SipRoutingClient(object):
         self,
         trunks: List[SipTrunk],
         **kwargs: Any
-    )-> None:
+    ) -> None:
         """Overwrites the list of SIP trunks.
 
         :param trunks: New list of trunks to be set.
@@ -221,7 +221,7 @@ class SipRoutingClient(object):
         self,
         routes: List[SipTrunkRoute],
         **kwargs: Any
-    )->  None:
+    ) -> None:
         """Overwrites the list of SIP routes.
 
         :param routes: New list of routes to be set.
@@ -242,7 +242,7 @@ class SipRoutingClient(object):
         target_phone_number: str,
         test_routes: List[SipTrunkRoute],
         **kwargs: Any
-    )-> List[SipTrunkRoute]:
+    ) -> List[SipTrunkRoute]:
         """Gets the list of routes matching the target phone number, ordered by priority.
 
         Gets the list of routes matching the target phone number, ordered by priority.
@@ -272,7 +272,7 @@ class SipRoutingClient(object):
         self,
         domain_name: str,
         **kwargs: Any
-    )-> SipDomain:
+    ) -> SipDomain:
         """Retrieve a single SIP domain.
 
         :param domain_name: domain_name of the desired SIP Domain.
@@ -293,7 +293,7 @@ class SipRoutingClient(object):
         self,
         domain: SipDomain,
         **kwargs: Any
-    )-> None:
+    ) -> None:
         """Modifies SIP domain with the given domain. If it doesn't exist, adds a new domain.
 
         :param domain: Domain object to be set.
@@ -312,7 +312,7 @@ class SipRoutingClient(object):
         self,
         domain_name: str,
         **kwargs: Any
-    )-> None:
+    ) -> None:
         """Deletes SIP Domain.
 
         :param domain_name: domain_name of the Domain to be deleted.
@@ -330,7 +330,7 @@ class SipRoutingClient(object):
     def list_domains(
         self,
         **kwargs: Any
-    )-> ItemPaged[SipDomain]:
+    ) -> ItemPaged[SipDomain]:
         """Retrieves the currently configured SIP Domain.
         
         :returns: Current SIP domains configuration.
@@ -353,7 +353,7 @@ class SipRoutingClient(object):
         self,
         domains: List[SipDomain],
         **kwargs: Any
-    )-> None:
+    ) -> None:
         """Overwrites the list of SIP domains.
 
         :param domains: New list of domains to be set.
@@ -377,7 +377,7 @@ class SipRoutingClient(object):
         if len(config.domains) > 0:
             self._rest_service.sip_routing.update(body=config, **kwargs)
 
-    def _list_trunks_(self, **kwargs):
+    def _list_trunks_(self, **kwargs: Any) -> List[SipTrunk]:
         config = self._rest_service.sip_routing.get(**kwargs)
         return [sip_trunk_from_generated(k,v) for k, v in config.trunks.items()]
 
@@ -389,8 +389,7 @@ class SipRoutingClient(object):
         self,
         trunks: List[SipTrunk],
         **kwargs: Any
-    )-> SipTrunk:
-        trunks_internal = {x.fqdn: sip_trunk_to_generated(x) for x in trunks}
+    ) -> List[SipTrunk]:
         modified_config = SipConfiguration(trunks=trunks_internal)
 
         new_config = self._rest_service.sip_routing.update(body=modified_config, **kwargs)

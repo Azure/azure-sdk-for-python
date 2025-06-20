@@ -45,9 +45,9 @@ class HateUnfairnessEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
 
     :param credential: The credential for connecting to Azure AI project. Required
     :type credential: ~azure.core.credentials.TokenCredential
-    :param azure_ai_project: The scope of the Azure AI project.
-        It contains subscription id, resource group, and project name.
-    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
+    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint 
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :type azure_ai_project: Union[str, ~azure.ai.evaluation.AzureAIProject]
     :param threshold: The threshold for the HateUnfairness evaluator. Default is 3.
     :type threshold: int
 
@@ -58,16 +58,26 @@ class HateUnfairnessEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             :end-before: [END hate_unfairness_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call a HateUnfairnessEvaluator.
-
-    .. admonition:: Example with Threshold:
+            :caption: Initialize and call HateUnfairnessEvaluator using azure.ai.evaluation.AzureAIProject.
+        
+    .. admonition:: Example using Azure AI Project URL:
+                
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START hate_unfairness_evaluator]
+            :end-before: [END hate_unfairness_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call HateUnfairnessEvaluator using Azure AI Project URL in the following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}.
     
+    .. admonition:: Example with Threshold:
+
         .. literalinclude:: ../samples/evaluation_samples_threshold.py
             :start-after: [START threshold_hate_unfairness_evaluator]
             :end-before: [END threshold_hate_unfairness_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize with threshold and call a HateUnfairnessEvaluator.
+            :caption: Initialize with threshold and call a HateUnfairnessEvaluator with a query and response.
     """
 
     id = "azureml://registries/azureml/models/Hate-and-Unfairness-Evaluator/versions/4"

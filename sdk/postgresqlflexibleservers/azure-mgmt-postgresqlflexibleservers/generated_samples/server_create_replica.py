@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -46,7 +47,7 @@ def main():
                 "dataEncryption": {
                     "geoBackupKeyURI": "",
                     "geoBackupUserAssignedIdentityId": "",
-                    "primaryKeyURI": "https://test-kv.vault.azure.net/keys/test-key1/77f57315bab34b0189daa113fbc78787",
+                    "primaryKeyURI": "https://test-kv.vault.azure.net/keys/test-key1/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
                     "primaryUserAssignedIdentityId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/testresourcegroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-usermanagedidentity",
                     "type": "AzureKeyVault",
                 },
@@ -58,6 +59,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2024-08-01/examples/ServerCreateReplica.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2025-01-01-preview/examples/ServerCreateReplica.json
 if __name__ == "__main__":
     main()

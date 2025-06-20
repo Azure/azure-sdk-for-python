@@ -8,6 +8,7 @@ from typing_extensions import NotRequired
 
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation._common.onedp._client import AIProjectClient
+from azure.ai.evaluation.simulator._adversarial_scenario import AdversarialScenario
 
 from ._rai_client import RAIClient
 
@@ -146,12 +147,13 @@ class AdversarialTemplate:
 
 class AdversarialTemplateHandler:
     """
-    Adversarial template handler constructor.
+    Initialize the AdversarialTemplateHandler.
 
-    :param azure_ai_project: The Azure AI project.
-    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
-    :param rai_client: The RAI client.
-    :type rai_client: ~azure.ai.evaluation.simulator._model_tools.RAIClient
+    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint 
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :type azure_ai_project: Union[str, AzureAIProject]
+    :param rai_client: The RAI client or AI Project client used for fetching parameters.
+    :type rai_client: Union[~azure.ai.evaluation.simulator._model_tools.RAIClient, ~azure.ai.evaluation._common.onedp._client.AIProjectClient]
     """
 
     def __init__(self, azure_ai_project: Union[str, AzureAIProject], rai_client: Union[RAIClient, AIProjectClient]) -> None:
@@ -179,10 +181,16 @@ class AdversarialTemplateHandler:
             self.categorized_ch_parameters = categorized_parameters
 
         template_category = collection_key.split("adv_")[-1]
+        if template_category == "qa_enterprise":
+            template_category = "qa"
 
         plist = self.categorized_ch_parameters
         ch_templates = []
         for key, value in plist.items():
+            if collection_key == AdversarialScenario.ADVERSARIAL_QA.value and "enterprise" in key:
+                continue
+            if collection_key == AdversarialScenario.ADVERSARIAL_QA_ENTERPRISE.value and "enterprise" not in key:
+                continue
             if value["category"] == template_category:
                 params = value["parameters"]
                 for p in params:

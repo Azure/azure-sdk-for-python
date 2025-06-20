@@ -24,9 +24,9 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
 
     :param credential: The credential for connecting to Azure AI project. Required
     :type credential: ~azure.core.credentials.TokenCredential
-    :param azure_ai_project: The scope of the Azure AI project.
-        It contains subscription id, resource group, and project name.
-    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
+    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint 
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :type azure_ai_project: Union[str, ~azure.ai.evaluation.AzureAIProject]
     :param threshold: The threshold for the groundedness pro evaluator. Default is 5.
     :type threshold: int
     :param kwargs: Additional arguments to pass to the evaluator.
@@ -40,6 +40,16 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             :language: python
             :dedent: 8
             :caption: Initialize and call a GroundednessProEvaluator with a query, response, and context.
+
+    .. admonition:: Example using Azure AI Project URL:
+        
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START groundedness_pro_evaluator]
+            :end-before: [END groundedness_pro_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call GroundednessProEvaluator using Azure AI Project URL in the following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     .. admonition:: Example with threshold:
 

@@ -867,6 +867,13 @@ All of these mentioned queries would look something like this:
 
 - `SELECT TOP 10 c.id, c.text FROM c ORDER BY RANK RRF(FullTextScore(c.text, ['quantum', 'theory']), FullTextScore(c.text, ['model']), VectorDistance(c.embedding, {item_embedding}))"`
 
+You can also use Weighted Reciprocal Rank Fusion to assign different weights to the different scores being used in the RRF function.
+This is done by passing in a list of weights to the RRF function in the query. **NOTE: If more weights are given than there are components of the RRF function, or if weights are missing a BAD REQUEST exception will occur.**
+- `SELECT TOP 10 c.id, c.text FROM c ORDER BY RANK RRF(FullTextScore(c.text, ['quantum', 'theory']), FullTextScore(c.text, ['model']), VectorDistance(c.embedding, {item_embedding}), [0.5, 0.3, 0.2])`
+
+
+- `SELECT TOP 10 c.id, c.text FROM c ORDER BY RANK RRF(FullTextScore(c.text, ['quantum', 'theory']), FullTextScore(c.text, ['model']), VectorDistance(c.embedding, {item_embedding}), [-0.5, 0.3, 0.2])`
+
 These queries must always use a TOP or LIMIT clause within the query since hybrid search queries have to look through a lot of data otherwise and may become too expensive or long-running.
 Since these queries are relatively expensive, the SDK sets a default limit of 1000 max items per query - if you'd like to raise that further, you
 can use the `AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS` environment variable to do so. However, be advised that queries with too many vector results
@@ -888,6 +895,20 @@ Also, requests with an invalid bucket ID (less than 1 or greater than 5) results
 
 See [here][cosmos_throughput_bucket_configuration] for instructions on configuring throughput buckets through the Azure portal.
 After throughput buckets have been configured, you can find our sync samples [here][cosmos_throughput_bucket_sample] and our async samples [here][cosmos_throughput_bucket_sample_async] as well for additional guidance.
+
+### Per Partition Circuit Breaker 
+Per partition circuit breaker is a feature that allows the SDK to failover requests on a partition level to another region based on client side statistics on 408 and 5xx error codes. This feature is only applicable for 
+reads in single write region accounts and reads and writes for multi-write region accounts. The following are the environment variables to enable per partition circuit breaker and to modify the thresholds for failing over 
+requests to another region:
+- `AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER`: Default is `False`.
+  - Enables the per partition circuit breaker feature.
+- `AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ`: Default is `10` consecutive errors.
+  - After a partition has encountered 10 consecutive errors for read requests, the SDK will send requests routed to that partition to another region.
+- `AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE`: Default is `5` consecutive errors.
+    - After a partition has encountered 5 consecutive errors for write requests, the SDK will send requests routed to that partition to another region.
+- `AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED`: Default is a `90` percent failure rate.
+  - After a partition reaches a 90 percent failure rate for all requests, the SDK will send requests routed to that partition to another region.
+
 ## Troubleshooting
 
 ### General

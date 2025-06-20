@@ -141,7 +141,6 @@ def _aggregate_content_safety_metrics(
             module = inspect.getmodule(evaluators[evaluator_name])
             if (
                 module
-                and module.__name__.startswith("azure.ai.evaluation.")
                 and metric_name.endswith("_score")
                 and metric_name.replace("_score", "") in content_safety_metrics
             ):
@@ -722,8 +721,9 @@ def evaluate(
     :keyword output_path: The local folder or file path to save evaluation results to if set. If folder path is provided
           the results will be saved to a file named `evaluation_results.json` in the folder.
     :paramtype output_path: Optional[str]
-    :keyword azure_ai_project: Logs evaluation results to AI Studio if set.
-    :paramtype azure_ai_project: Optional[~azure.ai.evaluation.AzureAIProject]
+    :keyword azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint 
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :paramtype azure_ai_project: Optional[Union[str, ~azure.ai.evaluation.AzureAIProject]]
     :keyword fail_on_evaluator_errors: Whether or not the evaluation should cancel early with an EvaluationException
         if ANY evaluator fails during their evaluation.
         Defaults to false, which means that evaluations will continue regardless of failures.
@@ -739,7 +739,17 @@ def evaluate(
             :end-before: [END evaluate_method]
             :language: python
             :dedent: 8
-            :caption: Run an evaluation on local data with Coherence and Relevance evaluators.
+            :caption: Run an evaluation on local data with one or more evaluators using azure.ai.evaluation.AzureAIProject
+        
+    .. admonition:: Example using Azure AI Project URL:
+                
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START evaluate_method]
+            :end-before: [END evaluate_method]
+            :language: python
+            :dedent: 8
+            :caption: Run an evaluation on local data with one or more evaluators using Azure AI Project URL in following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
     """
     try:
         return _evaluate(
@@ -978,17 +988,6 @@ def _preprocess_data(
     # Split normal evaluators and OAI graders
     evaluators, graders = _split_evaluators_and_grader_configs(evaluators_and_graders)
 
-    input_data_df = _validate_and_load_data(
-        target,
-        data,
-        evaluators_and_graders,
-        output_path,
-        azure_ai_project,
-        evaluation_name
-    )
-    if target is not None:
-        _validate_columns_for_target(input_data_df, target)
-
     target_run: Optional[BatchClientRun] = None
     target_generated_columns: Set[str] = set()
     batch_run_client: BatchClient
@@ -1135,8 +1134,8 @@ def _map_names_to_builtins(
     ) -> Dict[str, str]:
     """
     Construct a mapping from user-supplied evaluator names to which known, built-in
-    evaluator or grader they refer to. Custom or otherwise unknown evaluators are
-    mapped to the "unknown" value.
+    evaluator or grader they refer to. Custom evaluators are excluded from the mapping
+    as we only want to track built-in evaluators and graders.
 
     :param evaluators: The dictionary of evaluators.
     :type evaluators: Dict[str, Callable]
@@ -1158,8 +1157,8 @@ def _map_names_to_builtins(
                 found_eval = True
                 break
         if not found_eval:
-            # If not found, map to "unknown"
-            name_map[name] = "unknown"
+            # Skip custom evaluators - we only want to track built-in evaluators
+            pass
     
     for  name, grader in graders.items():
         name_map[name] = grader.id

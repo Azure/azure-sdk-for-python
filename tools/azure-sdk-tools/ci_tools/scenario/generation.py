@@ -68,11 +68,11 @@ def create_package_and_install(
     if cache_dir:
         commands_options.extend(["--cache-dir", cache_dir])
 
+    target_package = ParsedSetup.from_path(setup_py_path)
+
     discovered_packages = discover_packages(
         setup_py_path, distribution_directory, target_setup, package_type, force_create
     )
-
-    target_package = ParsedSetup.from_path(setup_py_path)
 
     # ensure that discovered packages are always copied to the distribution directory regardless of other factors
     for built_package in discovered_packages:

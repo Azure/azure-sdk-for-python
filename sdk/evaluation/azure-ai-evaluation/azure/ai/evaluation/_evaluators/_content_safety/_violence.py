@@ -41,9 +41,9 @@ class ViolenceEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
 
     :param credential: The credential for connecting to Azure AI project. Required
     :type credential: ~azure.core.credentials.TokenCredential
-    :param azure_ai_project: The scope of the Azure AI project.
-        It contains subscription id, resource group, and project name.
-    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
+    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint 
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :type azure_ai_project: Union[str, ~azure.ai.evaluation.AzureAIProject]
     :param threshold: The threshold for the Violence evaluator. Default is 3.
     :type threshold: int
 
@@ -56,6 +56,16 @@ class ViolenceEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             :dedent: 8
             :caption: Initialize and call a ViolenceEvaluator.
 
+    .. admonition:: Example using Azure AI Project URL:
+                
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START violence_evaluator]
+            :end-before: [END violence_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call ViolenceEvaluator using Azure AI Project URL in following format 
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+    
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/evaluation_samples_threshold.py

@@ -5,7 +5,9 @@ import os
 
 from typing import Dict, Optional, Union, Any
 
+from opentelemetry.environment_variables import OTEL_METRICS_EXPORTER
 from opentelemetry.util.types import Attributes
+from opentelemetry.sdk.environment_variables import OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
 from opentelemetry.sdk.metrics import (
     Counter,
     Histogram,
@@ -34,6 +36,7 @@ from opentelemetry.semconv.metrics.http_metrics import (
 from opentelemetry.semconv.trace import SpanAttributes
 
 from azure.monitor.opentelemetry.exporter._constants import (
+    _APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED,
     _APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN,
     _AUTOCOLLECTED_INSTRUMENT_NAMES,
     _METRIC_ENVELOPE_NAME,
@@ -78,6 +81,7 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             preferred_temporality=APPLICATION_INSIGHTS_METRIC_TEMPORALITIES,  # type: ignore
             preferred_aggregation=kwargs.get("preferred_aggregation"),  # type: ignore
         )
+        self._metrics_to_log_analytics = self._determine_metrics_to_log_analytics()
 
     # pylint: disable=R1702
     def export(
@@ -116,7 +120,7 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             self._handle_transmit_from_storage(envelopes, result)
             return _get_metric_export_result(result)
         except Exception:  # pylint: disable=broad-except
-            _logger.exception("Exception occurred while exporting the data.")
+            _logger.exception("Exception occurred while exporting the data.")  # pylint: disable=C4769
             return _get_metric_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 
     def force_flush(
@@ -142,6 +146,7 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         if self.storage:
             self.storage.close()
 
+    # pylint: disable=protected-access
     def _point_to_envelope(
         self,
         point: DataPointT,
@@ -149,12 +154,41 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         resource: Optional[Resource] = None,
         scope: Optional[InstrumentationScope] = None,
     ) -> Optional[TelemetryItem]:
+        # When Metrics to Log Analytics is disabled, only send Standard metrics and _OTELRESOURCE_
+        if not self._metrics_to_log_analytics and name not in _AUTOCOLLECTED_INSTRUMENT_NAMES:
+            return None
         envelope = _convert_point_to_envelope(point, name, resource, scope)
         if name in _AUTOCOLLECTED_INSTRUMENT_NAMES:
             envelope = _handle_std_metric_envelope(envelope, name, point.attributes)  # type: ignore
         if envelope is not None:
             envelope.instrumentation_key = self._instrumentation_key
+            # Only set SentToAMW on AKS Attach
+            if _utils._is_on_aks() and _utils._is_attach_enabled() and not self._is_stats_exporter():
+                if (
+                    OTEL_EXPORTER_OTLP_METRICS_ENDPOINT in os.environ
+                    and "otlp" in os.environ.get(OTEL_METRICS_EXPORTER, "")
+                ):
+                    envelope.data.base_data.properties["_MS.SentToAMW"] = "True"  # type: ignore
+                else:
+                    envelope.data.base_data.properties["_MS.SentToAMW"] = "False"  # type: ignore
+
         return envelope
+
+    # pylint: disable=protected-access
+    def _determine_metrics_to_log_analytics(self) -> bool:
+        """
+        Determines whether metrics should be sent to Log Analytics.
+
+        :return: False if metrics should not be sent to Log Analytics, True otherwise.
+        :rtype: bool
+        """
+        # Disabling metrics to Log Analytics via env var is currently only specified for AKS Attach scenarios.
+        if not _utils._is_on_aks() or not _utils._is_attach_enabled() or self._is_stats_exporter():
+            return True
+        env_var = os.environ.get(_APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED)
+        if not env_var:
+            return True
+        return env_var.lower().strip() != "false"
 
     # pylint: disable=docstring-keyword-should-match-keyword-only
     @classmethod
