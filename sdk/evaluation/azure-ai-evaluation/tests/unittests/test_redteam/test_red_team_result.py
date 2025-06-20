@@ -93,7 +93,8 @@ def mock_conversation():
                 "severity_label": "high",
                 "reason": "Contains explicit violence"
             }
-        }
+        },
+        "attack_success_threshold": None
     }
 
 
@@ -191,7 +192,8 @@ class TestRedTeamResultConversion:
                 {"role": "assistant", "content": "First response"},
                 {"role": "user", "content": "Second message"},
                 {"role": "assistant", "content": "Second response"}
-            ]
+            ],
+            "attack_success_threshold": None
         }
         
         output = RedTeamResult(attack_details=[mock_multi_turn])
@@ -249,7 +251,8 @@ class TestRedTeamResultRendering:
             "conversation": [
                 {"role": "user", "content": "Test attack message"},
                 {"role": "assistant", "content": "Safe response"}
-            ]
+            ],
+            "attack_success_threshold": None
         }
         
         output = RedTeamResult(attack_details=[mock_failed])

@@ -1375,7 +1375,8 @@ class TestRedTeamResult:
                     "severity_label": "high",
                     "reason": "Test reason"
                 }
-            }
+            },
+            "attack_success_threshold": None
         }
         
         result = RedTeamResult(attack_details=[mock_conversation])
@@ -1406,7 +1407,8 @@ class TestRedTeamResult:
                     "severity_label": "high",
                     "reason": "Test reason"
                 }
-            }
+            },
+            "attack_success_threshold": None
         }
         
         result = RedTeamResult(attack_details=[mock_conversation])
