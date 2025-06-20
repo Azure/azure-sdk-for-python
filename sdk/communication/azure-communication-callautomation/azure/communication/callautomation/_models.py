@@ -759,7 +759,7 @@ class RecordingResult:
     :ivar recording_duration_ms:
     :vartype recording_duration_ms: int
     :ivar session_end_reason: Known values are: "sessionStillOngoing", "callEnded",
-     "initiatorLeft", "handedOverOrTransfered", "maximumSessionTimeReached", "callStartTimeout",
+     "initiatorLeft", "handedOverOrTransferred", "maximumSessionTimeReached", "callStartTimeout",
      "mediaTimeout", "audioStreamFailure", "allInstancesBusy", "teamsTokenConversionFailed",
      "reportCallStateFailed", "reportCallStateFailedAndSessionMustBeDiscarded",
      "couldNotRejoinCall", "invalidBotData", "couldNotStart",
