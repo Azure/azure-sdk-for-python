@@ -404,7 +404,7 @@ def process_requires(setup_py_path: str, is_dev_build: bool = False):
     else:
         logging.info("Packages not available on PyPI:{}".format(requirement_to_update))
         update_requires(setup_py_path, requirement_to_update)
-        logging.info("Package requirement is updated in setup.py")
+        logging.info(f"Package requirement is updated in {'pyproject.toml' if pkg_details.is_pyproject else 'setup.py'}.")
 
 
 def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> Optional[str]:

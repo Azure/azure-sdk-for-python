@@ -313,7 +313,7 @@ def check_req_against_exclusion(req, req_to_exclude):
 
 
 def filter_dev_requirements(
-    setup_py_path,
+    package_directory,
     released_packages,
     temp_dir,
     additional_filter_fn: Optional[Callable[[str, List[str], List[Requirement]], List[str]]] = None,
@@ -326,7 +326,7 @@ def filter_dev_requirements(
     by the package).
     """
     # This method returns list of requirements from dev_requirements by filtering out packages in given list
-    dev_req_path = os.path.join(os.path.dirname(setup_py_path), DEV_REQ_FILE)
+    dev_req_path = os.path.join(package_directory, DEV_REQ_FILE)
     requirements = []
     with open(dev_req_path, "r") as dev_req_file:
         requirements = dev_req_file.readlines()
@@ -350,7 +350,7 @@ def filter_dev_requirements(
 
     if additional_filter_fn:
         # this filter function handles the case where a dev requirement is incompatible with the current set of targeted packages
-        filtered_req = additional_filter_fn(setup_py_path, filtered_req, released_packages)
+        filtered_req = additional_filter_fn(package_directory, filtered_req, released_packages)
 
     logging.info("Filtered dev requirements: %s", filtered_req)
 
@@ -408,10 +408,12 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    setup_path = os.path.join(os.path.abspath(args.target_package), "setup.py")
+
+    setup_path = os.path.join(os.path.abspath(args.target_package))
 
     if not (os.path.exists(setup_path) and os.path.exists(args.work_dir)):
         logging.error("Invalid arguments. Please make sure target directory and working directory are valid path")
         sys.exit(1)
+
 
     install_dependent_packages(setup_path, args.dependency_type, args.work_dir)
