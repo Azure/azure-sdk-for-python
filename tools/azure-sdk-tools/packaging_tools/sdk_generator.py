@@ -319,8 +319,7 @@ def main(generate_input, generate_output):
                 format_samples_and_tests(sdk_code_path)
             except Exception as e:
                 _LOGGER.warning(f"Fail to format samples and tests for {package_name} in {readme_or_tsp}: {str(e)}")
-                
-                
+
             # Update metadata
             try:
                 update_servicemetadata(
@@ -333,23 +332,25 @@ def main(generate_input, generate_output):
                     readme_or_tsp,
                 )
             except Exception as e:
-                _LOGGER.warning(f"Fail to update meta: {str(e)}")                
-                
+                _LOGGER.warning(f"Fail to update meta: {str(e)}")
+
             # Setup package locally
-            try:    
+            try:
                 check_call(
                     f"pip install --ignore-requires-python -e {sdk_code_path}",
                     shell=True,
                 )
             except Exception as e:
-                _LOGGER.warning(f"Fail to setup package {package_name} in {readme_or_tsp}: {str(e)}")                
-                
+                _LOGGER.warning(f"Fail to setup package {package_name} in {readme_or_tsp}: {str(e)}")
+
             # check whether multiapi package has only one api-version in per subfolder
             try:
                 if result[package_name]["isMultiapi"]:
                     check_api_version_in_subfolder(sdk_code_path)
             except Exception as e:
-                _LOGGER.warning(f"Fail to check api version in subfolder for {package_name} in {readme_or_tsp}: {str(e)}")
+                _LOGGER.warning(
+                    f"Fail to check api version in subfolder for {package_name} in {readme_or_tsp}: {str(e)}"
+                )
 
             # Changelog generation
             try:
@@ -378,7 +379,9 @@ def main(generate_input, generate_output):
                             os.remove(file_path)
                             _LOGGER.info(f"Remove {file_path} which is temp file to generate changelog.")
 
-                _LOGGER.info(f"changelog generation cost time: {int(time.time() - changelog_generation_start_time)} seconds")
+                _LOGGER.info(
+                    f"changelog generation cost time: {int(time.time() - changelog_generation_start_time)} seconds"
+                )
                 result[package_name]["changelog"] = {
                     "content": md_output,
                     "hasBreakingChange": "Breaking Changes" in md_output,
@@ -418,8 +421,7 @@ def main(generate_input, generate_output):
                 _LOGGER.info(f"apiview generation cost time: {int(time.time() - apiview_start_time)} seconds")
             else:
                 _LOGGER.info("Skip ApiView generation for package that does not run in pipeline.")
-                
-                
+
             # check generated files and update package["version"]
             if package_name.startswith("azure-mgmt-"):
                 try:
@@ -427,11 +429,13 @@ def main(generate_input, generate_output):
                 except Exception as e:
                     _LOGGER.warning(f"Fail to check generated files for {package_name}: {e}")
 
-            # Build artifacts
+            # Build artifacts for package
             try:
                 create_package(result[package_name]["path"][0], package_name)
                 dist_path = Path(sdk_folder, folder_name, package_name, "dist")
-                result[package_name]["artifacts"] = [str(dist_path / package_file) for package_file in os.listdir(dist_path)]
+                result[package_name]["artifacts"] = [
+                    str(dist_path / package_file) for package_file in os.listdir(dist_path)
+                ]
                 for artifact in result[package_name]["artifacts"]:
                     if ".whl" in artifact:
                         result[package_name]["language"] = "Python"
@@ -439,7 +443,7 @@ def main(generate_input, generate_output):
                 _LOGGER.info(f"Built package {package_name} successfully.")
             except Exception as e:
                 _LOGGER.warning(f"Fail to build package {package_name} in {readme_or_tsp}: {str(e)}")
-            
+
             # update result
             result[package_name]["installInstructions"] = {
                 "full": "You can install the use using pip install of the artifacts.",
@@ -447,7 +451,7 @@ def main(generate_input, generate_output):
             }
             result[package_name]["result"] = "succeeded"
             result[package_name]["packageFolder"] = result[package_name]["path"][0]
-            
+
     # remove duplicates
     try:
         for value in result.values():
@@ -461,15 +465,15 @@ def main(generate_input, generate_output):
 
     if len(result) == 0 and len(readme_and_tsp) > 1:
         raise Exception("No package is generated, please check the log for details")
-    
+
     if len(result) == 0:
         _LOGGER.info("No packages to process, returning empty result")
     else:
         _LOGGER.info(f"Processing {len(result)} generated packages...")
-        
+
     final_result = {"packages": result.values()}
     with open(generate_output, "w") as writer:
-        json.dump(final_result, writer)
+        json.dump(final_result, writer, indent=2)
 
     _LOGGER.info(
         f"Congratulations! Succeed to build package for {[p['packageName'] for p in final_result['packages']]}. And you shall be able to see the generated code when running 'git status'."
