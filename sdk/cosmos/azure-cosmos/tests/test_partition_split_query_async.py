@@ -78,7 +78,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
         print("initial check succeeded, now reading offer until replacing is done")
         offer = await self.container.get_throughput()
         while True:
-            if time.time() - start_time > self.MAX_TIME:  # timeout test at 25 minutes
+            if time.time() - start_time > self.MAX_TIME:  # timeout test at 7 minutes
                 self.skipTest("Partition split didn't complete in time.")
             if offer.properties['content'].get('isOfferReplacePending', False):
                 time.sleep(30)  # wait for the offer to be replaced, check every 30 seconds

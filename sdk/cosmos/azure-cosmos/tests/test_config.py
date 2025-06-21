@@ -27,8 +27,8 @@ try:
 except:
     print("no urllib3")
 
-SPLIT_TIMEOUT = 60*25 # timeout test at 25 minutes
-SLEEP_TIME = 60 # sleep for 1 minutes
+SPLIT_TIMEOUT = 60*7  # timeout test at 7 minutes
+SLEEP_TIME = 30  # sleep for 1 minutes
 
 class TestConfig(object):
     local_host = 'https://localhost:8081/'
@@ -215,7 +215,7 @@ class TestConfig(object):
         while True:
             offer = container.get_throughput()
             if offer.properties['content'].get('isOfferReplacePending', False):
-                if time.time() - start_time > SPLIT_TIMEOUT:  # timeout test at 25 minutes
+                if time.time() - start_time > SPLIT_TIMEOUT:  # timeout test at 7 minutes
                     raise unittest.SkipTest("Partition split didn't complete in time")
                 else:
                     print("Waiting for split to complete")
@@ -236,7 +236,7 @@ class TestConfig(object):
         while True:
             offer = await container.get_throughput()
             if offer.properties['content'].get('isOfferReplacePending', False):
-                if time.time() - start_time > SPLIT_TIMEOUT:  # timeout test at 25 minutes
+                if time.time() - start_time > SPLIT_TIMEOUT:  # timeout test at 7 minutes
                     raise unittest.SkipTest("Partition split didn't complete in time")
                 else:
                     print("Waiting for split to complete")
