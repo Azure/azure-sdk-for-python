@@ -3,6 +3,7 @@
 ### 4.13.0b3 (Unreleased)
 
 #### Features Added
+* Added support for Per Partition Automatic Failover. To enable this feature, you must follow the guide [here](https://learn.microsoft.com/azure/cosmos-db/how-to-configure-per-partition-automatic-failover). See [PR 41588](https://github.com/Azure/azure-sdk-for-python/pull/41588).
 
 #### Breaking Changes
 
