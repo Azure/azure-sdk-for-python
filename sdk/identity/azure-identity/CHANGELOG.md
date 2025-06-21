@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed an issue with `AzurePowerShellCredential` not working correctly for users still using older versions of PowerShell (e.g., Windows PowerShell 5.1) where `-AsPlainText` is not supported in the `ConvertFrom-SecureString` cmdlet.  ([#41675](https://github.com/Azure/azure-sdk-for-python/pull/41675))
+
 ### Other Changes
 
 ## 1.23.0 (2025-05-13)
