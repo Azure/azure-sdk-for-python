@@ -1,5 +1,10 @@
 # Release History
 
+## 1.3.0 (Unreleased)
+
+### Features Added
+- Added new APIs "list_connections"
+
 ## 1.2.2 (2025-02-28)
 
 ### Features Added
