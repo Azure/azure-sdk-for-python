@@ -68,7 +68,8 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
 
     id = "content_safety"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
-
+    _OPTIONAL_PARAMS = ["query"]
+    
     def __init__(
         self, 
         credential, 
