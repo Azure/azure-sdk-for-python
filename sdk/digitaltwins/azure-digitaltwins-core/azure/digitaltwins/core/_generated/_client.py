@@ -7,24 +7,22 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import TYPE_CHECKING
-
-from msrest import Deserializer, Serializer
+from typing import Any, TYPE_CHECKING
+from typing_extensions import Self
 
 from azure.core import PipelineClient
+from azure.core.pipeline import policies
+from azure.core.rest import HttpRequest, HttpResponse
 
-from . import models
 from ._configuration import AzureDigitalTwinsAPIConfiguration
+from ._utils.serialization import Deserializer, Serializer
 from .operations import DigitalTwinModelsOperations, DigitalTwinsOperations, EventRoutesOperations, QueryOperations
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
-
     from azure.core.credentials import TokenCredential
-    from azure.core.rest import HttpRequest, HttpResponse
 
-class AzureDigitalTwinsAPI(object):
+
+class AzureDigitalTwinsAPI:
     """A service for managing and querying digital twins and digital twin models.
 
     :ivar digital_twin_models: DigitalTwinModelsOperations operations
@@ -35,50 +33,59 @@ class AzureDigitalTwinsAPI(object):
     :vartype digital_twins: azure.digitaltwins.core.operations.DigitalTwinsOperations
     :ivar event_routes: EventRoutesOperations operations
     :vartype event_routes: azure.digitaltwins.core.operations.EventRoutesOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param base_url: Service URL. Default value is "https://digitaltwins-hostname".
-    :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-05-31". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword endpoint: Service URL. Default value is "https://digitaltwins-hostname".
+    :paramtype endpoint: str
+    :keyword api_version: Api Version. Default value is "2022-05-31". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(
-        self,
-        credential,  # type: "TokenCredential"
-        base_url="https://digitaltwins-hostname",  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        self, credential: "TokenCredential", *, endpoint: str = "https://digitaltwins-hostname", **kwargs: Any
+    ) -> None:
         self._config = AzureDigitalTwinsAPIConfiguration(credential=credential, **kwargs)
-        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: PipelineClient = PipelineClient(base_url=endpoint, policies=_policies, **kwargs)
+
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.digital_twin_models = DigitalTwinModelsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.digital_twin_models = DigitalTwinModelsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.query = QueryOperations(self._client, self._config, self._serialize, self._deserialize)
         self.digital_twins = DigitalTwinsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.event_routes = EventRoutesOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request,  # type: HttpRequest
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> HttpResponse
+    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = client._send_request(request)
+        >>> response = client.send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -89,17 +96,14 @@ class AzureDigitalTwinsAPI(object):
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> AzureDigitalTwinsAPI
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)
