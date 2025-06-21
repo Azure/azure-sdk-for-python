@@ -7,11 +7,11 @@ from typing_extensions import TypeAlias
 
 
 try:
-    from promptflow.core._errors import MissingRequiredPackage as _MissingRequiredPackage
+    from promptflow.core._errors import MissingRequiredPackage
 except ImportError:
     from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
-    class _MissingRequiredPackage(EvaluationException):
+    class MissingRequiredPackage(EvaluationException):
         """Raised when a required package is missing.
 
         :param message: A message describing the error. This is the error message the user will see.
@@ -24,6 +24,3 @@ except ImportError:
             kwargs.setdefault("target", ErrorTarget.EVALUATE)
             kwargs.setdefault("internal_message", "Missing required package.")
             super().__init__(message=message, **kwargs)
-
-
-MissingRequiredPackage: TypeAlias = _MissingRequiredPackage

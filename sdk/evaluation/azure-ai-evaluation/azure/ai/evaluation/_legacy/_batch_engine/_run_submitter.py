@@ -8,7 +8,7 @@ import sys
 
 from concurrent.futures import Executor
 from datetime import datetime, timezone
-from typing import Any, Callable, Dict, Mapping, Optional, Sequence, TextIO, Union
+from typing import Any, Callable, Dict, List, Mapping, Optional, Sequence, TextIO, Union
 
 from ._run import Run, RunStatus
 from ._trace import start_trace
@@ -97,7 +97,7 @@ class RunSubmitter:
         # has also been removed since it can be problematic in a multi-threaded environment.
 
         if run.previous_run:
-            previous: Optional[Run] = run.previous_run
+            previous: Run = run.previous_run
             if previous.status != RunStatus.COMPLETED:
                 raise BatchEngineValidationError(
                     f"Referenced run {previous.name} is not completed, got status {previous.status.value}."
@@ -138,7 +138,7 @@ class RunSubmitter:
             batch_result = await batch_engine.run(data=run.inputs, column_mapping=run.column_mapping, id=run.name)
             run._status = RunStatus.from_batch_result_status(batch_result.status)
 
-            error_logs: Sequence[str] = []
+            error_logs: List[str] = []
             if run._status != RunStatus.COMPLETED:
                 error_logs.append(f"Run {run.name} failed with status {batch_result.status}.")
                 if batch_result.error:

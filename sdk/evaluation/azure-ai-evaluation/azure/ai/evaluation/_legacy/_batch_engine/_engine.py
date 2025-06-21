@@ -20,7 +20,7 @@ from concurrent.futures import Executor
 from functools import partial
 from contextlib import contextmanager
 from datetime import datetime, timezone
-from typing import Any, Callable, Dict, Final, Generator, Mapping, MutableMapping, Optional, Sequence, Set, Tuple, cast
+from typing import Any, Callable, Dict, Final, Generator, List, Mapping, MutableMapping, Optional, Sequence, Set, Tuple, cast
 from uuid import uuid4
 
 from ._utils import DEFAULTS_KEY, get_int_env_var, get_value_from_path, is_async_callable
@@ -122,7 +122,7 @@ class BatchEngine:
     ) -> Sequence[Mapping[str, str]]:
         data = data[:max_lines] if max_lines else data
 
-        inputs: Sequence[Mapping[str, Any]] = []
+        inputs: List[Mapping[str, Any]] = []
         line: int = 0
         defaults = cast(Mapping[str, Any], column_mapping.get(DEFAULTS_KEY, {}))
 
@@ -270,6 +270,7 @@ class BatchEngine:
             # TODO ralphe: Fix this code so it doesn't re-order the outputs
             # wait for any task to complete
             done, pending = await asyncio.wait(pending, return_when=asyncio.FIRST_COMPLETED)
+            pending = list(pending)  # Convert set back to list
             completed_line_results = [task.result() for task in done]
             # persist node run infos and flow run info in line result to storage
             self._persist_run_info([result for _, result in completed_line_results])
