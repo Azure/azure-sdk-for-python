@@ -336,6 +336,8 @@ def mock_model_config() -> AzureOpenAIModelConfiguration:
         api_version="2023-07-01-preview",
         azure_deployment="aoai-deployment",
     )
+
+
 @pytest.fixture(scope="session")
 def mock_model_config_onedp() -> AzureOpenAIModelConfiguration:
     return AzureOpenAIModelConfiguration(
@@ -343,6 +345,7 @@ def mock_model_config_onedp() -> AzureOpenAIModelConfiguration:
         api_version="2024-12-01-preview",
         azure_deployment="aoai-deployment",
     )
+
 
 @pytest.fixture(scope="session")
 def mock_project_scope() -> Dict[str, str]:
@@ -354,9 +357,11 @@ def mock_project_scope() -> Dict[str, str]:
         "project_name": f"{SanitizedValues.WORKSPACE_NAME}",
     }
 
+
 @pytest.fixture(scope="session")
 def mock_onedp_project_scope() -> Dict[str, str]:
     return "https://Sanitized.services.ai.azure.com/api/projects/00000"
+
 
 KEY_AZURE_MODEL_CONFIG = "azure_openai_model_config"
 KEY_ONE_DP_AZURE_MODEL_CONFIG = "azure_openai_model_config_onedp"
@@ -378,6 +383,7 @@ def model_config(
 
     return model_config
 
+
 @pytest.fixture(scope="session")
 def model_config_onedp(
     connection_file: Dict[str, Any], mock_model_config_onedp: AzureOpenAIModelConfiguration
@@ -390,6 +396,7 @@ def model_config_onedp(
     AzureOpenAIModelConfiguration.__repr__ = lambda self: "<sensitive data redacted>"
 
     return model_config
+
 
 @pytest.fixture
 def non_azure_openai_model_config(connection_file: Mapping[str, Any]) -> OpenAIModelConfiguration:
@@ -424,10 +431,12 @@ def project_scope(connection_file: Mapping[str, Any], mock_project_scope: Dict[s
     config = get_config(connection_file, KEY_AZURE_PROJECT_SCOPE) if is_live() else mock_project_scope
     return config
 
+
 @pytest.fixture
 def project_scope_onedp(connection_file: Mapping[str, Any], mock_onedp_project_scope: Dict[str, Any]) -> Dict[str, Any]:
     config = get_config(connection_file, KEY_ONE_DP_PROJECT_SCOPE) if is_live() else mock_onedp_project_scope
     return config
+
 
 @pytest.fixture
 def datastore_project_scopes(connection_file, project_scope, mock_project_scope) -> Dict[str, Any]:
@@ -521,6 +530,7 @@ def azure_cred() -> TokenCredential:
     assert token is not None
     return credential
 
+
 @pytest.fixture
 def azure_cred_onedp() -> TokenCredential:
     from azure.identity import AzureCliCredential, DefaultAzureCredential
@@ -537,9 +547,10 @@ def azure_cred_onedp() -> TokenCredential:
         credential = DefaultAzureCredential()
         # ensure we can get token
         token = credential.get_token("https://ai.azure.com/.default")
-        
+
     assert token is not None
     return credential
+
 
 @pytest.fixture
 def user_object_id(azure_cred: TokenCredential) -> str:

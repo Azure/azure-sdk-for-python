@@ -10,7 +10,7 @@ from azure.ai.evaluation._common._experimental import experimental
 
 
 @experimental
-class AzureOpenAIGrader():
+class AzureOpenAIGrader:
     """
     Base class for Azure OpenAI grader wrappers, recommended only for use by experienced OpenAI API users.
     Combines a model configuration and any grader configuration
@@ -37,15 +37,19 @@ class AzureOpenAIGrader():
 
     id = "aoai://general"
 
-    def __init__(self, *, model_config : Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration], grader_config: Dict[str, Any], **kwargs: Any):
+    def __init__(
+        self,
+        *,
+        model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+        grader_config: Dict[str, Any],
+        **kwargs: Any,
+    ):
         self._model_config = model_config
         self._grader_config = grader_config
 
         if kwargs.get("validate", True):
             self._validate_model_config()
             self._validate_grader_config()
-
-
 
     def _validate_model_config(self) -> None:
         """Validate the model configuration that this grader wrapper is using."""
@@ -57,7 +61,7 @@ class AzureOpenAIGrader():
                 category=ErrorCategory.INVALID_VALUE,
                 target=ErrorTarget.AOAI_GRADER,
             )
-    
+
     def _validate_grader_config(self) -> None:
         """Validate the grader configuration that this grader wrapper is using."""
 
@@ -72,15 +76,17 @@ class AzureOpenAIGrader():
         :rtype: [~openai.OpenAI, ~openai.AzureOpenAI]
         """
         if "azure_endpoint" in self._model_config:
-           from openai import AzureOpenAI
-           # TODO set default values?
-           return AzureOpenAI(
+            from openai import AzureOpenAI
+
+            # TODO set default values?
+            return AzureOpenAI(
                 azure_endpoint=self._model_config["azure_endpoint"],
-                api_key=self._model_config.get("api_key", None), # Default-style access to appease linters.
-                api_version=DEFAULT_AOAI_API_VERSION, # Force a known working version
+                api_key=self._model_config.get("api_key", None),  # Default-style access to appease linters.
+                api_version=DEFAULT_AOAI_API_VERSION,  # Force a known working version
                 azure_deployment=self._model_config.get("azure_deployment", ""),
             )
         from openai import OpenAI
+
         # TODO add default values for base_url and organization?
         return OpenAI(
             api_key=self._model_config["api_key"],

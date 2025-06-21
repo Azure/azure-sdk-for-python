@@ -40,8 +40,8 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
 
     :param credential: The credential for connecting to Azure AI project. Required
     :type credential: ~azure.core.credentials.TokenCredential
-    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint 
-        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name.
     :type azure_ai_project: Union[str, ~azure.ai.evaluation.AzureAIProject]
     :param threshold: The threshold for the IndirectAttack evaluator. Default is 0.
     :type threshold: int
@@ -54,15 +54,15 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             :language: python
             :dedent: 8
             :caption: Initialize and call an IndirectAttackEvaluator.
-    
+
     .. admonition:: Example using Azure AI Project URL:
-        
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
             :start-after: [START indirect_attack_evaluator]
             :end-before: [END indirect_attack_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call IndirectAttackEvaluator using Azure AI Project URL in the following format 
+            :caption: Initialize and call IndirectAttackEvaluator using Azure AI Project URL in the following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     """

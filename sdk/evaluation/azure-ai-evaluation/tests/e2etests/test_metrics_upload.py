@@ -186,6 +186,7 @@ class TestMetricsUpload(object):
         if not is_live():
             try:
                 from promptflow.tracing import _start_trace
+
                 monkeypatch.setattr(_start_trace, "_is_devkit_installed", lambda: False)
             except ImportError:
                 pass
@@ -229,6 +230,7 @@ class TestMetricsUpload(object):
         if not is_live():
             try:
                 from promptflow.tracing import _start_trace
+
                 monkeypatch.setattr(_start_trace, "_is_devkit_installed", lambda: False)
             except ImportError:
                 pass

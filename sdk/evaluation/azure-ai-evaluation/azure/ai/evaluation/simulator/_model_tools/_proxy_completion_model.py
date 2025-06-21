@@ -193,7 +193,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
         time_start = time.time()
         full_response = None
 
-        if(isinstance(session, AIProjectClient)):
+        if isinstance(session, AIProjectClient):
             sim_request_dto = SimulationDTO(
                 headers=headers,
                 params=params,
@@ -203,7 +203,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             )
             response_data = session.red_teams.submit_simulation(sim_request_dto, headers=headers, params=params)
             operation_id = response_data["location"].split("/")[-1]
-            
+
             request_count = 0
             flag = True
             while flag:
@@ -211,6 +211,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
                     response = session.evaluations.operation_results(operation_id, headers=headers)
                 except Exception as e:
                     from types import SimpleNamespace  # pylint: disable=forgotten-debug-statement
+
                     response = SimpleNamespace(status_code=202, text=str(e), json=lambda: {"error": str(e)})
                 if isinstance(response, dict):
                     response_data = response
@@ -228,10 +229,11 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             # response.raise_for_status()
             if response.status_code != 202:
                 raise HttpResponseError(
-                    message=f"Received unexpected HTTP status: {response.status_code} {response.text()}", response=response
+                    message=f"Received unexpected HTTP status: {response.status_code} {response.text()}",
+                    response=response,
                 )
             response_data = response.json()
-            
+
             self.result_url = cast(str, response_data["location"])
             retry_policy = AsyncRetryPolicy(  # set up retry configuration
                 retry_on_status_codes=[202],  # on which statuses to retry
@@ -259,7 +261,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
                 )
             response.raise_for_status()
             response_data = response.json()
-            
+
         self.logger.info("Response: %s", response_data)
 
         # Copy the full response and return it to be saved in jsonl.
