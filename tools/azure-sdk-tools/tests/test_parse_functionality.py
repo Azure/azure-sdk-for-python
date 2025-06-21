@@ -17,7 +17,7 @@ pyproject_extension_scenario = os.path.join(scenarios_folder, "pyproject_project
 
 def test_parse_require():
     test_scenarios = [
-        ("ConfigArgParse>=0.12.0", "configargparse", ">=0.12.0"),
+        ("ConfigArgParse>=0.12.0", "ConfigArgParse", ">=0.12.0"),
         ("msrest>=0.6.10", "msrest", ">=0.6.10"),
         ("azure-core<2.0.0,>=1.2.2", "azure-core", "<2.0.0,>=1.2.2"),
         ("msrest==0.6.10", "msrest", "==0.6.10"),
@@ -31,10 +31,10 @@ def test_parse_require():
 
     for scenario in test_scenarios:
         result = parse_require(scenario[0])
-        assert result.key is not None
+        assert result.name is not None
         if scenario[2] is not None:
             assert len(result.specifier) != 0
-        assert result.key == scenario[1]
+        assert result.name == scenario[1]
         assert str(result.specifier) == (scenario[2] or "")
 
 
@@ -44,7 +44,7 @@ def test_parse_require_with_no_spec():
     for scenario in spec_scenarios:
         result = parse_require(scenario)
 
-        assert result.key == scenario.replace("_", "-")
+        assert result.name == scenario
         assert len(result.specifier) == 0
 
 

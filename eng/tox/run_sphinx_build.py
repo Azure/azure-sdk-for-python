@@ -12,14 +12,9 @@ from subprocess import check_call, CalledProcessError
 import argparse
 import os
 import logging
-import sys
 from prep_sphinx_env import should_build_docs
 from run_sphinx_apidoc import is_mgmt_package
-from pkg_resources import Requirement
-import ast
 import os
-import textwrap
-import io
 import shutil
 
 from ci_tools.parsing import ParsedSetup

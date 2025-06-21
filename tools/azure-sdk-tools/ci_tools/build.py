@@ -246,7 +246,7 @@ def create_package(
         # given the additional requirements of the package, we should install them in the current environment before attempting to build the package
         # we assume the presence of `wheel`, `build`, `setuptools>=61.0.0`
         pip_output = get_pip_list_output(sys.executable)
-        necessary_install_requirements = [req for req in setup_parsed.requires if parse_require(req).key not in pip_output.keys()]
+        necessary_install_requirements = [req for req in setup_parsed.requires if parse_require(req).name not in pip_output.keys()]
         run([sys.executable, "-m", "pip", "install", *necessary_install_requirements], cwd=setup_parsed.folder)
         run([sys.executable, "-m", "build", f"-n{'s' if enable_sdist else ''}{'w' if enable_wheel else ''}", "-o", dist], cwd=setup_parsed.folder, check=True)
     else:
