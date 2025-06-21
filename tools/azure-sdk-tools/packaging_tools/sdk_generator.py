@@ -300,40 +300,96 @@ def main(generate_input, generate_output):
                     package_entry["isMultiapi"] = is_multiapi_package(readme_python_content)
                     package_entry["targetReleaseDate"] = data.get("targetReleaseDate", "")
                     package_entry["allowInvalidNextVersion"] = data.get("allowInvalidNextVersion", False)
-                    package_entry["runInPipeline"] = run_in_pipeline
                     result[package_name] = package_entry
                 else:
                     result[package_name]["path"].append(folder_name)
                     result[package_name][spec_word].append(readme_or_tsp)
+            except Exception as e:
+                _LOGGER.error(f"fail to process package {package_name} in {readme_or_tsp}: {str(e)}")
+                continue
 
-                # Generate some necessary file for new service
+            # Generate some necessary file for new service
+            try:
                 init_new_service(package_name, folder_name)
+            except Exception as e:
+                _LOGGER.warning(f"fail to init new service {package_name} in {readme_or_tsp}: {str(e)}")
+
+            # format samples and tests
+            try:
                 format_samples_and_tests(sdk_code_path)
-
-                # Update metadata
-                try:
-                    update_servicemetadata(
-                        sdk_folder,
-                        data,
-                        config,
-                        folder_name,
-                        package_name,
-                        spec_folder,
-                        readme_or_tsp,
-                    )
-                except Exception as e:
-                    _LOGGER.error(f"fail to update meta: {str(e)}")
-
-                # Setup package locally
+            except Exception as e:
+                _LOGGER.warning(f"fail to format samples and tests for {package_name} in {readme_or_tsp}: {str(e)}")
+                
+                
+            # Update metadata
+            try:
+                update_servicemetadata(
+                    sdk_folder,
+                    data,
+                    config,
+                    folder_name,
+                    package_name,
+                    spec_folder,
+                    readme_or_tsp,
+                )
+            except Exception as e:
+                _LOGGER.warning(f"fail to update meta: {str(e)}")                
+                
+            # Setup package locally
+            try:    
                 check_call(
                     f"pip install --ignore-requires-python -e {sdk_code_path}",
                     shell=True,
                 )
-
-                # check whether multiapi package has only one api-version in per subfolder
-                check_api_version_in_subfolder(sdk_code_path)
             except Exception as e:
-                _LOGGER.error(f"fail to setup package: {str(e)}")
+                _LOGGER.warning(f"fail to setup package {package_name} in {readme_or_tsp}: {str(e)}")                
+                
+            # check whether multiapi package has only one api-version in per subfolder
+            try:
+                if result[package_name]["isMultiapi"]:
+                    check_api_version_in_subfolder(sdk_code_path)
+            except Exception as e:
+                _LOGGER.warning(f"fail to check api version in subfolder for {package_name} in {readme_or_tsp}: {str(e)}")
+
+            # Changelog generation
+            try:
+                last_version, last_stable_release = get_version_info(package_name, result[package_name]["tagIsStable"])
+                change_log_func = partial(
+                    change_log_generate,
+                    package_name,
+                    last_version,
+                    result[package_name]["tagIsStable"],
+                    last_stable_release=last_stable_release,
+                    prefolder=folder_name,
+                    is_multiapi=result[package_name]["isMultiapi"],
+                )
+
+                changelog_generation_start_time = time.time()
+                try:
+                    md_output = execute_func_with_timeout(change_log_func)
+                except multiprocessing.TimeoutError:
+                    md_output = "change log generation was timeout!!! You need to write it manually!!!"
+                except:
+                    md_output = "change log generation failed!!! You need to write it manually!!!"
+                finally:
+                    for file in ["stable.json", "current.json"]:
+                        file_path = Path(sdk_folder, folder_name, package_name, file)
+                        if file_path.exists():
+                            os.remove(file_path)
+                            _LOGGER.info(f"Remove {file_path} which is temp file to generate changelog.")
+
+                _LOGGER.info(f"changelog generation cost time: {int(time.time() - changelog_generation_start_time)} seconds")
+                result[package_name]["changelog"] = {
+                    "content": md_output,
+                    "hasBreakingChange": "Breaking Changes" in md_output,
+                    "breakingChangeItems": extract_breaking_change(md_output),
+                }
+                result[package_name]["version"] = last_version
+
+                _LOGGER.info(f"[PACKAGE]({package_name})[CHANGELOG]:{md_output}")
+            except Exception as e:
+                _LOGGER.warning(f"fail to generate changelog for {package_name} in {readme_or_tsp}: {str(e)}")
+                
 
     # remove duplicates
     try:
@@ -344,11 +400,11 @@ def main(generate_input, generate_output):
             if value.get("readmeMd"):
                 value["readmeMd"] = list(set(value["readmeMd"]))
     except Exception as e:
-        _LOGGER.error(f"fail to remove duplicates: {str(e)}")
+        _LOGGER.warning(f"fail to remove duplicates: {str(e)}")
 
     if len(result) == 0 and len(readme_and_tsp) > 1:
         raise Exception("No package is generated, please check the log for details")
-
+    
     # Process packages directly after generation
     sdk_folder = "."
     final_result = {"packages": []}
@@ -362,46 +418,10 @@ def main(generate_input, generate_output):
             package_name = package["packageName"]
             prefolder = package["path"][0]
             
-            # Changelog generation
-            last_version, last_stable_release = get_version_info(package_name, package["tagIsStable"])
-            change_log_func = partial(
-                change_log_generate,
-                package_name,
-                last_version,
-                package["tagIsStable"],
-                last_stable_release=last_stable_release,
-                prefolder=prefolder,
-                is_multiapi=package["isMultiapi"],
-            )
-
-            changelog_generation_start_time = time.time()
-            try:
-                md_output = execute_func_with_timeout(change_log_func)
-            except multiprocessing.TimeoutError:
-                md_output = "change log generation was timeout!!! You need to write it manually!!!"
-            except:
-                md_output = "change log generation failed!!! You need to write it manually!!!"
-            finally:
-                for file in ["stable.json", "current.json"]:
-                    file_path = Path(sdk_folder, prefolder, package_name, file)
-                    if file_path.exists():
-                        os.remove(file_path)
-                        _LOGGER.info(f"Remove {file_path} which is temp file to generate changelog.")
-
-            _LOGGER.info(f"changelog generation cost time: {int(time.time() - changelog_generation_start_time)} seconds")
-            package["changelog"] = {
-                "content": md_output,
-                "hasBreakingChange": "Breaking Changes" in md_output,
-                "breakingChangeItems": extract_breaking_change(md_output),
-            }
-            package["version"] = last_version
-
-            _LOGGER.info(f"[PACKAGE]({package_name})[CHANGELOG]:{md_output}")
-            
             # Generate api stub File
             folder_name = package["path"][0]
 
-            if package["runInPipeline"]:
+            if run_in_pipeline:
                 apiview_start_time = time.time()
                 try:
                     package_path = Path(sdk_folder, folder_name, package_name)
