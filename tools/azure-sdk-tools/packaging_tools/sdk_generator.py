@@ -446,7 +446,7 @@ def main(generate_input, generate_output):
 
             # update result
             result[package_name]["installInstructions"] = {
-                "full": "You can install the use using pip install of the artifacts.",
+                "full": "You can use pip to install the artifacts.",
                 "lite": f"pip install {package_name}",
             }
             result[package_name]["result"] = "succeeded"
