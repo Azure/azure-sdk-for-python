@@ -97,7 +97,7 @@ def _is_openai_model_config(val: object) -> TypeGuard[OpenAIModelConfiguration]:
 
 
 def parse_model_config_type(
-    model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+        model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
 ) -> None:
     if _is_aoi_model_config(model_config):
         model_config["type"] = AZURE_OPENAI_TYPE
@@ -106,9 +106,9 @@ def parse_model_config_type(
 
 
 def construct_prompty_model_config(
-    model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
-    default_api_version: str,
-    user_agent: str,
+        model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+        default_api_version: str,
+        user_agent: str,
 ) -> dict:
     parse_model_config_type(model_config)
 
@@ -126,6 +126,7 @@ def construct_prompty_model_config(
 
     return prompty_model_config
 
+
 def is_onedp_project(azure_ai_project: AzureAIProject) -> bool:
     """Check if the Azure AI project is an OneDP project.
 
@@ -137,6 +138,7 @@ def is_onedp_project(azure_ai_project: AzureAIProject) -> bool:
     if isinstance(azure_ai_project, str):
         return True
     return False
+
 
 def validate_azure_ai_project(o: object) -> AzureAIProject:
     fields = {"subscription_id": str, "resource_group_name": str, "project_name": str}
@@ -230,7 +232,7 @@ def _validate_typed_dict(o: object, t: Type[T_TypedDict]) -> T_TypedDict:
         k
         for k in annotations
         if (is_total and get_origin(annotations[k]) is not NotRequired)
-        or (not is_total and get_origin(annotations[k]) is Required)
+           or (not is_total and get_origin(annotations[k]) is Required)
     }
 
     missing_keys = required_keys - o.keys()
@@ -291,7 +293,8 @@ def _validate_typed_dict(o: object, t: Type[T_TypedDict]) -> T_TypedDict:
 
     return cast(T_TypedDict, o)
 
-def check_score_is_valid(score: Union[str, float], min_score = 1, max_score = 5) -> bool:
+
+def check_score_is_valid(score: Union[str, float], min_score=1, max_score=5) -> bool:
     """Check if the score is valid, i.e. is convertable to number and is in the range [min_score, max_score].
 
     :param score: The score to check.
@@ -309,6 +312,7 @@ def check_score_is_valid(score: Union[str, float], min_score = 1, max_score = 5)
         return False
 
     return min_score <= numeric_score <= max_score
+
 
 def parse_quality_evaluator_reason_score(llm_output: str, valid_score_range: str = "[1-5]") -> Tuple[float, str]:
     """Parse the output of prompt-based quality evaluators that return a score and reason.
@@ -422,11 +426,11 @@ def validate_conversation(conversation):
             except ImportError as ex:
                 raise MissingRequiredPackage(
                     message="Please install 'azure-ai-inference' package to use SystemMessage, "
-                    "UserMessage or AssistantMessage."
+                            "UserMessage or AssistantMessage."
                 ) from ex
 
             if isinstance(message, ChatRequestMessage) and not isinstance(
-                message, (UserMessage, AssistantMessage, SystemMessage)
+                    message, (UserMessage, AssistantMessage, SystemMessage)
             ):
                 raise_exception(
                     f"Messages must be a strongly typed class of ChatRequestMessage. Message number: {num}",
@@ -437,7 +441,7 @@ def validate_conversation(conversation):
             if isinstance(message, UserMessage):
                 user_message_count += 1
             if isinstance(message.content, list) and any(
-                isinstance(item, ImageContentItem) for item in message.content
+                    isinstance(item, ImageContentItem) for item in message.content
             ):
                 image_found = True
             continue
@@ -481,6 +485,7 @@ def validate_conversation(conversation):
             ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
         )
 
+
 def _extract_text_from_content(content):
     text = []
     for msg in content:
@@ -488,14 +493,18 @@ def _extract_text_from_content(content):
             text.append(msg['text'])
     return text
 
-def _get_conversation_history(query):
+
+def _get_conversation_history(query, include_system_messages=False):
     all_user_queries = []
     cur_user_query = []
     all_agent_responses = []
     cur_agent_response = []
+    system_message = None
     for msg in query:
         if not 'role' in msg:
             continue
+        if include_system_messages and msg['role'] == 'system' and 'content' in msg:
+            system_message = msg.get('content', '')
         if msg['role'] == 'user' and 'content' in msg:
             if cur_agent_response != []:
                 all_agent_responses.append(cur_agent_response)
@@ -505,15 +514,15 @@ def _get_conversation_history(query):
                 cur_user_query.append(text_in_msg)
 
         if msg['role'] == 'assistant' and 'content' in msg:
-            if cur_user_query !=[]:
+            if cur_user_query != []:
                 all_user_queries.append(cur_user_query)
                 cur_user_query = []
             text_in_msg = _extract_text_from_content(msg['content'])
             if text_in_msg:
                 cur_agent_response.append(text_in_msg)
-    if cur_user_query !=[]:
+    if cur_user_query != []:
         all_user_queries.append(cur_user_query)
-    if cur_agent_response !=[]:
+    if cur_agent_response != []:
         all_agent_responses.append(cur_agent_response)
 
     if len(all_user_queries) != len(all_agent_responses) + 1:
@@ -524,31 +533,37 @@ def _get_conversation_history(query):
             category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
         )
-
     return {
-            'user_queries'    : all_user_queries,
-            'agent_responses' : all_agent_responses
-           }
+        'system_message': system_message,
+        'user_queries': all_user_queries,
+        'agent_responses': all_agent_responses
+    }
+
 
 def _pretty_format_conversation_history(conversation_history):
     """Formats the conversation history for better readability."""
     formatted_history = ""
-    for i, (user_query, agent_response) in enumerate(zip(conversation_history['user_queries'], conversation_history['agent_responses']+[None])):
-        formatted_history+=f"User turn {i+1}:\n"
+    if 'system_message' in conversation_history and conversation_history['system_message'] is not None:
+        formatted_history += "SYSTEM MESSAGE:\n"
+        formatted_history += "  " + conversation_history['system_message'] + "\n\n"
+    for i, (user_query, agent_response) in enumerate(
+            zip(conversation_history['user_queries'], conversation_history['agent_responses'] + [None])):
+        formatted_history += f"User turn {i + 1}:\n"
         for msg in user_query:
-            formatted_history+="  " + "\n  ".join(msg)
-        formatted_history+="\n\n"
+            formatted_history += "  " + "\n  ".join(msg)
+        formatted_history += "\n\n"
         if agent_response:
-            formatted_history+=f"Agent turn {i+1}:\n"
+            formatted_history += f"Agent turn {i + 1}:\n"
             for msg in agent_response:
-                formatted_history+="  " + "\n  ".join(msg)
-            formatted_history+="\n\n"
+                formatted_history += "  " + "\n  ".join(msg)
+            formatted_history += "\n\n"
     return formatted_history
 
-def reformat_conversation_history(query, logger = None):
+
+def reformat_conversation_history(query, logger=None, include_system_messages=False):
     """Reformats the conversation history to a more compact representation."""
     try:
-        conversation_history = _get_conversation_history(query)
+        conversation_history = _get_conversation_history(query, include_system_messages=include_system_messages)
         return _pretty_format_conversation_history(conversation_history)
     except:
         # If the conversation history cannot be parsed for whatever reason (e.g. the converter format changed), the original query is returned
@@ -562,25 +577,59 @@ def reformat_conversation_history(query, logger = None):
             logger.warning(f"Conversation history could not be parsed, falling back to original query: {query}")
         return query
 
-def _get_agent_response(agent_response_msgs):
-    """Extracts the text from the agent response content."""
+
+def _get_agent_response(agent_response_msgs, include_tool_messages=False):
+    """Extracts formatted agent response including text, and optionally tool calls/results."""
     agent_response_text = []
+    tool_results = {}
+
+    # First pass: collect tool results
+    if include_tool_messages:
+        for msg in agent_response_msgs:
+            if msg.get("role") == "tool" and "tool_call_id" in msg:
+                for content in msg.get("content", []):
+                    if content.get("type") == "tool_result":
+                        result = content.get("tool_result")
+                        tool_results[msg["tool_call_id"]] = f'[TOOL_RESULT] {result}'
+
+    # Second pass: parse assistant messages and tool calls
     for msg in agent_response_msgs:
-        if 'role' in msg and msg['role'] == 'assistant' and 'content' in msg:
-            text = _extract_text_from_content(msg['content'])
+        if 'role' in msg and msg.get("role") == "assistant" and "content" in msg:
+            text = _extract_text_from_content(msg["content"])
             if text:
                 agent_response_text.extend(text)
+            if include_tool_messages:
+                for content in msg.get("content", []):
+                    # Todo: Verify if this is the correct way to handle tool calls
+                    if content.get("type") == "tool_call":
+                        if "tool_call" in content:
+                            tc = content.get("tool_call", {})
+                            func_name = tc.get("function", {}).get("name", "")
+                            args = tc.get("function", {}).get("arguments", {})
+                            tool_call_id = tc.get("id")
+                        else:
+                            tool_call_id = content.get("tool_call_id")
+                            func_name = content.get("name", "")
+                            args = content.get("arguments", {})
+                        args_str = ", ".join(f'{k}="{v}"' for k, v in args.items())
+                        call_line = f'[TOOL_CALL] {func_name}({args_str})'
+                        agent_response_text.append(call_line)
+                        if tool_call_id in tool_results:
+                            agent_response_text.append(tool_results[tool_call_id])
+
     return agent_response_text
 
-def reformat_agent_response(response, logger = None):
+
+def reformat_agent_response(response, logger=None, include_tool_messages=False):
     try:
         if response is None or response == []:
             return ""
-        agent_response = _get_agent_response(response)
+        agent_response = _get_agent_response(response, include_tool_messages=include_tool_messages)
         if agent_response == []:
             # If no message could be extracted, likely the format changed, fallback to the original response in that case
             if logger:
-                logger.warning(f"Empty agent response extracted, likely due to input schema change. Falling back to using the original response: {response}")
+                logger.warning(
+                    f"Empty agent response extracted, likely due to input schema change. Falling back to using the original response: {response}")
             return response
         return "\n".join(agent_response)
     except:
@@ -589,6 +638,22 @@ def reformat_agent_response(response, logger = None):
         if logger:
             logger.warning(f"Agent response could not be parsed, falling back to original response: {response}")
         return response
+
+
+def reformat_tool_definitions(tool_definitions, logger=None):
+    output_lines = ["TOOL_DEFINITIONS:"]
+    for tool in tool_definitions:
+        output_lines.append(f"Tool: {tool['name']}")
+        output_lines.append(f"Description: {tool['description']}")
+        output_lines.append("Parameters:")
+        properties = tool.get("parameters", {}).get("properties", {})
+        for param_name, param_info in properties.items():
+            param_type = param_info.get("type", "unknown")
+            param_desc = param_info.get("description", "")
+            output_lines.append(f"  - {param_name} ({param_type}): {param_desc}")
+        output_lines.append("")  # blank line between tools
+    return "\n".join(output_lines)
+
 
 def upload(path: str, container_client: ContainerClient, logger=None):
     """Upload files or directories to Azure Blob Storage using a container client.
