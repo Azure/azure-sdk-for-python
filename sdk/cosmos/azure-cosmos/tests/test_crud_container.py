@@ -24,7 +24,7 @@ import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
 import test_config
-from azure.cosmos import _retry_utility
+from azure.cosmos import _retry_utility, ThroughputProperties
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 from azure.cosmos.partition_key import PartitionKey
 
@@ -954,7 +954,34 @@ class TestCRUDContainerOperations(unittest.TestCase):
 
         created_db.delete_container(none_coll)
 
+    def test_replace_throughput_offer_with_int(self):
+        created_db = self.databaseForTest
+        collection = created_db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
+        new_throughput = ThroughputProperties(offer_throughput=2500)
+        collection.replace_throughput(new_throughput.offer_throughput)
+
+        retrieve_throughput = collection.get_throughput()
+        assert getattr(retrieve_throughput, "offer_throughput") == getattr(new_throughput, "offer_throughput")
+
+    def test_replace_throughput_offer_with_object(self):
+        created_db = self.databaseForTest
+        collection = created_db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
+
+        new_throughput = ThroughputProperties(offer_throughput=2500)
+        collection.replace_throughput(new_throughput)
+
+        retrieve_throughput = collection.get_throughput()
+        assert getattr(retrieve_throughput, "offer_throughput") == getattr(new_throughput, "offer_throughput")
+
+    def test_negative_replace_throughput_with_all_configs_set(self):
+        created_db = self.databaseForTest
+        collection = created_db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
+
+        new_throughput = ThroughputProperties(offer_throughput=2500, auto_scale_max_throughput=4000, auto_scale_increment_percent=5)
+
+        with pytest.raises(KeyError):
+            collection.replace_throughput(new_throughput)
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
         if HttpHeaders.PartitionKey in args[4].headers:
