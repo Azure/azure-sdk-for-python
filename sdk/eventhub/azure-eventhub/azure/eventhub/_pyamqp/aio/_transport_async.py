@@ -473,7 +473,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
                 proxy=http_proxy_host,
                 proxy_auth=http_proxy_auth,
                 ssl=self.sslopts if self._use_tls else None,
-                heartbeat=DEFAULT_WEBSOCKET_HEARTBEAT_SECONDS,
+                # heartbeat=DEFAULT_WEBSOCKET_HEARTBEAT_SECONDS,
             )
         except ClientConnectorError as exc:
             _LOGGER.info("Websocket connect failed: %r", exc, extra=self.network_trace_params)
