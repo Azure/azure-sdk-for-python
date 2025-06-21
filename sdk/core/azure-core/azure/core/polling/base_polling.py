@@ -382,7 +382,7 @@ class OperationResourcePolling(LongRunningOperation[HttpRequestTypeVar, AllHttpR
         :type pipeline_response: ~azure.core.pipeline.PipelineResponse
         :return: The status string.
         :rtype: str
-        :raises ~azure.core.polling.base_polling.BadResponse: if response has no body, or body does not contain status.
+        :raises ~azure.core.polling.base_polling.BadResponse: if response has no body or body does not contain status.
         """
         response = pipeline_response.http_response
         if _is_empty(response):
@@ -612,7 +612,7 @@ class _SansIOLROBasePolling(
         """Set the initial status of this LRO.
 
         :param client: The Azure Core Pipeline client used to make request.
-        :type client: ~azure.core.pipeline.PipelineClient
+        :type client: ~azure.core.PipelineClient
         :param initial_response: The initial response for the call.
         :type initial_response: ~azure.core.pipeline.PipelineResponse
         :param deserialization_callback: A callback function to deserialize the final response.
