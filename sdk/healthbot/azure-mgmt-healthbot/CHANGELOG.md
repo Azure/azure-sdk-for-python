@@ -1,5 +1,18 @@
 # Release History
 
+## 1.0.0 (2025-07-20)
+
+### Features Added
+
+  - Model `HealthBotProperties` added property `access_control_method`
+  - Enum `SkuName` added member `C1`
+  - Enum `SkuName` added member `PES`
+  - Model `BotsOperations` added method `begin_update`
+
+### Breaking Changes
+
+  - Deleted or renamed method `BotsOperations.update`
+
 ## 1.0.0b2 (2022-10-28)
 
 ### Features Added

@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,21 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-import sys
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class AvailableOperations(_serialization.Model):
@@ -40,8 +34,8 @@ class AvailableOperations(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.OperationDetail"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.OperationDetail"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Collection of available operation details.
         :paramtype value: list[~azure.mgmt.healthbot.models.OperationDetail]
@@ -75,11 +69,11 @@ class BotResponseList(_serialization.Model):
         "value": {"key": "value", "type": "[HealthBot]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.next_link = None
-        self.value = None
+        self.next_link: Optional[str] = None
+        self.value: Optional[List["_models.HealthBot"]] = None
 
 
 class Error(_serialization.Model):
@@ -93,7 +87,7 @@ class Error(_serialization.Model):
         "error": {"key": "error", "type": "ErrorError"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorError"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorError"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.healthbot.models.ErrorError
@@ -123,11 +117,11 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorError(_serialization.Model):
@@ -163,14 +157,14 @@ class ErrorError(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.Error"]] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
 
 
 class Resource(_serialization.Model):
@@ -202,13 +196,13 @@ class Resource(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class TrackedResource(Resource):
@@ -216,7 +210,7 @@ class TrackedResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource Id for the resource.
     :vartype id: str
@@ -249,7 +243,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -266,7 +260,7 @@ class HealthBot(TrackedResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource Id for the resource.
     :vartype id: str
@@ -317,8 +311,8 @@ class HealthBot(TrackedResource):
         tags: Optional[Dict[str, str]] = None,
         identity: Optional["_models.Identity"] = None,
         properties: Optional["_models.HealthBotProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -351,7 +345,7 @@ class HealthBotKey(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, key_name: Optional[str] = None, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, key_name: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword key_name: The name of the key.
         :paramtype key_name: str
@@ -374,7 +368,7 @@ class HealthBotKeysResponse(_serialization.Model):
         "secrets": {"key": "secrets", "type": "[HealthBotKey]"},
     }
 
-    def __init__(self, *, secrets: Optional[List["_models.HealthBotKey"]] = None, **kwargs):
+    def __init__(self, *, secrets: Optional[List["_models.HealthBotKey"]] = None, **kwargs: Any) -> None:
         """
         :keyword secrets: Array of Azure Health Bot Secrets.
         :paramtype secrets: list[~azure.mgmt.healthbot.models.HealthBotKey]
@@ -384,7 +378,9 @@ class HealthBotKeysResponse(_serialization.Model):
 
 
 class HealthBotProperties(_serialization.Model):
-    """The properties of a Azure Health Bot. The Health Bot Service is a cloud platform that empowers developers in Healthcare organizations to build and deploy their compliant, AI-powered virtual health assistants and health bots, that help them improve processes and reduce costs.
+    """The properties of a Azure Health Bot. The Health Bot Service is a cloud platform that empowers
+    developers in Healthcare organizations to build and deploy their compliant, AI-powered virtual
+    health assistants and health bots, that help them improve processes and reduce costs.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -394,28 +390,33 @@ class HealthBotProperties(_serialization.Model):
     :vartype bot_management_portal_link: str
     :ivar key_vault_properties: KeyVault properties for the resource encryption.
     :vartype key_vault_properties: ~azure.mgmt.healthbot.models.KeyVaultProperties
+    :ivar access_control_method: The access control method for the Azure Health Bot resource.
+    :vartype access_control_method: str
     """
 
     _validation = {
         "provisioning_state": {"readonly": True},
         "bot_management_portal_link": {"readonly": True},
+        "access_control_method": {"readonly": True},
     }
 
     _attribute_map = {
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "bot_management_portal_link": {"key": "botManagementPortalLink", "type": "str"},
         "key_vault_properties": {"key": "keyVaultProperties", "type": "KeyVaultProperties"},
+        "access_control_method": {"key": "accessControlMethod", "type": "str"},
     }
 
-    def __init__(self, *, key_vault_properties: Optional["_models.KeyVaultProperties"] = None, **kwargs):
+    def __init__(self, *, key_vault_properties: Optional["_models.KeyVaultProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword key_vault_properties: KeyVault properties for the resource encryption.
         :paramtype key_vault_properties: ~azure.mgmt.healthbot.models.KeyVaultProperties
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
-        self.bot_management_portal_link = None
+        self.provisioning_state: Optional[str] = None
+        self.bot_management_portal_link: Optional[str] = None
         self.key_vault_properties = key_vault_properties
+        self.access_control_method: Optional[str] = None
 
 
 class HealthBotUpdateParameters(_serialization.Model):
@@ -449,8 +450,8 @@ class HealthBotUpdateParameters(_serialization.Model):
         sku: Optional["_models.Sku"] = None,
         identity: Optional["_models.Identity"] = None,
         location: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword properties: Properties of Azure Health Bot.
         :paramtype properties: ~azure.mgmt.healthbot.models.HealthBotProperties
@@ -489,7 +490,7 @@ class Identity(_serialization.Model):
     :vartype type: str or ~azure.mgmt.healthbot.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user identities associated with the resource. The
      user identity dictionary key references will be ARM resource ids in the form:
-    '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :vartype user_assigned_identities: dict[str, ~azure.mgmt.healthbot.models.UserAssignedIdentity]
     """
 
@@ -510,8 +511,8 @@ class Identity(_serialization.Model):
         *,
         type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
         user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The identity type. The type 'SystemAssigned, UserAssigned' includes both an
          implicitly created identity and a set of user assigned identities. The type 'None' will remove
@@ -520,13 +521,13 @@ class Identity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.healthbot.models.ResourceIdentityType
         :keyword user_assigned_identities: The list of user identities associated with the resource.
          The user identity dictionary key references will be ARM resource ids in the form:
-        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.healthbot.models.UserAssignedIdentity]
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
@@ -534,7 +535,7 @@ class Identity(_serialization.Model):
 class KeyVaultProperties(_serialization.Model):
     """Properties of the key vault.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key_name: The name of the key vault key. Required.
     :vartype key_name: str
@@ -565,8 +566,8 @@ class KeyVaultProperties(_serialization.Model):
         key_vault_uri: str,
         key_version: Optional[str] = None,
         user_identity: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_name: The name of the key vault key. Required.
         :paramtype key_name: str
@@ -616,8 +617,8 @@ class OperationDetail(_serialization.Model):
         display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
         properties: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the operation.
         :paramtype name: str
@@ -665,8 +666,8 @@ class OperationDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Resource provider of the operation.
         :paramtype provider: str
@@ -687,10 +688,10 @@ class OperationDisplay(_serialization.Model):
 class Sku(_serialization.Model):
     """The resource model definition representing SKU.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar name: The name of the Azure Health Bot SKU. Required. Known values are: "F0", "S1", and
-     "C0".
+    :ivar name: The name of the Azure Health Bot SKU. Required. Known values are: "F0", "S1", "C0",
+     "PES", and "C1".
     :vartype name: str or ~azure.mgmt.healthbot.models.SkuName
     """
 
@@ -702,10 +703,10 @@ class Sku(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, name: Union[str, "_models.SkuName"], **kwargs):
+    def __init__(self, *, name: Union[str, "_models.SkuName"], **kwargs: Any) -> None:
         """
         :keyword name: The name of the Azure Health Bot SKU. Required. Known values are: "F0", "S1",
-         and "C0".
+         "C0", "PES", and "C1".
         :paramtype name: str or ~azure.mgmt.healthbot.models.SkuName
         """
         super().__init__(**kwargs)
@@ -749,8 +750,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.IdentityType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -797,11 +798,11 @@ class UserAssignedIdentity(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
 
 
 class ValidationResult(_serialization.Model):
@@ -815,7 +816,7 @@ class ValidationResult(_serialization.Model):
         "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(self, *, status: Optional[str] = None, **kwargs):
+    def __init__(self, *, status: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword status: The status code of the response validation.
         :paramtype status: str
