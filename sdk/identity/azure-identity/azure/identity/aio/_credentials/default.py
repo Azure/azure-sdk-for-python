@@ -9,7 +9,7 @@ from typing import List, Optional, Any, cast
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from azure.core.credentials_async import AsyncTokenCredential, AsyncSupportsTokenInfo
 from ..._constants import EnvironmentVariables
-from ..._internal import get_default_authority, normalize_authority, within_dac
+from ..._internal import get_default_authority, normalize_authority, within_dac, process_credential_exclusions
 from .azure_cli import AzureCliCredential
 from .azd_cli import AzureDeveloperCliCredential
 from .azure_powershell import AzurePowerShellCredential
@@ -89,7 +89,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
             :caption: Create a DefaultAzureCredential.
     """
 
-    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-statements
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-statements, too-many-locals
         if "tenant_id" in kwargs:
             raise TypeError("'tenant_id' is not supported in DefaultAzureCredential.")
 
@@ -125,34 +125,70 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         process_timeout = kwargs.pop("process_timeout", 10)
 
-        token_credentials_env = os.environ.get(EnvironmentVariables.AZURE_TOKEN_CREDENTIALS, "").strip().lower()
-        exclude_workload_identity_credential = kwargs.pop("exclude_workload_identity_credential", False)
-        exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", True)
-        exclude_developer_cli_credential = kwargs.pop("exclude_developer_cli_credential", False)
-        exclude_cli_credential = kwargs.pop("exclude_cli_credential", False)
-        exclude_environment_credential = kwargs.pop("exclude_environment_credential", False)
-        exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
-        exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", False)
-        exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
+        # Define credential configuration mapping (async version)
+        credential_config = {
+            "environment": {
+                "exclude_param": "exclude_environment_credential",
+                "env_name": "environmentcredential",
+                "default_exclude": False,
+            },
+            "workload_identity": {
+                "exclude_param": "exclude_workload_identity_credential",
+                "env_name": "workloadidentitycredential",
+                "default_exclude": False,
+            },
+            "managed_identity": {
+                "exclude_param": "exclude_managed_identity_credential",
+                "env_name": "managedidentitycredential",
+                "default_exclude": False,
+            },
+            "shared_token_cache": {
+                "exclude_param": "exclude_shared_token_cache_credential",
+                "env_name": "sharedtokencachecredential",
+                "default_exclude": False,
+            },
+            "visual_studio_code": {
+                "exclude_param": "exclude_visual_studio_code_credential",
+                "env_name": "visualstudiocodecredential",
+                "default_exclude": True,
+            },
+            "cli": {
+                "exclude_param": "exclude_cli_credential",
+                "env_name": "azureclicredential",
+                "default_exclude": False,
+            },
+            "developer_cli": {
+                "exclude_param": "exclude_developer_cli_credential",
+                "env_name": "azuredeveloperclicredential",
+                "default_exclude": False,
+            },
+            "powershell": {
+                "exclude_param": "exclude_powershell_credential",
+                "env_name": "azurepowershellcredential",
+                "default_exclude": False,
+            },
+        }
 
-        if token_credentials_env == "dev":
-            # In dev mode, use only developer credentials
-            exclude_environment_credential = True
-            exclude_managed_identity_credential = True
-            exclude_workload_identity_credential = True
-        elif token_credentials_env == "prod":
-            # In prod mode, use only production credentials
-            exclude_shared_token_cache_credential = True
-            exclude_visual_studio_code_credential = True
-            exclude_cli_credential = True
-            exclude_developer_cli_credential = True
-            exclude_powershell_credential = True
-        elif token_credentials_env != "":
-            # If the environment variable is set to something other than dev or prod, raise an error
-            raise ValueError(
-                f"Invalid value for {EnvironmentVariables.AZURE_TOKEN_CREDENTIALS}: {token_credentials_env}. "
-                "Valid values are 'dev' or 'prod'."
-            )
+        # Extract user-provided exclude flags and set defaults
+        exclude_flags = {}
+        user_excludes = {}
+        for cred_key, config in credential_config.items():
+            param_name = cast(str, config["exclude_param"])
+            user_excludes[cred_key] = kwargs.pop(param_name, None)
+            exclude_flags[cred_key] = config["default_exclude"]
+
+        # Process AZURE_TOKEN_CREDENTIALS environment variable and apply user overrides
+        exclude_flags = process_credential_exclusions(credential_config, exclude_flags, user_excludes)
+
+        # Extract individual exclude flags for backward compatibility
+        exclude_environment_credential = exclude_flags["environment"]
+        exclude_workload_identity_credential = exclude_flags["workload_identity"]
+        exclude_managed_identity_credential = exclude_flags["managed_identity"]
+        exclude_shared_token_cache_credential = exclude_flags["shared_token_cache"]
+        exclude_visual_studio_code_credential = exclude_flags["visual_studio_code"]
+        exclude_cli_credential = exclude_flags["cli"]
+        exclude_developer_cli_credential = exclude_flags["developer_cli"]
+        exclude_powershell_credential = exclude_flags["powershell"]
 
         credentials: List[AsyncSupportsTokenInfo] = []
         within_dac.set(True)
