@@ -1,5 +1,15 @@
 # Release History
 
+## 1.0.0b12 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.0.0b11 (2025-05-15)
 
 There have been significant updates with the release of version 1.0.0b11, including breaking changes.
