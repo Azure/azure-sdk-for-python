@@ -7,6 +7,11 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import DeleteJob
+    from ._models_py3 import DeleteJobCollection
+    from ._models_py3 import DeleteJobsAddOptions
+    from ._models_py3 import DeleteJobsGetByIdOptions
+    from ._models_py3 import DeleteJobsListOptions
     from ._models_py3 import DigitalTwinModelsAddOptions
     from ._models_py3 import DigitalTwinModelsDeleteOptions
     from ._models_py3 import DigitalTwinModelsGetByIdOptions
@@ -35,6 +40,13 @@ try:
     from ._models_py3 import EventRoutesDeleteOptions
     from ._models_py3 import EventRoutesGetByIdOptions
     from ._models_py3 import EventRoutesListOptions
+    from ._models_py3 import ImportJob
+    from ._models_py3 import ImportJobCollection
+    from ._models_py3 import ImportJobsAddOptions
+    from ._models_py3 import ImportJobsCancelOptions
+    from ._models_py3 import ImportJobsDeleteOptions
+    from ._models_py3 import ImportJobsGetByIdOptions
+    from ._models_py3 import ImportJobsListOptions
     from ._models_py3 import IncomingRelationship
     from ._models_py3 import IncomingRelationshipCollection
     from ._models_py3 import InnerError
@@ -44,6 +56,11 @@ try:
     from ._models_py3 import QueryTwinsOptions
     from ._models_py3 import RelationshipCollection
 except (SyntaxError, ImportError):
+    from ._models import DeleteJob  # type: ignore
+    from ._models import DeleteJobCollection  # type: ignore
+    from ._models import DeleteJobsAddOptions  # type: ignore
+    from ._models import DeleteJobsGetByIdOptions  # type: ignore
+    from ._models import DeleteJobsListOptions  # type: ignore
     from ._models import DigitalTwinModelsAddOptions  # type: ignore
     from ._models import DigitalTwinModelsDeleteOptions  # type: ignore
     from ._models import DigitalTwinModelsGetByIdOptions  # type: ignore
@@ -72,6 +89,13 @@ except (SyntaxError, ImportError):
     from ._models import EventRoutesDeleteOptions  # type: ignore
     from ._models import EventRoutesGetByIdOptions  # type: ignore
     from ._models import EventRoutesListOptions  # type: ignore
+    from ._models import ImportJob  # type: ignore
+    from ._models import ImportJobCollection  # type: ignore
+    from ._models import ImportJobsAddOptions  # type: ignore
+    from ._models import ImportJobsCancelOptions  # type: ignore
+    from ._models import ImportJobsDeleteOptions  # type: ignore
+    from ._models import ImportJobsGetByIdOptions  # type: ignore
+    from ._models import ImportJobsListOptions  # type: ignore
     from ._models import IncomingRelationship  # type: ignore
     from ._models import IncomingRelationshipCollection  # type: ignore
     from ._models import InnerError  # type: ignore
@@ -81,7 +105,17 @@ except (SyntaxError, ImportError):
     from ._models import QueryTwinsOptions  # type: ignore
     from ._models import RelationshipCollection  # type: ignore
 
+from ._azure_digital_twins_api_enums import (
+    DeleteJobStatus,
+    Status,
+)
+
 __all__ = [
+    'DeleteJob',
+    'DeleteJobCollection',
+    'DeleteJobsAddOptions',
+    'DeleteJobsGetByIdOptions',
+    'DeleteJobsListOptions',
     'DigitalTwinModelsAddOptions',
     'DigitalTwinModelsDeleteOptions',
     'DigitalTwinModelsGetByIdOptions',
@@ -110,6 +144,13 @@ __all__ = [
     'EventRoutesDeleteOptions',
     'EventRoutesGetByIdOptions',
     'EventRoutesListOptions',
+    'ImportJob',
+    'ImportJobCollection',
+    'ImportJobsAddOptions',
+    'ImportJobsCancelOptions',
+    'ImportJobsDeleteOptions',
+    'ImportJobsGetByIdOptions',
+    'ImportJobsListOptions',
     'IncomingRelationship',
     'IncomingRelationshipCollection',
     'InnerError',
@@ -118,4 +159,6 @@ __all__ = [
     'QuerySpecification',
     'QueryTwinsOptions',
     'RelationshipCollection',
+    'DeleteJobStatus',
+    'Status',
 ]
