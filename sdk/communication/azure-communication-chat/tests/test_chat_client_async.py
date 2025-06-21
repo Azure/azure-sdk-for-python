@@ -92,7 +92,7 @@ async def test_create_chat_thread_raises_error():
 
     chat_client = ChatClient("https://endpoint", credential, transport=Mock(send=mock_send))
 
-    topic = ("test topic",)
+    topic = "test topic"
     user = CommunicationUserIdentifier("8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
     participants = [ChatParticipant(identifier=user, display_name="name", share_history_time=datetime.utcnow())]
 
@@ -143,7 +143,7 @@ async def test_list_chat_threads():
     assert raised == False
 
     items = []
-    async for item in chat_threads:
+    async for item in chat_threads: # type: ignore
         items.append(item)
 
     assert len(items) == 1
