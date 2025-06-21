@@ -133,36 +133,76 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         process_timeout = kwargs.pop("process_timeout", 10)
 
-        token_credentials_env = os.environ.get(EnvironmentVariables.AZURE_TOKEN_CREDENTIALS, "").strip().lower()
-        exclude_workload_identity_credential = kwargs.pop("exclude_workload_identity_credential", False)
-        exclude_environment_credential = kwargs.pop("exclude_environment_credential", False)
-        exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
-        exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", False)
-        exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", True)
-        exclude_developer_cli_credential = kwargs.pop("exclude_developer_cli_credential", False)
-        exclude_cli_credential = kwargs.pop("exclude_cli_credential", False)
-        exclude_interactive_browser_credential = kwargs.pop("exclude_interactive_browser_credential", True)
-        exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
+        # Define credential configuration mapping
+        credential_config = {
+            "environment": {
+                "exclude_param": "exclude_environment_credential",
+                "env_name": "environmentcredential",
+                "default_exclude": False,
+            },
+            "workload_identity": {
+                "exclude_param": "exclude_workload_identity_credential",
+                "env_name": "workloadidentitycredential",
+                "default_exclude": False,
+            },
+            "managed_identity": {
+                "exclude_param": "exclude_managed_identity_credential",
+                "env_name": "managedidentitycredential",
+                "default_exclude": False,
+            },
+            "shared_token_cache": {
+                "exclude_param": "exclude_shared_token_cache_credential",
+                "env_name": "sharedtokencachecredential",
+                "default_exclude": False,
+            },
+            "visual_studio_code": {
+                "exclude_param": "exclude_visual_studio_code_credential",
+                "env_name": "visualstudiocodecredential",
+                "default_exclude": True,
+            },
+            "cli": {
+                "exclude_param": "exclude_cli_credential",
+                "env_name": "azureclicredential",
+                "default_exclude": False,
+            },
+            "developer_cli": {
+                "exclude_param": "exclude_developer_cli_credential",
+                "env_name": "azuredeveloperclicredential",
+                "default_exclude": False,
+            },
+            "powershell": {
+                "exclude_param": "exclude_powershell_credential",
+                "env_name": "azurepowershellcredential",
+                "default_exclude": False,
+            },
+            "interactive_browser": {
+                "exclude_param": "exclude_interactive_browser_credential",
+                "env_name": "interactivebrowsercredential",
+                "default_exclude": True,
+            },
+        }
 
-        if token_credentials_env == "dev":
-            # In dev mode, use only developer credentials
-            exclude_environment_credential = True
-            exclude_managed_identity_credential = True
-            exclude_workload_identity_credential = True
-        elif token_credentials_env == "prod":
-            # In prod mode, use only production credentials
-            exclude_shared_token_cache_credential = True
-            exclude_visual_studio_code_credential = True
-            exclude_cli_credential = True
-            exclude_developer_cli_credential = True
-            exclude_powershell_credential = True
-            exclude_interactive_browser_credential = True
-        elif token_credentials_env != "":
-            # If the environment variable is set to something other than dev or prod, raise an error
-            raise ValueError(
-                f"Invalid value for {EnvironmentVariables.AZURE_TOKEN_CREDENTIALS}: {token_credentials_env}. "
-                "Valid values are 'dev' or 'prod'."
-            )
+        # Extract user-provided exclude flags and set defaults
+        exclude_flags = {}
+        user_excludes = {}
+        for cred_key, config in credential_config.items():
+            param_name = cast(str, config["exclude_param"])
+            user_excludes[cred_key] = kwargs.pop(param_name, None)
+            exclude_flags[cred_key] = config["default_exclude"]
+
+        # Process AZURE_TOKEN_CREDENTIALS environment variable and apply user overrides
+        exclude_flags = self._process_exclusions(credential_config, exclude_flags, user_excludes)
+
+        # Extract individual exclude flags for backward compatibility
+        exclude_environment_credential = exclude_flags["environment"]
+        exclude_workload_identity_credential = exclude_flags["workload_identity"]
+        exclude_managed_identity_credential = exclude_flags["managed_identity"]
+        exclude_shared_token_cache_credential = exclude_flags["shared_token_cache"]
+        exclude_visual_studio_code_credential = exclude_flags["visual_studio_code"]
+        exclude_cli_credential = exclude_flags["cli"]
+        exclude_developer_cli_credential = exclude_flags["developer_cli"]
+        exclude_powershell_credential = exclude_flags["powershell"]
+        exclude_interactive_browser_credential = exclude_flags["interactive_browser"]
 
         credentials: List[SupportsTokenInfo] = []
         within_dac.set(True)
@@ -215,6 +255,68 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 credentials.append(InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id, **kwargs))
         within_dac.set(False)
         super(DefaultAzureCredential, self).__init__(*credentials)
+
+    @staticmethod
+    def _process_exclusions(credential_config: dict, exclude_flags: dict, user_excludes: dict) -> dict:
+        """Process credential exclusions based on environment variable and user overrides.
+
+        This method handles the AZURE_TOKEN_CREDENTIALS environment variable to determine
+        which credentials should be excluded from the credential chain, and then applies
+        any user-provided exclude overrides which take precedence over environment settings.
+
+        :param credential_config: Configuration mapping for all available credentials, containing
+            exclude parameter names, environment names, and default exclude settings
+        :type credential_config: dict
+        :param exclude_flags: Dictionary of exclude flags for each credential (will be modified)
+        :type exclude_flags: dict
+        :param user_excludes: User-provided exclude overrides from constructor kwargs
+        :type user_excludes: dict
+
+        :return: Dictionary of final exclude flags for each credential
+        :rtype: dict
+
+        :raises ValueError: If token_credentials_env contains an invalid credential name
+        """
+        # Handle AZURE_TOKEN_CREDENTIALS environment variable
+        token_credentials_env = os.environ.get(EnvironmentVariables.AZURE_TOKEN_CREDENTIALS, "").strip().lower()
+
+        if token_credentials_env == "dev":
+            # In dev mode, use only developer credentials
+            dev_credentials = {"cli", "developer_cli", "powershell", "shared_token_cache"}
+            for cred_key in credential_config:
+                exclude_flags[cred_key] = cred_key not in dev_credentials
+        elif token_credentials_env == "prod":
+            # In prod mode, use only production credentials
+            prod_credentials = {"environment", "workload_identity", "managed_identity"}
+            for cred_key in credential_config:
+                exclude_flags[cred_key] = cred_key not in prod_credentials
+        elif token_credentials_env:
+            # If a specific credential is specified, exclude all others except the specified one
+            valid_credentials = {config["env_name"] for config in credential_config.values()}
+
+            if token_credentials_env not in valid_credentials:
+                valid_values = ["dev", "prod"] + sorted(valid_credentials)
+                raise ValueError(
+                    f"Invalid value for {EnvironmentVariables.AZURE_TOKEN_CREDENTIALS}: {token_credentials_env}. "
+                    f"Valid values are: {', '.join(valid_values)}."
+                )
+
+            # Find which credential was selected and exclude all others
+            selected_cred_key = None
+            for cred_key, config in credential_config.items():
+                if config["env_name"] == token_credentials_env:
+                    selected_cred_key = cred_key
+                    break
+
+            for cred_key in credential_config:
+                exclude_flags[cred_key] = cred_key != selected_cred_key
+
+        # Apply user-provided exclude flags (these override environment variable settings)
+        for cred_key, user_value in user_excludes.items():
+            if user_value is not None:
+                exclude_flags[cred_key] = user_value
+
+        return exclude_flags
 
     def get_token(
         self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
