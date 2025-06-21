@@ -89,7 +89,6 @@ class CodegenTestPR:
         self.pr_number = 0
         self.tag_is_stable = False
         self.has_test = False
-        self.check_package_size_result = []  # List[str]
         self.version_suggestion = ""  # if can't calculate next version, give a suggestion
 
     @property
@@ -208,15 +207,6 @@ class CodegenTestPR:
         except:
             return ""
 
-    def check_package_size(self):
-        if self.after_multiapi_combiner:
-            packages = self.get_private_package()
-            for package in packages:
-                if os.path.getsize(package) > 2 * 1024 * 1024:
-                    self.check_package_size_result.append(
-                        f"ERROR: Package size is over 2MBytes: {Path(package).name}!!!"
-                    )
-
     def check_model_flatten(self):
         if self.whole_package_name in [
             "azure-mgmt-mysqlflexibleservers",
@@ -331,8 +321,7 @@ class CodegenTestPR:
         pr_title = "[AutoRelease] {}(can only be merged by SDK owner)".format(self.new_branch)
         pr_head = "{}:{}".format(os.getenv("USR_NAME"), self.new_branch)
         pr_base = "main"
-        pr_body = "" if not self.check_package_size_result else "{}\n".format("\n".join(self.check_package_size_result))
-        pr_body = pr_body + "{} \n{} \n{}".format(self.issue_link, self.test_result, self.pipeline_link)
+        pr_body = "{} \n{} \n{}".format(self.issue_link, self.test_result, self.pipeline_link)
         if self.has_multi_packages:
             pr_body += f"\nBuildTargetingString\n  {self.whole_package_name}\nSkip.CreateApiReview"
         res_create = api.pulls.create(pr_title, pr_head, pr_base, pr_body)
@@ -348,15 +337,6 @@ class CodegenTestPR:
             if self.issue_link:
                 issue_number = int(self.issue_link.split("/")[-1])
                 api_request.issues.add_labels(issue_number=issue_number, labels=["base-branch-attention"])
-
-    @property
-    def after_multiapi_combiner(self) -> bool:
-        content = self.get_autorest_result()
-        return content["packages"][0]["afterMultiapiCombiner"]
-
-    def get_private_package(self) -> List[str]:
-        content = self.get_autorest_result()
-        return content["packages"][0]["artifacts"]
 
     def ask_check_policy(self):
         changelog = self.get_changelog()

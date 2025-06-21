@@ -332,9 +332,6 @@ def main(generate_input, generate_output):
 
                 # check whether multiapi package has only one api-version in per subfolder
                 check_api_version_in_subfolder(sdk_code_path)
-
-                # could be removed in the short future
-                result[package_name]["afterMultiapiCombiner"] = False
             except Exception as e:
                 _LOGGER.error(f"fail to setup package: {str(e)}")
 
