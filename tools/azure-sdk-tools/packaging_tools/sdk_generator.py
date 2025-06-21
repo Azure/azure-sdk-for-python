@@ -471,7 +471,7 @@ def main(generate_input, generate_output):
     else:
         _LOGGER.info(f"Processing {len(result)} generated packages...")
 
-    final_result = {"packages": result.values()}
+    final_result = {"packages": list(result.values())}
     with open(generate_output, "w") as writer:
         json.dump(final_result, writer, indent=2)
 
