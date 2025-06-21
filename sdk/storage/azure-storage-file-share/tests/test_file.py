@@ -3848,7 +3848,7 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client.delete_file()
 
     @FileSharePreparer()
-    def test_mock_transport_no_content_validation(self, **kwargs):
+    def test_legacy_transport(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -3878,7 +3878,7 @@ class TestStorageFile(StorageRecordedTestCase):
         assert file_data == b"Hello World!"  # data is fixed by mock transport
 
     @FileSharePreparer()
-    def test_mock_transport_with_content_validation(self, **kwargs):
+    def test_legacy_transport_with_content_validation(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 

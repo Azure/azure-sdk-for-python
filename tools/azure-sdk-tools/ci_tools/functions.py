@@ -404,7 +404,7 @@ def process_requires(setup_py_path: str, is_dev_build: bool = False):
     else:
         logging.info("Packages not available on PyPI:{}".format(requirement_to_update))
         update_requires(setup_py_path, requirement_to_update)
-        logging.info("Package requirement is updated in setup.py")
+        logging.info(f"Package requirement is updated in {'pyproject.toml' if pkg_details.is_pyproject else 'setup.py'}.")
 
 
 def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> Optional[str]:
@@ -927,3 +927,20 @@ def verify_package_classifiers(package_name: str, package_version: str, package_
         if num < 5:
             return False, f"{package_name} has version {package_version} and is a GA release, but had development status '{c}'. Expecting a development classifier that is equal or greater than 'Development Status :: 5 - Production/Stable'."
     return True, None
+
+def get_pip_command(python_exe: Optional[str] = None) -> List[str]:
+    """
+    Determine whether to use 'uv pip' or regular 'pip' based on environment.
+
+    :param str python_exe: The Python executable to use (if not using the default).
+    :return: List of command arguments for pip.
+    :rtype: List[str]
+    
+    """
+    # Check TOX_PIP_IMPL environment variable (aligns with tox.ini configuration)
+    pip_impl = os.environ.get('TOX_PIP_IMPL', 'pip').lower()
+
+    if pip_impl == 'uv':
+        return ["uv", "pip"]
+    else:
+        return [python_exe if python_exe else sys.executable, "-m", "pip"]
