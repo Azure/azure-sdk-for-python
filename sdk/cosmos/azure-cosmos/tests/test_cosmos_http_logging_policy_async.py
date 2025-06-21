@@ -11,6 +11,7 @@ import pytest
 
 import azure.cosmos.aio._cosmos_client as cosmos_client
 from azure.cosmos import PartitionKey
+from azure.cosmos.exceptions import CosmosHttpResponseError
 import test_config
 from _fault_injection_transport_async import FaultInjectionTransportAsync
 from test_fault_injection_transport_async import TestFaultInjectionTransportAsync
@@ -57,6 +58,7 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
         self.client_diagnostic = None
         self.client_filtered_diagnostic = None
         self.client_activity_id = None
+        self.client_grandchild_logger = None
 
     async def asyncTearDown(self):
         if self.client_default:
@@ -67,6 +69,8 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
             await self.client_filtered_diagnostic.close()
         if self.client_activity_id:
             await self.client_activity_id.close()
+        if self.client_grandchild_logger:
+            await self.client_grandchild_logger.close()
 
     async def test_default_http_logging_policy_async(self):
         self.logger.addHandler(self.mock_handler_default)
@@ -310,6 +314,102 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
             await self.client_activity_id.delete_database(database_id)
             self.mock_handler_activity_id.reset()
             self.logger.removeHandler(self.mock_handler_activity_id)
+
+    async def test_logging_exceptions_with_no_response_async(self):
+        # Create a mock handler and logger for capturing logs
+        mock_handler = MockHandler()
+        logger = create_logger("test_logger_fault_injection_async", mock_handler)
+
+        # Set up FaultInjectionTransportAsync to inject a 502 error
+        id_value = str(uuid.uuid4())
+        document_definition = {'id': id_value,
+                               'pk': id_value,
+                               'name': 'sample document',
+                               'key': 'value'}
+        custom_transport = FaultInjectionTransportAsync()
+        predicate = lambda r: FaultInjectionTransportAsync.predicate_req_for_document_with_id(r, id_value)
+        custom_transport.add_fault(predicate, lambda r: FaultInjectionTransportAsync.error_after_delay(
+            1000,
+            CosmosHttpResponseError(
+                status_code=502,
+                message="Some random reverse proxy error.")))
+
+        # Initialize the client with the custom transport and logger
+        initialized_objects = await TestFaultInjectionTransportAsync.setup_method_with_custom_transport(
+            custom_transport,
+            default_endpoint=CONFIG.host,
+            key=CONFIG.masterKey,
+            database_id=CONFIG.TEST_DATABASE_ID,
+            container_id=CONFIG.TEST_SINGLE_PARTITION_CONTAINER_ID,
+            preferred_locations=[L1, L2],
+            excluded_locations=[],
+            multiple_write_locations=True,
+            custom_logger=logger
+        )
+        mock_handler.reset()
+
+        # Attempt to create an item, which should trigger the injected 502 error
+        container = initialized_objects["col"]
+        try:
+            await container.create_item(body=document_definition)
+            pytest.fail("Expected exception not thrown")
+        except CosmosHttpResponseError as cosmosError:
+            # Verify that the logger captured the 502 error and was called from on_exception
+            assert any(m.status_code == 502 and "on_exception" in m.funcName for m in mock_handler.messages)
+        finally:
+            # Clean up by closing the client
+            mock_handler.reset()
+            logger.removeHandler(mock_handler)
+            await initialized_objects["client"].close()
+
+    async def test_hierarchical_logger_with_filter_async(self):
+        # Create a root logger with a mock handler and a filter for status codes above 400
+        root_mock_handler = MockHandler()
+        root_mock_handler.addFilter(FilterStatusCode())
+        root_logger = create_logger("rootLogger", root_mock_handler)
+
+        # Create child loggers
+        root_logger_child = logging.getLogger("rootLogger.child")
+        root_logger_grandchild = logging.getLogger("rootLogger.child.grandchild")
+
+        # Use the grandchild logger for the Cosmos client
+        self.client_grandchild_logger = cosmos_client.CosmosClient(
+            self.host,
+            self.masterKey,
+            consistency_level="Session",
+            connection_policy=self.connectionPolicy,
+            logger=root_logger_grandchild,
+            enable_diagnostics_logging=True
+        )
+
+        # Reset the mock handler before the test
+        root_mock_handler.reset()
+
+        # Attempt to read a nonexistent item
+        database_id = "database_test_hierarchical_logger_" + str(uuid.uuid4())
+        container_id = "container_test_hierarchical_logger_" + str(uuid.uuid4())
+        database = await self.client_grandchild_logger.create_database(id=database_id)
+        container = await database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
+
+        try:
+            await container.read_item(item="nonexistent_item", partition_key="nonexistent_pk")
+        except:
+            pass
+
+        # Verify that the error was logged by the root logger's mock handler
+        assert len(root_mock_handler.messages) == 2
+        log_record = root_mock_handler.messages[0]
+        assert hasattr(log_record, "status_code")
+        assert log_record.status_code == 404
+        assert log_record.name == "rootLogger.child.grandchild"
+        assert not bool(root_logger_grandchild.filters)
+        assert not bool(root_logger_child.filters)
+        assert bool(root_mock_handler.filters)
+
+        # Clean up
+        await self.client_grandchild_logger.delete_database(database_id)
+        root_mock_handler.reset()
+        root_logger_grandchild.removeHandler(root_mock_handler)
 
 
 if __name__ == "__main__":
