@@ -45,27 +45,70 @@ if TYPE_CHECKING:
     from ._cosmos_client_connection import CosmosClientConnection
     from .aio._cosmos_client_connection_async import CosmosClientConnection as AsyncClientConnection
 
+class _RequestOption:
+    ACCESS_CONDITION = "access_condition"
+    CONTENT_TYPE = "content_type"
+    CONTINUATION = "continuation"
+    DISABLE_RU_PER_MINUTE_USAGE = "disable_ru_per_minute_usage"
+    EXCLUDED_LOCATIONS = "excluded_locations"
+    INITIAL_HEADERS = "initial_headers"
+    IS_QUERY_PLAN_REQUEST = "is_query_plan_request"
+    MAX_ITEM_COUNT = "max_item_count"
+    NO_RESPONSE = "no_response"
+    OFFER_ENABLE_RU_PER_MINUTE_THROUGHPUT = "offer_enable_ru_per_minute_throughput"
+    POST_TRIGGER_INCLUDE = "post_trigger_include"
+    PRE_TRIGGER_INCLUDE = "pre_trigger_include"
+    PRIORITY = "priority"
+    QUERY_VERSION = "query_version"
+    RESOURCE_TOKEN_EXPIRY_SECONDS = "resource_token_expiry_seconds"
+    SESSION_TOKEN = "session_token"
+    SUPPORTED_QUERY_FEATURES = "supported_query_features"
+    THROUGHPUT_BUCKET = "throughput_bucket"
 
-_COMMON_OPTIONS = {
-    'initial_headers': 'initialHeaders',
-    'pre_trigger_include': 'preTriggerInclude',
-    'post_trigger_include': 'postTriggerInclude',
-    'access_condition': 'accessCondition',
-    'session_token': 'sessionToken',
-    'resource_token_expiry_seconds': 'resourceTokenExpirySeconds',
-    'offer_enable_ru_per_minute_throughput': 'offerEnableRUPerMinuteThroughput',
-    'disable_ru_per_minute_usage': 'disableRUPerMinuteUsage',
-    'continuation': 'continuation',
-    'content_type': 'contentType',
-    'is_query_plan_request': 'isQueryPlanRequest',
-    'supported_query_features': 'supportedQueryFeatures',
-    'query_version': 'queryVersion',
-    'priority': 'priorityLevel',
-    'no_response': 'responsePayloadOnWriteDisabled',
-    'max_item_count': 'maxItemCount',
-    'throughput_bucket': 'throughputBucket',
-    'excluded_locations': 'excludedLocations'
-}
+class _FeedOptions:
+    ACCESS_CONDITION = "accessCondition"
+    CONTENT_TYPE = "contentType"
+    CONTINUATION = "continuation"
+    DISABLE_RU_PER_MINUTE_USAGE = "disableRuPerMinuteUsage"
+    EXCLUDED_LOCATIONS = "excludedLocations"
+    INITIAL_HEADERS = "initialHeaders"
+    IS_QUERY_PLAN_REQUEST = "isQueryPlanRequest"
+    MAX_ITEM_COUNT = "maxItemCount"
+    NO_RESPONSE = "noResponse"
+    OFFER_ENABLE_RU_PER_MINUTE_THROUGHPUT = "offerEnableRuPerMinuteThroughput"
+    POST_TRIGGER_INCLUDE = "postTriggerInclude"
+    PRE_TRIGGER_INCLUDE = "preTriggerInclude"
+    PRIORITY = "priority"
+    QUERY_VERSION = "queryVersion"
+    RESOURCE_TOKEN_EXPIRY_SECONDS = "resourceTokenExpirySeconds"
+    SESSION_TOKEN = "sessionToken"
+    SUPPORTED_QUERY_FEATURES = "supportedQueryFeatures"
+    THROUGHPUT_BUCKET = "throughputBucket"
+
+def is_snake_case(s: str):
+    return isinstance(s, str) and bool(re.match(r'^[a-z]+(_[a-z]+)*$', s))
+
+_COMMON_OPTIONS = {key: val for key, val in zip(_RequestOption.__dict__.values(), _FeedOptions.__dict__.values()) if is_snake_case(key)}
+# _COMMON_OPTIONS = {
+#     'initial_headers': 'initialHeaders',
+#     'pre_trigger_include': 'preTriggerInclude',
+#     'post_trigger_include': 'postTriggerInclude',
+#     'access_condition': 'accessCondition',
+#     'session_token': 'sessionToken',
+#     'resource_token_expiry_seconds': 'resourceTokenExpirySeconds',
+#     'offer_enable_ru_per_minute_throughput': 'offerEnableRUPerMinuteThroughput',
+#     'disable_ru_per_minute_usage': 'disableRUPerMinuteUsage',
+#     'continuation': 'continuation',
+#     'content_type': 'contentType',
+#     'is_query_plan_request': 'isQueryPlanRequest',
+#     'supported_query_features': 'supportedQueryFeatures',
+#     'query_version': 'queryVersion',
+#     'priority': 'priorityLevel',
+#     'no_response': 'responsePayloadOnWriteDisabled',
+#     'max_item_count': 'maxItemCount',
+#     'throughput_bucket': 'throughputBucket',
+#     'excluded_locations': 'excludedLocations'
+# }
 
 # Cosmos resource ID validation regex breakdown:
 # ^ Match start of string.
@@ -101,7 +144,9 @@ def _get_match_headers(kwargs: Dict[str, Any]) -> Tuple[Optional[str], Optional[
 
 def build_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     options = kwargs.pop('request_options', kwargs.pop('feed_options', {}))
-    for key, value in _COMMON_OPTIONS.items():
+    com_options = _COMMON_OPTIONS.items()
+    for key, value in com_options:
+    # for key, value in _COMMON_OPTIONS.items():
         if key in kwargs:
             options[value] = kwargs.pop(key)
     if_match, if_none_match = _get_match_headers(kwargs)
