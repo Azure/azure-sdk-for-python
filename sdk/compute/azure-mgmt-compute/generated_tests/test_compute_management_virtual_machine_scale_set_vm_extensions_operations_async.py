@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.compute.aio import ComputeManagementClient
+from azure.mgmt.compute.v2024_11_01.aio import ComputeManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -18,6 +18,33 @@ AZURE_LOCATION = "eastus"
 class TestComputeManagementVirtualMachineScaleSetVMExtensionsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ComputeManagementClient, is_async=True)
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_scale_set_vm_extensions_list(self, resource_group):
+        response = await self.client.virtual_machine_scale_set_vm_extensions.list(
+            resource_group_name=resource_group.name,
+            vm_scale_set_name="str",
+            instance_id="str",
+            api_version="2024-11-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_scale_set_vm_extensions_get(self, resource_group):
+        response = await self.client.virtual_machine_scale_set_vm_extensions.get(
+            resource_group_name=resource_group.name,
+            vm_scale_set_name="str",
+            instance_id="str",
+            vm_extension_name="str",
+            api_version="2024-11-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
@@ -117,33 +144,6 @@ class TestComputeManagementVirtualMachineScaleSetVMExtensionsOperationsAsync(Azu
                 api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_scale_set_vm_extensions_get(self, resource_group):
-        response = await self.client.virtual_machine_scale_set_vm_extensions.get(
-            resource_group_name=resource_group.name,
-            vm_scale_set_name="str",
-            instance_id="str",
-            vm_extension_name="str",
-            api_version="2024-11-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_scale_set_vm_extensions_list(self, resource_group):
-        response = await self.client.virtual_machine_scale_set_vm_extensions.list(
-            resource_group_name=resource_group.name,
-            vm_scale_set_name="str",
-            instance_id="str",
-            api_version="2024-11-01",
-        )
 
         # please add some check logic here by yourself
         # ...
