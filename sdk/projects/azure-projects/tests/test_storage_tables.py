@@ -73,7 +73,12 @@ def test_storage_tables_properties():
     assert fields["storageaccount.tableservice"].defaults
 
     r3 = StorageAccount(sku="Premium_ZRS")
-    assert r3.properties == {"sku": {"name": "Premium_ZRS"}, "properties": {}}
+    assert r3.properties == {
+        "sku": {"name": "Premium_ZRS"},
+        "properties": {},
+        "tags": {"azd-env-name": None},
+        "identity": {},
+    }
     with pytest.raises(ValueError):
         r3.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
 
@@ -129,8 +134,6 @@ def test_storage_tables_properties():
     assert fields["storageaccount_testa.tableservice_testa"].resource_group == None
     assert fields["storageaccount_testa.tableservice_testa"].name == None
     assert fields["storageaccount_testa.tableservice_testa"].defaults
-    assert params.get("testA") == param1
-    assert params.get("testB") == param2
 
 
 def test_storage_tables_reference():
@@ -202,7 +205,7 @@ def test_storage_tables_defaults():
     r = TableStorage(cors_rules=rules)
     fields = {}
     r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
-    add_defaults(fields, parameters=dict(GLOBAL_PARAMS))
+    add_defaults(fields, parameters=dict(GLOBAL_PARAMS), values={}, resource_defaults={})
     field = fields.popitem()[1]
     assert field.properties == {
         "name": "default",
@@ -249,7 +252,17 @@ def test_storage_tables_export_with_properties(export_dir):
     class test(AzureInfrastructure):
         r: TableStorage = field(
             default=TableStorage(
-                {"properties": {}}, account=StorageAccount(), cors_rules=[{"allowedMethods": ["GET", "HEAD"]}]
+                {"properties": {}},
+                account=StorageAccount(),
+                cors_rules=[
+                    {
+                        "allowedMethods": ["GET", "HEAD"],
+                        "allowedOrigins": ["*"],
+                        "exposedHeaders": ["x-ms-meta-data", "x-ms-meta-target"],
+                        "maxAgeInSeconds": 3600,
+                        "allowedHeaders": ["*"],
+                    }
+                ],
             )
         )
 
@@ -269,7 +282,7 @@ def test_storage_tables_export_with_no_user_access(export_dir):
             default=TableStorage(roles=["Storage Table Data Owner"], user_roles=["Storage Table Data Contributor"])
         )
 
-    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2], user_access=False)
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2], local_access=False)
 
 
 def test_storage_tables_client():

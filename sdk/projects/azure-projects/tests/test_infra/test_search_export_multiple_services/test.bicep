@@ -4,17 +4,27 @@ param defaultNamePrefix string
 param defaultName string
 param principalId string
 param tenantId string
-param azdTags object
 
 resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-07-31-preview' = {
+  tags: {
+    'azd-env-name': environmentName
+  }
   location: location
-  tags: azdTags
   name: defaultName
 }
 
 
 
 resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
+  tags: {
+    'azd-env-name': environmentName
+  }
   name: defaultName
   sku: {
     name: 'Standard'
@@ -29,13 +39,6 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
     publicNetworkAccess: 'Enabled'
   }
   location: location
-  tags: azdTags
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userassignedidentity.id}': {}
-    }
-  }
 }
 
 output AZURE_APPCONFIG_ID string = configurationstore.id
@@ -45,21 +48,23 @@ output AZURE_APPCONFIG_ENDPOINT string = configurationstore.properties.endpoint
 
 
 resource searchservice 'Microsoft.Search/searchServices@2024-06-01-Preview' = {
-  name: defaultName
-  sku: {
-    name: 'basic'
-  }
-  properties: {
-    publicNetworkAccess: 'Disabled'
-  }
-  location: location
-  tags: azdTags
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
       '${userassignedidentity.id}': {}
     }
   }
+  tags: {
+    'azd-env-name': environmentName
+  }
+  name: defaultName
+  sku: {
+    name: 'basic'
+  }
+  properties: {
+    publicNetworkAccess: 'disabled'
+  }
+  location: location
 }
 
 output AZURE_SEARCH_ID_R1 string = searchservice.id
@@ -73,17 +78,19 @@ resource searchservice_foo 'Microsoft.Search/searchServices@2024-06-01-Preview' 
     publicNetworkAccess: 'Enabled'
   }
   name: 'foo'
-  sku: {
-    name: 'basic'
-  }
-  location: location
-  tags: azdTags
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
       '${userassignedidentity.id}': {}
     }
   }
+  tags: {
+    'azd-env-name': environmentName
+  }
+  sku: {
+    name: 'basic'
+  }
+  location: location
 }
 
 output AZURE_SEARCH_ID_R2 string = searchservice_foo.id

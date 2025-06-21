@@ -4,17 +4,28 @@ param defaultNamePrefix string
 param defaultName string
 param principalId string
 param tenantId string
-param azdTags object
 
 resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-07-31-preview' = {
+  tags: {
+    'azd-env-name': environmentName
+  }
   location: location
-  tags: azdTags
   name: defaultName
 }
 
 
 
 resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
+  identity: {
+    type: 'SystemAssigned,UserAssigned'
+    userAssignedIdentities: {
+      identity: {}
+    }
+  }
+  tags: {
+    'azd-env-name': environmentName
+    foo: 'bar'
+  }
   properties: {
     disableLocalAuth: true
     createMode: 'Default'
@@ -27,17 +38,8 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
     softDeleteRetentionInDays: 10
   }
   location: 'westus'
-  identity: {
-    type: 'SystemAssigned,UserAssigned'
-    userAssignedIdentities: {
-      identity: {}
-    }
-  }
   sku: {
     name: 'Free'
-  }
-  tags: {
-    foo: 'bar'
   }
   name: defaultName
 }
