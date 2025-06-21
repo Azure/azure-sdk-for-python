@@ -58,6 +58,11 @@ try:
 except ImportError:
     print("[INFO] Could not import AIAgentConverter. Please install the dependency with `pip install azure-ai-projects`.")
 
+try:
+    from ._converters._sk_services import SKAgentConverter
+    _patch_all.append("SKAgentConverter")
+except ImportError:
+    print("[INFO] Could not import SKAgentConverter. Please install the dependency with `pip install semantic-kernel`.")
 
 __all__ = [
     "evaluate",
