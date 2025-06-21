@@ -920,7 +920,7 @@ class CallAutomationClient:
             recording_id=recording_id, **kwargs
         )
         return RecordingResult._from_generated(recording_result)  # pylint:disable=protected-access
-    
+
     @distributed_trace
     def download_recording(
         self, recording_url: str, *, offset: int = None, length: int = None, **kwargs
