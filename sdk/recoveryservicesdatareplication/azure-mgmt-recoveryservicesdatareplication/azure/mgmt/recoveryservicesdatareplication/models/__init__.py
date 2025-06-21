@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
+    AffectedObjectDetails,
     AzStackHCIClusterProperties,
     AzStackHCIFabricModelCustomProperties,
     CheckNameAvailabilityModel,
@@ -58,7 +59,6 @@ from ._models import (  # type: ignore
     InnerHealthErrorModel,
     JobModel,
     JobModelCustomProperties,
-    JobModelCustomPropertiesAffectedObjectDetails,
     JobModelProperties,
     ManagedServiceIdentity,
     Operation,
@@ -151,6 +151,7 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AffectedObjectDetails",
     "AzStackHCIClusterProperties",
     "AzStackHCIFabricModelCustomProperties",
     "CheckNameAvailabilityModel",
@@ -195,7 +196,6 @@ __all__ = [
     "InnerHealthErrorModel",
     "JobModel",
     "JobModelCustomProperties",
-    "JobModelCustomPropertiesAffectedObjectDetails",
     "JobModelProperties",
     "ManagedServiceIdentity",
     "Operation",
