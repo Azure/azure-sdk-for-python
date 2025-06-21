@@ -46,6 +46,20 @@ class MatchedBlockName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ELSE_ENUM = "Else"
 
 
+class OnFailure(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Action to be taken when the operation fails for a object."""
+
+    BREAK = "break"
+    BREAK_ENUM = "break"
+
+
+class OnSuccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Action to be taken when the operation is successful for a object."""
+
+    CONTINUE = "continue"
+    CONTINUE_ENUM = "continue"
+
+
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system".
