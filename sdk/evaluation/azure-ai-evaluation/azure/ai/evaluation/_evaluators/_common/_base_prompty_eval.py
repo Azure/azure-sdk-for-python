@@ -17,12 +17,8 @@ from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from ..._common.utils import construct_prompty_model_config, validate_model_config, parse_quality_evaluator_reason_score
+from ..._user_agent import USER_AGENT, construct_user_agent_string
 from . import EvaluatorBase
-
-try:
-    from ..._user_agent import USER_AGENT
-except ImportError:
-    USER_AGENT = "None"
 
 T = TypeVar("T")
 
@@ -60,7 +56,8 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         super().__init__(eval_last_turn=eval_last_turn, threshold=threshold, _higher_is_better=_higher_is_better)
 
         subclass_name = self.__class__.__name__
-        user_agent = f"{USER_AGENT} (type=evaluator subtype={subclass_name})"
+        base_user_agent = f"{USER_AGENT} (type=evaluator; subtype={subclass_name})"
+        user_agent = construct_user_agent_string(base_user_agent)
         prompty_model_config = construct_prompty_model_config(
             validate_model_config(model_config),
             self._DEFAULT_OPEN_API_VERSION,
