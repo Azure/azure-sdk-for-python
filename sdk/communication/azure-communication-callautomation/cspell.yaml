@@ -7,3 +7,6 @@
 version: "0.2"
 words:
   - Retriable
+  - PSTN
+  - Dtmf
+  - ssml
