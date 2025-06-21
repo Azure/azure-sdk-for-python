@@ -265,7 +265,7 @@ def main(generate_input, generate_output):
                 config = gen_dpg(readme_or_tsp, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
             _LOGGER.info(f"code generation cost time: {int(time.time() - code_generation_start_time)} seconds")
         except Exception as e:
-            _LOGGER.error(f"fail to generate sdk for {readme_or_tsp}: {str(e)}")
+            _LOGGER.error(f"Fail to generate sdk for {readme_or_tsp}: {str(e)}")
             for hint_message in [
                 "======================================= Whant Can I do (begin) ========================================================================",
                 f"Fail to generate sdk for {readme_or_tsp}. If you are from service team, please first check if the failure happens only to Python automation, or for all SDK automations. ",
@@ -305,20 +305,20 @@ def main(generate_input, generate_output):
                     result[package_name]["path"].append(folder_name)
                     result[package_name][spec_word].append(readme_or_tsp)
             except Exception as e:
-                _LOGGER.error(f"fail to process package {package_name} in {readme_or_tsp}: {str(e)}")
+                _LOGGER.error(f"Fail to process package {package_name} in {readme_or_tsp}: {str(e)}")
                 continue
 
             # Generate some necessary file for new service
             try:
                 init_new_service(package_name, folder_name)
             except Exception as e:
-                _LOGGER.warning(f"fail to init new service {package_name} in {readme_or_tsp}: {str(e)}")
+                _LOGGER.warning(f"Fail to init new service {package_name} in {readme_or_tsp}: {str(e)}")
 
             # format samples and tests
             try:
                 format_samples_and_tests(sdk_code_path)
             except Exception as e:
-                _LOGGER.warning(f"fail to format samples and tests for {package_name} in {readme_or_tsp}: {str(e)}")
+                _LOGGER.warning(f"Fail to format samples and tests for {package_name} in {readme_or_tsp}: {str(e)}")
                 
                 
             # Update metadata
@@ -333,7 +333,7 @@ def main(generate_input, generate_output):
                     readme_or_tsp,
                 )
             except Exception as e:
-                _LOGGER.warning(f"fail to update meta: {str(e)}")                
+                _LOGGER.warning(f"Fail to update meta: {str(e)}")                
                 
             # Setup package locally
             try:    
@@ -342,14 +342,14 @@ def main(generate_input, generate_output):
                     shell=True,
                 )
             except Exception as e:
-                _LOGGER.warning(f"fail to setup package {package_name} in {readme_or_tsp}: {str(e)}")                
+                _LOGGER.warning(f"Fail to setup package {package_name} in {readme_or_tsp}: {str(e)}")                
                 
             # check whether multiapi package has only one api-version in per subfolder
             try:
                 if result[package_name]["isMultiapi"]:
                     check_api_version_in_subfolder(sdk_code_path)
             except Exception as e:
-                _LOGGER.warning(f"fail to check api version in subfolder for {package_name} in {readme_or_tsp}: {str(e)}")
+                _LOGGER.warning(f"Fail to check api version in subfolder for {package_name} in {readme_or_tsp}: {str(e)}")
 
             # Changelog generation
             try:
@@ -388,39 +388,9 @@ def main(generate_input, generate_output):
 
                 _LOGGER.info(f"[PACKAGE]({package_name})[CHANGELOG]:{md_output}")
             except Exception as e:
-                _LOGGER.warning(f"fail to generate changelog for {package_name} in {readme_or_tsp}: {str(e)}")
-                
+                _LOGGER.warning(f"Fail to generate changelog for {package_name} in {readme_or_tsp}: {str(e)}")
 
-    # remove duplicates
-    try:
-        for value in result.values():
-            value["path"] = list(set(value["path"]))
-            if value.get("typespecProject"):
-                value["typespecProject"] = list(set(value["typespecProject"]))
-            if value.get("readmeMd"):
-                value["readmeMd"] = list(set(value["readmeMd"]))
-    except Exception as e:
-        _LOGGER.warning(f"fail to remove duplicates: {str(e)}")
-
-    if len(result) == 0 and len(readme_and_tsp) > 1:
-        raise Exception("No package is generated, please check the log for details")
-    
-    # Process packages directly after generation
-    sdk_folder = "."
-    final_result = {"packages": []}
-    
-    if len(result) == 0:
-        _LOGGER.info("No packages to process, returning empty result")
-    else:
-        _LOGGER.info(f"Processing {len(result)} generated packages...")
-        
-        for package in result.values():
-            package_name = package["packageName"]
-            prefolder = package["path"][0]
-            
-            # Generate api stub File
-            folder_name = package["path"][0]
-
+            # Generate ApiView
             if run_in_pipeline:
                 apiview_start_time = time.time()
                 try:
@@ -442,37 +412,62 @@ def main(generate_input, generate_output):
                     check_call(["apistubgen", "--pkg-path", "."], cwd=package_path, timeout=600)
                     for file in os.listdir(package_path):
                         if "_python.json" in file and package_name in file:
-                            package["apiViewArtifact"] = str(Path(package_path, file))
+                            result[package_name]["apiViewArtifact"] = str(Path(package_path, file))
                 except Exception as e:
                     _LOGGER.debug(f"Fail to generate ApiView token file for {package_name}: {e}")
                 _LOGGER.info(f"apiview generation cost time: {int(time.time() - apiview_start_time)} seconds")
             else:
                 _LOGGER.info("Skip ApiView generation for package that does not run in pipeline.")
-
+                
+                
             # check generated files and update package["version"]
             if package_name.startswith("azure-mgmt-"):
                 try:
-                    check_file(package)
+                    check_file(result[package_name])
                 except Exception as e:
-                    _LOGGER.error(f"Fail to check generated files for {package_name}: {e}")
+                    _LOGGER.warning(f"Fail to check generated files for {package_name}: {e}")
 
-            # Built package
-            create_package(prefolder, package_name)
-            dist_path = Path(sdk_folder, folder_name, package_name, "dist")
-            package["artifacts"] = [str(dist_path / package_file) for package_file in os.listdir(dist_path)]
-            for artifact in package["artifacts"]:
-                if ".whl" in artifact:
-                    package["language"] = "Python"
-                    break
-            # Installation package
-            package["installInstructions"] = {
+            # Build artifacts
+            try:
+                create_package(result[package_name]["path"][0], package_name)
+                dist_path = Path(sdk_folder, folder_name, package_name, "dist")
+                result[package_name]["artifacts"] = [str(dist_path / package_file) for package_file in os.listdir(dist_path)]
+                for artifact in result[package_name]["artifacts"]:
+                    if ".whl" in artifact:
+                        result[package_name]["language"] = "Python"
+                        break
+                _LOGGER.info(f"Built package {package_name} successfully.")
+            except Exception as e:
+                _LOGGER.warning(f"Fail to build package {package_name} in {readme_or_tsp}: {str(e)}")
+            
+            # update result
+            result[package_name]["installInstructions"] = {
                 "full": "You can install the use using pip install of the artifacts.",
                 "lite": f"pip install {package_name}",
             }
-            package["result"] = "succeeded"
-            package["packageFolder"] = package["path"][0]
-            final_result["packages"].append(package)
+            result[package_name]["result"] = "succeeded"
+            result[package_name]["packageFolder"] = result[package_name]["path"][0]
+            
+    # remove duplicates
+    try:
+        for value in result.values():
+            value["path"] = list(set(value["path"]))
+            if value.get("typespecProject"):
+                value["typespecProject"] = list(set(value["typespecProject"]))
+            if value.get("readmeMd"):
+                value["readmeMd"] = list(set(value["readmeMd"]))
+    except Exception as e:
+        _LOGGER.warning(f"Fail to remove duplicates: {str(e)}")
 
+    if len(result) == 0 and len(readme_and_tsp) > 1:
+        raise Exception("No package is generated, please check the log for details")
+    
+    if len(result) == 0:
+        _LOGGER.info("No packages to process, returning empty result")
+    else:
+        _LOGGER.info(f"Processing {len(result)} generated packages...")
+        
+    final_result = {"packages": result.values()}
     with open(generate_output, "w") as writer:
         json.dump(final_result, writer)
 
