@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -218,7 +218,7 @@ class EncryptionScopesOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: StorageManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -623,7 +623,7 @@ class EncryptionScopesOperations:
         filter: Optional[str] = None,
         include: Optional[Union[str, _models.ListEncryptionScopesInclude]] = None,
         **kwargs: Any
-    ) -> Iterable["_models.EncryptionScope"]:
+    ) -> ItemPaged["_models.EncryptionScope"]:
         """Lists all the encryption scopes available under the specified storage account.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The

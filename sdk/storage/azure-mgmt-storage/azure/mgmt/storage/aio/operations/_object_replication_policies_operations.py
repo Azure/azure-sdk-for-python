@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -63,7 +63,7 @@ class ObjectReplicationPoliciesOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, account_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ObjectReplicationPolicy"]:
+    ) -> AsyncItemPaged["_models.ObjectReplicationPolicy"]:
         """List the object replication policies associated with the storage account.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
