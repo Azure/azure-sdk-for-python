@@ -52,7 +52,8 @@
 ## 1.0.0b36 (2025-04-07)
 
 ### Features Added
-
+- Added customer-facing statsbeat preview.
+  ([#41669](https://github.com/Azure/azure-sdk-for-python/pull/41669))
 - Support `syntheticSource` from `user_agent.synthetic.type` semantic convention
   ([#40004](https://github.com/Azure/azure-sdk-for-python/pull/40004))
 - Support `server.address` attributes when converting Azure SDK messaging spans to envelopes
