@@ -3,11 +3,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import uuid
+from typing import Union, Optional
 
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric.rsa import (
     RSAPrivateKey,
+    RSAPublicKey,
     RSAPrivateNumbers,
     RSAPublicNumbers,
     generate_private_key,
@@ -41,7 +43,7 @@ class RsaKey(Key):  # pylint:disable=too-many-public-methods
         self._kid = kid
         self.kty = None
         self.key_ops = None
-        self._rsa_impl = None
+        self._rsa_impl: Optional[Union[RSAPrivateKey, RSAPublicKey]] = None
 
     @property
     def n(self):
@@ -85,12 +87,18 @@ class RsaKey(Key):  # pylint:disable=too-many-public-methods
 
     @property
     def public_key(self):
-        return self._rsa_impl.public_key() if self.is_private_key() else self._rsa_impl
+        if self._rsa_impl is None:
+            return None
+        if isinstance(self._rsa_impl, RSAPrivateKey):
+            return self._rsa_impl.public_key()
+        else:
+            # It's already a public key
+            return self._rsa_impl
 
     @staticmethod
     def generate(kid=None, kty="RSA", size=2048, e=65537):
         key = RsaKey()
-        key.kid = kid or str(uuid.uuid4())
+        key._kid = kid or str(uuid.uuid4())
         key.kty = kty
         key.key_ops = RsaKey.PRIVATE_KEY_DEFAULT_OPS
         # pylint:disable=protected-access
@@ -126,13 +134,11 @@ class RsaKey(Key):  # pylint:disable=too-many-public-methods
 
             # create the private key from the jwk key values
             priv = RSAPrivateNumbers(p=p, q=q, d=d, dmp1=dmp1, dmq1=dmq1, iqmp=iqmp, public_numbers=pub)
-            key_impl = priv.private_key(default_backend())
+            rsa_key._rsa_impl = priv.private_key(default_backend())
 
         # if the necessary private key values are not specified create the public key
         else:
-            key_impl = pub.public_key(default_backend())
-
-        rsa_key._rsa_impl = key_impl
+            rsa_key._rsa_impl = pub.public_key(default_backend())
 
         return rsa_key
 
