@@ -386,7 +386,7 @@ class _AIInferenceInstrumentorPreview:
                         accumulate["message"]["tool_calls"][-1]["function"]["arguments"] += tool_call.function.arguments
 
     def _accumulate_async_streaming_response(self, item, accumulate: Dict[str, Any]) -> None:
-        if not "choices" in item:
+        if not "choices" in item or not item["choices"]:
             return
         if "finish_reason" in item["choices"][0] and item["choices"][0]["finish_reason"]:
             accumulate["finish_reason"] = item["choices"][0]["finish_reason"]
