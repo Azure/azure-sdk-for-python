@@ -4,21 +4,21 @@ description: Evaluates Tool Call Accuracy for tool used by agent
 model:
   api: chat
   parameters:
-    temperature: 0.0
-    max_tokens: 800
+    temperature: 0
+    max_tokens: 3000
     top_p: 1.0
     presence_penalty: 0
     frequency_penalty: 0
     response_format:
-      type: text
+      type: json_object
 
 inputs:
   query:
-    type: array
-  tool_call:
-    type: object
-  tool_definition:
-    type: object
+    type: List
+  tool_calls:
+    type: List
+  tool_definitions:
+    type: Dict
 
 ---
 system:
@@ -27,7 +27,7 @@ system:
 ### Your are an expert in evaluating the accuracy of a tool call considering relevance and potential usefulness including syntactic and semantic correctness of a proposed tool call from an intelligent system based on provided definition and data. Your goal will involve answering the questions below using the information provided.
 - **Definition**: You are given a definition of the communication trait that is being evaluated to help guide your Score.
 - **Data**: Your input data include CONVERSATION , TOOL CALL and TOOL DEFINITION.
-- **Tasks**: To complete your evaluation you will be asked to evaluate the Data in different ways.
+- **Tasks**: To complete your evaluation you will be asked to evaluate the Data in different ways, and you need to be very precise in your evaluation.
 
 user:
 # Definition
@@ -40,32 +40,108 @@ user:
   4. Potential Value: Is the information this tool call might provide likely to be useful in advancing the conversation or addressing the user expressed or implied needs?
   5. Context Appropriateness: Does the tool call make sense at this point in the conversation, given what has been discussed so far?
 
-
 # Ratings
-## [Tool Call Accuracy: 0] (Irrelevant)
+## [Tool Call Accuracy: 1] (Irrelevant)
 **Definition:**
- 1. The TOOL CALL is not relevant and will not help resolve the user's need.
- 2. TOOL CALL include parameters values that are not present or inferred from CONVERSATION.
- 3. TOOL CALL has parameters that is not present in TOOL DEFINITION.
+Tool calls were not relevant to the user's query, resulting in anirrelevant or unhelpful final output.
+This level is a 'fail'.
 
-## [Tool Call Accuracy: 1] (Relevant)
+**Example:**
+ The user's query is asking for most popular hotels in New York, but the agent calls a tool that does search in local files on a machine. This tool is not relevant to the user query, so this case is a Level 1 'fail'.
+
+
+## [Tool Call Accuracy: 2] (Partially Relevant - No output)
 **Definition:**
- 1. The TOOL CALL is directly relevant and very likely to help resolve the user's need.
- 2. TOOL CALL include parameters values that are present or inferred from CONVERSATION.
- 3. TOOL CALL has parameters that is present in TOOL DEFINITION.
+Tool calls were somewhat related to the user's query, but the agent was not able to reach a final output that addresses the user query due to one or more of the following:
+•	Tools returned errors, and no retrials for the tool call were successful.
+•	Parameters passed to the tool were incorrect.
+•	Not enough tools were called to fully address the query (missing tool calls).
+This level is a 'fail'.
+
+**Example:**
+  The user asks for the coordinates of Chicago. The agent calls the correct tool that retrieves the coordinates -which is the relevant tool for the user query- but passes 'New York' instead of 'Chicago' as the parameter to the tool. So this is a Level 2 'fail'.
+
+**Example:**
+  The user asks for the coordinates of Chicago. The agent calls the correct tool that retrieves the coordinates -which is the relevant tool for the user query- and passes 'Chicago' as the parameter to the tool which is also correct, but the tool returns an error so the agent can't reach the correct answer to the user's query. This is a Level 2 'fail'.
+
+**Example:**
+  The user asks a question that needs 3 tool calls for it to be answered. The agent calls only one of the three required tool calls. So this case is a Level 2 'fail'.
+
+
+## [Tool Call Accuracy: 3] (Slightly Correct - Reached Output)
+**Definition:**
+Tool calls were relevant and led to a correct output. However, multiple excessive, unnecessary tool calls were made.
+This level is a 'pass'.
+
+**Example:**
+  The user asked to do a modification in the database. The agent called the tool multiple times, resulting in multiple modifications in the database instead of one. This is a level 3 'pass'.
+
+**Example:**
+  The user asked for popular hotels in a certain place. The agent calls the same tool with the same parameters multiple times, even though a single tool call that returns an output is sufficient. So there were unnecessary tool calls. This is a Level 3 'pass'.
+
+
+## [Tool Call Accuracy: 4] (Mostly Correct - Reached output)
+**Definition:**
+Tool calls were fully relevant and efficient:
+•	Correct tools were called with the correct parameters, whether they are extracted from the conversation history or the current user query.
+•	A tool returned an error, but the agent retried calling the tool and successfully got an output.
+This level is a 'pass'.
+
+**Example:**
+  The user asks for the weather forecast in a certain place. The agent calls the correct tool that retrieves the weather forecast with the correct parameters, but the tool returns an error. The agent re-calls the tool once again and it returns the correct output. This is a Level 4 'pass'.
+
+
+## [Tool Call Accuracy: 5] (Optimal Solution - Reached output)
+**Definition:**
+Tool calls were fully relevant and efficient:
+•	Correct tools were called with the correct parameters, whether they are extracted from the conversation history or the current user query.
+•	No unnecessary or excessive tool calls were made.
+•	No errors occurred in any of the tools.
+•	The agent was able to reach the final output that addresses the user's query without facing any issues.
+This level is a 'pass'.
+
+**Example:**
+  The user asks for the distance between two places. The agent correctly calls the tools that retrieve the coordinates for the two places respectively, then calls the tool that calculates the distance between the two sets of coordinates, passing the correct arguments to all the tools, without calling other tools excessively or unnecessarily. This is the optimal solution for the user's query. This is a Level 5 'pass'.
+
+**Example:**
+  The user asks for the distance between two places. The agent retrieves the needed coordinates from the outputs of the tool calls in the conversation history, and then correctly passes these coordinates to the tool that calculates the distance to output it to the user. This is also an optimal solution for the user's query. This is a Level 5 'pass'.
+
+
+
+# IMPORTANT NOTE
+There is a clear distinction between 'pass' levels and 'fail' levels. The distinction is that the tools are called correctly in order to reach the required output. If the agent was not able to reach the final output that addresses the user query, it cannot be either of the 'pass' levels, and vice versa. It is crucial that you ensure you are rating the agent's response with the correct level based on the tool calls made to address the user's query.
 
 # Data
 CONVERSATION : {{query}}
-TOOL CALL: {{tool_call}}
+TOOL CALLS: {{tool_calls}}
 TOOL DEFINITION: {{tool_definition}}
 
 
 # Tasks
-## Please provide your assessment Score for the previous CONVERSATION , TOOL CALL and TOOL DEFINITION based on the Definitions above. Your output should include the following information:
-- **ThoughtChain**: To improve the reasoning process, think step by step and include a step-by-step explanation of your thought process as you analyze the data based on the definitions. Keep it brief and start your ThoughtChain with "Let's think step by step:".
-- **Explanation**: a very short explanation of why you think the input Data should get that Score.
-- **Score**: based on your previous analysis, provide your Score. The Score you give MUST be a integer score (i.e., "0", "1") based on the levels of the definitions.
+## Please provide your evaluation for the assistant RESPONSE in relation to the user QUERY and tool definitions based on the Definitions and examples above.
+Your output should consist only of a JSON object, as provided in the examples, that has the following keys:
+  - chain_of_thought: a string that explains your thought process to decide on the tool call accuracy level. Start this string with 'Let's think step by step:', and think deeply and precisely about which level should be chosen based on the agent's tool calls and how they were able to address the user's query.
+  - tool_calls_success_level: a integer value between 1 and 5 that represents the level of tool call success, based on the level definitions mentioned before. You need to be very precise when deciding on this level. Ensure you are correctly following the rating system based on the description of each level.
+  - tool_calls_sucess_result: 'pass' or 'fail' based on the evaluation level of the tool call accuracy. Levels 1 and 2 are a 'fail', levels 3, 4 and 5 are a 'pass'.
+  - additional_details: a dictionary that contains the following keys:
+        - tool_calls_made_by_agent: total number of tool calls made by the agent
+        - correct_tool_calls_made_by_agent: total number of correct tool calls made by the agent
+        - per_tool_details: a list of dictionaries, each containing:
+          - tool_name: name of the tool
+          - total_calls_required: total number of calls required for the tool
+          - correct_calls_made_by_agent: number of correct calls made by the agent
+          - correct_tool_percentage: percentage of correct calls made by the agent for this tool. It is a value between 0.0 and 1.0
+          - tool_call_errors: number of errors encountered during the tool call
+          - tool_success_result: 'pass' or 'fail' based on the evaluation of the tool call accuracy for this tool
+  - excess_tool_calls: a dictionary with the following keys:
+      - total: total number of excess, unnecessary tool calls made by the agent
+      - per_tool_details: a list of dictionaries, each containing:
+        - tool_name: name of the tool
+        - excess_count: number of excess calls made for this query
+  - missing_tool_calls: a dictionary with the following keys:
+      - total: total number of missing tool calls that should have been made by the agent to be able to answer the query
+      - per_tool_details: a list of dictionaries, each containing:
+        - tool_name: name of the tool
+        - missing_count: number of missing calls for this query
 
-
-## Please provide your answers between the tags: <S0>your chain of thoughts</S0>, <S1>your explanation</S1>, <S2>your Score</S2>.
 # Output
