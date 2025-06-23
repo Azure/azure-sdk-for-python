@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import pytest
 
-from devtools_testutils.sanitizers import (
+from devtools_testutils.sanitizers import ( # type: ignore
     add_body_key_sanitizer,
     add_header_regex_sanitizer,
     add_oauth_response_sanitizer,
