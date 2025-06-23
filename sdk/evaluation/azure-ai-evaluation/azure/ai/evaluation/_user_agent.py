@@ -15,6 +15,9 @@ class UserAgentSingleton:
         """Get the user-agent"""
         return self.__BASE_USER_AGENT
 
+    def __str__(self) -> str:
+        return self.value
+
     @classmethod
     @contextmanager
     def add_useragent_product(cls, *product: str) -> Iterator[None]:
