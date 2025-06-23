@@ -23,7 +23,7 @@
 """
 import warnings
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Sequence, Union, Tuple, Mapping, Type, cast, overload, Iterable, Callable
+from typing import Any, Dict, List, Optional, Sequence, Union, Tuple, Mapping, cast, overload, Iterable, Callable
 from typing_extensions import Literal
 
 from azure.core import MatchConditions
