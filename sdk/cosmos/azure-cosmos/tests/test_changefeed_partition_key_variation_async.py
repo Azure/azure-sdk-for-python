@@ -262,7 +262,7 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
 
             for item in items:
                 try:
-                    epk_range = container.get_epk_range_for_partition_key(container_properties, item["pk"])
+                    epk_range = container._get_epk_range_for_partition_key(container_properties, item["pk"])
                     assert epk_range is not None, f"EPK range should not be None for partition key {item['pk']}."
                 except Exception as e:
                     assert False, f"Failed to get EPK range for partition key {item['pk']}: {str(e)}"
