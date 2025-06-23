@@ -3,6 +3,7 @@
 ### 4.13.0b3 (Unreleased)
 
 #### Features Added
+* Added feed range support in `query_items`. See [PR 41722](https://github.com/Azure/azure-sdk-for-python/pull/41722).
 
 #### Breaking Changes
 
