@@ -6,18 +6,26 @@ on:
   workflow_dispatch:         # Optional manual trigger
 
 jobs:
-  build-and-test:
+  check-dependencies:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Set up Python 3.11
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: 3.11
-        
-      - name: Install Dependencies
-        run: pip install packaging==25.0 requests==2.32.4
 
-      - name: Run Script
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install packaging==25.0 requests==2.32.4
+
+      - name: Run major dependency update check
         run: python sdk/ml/azure-ai-ml/scripts/major_updates.py
+
+      - name: Create GitHub issues for major updates
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python .github/scripts/create_issues.py
