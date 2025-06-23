@@ -298,6 +298,39 @@ def _is_synthetic_source(properties: Attributes) -> bool:
     return synthetic_type in ("bot", "test")
 
 
+def _is_synthetic_load(properties: Attributes) -> bool:
+    """
+    Check if the request is from a synthetic load test by examining the HTTP user agent.
+
+    :param properties: The attributes/properties to check for user agent information
+    :type properties: Attributes
+    :return: True if the user agent contains "AlwaysOn", False otherwise
+    :rtype: bool
+    """
+    # Check both old and new semantic convention attributes for HTTP user agent
+    user_agent = (
+        properties.get("user_agent.original") or  # type: ignore  # New semantic convention
+        properties.get("http.user_agent")  # type: ignore  # Legacy semantic convention
+    )
+
+    if user_agent and isinstance(user_agent, str):
+        return "AlwaysOn" in user_agent
+
+    return False
+
+
+def _is_any_synthetic_source(properties: Attributes) -> bool:
+    """
+    Check if the telemetry should be marked as synthetic from any source.
+
+    :param properties: The attributes/properties to check
+    :type properties: Attributes
+    :return: True if any synthetic source is detected, False otherwise
+    :rtype: bool
+    """
+    return _is_synthetic_source(properties) or _is_synthetic_load(properties)
+
+
 # pylint: disable=W0622
 def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, str]:
     truncated_properties: Dict[str, str] = {}

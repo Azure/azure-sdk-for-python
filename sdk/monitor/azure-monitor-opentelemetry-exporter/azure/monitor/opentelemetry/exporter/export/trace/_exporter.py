@@ -221,7 +221,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
     envelope.tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(span.context.trace_id)
     if SpanAttributes.ENDUSER_ID in span.attributes:
         envelope.tags[ContextTagKeys.AI_USER_ID] = span.attributes[SpanAttributes.ENDUSER_ID]
-    if _utils._is_synthetic_source(span.attributes):
+    if _utils._is_any_synthetic_source(span.attributes):
         envelope.tags[ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE] = "True"
     if span.parent and span.parent.span_id:
         envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(span.parent.span_id)
