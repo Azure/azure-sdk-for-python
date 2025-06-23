@@ -21,10 +21,11 @@ from azure.ai.evaluation._legacy._adapters._errors import MissingRequiredPackage
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client
 from azure.ai.evaluation._model_configurations import AzureAIProject
+from azure.ai.evaluation._user_agent import UserAgentSingleton
 from azure.ai.evaluation._common.utils import is_onedp_project
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline.policies import AsyncRetryPolicy
+from azure.core.pipeline.policies import AsyncRetryPolicy, UserAgentPolicy
 
 from .constants import (
     CommonConstants,
@@ -35,11 +36,6 @@ from .constants import (
 )
 from .utils import get_harm_severity_level, retrieve_content_type
 
-try:
-    version = importlib.metadata.version("azure-ai-evaluation")
-except importlib.metadata.PackageNotFoundError:
-    version = "unknown"
-USER_AGENT = "{}/{}".format("azure-ai-evaluation", version)
 
 USER_TEXT_TEMPLATE_DICT: Dict[str, Template] = {
     "DEFAULT": Template("<Human>{$query}</><System>{$response}</>"),
@@ -101,7 +97,7 @@ def get_common_headers(token: str, evaluator_name: Optional[str] = None) -> Dict
     :return: The common headers.
     :rtype: Dict
     """
-    user_agent = f"{USER_AGENT} (type=evaluator; subtype={evaluator_name})" if evaluator_name else USER_AGENT
+    user_agent = f"{UserAgentSingleton().value} (type=evaluator; subtype={evaluator_name})" if evaluator_name else UserAgentSingleton().value
     return {
         "Authorization": f"Bearer {token}",
         "User-Agent": user_agent,
@@ -645,7 +641,7 @@ async def evaluate_with_rai_service(
     """
 
     if is_onedp_project(project_scope):
-        client = AIProjectClient(endpoint=project_scope, credential=credential)
+        client = AIProjectClient(endpoint=project_scope, credential=credential, user_agent_policy=UserAgentPolicy(base_user_agent=UserAgentSingleton().value))
         token = await fetch_or_reuse_token(credential=credential, workspace=COG_SRV_WORKSPACE)
         await ensure_service_availability_onedp(client, token, annotation_task)
         operation_id = await submit_request_onedp(client, data, metric_name, token, annotation_task, evaluator_name)
@@ -788,7 +784,7 @@ async def evaluate_with_rai_service_multimodal(
     """
 
     if is_onedp_project(project_scope):
-        client = AIProjectClient(endpoint=project_scope, credential=credential)
+        client = AIProjectClient(endpoint=project_scope, credential=credential, user_agent_policy=UserAgentPolicy(base_user_agent=UserAgentSingleton().value))
         token = await fetch_or_reuse_token(credential=credential, workspace=COG_SRV_WORKSPACE)
         await ensure_service_availability_onedp(client, token, Tasks.CONTENT_HARM)
         operation_id = await submit_multimodal_request_onedp(client, messages, metric_name, token)
