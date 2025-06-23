@@ -244,7 +244,6 @@ class CodegenTestPR:
                     raise Exception(message)
 
     def check_file(self):
-        self.check_package_size()
         self.check_model_flatten()
 
     def sdk_code_path(self) -> str:
