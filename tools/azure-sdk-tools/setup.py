@@ -41,7 +41,6 @@ setup(
             "perfstress=devtools_testutils.perfstress_tests:run_perfstress_cmd",
             "perfstressdebug=devtools_testutils.perfstress_tests:run_perfstress_debug_cmd",
             "sdk_generator=packaging_tools.sdk_generator:generate_main",
-            "sdk_package=packaging_tools.sdk_package:generate_main",
             "sdk_build=ci_tools.build:build",
             "sdk_build_package=ci_tools.build:build_package",
             "sdk_build_conda=ci_tools.conda:entrypoint",
