@@ -74,7 +74,7 @@ class BufferedProducer:
             try:
                 await self._check_max_wait_time_future
             except Exception as exc:  # pylint: disable=broad-except
-                _LOGGER.warning("Partition %r stopped with error %r", self.partition_id, exc)
+                _LOGGER.debug("Partition %r stopped with error %r", self.partition_id, exc)
         await self._producer.close()
 
     async def put_events(self, events, timeout_time=None):
@@ -118,7 +118,7 @@ class BufferedProducer:
             try:
                 await callback(*args, **kwargs)
             except Exception as exc:  # pylint: disable=broad-except
-                _LOGGER.warning(
+                _LOGGER.debug(
                     "On partition %r, callback %r encountered exception %r",
                     callback.__name__,
                     exc,
@@ -162,7 +162,7 @@ class BufferedProducer:
                     except AttributeError:
                         await self._on_success(batch, self.partition_id)
                 except Exception as exc:  # pylint: disable=broad-except
-                    _LOGGER.info(
+                    _LOGGER.debug(
                         "Partition %r sending %r events failed due to exception: %r",
                         self.partition_id,
                         len(batch),
