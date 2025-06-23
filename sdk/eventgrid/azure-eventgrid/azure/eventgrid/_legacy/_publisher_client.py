@@ -117,8 +117,7 @@ class EventGridPublisherClient(object):
 
     @staticmethod
     def _policies(
-        credential: Union["AzureKeyCredential", "AzureSasCredential", "TokenCredential"],
-        **kwargs: Any
+        credential: Union["AzureKeyCredential", "AzureSasCredential", "TokenCredential"], **kwargs: Any
     ) -> List[Any]:
         auth_policy = _get_authentication_policy(credential)
         sdk_moniker = "eventgrid/{}".format(VERSION)
@@ -140,7 +139,9 @@ class EventGridPublisherClient(object):
         return policies
 
     @distributed_trace
-    def send(self, events: SendType, *, channel_name: Optional[str] = None, **kwargs: Any) -> None: # pylint:disable=docstring-keyword-should-match-keyword-only
+    def send(
+        self, events: SendType, *, channel_name: Optional[str] = None, **kwargs: Any
+    ) -> None:  # pylint:disable=docstring-keyword-should-match-keyword-only
         """Sends events to a topic or a domain specified during the client initialization.
 
         A single instance or a list of dictionaries, CloudEvents or EventGridEvents are accepted.

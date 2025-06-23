@@ -15,7 +15,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import EventGridConsumerClientConfiguration, EventGridPublisherClientConfiguration
 from ._operations import EventGridConsumerClientOperationsMixin, EventGridPublisherClientOperationsMixin
 
@@ -29,8 +29,8 @@ class EventGridPublisherClient(EventGridPublisherClientOperationsMixin):
     :param endpoint: The host name of the namespace, e.g.
      namespaceName1.westus-1.eventgrid.azure.net. Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is "2024-06-01".
@@ -43,6 +43,7 @@ class EventGridPublisherClient(EventGridPublisherClientOperationsMixin):
     ) -> None:
         _endpoint = "{endpoint}"
         self._config = EventGridPublisherClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -111,8 +112,8 @@ class EventGridConsumerClient(EventGridConsumerClientOperationsMixin):
     :param endpoint: The host name of the namespace, e.g.
      namespaceName1.westus-1.eventgrid.azure.net. Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is "2024-06-01".
@@ -125,6 +126,7 @@ class EventGridConsumerClient(EventGridConsumerClientOperationsMixin):
     ) -> None:
         _endpoint = "{endpoint}"
         self._config = EventGridConsumerClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
