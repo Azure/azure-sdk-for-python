@@ -1614,7 +1614,10 @@ class FilesOperations(FilesOperationsGenerated):
             logger.debug("File '%s' saved successfully at '%s'.", sanitized_file_name, target_file_path)
 
         except (ValueError, RuntimeError, TypeError, IOError) as e:
-            logger.error("An error occurred in save_file: %s", e)
+            logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug, do-not-log-raised-errors
+                "An error occurred in save_file: %s",
+                e,
+            )
             raise
 
     @distributed_trace_async

@@ -22,8 +22,8 @@ jobs:
       - template: /eng/pipelines/templates/variables/globals.yml
 
     pool:
-      name: azsdk-pool-mms-ubuntu-2004-general
-      vmImage: MMSUbuntu20.04
+      name: azsdk-pool
+      demands: ImageOverride -equals 'ubuntu-24.04'
 
     steps:
     - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
