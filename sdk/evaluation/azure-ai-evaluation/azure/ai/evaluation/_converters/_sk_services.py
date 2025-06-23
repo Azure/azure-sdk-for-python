@@ -97,7 +97,7 @@ class SKAgentConverter:
         return final_tools
 
     @staticmethod
-    def _get_tool_definitons(agent: ChatCompletionAgent) -> list:
+    def _get_tool_definitions(agent: ChatCompletionAgent) -> list:
         """
         Get tool definitions from the agent's plugins.
         :param agent: The ChatCompletionAgent from which to retrieve tool definitions.
@@ -121,7 +121,7 @@ class SKAgentConverter:
         agent: ChatCompletionAgent,
     ) -> List[ToolDefinition]:
         """Get and transform tool definitions from the agent."""
-        tool_definitions = SKAgentConverter._get_tool_definitons(agent)
+        tool_definitions = SKAgentConverter._get_tool_definitions(agent)
         return SKAgentConverter._transform_tool_definitions(tool_definitions)
 
     @staticmethod
@@ -389,7 +389,7 @@ class SKAgentConverter:
 
         query, response = await SKAgentConverter._convert_thread_to_eval_schema(
             thread=thread,
-            turn_index=turn_index,  # TODO: use asyn thread.get_messages method instead
+            turn_index=turn_index,
             agent=agent,
         )
 
