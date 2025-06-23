@@ -1157,6 +1157,7 @@ class MessagesOperations:
     @api_version_validation(
         method_added_on="v1",
         params_added_on={"v1": ["api_version", "thread_id", "message_id", "accept"]},
+        api_versions_list=["v1", "2025-05-15-preview"],
     )
     async def _delete_message(
         self, thread_id: str, message_id: str, **kwargs: Any
