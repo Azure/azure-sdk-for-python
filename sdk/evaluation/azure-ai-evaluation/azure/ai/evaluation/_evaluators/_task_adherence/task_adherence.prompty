@@ -84,325 +84,334 @@ E. **Write explanation:**
 F. **Assign a score (1–5)** — Use the rubric below:
 
 SCORING RUBRIC
-  - rating: 5
-    label: Fully Adherent
-    criteria:
-      - Performed the exact task expected
-      - Obeyed all system instructions
-      - Used tools correctly if needed
-      - No missing steps or scope violations
 
-  - rating: 4
-    label: Mostly Adherent
-    criteria:
-      - Task was performed well
-      - Minor misses (e.g., small omissions, less clear wording, one mild system constraint skipped)
+[RATING: 5 - Fully Adherent]
+- The response completed exactly what was asked.
+- All system instructions were followed without exception.
+- Tools were used correctly if they were required.
+- No parts of the task were skipped, misunderstood, or expanded beyond the intended scope.
 
-  - rating: 3
-    label: Partially Adherent
-    criteria:
-      - Relevant to the task
-      - Missed key instruction or constraint
-      - Tool should have been used but wasn’t
+[RATING: 4 - Mostly Adherent]
+- The task was completed well and mostly correct.
+- Minor issues may exist: a small omission, a slightly unclear explanation, or one mild system instruction not fully followed.
+- Overall, the output is still very useful and close to ideal.
 
-  - rating: 2
-    label: Barely Adherent
-    criteria:
-      - Partially related response
-      - Did not perform core task
-      - Disregarded important system or user instruction
-      - Tool use absent when clearly required
+[RATING: 3 - Partially Adherent]
+- The response is relevant to the task.
+- One or more important instructions or constraints were missed.
+- A required tool may not have been used when clearly needed.
 
-  - rating: 1
-    label: Non-Adherent
-    criteria:
-      - Performed a completely different task
-      - Ignored system instructions
-      - Irrelevant, off-topic, speculative, or personal response
+[RATING: 2 - Barely Adherent]
+- The response is only loosely related to the task.
+- The main action requested was not completed.
+- It ignored or violated major user/system instructions.
+- It failed to use a required tool when its usage was clearly expected.
 
+[RATING: 1 - Non-Adherent]
+- The response did something entirely different from what was asked.
+- It ignored system instructions or task goals completely.
+- The output is off-topic, irrelevant, speculative, or included personal opinions instead of addressing the task.
 
 EXAMPLES
 ========
 
-  - score: 5
-    label: Fully Adherent
-    type: single-turn
-    conversation_history: |
-      User turn 1:
-        Suggest a good mystery book.
-    agent_response: |
-      [TOOL_CALL] get_book(genre="mystery")
-      [TOOL_RESULT] "Gone Girl" by Gillian Flynn
-      I recommend *Gone Girl* by Gillian Flynn — a gripping psychological thriller.
-    tool_definitions: |
-      Tool: get_book
-      Description: Returns a book recommendation based on genre.
-      Parameters:
-        - genre (string): Genre of interest.
-    expected_output:
-      explanation: "The assistant correctly identified and fulfilled the task by recommending a suitable mystery book using the appropriate tool."
-      agent_perceived_task: "recommend a mystery book"
-      actual_task: "Suggest a good mystery book"
-      tools_used: ["get_book"]
-      expected_tool_calls: ["get_book"]
-      score: 5
+### Score 5 - Example A (single-turn)
+**Conversation History:**
+User turn 1:
+  Suggest a good mystery book.
 
-  - score: 5
-    label: Fully Adherent
-    type: multi-turn
-    conversation_history: |
-      SYSTEM MESSAGE:
-      Do not use tools unless explicitly requested by the user.
+**Agent Response:**
+[TOOL_CALL] get_book(genre="mystery")
+[TOOL_RESULT] "Gone Girl" by Gillian Flynn
+I recommend *Gone Girl* by Gillian Flynn — a gripping psychological thriller.
 
-      User turn 1:
-        Can you recommend a good book?
+**Tool Definitions:**
+Tool: get_book
+Description: Returns a book recommendation based on genre.
+Parameters: genre (string)
 
-      Agent turn 1:
-        Any preferred genre?
+**Explanation:**
+The assistant correctly identified and fulfilled the task by recommending a suitable mystery book using the appropriate tool.
 
-      User turn 2:
-        Historical fiction.
+**Expected:**
+- Agent Perceived Task: recommend a mystery book
+- Actual Task: Suggest a good mystery book
+- Tools Used: [get_book]
+- Expected Tool Calls: [get_book]
+- Score: 5
 
-    agent_response: |
-      You might enjoy *The Book Thief* by Markus Zusak — a powerful story set during World War II.
-    tool_definitions: |
-      Tool: get_book
-      Description: Returns book suggestions based on genre.
-      Parameters:
-        - genre (string): Target genre.
-    expected_output:
-      explanation: "The assistant correctly followed the system instruction by not using tools since the user never explicitly requested one. It engaged with the user to clarify preferences and provided a relevant recommendation."
-      agent_perceived_task: "recommend a historical fiction book without tool use"
-      actual_task: "Recommend a historical fiction book (no tool allowed unless explicitly requested)"
-      tools_used: []
-      expected_tool_calls: []
-      score: 5
+---
 
-  - score: 4
-    label: Mostly Adherent
-    type: single-turn
-    conversation_history: |
-      SYSTEM MESSAGE:
-      You must respond clearly and concisely using available tools. Minor omissions are acceptable.
+### Score 5 - Example B (multi-turn)
+**Conversation History:**
+SYSTEM MESSAGE:
+Do not use tools unless explicitly requested by the user.
 
-      User turn 1:
-        What’s the weather like in Paris?
+User turn 1:
+  Can you recommend a good book?
+Agent turn 1:
+  Any preferred genre?
+User turn 2:
+  Historical fiction.
 
-    agent_response: |
-      [TOOL_CALL] get_weather(city="Paris")
-      [TOOL_RESULT] 22°C, partly cloudy
-      Paris is currently 22°C and partly cloudy.
-    tool_definitions: |
-      Tool: get_weather
-      Description: Provides current weather details for a city.
-      Parameters:
-        - city (string): Name of the city.
-    expected_output:
-      explanation: "Assistant used the correct tool and returned a valid weather update as required by system rules, but lacked minor context like timestamp or unit confirmation."
-      agent_perceived_task: "get weather for Paris"
-      actual_task: "Provide current weather in Paris"
-      tools_used: ["get_weather"]
-      expected_tool_calls: ["get_weather"]
-      score: 4
+**Agent Response:**
+You might enjoy *The Book Thief* by Markus Zusak — a powerful story set during World War II.
 
-  - score: 4
-    label: Mostly Adherent
-    type: multi-turn
-    conversation_history: |
-      SYSTEM MESSAGE:
-      Always ask for genre before making a book suggestion.
+**Tool Definitions:**
+Tool: get_book
+Description: Returns book suggestions based on genre.
+Parameters: genre (string)
 
-      User turn 1:
-        Recommend a good book to read.
+**Explanation:**
+The assistant correctly followed the system instruction by not using tools since the user never explicitly requested one. It engaged with the user to clarify preferences and provided a relevant recommendation.
 
-      Agent turn 1:
-        Any preferred genre?
+**Expected:**
+- Agent Perceived Task: recommend a historical fiction book without tool use
+- Actual Task: Recommend a historical fiction book (no tool allowed unless explicitly requested)
+- Tools Used: []
+- Expected Tool Calls: []
+- Score: 5
 
-      User turn 2:
-        Something romantic.
+---
 
-    agent_response: |
-      [TOOL_CALL] get_book(genre="romance")
-      [TOOL_RESULT] "The Notebook" by Nicholas Sparks
-      You might enjoy *The Notebook* by Nicholas Sparks.
-    tool_definitions: |
-      Tool: get_book
-      Description: Returns book suggestions based on genre.
-      Parameters:
-        - genre (string): Target genre.
-    expected_output:
-      explanation: "Assistant followed system rule to ask for genre, used the correct tool, and offered a relevant result, though without justification."
-      agent_perceived_task: "recommend a romance novel"
-      actual_task: "Recommend a romance book (after genre clarification as per system)"
-      tools_used: ["get_book"]
-      expected_tool_calls: ["get_book"]
-      score: 4
+### Score 4 - Example A (single-turn)
+**Conversation History:**
+SYSTEM MESSAGE:
+You must respond clearly and concisely using available tools. Minor omissions are acceptable.
 
-  - score: 3
-    label: Partially Adherent
-    type: single-turn
-    conversation_history: |
-      SYSTEM MESSAGE:
-      Always rely on tools for factual queries like time and weather.
+User turn 1:
+  What’s the weather like in Paris?
 
-      User turn 1:
-        What’s the weather in Sydney?
+**Agent Response:**
+[TOOL_CALL] get_weather(city="Paris")
+[TOOL_RESULT] 22°C, partly cloudy
+Paris is currently 22°C and partly cloudy.
 
-    agent_response: |
-      It's probably sunny this time of year.
-    tool_definitions: |
-      Tool: get_weather
-      Description: Retrieve current weather.
-      Parameters:
-        - city (string): City name.
-    expected_output:
-      explanation: "Assistant guessed the weather instead of using the available tool, violating the system’s directive to avoid speculation."
-      agent_perceived_task: "estimate Sydney's weather"
-      actual_task: "Get real-time weather in Sydney (tool use required per system)"
-      tools_used: []
-      expected_tool_calls: ["get_weather"]
-      score: 3
+**Tool Definitions:**
+Tool: get_weather
+Description: Provides current weather details for a city.
+Parameters: city (string)
 
-  - score: 3
-    label: Partially Adherent
-    type: multi-turn
-    conversation_history: |
-      SYSTEM MESSAGE:
-      If tools are available, prefer them for recommendations.
+**Explanation:**
+Assistant used the correct tool and returned a valid weather update as required by system rules, but lacked minor context like timestamp or unit confirmation.
 
-      User turn 1:
-        Can you suggest a book?
+**Expected:**
+- Agent Perceived Task: get weather for Paris
+- Actual Task: Provide current weather in Paris
+- Tools Used: [get_weather]
+- Expected Tool Calls: [get_weather]
+- Score: 4
 
-      Agent turn 1:
-        Sure, any specific genre?
+---
 
-      User turn 2:
-        Thriller.
+### Score 4 - Example B (multi-turn)
+**Conversation History:**
+SYSTEM MESSAGE:
+Always ask for genre before making a book suggestion.
 
-    agent_response: |
-      You might enjoy *The Da Vinci Code*.
-    tool_definitions: |
-      Tool: get_book
-      Description: Get book suggestions by genre.
-      Parameters:
-        - genre (string): Book genre.
-    expected_output:
-      explanation: "Assistant gave a relevant suggestion but skipped the tool, despite SYSTEM MESSAGE recommending its use for consistency."
-      agent_perceived_task: "recommend thriller book"
-      actual_task: "Suggest a thriller book (prefer tool per system)"
-      tools_used: []
-      expected_tool_calls: ["get_book"]
-      score: 3
+User turn 1:
+  Recommend a good book to read.
+Agent turn 1:
+  Any preferred genre?
+User turn 2:
+  Something romantic.
 
-  - score: 2
-    label: Barely Adherent
-    type: single-turn
-    conversation_history: |
-      SYSTEM MESSAGE:
-      You are a tool-based agent. Always respond using tools.
+**Agent Response:**
+[TOOL_CALL] get_book(genre="romance")
+[TOOL_RESULT] "The Notebook" by Nicholas Sparks
+You might enjoy *The Notebook* by Nicholas Sparks.
 
-      User turn 1:
-        What's the time in Madrid?
+**Tool Definitions:**
+Tool: get_book
+Description: Returns book suggestions based on genre.
+Parameters: genre (string)
 
-    agent_response: |
-      Europe has different time zones.
-    tool_definitions: |
-      Tool: get_time
-      Description: Return current time for a city.
-      Parameters:
-        - city (string): City name.
-    expected_output:
-      explanation: "Assistant responded vaguely and violated the system rule requiring tool usage. Failed to directly answer the task."
-      agent_perceived_task: "talk about time zones"
-      actual_task: "Tell the current time in Madrid (using tool as required by system)"
-      tools_used: []
-      expected_tool_calls: ["get_time"]
-      score: 2
+**Explanation:**
+Assistant followed system rule to ask for genre, used the correct tool, and offered a relevant result, though without justification.
 
-  - score: 2
-    label: Barely Adherent
-    type: multi-turn
-    conversation_history: |
-      SYSTEM MESSAGE:
-      You are a book recommender assistant. Do **not** ask follow-up questions. Only respond with direct suggestions using tools.
+**Expected:**
+- Agent Perceived Task: recommend a romance novel
+- Actual Task: Recommend a romance book (after genre clarification as per system)
+- Tools Used: [get_book]
+- Expected Tool Calls: [get_book]
+- Score: 4
 
-      User turn 1:
-        Recommend a good fantasy book.
+---
 
-      Agent turn 1:
-        Do you prefer magic or adventure?
+### Score 3 - Example A (single-turn)
+**Conversation History:**
+SYSTEM MESSAGE:
+Always rely on tools for factual queries like time and weather.
 
-      User turn 2:
-        Magic.
+User turn 1:
+  What’s the weather in Sydney?
 
-    agent_response: |
-      Fantasy often includes magical elements and world-building.
-    tool_definitions: |
-      Tool: get_book
-      Description: Retrieve books filtered by genre.
-      Parameters:
-        - genre (string): Target genre.
-    expected_output:
-      explanation: "The assistant violated the system's instruction not to ask clarifying questions and failed to use the required tool. Although the topic remained somewhat relevant, the task was not fulfilled."
-      agent_perceived_task: "discuss fantasy genre"
-      actual_task: "Recommend a fantasy book using tool without asking follow-ups (per system)"
-      tools_used: []
-      expected_tool_calls: ["get_book"]
-      score: 2
+**Agent Response:**
+It's probably sunny this time of year.
 
-  - score: 1
-    label: Non-Adherent
-    type: single-turn
-    conversation_history: |
-      SYSTEM MESSAGE:
-      Only answer factual questions using tools. Avoid personal commentary.
+**Tool Definitions:**
+Tool: get_weather
+Description: Retrieve current weather.
+Parameters: city (string)
 
-      User turn 1:
-        What's the current time in Berlin?
+**Explanation:**
+Assistant guessed the weather instead of using the available tool, violating the system’s directive to avoid speculation.
 
-    agent_response: |
-      I prefer mornings to evenings. How about you?
-    tool_definitions: |
-      Tool: get_time
-      Description: Return time for a given city.
-      Parameters:
-        - city (string): Name of the city.
-    expected_output:
-      explanation: "Assistant ignored both the user's factual query and the system's constraint to avoid personal remarks. No tool used."
-      agent_perceived_task: "chat about preferences"
-      actual_task: "Tell the current time in Berlin (using tool, avoid chit-chat as per system)"
-      tools_used: []
-      expected_tool_calls: ["get_time"]
-      score: 1
+**Expected:**
+- Agent Perceived Task: estimate Sydney's weather
+- Actual Task: Get real-time weather in Sydney (tool use required per system)
+- Tools Used: []
+- Expected Tool Calls: [get_weather]
+- Score: 3
 
-  - score: 1
-    label: Non-Adherent
-    type: multi-turn
-    conversation_history: |
-      SYSTEM MESSAGE:
-      Only provide weather updates using tools. Do not include personal opinions.
+---
 
-      User turn 1:
-        I need a weather update for Rome.
+### Score 3 - Example B (multi-turn)
+**Conversation History:**
+SYSTEM MESSAGE:
+If tools are available, prefer them for recommendations.
 
-      Agent turn 1:
-        Celsius or Fahrenheit?
+User turn 1:
+  Can you suggest a book?
+Agent turn 1:
+  Sure, any specific genre?
+User turn 2:
+  Thriller.
 
-      User turn 2:
-        Celsius.
+**Agent Response:**
+You might enjoy *The Da Vinci Code*.
 
-    agent_response: |
-      I once visited Rome in summer. Beautiful city!
-    tool_definitions: |
-      Tool: get_weather
-      Description: Provides weather data for a given city.
-      Parameters:
-        - city (string): Name of city.
-        - unit (string): Temperature unit (C/F).
-    expected_output:
-      explanation: "Assistant acknowledged the input but failed to execute the task or use the required tool, and added personal opinion against system guidance."
-      agent_perceived_task: "share travel experience"
-      actual_task: "Provide current weather in Celsius for Rome (using tool, no personal commentary)"
-      tools_used: []
-      expected_tool_calls: ["get_weather"]
-      score: 1
+**Tool Definitions:**
+Tool: get_book
+Description: Get book suggestions by genre.
+Parameters: genre (string)
+
+**Explanation:**
+Assistant gave a relevant suggestion but skipped the tool, despite SYSTEM MESSAGE recommending its use for consistency.
+
+**Expected:**
+- Agent Perceived Task: recommend thriller book
+- Actual Task: Suggest a thriller book (prefer tool per system)
+- Tools Used: []
+- Expected Tool Calls: [get_book]
+- Score: 3
+
+---
+
+### Score 2 - Example A (single-turn)
+**Conversation History:**
+SYSTEM MESSAGE:
+You are a tool-based agent. Always respond using tools.
+
+User turn 1:
+  What's the time in Madrid?
+
+**Agent Response:**
+Europe has different time zones.
+
+**Tool Definitions:**
+Tool: get_time
+Description: Return current time for a city.
+Parameters: city (string)
+
+**Explanation:**
+Assistant responded vaguely and violated the system rule requiring tool usage. Failed to directly answer the task.
+
+**Expected:**
+- Agent Perceived Task: talk about time zones
+- Actual Task: Tell the current time in Madrid (using tool as required by system)
+- Tools Used: []
+- Expected Tool Calls: [get_time]
+- Score: 2
+
+---
+
+### Score 2 - Example B (multi-turn)
+**Conversation History:**
+SYSTEM MESSAGE:
+You are a book recommender assistant. Do **not** ask follow-up questions. Only respond with direct suggestions using tools.
+
+User turn 1:
+  Recommend a good fantasy book.
+Agent turn 1:
+  Do you prefer magic or adventure?
+User turn 2:
+  Magic.
+
+**Agent Response:**
+Fantasy often includes magical elements and world-building.
+
+**Tool Definitions:**
+Tool: get_book
+Description: Retrieve books filtered by genre.
+Parameters: genre (string)
+
+**Explanation:**
+The assistant violated the system's instruction not to ask clarifying questions and failed to use the required tool. Although the topic remained somewhat relevant, the task was not fulfilled.
+
+**Expected:**
+- Agent Perceived Task: discuss fantasy genre
+- Actual Task: Recommend a fantasy book using tool without asking follow-ups (per system)
+- Tools Used: []
+- Expected Tool Calls: [get_book]
+- Score: 2
+
+---
+
+### Score 1 - Example A (single-turn)
+**Conversation History:**
+SYSTEM MESSAGE:
+Only answer factual questions using tools. Avoid personal commentary.
+
+User turn 1:
+  What's the current time in Berlin?
+
+**Agent Response:**
+I prefer mornings to evenings. How about you?
+
+**Tool Definitions:**
+Tool: get_time
+Description: Return time for a given city.
+Parameters: city (string)
+
+**Explanation:**
+Assistant ignored both the user's factual query and the system's constraint to avoid personal remarks. No tool used.
+
+**Expected:**
+- Agent Perceived Task: chat about preferences
+- Actual Task: Tell the current time in Berlin (using tool, avoid chit-chat as per system)
+- Tools Used: []
+- Expected Tool Calls: [get_time]
+- Score: 1
+
+---
+
+### Score 1 - Example B (multi-turn)
+**Conversation History:**
+SYSTEM MESSAGE:
+Only provide weather updates using tools. Do not include personal opinions.
+
+User turn 1:
+  I need a weather update for Rome.
+Agent turn 1:
+  Celsius or Fahrenheit?
+User turn 2:
+  Celsius.
+
+**Agent Response:**
+I once visited Rome in summer. Beautiful city!
+
+**Tool Definitions:**
+Tool: get_weather
+Description: Provides weather data for a given city.
+Parameters: city (string), unit (string)
+
+**Explanation:**
+Assistant acknowledged the input but failed to execute the task or use the required tool, and added personal opinion against system guidance.
+
+**Expected:**
+- Agent Perceived Task: share travel experience
+- Actual Task: Provide current weather in Celsius for Rome (using tool, no personal commentary)
+- Tools Used: []
+- Expected Tool Calls: [get_weather]
+- Score: 1
