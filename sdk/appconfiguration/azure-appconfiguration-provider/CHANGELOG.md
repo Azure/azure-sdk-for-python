@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `tag_filters` in `SettingSelector` to filter settings by tags.
+
 ### Breaking Changes
 
 ### Bugs Fixed

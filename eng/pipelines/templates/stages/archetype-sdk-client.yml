@@ -41,6 +41,12 @@ parameters:
   - name: DevFeedName
     type: string
     default: public/azure-sdk-for-python
+  - name: PublicFeed
+    type: string
+    default: 'PyPi'
+  - name: PublicPublishEnvironment
+    type: string
+    default: package-publish
   - name: TargetDocRepoOwner
     type: string
     default: MicrosoftDocs
@@ -127,4 +133,5 @@ extends:
           TargetDocRepoOwner: ${{ parameters.TargetDocRepoOwner }}
           TargetDocRepoName: ${{ parameters.TargetDocRepoName }}
           DevFeedName: ${{ parameters.DevFeedName }}
-
+          PublicFeed: ${{ parameters.PublicFeed }}
+          PublicPublishEnvironment: ${{ parameters.PublicPublishEnvironment }}

@@ -8,8 +8,8 @@ jobs:
   displayName: 'Build Windows Dependencies'
   timeoutInMinutes: 90
   pool:
-    name: azsdk-pool-mms-win-2022-general
-    image: azsdk-pool-mms-win-2022-1espt
+    name: azsdk-pool
+    image: windows-2022
     os: windows
   variables:
     VS_INSTALLER_URL: "https://aka.ms/vs/17/release/vs_enterprise.exe"
@@ -84,8 +84,8 @@ jobs:
   displayName: 'Build Linux Dependencies'
   timeoutInMinutes: 90
   pool:
-    name: azsdk-pool-mms-ubuntu-2004-general
-    image: azsdk-pool-mms-ubuntu-2004-1espt
+    name: azsdk-pool
+    image: ubuntu-24.04
     os: linux
 
   steps:

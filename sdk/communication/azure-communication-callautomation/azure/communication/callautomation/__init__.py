@@ -18,6 +18,7 @@ from ._models import (
     RecordingProperties,
     AddParticipantResult,
     RemoveParticipantResult,
+    MoveParticipantsResult,
     TransferCallResult,
     MediaStreamingOptions,
     TranscriptionOptions,
@@ -37,6 +38,8 @@ from ._shared.models import (
     CommunicationIdentifierKind,
     CommunicationCloudEnvironment,
     UnknownIdentifier,
+    TeamsExtensionUserProperties,
+    TeamsExtensionUserIdentifier,
 )
 from ._generated.models._enums import (
     CallRejectReason,
@@ -78,6 +81,7 @@ __all__ = [
     "RecordingProperties",
     "AddParticipantResult",
     "RemoveParticipantResult",
+    "MoveParticipantsResult",
     "TransferCallResult",
     "MuteParticipantResult",
     "SendDtmfTonesResult",
@@ -91,6 +95,8 @@ __all__ = [
     "CommunicationIdentifierKind",
     "CommunicationCloudEnvironment",
     "UnknownIdentifier",
+    "TeamsExtensionUserProperties",
+    "TeamsExtensionUserIdentifier",
 
     # enums
     "CallRejectReason",
