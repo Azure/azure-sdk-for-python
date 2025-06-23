@@ -72,14 +72,11 @@ from .documents import ConnectionPolicy, DatabaseAccount
 from .partition_key import (
     _Undefined,
     _Empty,
-    PartitionKey,
     PartitionKeyKind,
+    PartitionKeyType,
+    SequentialPartitionKeyType,
     _return_undefined_or_empty_partition_key,
-    NonePartitionKeyValue,
 )
-
-PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
-
 
 class CredentialDict(TypedDict, total=False):
     masterKey: str
@@ -1310,7 +1307,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self,
         database_or_container_link: str,
         document: Dict[str, Any],
-        options: Optional[Dict[str, Any]] = None,
+        options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Upserts a document in a collection.
@@ -3168,8 +3165,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             feed_range_epk = FeedRangeInternalEpk.from_json(feed_range).get_normalized_range()
         elif "prefix_partition_key_object" in kwargs and "prefix_partition_key_value" in kwargs:
             prefix_partition_key_obj = kwargs.pop("prefix_partition_key_object")
-            prefix_partition_key_value = kwargs.pop("prefix_partition_key_value")
-            feed_range_epk = prefix_partition_key_obj._get_epk_range_for_prefix_partition_key(prefix_partition_key_value)
+            prefix_partition_key_value: SequentialPartitionKeyType = kwargs.pop("prefix_partition_key_value")
+            feed_range_epk = prefix_partition_key_obj.get_epk_range_for_prefix_partition_key(prefix_partition_key_value)
 
         # If feed_range_epk exist, query with the range
         if feed_range_epk is not None:

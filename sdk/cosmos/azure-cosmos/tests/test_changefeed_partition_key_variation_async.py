@@ -3,7 +3,7 @@ import uuid
 import pytest
 from azure.cosmos.aio import CosmosClient
 import test_config
-from azure.cosmos.partition_key import PartitionKey
+from azure.cosmos.partition_key import PartitionKey, get_partition_key_from_definition
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.asyncio
@@ -221,6 +221,68 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
         await self.insert_items(container_hpk, self.hpk_items)
         await self.validate_changefeed_hpk(container_hpk)
         await self.db.delete_container(container_hpk.id)
+
+    async def test_partition_key_version_1_properties_async(self):
+        """Test container with version 1 partition key definition and validate properties (async)."""
+        container_id = f"container_test_pk_version_1_properties_{uuid.uuid4()}"
+        pk = PartitionKey(path="/pk", kind="Hash", version=1)
+        container = await self.db.create_container(id=container_id, partition_key=pk)
+        original_get_properties = container._get_properties
+
+        # Simulate the version key not being in the definition
+
+        async def _get_properties_override():
+            properties = await original_get_properties()
+            partition_key = properties["partitionKey"]
+            partition_key.pop("version", None)  # Remove version key for validation
+            return {**properties, "partitionKey": partition_key}
+
+        container._get_properties = _get_properties_override
+
+        try:
+            # Get container properties and validate partition key definition
+            container_properties = await container._get_properties()
+            partition_key_definition = container_properties["partitionKey"]
+            # Ensure the version key is not included in the definition
+            assert "version" not in partition_key_definition, ("Version key should not be included "
+                                                               "in the partition key definition.")
+
+            # Create a PartitionKey instance from the definition and validate
+            partition_key_instance = get_partition_key_from_definition(partition_key_definition)
+            assert partition_key_instance.kind == "Hash", "Partition key kind mismatch."
+            assert partition_key_instance.version == 1, "Partition key version mismatch."
+
+            # Upsert items and validate _get_epk_range_for_partition_key
+            items = [
+                {"id": "1", "pk": "value1"},
+                {"id": "2", "pk": "value2"},
+                {"id": "3", "pk": "value3"}
+            ]
+            await self.insert_items(container, items)
+
+            for item in items:
+                try:
+                    epk_range = container.get_epk_range_for_partition_key(container_properties, item["pk"])
+                    assert epk_range is not None, f"EPK range should not be None for partition key {item['pk']}."
+                except Exception as e:
+                    assert False, f"Failed to get EPK range for partition key {item['pk']}: {str(e)}"
+            # Query the change feed and validate the results
+            change_feed = container.query_items_change_feed(is_start_from_beginning=True)
+            change_feed_items = [item async for item in change_feed]
+
+            # Ensure the same items are retrieved
+            assert len(change_feed_items) == len(items), (
+                f"Mismatch in document count: Change feed returned {len(change_feed_items)} items, "
+                f"while {len(items)} items were created."
+            )
+            for index, item in enumerate(items):
+                assert item['id'] == change_feed_items[index]['id'], f"Item {item} not found in change feed results."
+
+        finally:
+            # Clean up the container
+            container._get_properties = original_get_properties
+            await self.db.delete_container(container.id)
+
 
 if __name__ == '__main__':
     unittest.main()

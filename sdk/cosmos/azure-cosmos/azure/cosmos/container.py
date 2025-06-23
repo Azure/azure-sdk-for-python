@@ -50,10 +50,9 @@ from .partition_key import (
     NonePartitionKeyValue,
     PartitionKey,
     PartitionKeyType,
+    SequentialPartitionKeyType,
     build_partition_key_from_properties,
-    _Empty,
-    _Undefined,
-    _return_undefined_or_empty_partition_key
+    _return_undefined_or_empty_partition_key,
 )
 from .scripts import ScriptsProxy
 
@@ -63,15 +62,11 @@ __all__ = ("ContainerProxy",)
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
-def is_prefix_partition_key(container_properties: Dict[str, Any], partition_key: PartitionKeyType) -> bool:
-    partition_key_obj: PartitionKey = build_partition_key_from_properties(container_properties)
-    return partition_key_obj._is_prefix_partition_key(partition_key)
-
 def get_epk_range_for_partition_key(
         container_properties: Dict[str, Any],
         partition_key_value: PartitionKeyType) -> Range:
     partition_key_obj: PartitionKey = build_partition_key_from_properties(container_properties)
-    return partition_key_obj._get_epk_range_for_partition_key(partition_key_value)
+    return partition_key_obj.get_epk_range_for_partition_key(partition_key_value)
 
 class ContainerProxy:  # pylint: disable=too-many-public-methods
     """An interface to interact with a specific DB Container.
@@ -870,9 +865,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if "feed_range" not in kwargs and "partition_key" in kwargs:
             partition_key_value = self._set_partition_key(kwargs.pop("partition_key"))
             partition_key_obj = build_partition_key_from_properties(container_properties)
-            if partition_key_obj._is_prefix_partition_key(partition_key_value):
+            if partition_key_obj.is_prefix_partition_key(partition_key_value):
                 kwargs["prefix_partition_key_object"] = partition_key_obj
-                kwargs["prefix_partition_key_value"] = partition_key_value
+                kwargs["prefix_partition_key_value"] = cast(SequentialPartitionKeyType, partition_key_value)
             else:
                 # Add to feed_options, only when feed_range not given and partition_key was not prefixed partition_key
                 feed_options["partitionKey"] = partition_key_value

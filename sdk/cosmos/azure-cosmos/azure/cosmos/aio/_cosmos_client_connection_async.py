@@ -72,8 +72,8 @@ from .. import _session
 from .. import _utils
 from ..partition_key import (
     _Undefined,
-    PartitionKey,
     PartitionKeyKind,
+    SequentialPartitionKeyType,
     _return_undefined_or_empty_partition_key,
     NonePartitionKeyValue, _Empty,
     build_partition_key_from_properties,
@@ -2164,7 +2164,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def ReadContainers(
         self,
         database_link: str,
-        options: Optional[Dict[str, Any]] = None,
+        options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Reads all collections in a database.
@@ -2962,9 +2962,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             # check if query has prefix partition key
             partition_key_value = options["partitionKey"]
             partition_key_obj = build_partition_key_from_properties(container_property)
-            if partition_key_obj._is_prefix_partition_key(partition_key_value):
+            if partition_key_obj.is_prefix_partition_key(partition_key_value):
                 req_headers.pop(http_constants.HttpHeaders.PartitionKey, None)
-                feed_range_epk = partition_key_obj._get_epk_range_for_prefix_partition_key(partition_key_value)
+                partition_key_value = cast(SequentialPartitionKeyType, partition_key_value)
+                feed_range_epk = partition_key_obj.get_epk_range_for_prefix_partition_key(partition_key_value)
 
         if feed_range_epk is not None:
             over_lapping_ranges = await self._routing_map_provider.get_overlapping_ranges(id_, [feed_range_epk],

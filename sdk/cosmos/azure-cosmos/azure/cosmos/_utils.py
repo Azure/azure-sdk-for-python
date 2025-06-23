@@ -108,7 +108,6 @@ def verify_exclusive_arguments(
     that and raise an error if exclusive arguments are present.
 
     :param List[str] exclusive_keys: The names of exclusive arguments.
-    :param Dict[str, Any] kwargs: The dictionary of keyword arguments.
     """
     keys_in_kwargs = [key for key in exclusive_keys if key in kwargs and kwargs[key] is not None]
 

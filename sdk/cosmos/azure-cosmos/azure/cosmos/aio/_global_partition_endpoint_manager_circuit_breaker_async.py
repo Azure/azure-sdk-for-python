@@ -23,7 +23,7 @@
 """
 from typing import TYPE_CHECKING, Optional
 
-from azure.cosmos import PartitionKey
+from azure.cosmos.partition_key import get_partition_key_from_definition
 from azure.cosmos._global_partition_endpoint_manager_circuit_breaker_core import \
     _GlobalPartitionEndpointManagerForCircuitBreakerCore
 from azure.cosmos._routing.routing_range import PartitionKeyRangeWrapper, Range
@@ -60,14 +60,12 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
         # get relevant information from container cache to get the overlapping ranges
         container_link = properties["container_link"]
         partition_key_definition = properties["partitionKey"]
-        partition_key = PartitionKey(path=partition_key_definition["paths"],
-                                     kind=partition_key_definition["kind"],
-                                     version=partition_key_definition["version"])
+        partition_key = get_partition_key_from_definition(partition_key_definition)
 
         if HttpHeaders.PartitionKey in request.headers:
             partition_key_value = request.headers[HttpHeaders.PartitionKey]
             # get the partition key range for the given partition key
-            epk_range = [partition_key._get_epk_range_for_partition_key(partition_key_value)]
+            epk_range = [partition_key.get_epk_range_for_partition_key(partition_key_value)]
             partition_ranges = await (self.client._routing_map_provider
                                       .get_overlapping_ranges(container_link, epk_range))
             partition_range = Range.PartitionKeyRangeToRange(partition_ranges[0])

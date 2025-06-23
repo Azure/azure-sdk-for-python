@@ -5,7 +5,7 @@ aiohttp<3.8.6 ; platform_python_implementation == "PyPy"
 aiohttp ; platform_python_implementation != "PyPy"
 -e ../../../tools/azure-sdk-tools
 -e tests/testserver_tests/coretestserver
--e tests/specs_sdk/scratch
+-e tests/specs_sdk/modeltypes
 pytest-trio
 azure-storage-blob
 azure-data-tables
