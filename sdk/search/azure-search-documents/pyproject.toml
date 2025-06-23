@@ -1,3 +1,0 @@
-[tool.azure-sdk-build]
-pyright = false
-verifytypes = true

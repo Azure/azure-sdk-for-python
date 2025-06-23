@@ -1,2 +1,0 @@
-../../../tools/azure-sdk-tools[build]
-aiohttp>=3.0; python_version >= '3.5'

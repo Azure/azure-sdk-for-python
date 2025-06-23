@@ -1,6 +1,0 @@
-recursive-include tests *.py
-include *.md
-include LICENSE
-include corehttp/__init__.py
-recursive-include samples *.py *.md
-include corehttp/py.typed

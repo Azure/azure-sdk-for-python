@@ -1,4 +1,0 @@
-directory: specification/mongocluster/DocumentDB.MongoCluster.Management
-commit: ffcf309b79580e1af87d7bbcb70061441d23bd6c
-repo: Azure/azure-rest-api-specs
-additionalDirectories: 

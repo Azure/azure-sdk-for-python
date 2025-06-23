@@ -1,3 +1,0 @@
-include *.md
-include azure/cognitiveservices/__init__.py
-include azure/cognitiveservices/search/__init__.py

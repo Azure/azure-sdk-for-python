@@ -1,5 +1,0 @@
-python-dotenv
-http://localhost:8000/dist/azure_core-1.25.0-py3-none-any.whl
-azure-ai-textanalytics
-azure-storage-blob
-azure-ai-formrecognizer

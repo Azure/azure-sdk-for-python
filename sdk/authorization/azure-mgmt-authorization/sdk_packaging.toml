@@ -1,7 +1,0 @@
-[packaging]
-package_name = "azure-mgmt-authorization"
-package_pprint_name = "Authorization Management"
-package_doc_id = "authorization"
-is_stable = true
-sample_link = ""
-title = "AuthorizationManagementClient"

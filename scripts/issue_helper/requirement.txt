@@ -1,3 +1,0 @@
-PyGithub==1.55
-datetime
-requests

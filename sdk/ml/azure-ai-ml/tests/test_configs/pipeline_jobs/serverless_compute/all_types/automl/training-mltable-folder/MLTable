@@ -1,4 +1,0 @@
-paths:
-  - file: ./train.txt
-transformations:
-  - take: 1

@@ -1,5 +1,0 @@
-../../core/azure-core
-aiohttp>=3.0
-typing_extensions>=3.7.2
--e ../../../tools/azure-sdk-tools
-cryptography<45.0.0; python_version < "3.10"

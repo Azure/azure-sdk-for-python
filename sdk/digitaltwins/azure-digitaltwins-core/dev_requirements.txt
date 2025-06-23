@@ -1,7 +1,0 @@
-../../core/azure-core
-azure-mgmt-authorization
-azure-mgmt-digitaltwins
--e ../../identity/azure-identity
--e ../../../tools/azure-sdk-tools
-aiohttp>=3.0
-../../nspkg/azure-digitaltwins-nspkg

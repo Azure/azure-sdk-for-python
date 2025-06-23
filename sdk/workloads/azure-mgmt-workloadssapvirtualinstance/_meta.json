@@ -1,6 +1,0 @@
-{
-  "commit": "0d182673b42de227bc01c0e4f04932b6c074f5ce",
-  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "typespec_src": "specification/workloads/Workloads.SAPVirtualInstance.Management",
-  "@azure-tools/typespec-python": "0.42.2"
-}

@@ -1,3 +1,0 @@
--e ../../../tools/azure-sdk-tools
--e ../../core/azure-mgmt-core
--e ../../core/azure-core

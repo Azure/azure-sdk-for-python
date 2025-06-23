@@ -1,8 +1,0 @@
--e ../../../tools/azure-sdk-tools
--e ../azure-mgmt-batch
--e ../../core/azure-core
-# -e ../../identity/azure-identity
-azure-identity==1.17.0
-azure-mgmt-resource<=21.1.0
-azure-mgmt-storage<=20.0.0
-aiohttp>=3.0
