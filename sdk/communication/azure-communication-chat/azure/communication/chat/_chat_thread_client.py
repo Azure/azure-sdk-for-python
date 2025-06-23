@@ -66,12 +66,11 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
 
     def __init__(
         self,
-        endpoint,  # type: str
-        credential,  # type: CommunicationTokenCredential
-        thread_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        endpoint: str,
+        credential: CommunicationTokenCredential,
+        thread_id: str,
+        **kwargs: Any
+    ) -> None:
         if not thread_id:
             raise ValueError("thread_id can not be None or empty")
 
@@ -100,8 +99,7 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
         )
 
     @property
-    def thread_id(self):
-        # type: () -> str
+    def thread_id(self) -> str:
         """
         Gets the thread id from the client.
 
