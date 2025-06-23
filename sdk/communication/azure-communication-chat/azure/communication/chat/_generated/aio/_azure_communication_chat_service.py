@@ -1,3 +1,4 @@
+# pylint: disable=protected-access
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -33,7 +34,7 @@ class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-versi
     :paramtype api_version: str
     """
 
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential,protected-access
         self, endpoint: str, **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
@@ -64,7 +65,7 @@ class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-versi
         self.chat_thread = ChatThreadOperations(self._client, self._config, self._serialize, self._deserialize)
         self.chat = ChatOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(
+    def _send_request(  # pylint: disable=protected-access
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
     ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
@@ -93,11 +94,11 @@ class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-versi
         return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:
-        await self._client.close()
+        await self._client.close()  # pylint: disable=protected-access
 
     async def __aenter__(self) -> "AzureCommunicationChatService":
-        await self._client.__aenter__()
+        await self._client.__aenter__()  # pylint: disable=protected-access
         return self
 
     async def __aexit__(self, *exc_details: Any) -> None:
-        await self._client.__aexit__(*exc_details)
+        await self._client.__aexit__(*exc_details)  # pylint: disable=protected-access

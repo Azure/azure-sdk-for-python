@@ -36,7 +36,7 @@ class AzureCommunicationChatServiceConfiguration:  # pylint: disable=too-many-in
         self.api_version = api_version
         kwargs.setdefault("sdk_moniker", "azurecommunicationchatservice/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
-        self._configure(**kwargs)
+        self._configure(**kwargs)  # pylint: disable=protected-access
 
     def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)

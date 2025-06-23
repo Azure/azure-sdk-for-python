@@ -1,3 +1,4 @@
+# pylint: disable=protected-access
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -33,7 +34,7 @@ class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-versi
     :paramtype api_version: str
     """
 
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential,protected-access
         self, endpoint: str, **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
@@ -64,7 +65,9 @@ class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-versi
         self.chat_thread = ChatThreadOperations(self._client, self._config, self._serialize, self._deserialize)
         self.chat = ChatOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
+    def _send_request(  # pylint: disable=protected-access
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -91,11 +94,11 @@ class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-versi
         return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:
-        self._client.close()
+        self._client.close()  # pylint: disable=protected-access
 
     def __enter__(self) -> "AzureCommunicationChatService":
-        self._client.__enter__()
+        self._client.__enter__()  # pylint: disable=protected-access
         return self
 
     def __exit__(self, *exc_details: Any) -> None:
-        self._client.__exit__(*exc_details)
+        self._client.__exit__(*exc_details)  # pylint: disable=protected-access
