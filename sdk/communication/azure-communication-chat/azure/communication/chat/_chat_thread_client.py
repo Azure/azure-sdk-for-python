@@ -319,10 +319,9 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
     @distributed_trace
     def get_message(
         self,
-        message_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> ChatMessage
+        message_id: str,
+        **kwargs: Any
+    ) -> ChatMessage:
         """Gets a message by id.
 
         :param message_id: Required. The message id.
@@ -348,9 +347,12 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
 
     @distributed_trace
     def list_messages(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> ItemPaged[ChatMessage]
+        self,
+        *,
+        results_per_page: Optional[int] = None,
+        start_time: Optional["datetime"] = None,
+        **kwargs: Any
+    ) -> "ItemPaged[ChatMessage]":
         """Gets a list of messages from a thread.
 
         :keyword int results_per_page: The maximum number of messages to be returned per page.
@@ -369,9 +371,6 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
                 :dedent: 8
                 :caption: Listing messages of a chat thread.
         """
-        results_per_page = kwargs.pop("results_per_page", None)
-        start_time = kwargs.pop("start_time", None)
-
         a = self._client.chat_thread.list_chat_messages(
             self._thread_id,
             max_page_size=results_per_page,
@@ -384,11 +383,12 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
     @distributed_trace
     def update_message(
         self,
-        message_id,  # type: str
-        content=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        message_id: str,
+        content: Optional[str] = None,
+        *,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
         """Updates a message.
 
         :param message_id: Required. The message id.
@@ -412,7 +412,6 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
         if not message_id:
             raise ValueError("message_id cannot be None.")
 
-        metadata = kwargs.pop("metadata", None)
         update_message_request = UpdateChatMessageRequest(content=content, metadata=metadata)
 
         return self._client.chat_thread.update_chat_message(
@@ -425,10 +424,9 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
     @distributed_trace
     def delete_message(
         self,
-        message_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        message_id: str,
+        **kwargs: Any
+    ) -> None:
         """Deletes a message.
 
         :param message_id: Required. The message id.
@@ -455,9 +453,12 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
 
     @distributed_trace
     def list_participants(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> ItemPaged[ChatParticipant]
+        self,
+        *,
+        results_per_page: Optional[int] = None,
+        skip: Optional[int] = None,
+        **kwargs: Any
+    ) -> "ItemPaged[ChatParticipant]":
         """Gets the participants of a thread.
 
         :keyword int results_per_page: The maximum number of participants to be returned per page.
@@ -476,9 +477,6 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
                 :caption: Listing participants of chat thread.
         """
 
-        results_per_page = kwargs.pop("results_per_page", None)
-        skip = kwargs.pop("skip", None)
-
         return self._client.chat_thread.list_chat_participants(
             self._thread_id,
             max_page_size=results_per_page,
@@ -490,10 +488,9 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
     @distributed_trace
     def add_participants(
         self,
-        thread_participants,  # type: List[ChatParticipant]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List[Tuple[ChatParticipant, ChatError]]
+        thread_participants: List[ChatParticipant],
+        **kwargs: Any
+    ) -> List[Tuple[ChatParticipant, "ChatError"]]:
         """Adds thread participants to a thread. If participants already exist, no change occurs.
 
         If all participants are added successfully, then an empty list is returned;
@@ -533,10 +530,9 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
     @distributed_trace
     def remove_participant(
         self,
-        identifier,  # type: CommunicationIdentifier
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        identifier: CommunicationIdentifier,
+        **kwargs: Any
+    ) -> None:
         """Remove a participant from a thread.
 
         :param identifier: Required. Identifier of the thread participant to remove from the thread.
@@ -563,15 +559,12 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
             **kwargs
         )
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         return self._client.close()
 
-    def __enter__(self):
-        # type: () -> ChatThreadClient
+    def __enter__(self) -> "ChatThreadClient":
         self._client.__enter__()  # pylint:disable=no-member
         return self
 
-    def __exit__(self, *args):
-        # type: (*Any) -> None
+    def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)  # pylint:disable=no-member

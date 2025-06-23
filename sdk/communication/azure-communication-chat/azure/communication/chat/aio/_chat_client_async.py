@@ -100,7 +100,14 @@ class ChatClient(object):  # pylint: disable=client-accepts-api-version-keyword
         return ChatThreadClient(endpoint=self._endpoint, credential=self._credential, thread_id=thread_id, **kwargs)
 
     @distributed_trace_async
-    async def create_chat_thread(self, topic: str, **kwargs) -> CreateChatThreadResult:
+    async def create_chat_thread(
+        self,
+        topic: str,
+        *,
+        thread_participants: Optional[List["ChatParticipant"]] = None,
+        idempotency_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> CreateChatThreadResult:
         """Creates a chat thread.
 
         :param topic: Required. The thread topic.
@@ -130,11 +137,9 @@ class ChatClient(object):  # pylint: disable=client-accepts-api-version-keyword
         if not topic:
             raise ValueError("topic cannot be None.")
 
-        idempotency_token = kwargs.pop("idempotency_token", None)
         if idempotency_token is None:
             idempotency_token = str(uuid4())
 
-        thread_participants = kwargs.pop("thread_participants", None)
         participants = []
         if thread_participants is not None:
             participants = [m._to_generated() for m in thread_participants]  # pylint:disable=protected-access
@@ -160,7 +165,13 @@ class ChatClient(object):  # pylint: disable=client-accepts-api-version-keyword
         return create_chat_thread_result
 
     @distributed_trace
-    def list_chat_threads(self, **kwargs: Any) -> AsyncItemPaged[ChatThreadItem]:
+    def list_chat_threads(
+        self,
+        *,
+        results_per_page: Optional[int] = None,
+        start_time: Optional[datetime] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[ChatThreadItem]:
         """Gets the list of chat threads of a user.
 
         :keyword int results_per_page: The maximum number of chat threads to be returned per page.
@@ -178,9 +189,6 @@ class ChatClient(object):  # pylint: disable=client-accepts-api-version-keyword
                 :dedent: 4
                 :caption: Listing chat threads.
         """
-        results_per_page = kwargs.pop("results_per_page", None)
-        start_time = kwargs.pop("start_time", None)
-
         return self._client.chat.list_chat_threads(max_page_size=results_per_page, start_time=start_time, **kwargs)
 
     @distributed_trace_async
