@@ -9,6 +9,7 @@ from typing import Dict, List, Union, TypeVar, cast
 from typing_extensions import overload, override
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from ..._common.utils import check_score_is_valid
 from azure.ai.evaluation._common._experimental import experimental
 
 logger = logging.getLogger(__name__)
@@ -64,7 +65,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
 
     _PROMPTY_FILE = "tool_call_accuracy.prompty"
-    _RESULT_KEY = "tool_call_accuracy"
+    _RESULT_KEY = "tool_call_accurate"
 
     _MAX_TOOL_CALL_ACCURACY_SCORE = 5
     _MIN_TOOL_CALL_ACCURACY_SCORE = 1
