@@ -6,7 +6,7 @@ This package extends the [Azure Identity][azure_identity] library by providing s
 |-------------------------------------------|-------------------------|
 | Web Account Manager (WAM) on Windows 10+  | 1.0.0                   |
 | [Company Portal][company_portal] on macOS | 1.3.0b1                 |
-| Web Account Manager (WAM) on WSL          | 1.3.0b2                 |
+| Web Account Manager (WAM) on WSL 2.4.13+  | 1.3.0b2                 |
 | Broker on Linux                           | 1.3.0b2                 |
 
 [Source code][source_code] | [Package (PyPI)][azure_identity_broker] | [API reference documentation][ref_docs] | [Microsoft Entra ID documentation][entra_id]
