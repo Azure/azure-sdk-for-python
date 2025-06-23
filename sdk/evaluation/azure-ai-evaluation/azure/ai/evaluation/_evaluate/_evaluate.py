@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import inspect
+import contextlib
 import json
 import logging
 import os
@@ -697,6 +698,7 @@ def evaluate(
     azure_ai_project: Optional[Union[str, AzureAIProject]] = None,
     output_path: Optional[Union[str, os.PathLike]] = None,
     fail_on_evaluator_errors: bool = False,
+    _user_agent: Optional[str] = None,
     **kwargs,
 ) -> EvaluationResult:
     """Evaluates target or data with built-in or custom evaluators. If both target and data are provided,
@@ -729,6 +731,8 @@ def evaluate(
         Defaults to false, which means that evaluations will continue regardless of failures.
         If such failures occur, metrics may be missing, and evidence of failures can be found in the evaluation's logs.
     :paramtype fail_on_evaluator_errors: bool
+    :keyword _user_agent: A string to append to the default user-agent sent with evaluation http requests
+    :paramtype _user_agent: Optional[str]
     :return: Evaluation results.
     :rtype: ~azure.ai.evaluation.EvaluationResult
 
@@ -752,17 +756,18 @@ def evaluate(
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
     """
     try:
-        return _evaluate(
-            evaluation_name=evaluation_name,
-            target=target,
-            data=data,
-            evaluators_and_graders=evaluators,
-            evaluator_config=evaluator_config,
-            azure_ai_project=azure_ai_project,
-            output_path=output_path,
-            fail_on_evaluator_errors=fail_on_evaluator_errors,
-            **kwargs,
-        )
+        with UserAgentSingleton().add_useragent_product(_user_agent) if _user_agent else contextlib.nullcontext():
+            return _evaluate(
+                evaluation_name=evaluation_name,
+                target=target,
+                data=data,
+                evaluators_and_graders=evaluators,
+                evaluator_config=evaluator_config,
+                azure_ai_project=azure_ai_project,
+                output_path=output_path,
+                fail_on_evaluator_errors=fail_on_evaluator_errors,
+                **kwargs,
+            )
     except Exception as e:
         # Handle multiprocess bootstrap error
         bootstrap_error = (
