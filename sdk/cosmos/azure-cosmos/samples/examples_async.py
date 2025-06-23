@@ -262,6 +262,18 @@ async def examples_async():
             await container.delete_item(item_dict, partition_key=["GA", "Atlanta", 30363])
         # [END delete_items]
 
+        # Query items with feed range is also supported. This example
+        # gets all items within the feed range.
+        # [START query_items_feed_range]
+        import json
+
+        async for feed_range in container.read_feed_ranges():
+            async for queried_item in container.query_items(
+                    query='SELECT * from c',
+                    feed_range=feed_range):
+                print(json.dumps(queried_item, indent=True))
+        # [END query_items_param]
+
         # Get the feed ranges list from container.
         # [START read_feed_ranges]
         feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
