@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Any, List, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
 from urllib.parse import urlparse
 
@@ -109,9 +109,8 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
 
     @distributed_trace
     def get_properties(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> ChatThreadProperties
+        self, **kwargs: Any
+    ) -> ChatThreadProperties:
         """Gets the properties of the chat thread.
 
         :return: ChatThreadProperties
@@ -134,10 +133,9 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
     @distributed_trace
     def update_topic(
         self,
-        topic=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        topic: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """Updates a thread's properties.
 
         :param topic: Thread topic. If topic is not specified, the update will succeed but
@@ -165,10 +163,9 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
     @distributed_trace
     def send_read_receipt(
         self,
-        message_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        message_id: str,
+        **kwargs: Any
+    ) -> None:
         """Posts a read receipt event to a chat thread, on behalf of a user.
 
         :param message_id: Required. Id of the latest message read by current user.
@@ -196,9 +193,12 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
 
     @distributed_trace
     def list_read_receipts(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> ItemPaged[ChatMessageReadReceipt]
+        self,
+        *,
+        results_per_page: Optional[int] = None,
+        skip: Optional[int] = None,
+        **kwargs: Any
+    ) -> "ItemPaged[ChatMessageReadReceipt]":
         """Gets read receipts for a thread.
 
         :keyword int results_per_page: The maximum number of chat message read receipts to be returned per page.
@@ -216,9 +216,6 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
                 :dedent: 8
                 :caption: Listing read receipts.
         """
-        results_per_page = kwargs.pop("results_per_page", None)
-        skip = kwargs.pop("skip", None)
-
         return self._client.chat_thread.list_chat_read_receipts(
             self._thread_id,
             max_page_size=results_per_page,
@@ -231,9 +228,11 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
 
     @distributed_trace
     def send_typing_notification(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        self,
+        *,
+        sender_display_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """Posts a typing event to a thread, on behalf of a user.
 
         :keyword str sender_display_name: The display name of the typing notification sender. This property
@@ -252,7 +251,6 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
                 :caption: Send typing notification.
         """
 
-        sender_display_name = kwargs.pop("sender_display_name", None)
         send_typing_notification_request = SendTypingNotificationRequest(sender_display_name=sender_display_name)
         return self._client.chat_thread.send_typing_notification(
             chat_thread_id=self._thread_id, send_typing_notification_request=send_typing_notification_request, **kwargs
@@ -261,10 +259,13 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
     @distributed_trace
     def send_message(
         self,
-        content,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> SendChatMessageResult
+        content: str,
+        *,
+        chat_message_type: Optional[Union[str, ChatMessageType]] = None,
+        sender_display_name: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> SendChatMessageResult:
         """Sends a message to a thread.
 
         :param content: Required. Chat message content.
@@ -291,7 +292,6 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
         if not content:
             raise ValueError("content cannot be None.")
 
-        chat_message_type = kwargs.pop("chat_message_type", None)
         if chat_message_type is None:
             chat_message_type = ChatMessageType.TEXT
         elif not isinstance(chat_message_type, ChatMessageType):
@@ -306,9 +306,6 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
             raise ValueError(
                 "chat_message_type: {message_type} can be only 'text' or 'html'".format(message_type=chat_message_type)
             )
-
-        sender_display_name = kwargs.pop("sender_display_name", None)
-        metadata = kwargs.pop("metadata", None)
 
         create_message_request = SendChatMessageRequest(
             content=content, type=chat_message_type, sender_display_name=sender_display_name, metadata=metadata
