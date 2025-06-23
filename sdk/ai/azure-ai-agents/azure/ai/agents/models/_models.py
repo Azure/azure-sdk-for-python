@@ -1727,6 +1727,46 @@ class MessageContent(_Model):
         super().__init__(*args, **kwargs)
 
 
+class MessageDeletionStatus(_Model):
+    """The status of a thread message deletion operation.
+
+    :ivar id: The ID of the resource specified for deletion. Required.
+    :vartype id: str
+    :ivar deleted: A value indicating whether deletion was successful. Required.
+    :vartype deleted: bool
+    :ivar object: The object type, which is always 'thread.message.deleted'. Required. Default
+     value is "thread.message.deleted".
+    :vartype object: str
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the resource specified for deletion. Required."""
+    deleted: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A value indicating whether deletion was successful. Required."""
+    object: Literal["thread.message.deleted"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The object type, which is always 'thread.message.deleted'. Required. Default value is
+     \"thread.message.deleted\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        deleted: bool,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object: Literal["thread.message.deleted"] = "thread.message.deleted"
+
+
 class MessageDelta(_Model):
     """Represents the typed 'delta' payload within a streaming message delta chunk.
 

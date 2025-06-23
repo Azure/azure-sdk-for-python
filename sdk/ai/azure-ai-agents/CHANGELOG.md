@@ -4,9 +4,13 @@
 
 ## 1.1.0b3 (Unreleased)
 
+### Features Added
+- Added delete operation for `ThreadMessages`.
+
 ### Sample updates
 - The file search samples were updated to demonstrate retrieving text associated with citations.
 - Added samples for file search citation with streaming.
+
 
 ## 1.1.0b2 (2025-06-09)
 
