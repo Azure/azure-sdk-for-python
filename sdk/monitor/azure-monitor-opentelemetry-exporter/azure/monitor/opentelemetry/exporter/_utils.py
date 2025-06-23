@@ -70,10 +70,10 @@ def _is_on_aks():
 
 
 def _is_attach_enabled():
-    if _is_on_app_service():
-        return isdir("/agents/python/")
     if _is_on_functions():
         return environ.get(_PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY) == "true"
+    if _is_on_app_service():
+        return isdir("/agents/python/")
     if _is_on_aks():
         return _AKS_ARM_NAMESPACE_ID in environ
     return False
@@ -130,7 +130,6 @@ def _getlocale():
 azure_monitor_context = {
     ContextTagKeys.AI_DEVICE_ID: platform.node(),
     ContextTagKeys.AI_DEVICE_LOCALE: _getlocale(),
-    ContextTagKeys.AI_DEVICE_OS_VERSION: platform.version(),
     ContextTagKeys.AI_DEVICE_TYPE: "Other",
     ContextTagKeys.AI_INTERNAL_SDK_VERSION: _get_sdk_version(),
 }

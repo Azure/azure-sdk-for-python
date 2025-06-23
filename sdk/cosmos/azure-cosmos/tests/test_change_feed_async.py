@@ -3,6 +3,7 @@
 
 import unittest
 import uuid
+import os
 from asyncio import sleep
 from datetime import datetime, timedelta, timezone
 
@@ -18,13 +19,16 @@ from azure.cosmos.partition_key import PartitionKey
 
 @pytest_asyncio.fixture()
 async def setup():
+    use_multiple_write_locations = False
+    if os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER", "False") == "True":
+        use_multiple_write_locations = True
     config = test_config.TestConfig()
     if config.masterKey == '[YOUR_KEY_HERE]' or config.host == '[YOUR_ENDPOINT_HERE]':
         raise Exception(
             "You must specify your Azure Cosmos account values for "
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
-    test_client = CosmosClient(config.host, config.masterKey)
+    test_client = CosmosClient(config.host, config.masterKey, multiple_write_locations=use_multiple_write_locations)
     created_db = await test_client.create_database_if_not_exists(config.TEST_DATABASE_ID)
     created_db_data = {
         "created_db": created_db,

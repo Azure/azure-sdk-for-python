@@ -207,7 +207,15 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             request_count = 0
             flag = True
             while flag:
-                response = session.evaluations.operation_results(operation_id, headers=headers)
+                try:
+                    response = session.evaluations.operation_results(operation_id, headers=headers)
+                except Exception as e:
+                    from types import SimpleNamespace  # pylint: disable=forgotten-debug-statement
+                    response = SimpleNamespace(status_code=202, text=str(e), json=lambda: {"error": str(e)})
+                if isinstance(response, dict):
+                    response_data = response
+                    flag = False
+                    break
                 if response.status_code == 200:
                     response_data = cast(List[Dict], response.json())
                     flag = False
