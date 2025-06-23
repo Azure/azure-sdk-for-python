@@ -5,6 +5,7 @@ GITHUB_API = "https://api.github.com"
 REPO = "Azure/azure-sdk-for-python"
 TOKEN = os.getenv("GITHUB_TOKEN")
 
+
 def issue_exists(title):
     url = f"{GITHUB_API}/search/issues"
     headers = {"Authorization": f"token {TOKEN}"}
@@ -13,19 +14,17 @@ def issue_exists(title):
     data = response.json()
     return data.get("total_count", 0) > 0
 
+
 def create_issue(title, body, labels):
     url = f"{GITHUB_API}/repos/{REPO}/issues"
     headers = {"Authorization": f"token {TOKEN}"}
-    payload = {
-        "title": title,
-        "body": body,
-        "labels": labels
-    }
+    payload = {"title": title, "body": body, "labels": labels}
     response = requests.post(url, headers=headers, json=payload)
     if response.status_code == 201:
         print(f"Issue created: {title}")
     else:
         print(f"Failed to create issue: {title} - {response.text}")
+
 
 with open("updates.txt", "r") as f:
     for line in f:
