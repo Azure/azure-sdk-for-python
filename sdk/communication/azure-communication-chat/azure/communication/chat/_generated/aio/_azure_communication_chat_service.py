@@ -20,7 +20,7 @@ from ._configuration import AzureCommunicationChatServiceConfiguration
 from .operations import ChatOperations, ChatThreadOperations
 
 
-class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-version-keyword
+class AzureCommunicationChatService:
     """Azure Communication Chat Service.
 
     :ivar chat_thread: ChatThreadOperations operations
@@ -34,7 +34,7 @@ class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-versi
     :paramtype api_version: str
     """
 
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential,protected-access
+    def __init__(  # pylint: disable=protected-access
         self, endpoint: str, **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
@@ -53,16 +53,21 @@ class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-versi
                 self._config.custom_hook_policy,
                 self._config.logging_policy,
                 policies.DistributedTracingPolicy(**kwargs),
-                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                (policies.SensitiveHeaderCleanupPolicy(**kwargs) 
+                 if self._config.redirect_policy else None),
                 self._config.http_logging_policy,
             ]
-        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(
+            base_url=_endpoint, policies=_policies, **kwargs
+        )
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.chat_thread = ChatThreadOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.chat_thread = ChatThreadOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.chat = ChatOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(  # pylint: disable=protected-access
@@ -76,7 +81,8 @@ class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-versi
         >>> response = await client._send_request(request)
         <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
+        For more information on this code flow, see
+        https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -87,7 +93,9 @@ class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-versi
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
