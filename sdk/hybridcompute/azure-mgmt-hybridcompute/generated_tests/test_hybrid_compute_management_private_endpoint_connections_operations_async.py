@@ -21,12 +21,12 @@ class TestHybridComputeManagementPrivateEndpointConnectionsOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_private_endpoint_connections_get(self, resource_group):
         response = await self.client.private_endpoint_connections.get(
             resource_group_name=resource_group.name,
             scope_name="str",
             private_endpoint_connection_name="str",
-            api_version="2024-07-31-preview",
+            api_version="2025-02-19-preview",
         )
 
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestHybridComputeManagementPrivateEndpointConnectionsOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_private_endpoint_connections_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.private_endpoint_connections.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -63,7 +63,7 @@ class TestHybridComputeManagementPrivateEndpointConnectionsOperationsAsync(Azure
                     },
                     "type": "str",
                 },
-                api_version="2024-07-31-preview",
+                api_version="2025-02-19-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -72,13 +72,13 @@ class TestHybridComputeManagementPrivateEndpointConnectionsOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_private_endpoint_connections_begin_delete(self, resource_group):
         response = await (
             await self.client.private_endpoint_connections.begin_delete(
                 resource_group_name=resource_group.name,
                 scope_name="str",
                 private_endpoint_connection_name="str",
-                api_version="2024-07-31-preview",
+                api_version="2025-02-19-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -87,11 +87,11 @@ class TestHybridComputeManagementPrivateEndpointConnectionsOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_private_link_scope(self, resource_group):
+    async def test_private_endpoint_connections_list_by_private_link_scope(self, resource_group):
         response = self.client.private_endpoint_connections.list_by_private_link_scope(
             resource_group_name=resource_group.name,
             scope_name="str",
-            api_version="2024-07-31-preview",
+            api_version="2025-02-19-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

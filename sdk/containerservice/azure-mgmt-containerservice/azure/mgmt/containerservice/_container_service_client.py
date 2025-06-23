@@ -58,18 +58,18 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2025-03-01'
+    DEFAULT_API_VERSION = '2025-04-01'
     _PROFILE_TAG = "azure.mgmt.containerservice.ContainerServiceClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
-            'container_service': '2025-02-02-preview',
+            'container_service': '2025-03-02-preview',
             'container_services': '2017-07-01',
-            'load_balancers': '2025-02-02-preview',
-            'managed_cluster_snapshots': '2025-02-02-preview',
-            'namespaces': '2025-02-02-preview',
+            'load_balancers': '2025-03-02-preview',
+            'managed_cluster_snapshots': '2025-03-02-preview',
+            'managed_namespaces': '2025-03-02-preview',
             'open_shift_managed_clusters': '2019-09-30-preview',
-            'operation_status_result': '2025-02-02-preview',
+            'operation_status_result': '2025-03-02-preview',
         }},
         _PROFILE_TAG + " latest"
     )
@@ -127,8 +127,8 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
            * 2019-09-30-preview: :mod:`v2019_09_30_preview.models<azure.mgmt.containerservice.v2019_09_30_preview.models>`
            * 2020-03-01: :mod:`v2020_03_01.models<azure.mgmt.containerservice.v2020_03_01.models>`
            * 2020-11-01: :mod:`v2020_11_01.models<azure.mgmt.containerservice.v2020_11_01.models>`
-           * 2025-02-02-preview: :mod:`v2025_02_02_preview.models<azure.mgmt.containerservice.v2025_02_02_preview.models>`
-           * 2025-03-01: :mod:`v2025_03_01.models<azure.mgmt.containerservice.v2025_03_01.models>`
+           * 2025-03-02-preview: :mod:`v2025_03_02_preview.models<azure.mgmt.containerservice.v2025_03_02_preview.models>`
+           * 2025-04-01: :mod:`v2025_04_01.models<azure.mgmt.containerservice.v2025_04_01.models>`
         """
         if api_version == '2017-07-01':
             from .v2017_07_01 import models
@@ -142,11 +142,11 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-11-01':
             from .v2020_11_01 import models
             return models
-        elif api_version == '2025-02-02-preview':
-            from .v2025_02_02_preview import models
+        elif api_version == '2025-03-02-preview':
+            from .v2025_03_02_preview import models
             return models
-        elif api_version == '2025-03-01':
-            from .v2025_03_01 import models
+        elif api_version == '2025-04-01':
+            from .v2025_04_01 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -156,18 +156,18 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
 
            * 2020-03-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2020_03_01.operations.AgentPoolsOperations>`
            * 2020-11-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2020_11_01.operations.AgentPoolsOperations>`
-           * 2025-02-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2025_02_02_preview.operations.AgentPoolsOperations>`
-           * 2025-03-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2025_03_01.operations.AgentPoolsOperations>`
+           * 2025-03-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2025_03_02_preview.operations.AgentPoolsOperations>`
+           * 2025-04-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2025_04_01.operations.AgentPoolsOperations>`
         """
         api_version = self._get_api_version('agent_pools')
         if api_version == '2020-03-01':
             from .v2020_03_01.operations import AgentPoolsOperations as OperationClass
         elif api_version == '2020-11-01':
             from .v2020_11_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2025-02-02-preview':
-            from .v2025_02_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2025-03-01':
-            from .v2025_03_01.operations import AgentPoolsOperations as OperationClass
+        elif api_version == '2025-03-02-preview':
+            from .v2025_03_02_preview.operations import AgentPoolsOperations as OperationClass
+        elif api_version == '2025-04-01':
+            from .v2025_04_01.operations import AgentPoolsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'agent_pools'".format(api_version))
         self._config.api_version = api_version
@@ -177,11 +177,11 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
     def container_service(self):
         """Instance depends on the API version:
 
-           * 2025-02-02-preview: :class:`ContainerServiceOperations<azure.mgmt.containerservice.v2025_02_02_preview.operations.ContainerServiceOperations>`
+           * 2025-03-02-preview: :class:`ContainerServiceOperations<azure.mgmt.containerservice.v2025_03_02_preview.operations.ContainerServiceOperations>`
         """
         api_version = self._get_api_version('container_service')
-        if api_version == '2025-02-02-preview':
-            from .v2025_02_02_preview.operations import ContainerServiceOperations as OperationClass
+        if api_version == '2025-03-02-preview':
+            from .v2025_03_02_preview.operations import ContainerServiceOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'container_service'".format(api_version))
         self._config.api_version = api_version
@@ -205,11 +205,11 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
     def load_balancers(self):
         """Instance depends on the API version:
 
-           * 2025-02-02-preview: :class:`LoadBalancersOperations<azure.mgmt.containerservice.v2025_02_02_preview.operations.LoadBalancersOperations>`
+           * 2025-03-02-preview: :class:`LoadBalancersOperations<azure.mgmt.containerservice.v2025_03_02_preview.operations.LoadBalancersOperations>`
         """
         api_version = self._get_api_version('load_balancers')
-        if api_version == '2025-02-02-preview':
-            from .v2025_02_02_preview.operations import LoadBalancersOperations as OperationClass
+        if api_version == '2025-03-02-preview':
+            from .v2025_03_02_preview.operations import LoadBalancersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'load_balancers'".format(api_version))
         self._config.api_version = api_version
@@ -219,14 +219,14 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
     def machines(self):
         """Instance depends on the API version:
 
-           * 2025-02-02-preview: :class:`MachinesOperations<azure.mgmt.containerservice.v2025_02_02_preview.operations.MachinesOperations>`
-           * 2025-03-01: :class:`MachinesOperations<azure.mgmt.containerservice.v2025_03_01.operations.MachinesOperations>`
+           * 2025-03-02-preview: :class:`MachinesOperations<azure.mgmt.containerservice.v2025_03_02_preview.operations.MachinesOperations>`
+           * 2025-04-01: :class:`MachinesOperations<azure.mgmt.containerservice.v2025_04_01.operations.MachinesOperations>`
         """
         api_version = self._get_api_version('machines')
-        if api_version == '2025-02-02-preview':
-            from .v2025_02_02_preview.operations import MachinesOperations as OperationClass
-        elif api_version == '2025-03-01':
-            from .v2025_03_01.operations import MachinesOperations as OperationClass
+        if api_version == '2025-03-02-preview':
+            from .v2025_03_02_preview.operations import MachinesOperations as OperationClass
+        elif api_version == '2025-04-01':
+            from .v2025_04_01.operations import MachinesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'machines'".format(api_version))
         self._config.api_version = api_version
@@ -236,14 +236,14 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
     def maintenance_configurations(self):
         """Instance depends on the API version:
 
-           * 2025-02-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2025_02_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2025-03-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2025_03_01.operations.MaintenanceConfigurationsOperations>`
+           * 2025-03-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2025_03_02_preview.operations.MaintenanceConfigurationsOperations>`
+           * 2025-04-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2025_04_01.operations.MaintenanceConfigurationsOperations>`
         """
         api_version = self._get_api_version('maintenance_configurations')
-        if api_version == '2025-02-02-preview':
-            from .v2025_02_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2025-03-01':
-            from .v2025_03_01.operations import MaintenanceConfigurationsOperations as OperationClass
+        if api_version == '2025-03-02-preview':
+            from .v2025_03_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
+        elif api_version == '2025-04-01':
+            from .v2025_04_01.operations import MaintenanceConfigurationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'maintenance_configurations'".format(api_version))
         self._config.api_version = api_version
@@ -253,11 +253,11 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
     def managed_cluster_snapshots(self):
         """Instance depends on the API version:
 
-           * 2025-02-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2025_02_02_preview.operations.ManagedClusterSnapshotsOperations>`
+           * 2025-03-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2025_03_02_preview.operations.ManagedClusterSnapshotsOperations>`
         """
         api_version = self._get_api_version('managed_cluster_snapshots')
-        if api_version == '2025-02-02-preview':
-            from .v2025_02_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
+        if api_version == '2025-03-02-preview':
+            from .v2025_03_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'managed_cluster_snapshots'".format(api_version))
         self._config.api_version = api_version
@@ -269,34 +269,34 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
 
            * 2020-03-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2020_03_01.operations.ManagedClustersOperations>`
            * 2020-11-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2020_11_01.operations.ManagedClustersOperations>`
-           * 2025-02-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2025_02_02_preview.operations.ManagedClustersOperations>`
-           * 2025-03-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2025_03_01.operations.ManagedClustersOperations>`
+           * 2025-03-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2025_03_02_preview.operations.ManagedClustersOperations>`
+           * 2025-04-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2025_04_01.operations.ManagedClustersOperations>`
         """
         api_version = self._get_api_version('managed_clusters')
         if api_version == '2020-03-01':
             from .v2020_03_01.operations import ManagedClustersOperations as OperationClass
         elif api_version == '2020-11-01':
             from .v2020_11_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2025-02-02-preview':
-            from .v2025_02_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2025-03-01':
-            from .v2025_03_01.operations import ManagedClustersOperations as OperationClass
+        elif api_version == '2025-03-02-preview':
+            from .v2025_03_02_preview.operations import ManagedClustersOperations as OperationClass
+        elif api_version == '2025-04-01':
+            from .v2025_04_01.operations import ManagedClustersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'managed_clusters'".format(api_version))
         self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
-    def namespaces(self):
+    def managed_namespaces(self):
         """Instance depends on the API version:
 
-           * 2025-02-02-preview: :class:`NamespacesOperations<azure.mgmt.containerservice.v2025_02_02_preview.operations.NamespacesOperations>`
+           * 2025-03-02-preview: :class:`ManagedNamespacesOperations<azure.mgmt.containerservice.v2025_03_02_preview.operations.ManagedNamespacesOperations>`
         """
-        api_version = self._get_api_version('namespaces')
-        if api_version == '2025-02-02-preview':
-            from .v2025_02_02_preview.operations import NamespacesOperations as OperationClass
+        api_version = self._get_api_version('managed_namespaces')
+        if api_version == '2025-03-02-preview':
+            from .v2025_03_02_preview.operations import ManagedNamespacesOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'namespaces'".format(api_version))
+            raise ValueError("API version {} does not have operation group 'managed_namespaces'".format(api_version))
         self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
@@ -318,11 +318,11 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
     def operation_status_result(self):
         """Instance depends on the API version:
 
-           * 2025-02-02-preview: :class:`OperationStatusResultOperations<azure.mgmt.containerservice.v2025_02_02_preview.operations.OperationStatusResultOperations>`
+           * 2025-03-02-preview: :class:`OperationStatusResultOperations<azure.mgmt.containerservice.v2025_03_02_preview.operations.OperationStatusResultOperations>`
         """
         api_version = self._get_api_version('operation_status_result')
-        if api_version == '2025-02-02-preview':
-            from .v2025_02_02_preview.operations import OperationStatusResultOperations as OperationClass
+        if api_version == '2025-03-02-preview':
+            from .v2025_03_02_preview.operations import OperationStatusResultOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operation_status_result'".format(api_version))
         self._config.api_version = api_version
@@ -334,18 +334,18 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
 
            * 2020-03-01: :class:`Operations<azure.mgmt.containerservice.v2020_03_01.operations.Operations>`
            * 2020-11-01: :class:`Operations<azure.mgmt.containerservice.v2020_11_01.operations.Operations>`
-           * 2025-02-02-preview: :class:`Operations<azure.mgmt.containerservice.v2025_02_02_preview.operations.Operations>`
-           * 2025-03-01: :class:`Operations<azure.mgmt.containerservice.v2025_03_01.operations.Operations>`
+           * 2025-03-02-preview: :class:`Operations<azure.mgmt.containerservice.v2025_03_02_preview.operations.Operations>`
+           * 2025-04-01: :class:`Operations<azure.mgmt.containerservice.v2025_04_01.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2020-03-01':
             from .v2020_03_01.operations import Operations as OperationClass
         elif api_version == '2020-11-01':
             from .v2020_11_01.operations import Operations as OperationClass
-        elif api_version == '2025-02-02-preview':
-            from .v2025_02_02_preview.operations import Operations as OperationClass
-        elif api_version == '2025-03-01':
-            from .v2025_03_01.operations import Operations as OperationClass
+        elif api_version == '2025-03-02-preview':
+            from .v2025_03_02_preview.operations import Operations as OperationClass
+        elif api_version == '2025-04-01':
+            from .v2025_04_01.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         self._config.api_version = api_version
@@ -356,16 +356,16 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2020-11-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2020_11_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2025-02-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2025_02_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2025-03-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2025_03_01.operations.PrivateEndpointConnectionsOperations>`
+           * 2025-03-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2025_03_02_preview.operations.PrivateEndpointConnectionsOperations>`
+           * 2025-04-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2025_04_01.operations.PrivateEndpointConnectionsOperations>`
         """
         api_version = self._get_api_version('private_endpoint_connections')
         if api_version == '2020-11-01':
             from .v2020_11_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2025-02-02-preview':
-            from .v2025_02_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2025-03-01':
-            from .v2025_03_01.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == '2025-03-02-preview':
+            from .v2025_03_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == '2025-04-01':
+            from .v2025_04_01.operations import PrivateEndpointConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_endpoint_connections'".format(api_version))
         self._config.api_version = api_version
@@ -376,16 +376,16 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2020-11-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2020_11_01.operations.PrivateLinkResourcesOperations>`
-           * 2025-02-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2025_02_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2025-03-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2025_03_01.operations.PrivateLinkResourcesOperations>`
+           * 2025-03-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2025_03_02_preview.operations.PrivateLinkResourcesOperations>`
+           * 2025-04-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2025_04_01.operations.PrivateLinkResourcesOperations>`
         """
         api_version = self._get_api_version('private_link_resources')
         if api_version == '2020-11-01':
             from .v2020_11_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2025-02-02-preview':
-            from .v2025_02_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2025-03-01':
-            from .v2025_03_01.operations import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == '2025-03-02-preview':
+            from .v2025_03_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == '2025-04-01':
+            from .v2025_04_01.operations import PrivateLinkResourcesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_link_resources'".format(api_version))
         self._config.api_version = api_version
@@ -396,16 +396,16 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2020-11-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2020_11_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2025-02-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2025_02_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2025-03-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2025_03_01.operations.ResolvePrivateLinkServiceIdOperations>`
+           * 2025-03-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2025_03_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+           * 2025-04-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2025_04_01.operations.ResolvePrivateLinkServiceIdOperations>`
         """
         api_version = self._get_api_version('resolve_private_link_service_id')
         if api_version == '2020-11-01':
             from .v2020_11_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2025-02-02-preview':
-            from .v2025_02_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2025-03-01':
-            from .v2025_03_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
+        elif api_version == '2025-03-02-preview':
+            from .v2025_03_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
+        elif api_version == '2025-04-01':
+            from .v2025_04_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'resolve_private_link_service_id'".format(api_version))
         self._config.api_version = api_version
@@ -415,14 +415,14 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
     def snapshots(self):
         """Instance depends on the API version:
 
-           * 2025-02-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2025_02_02_preview.operations.SnapshotsOperations>`
-           * 2025-03-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2025_03_01.operations.SnapshotsOperations>`
+           * 2025-03-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2025_03_02_preview.operations.SnapshotsOperations>`
+           * 2025-04-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2025_04_01.operations.SnapshotsOperations>`
         """
         api_version = self._get_api_version('snapshots')
-        if api_version == '2025-02-02-preview':
-            from .v2025_02_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2025-03-01':
-            from .v2025_03_01.operations import SnapshotsOperations as OperationClass
+        if api_version == '2025-03-02-preview':
+            from .v2025_03_02_preview.operations import SnapshotsOperations as OperationClass
+        elif api_version == '2025-04-01':
+            from .v2025_04_01.operations import SnapshotsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'snapshots'".format(api_version))
         self._config.api_version = api_version
@@ -432,14 +432,14 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
     def trusted_access_role_bindings(self):
         """Instance depends on the API version:
 
-           * 2025-02-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2025_02_02_preview.operations.TrustedAccessRoleBindingsOperations>`
-           * 2025-03-01: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2025_03_01.operations.TrustedAccessRoleBindingsOperations>`
+           * 2025-03-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2025_03_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+           * 2025-04-01: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2025_04_01.operations.TrustedAccessRoleBindingsOperations>`
         """
         api_version = self._get_api_version('trusted_access_role_bindings')
-        if api_version == '2025-02-02-preview':
-            from .v2025_02_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2025-03-01':
-            from .v2025_03_01.operations import TrustedAccessRoleBindingsOperations as OperationClass
+        if api_version == '2025-03-02-preview':
+            from .v2025_03_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
+        elif api_version == '2025-04-01':
+            from .v2025_04_01.operations import TrustedAccessRoleBindingsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'trusted_access_role_bindings'".format(api_version))
         self._config.api_version = api_version
@@ -449,14 +449,14 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
     def trusted_access_roles(self):
         """Instance depends on the API version:
 
-           * 2025-02-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2025_02_02_preview.operations.TrustedAccessRolesOperations>`
-           * 2025-03-01: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2025_03_01.operations.TrustedAccessRolesOperations>`
+           * 2025-03-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2025_03_02_preview.operations.TrustedAccessRolesOperations>`
+           * 2025-04-01: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2025_04_01.operations.TrustedAccessRolesOperations>`
         """
         api_version = self._get_api_version('trusted_access_roles')
-        if api_version == '2025-02-02-preview':
-            from .v2025_02_02_preview.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2025-03-01':
-            from .v2025_03_01.operations import TrustedAccessRolesOperations as OperationClass
+        if api_version == '2025-03-02-preview':
+            from .v2025_03_02_preview.operations import TrustedAccessRolesOperations as OperationClass
+        elif api_version == '2025-04-01':
+            from .v2025_04_01.operations import TrustedAccessRolesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'trusted_access_roles'".format(api_version))
         self._config.api_version = api_version

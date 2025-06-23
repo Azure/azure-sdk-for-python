@@ -5,7 +5,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import azure.mgmt.resource
 import azure.mgmt.resource.templatespecs
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 import pytest
