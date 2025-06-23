@@ -57,7 +57,7 @@ def test_basic_imports():
         from marshmallow.schema import SchemaMeta
         from marshmallow.exceptions import ValidationError as SchemaValidationError
         from marshmallow.fields import Field, Nested
-        from marshmallow.utils import FieldInstanceResolutionError, from_iso_datetime, resolve_field_instance
+        from marshmallow.utils import from_iso_datetime, resolve_field_instance
         
         print("✓ All basic imports successful")
         return True
