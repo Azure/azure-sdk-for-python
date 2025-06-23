@@ -20,7 +20,9 @@ class EventGridSasCredentialPolicy(SansIOHTTPPolicy):
     :raises: ValueError or TypeError
     """
 
-    def __init__(self, credential: "AzureSasCredential", name: str, **kwargs: Any) -> None:  # pylint: disable=unused-argument
+    def __init__(
+        self, credential: "AzureSasCredential", name: str, **kwargs: Any
+    ) -> None:  # pylint: disable=unused-argument
         super(EventGridSasCredentialPolicy, self).__init__()
         self._credential = credential
         if not name:
