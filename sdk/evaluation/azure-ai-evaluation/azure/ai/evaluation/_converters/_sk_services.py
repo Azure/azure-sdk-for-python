@@ -76,8 +76,8 @@ class SKAgentConverter:
 
         for tool in tool_list:
             filtered_tool = {
-                "name": tool["name"],
-                "description": tool.get("description"),  # or "No description",
+                "name": tool["plugin_name"] + "-" + tool["name"],
+                "description": tool.get("description") or "No description",
                 "type": "function",  # TODO: hardcoded for now.
                 "parameters": {
                     "type": "object",  # Is this always the case?
@@ -89,7 +89,7 @@ class SKAgentConverter:
                 param_name = param.get("name")
                 filtered_tool["parameters"]["properties"][param_name] = {
                     "type": param["type_"],
-                    "description": param.get("description"),  # or "No description"
+                    "description": param.get("description") or "No description",
                 }
 
             final_tools.append(ToolDefinition(**filtered_tool))
@@ -289,7 +289,7 @@ class SKAgentConverter:
         converted_messages = []
         for item in message.items:
             message_dict = {
-                "role": str(message.role),
+                "role": message.role.value,
                 "content": [],  # will be filled in later
             }
             if "created" in message.metadata:
