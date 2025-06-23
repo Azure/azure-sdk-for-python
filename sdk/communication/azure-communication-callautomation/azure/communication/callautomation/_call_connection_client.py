@@ -21,6 +21,7 @@ from ._models import (
     CallConnectionProperties,
     AddParticipantResult,
     RemoveParticipantResult,
+    MoveParticipantsResult,
     TransferCallResult,
     MuteParticipantResult,
     SendDtmfTonesResult,
@@ -31,6 +32,7 @@ from ._generated._client import AzureCommunicationCallAutomationService
 from ._generated.models import (
     AddParticipantRequest,
     RemoveParticipantRequest,
+    MoveParticipantsRequest,
     TransferToParticipantRequest,
     PlayRequest,
     RecognizeRequest,
@@ -373,6 +375,46 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         )
 
         return RemoveParticipantResult._from_generated(response)  # pylint:disable=protected-access
+
+    @distributed_trace
+    def move_participants(
+        self,
+        target_participants: List["CommunicationIdentifier"],
+        from_call: str,
+        *,
+        operation_context: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        **kwargs,
+    ) -> MoveParticipantsResult:
+        """Move participants from another call to this call.
+
+        :param target_participants: The participants to move to this call.
+        :type target_participants: list[~azure.communication.callautomation.CommunicationIdentifier]
+        :param from_call: The CallConnectionId for the call you want to move the participant from.
+        :type from_call: str
+        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :paramtype operation_context: str
+        :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URL set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_url: str or None
+        :return: MoveParticipantsResult
+        :rtype: ~azure.communication.callautomation.MoveParticipantsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        move_participants_request = MoveParticipantsRequest(
+            target_participants=[serialize_identifier(participant) for participant in target_participants],
+            from_call=from_call,
+            operation_context=operation_context,
+            operation_callback_uri=operation_callback_url,
+        )
+        process_repeatability_first_sent(kwargs)
+        response = self._call_connection_client.move_participants(
+            self._call_connection_id, move_participants_request, **kwargs
+        )
+
+        return MoveParticipantsResult._from_generated(response)  # pylint:disable=protected-access
 
     @overload
     def play_media(

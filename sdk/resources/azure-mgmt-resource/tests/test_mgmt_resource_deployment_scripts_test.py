@@ -22,7 +22,7 @@ class TestMgmtResourceDeploymentScript(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
         self.script_client = self.create_mgmt_client(
-            azure.mgmt.resource.DeploymentScriptsClient, api_version="2019-10-01-preview"
+            azure.mgmt.resource.deploymentscripts.DeploymentScriptsClient, api_version="2019-10-01-preview"
         )
 
         # if self.is_live:
