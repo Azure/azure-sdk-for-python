@@ -64,7 +64,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
 
     _PROMPTY_FILE = "tool_call_accuracy.prompty"
-    _RESULT_KEY = "tool_calls_success_level"
+    _RESULT_KEY = "tool_call_accuracy"
 
     _MAX_TOOL_CALL_ACCURACY_SCORE = 5
     _MIN_TOOL_CALL_ACCURACY_SCORE = 1
@@ -161,7 +161,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # TODO : Support classes that represents tool calls, messages etc once client side definitions are available
         if tool_calls is None:
             # Extract tool calls from response if not provided
-            tool_calls = self._parse_response(response)
+            tool_calls = self._parse_tools_from_response(response)
             if len(tool_calls) == 0:
                 raise EvaluationException(
                     message="response does not have tool calls. Either provide tool_calls or response with tool calls.",
@@ -216,7 +216,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
 
         if isinstance(llm_output, dict):
-            score = llm_output.get(self._RESULT_KEY, None)
+            score = llm_output.get("tool_calls_success_level", None)
             if not check_score_is_valid(score, ToolCallAccuracyEvaluator._MIN_TOOL_CALL_ACCURACY_SCORE, ToolCallAccuracyEvaluator._MAX_TOOL_CALL_ACCURACY_SCORE):
                 raise EvaluationException(
                     message=f"Invalid score value: {score}. Expected a number in range [{ToolCallAccuracyEvaluator._MIN_TOOL_CALL_ACCURACY_SCORE}, {ToolCallAccuracyEvaluator._MAX_TOOL_CALL_ACCURACY_SCORE}].",
@@ -270,7 +270,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         }
     
-    def _parse_response(self, response):
+    def _parse_tools_from_response(self, response):
         """Parse the response to extract tool calls and results.
         :param response: The response to parse.
         :type response: Union[str, List[dict]]
@@ -303,6 +303,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: List of tool definitions that are needed for the provided tool calls.
         :rtype: List[dict]
         """
+        needed_tool_definitions = []
         for tool_call in tool_calls:
             if isinstance(tool_call, dict) and tool_call.get("type") == "tool_call":
                 tool_name = tool_call.get("name")

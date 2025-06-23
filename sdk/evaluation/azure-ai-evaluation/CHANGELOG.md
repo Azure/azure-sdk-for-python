@@ -8,6 +8,8 @@
 
 - Significant improvements to IntentResolution evaluator. New version has less variance, is nearly 2x faster and consumes fewer tokens.
 
+- Fixes and improvements to ToolCallAccuracy evaluator. New version has less variance. and now works on all tool calls that happen in a turn at once. Previously, it worked on each tool call independently without having context on the other tool calls that happen in the same turn, and then aggregated the results to a number in the range [0-1]. The number range is now [1-5].
+
 - Fixed MeteorScoreEvaluator and other threshold-based evaluators returning incorrect binary results due to integer conversion of decimal scores. Previously, decimal scores like 0.9375 were incorrectly converted to integers (0) before threshold comparison, causing them to fail even when above the threshold. [#41415](https://github.com/Azure/azure-sdk-for-python/issues/41415)
 
 ## 1.8.0 (2025-05-29)
