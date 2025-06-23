@@ -49,8 +49,8 @@ $token = Get-AzAccessToken @params
 $tokenValue = $token.Token
 if ($tokenValue -is [System.Security.SecureString]) {{
     if ($PSVersionTable.PSVersion.Major -lt 7) {{
+        $ssPtr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($tokenValue)
         try {{
-            $ssPtr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($tokenValue)
             $tokenValue = [System.Runtime.InteropServices.Marshal]::PtrToStringBSTR($ssPtr)
         }}
         finally {{
