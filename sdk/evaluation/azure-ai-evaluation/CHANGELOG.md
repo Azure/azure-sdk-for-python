@@ -1,5 +1,10 @@
 # Release History
 
+## 1.9.0 (Unreleased)
+
+### Breaking Changes
+- Added `_evaluate_query` parameter to `RaiServiceEvaluatorBase` class with a default value of `False`. This parameter controls whether queries are included in evaluation data when evaluating query-response pairs. Previously, queries were always included in evaluations. Existing code that relies on queries being evaluated will need to explicitly set `_evaluate_query=True` to maintain the previous behavior.
+
 ## 1.8.0 (2025-05-28)
 
 ### Features Added

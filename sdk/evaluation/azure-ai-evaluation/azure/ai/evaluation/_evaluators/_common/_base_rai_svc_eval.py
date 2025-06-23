@@ -36,12 +36,14 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         aggregated. Per-turn results are still be available in the output via the "evaluation_per_turn" key
         when this occurs. Default is False, resulting full conversation evaluation and aggregation.
     :type eval_last_turn: bool
-    :param conversation_aggregation_type: The type of aggregation to perform on the per-turn results of a conversation
-        to produce a single result.
+    :param conversation_aggregation_type: The type of aggregation to perform on the per-turn results of a conversation        to produce a single result.
         Default is ~azure.ai.evaluation._AggregationType.MEAN.
     :type conversation_aggregation_type: ~azure.ai.evaluation._AggregationType
     :param threshold: The threshold for the evaluation. Default is 3.
     :type threshold: Optional[int]
+    :param _evaluate_query: If True, the query will be included in the evaluation data when evaluating
+        query-response pairs. If False, only the response will be evaluated. Default is False.
+    :type _evaluate_query: bool
     :param _higher_is_better: If True, higher scores are better. Default is True.
     :type _higher_is_better: Optional[bool]
     """
@@ -55,6 +57,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         eval_last_turn: bool = False,
         conversation_aggregation_type: _AggregationType = _AggregationType.MEAN,
         threshold: int = 3,
+        _evaluate_query: bool = False,
         _higher_is_better: Optional[bool] = False,
     ):
         super().__init__(eval_last_turn=eval_last_turn, conversation_aggregation_type=conversation_aggregation_type, threshold=threshold, _higher_is_better=_higher_is_better)
@@ -62,6 +65,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         self._azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self._credential = credential
         self._threshold = threshold
+        self._evaluate_query = _evaluate_query
         self._higher_is_better = _higher_is_better
 
     @override
@@ -138,7 +142,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
             )
         input_data = {"response": str(response)}
         
-        if query is not None:
+        if query is not None and self._evaluate_query:
             input_data["query"] = str(query)
 
         if "context" in self._singleton_inputs:
