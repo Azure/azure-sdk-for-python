@@ -76,7 +76,9 @@ class SKAgentConverter:
 
         for tool in tool_list:
             filtered_tool = {
-                "name": tool["plugin_name"] + "-" + tool["name"],
+                "name": (
+                    tool["plugin_name"] + "-" + tool["name"]
+                ),  # must be like that to match tool calls.
                 "description": tool.get("description") or "No description",
                 "type": "function",  # TODO: hardcoded for now.
                 "parameters": {
@@ -278,6 +280,16 @@ class SKAgentConverter:
         return turns[turn_index]
 
     @staticmethod
+    def _safe_json_loads(value: Any) -> Any:
+        """Safely parse a JSON string into a Python object, return original if parsing fails."""
+        if isinstance(value, str):
+            try:
+                return json.loads(value)
+            except json.JSONDecodeError:
+                return value
+        return value
+
+    @staticmethod
     def _process_message_items(message: ChatMessageContent) -> List[Message]:
         """
         Processes the items in a message and converts them to the specified schema.
@@ -303,21 +315,26 @@ class SKAgentConverter:
             elif isinstance(item, FunctionCallContent):
                 item_dict = item.to_dict()
                 item_func = item_dict["function"]
+                arguments = SKAgentConverter._safe_json_loads(item_func["arguments"])
+
                 message_dict["content"].append(
                     {
                         "type": "tool_call",
                         "tool_call_id": item_dict.get("id", None),
                         "name": item_func["name"],
-                        "arguments": item_func["arguments"],
+                        "arguments": arguments,
                     }
                 )
             elif isinstance(item, FunctionResultContent):
                 item_dict = item.to_dict()
                 message_dict["tool_call_id"] = item_dict.get("tool_call_id", None)
+
+                item_content = SKAgentConverter._safe_json_loads(item_dict["content"])
+
                 message_dict["content"].append(
                     {
                         "type": "tool_result",
-                        "tool_result": item_dict["content"],
+                        "tool_result": item_content,
                     }
                 )
             else:
