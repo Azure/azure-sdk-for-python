@@ -69,14 +69,14 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _MAX_TOOL_CALL_ACCURACY_SCORE = 5
     _MIN_TOOL_CALL_ACCURACY_SCORE = 1
-    _DEFAULT_TOOL_CALL_ACCURACY_THRESHOLD = 3
+    _DEFAULT_TOOL_CALL_ACCURACY_SCORE = 3
 
     id = "id"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
     def __init__(self, model_config, *,
-                 threshold=_DEFAULT_TOOL_CALL_ACCURACY_THRESHOLD,
+                 threshold=_DEFAULT_TOOL_CALL_ACCURACY_SCORE,
                  **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
@@ -138,61 +138,40 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
         # TODO add warning that only tool calls of type function are supported
         # Collect inputs
-        tool_calls = kwargs.get("tool_calls", None)
+        tool_calls = kwargs.get("tool_calls")
         tool_definitions = kwargs.get("tool_definitions")
-        query = kwargs.get("query", None)
-        response = kwargs.get("response", None)
-
-        if response is None and tool_calls is None:
-            raise EvaluationException(
-                message="Either response or tool_calls must be provided.",
-                blame=ErrorBlame.USER_ERROR,
-                category=ErrorCategory.MISSING_FIELD,
-                target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
-            )
-
-        if tool_definitions is None:
-            raise EvaluationException(
-                message="Tool definitions must be provided.",
-                blame=ErrorBlame.USER_ERROR,
-                category=ErrorCategory.MISSING_FIELD,
-                target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
-            )
+        query = kwargs.get("query")
+        response = kwargs.get("response")
 
         # TODO : Support classes that represents tool calls, messages etc once client side definitions are available
-        if tool_calls is None:
-            # Extract tool calls from response if not provided
-            tool_calls = self._parse_tools_from_response(response)
-            if len(tool_calls) == 0:
-                raise EvaluationException(
-                    message="response does not have tool calls. Either provide tool_calls or response with tool calls.",
-                    blame=ErrorBlame.USER_ERROR,
-                    category=ErrorCategory.MISSING_FIELD,
-                    target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
-                )
+        if response:
+            parsed_tool_calls = self._parse_tools_from_response(response)
+            if parsed_tool_calls:
+                tool_calls = parsed_tool_calls
+
+        if not tool_calls:
+            return {"error_message": "No tool calls found in response or provided tool_calls."}
+        if not tool_definitions or len(tool_definitions) == 0:
+            return {"error_message": "Tool definitions must be provided."}
 
         if not isinstance(tool_calls, list):
             tool_calls = [tool_calls]
-            
         if not isinstance(tool_definitions, list):
             tool_definitions = [tool_definitions]
 
-        needed_tool_definitions = self._extract_needed_tool_definitions(tool_calls, tool_definitions)
+        try:
+            needed_tool_definitions = self._extract_needed_tool_definitions(tool_calls, tool_definitions)
+        except EvaluationException as e:
+            return {"error_message": "Tool definitions for all tool calls must be provided."}
         if len(needed_tool_definitions) == 0:
-            raise EvaluationException(
-                message="No tool definitions found for the provided tool calls.",
-                blame=ErrorBlame.USER_ERROR,
-                category=ErrorCategory.INVALID_VALUE,
-                target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
-            )
-            
-        eval_input = {
+            return {"error_message": "Tool definitions for all tool calls must be provided."}
+
+        return {
             "query": query,
             "tool_calls": tool_calls,
             "tool_definitions": needed_tool_definitions
         }
         
-        return eval_input
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:  # type: ignore[override]
@@ -205,20 +184,12 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The evaluation result.
         :rtype: Dict
         """
-        # Instead of splitting into per-tool-call, pass all tool calls at once
-        try:
-            eval_input = self._convert_kwargs_to_eval_input(**kwargs)
-
-        # If no tool calls were made or tool call type is not supported, return not applicable result
-        except EvaluationException as e:
-            return self._not_applicable_result(eval_input)
-
         # Single LLM call for all tool calls
         llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
 
         if isinstance(llm_output, dict):
             score = llm_output.get("tool_calls_success_level", None)
-            if not check_score_is_valid(score, ToolCallAccuracyEvaluator._MIN_TOOL_CALL_ACCURACY_SCORE, ToolCallAccuracyEvaluator._MAX_TOOL_CALL_ACCURACY_SCORE):
+            if not score or not check_score_is_valid(score, ToolCallAccuracyEvaluator._MIN_TOOL_CALL_ACCURACY_SCORE, ToolCallAccuracyEvaluator._MAX_TOOL_CALL_ACCURACY_SCORE):
                 raise EvaluationException(
                     message=f"Invalid score value: {score}. Expected a number in range [{ToolCallAccuracyEvaluator._MIN_TOOL_CALL_ACCURACY_SCORE}, {ToolCallAccuracyEvaluator._MAX_TOOL_CALL_ACCURACY_SCORE}].",
                     internal_message="Invalid score value.",
@@ -249,8 +220,26 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             category=ErrorCategory.FAILED_EXECUTION,
             target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
         )
+    
+    async def _real_call(self, **kwargs):
+        """The asynchronous call where real end-to-end evaluation logic is performed.
 
-    def _not_applicable_result(self, eval_input):
+        :keyword kwargs: The inputs to evaluate.
+        :type kwargs: Dict
+        :return: The evaluation result.
+        :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
+        """
+        # Convert inputs into list of evaluable inputs.
+        eval_input = self._convert_kwargs_to_eval_input(**kwargs)
+        if isinstance(eval_input, dict) and eval_input.get('error_message'):
+            # If there is an error message, return not applicable result
+            return self._not_applicable_result(eval_input.get('error_message'))
+        # Do the evaluation
+        result = await self._do_eval(eval_input)
+        # Return the result
+        return result
+    
+    def _not_applicable_result(self, error_message):
         """Return a result indicating that the tool call is not applicable for evaluation.
 
         :param eval_input: The input to the evaluator.
@@ -263,7 +252,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             self._result_key: self._NOT_APPLICABLE_RESULT,
             f"{self._result_key}_result": 'pass',
             f"{self._result_key}_threshold": self.threshold,
-            f"{self._result_key}_reason": 'Not applicable. No tool calls were made or tool call type is not supported.',
+            f"{self._result_key}_reason": error_message,
             "applicable": False,
             "per_tool_call_details": {},
             "excess_tool_calls": {},
@@ -308,7 +297,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         for tool_call in tool_calls:
             if isinstance(tool_call, dict) and tool_call.get("type") == "tool_call":
                 tool_name = tool_call.get("name")
-                tool_definition = [tool for tool in tool_definitions if tool.get("name") == tool_name]
+                tool_definition = [tool for tool in tool_definitions if tool.get("name") == tool_name and tool.get("type", "function") == "function"]
                 if len(tool_definition) > 0:
                     needed_tool_definitions.extend(tool_definition)
                 else:
