@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines,too-many-statements,missing-module-docstring,line-too-long,too-many-locals,missing-function-docstring
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -317,7 +317,7 @@ def build_add_chat_participants_request(chat_thread_id: str, **kwargs: Any) -> H
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_update_chat_thread_properties_request(  # pylint: disable=name-too-long
+def build_update_chat_thread_properties_request(
     chat_thread_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})

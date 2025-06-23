@@ -1,3 +1,4 @@
+# pylint: disable=missing-module-docstring,line-too-long,missing-function-docstring
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -19,7 +20,7 @@ from ._serialization import Deserializer, Serializer
 from .operations import ChatOperations, ChatThreadOperations
 
 
-class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-version-keyword
+class AzureCommunicationChatService:
     """Azure Communication Chat Service.
 
     :ivar chat_thread: ChatThreadOperations operations
@@ -33,7 +34,7 @@ class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-versi
     :paramtype api_version: str
     """
 
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+    def __init__(
         self, endpoint: str, **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"

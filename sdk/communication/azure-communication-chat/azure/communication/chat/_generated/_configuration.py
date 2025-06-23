@@ -1,3 +1,4 @@
+# pylint: disable=missing-module-docstring,line-too-long,consider-using-f-string,too-few-public-methods
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -13,7 +14,7 @@ from azure.core.pipeline import policies
 VERSION = "unknown"
 
 
-class AzureCommunicationChatServiceConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class AzureCommunicationChatServiceConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for AzureCommunicationChatService.
 
     Note that all parameters used to create this instance are saved as instance
