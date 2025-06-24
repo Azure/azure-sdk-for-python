@@ -59,7 +59,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
 
     _PROMPTY_FILE = "task_adherence.prompty"
-    _RESULT_KEY = "task_adherence_v2"
+    _RESULT_KEY = "task_adherence"
     _OPTIONAL_PARAMS = ["tool_definitions"]
 
     _DEFAULT_TASK_ADHERENCE_SCORE = 3

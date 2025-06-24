@@ -762,53 +762,81 @@ class TestUtils:
 
         assert formatted == "Let me check that for you.\nYou have one order on file."
 
-    def test_format_tool_definitions(self):
-        tool_definitions = [
+    def test_single_tool_with_parameters(self):
+        tools = [{
+            "name": "search",
+            "description": "Searches the web.",
+            "parameters": {
+                "properties": {
+                    "query": {"type": "string"},
+                    "lang": {"type": "string"}
+                }
+            }
+        }]
+        expected_output = (
+            "TOOL DEFINITIONS:\n"
+            "- search: Searches the web. (inputs: query, lang)"
+        )
+        self.assertEqual(reformat_tool_definitions(tools), expected_output)
+
+    def test_tool_with_no_parameters(self):
+        tools = [{
+            "name": "ping",
+            "description": "Check if server is reachable.",
+            "parameters": {}
+        }]
+        expected_output = (
+            "TOOL DEFINITIONS:\n"
+            "- ping: Check if server is reachable. (inputs: no parameters)"
+        )
+        self.assertEqual(reformat_tool_definitions(tools), expected_output)
+
+    def test_tool_missing_description_and_parameters(self):
+        tools = [{"name": "noop"}]
+        expected_output = (
+            "TOOL DEFINITIONS:\n"
+            "- noop:  (inputs: no parameters)"
+        )
+        self.assertEqual(reformat_tool_definitions(tools), expected_output)
+
+    def test_tool_missing_name(self):
+        tools = [{
+            "description": "Does something.",
+            "parameters": {
+                "properties": {"x": {"type": "number"}}
+            }
+        }]
+        expected_output = (
+            "TOOL DEFINITIONS:\n"
+            "- unnamed_tool: Does something. (inputs: x)"
+        )
+        self.assertEqual(reformat_tool_definitions(tools), expected_output)
+
+    def test_multiple_tools(self):
+        tools = [
             {
-                "name": "get_weather",
-                "description": "Provides current weather details for a city.",
+                "name": "alpha",
+                "description": "Tool A.",
                 "parameters": {
-                    "type": "object",
                     "properties": {
-                        "city": {
-                            "type": "string",
-                            "description": "Name of the city."
-                        }
+                        "a1": {"type": "string"}
                     }
                 }
             },
             {
-                "name": "get_news",
-                "description": "Fetches top headlines.",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "category": {
-                            "type": "string",
-                            "description": "News category (e.g., sports, tech)."
-                        },
-                        "region": {
-                            "type": "string",
-                            "description": "Region to get news from."
-                        }
-                    }
-                }
+                "name": "beta",
+                "description": "Tool B.",
+                "parameters": {}
             }
         ]
-
-        expected = (
-            "TOOL_DEFINITIONS:\n"
-            "Tool: get_weather\n"
-            "Description: Provides current weather details for a city.\n"
-            "Parameters:\n"
-            "  - city (string): Name of the city.\n\n"
-            "Tool: get_news\n"
-            "Description: Fetches top headlines.\n"
-            "Parameters:\n"
-            "  - category (string): News category (e.g., sports, tech).\n"
-            "  - region (string): Region to get news from.\n"
+        expected_output = (
+            "TOOL DEFINITIONS:\n"
+            "- alpha: Tool A. (inputs: a1)\n"
+            "- beta: Tool B. (inputs: no parameters)"
         )
+        self.assertEqual(reformat_tool_definitions(tools), expected_output)
 
-        result = reformat_tool_definitions(tool_definitions)
-        assert result.strip() == expected.strip()
-
+    def test_empty_tool_list(self):
+        tools = []
+        expected_output = "TOOL DEFINITIONS:"
+        self.assertEqual(reformat_tool_definitions(tools), expected_output)
