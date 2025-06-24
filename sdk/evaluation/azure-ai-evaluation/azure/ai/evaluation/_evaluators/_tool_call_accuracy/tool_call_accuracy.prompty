@@ -126,7 +126,7 @@ Your output should consist only of a JSON object, as provided in the examples, t
   - additional_details: a dictionary that contains the following keys:
         - tool_calls_made_by_agent: total number of tool calls made by the agent
         - correct_tool_calls_made_by_agent: total number of correct tool calls made by the agent
-        - per_tool_details: a list of dictionaries, each containing:
+        - details: a list of dictionaries, each containing:
           - tool_name: name of the tool
           - total_calls_required: total number of calls required for the tool
           - correct_calls_made_by_agent: number of correct calls made by the agent
@@ -135,12 +135,12 @@ Your output should consist only of a JSON object, as provided in the examples, t
           - tool_success_result: 'pass' or 'fail' based on the evaluation of the tool call accuracy for this tool
   - excess_tool_calls: a dictionary with the following keys:
       - total: total number of excess, unnecessary tool calls made by the agent
-      - per_tool_details: a list of dictionaries, each containing:
+      - details: a list of dictionaries, each containing:
         - tool_name: name of the tool
         - excess_count: number of excess calls made for this query
   - missing_tool_calls: a dictionary with the following keys:
       - total: total number of missing tool calls that should have been made by the agent to be able to answer the query
-      - per_tool_details: a list of dictionaries, each containing:
+      - details: a list of dictionaries, each containing:
         - tool_name: name of the tool
         - missing_count: number of missing calls for this query
 
