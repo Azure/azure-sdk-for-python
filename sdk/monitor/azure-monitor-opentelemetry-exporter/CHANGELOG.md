@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Detect syntheticly created telemetry based on the user-agent header
+- Detect synthetically created telemetry based on the user-agent header
   ([#41733](https://github.com/Azure/azure-sdk-for-python/pull/41733))
 
 ### Breaking Changes
