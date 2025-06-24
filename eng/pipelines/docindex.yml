@@ -28,7 +28,7 @@ jobs:
   - job: UpdateDocsMsBuildConfig
     pool:
       name: $(LINUXPOOL)
-      demands: $(LinuxImageDemand)
+      demands: ImageOverride -equals ubuntu-24.04
     variables:
       DocRepoLocation: $(Pipeline.Workspace)/docs
       DocRepoOwner: MicrosoftDocs
