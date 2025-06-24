@@ -12,11 +12,17 @@
 - Link to specific pages when answering guidelines questions
 - Use this as the authoritative source for SDK development guidance
 
-### RULE 3: VERIFY ENVIRONMENT FIRST
-**BEFORE any commands:**
-1. Get path to azure-sdk-for-python repo root, and path to tox.ini file
-2. Use `verify_setup` tool from azure-sdk-python-mcp server
+### RULE 3: FOLLOW CODEGEN WORKFLOW
+**BEFORE any TypeSpec SDK generation:**
+1. Get path to azure-sdk-for-python repo root and tox.ini file
+2. Verify all prerequisites: Python 3.9+, Node.js 20.x+, tsp-client CLI
 3. Ensure Python virtual environment is active
+4. Follow [Dataplane Codegen Quick Start](https://github.com/Azure/azure-sdk-for-python/wiki/Dataplane-Codegen-Quick-Start) workflow
+
+**Post-Generation Process:**
+1. Always reference [What to do after generating SDK code](https://github.com/Azure/azure-sdk-for-python/wiki/What-to-do-after-generating-the-SDK-code-with-codegen)
+2. Use tsp-client commands as specified in wiki guidelines
+3. Follow the 7-step execution sequence for complete workflow
 
 **Virtual Environment Setup:**
 ```bash
@@ -34,134 +40,242 @@ source <env_name>/bin/activate
 
 ## TYPESPEC SDK GENERATION - COMPLETE WORKFLOW
 
-### PHASE 1: CONTEXT ASSESSMENT
+Following the [Dataplane Codegen Quick Start](https://github.com/Azure/azure-sdk-for-python/wiki/Dataplane-Codegen-Quick-Start) guidelines.
 
-**ACTION:** Determine TypeSpec project location
+### PHASE 1: PREREQUISITES AND SETUP
+
+**REQUIRED DEPENDENCIES:**
+1. **Python 3.9 or later** - Use `python --version` to verify
+2. **Node.js 20.x LTS or later** - Use `node --version` to verify  
+3. **GitHub CLI authenticated** - Use `gh auth login`
+4. **tsp-client CLI tool** - Install with `npm install -g @azure-tools/typespec-client-generator-cli`
+
+**REPOSITORY SETUP:**
+1. User must be on feature branch (NOT main): `git checkout -b <branch_name>`
+2. Ensure azure-sdk-for-python repo is forked and cloned
+3. TypeSpec definition must be merged into main branch of azure-rest-api-specs repo
+
+### PHASE 2: PROJECT CONFIGURATION
+
+**KEY INFORMATION NEEDED:**
+- `service_name`: Short name for Azure service (matches azure-rest-api-specs folder)
+- `namespace`: Python namespace (e.g., azure.ai.anomalydetector)  
+- `package_name`: PyPI package name (e.g., azure-ai-anomalydetector)
+- `module_name`: Additional component if multiple packages needed
+
+**FOLDER STRUCTURE:**
+- SDK path: `sdk/{service_name}/{package_name}/`
+- Generated code: `/azure/{service_name}/{module_name}/`
+- Tests: `/tests/`
+- Samples: `/samples/`
+
+### PHASE 3: TYPESPEC CONFIGURATION
+
+**VERIFY tspconfig.yaml contains:**
+```yaml
+parameters:
+  "service-dir":
+    default: "YOUR-SERVICE-DIRECTORY"
+
+emit: [
+  "@azure-tools/typespec-autorest",
+]
+
+options:
+  "@azure-tools/typespec-python":
+    package-dir: "YOUR-PACKAGE-DIR"
+    namespace: "YOUR.NAMESPACE.NAME"
+    flavor: "azure"
 ```
-IF TypeSpec project paths exist in context:
-    USE local paths to generate SDK from tspconfig.yaml
-ELSE:
-    ASK user for tspconfig.yaml file path
-```
 
-### PHASE 2: PREREQUISITES CHECK
-
-**REQUIRED CONDITIONS:**
-1. GitHub CLI authenticated: `gh auth login`
-2. User on feature branch (NOT main)
-   ```bash
-   git checkout -b <branch_name>
-   ```
-
-### PHASE 3: TSP-CLIENT RULES
-
-**CRITICAL RULES:**
-- **LOCAL REPO:** Do NOT grab commit hash
-- **DIRECTORIES:** Let commands auto-create directories
-- **PACKAGE GENERATION:** Find tsp-location.yaml in azure-sdk-for-python repo
-- **URL REFERENCES:** Use commit hash (NOT branch name) for tspconfig.yaml URLs
-
-**Get latest commit hash:**
-```bash
-curl -s "https://api.github.com/repos/Azure/azure-rest-api-specs/commits?path=<path_to_tspconfig.yaml>&per_page=1"
-```
-
+**TSP-CLIENT USAGE RULES:**
+- **INITIAL SETUP:** Use `tsp-client init -c <REMOTE_TSPCONFIG_URL>` from repo root
+- **UPDATES:** Use `tsp-client update` from SDK folder with tsp-location.yaml
+- **URL FORMAT:** Use commit hash in GitHub URL (NOT branch name)
 **DEPENDENCIES:** Verify installation of: node, python, tox
 
 ---
 
-## EXECUTION SEQUENCE - 7 MANDATORY STEPS
+## REFERENCE DOCUMENTATION AND GUIDELINES
 
-**ESTIMATED TOTAL TIME: 10-15 minutes**
-- SDK Generation: 5-6 minutes
-- Static Validation: 3-5 minutes  
-- Documentation & Commit: 2-4 minutes
+### CORE REFERENCES
+- **[Dataplane Codegen Quick Start](https://github.com/Azure/azure-sdk-for-python/wiki/Dataplane-Codegen-Quick-Start)**: Primary workflow guide
+- **[What to do after generating SDK code](https://github.com/Azure/azure-sdk-for-python/wiki/What-to-do-after-generating-the-SDK-code-with-codegen)**: Post-generation enhancements
+- **[Azure SDK Design Guidelines](https://azure.github.io/azure-sdk/python_design.html)**: Official design principles
+- **[Azure SDK Repo Structure](https://github.com/Azure/azure-sdk/blob/main/docs/policies/repostructure.md#sdk-directory-layout)**: Repository organization
+
+### PROJECT STRUCTURE GUIDELINES
+
+**Service and Package Naming:**
+- `service_name`: Matches azure-rest-api-specs folder (e.g., "servicebus")  
+- `namespace`: Python import path (e.g., "azure.servicebus")
+- `package_name`: PyPI name (e.g., "azure-servicebus")
+- `module_name`: Optional for multi-package services (e.g., "azure-synapse-artifacts")
+
+**Folder Structure Pattern:**
+```
+sdk/{service_name}/{package_name}/
+├── azure/{service_name}/{module_name}/     # Generated code
+├── tests/                                  # Test files
+├── samples/                               # Usage examples  
+├── setup.py                              # Package metadata
+├── README.md                             # Service documentation
+├── CHANGELOG.md                          # Version history
+└── _version.py                           # Version info
+```
+
+---
+
+## EXECUTION SEQUENCE - FOLLOWING WIKI GUIDELINES
+
+**ESTIMATED TOTAL TIME: 15-20 minutes**
+- Environment Setup: 2-3 minutes
+- SDK Generation: 5-6 minutes  
+- Static Validation: 5-8 minutes
+- Documentation & Commit: 3-5 minutes
 
 **ALWAYS inform users of time expectations before starting any long-running operations.**
 
 ### STEP 1: ENVIRONMENT VERIFICATION
+
 ```
-ACTION: Run verify_setup mcp tool
+ACTION: Verify all prerequisites are met
+DEPENDENCIES: 
+  - Python 3.9+ installed and active in virtual environment
+  - Node.js 20.x LTS+ installed
+  - GitHub CLI authenticated (gh auth login)
+  - tsp-client CLI tool installed globally
 IF missing dependencies:
-    STOP and install missing dependencies
+    STOP and guide user to install missing dependencies
     THEN proceed to Step 2
 ```
 
-### STEP 2: SDK GENERATION
+### STEP 2: SDK GENERATION WITH TSP-CLIENT
+
 ```
-ACTION: Use azure-sdk-python-mcp sdk generation server tools (init, init_local)
-TIMING: ALWAYS inform user before starting: "This SDK generation step will take approximately 5-6 minutes to complete."
-IF local path provided:
-    USE local mcp tools with tspconfig.yaml path
+ACTION: Generate SDK using tsp-client following wiki guidelines
+TIMING: ALWAYS inform user: "SDK generation will take approximately 5-6 minutes to complete."
+
+FOR INITIAL SETUP:
+  USE: tsp-client init -c <REMOTE_TSPCONFIG_URL>
+  FROM: Repository root directory
+  URL FORMAT: Must include commit hash (not branch name)
+
+FOR UPDATES:  
+  USE: tsp-client update
+  FROM: SDK folder containing tsp-location.yaml
+  VERIFY: tsp-location.yaml exists and points to correct TypeSpec project
+
 IF commands fail:
     ANALYZE error messages
-    DIRECT user to fix TypeSpec errors in source repo
+    CHECK: TypeSpec configuration in tspconfig.yaml
+    DIRECT: User to fix TypeSpec errors in azure-rest-api-specs repo
 ```
 
-### STEP 3: STATIC VALIDATION (SEQUENTIAL)
+### STEP 3: POST-GENERATION VALIDATION AND FIXES
+
 ```
-TIMING: Inform user: "Static validation will take approximately 3-5 minutes for each step."
+TIMING: Inform user: "Post-generation validation will take approximately 5-8 minutes total."
+REFERENCE: Follow "What to do after generating the SDK code with codegen" guidelines
+
+SEQUENTIAL VALIDATION STEPS:
 FOR EACH validation step:
-    RUN validation (tox mcp tool)
+    RUN validation using tox from azure-sdk-for-python/eng/tox/tox.ini
     IF errors/warnings found:
-        FIX issues
-        RERUN same step
+        FIX issues following official guidelines
+        RERUN same step until it passes
     ONLY proceed to next step when current step passes
 ```
 
-**Validation Commands:**
+**Validation Commands (Sequential Order):**
 ```bash
-# Step 3a: Pylint
-tox -e pylint -c [path to tox.ini] --root .
-
-# Step 3b: MyPy  
-tox -e mypy -c [path to tox.ini] --root .
-
-# Step 3c: Pyright
-tox -e pyright -c [path to tox.ini] --root .
-
-# Step 3d: Verifytypes
-tox -e verifytypes -c [path to tox.ini] --root .
-
-# Step 3e: Sphinx
-tox -e sphinx -c [path to tox.ini] --root .
-
-# Step 3f: Mindependency
-tox -e mindependency -c [path to tox.ini] --root .
-
-# Step 3g: Bandit
-tox -e bandit -c [path to tox.ini] --root .
-
-# Step 3h: Black
+# Step 3a: Code Formatting  
 tox -e black -c [path to tox.ini] --root .
 
-# Step 3i: Samples
+# Step 3b: Linting
+tox -e pylint -c [path to tox.ini] --root .
+
+# Step 3c: Type Checking - MyPy
+tox -e mypy -c [path to tox.ini] --root .
+
+# Step 3d: Type Checking - Pyright
+tox -e pyright -c [path to tox.ini] --root .
+
+# Step 3e: Type Verification
+tox -e verifytypes -c [path to tox.ini] --root .
+
+# Step 3f: Documentation Build
+tox -e sphinx -c [path to tox.ini] --root .
+
+# Step 3g: Minimum Dependencies
+tox -e mindependency -c [path to tox.ini] --root .
+
+# Step 3h: Security Scanning
+tox -e bandit -c [path to tox.ini] --root .
+
+# Step 3i: Sample Validation
 tox -e samples -c [path to tox.ini] --root .
 
-# Step 3j: Breaking
+# Step 3j: Breaking Changes Check
 tox -e breaking -c [path to tox.ini] --root .
 ```
 
-**REQUIREMENTS:**
+**POST-VALIDATION REQUIREMENTS:**
 - Provide summary after each validation step
 - Edit ONLY files with validation errors/warnings
-- Fix each issue before proceeding
+- Reference official Azure SDK guidelines for fixes
+- Do NOT create new files or add unnecessary dependencies
+- Ensure all release-blocking checks pass: MyPy, Pylint, Sphinx, Tests-CI
 
-### STEP 4: DOCUMENTATION UPDATE
+### STEP 4: PACKAGE ENHANCEMENT AND DOCUMENTATION
+
 ```
+REFERENCE: "What to do after generating the SDK code with codegen" wiki guidelines
 REQUIRED ACTIONS:
-1. CREATE/UPDATE CHANGELOG.md with changes
-2. VERIFY package version matches API spec version
-3. IF version incorrect: UPDATE _version.py AND CHANGELOG
-4. SET CHANGELOG entry date to TODAY
+1. REVIEW and enhance generated code for better user experience
+2. UPDATE README.md with service-specific information
+3. CREATE/UPDATE CHANGELOG.md with version and changes
+4. VERIFY package version matches API spec version in _version.py
+5. VALIDATE setup.py and other package metadata
+6. ENSURE samples are functional and follow Azure SDK patterns
+7. SET CHANGELOG entry date to TODAY's date
+
+POST-GENERATION ENHANCEMENTS:
+- Add service-specific documentation
+- Enhance code examples in docstrings  
+- Verify authentication patterns follow Azure SDK guidelines
+- Ensure error handling follows SDK conventions
 ```
 
-### STEP 5: COMMIT AND PUSH
+### STEP 5: FINAL VALIDATION AND TESTING
+
 ```
-ACTION: Show changed files (ignore .github, .vscode)
+ACTION: Run comprehensive validation before commit
+TESTS TO RUN:
+1. Import validation: Verify package imports correctly
+2. Basic functionality tests: Run generated tests
+3. Sample execution: Verify samples work as expected
+4. Documentation build: Ensure docs generate without errors
+
+COMMAND EXAMPLES:
+python -c "import azure.{service_name}"
+pytest tests/ --basic-validation
+python samples/basic_sample.py --dry-run
+```
+
+### STEP 6: COMMIT AND PUSH CHANGES
+
+```
+ACTION: Prepare for commit following SDK repo conventions
+COMMIT PROCESS:
+1. SHOW changed files (ignore .github, .vscode, .tox, __pycache__)
+2. VERIFY all generated files are included
+3. REVIEW commit message follows conventional format
+4. CONFIRM user approval before committing
+
 IF user confirms:
     git add <changed_files>
-    git commit -m "<commit_message>"
+    git commit -m "<service_name>: <action> <description>"
     git push -u origin <branch_name>
 IF authentication fails:
     PROMPT: gh auth login
@@ -169,25 +283,29 @@ IF user rejects:
     GUIDE to fix issues and revalidate
 ```
 
-### STEP 6: PULL REQUEST MANAGEMENT
+### STEP 7: PULL REQUEST CREATION AND HANDOFF
+
 ```
+PR MANAGEMENT:
 CHECK: Does PR exist for current branch?
 IF PR exists:
-    SHOW PR details
+    UPDATE PR with latest changes
+    SHOW PR details and status
 IF NO PR exists:
     VERIFY branch != "main"
-    PUSH changes to remote
-    GENERATE PR title and description
-    CREATE PR in DRAFT mode
+    GENERATE descriptive PR title: "[{service_name}] Initial SDK generation"
+    CREATE comprehensive PR description including:
+      - Service overview
+      - Generated features
+      - Validation status
+      - Breaking changes (if any)
+    CREATE PR in DRAFT mode for review
     RETURN PR link
-ALWAYS: Display PR summary with status, checks, action items
-```
 
-### STEP 7: HANDOFF
-```
-FINAL ACTIONS:
-1. RETURN PR URL for review
-2. PROMPT user with exact text:
+FINAL HANDOFF:
+1. PROVIDE PR URL for review
+2. REFERENCE post-generation wiki: "What to do after generating the SDK code with codegen"
+3. PROMPT user with exact text:
    "Use the azure-rest-api-specs agent to handle the rest of the process and provide it the pull request."
 ```
 
