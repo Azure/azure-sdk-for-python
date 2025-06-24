@@ -641,17 +641,13 @@ def reformat_agent_response(response, logger=None, include_tool_messages=False):
 
 
 def reformat_tool_definitions(tool_definitions, logger=None):
-    output_lines = ["TOOL_DEFINITIONS:"]
+    output_lines = ["TOOL DEFINITIONS:"]
     for tool in tool_definitions:
-        output_lines.append(f"Tool: {tool['name']}")
-        output_lines.append(f"Description: {tool['description']}")
-        output_lines.append("Parameters:")
-        properties = tool.get("parameters", {}).get("properties", {})
-        for param_name, param_info in properties.items():
-            param_type = param_info.get("type", "unknown")
-            param_desc = param_info.get("description", "")
-            output_lines.append(f"  - {param_name} ({param_type}): {param_desc}")
-        output_lines.append("")  # blank line between tools
+        name = tool.get("name", "unnamed_tool")
+        desc = tool.get("description", "").strip()
+        params = tool.get("parameters", {}).get("properties", {})
+        param_names = ", ".join(params.keys()) if params else "no parameters"
+        output_lines.append(f"- {name}: {desc} (inputs: {param_names})")
     return "\n".join(output_lines)
 
 
