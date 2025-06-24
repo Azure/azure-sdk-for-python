@@ -20,11 +20,11 @@ USAGE:
     Set this environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
                           page of your Azure AI Foundry portal.
-    2) MODEL_DEPLOYMENT_NAME - The deployment name of the TBD AI model, as found under the "Name" column in
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the arbitration AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
     3) DEEP_RESEARCH_MODEL_DEPLOYMENT_NAME - The deployment name of the Deep Research AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
-    4) TBD: BING_CUSTOM_CONNECTION_ID - The ID of the Bing Custom Search connection, in the format of:
+    4) AZURE_BING_CONNECTION_ID - The ID of the Bing connection, in the format of:
        /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace-name}/connections/{connection-name}
 """
 
@@ -49,45 +49,47 @@ deep_research_tool = DeepResearchTool(
 
 # Create Agent with the Deep Research tool and process Agent run
 with project_client:
-    agents_client = project_client.agents
 
-    agent = agents_client.create_agent(
-        model=os.environ["MODEL_DEPLOYMENT_NAME"],
-        name="my-agent",
-        instructions="You are a helpful agent",
-        tools=deep_research_tool.definitions,
-    )
-    # [END create_agent_with_deep_research_tool]]
-    print(f"Created agent, ID: {agent.id}")
+    with project_client.agents as agents_client:
 
-    # Create thread for communication
-    thread = agents_client.threads.create()
-    print(f"Created thread, ID: {thread.id}")
+        agent = agents_client.create_agent(
+            model=os.environ["MODEL_DEPLOYMENT_NAME"],
+            name="my-agent",
+            instructions="You are a helpful agent",
+            tools=deep_research_tool.definitions,
+        )
 
-    # Create message to thread
-    message = agents_client.messages.create(
-        thread_id=thread.id,
-        role="user",
-        content="TBD",
-    )
-    print(f"Created message, ID: {message.id}")
+        # [END create_agent_with_deep_research_tool]
+        print(f"Created agent, ID: {agent.id}")
 
-    # Create and process Agent run in thread with tools
-    run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
-    print(f"Run finished with status: {run.status}")
+        # Create thread for communication
+        thread = agents_client.threads.create()
+        print(f"Created thread, ID: {thread.id}")
 
-    if run.status == "failed":
-        print(f"Run failed: {run.last_error}")
+        # Create message to thread
+        message = agents_client.messages.create(
+            thread_id=thread.id,
+            role="user",
+            content="TBD",
+        )
+        print(f"Created message, ID: {message.id}")
 
-    # Delete the Agent when done
-    agents_client.delete_agent(agent.id)
-    print("Deleted agent")
+        # Create and process Agent run in thread with tools
+        run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
+        print(f"Run finished with status: {run.status}")
 
-    # Fetch and log all messages
-    messages = agents_client.messages.list(thread_id=thread.id)
-    for msg in messages:
-        if msg.text_messages:
-            for text_message in msg.text_messages:
-                print(f"Agent response: {text_message.text.value}")
-            for annotation in msg.url_citation_annotations:
-                print(f"URL Citation: [{annotation.url_citation.title}]({annotation.url_citation.url})")
+        if run.status == "failed":
+            print(f"Run failed: {run.last_error}")
+
+        # Delete the Agent when done
+        agents_client.delete_agent(agent.id)
+        print("Deleted agent")
+
+        # Fetch and log all messages
+        messages = agents_client.messages.list(thread_id=thread.id)
+        for msg in messages:
+            if msg.text_messages:
+                for text_message in msg.text_messages:
+                    print(f"Agent response: {text_message.text.value}")
+                for annotation in msg.url_citation_annotations:
+                    print(f"URL Citation: [{annotation.url_citation.title}]({annotation.url_citation.url})")
