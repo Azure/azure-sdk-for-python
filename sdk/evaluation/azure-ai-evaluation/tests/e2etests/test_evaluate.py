@@ -5,6 +5,9 @@ import pathlib
 import pandas as pd
 import pytest
 import requests
+from typing import Dict
+from unittest.mock import Mock, patch
+
 from ci_tools.variables import in_ci
 
 from azure.ai.evaluation import (
@@ -15,7 +18,8 @@ from azure.ai.evaluation import (
 from azure.ai.evaluation._common.math import list_mean_nan_safe
 from azure.ai.evaluation._azure._clients import LiteMLClient
 from azure.ai.evaluation._constants import TokenScope
-
+from azure.ai.evaluation._user_agent import UserAgentSingleton
+from azure.ai.evaluation._version import VERSION
 
 @pytest.fixture
 def csv_file():
@@ -500,3 +504,44 @@ class TestEvaluate:
             == 1
         )
         assert jsonl_result["studio_url"] == csv_result["studio_url"] == None
+
+
+class TestUserAgent:
+    """Test suite to validate that the User-Agent header is overridable."""
+
+    @staticmethod
+    def _transparent_mock_method(cls_to_mock, attribute_name: str) -> Mock:
+        """Return a mock that still behaves like the original.
+
+        :param cls_to_mock: The class
+        :param attribute_name: The class' attribute to mock
+        :return: A mock for the attribute
+        :rtype: Mock
+        """
+        # https://stackoverflow.com/a/70886946
+        return patch.object(
+            cls_to_mock, attribute_name, side_effect=getattr(cls_to_mock, attribute_name), autospec=True
+        )
+
+    def test_evaluate_user_agent(self, model_config: Dict[str, str], data_file: str) -> None:
+        """Validate that user agent can be overriden with evaluate param."""
+        base_user_agent = f"azure-ai-evaluation/{VERSION}"
+        added_useragent = "test/1.0.0"
+
+        expected_user_agent = f"{base_user_agent} {added_useragent}"
+
+        from httpx import AsyncClient, Request
+
+        with self._transparent_mock_method(AsyncClient, "send") as mock:
+            evaluate(
+                data=data_file, evaluators={"fluency": FluencyEvaluator(model_config)}, _user_agent=added_useragent
+            )
+
+            mock.assert_called()
+
+            for call_args in mock.call_args_list:
+                _, request, *_ = call_args.args
+                request: Request
+
+                # Not checking for strict equality because some evaluators add to the user agent
+                assert expected_user_agent in request.headers["User-Agent"]

@@ -2,10 +2,12 @@ import math
 import base64
 import os
 import pathlib
+from unittest.mock import patch, Mock
 
 import pytest
 from devtools_testutils import is_live
 
+from typing import Dict
 from azure.ai.inference.models import (
     UserMessage,
     SystemMessage,
@@ -14,8 +16,10 @@ from azure.ai.inference.models import (
     ImageContentItem,
     ImageUrl,
 )
+from azure.ai.evaluation._version import VERSION
 from azure.ai.evaluation._common.constants import HarmSeverityLevel
 from azure.ai.evaluation._model_configurations import Conversation
+from azure.ai.evaluation._http_utils import AsyncHttpPipeline
 from azure.ai.evaluation import (
     BleuScoreEvaluator,
     CoherenceEvaluator,
@@ -43,6 +47,7 @@ from azure.ai.evaluation import (
 )
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
 
+from azure.ai.evaluation._user_agent import UserAgentSingleton
 
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
 @pytest.mark.localtest
@@ -1249,3 +1254,94 @@ class TestBuiltInEvaluators:
         assert score["fictional_characters_reason"], "fictional_characters_reason must not be None or empty."
         assert score["logos_and_brands_label"] in [True, False]
         assert score["fictional_characters_reason"], "fictional_characters_reason must not be None or empty."
+
+
+class TestUserAgent:
+    """Test suite to validate that the User-Agent header is overridable."""
+
+    @staticmethod
+    def _transparent_mock_method(cls_to_mock, attribute_name: str) -> Mock:
+        """Return a mock that still behaves like the original.
+
+        :param cls_to_mock: The class
+        :param attribute_name: The class' attribute to mock
+        :return: A mock for the attribute
+        :rtype: Mock
+        """
+        # https://stackoverflow.com/a/70886946
+        return patch.object(
+            cls_to_mock, attribute_name, side_effect=getattr(cls_to_mock, attribute_name), autospec=True
+        )
+
+    @pytest.mark.parametrize(
+        "evaluator_cls",
+        [
+            ECIEvaluator,
+            SexualEvaluator,
+            ViolenceEvaluator,
+            HateUnfairnessEvaluator,
+            UngroundedAttributesEvaluator,
+            IndirectAttackEvaluator,
+            CodeVulnerabilityEvaluator,
+            GroundednessProEvaluator,
+            ProtectedMaterialEvaluator,
+            SelfHarmEvaluator,
+        ],
+    )
+    def test_rai_service_evaluator(
+        self, evaluator_cls, project_scope: Dict[str, str], azure_cred, simple_conversation
+    ) -> None:
+        """Validate that user agent can be overriden for rai service based evaluators."""
+        base_user_agent = f"azure-ai-evaluation/{VERSION}"
+        added_useragent = "test/1.0.0"
+
+        expected_user_agent = f"{base_user_agent} {added_useragent}"
+
+        with self._transparent_mock_method(
+            AsyncHttpPipeline, "request"
+        ) as mock:  # rai service requests are sent with AsyncHttpPipeline
+            evaluator = evaluator_cls(credential=azure_cred, azure_ai_project=project_scope)
+
+            with UserAgentSingleton.add_useragent_product(added_useragent):
+                evaluator(conversation=simple_conversation)
+
+                mock.assert_called()
+
+                for call_args in mock.call_args_list:
+                    # Not checking for strict equality because some evaluators add to the user agent
+                    assert expected_user_agent in call_args.kwargs["headers"]["User-Agent"]
+
+    @pytest.mark.parametrize(
+        "evaluator_cls",
+        [
+            RelevanceEvaluator,
+            GroundednessEvaluator,
+            FluencyEvaluator,
+            SimilarityEvaluator,
+            CoherenceEvaluator,
+            RetrievalEvaluator,
+        ],
+    )
+    def test_prompty_evaluator(self, evaluator_cls, model_config: Dict[str, str], simple_conversation) -> None:
+        """Validate that user agent can be overriden for prompty based evaluators."""
+        base_user_agent = f"azure-ai-evaluation/{VERSION}"
+        added_useragent = "test/1.0.0"
+
+        expected_user_agent = f"{base_user_agent} {added_useragent}"
+
+        from httpx import AsyncClient, Request
+
+        with self._transparent_mock_method(AsyncClient, "send") as mock:  # OpenAI requests sent with httpx
+            evaluator = evaluator_cls(model_config)
+
+            with UserAgentSingleton.add_useragent_product(added_useragent):
+                evaluator(conversation=simple_conversation)
+
+                mock.assert_called()
+
+                for call_args in mock.call_args_list:
+                    _, request, *_ = call_args.args
+                    request: Request
+
+                    # Not checking for strict equality because some evaluators add to the user agent
+                    assert expected_user_agent in request.headers["User-Agent"]
