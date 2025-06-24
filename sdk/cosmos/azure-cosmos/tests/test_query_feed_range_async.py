@@ -45,7 +45,7 @@ async def get_container(container_id: str):
     db = client.get_database_client(DATABASE_ID)
     return db.get_container_client(container_id)
 
-@pytest.mark.cosmosMultiRegion
+@pytest.mark.cosmosQuery
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup_and_teardown_async")
 class TestQueryFeedRangeAsync:
