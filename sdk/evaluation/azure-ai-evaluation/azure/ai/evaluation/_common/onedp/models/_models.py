@@ -11,15 +11,278 @@
 import datetime
 from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .. import _model_base
-from .._model_base import rest_discriminator, rest_field
+from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import CredentialType, DatasetType, DeploymentType, IndexType, PendingUploadType
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AnnotationDTO(_model_base.Model):
+class AgentEvaluation(_Model):
+    """Evaluation response for agent evaluation run.
+
+    :ivar id: Identifier of the agent evaluation run. Required.
+    :vartype id: str
+    :ivar status: Status of the agent evaluation. Options: Running, Completed, Failed. Required.
+    :vartype status: str
+    :ivar error: The reason of the request failure for the long running process, if applicable.
+    :vartype error: str
+    :ivar result: The agent evaluation result.
+    :vartype result: list[~azure.ai.projects.onedp.models.AgentEvaluationResult]
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Identifier of the agent evaluation run. Required."""
+    status: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Status of the agent evaluation. Options: Running, Completed, Failed. Required."""
+    error: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The reason of the request failure for the long running process, if applicable."""
+    result: Optional[List["_models.AgentEvaluationResult"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The agent evaluation result."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        status: str,
+        error: Optional[str] = None,
+        result: Optional[List["_models.AgentEvaluationResult"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentEvaluationRedactionConfiguration(_Model):
+    """The redaction configuration will allow the user to control what is redacted.
+
+    :ivar redact_score_properties: Redact score properties. If not specified, the default is to
+     redact in production.
+    :vartype redact_score_properties: bool
+    """
+
+    redact_score_properties: Optional[bool] = rest_field(
+        name="redactScoreProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Redact score properties. If not specified, the default is to redact in production."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        redact_score_properties: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentEvaluationRequest(_Model):
+    """Evaluation request for agent run.
+
+    :ivar run_id: Identifier of the agent run. Required.
+    :vartype run_id: str
+    :ivar thread_id: Identifier of the agent thread. This field is mandatory currently, but it will
+     be optional in the future.
+    :vartype thread_id: str
+    :ivar evaluators: Evaluators to be used for the evaluation. Required.
+    :vartype evaluators: dict[str, ~azure.ai.projects.onedp.models.EvaluatorConfiguration]
+    :ivar sampling_configuration: Sampling configuration for the evaluation.
+    :vartype sampling_configuration:
+     ~azure.ai.projects.onedp.models.AgentEvaluationSamplingConfiguration
+    :ivar redaction_configuration: Redaction configuration for the evaluation.
+    :vartype redaction_configuration:
+     ~azure.ai.projects.onedp.models.AgentEvaluationRedactionConfiguration
+    :ivar app_insights_connection_string: Pass the AppInsights connection string to the agent
+     evaluation for the evaluation results and the errors logs. Required.
+    :vartype app_insights_connection_string: str
+    """
+
+    run_id: str = rest_field(name="runId", visibility=["read", "create", "update", "delete", "query"])
+    """Identifier of the agent run. Required."""
+    thread_id: Optional[str] = rest_field(name="threadId", visibility=["read", "create", "update", "delete", "query"])
+    """Identifier of the agent thread. This field is mandatory currently, but it will be optional in
+     the future."""
+    evaluators: Dict[str, "_models.EvaluatorConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Evaluators to be used for the evaluation. Required."""
+    sampling_configuration: Optional["_models.AgentEvaluationSamplingConfiguration"] = rest_field(
+        name="samplingConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Sampling configuration for the evaluation."""
+    redaction_configuration: Optional["_models.AgentEvaluationRedactionConfiguration"] = rest_field(
+        name="redactionConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Redaction configuration for the evaluation."""
+    app_insights_connection_string: str = rest_field(
+        name="appInsightsConnectionString", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Pass the AppInsights connection string to the agent evaluation for the evaluation results and
+     the errors logs. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        run_id: str,
+        evaluators: Dict[str, "_models.EvaluatorConfiguration"],
+        app_insights_connection_string: str,
+        thread_id: Optional[str] = None,
+        sampling_configuration: Optional["_models.AgentEvaluationSamplingConfiguration"] = None,
+        redaction_configuration: Optional["_models.AgentEvaluationRedactionConfiguration"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentEvaluationResult(_Model):
+    """Result for the agent evaluation evaluator run.
+
+    :ivar evaluator: Evaluator's name. This is the name of the evaluator that was used to evaluate
+     the agent's completion. Required.
+    :vartype evaluator: str
+    :ivar evaluator_id: Identifier of the evaluator. Required.
+    :vartype evaluator_id: str
+    :ivar score: Score of the given evaluator. No restriction on range. Required.
+    :vartype score: float
+    :ivar status: Status of the evaluator result. Options: Running, Completed, Failed,
+     NotApplicable. Required.
+    :vartype status: str
+    :ivar reason: Reasoning for the evaluation result.
+    :vartype reason: str
+    :ivar version: Version of the evaluator that was used to evaluate the agent's completion.
+    :vartype version: str
+    :ivar thread_id: The unique identifier of the thread.
+    :vartype thread_id: str
+    :ivar run_id: The unique identifier of the run. Required.
+    :vartype run_id: str
+    :ivar error: A string explaining why there was an error, if applicable.
+    :vartype error: str
+    :ivar additional_details: Additional properties relevant to the evaluator. These will differ
+     between evaluators.
+    :vartype additional_details: dict[str, str]
+    """
+
+    evaluator: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Evaluator's name. This is the name of the evaluator that was used to evaluate the agent's
+     completion. Required."""
+    evaluator_id: str = rest_field(name="evaluatorId", visibility=["read", "create", "update", "delete", "query"])
+    """Identifier of the evaluator. Required."""
+    score: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Score of the given evaluator. No restriction on range. Required."""
+    status: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Status of the evaluator result. Options: Running, Completed, Failed, NotApplicable. Required."""
+    reason: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Reasoning for the evaluation result."""
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Version of the evaluator that was used to evaluate the agent's completion."""
+    thread_id: Optional[str] = rest_field(name="threadId", visibility=["read", "create", "update", "delete", "query"])
+    """The unique identifier of the thread."""
+    run_id: str = rest_field(name="runId", visibility=["read", "create", "update", "delete", "query"])
+    """The unique identifier of the run. Required."""
+    error: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A string explaining why there was an error, if applicable."""
+    additional_details: Optional[Dict[str, str]] = rest_field(
+        name="additionalDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional properties relevant to the evaluator. These will differ between evaluators."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        evaluator: str,
+        evaluator_id: str,
+        score: float,
+        status: str,
+        run_id: str,
+        reason: Optional[str] = None,
+        version: Optional[str] = None,
+        thread_id: Optional[str] = None,
+        error: Optional[str] = None,
+        additional_details: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentEvaluationSamplingConfiguration(_Model):
+    """Definition for sampling strategy.
+
+    :ivar name: Name of the sampling strategy. Required.
+    :vartype name: str
+    :ivar sampling_percent: Percentage of sampling per hour (0-100). Required.
+    :vartype sampling_percent: float
+    :ivar max_request_rate: Maximum request rate per hour (0 to 1000). Required.
+    :vartype max_request_rate: float
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the sampling strategy. Required."""
+    sampling_percent: float = rest_field(
+        name="samplingPercent", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Percentage of sampling per hour (0-100). Required."""
+    max_request_rate: float = rest_field(
+        name="maxRequestRate", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum request rate per hour (0 to 1000). Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        sampling_percent: float,
+        max_request_rate: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AnnotationDTO(_Model):
     """Represents the data transfer object for an annotation.
 
     :ivar annotation_task: The task associated with the annotation. Required.
@@ -103,7 +366,7 @@ class AnnotationDTO(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TargetModelConfig(_model_base.Model):
+class TargetModelConfig(_Model):
     """Abstract class for model configuration.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -113,7 +376,7 @@ class TargetModelConfig(_model_base.Model):
     :vartype type: str
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: Dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Type of the model configuration. Required. Default value is None."""
 
@@ -180,7 +443,7 @@ class AOAIModelConfig(TargetModelConfig, discriminator="AOAI"):
         super().__init__(*args, type="AOAI", **kwargs)
 
 
-class BaseCredentials(_model_base.Model):
+class BaseCredentials(_Model):
     """A base class for connection credentials.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -192,7 +455,7 @@ class BaseCredentials(_model_base.Model):
     :vartype auth_type: str or ~azure.ai.projects.onedp.models.CredentialType
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: Dict[str, _Model] = {}
     auth_type: str = rest_discriminator(name="authType", visibility=["read"])
     """The type of credential used by the connection. Required. Known values are: \"ApiKey\", \"AAD\",
      \"SAS\", \"CustomKeys\", and \"None\"."""
@@ -245,7 +508,7 @@ class ApiKeyCredentials(BaseCredentials, discriminator="ApiKey"):
         super().__init__(*args, auth_type=CredentialType.API_KEY, **kwargs)
 
 
-class AssetCredentialRequest(_model_base.Model):
+class AssetCredentialRequest(_Model):
     """Asset Credential Request.
 
     :ivar blob_uri: Blob URI. Required.
@@ -273,7 +536,7 @@ class AssetCredentialRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AssetCredentialResponse(_model_base.Model):
+class AssetCredentialResponse(_Model):
     """Represents a reference to a blob for consumption.
 
     :ivar blob_reference_for_consumption: Credential info to access the storage account. Required.
@@ -304,7 +567,7 @@ class AssetCredentialResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AttackObjective(_model_base.Model):
+class AttackObjective(_Model):
     """Attack Objective.
 
     :ivar id: The unique identifier. Required.
@@ -356,7 +619,7 @@ class AttackObjective(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Index(_model_base.Model):
+class Index(_Model):
     """Index resource Definition.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -379,7 +642,7 @@ class Index(_model_base.Model):
     :vartype tags: dict[str, str]
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: Dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Type of index. Required. Known values are: \"AzureSearch\", \"CosmosDBNoSqlVectorStore\", and
      \"ManagedAzureSearch\"."""
@@ -391,9 +654,9 @@ class Index(_model_base.Model):
     """The name of the resource. Required."""
     version: str = rest_field(visibility=["read"])
     """The version of the resource. Required."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    description: Optional[str] = rest_field(visibility=["create", "update"])
     """The asset description text."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["create", "update"])
     """Tag dictionary. Tags can be added, removed, and updated."""
 
     @overload
@@ -442,9 +705,9 @@ class AzureAISearchIndex(Index, discriminator="AzureSearch"):
 
     type: Literal[IndexType.AZURE_SEARCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Type of index. Required. Azure search"""
-    connection_name: str = rest_field(name="connectionName", visibility=["read", "create", "update", "delete", "query"])
+    connection_name: str = rest_field(name="connectionName", visibility=["create"])
     """Name of connection to Azure AI Search. Required."""
-    index_name: str = rest_field(name="indexName", visibility=["read", "create", "update", "delete", "query"])
+    index_name: str = rest_field(name="indexName", visibility=["create"])
     """Name of index in Azure AI Search resource to attach. Required."""
 
     @overload
@@ -469,7 +732,7 @@ class AzureAISearchIndex(Index, discriminator="AzureSearch"):
         super().__init__(*args, type=IndexType.AZURE_SEARCH, **kwargs)
 
 
-class BlobReferenceForConsumption(_model_base.Model):
+class BlobReferenceForConsumption(_Model):
     """Represents a reference to a blob for consumption.
 
     :ivar blob_uri: Blob URI path for client to upload data. Example:
@@ -512,7 +775,189 @@ class BlobReferenceForConsumption(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Connection(_model_base.Model):
+class ChatChoice(_Model):
+    """The representation of a single prompt completion as part of an overall chat completions
+    request.
+    Generally, ``n`` choices are generated per provided prompt with a default value of 1.
+    Token limits and other settings may limit the number of choices generated.
+
+    :ivar index: The ordered index associated with this chat completions choice. Required.
+    :vartype index: int
+    :ivar finish_reason: The reason that this chat completions choice completed its generated.
+     Required. Known values are: "stop", "length", "content_filter", and "tool_calls".
+    :vartype finish_reason: str or ~azure.ai.projects.onedp.models.CompletionsFinishReason
+    :ivar message: The chat message for a given chat completions prompt. Required.
+    :vartype message: ~azure.ai.projects.onedp.models.ChatResponseMessage
+    """
+
+    index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ordered index associated with this chat completions choice. Required."""
+    finish_reason: Union[str, "_models.CompletionsFinishReason"] = rest_field(visibility=["read"])
+    """The reason that this chat completions choice completed its generated. Required. Known values
+     are: \"stop\", \"length\", \"content_filter\", and \"tool_calls\"."""
+    message: "_models.ChatResponseMessage" = rest_field(visibility=["read"])
+    """The chat message for a given chat completions prompt. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChatCompletions(_Model):
+    """Representation of the response data from a chat completions request.
+    Completions support a wide variety of tasks and generate text that continues from or
+    "completes"
+    provided prompt data.
+
+    :ivar id: A unique identifier associated with this chat completions response. Required.
+    :vartype id: str
+    :ivar object: The response object type. Required.
+    :vartype object: str
+    :ivar created: The first timestamp associated with generation activity for this completions
+     response,
+     represented as seconds since the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required.
+    :vartype created: ~datetime.datetime
+    :ivar model: The model used for the chat completion. Required.
+    :vartype model: str
+    :ivar choices: The collection of completions choices associated with this completions response.
+     Generally, ``n`` choices are generated per provided prompt with a default value of 1.
+     Token limits and other settings may limit the number of choices generated. Required.
+    :vartype choices: list[~azure.ai.projects.onedp.models.ChatChoice]
+    :ivar usage:   Usage information for tokens processed and generated as part of this completions
+     operation. Required.
+    :vartype usage: ~azure.ai.projects.onedp.models.CompletionsUsage
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A unique identifier associated with this chat completions response. Required."""
+    object: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The response object type. Required."""
+    created: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
+    """The first timestamp associated with generation activity for this completions response,
+     represented as seconds since the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required."""
+    model: str = rest_field(visibility=["read"])
+    """The model used for the chat completion. Required."""
+    choices: List["_models.ChatChoice"] = rest_field(visibility=["read"])
+    """The collection of completions choices associated with this completions response.
+     Generally, ``n`` choices are generated per provided prompt with a default value of 1.
+     Token limits and other settings may limit the number of choices generated. Required."""
+    usage: "_models.CompletionsUsage" = rest_field(visibility=["read"])
+    """  Usage information for tokens processed and generated as part of this completions operation.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        object: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChatResponseMessage(_Model):
+    """A representation of a chat message as received in a response.
+
+    :ivar role: The chat role associated with the message. Required. Known values are: "system",
+     "developer", "user", "assistant", and "tool".
+    :vartype role: str or ~azure.ai.projects.onedp.models.ChatRole
+    :ivar content: The content of the message. Required.
+    :vartype content: str
+    :ivar reasoning_content: The reasoning content the model used for generating the response.
+    :vartype reasoning_content: str
+    """
+
+    role: Union[str, "_models.ChatRole"] = rest_field(visibility=["read"])
+    """The chat role associated with the message. Required. Known values are: \"system\",
+     \"developer\", \"user\", \"assistant\", and \"tool\"."""
+    content: str = rest_field(visibility=["read"])
+    """The content of the message. Required."""
+    reasoning_content: Optional[str] = rest_field(visibility=["read"])
+    """The reasoning content the model used for generating the response."""
+
+
+class ClientRequestIdHeader(_Model):
+    """Provides the 'x-ms-client-request-id' header to enable request correlation in requests and
+    responses.
+
+    """
+
+
+class CompletionsUsage(_Model):
+    """Representation of the token counts processed for a completions request.
+    Counts consider all tokens across prompts, choices, choice alternates, best_of generations, and
+    other consumers.
+
+    :ivar completion_tokens: The number of tokens generated across all completions emissions.
+     Required.
+    :vartype completion_tokens: int
+    :ivar prompt_tokens: The number of tokens in the provided prompts for the completions request.
+     Required.
+    :vartype prompt_tokens: int
+    :ivar total_tokens: The total number of tokens processed for the completions request and
+     response. Required.
+    :vartype total_tokens: int
+    :ivar completion_tokens_details: Breakdown of tokens used in a completion.
+    :vartype completion_tokens_details: ~azure.ai.projects.onedp.models.CompletionsUsageDetails
+    :ivar prompt_tokens_details: Breakdown of tokens used in the prompt/chat history.
+    :vartype prompt_tokens_details: ~azure.ai.projects.onedp.models.PromptUsageDetails
+    """
+
+    completion_tokens: int = rest_field(visibility=["read"])
+    """The number of tokens generated across all completions emissions. Required."""
+    prompt_tokens: int = rest_field(visibility=["read"])
+    """The number of tokens in the provided prompts for the completions request. Required."""
+    total_tokens: int = rest_field(visibility=["read"])
+    """The total number of tokens processed for the completions request and response. Required."""
+    completion_tokens_details: Optional["_models.CompletionsUsageDetails"] = rest_field(visibility=["read"])
+    """Breakdown of tokens used in a completion."""
+    prompt_tokens_details: Optional["_models.PromptUsageDetails"] = rest_field(visibility=["read"])
+    """Breakdown of tokens used in the prompt/chat history."""
+
+
+class CompletionsUsageDetails(_Model):
+    """A breakdown of tokens used in a completion.
+
+    :ivar audio_tokens: The number of tokens corresponding to audio input. Required.
+    :vartype audio_tokens: int
+    :ivar reasoning_tokens: The number of tokens corresponding to reasoning. Required.
+    :vartype reasoning_tokens: int
+    :ivar total_tokens: The total number of tokens processed for the completions request and
+     response. Required.
+    :vartype total_tokens: int
+    """
+
+    audio_tokens: int = rest_field(visibility=["read"])
+    """The number of tokens corresponding to audio input. Required."""
+    reasoning_tokens: int = rest_field(visibility=["read"])
+    """The number of tokens corresponding to reasoning. Required."""
+    total_tokens: int = rest_field(visibility=["read"])
+    """The total number of tokens processed for the completions request and response. Required."""
+
+
+class Connection(_Model):
     """Response from the list and get connections operations.
 
     :ivar auth_type: Discriminator property for Connection. Required.
@@ -567,7 +1012,7 @@ class Connection(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Content(_model_base.Model):
+class Content(_Model):
     """Message content.
 
     :ivar messages: The type of content. Required.
@@ -624,14 +1069,14 @@ class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
 
     type: Literal[IndexType.COSMOS_DB] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Type of index. Required. CosmosDB"""
-    connection_name: str = rest_field(name="connectionName", visibility=["read", "create", "update", "delete", "query"])
+    connection_name: str = rest_field(name="connectionName", visibility=["create"])
     """Name of connection to CosmosDB. Required."""
-    database_name: str = rest_field(name="databaseName", visibility=["read", "create", "update", "delete", "query"])
+    database_name: str = rest_field(name="databaseName", visibility=["create"])
     """Name of the CosmosDB Database. Required."""
-    container_name: str = rest_field(name="containerName", visibility=["read", "create", "update", "delete", "query"])
+    container_name: str = rest_field(name="containerName", visibility=["create"])
     """Name of CosmosDB Container. Required."""
     embedding_configuration: "_models.EmbeddingConfiguration" = rest_field(
-        name="embeddingConfiguration", visibility=["read", "create", "update", "delete", "query"]
+        name="embeddingConfiguration", visibility=["create"]
     )
     """Embedding model configuration. Required."""
 
@@ -685,7 +1130,7 @@ class CustomCredential(BaseCredentials, discriminator="CustomKeys"):
         super().__init__(*args, auth_type=CredentialType.CUSTOM, **kwargs)
 
 
-class CustomizationParameters(_model_base.Model):
+class CustomizationParameters(_Model):
     """Customization Parameters.
 
     :ivar application_scenario: Application scenario.
@@ -722,7 +1167,7 @@ class CustomizationParameters(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DatasetVersion(_model_base.Model):
+class DatasetVersion(_Model):
     """DatasetVersion Definition.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -751,7 +1196,7 @@ class DatasetVersion(_model_base.Model):
     :vartype tags: dict[str, str]
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: Dict[str, _Model] = {}
     dataset_uri: str = rest_field(name="datasetUri", visibility=["read", "create"])
     """[Required] Uri of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
      <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required."""
@@ -768,9 +1213,9 @@ class DatasetVersion(_model_base.Model):
     """The name of the resource. Required."""
     version: str = rest_field(visibility=["read"])
     """The version of the resource. Required."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    description: Optional[str] = rest_field(visibility=["create", "update"])
     """The asset description text."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["create", "update"])
     """Tag dictionary. Tags can be added, removed, and updated."""
 
     @overload
@@ -795,7 +1240,7 @@ class DatasetVersion(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Deployment(_model_base.Model):
+class Deployment(_Model):
     """Model Deployment Definition.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -807,7 +1252,7 @@ class Deployment(_model_base.Model):
     :vartype name: str
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: Dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The type of the deployment. Required. \"ModelDeployment\""""
     name: str = rest_field(visibility=["read"])
@@ -831,7 +1276,7 @@ class Deployment(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class EmbeddingConfiguration(_model_base.Model):
+class EmbeddingConfiguration(_Model):
     """Embedding configuration class.
 
     :ivar model_deployment_name: Deployment name of embedding model. It can point to a model
@@ -841,12 +1286,10 @@ class EmbeddingConfiguration(_model_base.Model):
     :vartype embedding_field: str
     """
 
-    model_deployment_name: str = rest_field(
-        name="modelDeploymentName", visibility=["read", "create", "update", "delete", "query"]
-    )
+    model_deployment_name: str = rest_field(name="modelDeploymentName", visibility=["create"])
     """Deployment name of embedding model. It can point to a model deployment either in the parent
      AIServices or a connection. Required."""
-    embedding_field: str = rest_field(name="embeddingField", visibility=["read", "create", "update", "delete", "query"])
+    embedding_field: str = rest_field(name="embeddingField", visibility=["create"])
     """Embedding field. Required."""
 
     @overload
@@ -894,7 +1337,7 @@ class EntraIDCredentials(BaseCredentials, discriminator="AAD"):
         super().__init__(*args, auth_type=CredentialType.ENTRA_ID, **kwargs)
 
 
-class Evaluation(_model_base.Model):
+class Evaluation(_Model):
     """Evaluation Definition.
 
     :ivar id: Identifier of the evaluation. Required.
@@ -984,7 +1427,7 @@ class Evaluation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluationResult(_model_base.Model):
+class EvaluationResult(_Model):
     """Evaluation Result resource Definition.
 
     :ivar result_type: Type of Evaluation result. Known values are: "Benchmark", "Evaluation",
@@ -1009,15 +1452,13 @@ class EvaluationResult(_model_base.Model):
     """
 
     result_type: Optional[Union[str, "_models.ResultType"]] = rest_field(
-        name="ResultType", visibility=["read", "create", "update", "delete", "query"]
+        name="resultType", visibility=["read", "create", "update", "delete", "query"]
     )
     """Type of Evaluation result. Known values are: \"Benchmark\", \"Evaluation\", \"Redteam\", and
      \"Simulation\"."""
-    metrics: Optional[Dict[str, float]] = rest_field(
-        name="Metrics", visibility=["read", "create", "update", "delete", "query"]
-    )
+    metrics: Optional[Dict[str, float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Aggregated metrics."""
-    blob_uri: Optional[str] = rest_field(name="BlobUri", visibility=["read", "create", "update", "delete", "query"])
+    blob_uri: Optional[str] = rest_field(name="blobUri", visibility=["read", "create", "update", "delete", "query"])
     """Blob URI."""
     stage: Optional[str] = rest_field(visibility=["read", "create", "update"])
     """Asset stage."""
@@ -1027,9 +1468,9 @@ class EvaluationResult(_model_base.Model):
     """The name of the resource. Required."""
     version: str = rest_field(visibility=["read"])
     """The version of the resource. Required."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    description: Optional[str] = rest_field(visibility=["create", "update"])
     """The asset description text."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["create", "update"])
     """Tag dictionary. Tags can be added, removed, and updated."""
 
     @overload
@@ -1055,7 +1496,7 @@ class EvaluationResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluationTarget(_model_base.Model):
+class EvaluationTarget(_Model):
     """Target for the evaluation process.
 
     :ivar system_message: System message related to the evaluation target. Required.
@@ -1097,7 +1538,7 @@ class EvaluationTarget(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluationUpload(_model_base.Model):
+class EvaluationUpload(_Model):
     """Upload a local SDK evaluation run. Currently update supports status, outputs, properties, and
     tags updates.
 
@@ -1187,7 +1628,7 @@ class EvaluationUpload(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluatorConfiguration(_model_base.Model):
+class EvaluatorConfiguration(_Model):
     """Evaluator Configuration.
 
     :ivar id: Identifier of the evaluator. Required.
@@ -1336,7 +1777,40 @@ class FolderDatasetVersion(DatasetVersion, discriminator="uri_folder"):
         super().__init__(*args, type=DatasetType.URI_FOLDER, **kwargs)
 
 
-class InputData(_model_base.Model):
+class GetAgentEvaluationResultsRequestClientRequestId(_Model):  # pylint: disable=name-too-long
+    """GetAgentEvaluationResultsRequestClientRequestId.
+
+    :ivar parameters: Required.
+    :vartype parameters: ~azure.ai.projects.onedp.models.ClientRequestIdHeader
+    :ivar response: Required.
+    :vartype response: ~azure.ai.projects.onedp.models.ClientRequestIdHeader
+    """
+
+    parameters: "_models.ClientRequestIdHeader" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    response: "_models.ClientRequestIdHeader" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        parameters: "_models.ClientRequestIdHeader",
+        response: "_models.ClientRequestIdHeader",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InputData(_Model):
     """Abstract data class.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1346,7 +1820,7 @@ class InputData(_model_base.Model):
     :vartype type: str
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: Dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Type of the data. Required. Default value is None."""
 
@@ -1400,7 +1874,7 @@ class InputDataset(InputData, discriminator="dataset"):
         super().__init__(*args, type="dataset", **kwargs)
 
 
-class LongRunningResponse(_model_base.Model):
+class LongRunningResponse(_Model):
     """Long Running Response.
 
     :ivar location: The location. Required.
@@ -1496,7 +1970,7 @@ class ManagedAzureAISearchIndex(Index, discriminator="ManagedAzureSearch"):
 
     type: Literal[IndexType.MANAGED_AZURE_SEARCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Type of index. Required. Managed Azure Search"""
-    vector_store_id: str = rest_field(name="vectorStoreId", visibility=["read", "create", "update", "delete", "query"])
+    vector_store_id: str = rest_field(name="vectorStoreId", visibility=["create"])
     """Vector store id of managed index. Required."""
 
     @overload
@@ -1520,7 +1994,7 @@ class ManagedAzureAISearchIndex(Index, discriminator="ManagedAzureSearch"):
         super().__init__(*args, type=IndexType.MANAGED_AZURE_SEARCH, **kwargs)
 
 
-class Message(_model_base.Model):
+class Message(_Model):
     """Message.
 
     :ivar role: The role.
@@ -1553,7 +2027,7 @@ class Message(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Metadata(_model_base.Model):
+class Metadata(_Model):
     """Metadata.
 
     :ivar target_harms: List of target harms. Required.
@@ -1666,7 +2140,7 @@ class NoAuthenticationCredentials(BaseCredentials, discriminator="None"):
         super().__init__(*args, auth_type=CredentialType.NONE, **kwargs)
 
 
-class PendingUploadRequest(_model_base.Model):
+class PendingUploadRequest(_Model):
     """Represents a request for a pending upload.
 
     :ivar pending_upload_id: If PendingUploadId is not provided, a random GUID will be used.
@@ -1713,7 +2187,7 @@ class PendingUploadRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PendingUploadResponse(_model_base.Model):
+class PendingUploadResponse(_Model):
     """Represents the response for a pending upload request.
 
     :ivar blob_reference_for_consumption: Container-level read, write, list SAS. Required.
@@ -1769,18 +2243,33 @@ class PendingUploadResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RedTeam(_model_base.Model):
+class PromptUsageDetails(_Model):
+    """A breakdown of tokens used in the prompt/chat history.
+
+    :ivar audio_tokens: The number of tokens corresponding to audio input. Required.
+    :vartype audio_tokens: int
+    :ivar cached_tokens: The total number of tokens cached. Required.
+    :vartype cached_tokens: int
+    """
+
+    audio_tokens: int = rest_field(visibility=["read"])
+    """The number of tokens corresponding to audio input. Required."""
+    cached_tokens: int = rest_field(visibility=["read"])
+    """The total number of tokens cached. Required."""
+
+
+class RedTeam(_Model):
     """Red team details.
 
     :ivar id: Identifier of the red team. Required.
     :vartype id: str
-    :ivar scan_name: Name of the red-team scan. Required.
+    :ivar scan_name: Name of the red-team scan.
     :vartype scan_name: str
     :ivar num_turns: Number of simulation rounds. Required.
     :vartype num_turns: int
-    :ivar attack_strategy: List of attack strategies or nested lists of attack strategies.
+    :ivar attack_strategies: List of attack strategies or nested lists of attack strategies.
      Required.
-    :vartype attack_strategy: list[str or ~azure.ai.projects.onedp.models.AttackStrategy]
+    :vartype attack_strategies: list[str or ~azure.ai.projects.onedp.models.AttackStrategy]
     :ivar simulation_only: Simulation-only or Simulation + Evaluation. Default false, if true the
      scan outputs conversation not evaluation result. Required.
     :vartype simulation_only: bool
@@ -1808,12 +2297,12 @@ class RedTeam(_model_base.Model):
 
     id: str = rest_field(visibility=["read"])
     """Identifier of the red team. Required."""
-    scan_name: str = rest_field(name="scanName", visibility=["read", "create", "update", "delete", "query"])
-    """Name of the red-team scan. Required."""
+    scan_name: Optional[str] = rest_field(name="scanName", visibility=["read", "create", "update", "delete", "query"])
+    """Name of the red-team scan."""
     num_turns: int = rest_field(name="numTurns", visibility=["read", "create", "update", "delete", "query"])
     """Number of simulation rounds. Required."""
-    attack_strategy: List[Union[str, "_models.AttackStrategy"]] = rest_field(
-        name="attackStrategy", visibility=["read", "create", "update", "delete", "query"]
+    attack_strategies: List[Union[str, "_models.AttackStrategy"]] = rest_field(
+        name="attackStrategies", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of attack strategies or nested lists of attack strategies. Required."""
     simulation_only: bool = rest_field(
@@ -1849,11 +2338,11 @@ class RedTeam(_model_base.Model):
     def __init__(
         self,
         *,
-        scan_name: str,
         num_turns: int,
-        attack_strategy: List[Union[str, "_models.AttackStrategy"]],
+        attack_strategies: List[Union[str, "_models.AttackStrategy"]],
         simulation_only: bool,
         risk_categories: List[Union[str, "_models.RiskCategory"]],
+        scan_name: Optional[str] = None,
         application_scenario: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, str]] = None,
@@ -1870,7 +2359,7 @@ class RedTeam(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RedTeamUpload(_model_base.Model):
+class RedTeamUpload(_Model):
     """Red team details.
 
     :ivar id: Identifier of the red team. Required.
@@ -1966,7 +2455,7 @@ class RedTeamUpload(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SasCredential(_model_base.Model):
+class SasCredential(_Model):
     """SAS Credential definition.
 
     :ivar sas_uri: SAS uri. Required.
@@ -2015,7 +2504,7 @@ class SASCredentials(BaseCredentials, discriminator="SAS"):
         super().__init__(*args, auth_type=CredentialType.SAS, **kwargs)
 
 
-class SimulationDTO(_model_base.Model):
+class SimulationDTO(_Model):
     """Customization Parameters.
 
     :ivar headers: Additional headers.
@@ -2120,7 +2609,7 @@ class SimulationDTO(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Sku(_model_base.Model):
+class Sku(_Model):
     """Sku information.
 
     :ivar capacity: Sku capacity. Required.
@@ -2168,7 +2657,7 @@ class Sku(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_model_base.Model):
+class SystemData(_Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_at: The timestamp the resource was created at.
@@ -2193,7 +2682,7 @@ class SystemData(_model_base.Model):
     """The timestamp of resource last modification (UTC)."""
 
 
-class TargetHarm(_model_base.Model):
+class TargetHarm(_Model):
     """Target Harm.
 
     :ivar risk_type: The risk type.
