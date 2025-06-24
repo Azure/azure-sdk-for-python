@@ -69,6 +69,30 @@ class TestCosmosResponses(unittest.TestCase):
         assert len(batch_response.get_response_headers()) > 0
         assert int(lsn) + 1 < int(batch_response.get_response_headers()['lsn'])
 
+    def test_create_database_headers(self):
+        first_response = self.client.create_database(id="responses_test" + str(uuid.uuid4()))
+        assert len(first_response.get_response_headers()) > 0
+
+    def test_create_database_if_not_exists_headers(self):
+        first_response = self.client.create_database_if_not_exists(id="responses_test" + str(uuid.uuid4()))
+        assert len(first_response.get_response_headers()) > 0
+
+    def test_create_container_headers(self):
+        first_response = self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),
+                                                        partition_key=PartitionKey(path="/company"))
+        assert len(first_response.get_response_headers()) > 0
+
+    def test_create_container_if_not_exists_headers(self):
+        first_response = self.test_database.create_container_if_not_exists(id="responses_test" + str(uuid.uuid4()),
+                                                        partition_key=PartitionKey(path="/company"))
+        assert len(first_response.get_response_headers()) > 0
+
+    def test_replace_container_headers(self):
+        first_response = self.test_database.create_container_if_not_exists(id="responses_test" + str(uuid.uuid4()),
+                                                        partition_key=PartitionKey(path="/company"))
+        second_response = self.test_database.replace_container(first_response.id,
+                                                               partition_key=PartitionKey(path="/company"))
+        assert len(second_response.get_response_headers()) > 0
 
 if __name__ == '__main__':
     unittest.main()

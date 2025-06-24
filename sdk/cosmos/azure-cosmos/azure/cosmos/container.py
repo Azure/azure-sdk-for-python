@@ -24,6 +24,8 @@
 import warnings
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Sequence, Union, Tuple, Mapping, Type, cast, overload, Iterable, Callable
+
+from requests.structures import CaseInsensitiveDict
 from typing_extensions import Literal
 
 from azure.core import MatchConditions
@@ -104,6 +106,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self.client_connection = client_connection
         self._is_system_key: Optional[bool] = None
         self._scripts: Optional[ScriptsProxy] = None
+        self._response_headers = properties
         if properties:
             self.client_connection._set_container_properties_cache(self.container_link,
                                                                    _build_properties_cache(properties,
@@ -122,6 +125,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if self.container_link not in self.__get_client_container_caches():
             self.read(**kwargs)
         return self.__get_client_container_caches()[self.container_link]
+
+    def get_response_headers(self) -> dict[str, Any]:
+        """Returns a copy of the response headers associated to this response
+
+        :return: Dict of response headers
+        :rtype: dict[str, Any]
+        """
+        return self._response_headers.copy()
 
     @property
     def is_system_key(self) -> bool:

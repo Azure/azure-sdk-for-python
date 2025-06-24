@@ -100,6 +100,7 @@ class DatabaseProxy(object):
         self.id = id
         self.database_link = "dbs/{}".format(self.id)
         self._properties = properties
+        self._response_headers = properties
 
     def __repr__(self) -> str:
         return "<DatabaseProxy [{}]>".format(self.database_link)[:1024]
@@ -125,6 +126,14 @@ class DatabaseProxy(object):
         if self._properties is None:
             self._properties = await self.read()
         return self._properties
+
+    def get_response_headers(self) -> dict[str, Any]:
+        """Returns a copy of the response headers associated to this response
+
+        :return: Dict of response headers
+        :rtype: dict[str, Any]
+        """
+        return self._response_headers.copy()
 
     @distributed_trace_async
     async def read(

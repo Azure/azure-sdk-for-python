@@ -93,6 +93,7 @@ class ContainerProxy:
         self.container_link = "{}/colls/{}".format(database_link, self.id)
         self._is_system_key: Optional[bool] = None
         self._scripts: Optional[ScriptsProxy] = None
+        self._response_headers = properties
         if properties:
             self.client_connection._set_container_properties_cache(self.container_link,
                                                                    _build_properties_cache(properties,
@@ -111,6 +112,14 @@ class ContainerProxy:
         if self.container_link not in self.client_connection._container_properties_cache:
             await self.read(**kwargs)
         return self.client_connection._container_properties_cache[self.container_link]
+
+    def get_response_headers(self) -> dict[str, Any]:
+        """Returns a copy of the response headers associated to this response
+
+        :return: Dict of response headers
+        :rtype: dict[str, Any]
+        """
+        return self._response_headers.copy()
 
     @property
     async def is_system_key(self) -> bool:
