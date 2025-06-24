@@ -8,7 +8,17 @@
 from datetime import datetime
 from types import TracebackType
 from typing import (
-    Any, AnyStr, Callable, Dict, IO, Iterable, List, Literal, Optional, Tuple, Union,
+    Any,
+    AnyStr,
+    Callable,
+    Dict,
+    IO,
+    Iterable,
+    List,
+    Literal,
+    Optional,
+    Tuple,
+    Union,
 )
 
 from typing_extensions import Self
@@ -30,7 +40,8 @@ from ._shared.base_client import StorageAccountHostsMixin
 class ShareFileClient(StorageAccountHostsMixin):
     snapshot: Optional[str]
     def __init__(
-        self, account_url: str,
+        self,
+        account_url: str,
         share_name: str,
         file_path: str,
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
@@ -38,7 +49,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]
         ] = None,
         *,
-        token_intent: Optional[Literal['backup']] = None,
+        token_intent: Optional[Literal["backup"]] = None,
         allow_trailing_dot: Optional[bool] = None,
         allow_source_trailing_dot: Optional[bool] = None,
         api_version: Optional[str] = None,
@@ -54,13 +65,14 @@ class ShareFileClient(StorageAccountHostsMixin):
     def close(self) -> None: ...
     @classmethod
     def from_file_url(
-        cls, file_url: str,
+        cls,
+        file_url: str,
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         credential: Optional[
             Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]
         ] = None,
         *,
-        token_intent: Optional[Literal['backup']] = None,
+        token_intent: Optional[Literal["backup"]] = None,
         allow_trailing_dot: Optional[bool] = None,
         allow_source_trailing_dot: Optional[bool] = None,
         api_version: Optional[str] = None,
@@ -71,7 +83,8 @@ class ShareFileClient(StorageAccountHostsMixin):
     ) -> Self: ...
     @classmethod
     def from_connection_string(
-        cls, conn_str: str,
+        cls,
+        conn_str: str,
         share_name: str,
         file_path: str,
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
@@ -79,7 +92,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]
         ] = None,
         *,
-        token_intent: Optional[Literal['backup']] = None,
+        token_intent: Optional[Literal["backup"]] = None,
         allow_trailing_dot: Optional[bool] = None,
         allow_source_trailing_dot: Optional[bool] = None,
         api_version: Optional[str] = None,
@@ -96,7 +109,8 @@ class ShareFileClient(StorageAccountHostsMixin):
     def exists(self, *, timeout: Optional[int] = None, **kwargs: Any) -> bool: ...
     @distributed_trace
     def create_file(
-        self, size: int,
+        self,
+        size: int,
         file_attributes: Optional[Union[str, NTFSAttributes]] = None,
         file_creation_time: Optional[Union[str, datetime]] = None,
         file_last_write_time: Optional[Union[str, datetime]] = None,
@@ -116,7 +130,8 @@ class ShareFileClient(StorageAccountHostsMixin):
     ) -> Dict[str, Any]: ...
     @distributed_trace
     def upload_file(
-        self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        self,
+        data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
         length: Optional[int] = None,
         file_attributes: Optional[Union[str, NTFSAttributes]] = None,
         file_creation_time: Optional[Union[str, datetime]] = None,
@@ -131,7 +146,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         max_concurrency: int = 1,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
         progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
-        encoding: str = 'UTF-8',
+        encoding: str = "UTF-8",
         timeout: Optional[int] = None,
         **kwargs
     ) -> Dict[str, Any]: ...
@@ -154,8 +169,8 @@ class ShareFileClient(StorageAccountHostsMixin):
         owner: Optional[str] = None,
         group: Optional[str] = None,
         file_mode: Optional[str] = None,
-        file_mode_copy_mode: Optional[Literal['source', 'override']] = None,
-        owner_copy_mode: Optional[Literal['source', 'override']] = None,
+        file_mode_copy_mode: Optional[Literal["source", "override"]] = None,
+        owner_copy_mode: Optional[Literal["source", "override"]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
@@ -170,7 +185,8 @@ class ShareFileClient(StorageAccountHostsMixin):
     ) -> None: ...
     @distributed_trace
     def download_file(
-        self, offset: Optional[int] = None,
+        self,
+        offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
         max_concurrency: int = 1,
@@ -182,11 +198,7 @@ class ShareFileClient(StorageAccountHostsMixin):
     ) -> StorageStreamDownloader: ...
     @distributed_trace
     def delete_file(
-        self,
-        *,
-        lease: Optional[Union[ShareLeaseClient, str]] = None,
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, *, lease: Optional[Union[ShareLeaseClient, str]] = None, timeout: Optional[int] = None, **kwargs: Any
     ) -> None: ...
     @distributed_trace
     def rename_file(
@@ -209,15 +221,12 @@ class ShareFileClient(StorageAccountHostsMixin):
     ) -> "ShareFileClient": ...
     @distributed_trace
     def get_file_properties(
-        self,
-        *,
-        lease: Optional[Union[ShareLeaseClient, str]] = None,
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, *, lease: Optional[Union[ShareLeaseClient, str]] = None, timeout: Optional[int] = None, **kwargs: Any
     ) -> FileProperties: ...
     @distributed_trace
     def set_http_headers(
-        self, content_settings: ContentSettings,
+        self,
+        content_settings: ContentSettings,
         file_attributes: Optional[Union[str, NTFSAttributes]] = None,
         file_creation_time: Optional[Union[str, datetime]] = None,
         file_last_write_time: Optional[Union[str, datetime]] = None,
@@ -244,12 +253,13 @@ class ShareFileClient(StorageAccountHostsMixin):
     ) -> Dict[str, Any]: ...
     @distributed_trace
     def upload_range(
-        self, data: bytes,
+        self,
+        data: bytes,
         offset: int,
         length: int,
         *,
         validate_content: bool = False,
-        encoding: str = 'UTF-8',
+        encoding: str = "UTF-8",
         file_last_write_mode: Optional[Literal["preserve", "now"]] = None,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
         timeout: Optional[int] = None,
@@ -257,7 +267,8 @@ class ShareFileClient(StorageAccountHostsMixin):
     ) -> Dict[str, Any]: ...
     @distributed_trace
     def upload_range_from_url(
-        self, source_url: str,
+        self,
+        source_url: str,
         offset: int,
         length: int,
         source_offset: int,
@@ -274,7 +285,8 @@ class ShareFileClient(StorageAccountHostsMixin):
     ) -> Dict[str, Any]: ...
     @distributed_trace
     def get_ranges(
-        self, offset: Optional[int] = None,
+        self,
+        offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
@@ -283,7 +295,8 @@ class ShareFileClient(StorageAccountHostsMixin):
     ) -> List[Dict[str, int]]: ...
     @distributed_trace
     def get_ranges_diff(
-        self, previous_sharesnapshot: Union[str, Dict[str, Any]],
+        self,
+        previous_sharesnapshot: Union[str, Dict[str, Any]],
         offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
@@ -321,7 +334,8 @@ class ShareFileClient(StorageAccountHostsMixin):
     def close_all_handles(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, int]: ...
     @distributed_trace
     def create_hardlink(
-        self, target: str,
+        self,
+        target: str,
         *,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
         timeout: Optional[int] = None,
@@ -329,7 +343,8 @@ class ShareFileClient(StorageAccountHostsMixin):
     ) -> Dict[str, Any]: ...
     @distributed_trace
     def create_symlink(
-        self, target: str,
+        self,
+        target: str,
         *,
         metadata: Optional[Dict[str, str]] = None,
         file_creation_time: Optional[Union[str, datetime]] = None,
@@ -341,9 +356,4 @@ class ShareFileClient(StorageAccountHostsMixin):
         **kwargs: Any
     ) -> Dict[str, Any]: ...
     @distributed_trace
-    def get_symlink(
-        self,
-        *,
-        timeout: Optional[int] = None,
-        **kwargs: Any
-    ) -> Dict[str, Any]: ...
+    def get_symlink(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]: ...

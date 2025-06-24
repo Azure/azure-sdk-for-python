@@ -25,10 +25,7 @@ from .._models import (
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 
-class ShareServiceClient(  # type: ignore[misc]
-    AsyncStorageAccountHostsMixin,
-    StorageAccountHostsMixin
-):
+class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore[misc]
     def __init__(
         self,
         account_url: str,

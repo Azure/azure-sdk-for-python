@@ -8,8 +8,20 @@
 from datetime import datetime
 from types import TracebackType
 from typing import (
-    Any, AnyStr, AsyncIterable, Awaitable, Callable, cast,
-    Dict, IO, Iterable, List, Literal, Optional, Tuple, Union,
+    Any,
+    AnyStr,
+    AsyncIterable,
+    Awaitable,
+    Callable,
+    cast,
+    Dict,
+    IO,
+    Iterable,
+    List,
+    Literal,
+    Optional,
+    Tuple,
+    Union,
 )
 
 from typing_extensions import Self
@@ -34,10 +46,10 @@ from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.response_handlers import process_storage_error
 
-
 class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore [misc]
     def __init__(
-        self, account_url: str,
+        self,
+        account_url: str,
         share_name: str,
         file_path: str,
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
@@ -45,7 +57,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]
         ] = None,
         *,
-        token_intent: Optional[Literal['backup']] = None,
+        token_intent: Optional[Literal["backup"]] = None,
         allow_trailing_dot: Optional[bool] = None,
         allow_source_trailing_dot: Optional[bool] = None,
         api_version: Optional[str] = None,
@@ -61,13 +73,14 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
     async def close(self) -> None: ...
     @classmethod
     def from_file_url(
-        cls, file_url: str,
+        cls,
+        file_url: str,
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         credential: Optional[
             Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]
         ] = None,
         *,
-        token_intent: Optional[Literal['backup']] = None,
+        token_intent: Optional[Literal["backup"]] = None,
         allow_trailing_dot: Optional[bool] = None,
         allow_source_trailing_dot: Optional[bool] = None,
         api_version: Optional[str] = None,
@@ -78,7 +91,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
     ) -> Self: ...
     @classmethod
     def from_connection_string(
-        cls, conn_str: str,
+        cls,
+        conn_str: str,
         share_name: str,
         file_path: str,
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
@@ -86,7 +100,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]
         ] = None,
         *,
-        token_intent: Optional[Literal['backup']] = None,
+        token_intent: Optional[Literal["backup"]] = None,
         allow_trailing_dot: Optional[bool] = None,
         allow_source_trailing_dot: Optional[bool] = None,
         api_version: Optional[str] = None,
@@ -97,11 +111,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
     ) -> Self: ...
     @distributed_trace_async
     async def acquire_lease(
-        self,
-        lease_id: Optional[str] = None,
-        *,
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, lease_id: Optional[str] = None, *, timeout: Optional[int] = None, **kwargs: Any
     ) -> ShareLeaseClient: ...
     @distributed_trace_async
     async def exists(self, *, timeout: Optional[int] = None, **kwargs: Any) -> bool: ...
@@ -115,7 +125,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         file_permission: Optional[str] = None,
         permission_key: Optional[str] = None,
         *,
-        file_permission_format: Optional[Literal['sddl', 'binary']] = None,
+        file_permission_format: Optional[Literal["sddl", "binary"]] = None,
         file_change_time: Optional[Union[str, datetime]] = None,
         content_settings: Optional[ContentSettings] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -128,7 +138,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
     ) -> Dict[str, Any]: ...
     @distributed_trace_async
     async def upload_file(
-        self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+        self,
+        data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
         length: Optional[int] = None,
         file_attributes: Optional[Union[str, NTFSAttributes]] = None,
         file_creation_time: Optional[Union[str, datetime]] = None,
@@ -142,7 +153,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         max_concurrency: int = 1,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
         progress_hook: Optional[Callable[[int, Optional[int]], Awaitable[None]]] = None,
-        encoding: str = 'UTF-8',
+        encoding: str = "UTF-8",
         timeout: Optional[int] = None,
         **kwargs
     ) -> Dict[str, Any]: ...
@@ -153,7 +164,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         *,
         file_permission: Optional[str] = None,
         permission_key: Optional[str] = None,
-        file_permission_format: Optional[Literal['sddl', 'binary']] = None,
+        file_permission_format: Optional[Literal["sddl", "binary"]] = None,
         file_attributes: Optional[Union[str, NTFSAttributes]] = None,
         file_creation_time: Optional[Union[str, datetime]] = None,
         file_last_write_time: Optional[Union[str, datetime]] = None,
@@ -165,8 +176,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         owner: Optional[str] = None,
         group: Optional[str] = None,
         file_mode: Optional[str] = None,
-        file_mode_copy_mode: Optional[Literal['source', 'override']] = None,
-        owner_copy_mode: Optional[Literal['source', 'override']] = None,
+        file_mode_copy_mode: Optional[Literal["source", "override"]] = None,
+        owner_copy_mode: Optional[Literal["source", "override"]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
@@ -181,7 +192,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
     ) -> None: ...
     @distributed_trace_async
     async def download_file(
-        self, offset: Optional[int] = None,
+        self,
+        offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
         max_concurrency: int = 1,
@@ -193,11 +205,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
     ) -> StorageStreamDownloader: ...
     @distributed_trace_async
     async def delete_file(
-        self,
-        *,
-        lease: Optional[Union[ShareLeaseClient, str]] = None,
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, *, lease: Optional[Union[ShareLeaseClient, str]] = None, timeout: Optional[int] = None, **kwargs: Any
     ) -> None: ...
     @distributed_trace_async
     async def rename_file(
@@ -209,7 +217,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         ignore_read_only: Optional[bool] = None,
         file_permission: Optional[str] = None,
         file_permission_key: Optional[str] = None,
-        file_permission_format: Optional[Literal['sddl', 'binary']] = None,
+        file_permission_format: Optional[Literal["sddl", "binary"]] = None,
         file_attributes: Optional[Union[str, NTFSAttributes]] = None,
         file_creation_time: Optional[Union[str, datetime]] = None,
         file_last_write_time: Optional[Union[str, datetime]] = None,
@@ -222,11 +230,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
     ) -> "ShareFileClient": ...
     @distributed_trace_async
     async def get_file_properties(
-        self,
-        *,
-        lease: Optional[Union[ShareLeaseClient, str]] = None,
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, *, lease: Optional[Union[ShareLeaseClient, str]] = None, timeout: Optional[int] = None, **kwargs: Any
     ) -> FileProperties: ...
     @distributed_trace_async
     async def set_http_headers(
@@ -238,7 +242,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         file_permission: Optional[str] = None,
         permission_key: Optional[str] = None,
         *,
-        file_permission_format: Optional[Literal['sddl', 'binary']] = None,
+        file_permission_format: Optional[Literal["sddl", "binary"]] = None,
         file_change_time: Optional[Union[str, datetime]] = None,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
         owner: Optional[str] = None,
@@ -258,12 +262,13 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
     ) -> Dict[str, Any]: ...
     @distributed_trace_async
     async def upload_range(
-        self, data: bytes,
+        self,
+        data: bytes,
         offset: int,
         length: int,
         *,
         validate_content: bool = False,
-        file_last_write_mode: Optional[Literal['preserve', 'now']] = None,
+        file_last_write_mode: Optional[Literal["preserve", "now"]] = None,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
         encoding: str = "UTF-8",
         timeout: Optional[int] = None,
@@ -271,7 +276,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
     ) -> Dict[str, Any]: ...
     @distributed_trace_async
     async def upload_range_from_url(
-        self, source_url: str,
+        self,
+        source_url: str,
         offset: int,
         length: int,
         source_offset: int,
@@ -280,7 +286,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         source_if_unmodified_since: Optional[datetime] = None,
         source_etag: Optional[str] = None,
         source_match_condition: Optional[MatchConditions] = None,
-        file_last_write_mode: Optional[Literal['preserve', 'now']] = None,
+        file_last_write_mode: Optional[Literal["preserve", "now"]] = None,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
         source_authorization: Optional[str] = None,
         timeout: Optional[int] = None,
@@ -288,7 +294,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
     ) -> Dict[str, Any]: ...
     @distributed_trace_async
     async def get_ranges(
-        self, offset: Optional[int] = None,
+        self,
+        offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
@@ -297,7 +304,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
     ) -> List[Dict[str, int]]: ...
     @distributed_trace_async
     async def get_ranges_diff(
-        self, previous_sharesnapshot: Union[str, Dict[str, Any]],
+        self,
+        previous_sharesnapshot: Union[str, Dict[str, Any]],
         offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
@@ -329,17 +337,14 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
     def list_handles(self, *, timeout: Optional[int] = None, **kwargs: Any) -> AsyncItemPaged[Handle]: ...
     @distributed_trace_async
     async def close_handle(
-        self,
-        handle: Union[str, Handle],
-        *,
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, handle: Union[str, Handle], *, timeout: Optional[int] = None, **kwargs: Any
     ) -> Dict[str, int]: ...
     @distributed_trace_async
     async def close_all_handles(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, int]: ...
     @distributed_trace_async
     async def create_hardlink(
-        self, target: str,
+        self,
+        target: str,
         *,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
         timeout: Optional[int] = None,
@@ -347,7 +352,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
     ) -> Dict[str, Any]: ...
     @distributed_trace_async
     async def create_symlink(
-        self, target: str,
+        self,
+        target: str,
         *,
         metadata: Optional[Dict[str, str]] = None,
         file_creation_time: Optional[Union[str, datetime]] = None,
@@ -359,9 +365,4 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         **kwargs: Any
     ) -> Dict[str, Any]: ...
     @distributed_trace_async
-    async def get_symlink(
-        self,
-        *,
-        timeout: Optional[int] = None,
-        **kwargs: Any
-    ) -> Dict[str, Any]: ...
+    async def get_symlink(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]: ...

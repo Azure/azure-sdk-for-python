@@ -32,10 +32,7 @@ from .._models import (
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 
-class ShareClient(  # type: ignore[misc]
-    AsyncStorageAccountHostsMixin,
-    StorageAccountHostsMixin
-):
+class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore[misc]
     snapshot: Optional[str]
     def __init__(
         self,
