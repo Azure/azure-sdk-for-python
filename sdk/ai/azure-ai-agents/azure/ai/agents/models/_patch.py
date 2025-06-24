@@ -67,7 +67,7 @@ from ._models import (
     RunStepDeltaChunk,
     DeepResearchToolDefinition,
     DeepResearchDetails,
-    BingGroundingConnectionInformation,
+    DeepResearchBingGroundingConnection,
     BingGroundingSearchConfiguration,
     BingGroundingSearchToolParameters,
     BingCustomSearchToolDefinition,
@@ -914,7 +914,7 @@ class DeepResearchTool(Tool[DeepResearchToolDefinition]):
 
         self._deep_research_details = DeepResearchDetails(
             deep_research_model_deployment_name=deep_research_model,
-            bing_grounding_connections=[BingGroundingConnectionInformation(connection_id=bing_grounding_connection_id)],
+            bing_grounding_connections=[DeepResearchBingGroundingConnection(connection_id=bing_grounding_connection_id)],
         )
 
     @property
