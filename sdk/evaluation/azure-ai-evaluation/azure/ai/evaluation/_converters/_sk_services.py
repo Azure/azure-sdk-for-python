@@ -48,23 +48,7 @@ class SKAgentConverter:
         tool_list: List[Dict[str, Any]],
     ) -> List[ToolDefinition]:
         """
-        Convert a verbose tool definition list into the schema
-        ```
-        {
-            "name": str,
-            "description": str | "No description",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    <param_name>: {
-                        "type": "string",
-                        "description": str | "No description"
-                    },
-                    ...
-                }
-            }
-        }
-        ```
+        Convert verbose tool definition dicts into the `ToolDefinition`s
         :param tool_list: List of tool definitions to transform.
         :type tool_list: List[Dict[str, Any]]
         :return: Transformed list of tool definitions.
