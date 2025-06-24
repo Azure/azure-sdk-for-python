@@ -32,7 +32,7 @@ Use the Azure.Search.Documents client library to:
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/search/azure-search-documents)
 | [Package (PyPI)](https://pypi.org/project/azure-search-documents/)
 | [Package (Conda)](https://anaconda.org/microsoft/azure-search-documents/)
-| [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-search-documents/latest/index.html)
+| [API reference documentation](https://azuresdkdocs.z19.web.core.windows.net/python/azure-search-documents/latest/index.html)
 | [Product documentation](https://docs.microsoft.com/azure/search/search-what-is-azure-search)
 | [Samples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples)
 
