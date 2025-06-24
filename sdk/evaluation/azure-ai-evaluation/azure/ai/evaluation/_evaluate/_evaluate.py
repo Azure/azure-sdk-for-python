@@ -698,7 +698,6 @@ def evaluate(
     azure_ai_project: Optional[Union[str, AzureAIProject]] = None,
     output_path: Optional[Union[str, os.PathLike]] = None,
     fail_on_evaluator_errors: bool = False,
-    _user_agent: Optional[str] = None,
     **kwargs,
 ) -> EvaluationResult:
     """Evaluates target or data with built-in or custom evaluators. If both target and data are provided,
@@ -731,8 +730,8 @@ def evaluate(
         Defaults to false, which means that evaluations will continue regardless of failures.
         If such failures occur, metrics may be missing, and evidence of failures can be found in the evaluation's logs.
     :paramtype fail_on_evaluator_errors: bool
-    :keyword _user_agent: A string to append to the default user-agent sent with evaluation http requests
-    :paramtype _user_agent: Optional[str]
+    :keyword user_agent: A string to append to the default user-agent sent with evaluation http requests
+    :paramtype user_agent: Optional[str]
     :return: Evaluation results.
     :rtype: ~azure.ai.evaluation.EvaluationResult
 
@@ -756,7 +755,8 @@ def evaluate(
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
     """
     try:
-        with UserAgentSingleton().add_useragent_product(_user_agent) if _user_agent else contextlib.nullcontext():
+        user_agent: Optional[str] = kwargs.get("user_agent")
+        with UserAgentSingleton().add_useragent_product(user_agent) if user_agent else contextlib.nullcontext():
             return _evaluate(
                 evaluation_name=evaluation_name,
                 target=target,

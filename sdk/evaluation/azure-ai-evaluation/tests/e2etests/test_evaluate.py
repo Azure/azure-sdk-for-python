@@ -545,7 +545,7 @@ class TestUserAgent:
 
         with self._transparent_mock_method(AsyncClient, "send") as mock:
             evaluate(
-                data=data_file, evaluators={"fluency": FluencyEvaluator(model_config)}, _user_agent=added_useragent
+                data=data_file, evaluators={"fluency": FluencyEvaluator(model_config)}, user_agent=added_useragent
             )
 
             mock.assert_called()
