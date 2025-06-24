@@ -75,24 +75,20 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_create_database_headers(self):
         first_response = await self.client.create_database(id="responses_test" + str(uuid.uuid4()))
-        print(first_response.get_response_headers())
         assert len(first_response.get_response_headers()) > 0
 
     async def test_create_database_if_not_exists_headers(self):
         first_response = await self.client.create_database_if_not_exists(id="responses_test" + str(uuid.uuid4()))
-        print(first_response.get_response_headers())
         assert len(first_response.get_response_headers()) > 0
 
     async def test_create_container_headers(self):
         first_response = await self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),
                                                         partition_key=PartitionKey(path="/company"))
-        print(first_response.get_response_headers())
         assert len(first_response.get_response_headers()) > 0
 
     async def test_create_container_if_not_exists_headers(self):
         first_response = await self.test_database.create_container_if_not_exists(id="responses_test" + str(uuid.uuid4()),
                                                         partition_key=PartitionKey(path="/company"))
-        print(first_response.get_response_headers())
         assert len(first_response.get_response_headers()) > 0
 
     async def test_replace_container_headers(self):
