@@ -1256,6 +1256,7 @@ class TestBuiltInEvaluators:
         assert score["fictional_characters_reason"], "fictional_characters_reason must not be None or empty."
 
 
+@pytest.mark.usefixtures("recording_injection", "recorded_test")
 class TestUserAgent:
     """Test suite to validate that the User-Agent header is overridable."""
 

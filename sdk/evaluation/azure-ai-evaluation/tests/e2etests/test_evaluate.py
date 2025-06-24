@@ -506,6 +506,7 @@ class TestEvaluate:
         assert jsonl_result["studio_url"] == csv_result["studio_url"] == None
 
 
+@pytest.mark.usefixtures("recording_injection", "recorded_test")
 class TestUserAgent:
     """Test suite to validate that the User-Agent header is overridable."""
 
