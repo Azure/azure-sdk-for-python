@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Suppress stdout side effect of add permissions to file for local storage on Windows
+  ([#41727](https://github.com/Azure/azure-sdk-for-python/pull/41727))
+
 ### Other Changes
 
 ## 1.0.0b38 (2025-06-17)
