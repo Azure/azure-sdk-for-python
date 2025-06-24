@@ -13,7 +13,6 @@ from typing import (
     AsyncIterable,
     Awaitable,
     Callable,
-    cast,
     Dict,
     IO,
     Iterable,
@@ -30,23 +29,18 @@ from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._download_async import StorageStreamDownloader
 from ._lease_async import ShareLeaseClient
 from ._models import FileProperties, Handle
-from .._deserialize import get_file_ranges_result
-from .._file_client_helpers import (
-    _get_ranges_options,
-    _upload_range_from_url_options,
-)
 from .._models import ContentSettings, NTFSAttributes
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
-from .._shared.response_handlers import process_storage_error
+
 
 class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore [misc]
+    snapshot: Optional[str]
     def __init__(
         self,
         account_url: str,
