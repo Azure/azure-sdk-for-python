@@ -6,6 +6,7 @@
 # pylint: skip-file
 
 from datetime import datetime
+from types import TracebackType
 from typing import (
     Any,
     AnyStr,
@@ -73,6 +74,11 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         audience: Optional[str] = None,
         **kwargs: Any
     ) -> Self: ...
+    def __enter__(self) -> Self: ...
+    def __exit__(
+        self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
+    ) -> None: ...
+    def close(self) -> None: ...
     @classmethod
     def from_connection_string(
         cls,
