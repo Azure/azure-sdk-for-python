@@ -3,9 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Type
-import platform
+
 import pytest
+import time
 from unittest import TestCase
 
 try:
@@ -18,11 +18,42 @@ from azure.communication.identity._shared.user_credential import (
 )
 from azure.communication.identity._shared.utils import create_access_token
 from azure.communication.identity._shared.utils import get_current_utc_as_int
-from datetime import timedelta
+
 from _shared.helper import (
     generate_token_with_custom_expiry_epoch,
     generate_token_with_custom_expiry,
 )
+
+
+class DummyToken:
+    def __init__(self, token, expires_on):
+        self.token = token
+        self.expires_on = expires_on
+
+
+class DummyTokenExchangeClient:
+    def __init__(self, resource_endpoint, token_credential, scopes):
+        self.resource_endpoint = resource_endpoint
+        self.token_credential = token_credential
+        self.scopes = scopes
+
+    def exchange_entra_token(self):
+        return DummyToken("dummy", 9999999999)
+        
+
+class DummyTokenExchangeClientSwitch:
+    def __init__(self, resource_endpoint, token_credential, scopes):
+        self.resource_endpoint = resource_endpoint
+        self.token_credential = token_credential
+        self.scopes = scopes
+        self.call_count = 0
+
+    def exchange_entra_token(self):
+        self.call_count += 1
+        if self.call_count == 1:
+            return DummyToken("dummy_expired", int(time.time()) - 5 * 60)
+        else:
+            return DummyToken("dummy_valid", int(time.time()) + 60 * 60)
 
 
 class TestCommunicationTokenCredential(TestCase):
@@ -201,3 +232,55 @@ class TestCommunicationTokenCredential(TestCase):
         with pytest.raises(RuntimeError) as err:
             credential.get_token()
         assert str(err.value) == "An instance of CommunicationTokenCredential cannot be reused once it has been closed."
+
+    def test_missing_fields_raises_value_error(self):
+        # Only resource_endpoint provided
+        with pytest.raises(ValueError) as excinfo:
+            CommunicationTokenCredential(resource_endpoint="https://endpoint")
+        assert "Missing: token_credential" in str(excinfo.value)
+
+        # Only token_credential provided
+        with pytest.raises(ValueError) as excinfo:
+            CommunicationTokenCredential(token_credential=MagicMock())
+        assert "Missing: resource_endpoint" in str(excinfo.value)
+
+        # Only scopes provided
+        with pytest.raises(ValueError) as excinfo:
+            CommunicationTokenCredential(scopes=["scope"])
+        assert "Missing: resource_endpoint, token_credential" in str(excinfo.value)
+
+    def test_all_fields_present_calls_token_exchange(monkeypatch):
+        # Patch TokenExchangeClient to our dummy
+        with patch("azure.communication.identity._shared.user_credential.TokenExchangeClient", DummyTokenExchangeClient):
+            cred = CommunicationTokenCredential(
+                resource_endpoint="https://endpoint",
+                token_credential=MagicMock(),
+                scopes=["scope"]
+            )
+            token = cred.get_token()
+            assert token.token == "dummy"
+            assert token.expires_on == 9999999999
+
+    def test_missing_scopes_calls_token_exchange(monkeypatch):
+        # Patch TokenExchangeClient to our dummy
+        with patch("azure.communication.identity._shared.user_credential.TokenExchangeClient", DummyTokenExchangeClient):
+            cred = CommunicationTokenCredential(
+                resource_endpoint="https://endpoint",
+                token_credential=MagicMock()
+            )
+            token = cred.get_token()
+            assert token.token == "dummy"
+            assert token.expires_on == 9999999999
+
+    def test_token_exchange_refreshes_from_expired_to_valid(monkeypatch):
+        # Patch TokenExchangeClient to DummyTokenExchangeClientSwitch
+        # First call returns expired token - when initializing the token
+        with patch("azure.communication.identity._shared.user_credential.TokenExchangeClient", DummyTokenExchangeClientSwitch):
+            cred = CommunicationTokenCredential(
+                resource_endpoint="https://endpoint",
+                token_credential=MagicMock(),
+                scopes=["scope"]
+            )
+            # Second call will trigger a refresh and generate a valid token
+            token2 = cred.get_token()
+            assert token2.token == "dummy_valid"

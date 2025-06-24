@@ -62,8 +62,8 @@ extends:
               artifactName: artifacts-for-release
               targetPath: $(Artifacts)
           pool:
-            image: azsdk-pool-mms-ubuntu-2004-1espt
-            name: azsdk-pool-mms-ubuntu-2004-general
+            image: ubuntu-24.04
+            name: azsdk-pool
             os: linux
           strategy:
             runOnce:

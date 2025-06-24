@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Suppress stdout side effect of add permissions to file for local storage on Windows
+  ([#41727](https://github.com/Azure/azure-sdk-for-python/pull/41727))
+
 ### Other Changes
 
 - Configuration manager/worker fetch via OneSettings part 1
