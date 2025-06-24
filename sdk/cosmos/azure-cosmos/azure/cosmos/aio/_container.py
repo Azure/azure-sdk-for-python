@@ -920,8 +920,8 @@ class ContainerProxy:
                 cast(PartitionKeyType, partition_key_value))
             change_feed_state_context["partitionKeyFeedRange"] = self._get_epk_range_for_partition_key(
                 partition_key_value, feed_options)
-        if "feedRange" in kwargs:
-            change_feed_state_context["feedRange"] = feed_options.pop('feedRange')
+        if "feed_range" in kwargs:
+            change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
         if "continuation" in feed_options:
             change_feed_state_context["continuation"] = feed_options.pop("continuation")
 

@@ -566,7 +566,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             change_feed_state_context["startTime"] = kwargs.pop("start_time")
 
         container_properties = self._get_properties_with_options(feed_options)
-        # TODO: validate partition_key and feed_range exclusive check here to avoid any extra API calls
         if "partition_key" in kwargs:
             partition_key = kwargs.pop("partition_key")
             change_feed_state_context["partitionKey"] = self._set_partition_key(cast(PartitionKeyType, partition_key))
