@@ -1,6 +1,6 @@
 # Azure AI Search client library for Python
 
-[Azure AI Search](https://learn.microsoft.com/azure/search/) (formerly known as "Azure Cognitive Search") is an AI-powered information retrieval platform that helps developers build rich search experiences and generative AI apps that combine large language models with enterprise data.
+[Azure AI Search](https://docs.microsoft.com/azure/search/) (formerly known as "Azure Cognitive Search") is an AI-powered information retrieval platform that helps developers build rich search experiences and generative AI apps that combine large language models with enterprise data.
 
 Azure AI Search is well suited for the following application scenarios:
 
@@ -32,8 +32,8 @@ Use the Azure.Search.Documents client library to:
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/search/azure-search-documents)
 | [Package (PyPI)](https://pypi.org/project/azure-search-documents/)
 | [Package (Conda)](https://anaconda.org/microsoft/azure-search-documents/)
-| [API reference documentation](https://azuresdkdocs.z19.web.core.windows.net/python/azure-search-documents/latest/index.html)
-| [Product documentation](https://learn.microsoft.com/azure/search/search-what-is-azure-search)
+| [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-search-documents/latest/index.html)
+| [Product documentation](https://docs.microsoft.com/azure/search/search-what-is-azure-search)
 | [Samples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples)
 
 ## Getting started
@@ -58,7 +58,7 @@ To create a new search service, you can use the [Azure portal][create_search_ser
 az search service create --name <mysearch> --resource-group <mysearch-rg> --sku free --location westus
 ```
 
-See [choosing a pricing tier](https://learn.microsoft.com/azure/search/search-sku-tier)
+See [choosing a pricing tier](https://docs.microsoft.com/azure/search/search-sku-tier)
  for more information about available options.
 
 ### Authenticate the client
@@ -69,7 +69,7 @@ To interact with the search service, you'll need to create an instance of the ap
 
 An API key can be an easier approach to start with because it doesn't require pre-existing role assignments.
 
-You can get the **endpoint** and an **API key** from the Search service in the [Azure portal](https://portal.azure.com/). Please refer the [documentation](https://learn.microsoft.com/azure/search/search-security-api-keys) for instructions on how to get an API key.
+You can get the **endpoint** and an **API key** from the Search service in the [Azure portal](https://portal.azure.com/). Please refer the [documentation](https://docs.microsoft.com/azure/search/search-security-api-keys) for instructions on how to get an API key.
 
 Alternatively, you can use the following [Azure CLI](https://learn.microsoft.com/cli/azure/) command to retrieve the API key from the Search service:
 
@@ -137,34 +137,33 @@ indexes and database tables.)_  The Azure.Search.Documents client library
 exposes operations on these resources through three main client types.
 
 * `SearchClient` helps with:
-  * [Searching](https://learn.microsoft.com/azure/search/search-lucene-query-architecture)
+  * [Searching](https://docs.microsoft.com/azure/search/search-lucene-query-architecture)
     your indexed documents using [vector queries](https://learn.microsoft.com/azure/search/vector-search-how-to-query),
     [keyword queries](https://learn.microsoft.com/azure/search/search-query-create)
     and [hybrid queries](https://learn.microsoft.com/azure/search/hybrid-search-how-to-query)
   * [Vector query filters](https://learn.microsoft.com/azure/search/vector-search-filters) and [Text query filters](https://learn.microsoft.com/azure/search/search-filters)
   * [Semantic ranking](https://learn.microsoft.com/azure/search/semantic-how-to-query-request) and [scoring profiles](https://learn.microsoft.com/azure/search/index-add-scoring-profiles) for boosting relevance
-  * [Autocompleting](https://learn.microsoft.com/rest/api/searchservice/autocomplete)
+  * [Autocompleting](https://docs.microsoft.com/rest/api/searchservice/autocomplete)
     partially typed search terms based on documents in the index
-  * [Suggesting](https://learn.microsoft.com/rest/api/searchservice/suggestions)
+  * [Suggesting](https://docs.microsoft.com/rest/api/searchservice/suggestions)
     the most likely matching text in documents as a user types
-  * [Adding, Updating or Deleting Documents](https://learn.microsoft.com/rest/api/searchservice/addupdate-or-delete-documents)
+  * [Adding, Updating or Deleting Documents](https://docs.microsoft.com/rest/api/searchservice/addupdate-or-delete-documents)
     documents from an index
 
 * `SearchIndexClient` allows you to:
-  * [Create, delete, update, or configure a search index](https://learn.microsoft.com/rest/api/searchservice/index-operations)
-  * [Declare custom synonym maps to expand or rewrite queries](https://learn.microsoft.com/rest/api/searchservice/synonym-map-operations)
+  * [Create, delete, update, or configure a search index](https://docs.microsoft.com/rest/api/searchservice/index-operations)
+  * [Declare custom synonym maps to expand or rewrite queries](https://docs.microsoft.com/rest/api/searchservice/synonym-map-operations)
 <!--   * Most of the `SearchServiceClient` functionality is not yet available in our current preview -->
 
 * `SearchIndexerClient` allows you to:
-  * [Start indexers to automatically crawl data sources](https://learn.microsoft.com/rest/api/searchservice/indexer-operations)
-  * [Define AI powered Skillsets to transform and enrich your data](https://learn.microsoft.com/rest/api/searchservice/skillset-operations)
+  * [Start indexers to automatically crawl data sources](https://docs.microsoft.com/rest/api/searchservice/indexer-operations)
+  * [Define AI powered Skillsets to transform and enrich your data](https://docs.microsoft.com/rest/api/searchservice/skillset-operations)
 
 Azure AI Search provides two powerful features: **semantic ranking** and **vector search**.
 
 **Semantic ranking** enhances the quality of search results for text-based queries. By enabling semantic ranking on your search service, you can improve the relevance of search results in two ways:
-
-* It applies secondary ranking to the initial result set, promoting the most semantically relevant results to the top.
-* It extracts and returns captions and answers in the response, which can be displayed on a search page to enhance the user's search experience.
+- It applies secondary ranking to the initial result set, promoting the most semantically relevant results to the top.
+- It extracts and returns captions and answers in the response, which can be displayed on a search page to enhance the user's search experience.
 
 To learn more about semantic ranking, you can refer to the [documentation](https://learn.microsoft.com/azure/search/vector-search-overview).
 
@@ -181,15 +180,17 @@ previous `Microsoft.Azure.Search` client library (v10) is now retired. It has ma
 ## Examples
 
 The following examples all use a simple [Hotel data set](https://github.com/Azure-Samples/azure-search-sample-data/blob/master/README.md)
-that you can [import into your own index from the Azure portal.](https://learn.microsoft.com/azure/search/search-get-started-portal#step-1---start-the-import-data-wizard-and-create-a-data-source)
+that you can [import into your own index from the Azure portal.](https://docs.microsoft.com/azure/search/search-get-started-portal#step-1---start-the-import-data-wizard-and-create-a-data-source)
 These are just a few of the basics - please [check out our Samples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples) for
 much more.
+
 
 * [Querying](#querying)
 * [Creating an index](#creating-an-index)
 * [Adding documents to your index](#adding-documents-to-your-index)
 * [Retrieving a specific document from your index](#retrieving-a-specific-document-from-your-index)
 * [Async APIs](#async-apis)
+
 
 ### Querying
 
@@ -225,6 +226,7 @@ for result in results:
     print("{}: {})".format(result["hotelId"], result["hotelName"]))
 ```
 
+
 ### Creating an index
 
 You can use the `SearchIndexClient` to create a search index. Fields can be
@@ -238,7 +240,6 @@ client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
 name = "hotels"
 fields = [
     SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
-    SimpleField(name="hotelName", type=SearchFieldDataType.String, searchable=True),
     SimpleField(name="baseRate", type=SearchFieldDataType.Double),
     SearchableField(name="description", type=SearchFieldDataType.String, collection=True),
     ComplexField(
@@ -263,14 +264,17 @@ result = client.create_index(index)
 
 You can `Upload`, `Merge`, `MergeOrUpload`, and `Delete` multiple documents from
 an index in a single batched request.  There are
-[a few special rules for merging](https://learn.microsoft.com/rest/api/searchservice/addupdate-or-delete-documents#document-actions)
+[a few special rules for merging](https://docs.microsoft.com/rest/api/searchservice/addupdate-or-delete-documents#document-actions)
 to be aware of.
 
 <!-- SNIPPET:sample_crud_operations.upload_document -->
 
 ```python
 DOCUMENT = {
+    "category": "Hotel",
     "hotelId": "1000",
+    "rating": 4.0,
+    "rooms": [],
     "hotelName": "Azure Inn",
 }
 
@@ -283,10 +287,10 @@ print("Upload of new document succeeded: {}".format(result[0].succeeded))
 
 ### Authenticate in a National Cloud
 
-To authenticate in a [National Cloud](https://learn.microsoft.com/azure/active-directory/develop/authentication-national-cloud), you will need to make the following additions to your client configuration:
+To authenticate in a [National Cloud](https://docs.microsoft.com/azure/active-directory/develop/authentication-national-cloud), you will need to make the following additions to your client configuration:
 
-* Set the `AuthorityHost` in the credential options or via the `AZURE_AUTHORITY_HOST` environment variable
-* Set the `audience` in `SearchClient`, `SearchIndexClient`, or `SearchIndexerClient`
+- Set the `AuthorityHost` in the credential options or via the `AZURE_AUTHORITY_HOST` environment variable
+- Set the `audience` in `SearchClient`, `SearchIndexClient`, or `SearchIndexerClient`
 
 ```python
 # Create a SearchClient that will authenticate through AAD in the China national cloud.
@@ -321,6 +325,8 @@ result = search_client.get_document(key="23")
 
 print("Details for hotel '23' are:")
 print("        Name: {}".format(result["hotelName"]))
+print("      Rating: {}".format(result["rating"]))
+print("    Category: {}".format(result["category"]))
 ```
 
 <!-- END SNIPPET -->
@@ -393,7 +399,7 @@ result =  client.search(search_text="spa", logging_enable=True)
 ## Next steps
 
 * Go further with Azure.Search.Documents and our [https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/search/azure-search-documents/samples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples)
-* Read more about the [Azure AI Search service](https://learn.microsoft.com/azure/search/search-what-is-azure-search)
+* Read more about the [Azure AI Search service](https://docs.microsoft.com/azure/search/search-what-is-azure-search)
 
 ## Contributing
 
@@ -410,7 +416,7 @@ For more information, see the [Code of Conduct FAQ][coc_faq]
 or contact [opencode@microsoft.com][coc_contact] with any
 additional questions or comments.
 
-
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-net%2Fsdk%2Fsearch%2FAzure.Search.Documents%2FREADME.png)
 
 ## Related projects
 
@@ -418,17 +424,17 @@ additional questions or comments.
 
 <!-- LINKS -->
 
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fsearch%2Fazure-search-documents%2FREADME.png)
 
-
-[azure_cli]: https://learn.microsoft.com/cli/azure
+[azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [azure_sub]: https://azure.microsoft.com/free/
-[search_resource]: https://learn.microsoft.com/azure/search/search-create-service-portal
+[search_resource]: https://docs.microsoft.com/azure/search/search-create-service-portal
 [azure_portal]: https://portal.azure.com
 
-[create_search_service_docs]: https://learn.microsoft.com/azure/search/search-create-service-portal
-[create_search_service_ps]: https://learn.microsoft.com/azure/search/search-manage-powershell#create-or-delete-a-service
-[create_search_service_cli]: https://learn.microsoft.com/cli/azure/search/service?view=azure-cli-latest#az-search-service-create
+[create_search_service_docs]: https://docs.microsoft.com/azure/search/search-create-service-portal
+[create_search_service_ps]: https://docs.microsoft.com/azure/search/search-manage-powershell#create-or-delete-a-service
+[create_search_service_cli]: https://docs.microsoft.com/cli/azure/search/service?view=azure-cli-latest#az-search-service-create
 [search_contrib]: https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 

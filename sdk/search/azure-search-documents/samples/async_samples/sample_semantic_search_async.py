@@ -34,7 +34,7 @@ async def speller():
 
     credential = AzureKeyCredential(key)
     client = SearchClient(endpoint=service_endpoint, index_name=index_name, credential=credential)
-    results = await client.search(search_text="luxury", query_language="en-us", query_speller="lexicon")
+    results = await client.search(search_text="luxury")
 
     async for result in results:
         print("{}\n{}\n)".format(result["hotelId"], result["hotelName"]))
@@ -52,14 +52,7 @@ async def semantic_ranking():
 
     credential = AzureKeyCredential(key)
     client = SearchClient(endpoint=service_endpoint, index_name=index_name, credential=credential)
-    results = list(
-        client.search(
-            search_text="luxury",
-            query_type="semantic",
-            semantic_configuration_name="semantic_config_name",
-            query_language="en-us",
-        )
-    )
+    results = list(client.search(search_text="luxury", query_type="semantic"))
 
     for result in results:
         print("{}\n{}\n)".format(result["hotelId"], result["hotelName"]))

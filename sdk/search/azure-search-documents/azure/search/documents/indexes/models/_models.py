@@ -5,11 +5,11 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, List, Optional, MutableMapping, Dict, Callable, Union
+from typing import Any, List, Optional, MutableMapping, Dict, Callable
 from enum import Enum
 from typing_extensions import Self
 from azure.core import CaseInsensitiveEnumMeta
-from .._generated._utils import serialization as _serialization
+from .._generated import _serialization
 from .._generated.models import (
     LexicalAnalyzer,
     LexicalTokenizer,
@@ -32,13 +32,10 @@ from .._generated.models import (
     SearchIndexerDataContainer,
     DataChangeDetectionPolicy,
     DataDeletionDetectionPolicy,
-    SearchIndexerDataIdentity,
     SearchIndexer as _SearchIndexer,
     IndexingSchedule,
     IndexingParameters,
     FieldMapping,
-    SearchIndexerCache,
-    IndexerPermissionOption,
 )
 
 DELIMITER = "|"
@@ -99,7 +96,7 @@ class SearchIndexerSkillset(_serialization.Model):
         self.e_tag = e_tag
         self.encryption_key = encryption_key
 
-    def _to_generated(self) -> _SearchIndexerSkillset:
+    def _to_generated(self):
         generated_skills = []
         for skill in self.skills:
             if hasattr(skill, "_to_generated"):
@@ -109,7 +106,7 @@ class SearchIndexerSkillset(_serialization.Model):
         assert len(generated_skills) == len(self.skills)
         encryption_key = getattr(self, "encryption_key", None)
         return _SearchIndexerSkillset(
-            name=getattr(self, "name", ""),
+            name=getattr(self, "name", None),
             description=getattr(self, "description", None),
             skills=generated_skills,
             cognitive_services_account=getattr(self, "cognitive_services_account", None),
@@ -143,7 +140,6 @@ class SearchIndexerSkillset(_serialization.Model):
 
     def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
         """Return the JSON that would be sent to server from this model.
-
         :param bool keep_readonly: If you want to serialize the readonly attributes
         :returns: A dict JSON compatible object
         :rtype: dict
@@ -158,7 +154,7 @@ class SearchIndexerSkillset(_serialization.Model):
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchIndexerSkillset instance
         :rtype: SearchIndexerSkillset
-        :raises DeserializationError: if something went wrong
+        :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(_SearchIndexerSkillset.deserialize(data, content_type=content_type))
 
@@ -197,9 +193,9 @@ class SearchIndexerSkillset(_serialization.Model):
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchIndexerSkillset instance
         :rtype: SearchIndexerSkillset
-        :raises DeserializationError: if something went wrong
+        :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(
+        return cls._from_generated(  # type: ignore
             _SearchIndexerSkillset.from_dict(data, content_type=content_type, key_extractors=key_extractors)
         )
 
@@ -239,7 +235,7 @@ class EntityRecognitionSkill(SearchIndexerSkill):
      that can be consumed as an input by another skill.
     :vartype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
     :ivar categories: A list of entity categories that should be extracted.
-    :vartype categories: list[str] or list[~azure.search.documents.indexes.models.EntityCategory]
+    :vartype categories: list[str or ~azure.search.documents.indexes.models.EntityCategory]
     :ivar default_language_code: A value indicating which language code to use. Default is en.
      Possible values include: "ar", "cs", "zh-Hans", "zh-Hant", "da", "nl", "en", "fi", "fr", "de",
      "el", "hu", "it", "ja", "ko", "no", "pl", "pt-PT", "pt-BR", "ru", "es", "sv", "tr".
@@ -442,7 +438,45 @@ class SentimentSkill(SearchIndexerSkill):
 
 
 class AnalyzeTextOptions(_serialization.Model):
-    """Specifies some text and analysis components used to break that text into tokens."""
+    """Specifies some text and analysis components used to break that text into tokens.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar text: Required. The text to break into tokens.
+    :vartype text: str
+    :ivar analyzer_name: The name of the analyzer to use to break the given text. If this parameter is
+     not specified, you must specify a tokenizer instead. The tokenizer and analyzer parameters are
+     mutually exclusive. Possible values include: "ar.microsoft", "ar.lucene", "hy.lucene",
+     "bn.microsoft", "eu.lucene", "bg.microsoft", "bg.lucene", "ca.microsoft", "ca.lucene", "zh-
+     Hans.microsoft", "zh-Hans.lucene", "zh-Hant.microsoft", "zh-Hant.lucene", "hr.microsoft",
+     "cs.microsoft", "cs.lucene", "da.microsoft", "da.lucene", "nl.microsoft", "nl.lucene",
+     "en.microsoft", "en.lucene", "et.microsoft", "fi.microsoft", "fi.lucene", "fr.microsoft",
+     "fr.lucene", "gl.lucene", "de.microsoft", "de.lucene", "el.microsoft", "el.lucene",
+     "gu.microsoft", "he.microsoft", "hi.microsoft", "hi.lucene", "hu.microsoft", "hu.lucene",
+     "is.microsoft", "id.microsoft", "id.lucene", "ga.lucene", "it.microsoft", "it.lucene",
+     "ja.microsoft", "ja.lucene", "kn.microsoft", "ko.microsoft", "ko.lucene", "lv.microsoft",
+     "lv.lucene", "lt.microsoft", "ml.microsoft", "ms.microsoft", "mr.microsoft", "nb.microsoft",
+     "no.lucene", "fa.lucene", "pl.microsoft", "pl.lucene", "pt-BR.microsoft", "pt-BR.lucene", "pt-
+     PT.microsoft", "pt-PT.lucene", "pa.microsoft", "ro.microsoft", "ro.lucene", "ru.microsoft",
+     "ru.lucene", "sr-cyrillic.microsoft", "sr-latin.microsoft", "sk.microsoft", "sl.microsoft",
+     "es.microsoft", "es.lucene", "sv.microsoft", "sv.lucene", "ta.microsoft", "te.microsoft",
+     "th.microsoft", "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft",
+     "vi.microsoft", "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern",
+     "simple", "stop", "whitespace".
+    :vartype analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
+    :ivar tokenizer_name: The name of the tokenizer to use to break the given text. If this parameter
+     is not specified, you must specify an analyzer instead. The tokenizer and analyzer parameters
+     are mutually exclusive. Possible values include: "classic", "edgeNGram", "keyword_v2",
+     "letter", "lowercase", "microsoft_language_tokenizer", "microsoft_language_stemming_tokenizer",
+     "nGram", "path_hierarchy_v2", "pattern", "standard_v2", "uax_url_email", "whitespace".
+    :vartype tokenizer_name: str or ~azure.search.documents.indexes.models.LexicalTokenizerName
+    :ivar token_filters: An optional list of token filters to use when breaking the given text.
+     This parameter can only be set when using the tokenizer parameter.
+    :vartype token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
+    :ivar char_filters: An optional list of character filters to use when breaking the given text.
+     This parameter can only be set when using the tokenizer parameter.
+    :vartype char_filters: list[str]
+    """
 
     def __init__(
         self,
@@ -455,42 +489,6 @@ class AnalyzeTextOptions(_serialization.Model):
         char_filters: Optional[List[str]] = None,
         **kwargs
     ):
-        """
-        :keyword text: Required. The text to break into tokens.
-        :paramtype text: str
-        :keyword analyzer_name: The name of the analyzer to use to break the given text. If this parameter is
-         not specified, you must specify a tokenizer instead. The tokenizer and analyzer parameters are
-         mutually exclusive. Possible values include: "ar.microsoft", "ar.lucene", "hy.lucene",
-         "bn.microsoft", "eu.lucene", "bg.microsoft", "bg.lucene", "ca.microsoft", "ca.lucene", "zh-
-         Hans.microsoft", "zh-Hans.lucene", "zh-Hant.microsoft", "zh-Hant.lucene", "hr.microsoft",
-         "cs.microsoft", "cs.lucene", "da.microsoft", "da.lucene", "nl.microsoft", "nl.lucene",
-         "en.microsoft", "en.lucene", "et.microsoft", "fi.microsoft", "fi.lucene", "fr.microsoft",
-         "fr.lucene", "gl.lucene", "de.microsoft", "de.lucene", "el.microsoft", "el.lucene",
-         "gu.microsoft", "he.microsoft", "hi.microsoft", "hi.lucene", "hu.microsoft", "hu.lucene",
-         "is.microsoft", "id.microsoft", "id.lucene", "ga.lucene", "it.microsoft", "it.lucene",
-         "ja.microsoft", "ja.lucene", "kn.microsoft", "ko.microsoft", "ko.lucene", "lv.microsoft",
-         "lv.lucene", "lt.microsoft", "ml.microsoft", "ms.microsoft", "mr.microsoft", "nb.microsoft",
-         "no.lucene", "fa.lucene", "pl.microsoft", "pl.lucene", "pt-BR.microsoft", "pt-BR.lucene", "pt-
-         PT.microsoft", "pt-PT.lucene", "pa.microsoft", "ro.microsoft", "ro.lucene", "ru.microsoft",
-         "ru.lucene", "sr-cyrillic.microsoft", "sr-latin.microsoft", "sk.microsoft", "sl.microsoft",
-         "es.microsoft", "es.lucene", "sv.microsoft", "sv.lucene", "ta.microsoft", "te.microsoft",
-         "th.microsoft", "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft",
-         "vi.microsoft", "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern",
-         "simple", "stop", "whitespace".
-        :paramtype analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
-        :keyword tokenizer_name: The name of the tokenizer to use to break the given text. If this parameter
-         is not specified, you must specify an analyzer instead. The tokenizer and analyzer parameters
-         are mutually exclusive. Possible values include: "classic", "edgeNGram", "keyword_v2",
-         "letter", "lowercase", "microsoft_language_tokenizer", "microsoft_language_stemming_tokenizer",
-         "nGram", "path_hierarchy_v2", "pattern", "standard_v2", "uax_url_email", "whitespace".
-        :paramtype tokenizer_name: str or ~azure.search.documents.indexes.models.LexicalTokenizerName
-        :keyword token_filters: An optional list of token filters to use when breaking the given text.
-         This parameter can only be set when using the tokenizer parameter.
-        :paramtype token_filters: list[str] or list[~azure.search.documents.indexes.models.TokenFilterName]
-        :keyword char_filters: An optional list of character filters to use when breaking the given text.
-         This parameter can only be set when using the tokenizer parameter.
-        :paramtype char_filters: list[str]
-        """
         super().__init__(**kwargs)
         self.text = text
         self.analyzer_name = analyzer_name
@@ -510,9 +508,7 @@ class AnalyzeTextOptions(_serialization.Model):
         )
 
     @classmethod
-    def _from_analyze_request(cls, analyze_request) -> Optional[Self]:
-        if not analyze_request:
-            return None
+    def _from_analyze_request(cls, analyze_request) -> Self:
         return cls(
             text=analyze_request.text,
             analyzer_name=analyze_request.analyzer,
@@ -524,7 +520,6 @@ class AnalyzeTextOptions(_serialization.Model):
 
     def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
         """Return the JSON that would be sent to server from this model.
-
         :param bool keep_readonly: If you want to serialize the readonly attributes
         :returns: A dict JSON compatible object
         :rtype: dict
@@ -539,7 +534,7 @@ class AnalyzeTextOptions(_serialization.Model):
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A AnalyzeTextOptions instance
         :rtype: AnalyzeTextOptions
-        :raises DeserializationError: if something went wrong
+        :raises: DeserializationError if something went wrong
         """
         return cls._from_analyze_request(AnalyzeRequest.deserialize(data, content_type=content_type))
 
@@ -578,7 +573,7 @@ class AnalyzeTextOptions(_serialization.Model):
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A AnalyzeTextOptions instance
         :rtype: AnalyzeTextOptions
-        :raises DeserializationError: if something went wrong
+        :raises: DeserializationError if something went wrong
         """
         return cls._from_analyze_request(
             AnalyzeRequest.from_dict(data, content_type=content_type, key_extractors=key_extractors)
@@ -609,12 +604,26 @@ class CustomAnalyzer(LexicalAnalyzer):
     :ivar token_filters: A list of token filters used to filter out or modify the tokens generated
      by a tokenizer. For example, you can specify a lowercase filter that converts all characters to
      lowercase. The filters are run in the order in which they are listed.
-    :vartype token_filters: list[str] or list[~azure.search.documents.indexes.models.TokenFilterName]
+    :vartype token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
     :ivar char_filters: A list of character filters used to prepare input text before it is
      processed by the tokenizer. For instance, they can replace certain characters or symbols. The
      filters are run in the order in which they are listed.
     :vartype char_filters: list[str]
     """
+
+    _validation = {
+        "odata_type": {"required": True},
+        "name": {"required": True},
+        "tokenizer_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "tokenizer_name": {"key": "tokenizerName", "type": "str"},
+        "token_filters": {"key": "tokenFilters", "type": "[str]"},
+        "char_filters": {"key": "charFilters", "type": "[str]"},
+    }
 
     def __init__(self, **kwargs):
         super(CustomAnalyzer, self).__init__(**kwargs)
@@ -806,11 +815,6 @@ class SearchResourceEncryptionKey(_serialization.Model):
     :vartype application_id: str
     :ivar application_secret: The authentication key of the specified AAD application.
     :vartype application_secret: str
-    :ivar identity: An explicit managed identity to use for this encryption key. If not specified
-     and the access credentials property is null, the system-assigned managed identity is used. On
-     update to the resource, if the explicit identity is unspecified, it remains unchanged. If
-     "none" is specified, the value of this property is cleared.
-    :vartype identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
     """
 
     def __init__(
@@ -821,7 +825,6 @@ class SearchResourceEncryptionKey(_serialization.Model):
         vault_uri: str,
         application_id: Optional[str] = None,
         application_secret: Optional[str] = None,
-        identity: Optional[SearchIndexerDataIdentity] = None,
         **kwargs
     ):
         super().__init__(**kwargs)
@@ -830,7 +833,6 @@ class SearchResourceEncryptionKey(_serialization.Model):
         self.vault_uri = vault_uri
         self.application_id = application_id
         self.application_secret = application_secret
-        self.identity = identity
 
     def _to_generated(self):
         if self.application_id and self.application_secret:
@@ -845,7 +847,6 @@ class SearchResourceEncryptionKey(_serialization.Model):
             key_version=self.key_version,
             vault_uri=self.vault_uri,
             access_credentials=access_credentials,
-            identity=self.identity,
         )
 
     @classmethod
@@ -864,12 +865,10 @@ class SearchResourceEncryptionKey(_serialization.Model):
             vault_uri=search_resource_encryption_key.vault_uri,
             application_id=application_id,
             application_secret=application_secret,
-            identity=search_resource_encryption_key.identity,
         )
 
     def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
         """Return the JSON that would be sent to server from this model.
-
         :param bool keep_readonly: If you want to serialize the readonly attributes
         :returns: A dict JSON compatible object
         :rtype: dict
@@ -883,11 +882,9 @@ class SearchResourceEncryptionKey(_serialization.Model):
         :param str data: A str using RestAPI structure. JSON by default.
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchResourceEncryptionKey instance
-        :raises DeserializationError: if something went wrong
+        :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(  # type: ignore
-            _SearchResourceEncryptionKey.deserialize(data, content_type=content_type)
-        )
+        return cls._from_generated(_SearchResourceEncryptionKey.deserialize(data, content_type=content_type))
 
     def as_dict(
         self,
@@ -924,7 +921,7 @@ class SearchResourceEncryptionKey(_serialization.Model):
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchResourceEncryptionKey instance
         :rtype: SearchResourceEncryptionKey
-        :raises DeserializationError: if something went wrong
+        :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(
             _SearchResourceEncryptionKey.from_dict(data, content_type=content_type, key_extractors=key_extractors)
@@ -1000,7 +997,6 @@ class SynonymMap(_serialization.Model):
 
     def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
         """Return the JSON that would be sent to server from this model.
-
         :param bool keep_readonly: If you want to serialize the readonly attributes
         :returns: A dict JSON compatible object
         :rtype: dict
@@ -1015,7 +1011,7 @@ class SynonymMap(_serialization.Model):
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SynonymMap instance
         :rtype: SynonymMap
-        :raises DeserializationError: if something went wrong
+        :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(_SynonymMap.deserialize(data, content_type=content_type))
 
@@ -1054,14 +1050,14 @@ class SynonymMap(_serialization.Model):
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SynonymMap instance
         :rtype: SynonymMap
-        :raises DeserializationError: if something went wrong
+        :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(
             _SynonymMap.from_dict(data, content_type=content_type, key_extractors=key_extractors)
         )
 
 
-class SearchIndexerDataSourceConnection(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class SearchIndexerDataSourceConnection(_serialization.Model):
     """Represents a datasource connection definition, which can be used to configure an indexer.
 
     All required parameters must be populated in order to send to Azure.
@@ -1077,14 +1073,6 @@ class SearchIndexerDataSourceConnection(_serialization.Model):  # pylint: disabl
     :vartype connection_string: str
     :ivar container: Required. The data container for the datasource connection.
     :vartype container: ~azure.search.documents.indexes.models.SearchIndexerDataContainer
-    :ivar identity: An explicit managed identity to use for this datasource. If not specified and
-     the connection string is a managed identity, the system-assigned managed identity is used. If
-     not specified, the value remains unchanged. If "none" is specified, the value of this property
-     is cleared.
-    :vartype identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
-    :ivar indexer_permission_options: Ingestion options with various types of permission data.
-    :vartype indexer_permission_options: list[str or
-     ~azure.search.documents.indexes.models.IndexerPermissionOption]
     :ivar data_change_detection_policy: The data change detection policy for the datasource connection.
     :vartype data_change_detection_policy: ~azure.search.documents.models.DataChangeDetectionPolicy
     :ivar data_deletion_detection_policy: The data deletion detection policy for the datasource connection.
@@ -1112,8 +1100,6 @@ class SearchIndexerDataSourceConnection(_serialization.Model):  # pylint: disabl
         type: str,
         connection_string: str,
         container: SearchIndexerDataContainer,
-        identity: Optional[SearchIndexerDataIdentity] = None,
-        indexer_permission_options: Optional[List[Union[str, IndexerPermissionOption]]] = None,
         data_change_detection_policy: Optional[DataChangeDetectionPolicy] = None,
         data_deletion_detection_policy: Optional[DataDeletionDetectionPolicy] = None,
         e_tag: Optional[str] = None,
@@ -1126,8 +1112,6 @@ class SearchIndexerDataSourceConnection(_serialization.Model):  # pylint: disabl
         self.type = type
         self.connection_string = connection_string
         self.container = container
-        self.identity = identity
-        self.indexer_permission_options = indexer_permission_options
         self.data_change_detection_policy = data_change_detection_policy
         self.data_deletion_detection_policy = data_deletion_detection_policy
         self.e_tag = e_tag
@@ -1151,8 +1135,6 @@ class SearchIndexerDataSourceConnection(_serialization.Model):  # pylint: disabl
             encryption_key=(
                 self.encryption_key._to_generated() if self.encryption_key else None  # pylint: disable=protected-access
             ),
-            identity=self.identity,
-            indexer_permission_options=self.indexer_permission_options,
         )
 
     @classmethod
@@ -1160,7 +1142,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):  # pylint: disabl
         if not search_indexer_data_source:
             return None
         connection_string = (
-            search_indexer_data_source.credentials.connection_string if search_indexer_data_source.credentials else ""
+            search_indexer_data_source.credentials.connection_string if search_indexer_data_source.credentials else None
         )
         return cls(
             name=search_indexer_data_source.name,
@@ -1178,13 +1160,10 @@ class SearchIndexerDataSourceConnection(_serialization.Model):  # pylint: disabl
                 if search_indexer_data_source.encryption_key
                 else None
             ),
-            identity=search_indexer_data_source.identity,
-            indexer_permission_options=search_indexer_data_source.indexer_permission_options,
         )
 
     def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
         """Return the JSON that would be sent to server from this model.
-
         :param bool keep_readonly: If you want to serialize the readonly attributes
         :returns: A dict JSON compatible object
         :rtype: dict
@@ -1199,7 +1178,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):  # pylint: disabl
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchIndexerDataSourceConnection instance
         :rtype: SearchIndexerDataSourceConnection
-        :raises DeserializationError: if something went wrong
+        :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(_SearchIndexerDataSource.deserialize(data, content_type=content_type))
 
@@ -1238,7 +1217,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):  # pylint: disabl
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchIndexerDataSourceConnection instance
         :rtype: SearchIndexerDataSourceConnection
-        :raises DeserializationError: if something went wrong
+        :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(
             _SearchIndexerDataSource.from_dict(data, content_type=content_type, key_extractors=key_extractors)
@@ -1303,9 +1282,6 @@ class SearchIndexer(_serialization.Model):  # pylint: disable=too-many-instance-
      keys is not available for free search services, and is only available for paid services created
      on or after January 1, 2019.
     :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
-    :ivar cache: Adds caching to an enrichment pipeline to allow for incremental modification steps
-     without having to rebuild the index every time.
-    :vartype cache: ~azure.search.documents.indexes.models.SearchIndexerCache
     """
 
     def __init__(
@@ -1323,7 +1299,6 @@ class SearchIndexer(_serialization.Model):  # pylint: disable=too-many-instance-
         is_disabled: bool = False,
         e_tag: Optional[str] = None,
         encryption_key: Optional[SearchResourceEncryptionKey] = None,
-        cache: Optional[SearchIndexerCache] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1362,9 +1337,6 @@ class SearchIndexer(_serialization.Model):  # pylint: disable=too-many-instance-
          keys is not available for free search services, and is only available for paid services created
          on or after January 1, 2019.
         :paramtype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
-        :keyword cache: Adds caching to an enrichment pipeline to allow for incremental modification
-         steps without having to rebuild the index every time.
-        :paramtype cache: ~azure.search.documents.indexes.models.SearchIndexerCache
         """
         super().__init__(**kwargs)
         self.name = name
@@ -1379,7 +1351,6 @@ class SearchIndexer(_serialization.Model):  # pylint: disable=too-many-instance-
         self.is_disabled = is_disabled
         self.e_tag = e_tag
         self.encryption_key = encryption_key
-        self.cache = cache
 
     def _to_generated(self):
         return _SearchIndexer(
@@ -1397,7 +1368,6 @@ class SearchIndexer(_serialization.Model):  # pylint: disable=too-many-instance-
             encryption_key=(
                 self.encryption_key._to_generated() if self.encryption_key else None  # pylint:disable=protected-access
             ),
-            cache=self.cache,
         )
 
     @classmethod
@@ -1418,12 +1388,10 @@ class SearchIndexer(_serialization.Model):  # pylint: disable=too-many-instance-
             e_tag=search_indexer.e_tag,
             # pylint:disable=protected-access
             encryption_key=SearchResourceEncryptionKey._from_generated(search_indexer.encryption_key),
-            cache=search_indexer.cache,
         )
 
     def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
         """Return the JSON that would be sent to server from this model.
-
         :param bool keep_readonly: If you want to serialize the readonly attributes
         :returns: A dict JSON compatible object
         :rtype: dict
@@ -1433,11 +1401,10 @@ class SearchIndexer(_serialization.Model):  # pylint: disable=too-many-instance-
     @classmethod
     def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional[Self]:  # type: ignore
         """Parse a str using the RestAPI syntax and return a SearchIndexer instance.
-
         :param str data: A str using RestAPI structure. JSON by default.
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchIndexer instance
         :rtype: SearchIndexer
-        :raises DeserializationError: if something went wrong
+        :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(_SearchIndexer.deserialize(data, content_type=content_type))

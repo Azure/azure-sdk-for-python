@@ -1,177 +1,16 @@
 # Release History
 
-## 11.6.0b13 (Unreleased)
-
-### Features Added
-
-- Added `azure.search.documents.models.DebugInfo`.
-
-### Breaking Changes
+## 11.5.3 (2025-06-25)
 
 ### Bugs Fixed
 
-### Other Changes
+- Fixed the issue search operation did not handle 206 correctly.
 
-## 11.6.0b12 (2025-05-14)
-
-### Features Added
-
-- Added `azure.search.documents.agent.KnowledgeAgentRetrievalClient`.
-- Added knowledge agents operations in `SearchIndexClient`.
-- Added `resync` method in `SearchIndexerClient`.
-- Exposed `@search.reranker_boosted_score` in the search results.
-- Added `x_ms_query_source_authorization` as a keyword argument to `SearchClient.search`.
-- Added property `azure.search.documents.indexes.models.SearchField.permission_filter`.
-- Added property `azure.search.documents.indexes.models.SearchIndex.permission_filter_option`.
-- Added property `azure.search.documents.indexes.models.SearchIndexerDataSourceConnection.indexer_permission_options`.
-
-- Added new models:
-    - `azure.search.documents.models.QueryResultDocumentInnerHit`
-    - `azure.search.documents.indexes.models.ChatCompletionExtraParametersBehavior`
-    - `azure.search.documents.indexes.models.ChatCompletionResponseFormat`
-    - `azure.search.documents.indexes.models.ChatCompletionResponseFormatType`
-    - `azure.search.documents.indexes.models.ChatCompletionResponseFormatJsonSchemaProperties`
-    - `azure.search.documents.indexes.models.ChatCompletionSchema`
-    - `azure.search.documents.indexes.models.ChatCompletionSkill`
-    - `azure.search.documents.indexes.models.CommonModelParameters`
-    - `azure.search.documents.indexes.models.DocumentIntelligenceLayoutSkillChunkingProperties`
-    - `azure.search.documents.indexes.models.DocumentIntelligenceLayoutSkillChunkingUnit`
-    - `azure.search.documents.indexes.models.DocumentIntelligenceLayoutSkillExtractionOptions`
-    - `azure.search.documents.indexes.models.DocumentIntelligenceLayoutSkillOutputFormat`
-    - `azure.search.documents.indexes.models.IndexerPermissionOption`
-    - `azure.search.documents.indexes.models.IndexerResyncOption`
-    - `azure.search.documents.indexes.models.KnowledgeAgent`
-    - `azure.search.documents.indexes.models.KnowledgeAgentAzureOpenAIModel`
-    - `azure.search.documents.indexes.models.KnowledgeAgentModel`
-    - `azure.search.documents.indexes.models.KnowledgeAgentModelKind`
-    - `azure.search.documents.indexes.models.KnowledgeAgentRequestLimits`
-    - `azure.search.documents.indexes.models.KnowledgeAgentTargetIndex`
-    - `azure.search.documents.indexes.models.PermissionFilter`
-    - `azure.search.documents.indexes.models.RankingOrder`
-    - `azure.search.documents.indexes.models.SearchIndexPermissionFilterOption`
+## 11.5.2 (2024-10-31)
 
 ### Bugs Fixed
 
-- Fixed the issue batching in upload_documents() did not work.    #40157
-
-### Other Changes
-
-- Updated the API version to "2025-05-01-preview"
-
-## 11.6.0b11 (2025-03-25)
-
-### Bugs Fixed
-
-- Fixed the issue that could not deserialize `document_debug_info`.    #40138
-
-## 11.6.0b10 (2025-03-11)
-
-### Features Added
-
-- Added `SearchIndexClient.list_index_stats_summary`.
-- Added `SearchIndexerCache.id`.
-- Added new model `azure.search.documents.indexes.models.IndexStatisticsSummary`.
-
-### Breaking Changes
-
-> These changes do not impact the API of stable versions such as 11.5.0.
-> Only code written against a beta version such as 11.6.0b9 may be affected.
-- Renamed `azure.search.documents.indexes.models.AIStudioModelCatalogName` to `azure.search.documents.indexes.models.AIFoundryModelCatalogName`.
-
-### Other Changes
-
-- Updated the API version to "2025-03-01-preview"
-
-## 11.6.0b9 (2025-01-14)
-
-### Bugs Fixed
-
-- Exposed `@search.document_debug_info` in the search results.
-
-## 11.6.0b8 (2024-11-21)
-
-### Features Added
-
-- Added `get_debug_info` in Search results.
-
-## 11.6.0b7 (2024-11-18)
-
-### Features Added
-
-- Added `SearchResourceEncryptionKey`.`identity` support.
-- Added `query_rewrites` & `query_rewrites_count` in `SearchClient.Search`.
-- Added `query_rewrites` in `VectorizableTextQuery`.
-- Added new models:
-  - `azure.search.documents.QueryRewritesType`
-  - `azure.search.documents.indexes.AIServicesAccountIdentity`
-  - `azure.search.documents.indexes.AIServicesAccountKey`
-  - `azure.search.documents.indexes.AzureOpenAITokenizerParameters`
-  - `azure.search.documents.indexes.DocumentIntelligenceLayoutSkillMarkdownHeaderDepth`
-  - `azure.search.documents.indexes.DocumentIntelligenceLayoutSkillOutputMode`
-  - `azure.search.documents.indexes.DataSourceCredentials`
-  - `azure.search.documents.indexes.DocumentIntelligenceLayoutSkill`
-  - `azure.search.documents.indexes.IndexerCurrentState`
-  - `azure.search.documents.indexes.MarkdownHeaderDepth`
-  - `azure.search.documents.indexes.MarkdownParsingSubmode`
-  - `azure.search.documents.indexes.RescoringOptions`
-  - `azure.search.documents.indexes.ResourceCounter`
-  - `azure.search.documents.indexes.SkillNames`
-  - `azure.search.documents.indexes.SplitSkillEncoderModelName`
-  - `azure.search.documents.indexes.SplitSkillUnit`
-  - `azure.search.documents.indexes.VectorSearchCompressionKind`
-  - `azure.search.documents.indexes.VectorSearchCompressionRescoreStorageMethod`
-
-### Other Changes
-
-- Updated the API version to "2024-1-01-preview"
-
-11.5.2 (2024-10-31)
-
-### Bugs Fixed
-
-- Fixed the issue that encryptionKey was lost during serialization. #37521
-
-## 11.6.0b6 (2024-10-08)
-
-### Bugs Fixed
-
-- Fixed the issue that `encryptionKey` in `SearchIndexer` was lost during serialization.  #37521
-
-## 11.6.0b5 (2024-09-19)
-
-### Features Added
-
-- `SearchIndexClient`.`get_search_client` inherits the API version.
-
-### Bugs Fixed
-
-- Fixed the issue that we missed ODATA header when using Entra ID auth.
-- Fixed the issue that `encryptionKey` was lost during serialization.  #37251
-
-### Other Changes
-
-- Updated the API version to "2024-09-01-preview"
-
-### Breaking changes
-
-> These changes do not impact the API of stable versions such as 11.5.0.
-> Only code written against a beta version such as 11.6.0b4 may be affected.
-- Below models were renamed
-  - `azure.search.documents.indexes.models.SearchIndexerIndexProjections` -> `azure.search.documents.indexes.models.SearchIndexerIndexProjection`
-  - `azure.search.documents.indexes.models.LineEnding` -> `azure.search.documents.indexes.models.OrcLineEnding`
-  - `azure.search.documents.indexes.models.ScalarQuantizationCompressionConfiguration` -> `azure.search.documents.indexes.models.ScalarQuantizationCompression`
-  - `azure.search.documents.indexes.models.VectorSearchCompressionConfiguration` -> `azure.search.documents.indexes.models.VectorSearchCompression`
-  - `azure.search.documents.indexes.models.VectorSearchCompressionTargetDataType` -> `azure.search.documents.indexes.models.VectorSearchCompressionTarget`
-- Below properties were renamed
-  - `azure.search.documents.indexes.models.AzureMachineLearningVectorizer.name` -> `azure.search.documents.indexes.models.AzureMachineLearningVectorizer.vectorizer_name`
-  - `azure.search.documents.indexes.models.AzureOpenAIEmbeddingSkill.deployment_id` -> `azure.search.documents.indexes.models.AzureOpenAIEmbeddingSkill.deployment_name`
-  - `azure.search.documents.indexes.models.AzureOpenAIEmbeddingSkill.resource_uri` -> `azure.search.documents.indexes.models.AzureOpenAIEmbeddingSkill.resource_url`
-  - `azure.search.documents.indexes.models.AzureOpenAIVectorizer.azure_open_ai_parameters` -> `azure.search.documents.indexes.models.AzureOpenAIVectorizer.parameters`
-  - `azure.search.documents.indexes.models.AzureOpenAIVectorizer.name` -> `azure.search.documents.indexes.models.AzureOpenAIVectorizer.vectorizer_name`
-  - `azure.search.documents.indexes.models.SearchIndexerDataUserAssignedIdentity.user_assigned_identity` -> `azure.search.documents.indexes.models.SearchIndexerDataUserAssignedIdentity.resource_id`
-  - `azure.search.documents.indexes.models.VectorSearchProfile.compression_configuration_name` -> `azure.search.documents.indexes.models.VectorSearchProfile.compression_name`
-  - `azure.search.documents.indexes.models.VectorSearchProfile.vectorizer` -> `azure.search.documents.indexes.models.VectorSearchProfile.vectorizer_name`
-  - `azure.search.documents.indexes.models.VectorSearchVectorizer.name` -> `azure.search.documents.indexes.models.VectorSearchVectorizer.vectorizer_name`
+- Fixed the issue that `encryptionKey` was lost during serialization.  #37521
 
 ## 11.5.1 (2024-07-30)
 
@@ -185,6 +24,7 @@
 
 > These changes do not impact the API of stable versions such as 11.4.0.
 > Only code written against a beta version such as 11.6.0b4 may be affected.
+
 - Below models are renamed
   - `azure.search.documents.indexes.models.SearchIndexerIndexProjections` -> `azure.search.documents.indexes.models.SearchIndexerIndexProjection`
   - `azure.search.documents.indexes.models.LineEnding` -> `azure.search.documents.indexes.models.OrcLineEnding`
@@ -500,7 +340,7 @@
 
 ### Features Added
 
-- Support for [`AzureMachineLearningSkill`](https://learn.microsoft.com/azure/search/cognitive-search-aml-skill). The AML skill allows you to extend AI enrichment with a custom [Azure Machine Learning](https://learn.microsoft.com/azure/machine-learning/overview-what-is-azure-machine-learning) (AML) model. Once an AML model is [trained and deployed](https://learn.microsoft.com/azure/machine-learning/concept-azure-machine-learning-architecture#workspace), an AML skill integrates it into AI enrichment.
+- Support for [`AzureMachineLearningSkill`](https://docs.microsoft.com/azure/search/cognitive-search-aml-skill). The AML skill allows you to extend AI enrichment with a custom [Azure Machine Learning](https://docs.microsoft.com/azure/machine-learning/overview-what-is-azure-machine-learning) (AML) model. Once an AML model is [trained and deployed](https://docs.microsoft.com/azure/machine-learning/concept-azure-machine-learning-architecture#workspace), an AML skill integrates it into AI enrichment.
 
 ### Other Changes
 
@@ -550,7 +390,7 @@ Minor updates.
 
 ### Features Added
 
-- Added new models: 
+- Added new models:
   - `azure.search.documents.models.QueryCaptionType`
   - `azure.search.documents.models.CaptionResult`
   - `azure.search.documents.indexes.models.CustomEntityLookupSkillLanguage`

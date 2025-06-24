@@ -95,7 +95,7 @@ def get_hotel_documents():
         {
             "hotelId": "2",
             "hotelName": "Roach Motel",
-            "description": "Cheapest hotel in town. Infact, a motel.",
+            "descrdescriptioniption": "Cheapest hotel in town. Infact, a motel.",
             "descriptionVector": get_embeddings("Cheapest hotel in town. Infact, a motel."),
             "category": "Budget",
         },

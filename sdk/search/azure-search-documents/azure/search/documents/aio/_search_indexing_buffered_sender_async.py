@@ -44,7 +44,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     :keyword callable on_remove: If it is set, the client will call corresponding methods when there
         is a IndexAction removed from the queue (succeeds or fails).
     :keyword str api_version: The Search API version to use for requests.
-    :keyword str audience: sets the Audience to use for authentication with Microsoft Entra ID. The
+    :keyword str audience: sets the Audience to use for authentication with Azure Active Directory (AAD). The
         audience is not considered when using a shared key. If audience is not provided, the public cloud audience
         will be assumed.
     """
@@ -102,7 +102,6 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     @property
     def actions(self) -> List[IndexAction]:
         """The list of currently index actions in queue to index.
-
         :return: The list of currently index actions in queue to index.
         :rtype: list[IndexAction]
         """
@@ -111,7 +110,6 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     @distributed_trace_async
     async def close(self, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         """Close the session.
-
         :return: None
         :rtype: None
         """
@@ -121,11 +119,10 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     @distributed_trace_async
     async def flush(self, timeout: int = 86400, **kwargs) -> bool:  # pylint:disable=unused-argument
         """Flush the batch.
-
         :param int timeout: time out setting. Default is 86400s (one day)
         :return: True if there are errors. Else False
         :rtype: bool
-        :raises ~azure.core.exceptions.ServiceResponseTimeoutError: if there is a timeout
+        :raises ~azure.core.exceptions.ServiceResponseTimeoutError:
         """
         has_error = False
         begin_time = int(time.time())
@@ -200,7 +197,6 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         will be triggered. It checks the actions already queued and flushes them if:
         1. Auto_flush is on
         2. There are self._batch_action_count actions queued
-
         :return: True if proces is needed, False otherwise
         :rtype: bool
         """
@@ -224,7 +220,6 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     @distributed_trace_async
     async def upload_documents(self, documents: List[Dict], **kwargs: Any) -> None:  # pylint: disable=unused-argument
         """Queue upload documents actions.
-
         :param documents: A list of documents to upload.
         :type documents: list[dict]
         """
@@ -235,7 +230,6 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     @distributed_trace_async
     async def delete_documents(self, documents: List[Dict], **kwargs: Any) -> None:  # pylint: disable=unused-argument
         """Queue delete documents actions
-
         :param documents: A list of documents to delete.
         :type documents: list[Dict]
         """
@@ -246,7 +240,6 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     @distributed_trace_async
     async def merge_documents(self, documents: List[Dict], **kwargs: Any) -> None:  # pylint: disable=unused-argument
         """Queue merge documents actions
-
         :param documents: A list of documents to merge.
         :type documents: list[dict]
         """
@@ -258,7 +251,6 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     async def merge_or_upload_documents(self, documents: List[Dict], **kwargs: Any) -> None:
         # pylint: disable=unused-argument
         """Queue merge documents or upload documents actions
-
         :param documents: A list of documents to merge or upload.
         :type documents: list[dict]
         """
@@ -274,7 +266,8 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         :type batch: IndexDocumentsBatch
         :return: Indexing result for each action in the batch.
         :rtype:  list[IndexingResult]
-        :raises ~azure.search.documents.RequestEntityTooLargeError: The request is too large.
+
+        :raises ~azure.search.documents.RequestEntityTooLargeError
         """
         return await self._index_documents_actions(actions=batch.actions, **kwargs)
 
@@ -299,7 +292,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             if remaining < 0:
                 raise ServiceResponseTimeoutError("Service response time out") from ex
             batch_response_first_half = await self._index_documents_actions(
-                actions=actions[:pos], timeout=remaining, **kwargs
+                actions=actions[:pos], error_map=error_map, **kwargs
             )
             if len(batch_response_first_half) > 0:
                 result_first_half = batch_response_first_half
@@ -310,7 +303,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             if remaining < 0:
                 raise ServiceResponseTimeoutError("Service response time out") from ex
             batch_response_second_half = await self._index_documents_actions(
-                actions=actions[pos:], timeout=remaining, **kwargs
+                actions=actions[pos:], error_map=error_map, **kwargs
             )
             if len(batch_response_second_half) > 0:
                 result_second_half = batch_response_second_half

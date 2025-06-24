@@ -45,7 +45,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         is a IndexAction removed from the queue (succeeds or fails). This may be called from main
         thread or a worker thread.
     :keyword str api_version: The Search API version to use for requests.
-    :keyword str audience: sets the Audience to use for authentication with Microsoft Entra ID. The
+    :keyword str audience: sets the Audience to use for authentication with Azure Active Directory (AAD). The
         audience is not considered when using a shared key. If audience is not provided, the public cloud audience
         will be assumed.
     """
@@ -111,7 +111,6 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     @distributed_trace
     def close(self, **kwargs) -> None:  # pylint: disable=unused-argument
         """Close the session.
-
         :return: None
         :rtype: None
         """
@@ -271,7 +270,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         :return: Indexing result of each action in the batch.
         :rtype:  list[IndexingResult]
 
-        :raises ~azure.search.documents.RequestEntityTooLargeError: The request is too large.
+        :raises ~azure.search.documents.RequestEntityTooLargeError
         """
         return self._index_documents_actions(actions=batch.actions, **kwargs)
 
@@ -296,7 +295,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             if remaining < 0:
                 raise ServiceResponseTimeoutError("Service response time out") from ex
             batch_response_first_half = self._index_documents_actions(
-                actions=actions[:pos], timeout=remaining, **kwargs
+                actions=actions[:pos], error_map=error_map, timeout=remaining, **kwargs
             )
             if len(batch_response_first_half) > 0:
                 result_first_half = batch_response_first_half
@@ -307,7 +306,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             if remaining < 0:
                 raise ServiceResponseTimeoutError("Service response time out") from ex
             batch_response_second_half = self._index_documents_actions(
-                actions=actions[pos:], timeout=remaining, **kwargs
+                actions=actions[pos:], error_map=error_map, timeout=remaining, **kwargs
             )
             if len(batch_response_second_half) > 0:
                 result_second_half = batch_response_second_half

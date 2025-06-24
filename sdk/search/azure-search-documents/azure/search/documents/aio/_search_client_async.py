@@ -3,14 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import cast, List, Union, Any, Optional, Dict, MutableMapping
+from typing import cast, List, Union, Any, Optional, Dict
 
 from azure.core.rest import HttpRequest, AsyncHttpResponse
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._paging import AsyncSearchItemPaged, AsyncSearchPageIterator
-from .._utils import get_authentication_policy, get_answer_query, get_rewrites_query
+from .._utils import get_authentication_policy, get_answer_query
 from .._generated.aio import SearchIndexClient
 from .._generated.models import (
     AutocompleteMode,
@@ -20,18 +20,13 @@ from .._generated.models import (
     IndexingResult,
     QueryAnswerType,
     QueryCaptionType,
-    QueryLanguage,
-    QuerySpellerType,
     QueryType,
     SearchMode,
     ScoringStatistics,
     VectorFilterMode,
     VectorQuery,
     SemanticErrorMode,
-    QueryRewritesType,
-    QueryDebugMode,
     SuggestRequest,
-    HybridSearch,
 )
 from .._search_documents_error import RequestEntityTooLargeError
 from .._index_documents_batch import IndexDocumentsBatch
@@ -51,7 +46,7 @@ class SearchClient(HeadersMixin):
     :param credential: A credential to authorize search client requests
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials_async.AsyncTokenCredential
     :keyword str api_version: The Search API version to use for requests.
-    :keyword str audience: sets the Audience to use for authentication with Microsoft Entra ID. The
+    :keyword str audience: sets the Audience to use for authentication with Azure Active Directory (AAD). The
         audience is not considered when using a shared key. If audience is not provided, the public cloud audience
         will be assumed.
 
@@ -103,7 +98,6 @@ class SearchClient(HeadersMixin):
 
     async def close(self) -> None:
         """Close the session.
-
         :return: None
         :rtype: None
         """
@@ -162,14 +156,11 @@ class SearchClient(HeadersMixin):
         semantic_query: Optional[str] = None,
         search_fields: Optional[List[str]] = None,
         search_mode: Optional[Union[str, SearchMode]] = None,
-        query_language: Optional[Union[str, QueryLanguage]] = None,
-        query_speller: Optional[Union[str, QuerySpellerType]] = None,
         query_answer: Optional[Union[str, QueryAnswerType]] = None,
         query_answer_count: Optional[int] = None,
         query_answer_threshold: Optional[float] = None,
         query_caption: Optional[Union[str, QueryCaptionType]] = None,
         query_caption_highlight_enabled: Optional[bool] = None,
-        semantic_fields: Optional[List[str]] = None,
         semantic_configuration_name: Optional[str] = None,
         select: Optional[List[str]] = None,
         skip: Optional[int] = None,
@@ -180,11 +171,6 @@ class SearchClient(HeadersMixin):
         vector_filter_mode: Optional[Union[str, VectorFilterMode]] = None,
         semantic_error_mode: Optional[Union[str, SemanticErrorMode]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
-        query_rewrites: Optional[Union[str, QueryRewritesType]] = None,
-        query_rewrites_count: Optional[int] = None,
-        debug: Optional[Union[str, QueryDebugMode]] = None,
-        hybrid_search: Optional[HybridSearch] = None,
-        x_ms_query_source_authorization: Optional[str] = None,
         **kwargs
     ) -> AsyncSearchItemPaged[Dict]:
         # pylint:disable=too-many-locals, disable=redefined-builtin
@@ -235,18 +221,6 @@ class SearchClient(HeadersMixin):
         :keyword search_mode: A value that specifies whether any or all of the search terms must be
             matched in order to count the document as a match. Possible values include: 'any', 'all'.
         :paramtype search_mode: str or ~azure.search.documents.models.SearchMode
-        :keyword query_language: The language of the search query. Possible values include: "none", "en-us",
-            "en-gb", "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de", "es-es", "es-mx", "zh-cn",
-            "zh-tw", "pt-br", "pt-pt", "it-it", "ja-jp", "ko-kr", "ru-ru", "cs-cz", "nl-be", "nl-nl",
-            "hu-hu", "pl-pl", "sv-se", "tr-tr", "hi-in", "ar-sa", "ar-eg", "ar-ma", "ar-kw", "ar-jo",
-            "da-dk", "no-no", "bg-bg", "hr-hr", "hr-ba", "ms-my", "ms-bn", "sl-sl", "ta-in", "vi-vn",
-            "el-gr", "ro-ro", "is-is", "id-id", "th-th", "lt-lt", "uk-ua", "lv-lv", "et-ee", "ca-es",
-            "fi-fi", "sr-ba", "sr-me", "sr-rs", "sk-sk", "nb-no", "hy-am", "bn-in", "eu-es", "gl-es",
-            "gu-in", "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in", "te-in", "ur-pk".
-        :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
-        :keyword query_speller: A value that specified the type of the speller to use to spell-correct
-            individual search query terms. Possible values include: "none", "lexicon".
-        :paramtype query_speller: str or ~azure.search.documents.models.QuerySpellerType
         :keyword query_answer: This parameter is only valid if the query type is 'semantic'. If set,
             the query returns answers extracted from key passages in the highest ranked documents.
             Possible values include: "none", "extractive".
@@ -263,7 +237,6 @@ class SearchClient(HeadersMixin):
         :keyword bool query_caption_highlight_enabled: This parameter is only valid if the query type is 'semantic' when
             query caption is set to 'extractive'. Determines whether highlighting is enabled.
             Defaults to 'true'.
-        :keyword list[str] semantic_fields: The list of field names used for semantic search.
         :keyword semantic_configuration_name: The name of the semantic configuration that will be used when
             processing documents for queries of type semantic.
         :paramtype semantic_configuration_name: str
@@ -294,29 +267,11 @@ class SearchClient(HeadersMixin):
         :paramtype semantic_error_mode: str or ~azure.search.documents.models.SemanticErrorMode
         :keyword int semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount of
             time it takes for semantic enrichment to finish processing before the request fails.
-        :keyword query_rewrites: When QueryRewrites is set to ``generative``\\ , the query terms are sent
-            to a generate model which will produce 10 (default) rewrites to help increase the recall of the
-            request. The requested count can be configured by appending the pipe character ``|`` followed
-            by the ``count-<number of rewrites>`` option, such as ``generative|count-3``. Defaults to
-            ``None``. This parameter is only valid if the query type is ``semantic``. Known values are:
-            "none" and "generative".
-        :paramtype query_rewrites: str or ~azure.search.documents.models.QueryRewritesType
-        :keyword int query_rewrites_count: This parameter is only valid if the query rewrites type is 'generative'.
-            Configures the number of rewrites returned. Default count is 10.
-        :keyword debug: Enables a debugging tool that can be used to further explore your Semantic search
-            results. Known values are: "disabled", "speller", "semantic", and "all".
-        :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
         :keyword vector_queries: The query parameters for vector and hybrid search queries.
         :paramtype vector_queries: list[VectorQuery]
         :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
-            vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and "preFilter".
+             vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and "preFilter".
         :paramtype vector_filter_mode: str or VectorFilterMode
-        :keyword hybrid_search: The query parameters to configure hybrid search behaviors.
-        :paramtype hybrid_search: ~azure.search.documents.models.HybridSearch
-        :keyword x_ms_query_source_authorization: Token identifying the user for which the query is being
-            executed. This token is used to enforce security restrictions on documents. Default value is
-            None.
-        :paramtype x_ms_query_source_authorization: str
         :return: A list of documents (dicts) matching the specified search criteria.
         :return: List of search results.
         :rtype:  AsyncSearchItemPaged[dict]
@@ -352,7 +307,6 @@ class SearchClient(HeadersMixin):
         filter_arg = filter
         search_fields_str = ",".join(search_fields) if search_fields else None
         answers = get_answer_query(query_answer, query_answer_count, query_answer_threshold)
-        rewrites = get_rewrites_query(query_rewrites, query_rewrites_count)
         captions = (
             query_caption
             if not query_caption_highlight_enabled
@@ -376,11 +330,8 @@ class SearchClient(HeadersMixin):
             semantic_query=semantic_query,
             search_fields=search_fields_str,
             search_mode=search_mode,
-            query_language=query_language,
-            speller=query_speller,
             answers=answers,
             captions=captions,
-            semantic_fields=",".join(semantic_fields) if semantic_fields else None,
             semantic_configuration=semantic_configuration,
             select=select if isinstance(select, str) else None,
             skip=skip,
@@ -391,16 +342,12 @@ class SearchClient(HeadersMixin):
             vector_filter_mode=vector_filter_mode,
             semantic_error_handling=semantic_error_mode,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
-            query_rewrites=rewrites,
-            debug=debug,
-            hybrid_search=hybrid_search,
         )
         if isinstance(select, list):
             query.select(select)
         if isinstance(order_by, list):
             query.order_by(order_by)
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        kwargs["x_ms_query_source_authorization"] = x_ms_query_source_authorization
         kwargs["api_version"] = self._api_version
         return AsyncSearchItemPaged(self._client, query, kwargs, page_iterator_class=AsyncSearchPageIterator)
 
@@ -420,7 +367,7 @@ class SearchClient(HeadersMixin):
         select: Optional[List[str]] = None,
         top: Optional[int] = None,
         **kwargs
-    ) -> List[MutableMapping[str, Any]]:
+    ) -> List[Dict]:
         """Get search suggestion results from the Azure search index.
 
         :param str search_text: Required. The search text to use to suggest documents. Must be at least 1
@@ -506,7 +453,7 @@ class SearchClient(HeadersMixin):
         search_fields: Optional[List[str]] = None,
         top: Optional[int] = None,
         **kwargs
-    ) -> List[MutableMapping[str, Any]]:
+    ) -> List[Dict]:
         """Get search auto-completion results from the Azure search index.
 
         :param str search_text: The search text on which to base autocomplete results.
@@ -693,7 +640,7 @@ class SearchClient(HeadersMixin):
         :return: List of IndexingResult
         :rtype:  list[IndexingResult]
 
-        :raises ~azure.search.documents.RequestEntityTooLargeError: The request is too large.
+        :raises ~azure.search.documents.RequestEntityTooLargeError
         """
         return await self._index_documents_actions(actions=batch.actions, **kwargs)
 
@@ -709,12 +656,16 @@ class SearchClient(HeadersMixin):
             if len(actions) == 1:
                 raise
             pos = round(len(actions) / 2)
-            batch_response_first_half = await self._index_documents_actions(actions=actions[:pos], **kwargs)
+            batch_response_first_half = await self._index_documents_actions(
+                actions=actions[:pos], error_map=error_map, **kwargs
+            )
             if batch_response_first_half:
                 result_first_half = batch_response_first_half
             else:
                 result_first_half = []
-            batch_response_second_half = await self._index_documents_actions(actions=actions[pos:], **kwargs)
+            batch_response_second_half = await self._index_documents_actions(
+                actions=actions[pos:], error_map=error_map, **kwargs
+            )
             if batch_response_second_half:
                 result_second_half = batch_response_second_half
             else:

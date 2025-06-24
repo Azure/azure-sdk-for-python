@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
 from azure.search.documents.indexes.models import (
     SearchIndexerDataContainer,
     SearchIndexerDataSourceConnection,

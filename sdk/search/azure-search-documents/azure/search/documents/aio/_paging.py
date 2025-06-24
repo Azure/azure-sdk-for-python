@@ -3,11 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Dict, Optional, cast, MutableMapping, Any
+from typing import List, Dict, Optional, cast
 
 from azure.core.paging import ReturnType
 from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator
-from .._generated.models import QueryAnswerResult, SearchDocumentsResult, DebugInfo
+from .._generated.models import QueryAnswerResult, SearchDocumentsResult
 from .._paging import (
     convert_search_result,
     pack_continuation_token,
@@ -17,8 +17,6 @@ from .._api_versions import DEFAULT_VERSION
 
 
 class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
-    """A pageable list of search results."""
-
     def __init__(self, *args, **kwargs) -> None:
         super(AsyncSearchItemPaged, self).__init__(*args, **kwargs)
         self._first_page_iterator_instance: Optional[AsyncSearchPageIterator] = None
@@ -75,17 +73,9 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         and answers are requested in the search query via the query_answer parameter.
 
         :return: Answers.
-        :rtype: list[~azure.search.documents.models.QueryAnswerResult]
+        :rtype: list[~azure.search.documents.QueryAnswerResult]
         """
         return cast(List[QueryAnswerResult], await self._first_iterator_instance().get_answers())
-
-    async def get_debug_info(self) -> DebugInfo:
-        """Return the debug information for the query.
-
-        :return: the debug information for the query.
-        :rtype: ~azure.search.documents.models.DebugInfo
-        """
-        return cast(DebugInfo, await self._first_iterator_instance().get_debug_info())
 
 
 # The pylint error silenced below seems spurious, as the inner wrapper does, in
@@ -102,8 +92,6 @@ def _ensure_response(f):
 
 
 class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
-    """An iterator of search results."""
-
     def __init__(self, client, initial_query, kwargs, continuation_token=None) -> None:
         super(AsyncSearchPageIterator, self).__init__(
             get_next=self._get_next_cb,
@@ -113,7 +101,7 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
         self._client = client
         self._initial_query = initial_query
         self._kwargs = kwargs
-        self._facets: Optional[MutableMapping[str, List[MutableMapping[str, Any]]]] = None
+        self._facets = None
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
 
     async def _get_next_cb(self, continuation_token):
@@ -130,7 +118,7 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
         return continuation_token, results
 
     @_ensure_response
-    async def get_facets(self) -> Optional[MutableMapping[str, Any]]:
+    async def get_facets(self) -> Optional[Dict]:
         self.continuation_token = None
         response = cast(SearchDocumentsResult, self._response)
         facets = response.facets
@@ -156,9 +144,3 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
         self.continuation_token = None
         response = cast(SearchDocumentsResult, self._response)
         return response.answers
-
-    @_ensure_response
-    async def get_debug_info(self) -> DebugInfo:
-        self.continuation_token = None
-        response = cast(SearchDocumentsResult, self._response)
-        return cast(DebugInfo, response.debug_info)

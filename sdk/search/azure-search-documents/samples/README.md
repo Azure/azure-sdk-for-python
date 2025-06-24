@@ -12,7 +12,7 @@ products:
 These code samples show common scenario operations with the Azure Cognitive
 Search client library.
 
-Authenticate the client with a Azure Cognitive Search [API Key Credential](https://learn.microsoft.com/azure/search/search-security-api-keys):
+Authenticate the client with a Azure Cognitive Search [API Key Credential](https://docs.microsoft.com/azure/search/search-security-api-keys):
 
 [https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/search/azure-search-documents/samples/sample_authentication.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/async_samples/sample_authentication_async.py))
 
@@ -48,7 +48,7 @@ Then for common search index operations:
 
 * Python 3.8 or later is required to use this package
 * You must have an [Azure subscription](https://azure.microsoft.com/free/)
-* You must create the "Hotels" sample index [in the Azure Portal](https://learn.microsoft.com/azure/search/search-get-started-portal)
+* You must create the "Hotels" sample index [in the Azure Portal](https://docs.microsoft.com/azure/search/search-get-started-portal)
 
 ## Setup
 
@@ -69,5 +69,5 @@ Then for common search index operations:
 
 ## Next steps
 
-Check out the [API reference documentation](https://learn.microsoft.com/rest/api/searchservice/)
+Check out the [API reference documentation](https://docs.microsoft.com/rest/api/searchservice/)
 to learn more about what you can do with the Azure Cognitive Search client library.

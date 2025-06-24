@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import Any, Dict, Union, List, Optional, MutableMapping, Callable, cast
 from typing_extensions import Self
-from .._generated._utils import serialization as _serialization
+from .._generated import _serialization
 from ._edm import Collection, ComplexType, String
 from .._generated.models import (
     SearchField as _SearchField,
@@ -21,12 +21,9 @@ from .._generated.models import (
     LexicalTokenizer,
     TokenFilter,
     CharFilter,
-    LexicalNormalizer,
     SimilarityAlgorithm,
     SemanticSearch,
     VectorSearch,
-    SearchIndexPermissionFilterOption,
-    PermissionFilter,
 )
 from ._models import (
     pack_analyzer,
@@ -101,9 +98,6 @@ class SearchField(_serialization.Model):
         Collection(Edm.GeographyPoint) cannot be facetable. Default is true for all other simple
         fields.
     :vartype facetable: bool
-    :ivar permission_filter: A value indicating whether the field should be used as a permission
-        filter. Known values are: "userIds", "groupIds", and "rbacScope".
-    :vartype permission_filter: str or ~azure.search.documents.indexes.models.PermissionFilter
     :ivar analyzer_name: The name of the analyzer to use for the field. This option can be used only
         with searchable fields and it can't be set together with either searchAnalyzer or
         indexAnalyzer. Once the analyzer is chosen, it cannot be changed for the field. Must be null
@@ -171,11 +165,6 @@ class SearchField(_serialization.Model):
         "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
         "whitespace".
     :vartype index_analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
-    :ivar normalizer_name: The name of the normalizer to use for the field. This option can be used only
-        with fields with filterable, sortable, or facetable enabled. Once the normalizer is chosen, it
-        cannot be changed for the field. Must be null for complex fields. Known values are:
-        "asciifolding", "elision", "lowercase", "standard", and "uppercase".
-    :vartype normalizer_name: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
     :ivar vector_search_dimensions: The dimensionality of the vector field.
     :vartype vector_search_dimensions: int
     :ivar vector_search_profile_name: The name of the vector search profile that specifies the algorithm
@@ -206,13 +195,11 @@ class SearchField(_serialization.Model):
         filterable: Optional[bool] = None,
         sortable: Optional[bool] = None,
         facetable: Optional[bool] = None,
-        permission_filter: Optional[Union[str, PermissionFilter]] = None,
         analyzer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
         search_analyzer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
         index_analyzer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
         synonym_map_names: Optional[List[str]] = None,
         fields: Optional[List["SearchField"]] = None,
-        normalizer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
         vector_search_dimensions: Optional[int] = None,
         vector_search_profile_name: Optional[str] = None,
         vector_encoding_format: Optional[Union[str, VectorEncodingFormat]] = None,
@@ -228,13 +215,11 @@ class SearchField(_serialization.Model):
         self.filterable = filterable
         self.sortable = sortable
         self.facetable = facetable
-        self.permission_filter = permission_filter
         self.analyzer_name = analyzer_name
         self.search_analyzer_name = search_analyzer_name
         self.index_analyzer_name = index_analyzer_name
         self.synonym_map_names = synonym_map_names
         self.fields = fields
-        self.normalizer_name = normalizer_name
         self.vector_search_dimensions = vector_search_dimensions
         self.vector_search_profile_name = vector_search_profile_name
         self.vector_encoding_format = vector_encoding_format
@@ -252,11 +237,9 @@ class SearchField(_serialization.Model):
             filterable=self.filterable,
             sortable=self.sortable,
             facetable=self.facetable,
-            permission_filter=self.permission_filter,
             analyzer=self.analyzer_name,
             search_analyzer=self.search_analyzer_name,
             index_analyzer=self.index_analyzer_name,
-            normalizer=self.normalizer_name,
             synonym_maps=self.synonym_map_names,
             fields=fields,
             vector_search_dimensions=self.vector_search_dimensions,
@@ -275,10 +258,6 @@ class SearchField(_serialization.Model):
             else None
         )
         hidden = not search_field.retrievable if search_field.retrievable is not None else None
-        try:
-            normalizer = search_field.normalizer
-        except AttributeError:
-            normalizer = None
         return cls(
             name=search_field.name,
             type=search_field.type,
@@ -289,11 +268,9 @@ class SearchField(_serialization.Model):
             filterable=search_field.filterable,
             sortable=search_field.sortable,
             facetable=search_field.facetable,
-            permission_filter=search_field.permission_filter,
             analyzer_name=search_field.analyzer,
             search_analyzer_name=search_field.search_analyzer,
             index_analyzer_name=search_field.index_analyzer,
-            normalizer_name=normalizer,
             synonym_map_names=search_field.synonym_maps,
             fields=fields,
             vector_search_dimensions=search_field.vector_search_dimensions,
@@ -303,7 +280,6 @@ class SearchField(_serialization.Model):
 
     def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
         """Return the JSON that would be sent to server from this model.
-
         :param bool keep_readonly: If you want to serialize the readonly attributes
         :returns: A dict JSON compatible object
         :rtype: dict
@@ -317,7 +293,7 @@ class SearchField(_serialization.Model):
         :param str data: A str using RestAPI structure. JSON by default.
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchField instance
-        :raises DeserializationError: if something went wrong
+        :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(_SearchField.deserialize(data, content_type=content_type))
 
@@ -344,7 +320,7 @@ class SearchField(_serialization.Model):
         data: Any,
         key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> Optional[Self]:
+    ) -> Optional["SearchField"]:
         """Parse a dict using given key extractor return a model.
 
         By default consider key
@@ -356,7 +332,7 @@ class SearchField(_serialization.Model):
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchField instance
         :rtype: SearchField
-        :raises DeserializationError: if something went wrong
+        :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(
             _SearchField.from_dict(data, content_type=content_type, key_extractors=key_extractors)
@@ -596,7 +572,8 @@ def ComplexField(
     fields: Optional[List[SearchField]] = None,
     **kw  # pylint:disable=unused-argument
 ) -> SearchField:
-    """Configure a Complex or Complex collection field for an Azure Search Index
+    """Configure a Complex or Complex collection field for an Azure Search
+    Index
 
     :keyword name: Required. The name of the field, which must be unique within the fields collection
         of the index or parent field.
@@ -641,8 +618,6 @@ class SearchIndex(_serialization.Model):
     :vartype token_filters: list[~azure.search.documents.indexes.models.TokenFilter]
     :ivar char_filters: The character filters for the index.
     :vartype char_filters: list[~azure.search.documents.indexes.models.CharFilter]
-    :ivar normalizers: The normalizers for the index.
-    :vartype normalizers: list[~azure.search.documents.indexes.models.LexicalNormalizer]
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
         This key is used to provide an additional level of encryption-at-rest for your data when you
         want full assurance that no one, not even Microsoft, can decrypt your data in Azure Cognitive
@@ -661,10 +636,6 @@ class SearchIndex(_serialization.Model):
     :vartype semantic_search: ~azure.search.documents.indexes.models.SemanticSearch
     :ivar vector_search: Defines parameters for a search index that influence scoring in a vector space.
     :vartype vector_search: ~azure.search.documents.indexes.models.VectorSearch
-    :ivar permission_filter_option: A value indicating whether permission filtering is enabled for
-        the index. Known values are: "enabled" and "disabled".
-    :vartype permission_filter_option: str or
-        ~azure.search.documents.indexes.models.SearchIndexPermissionFilterOption
     :ivar e_tag: The ETag of the index.
     :vartype e_tag: str
     """
@@ -682,12 +653,10 @@ class SearchIndex(_serialization.Model):
         tokenizers: Optional[List[LexicalTokenizer]] = None,
         token_filters: Optional[List[TokenFilter]] = None,
         char_filters: Optional[List[CharFilter]] = None,
-        normalizers: Optional[List[LexicalNormalizer]] = None,
         encryption_key: Optional[SearchResourceEncryptionKey] = None,
         similarity: Optional[SimilarityAlgorithm] = None,
         semantic_search: Optional[SemanticSearch] = None,
         vector_search: Optional[VectorSearch] = None,
-        permission_filter_option: Optional[Union[str, SearchIndexPermissionFilterOption]] = None,
         e_tag: Optional[str] = None,
         **kwargs
     ):
@@ -702,12 +671,10 @@ class SearchIndex(_serialization.Model):
         self.tokenizers = tokenizers
         self.token_filters = token_filters
         self.char_filters = char_filters
-        self.normalizers = normalizers
         self.encryption_key = encryption_key
         self.similarity = similarity
         self.semantic_search = semantic_search
         self.vector_search = vector_search
-        self.permission_filter_option = permission_filter_option
         self.e_tag = e_tag
 
     def _to_generated(self) -> _SearchIndex:
@@ -737,14 +704,12 @@ class SearchIndex(_serialization.Model):
             tokenizers=tokenizers,
             token_filters=self.token_filters,
             char_filters=self.char_filters,
-            normalizers=self.normalizers,
             # pylint:disable=protected-access
             encryption_key=self.encryption_key._to_generated() if self.encryption_key else None,
             similarity=self.similarity,
             semantic_search=self.semantic_search,
             e_tag=self.e_tag,
             vector_search=self.vector_search,
-            permission_filter_option=self.permission_filter_option,
         )
 
     @classmethod
@@ -771,10 +736,6 @@ class SearchIndex(_serialization.Model):
             fields = [cast(SearchField, SearchField._from_generated(x)) for x in search_index.fields]
         else:
             fields = []
-        try:
-            normalizers = search_index.normalizers
-        except AttributeError:
-            normalizers = None
         return cls(
             name=search_index.name,
             fields=fields,
@@ -786,19 +747,16 @@ class SearchIndex(_serialization.Model):
             tokenizers=tokenizers,
             token_filters=search_index.token_filters,
             char_filters=search_index.char_filters,
-            normalizers=normalizers,
             # pylint:disable=protected-access
             encryption_key=SearchResourceEncryptionKey._from_generated(search_index.encryption_key),
             similarity=search_index.similarity,
             semantic_search=search_index.semantic_search,
             e_tag=search_index.e_tag,
             vector_search=search_index.vector_search,
-            permission_filter_option=search_index.permission_filter_option,
         )
 
     def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
         """Return the JSON that would be sent to server from this model.
-
         :param bool keep_readonly: If you want to serialize the readonly attributes
         :returns: A dict JSON compatible object
         :rtype: dict
@@ -813,7 +771,7 @@ class SearchIndex(_serialization.Model):
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchIndex instance
         :rtype: SearchIndex
-        :raises DeserializationError: if something went wrong
+        :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(_SearchIndex.deserialize(data, content_type=content_type))
 
@@ -830,9 +788,9 @@ class SearchIndex(_serialization.Model):
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(  # type: ignore
+        return self._to_generated().as_dict(
             keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs
-        )
+        )  # type: ignore
 
     @classmethod
     def from_dict(  # type: ignore
@@ -852,7 +810,7 @@ class SearchIndex(_serialization.Model):
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchIndex instance
         :rtype: SearchIndex
-        :raises DeserializationError: if something went wrong
+        :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(
             _SearchIndex.from_dict(data, content_type=content_type, key_extractors=key_extractors)
@@ -875,7 +833,6 @@ def pack_search_field(search_field: SearchField) -> _SearchField:
         analyzer_name = search_field.get("analyzer_name")
         search_analyzer_name = search_field.get("search_analyzer_name")
         index_analyzer_name = search_field.get("index_analyzer_name")
-        normalizer = search_field.get("normalizer")
         synonym_map_names = search_field.get("synonym_map_names")
         fields = search_field.get("fields")
         fields = [pack_search_field(x) for x in fields] if fields else None
@@ -893,7 +850,6 @@ def pack_search_field(search_field: SearchField) -> _SearchField:
             analyzer=analyzer_name,
             search_analyzer=search_analyzer_name,
             index_analyzer=index_analyzer_name,
-            normalizer=normalizer,
             synonym_maps=synonym_map_names,
             fields=fields,
             vector_search_dimensions=vector_search_dimensions,
