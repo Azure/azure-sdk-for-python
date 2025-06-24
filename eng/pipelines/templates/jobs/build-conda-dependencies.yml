@@ -85,7 +85,7 @@ jobs:
   timeoutInMinutes: 90
   pool:
     name: azsdk-pool
-    image: ubuntu-24.04
+    image: $(LINUXVMIMAGE)
     os: linux
 
   steps:

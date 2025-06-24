@@ -115,7 +115,7 @@ extends:
                     SparseCheckoutPaths:
                       - sdk/${{ parameters.ServiceDirectory }}/**/*.json
                     JobTemplatePath: /eng/pipelines/templates/jobs/live.tests.yml
-                    OsVmImage: ubuntu-24.04
+                    OsVmImage: $(LINUXVMIMAGE)
                     Pool: azsdk-pool
                     AdditionalParameters:
                       ServiceDirectory: ${{ parameters.ServiceDirectory }}

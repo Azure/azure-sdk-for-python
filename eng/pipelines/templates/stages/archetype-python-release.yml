@@ -27,7 +27,7 @@ stages:
             condition: ne(variables['Skip.TagRepository'], 'true')
 
             pool:
-              image: ubuntu-24.04
+              image: $(LINUXVMIMAGE)
               name: azsdk-pool
               os: linux
 
@@ -112,7 +112,7 @@ stages:
                   targetPath: $(Pipeline.Workspace)/packages_extended
 
               pool:
-                image: ubuntu-24.04
+                image: $(LINUXVMIMAGE)
                 name: azsdk-pool
                 os: linux
 
@@ -190,7 +190,7 @@ stages:
             dependsOn: PublishPackage
 
             pool:
-              image: ubuntu-24.04
+              image: $(LINUXVMIMAGE)
               name: azsdk-pool
               os: linux
 
@@ -259,7 +259,7 @@ stages:
               dependsOn: PublishPackage
 
               pool:
-                image: ubuntu-24.04
+                image: $(LINUXVMIMAGE)
                 name: azsdk-pool
                 os: linux
 
@@ -299,7 +299,7 @@ stages:
             dependsOn: PublishPackage
 
             pool:
-              image: ubuntu-24.04
+              image: $(LINUXVMIMAGE)
               name: azsdk-pool
               os: linux
 
@@ -342,7 +342,7 @@ stages:
         displayName: "Publish package to daily feed"
         condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
         pool:
-          image: ubuntu-24.04
+          image: $(LINUXVMIMAGE)
           name: azsdk-pool
           os: linux
         steps:
@@ -380,7 +380,7 @@ stages:
         dependsOn: PublishPackages
         condition: and(succeeded(), or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal'))))
         pool:
-          image: ubuntu-24.04
+          image: $(LINUXVMIMAGE)
           name: azsdk-pool
           os: linux
         steps:

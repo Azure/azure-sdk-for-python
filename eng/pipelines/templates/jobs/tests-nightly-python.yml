@@ -22,7 +22,7 @@ jobs:
 
     pool:
       name: 'azsdk-pool'
-      demands: ImageOverride -equals 'ubuntu-24.04'
+      demands: ImageOverride -equals $(LINUXVMIMAGE)
 
     steps:
       - template: ../steps/release-candidate-steps.yml
@@ -37,7 +37,7 @@ jobs:
 
       pool:
         name: 'azsdk-pool'
-        demands: ImageOverride -equals 'ubuntu-24.04'
+        demands: ImageOverride -equals $(LINUXVMIMAGE)
 
       steps:
         - task: UsePythonVersion@0

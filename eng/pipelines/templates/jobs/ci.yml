@@ -237,7 +237,7 @@ jobs:
   - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
     parameters:
       JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
-      OsVmImage: ubuntu-24.04
+      OsVmImage: $(LINUXVMIMAGE)
       Pool: azsdk-pool
       DependsOn:
         - 'Build_Linux'
@@ -286,7 +286,7 @@ jobs:
   - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
     parameters:
       JobTemplatePath: /eng/pipelines/templates/jobs/regression.yml
-      OsVmImage: ubuntu-24.04
+      OsVmImage: $(LINUXVMIMAGE)
       Pool: azsdk-pool
       GenerateJobName: generate_regression_matrix
       SparseCheckoutPaths: [ "scripts/", "sdk/", "tools/azure-sdk-tools/" ]

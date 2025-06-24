@@ -34,7 +34,7 @@ jobs:
     strategy:
       matrix:
         linux:
-          imageName: 'ubuntu-24.04'
+          imageName: $(LINUXVMIMAGE)
           poolName: 'azsdk-pool'
         # windows:
         #   imageName: 'windows-2022'

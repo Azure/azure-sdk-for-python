@@ -62,7 +62,7 @@ extends:
               artifactName: artifacts-for-release
               targetPath: $(Artifacts)
           pool:
-            image: ubuntu-24.04
+            image: $(LINUXVMIMAGE)
             name: azsdk-pool
             os: linux
           strategy:
