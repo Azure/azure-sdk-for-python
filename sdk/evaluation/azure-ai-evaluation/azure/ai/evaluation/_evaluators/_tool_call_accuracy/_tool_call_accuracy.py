@@ -268,19 +268,29 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :rtype: List[dict]
         """
         tool_calls = []
-        tool_results = []
+        tool_results_map = {}
         if isinstance(response, list):
-            for message in response:
-                if message.get("role") == "assistant":
-                    tool_calls.extend([content for content in message.get("content")
-                                    if content.get("type") == "tool_call"])
-                    tool_results.extend([content for content in message.get("content")
-                                    if content.get("type") == "tool_result"])
-        # Format the tool calls and results
-        for i in range(min(len(tool_calls), len(tool_results))):
-            if isinstance(tool_calls[i], dict) and tool_calls[i].get("type") == "tool_call":
-                if tool_results[i]["tool_call_id"] == tool_calls[i]["tool_call_id"]:
-                    tool_calls[i]["tool_result"] = tool_results[i]
+            for message in response:                
+                print(message)
+                # Extract tool calls from assistant messages
+                if message.get("role") == "assistant" and isinstance(message.get("content"), list):
+                    for content_item in message.get("content"):
+                        if isinstance(content_item, dict) and content_item.get("type") == "tool_call":
+                            tool_calls.append(content_item)
+
+                # Extract tool results from tool messages
+                elif message.get("role") == "tool" and message.get("tool_call_id"):
+                    tool_call_id = message.get("tool_call_id")
+                    if isinstance(message.get("content"), list) and len(message.get("content")) > 0:
+                        result_content = message.get("content")[0]
+                        if isinstance(result_content, dict) and result_content.get("type") == "tool_result":
+                            tool_results_map[tool_call_id] = result_content
+
+        # Attach results to their corresponding calls
+        for tool_call in tool_calls:
+            tool_call_id = tool_call.get("tool_call_id")
+            if tool_call_id in tool_results_map:
+                tool_call["tool_result"] = tool_results_map[tool_call_id]['tool_result']
 
         return tool_calls
     
@@ -297,7 +307,9 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         for tool_call in tool_calls:
             if isinstance(tool_call, dict) and tool_call.get("type") == "tool_call":
                 tool_name = tool_call.get("name")
-                tool_definition = [tool for tool in tool_definitions if tool.get("name") == tool_name and tool.get("type", "function") == "function"]
+                tool_definition = [tool for tool in tool_definitions
+                                   if tool.get("name") == tool_name and
+                                   tool.get("type", "function") == "function"]
                 if len(tool_definition) > 0:
                     needed_tool_definitions.extend(tool_definition)
                 else:
