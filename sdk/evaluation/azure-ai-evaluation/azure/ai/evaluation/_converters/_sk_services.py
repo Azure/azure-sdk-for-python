@@ -76,9 +76,7 @@ class SKAgentConverter:
 
         for tool in tool_list:
             filtered_tool = {
-                "name": (
-                    tool["plugin_name"] + "-" + tool["name"]
-                ),  # must be like that to match tool calls.
+                "name": tool["fully_qualified_name"],
                 "description": tool.get("description") or "No description",
                 "type": "function",  # TODO: hardcoded for now.
                 "parameters": {
@@ -113,6 +111,7 @@ class SKAgentConverter:
             for function in functions_metadata:
                 # Serialize metadata to a dictionary
                 function_dict = function.model_dump()
+                function_dict["fully_qualified_name"] = function.fully_qualified_name
                 # function_dict["type"] = "tool_call"
                 functions.append(function_dict)
 
@@ -436,6 +435,9 @@ class SKAgentConverter:
         :return: List of evaluation data dictionaries.
         :rtype: List[dict]
         """
+
+        if isinstance(threads, ChatHistoryAgentThread):
+            threads = [threads]
 
         all_eval_data: List[dict] = []
 
