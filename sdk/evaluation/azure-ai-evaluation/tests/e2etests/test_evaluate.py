@@ -15,6 +15,7 @@ from azure.ai.evaluation import (
     FluencyEvaluator,
     evaluate,
 )
+from azure.ai.evaluation import AzureOpenAIModelConfiguration
 from azure.ai.evaluation._common.math import list_mean_nan_safe
 from azure.ai.evaluation._azure._clients import LiteMLClient
 from azure.ai.evaluation._constants import TokenScope
@@ -509,6 +510,15 @@ class TestEvaluate:
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
 class TestUserAgent:
     """Test suite to validate that the User-Agent header is overridable."""
+
+    @pytest.fixture(scope="session")
+    def mock_model_config(self, mock_model_config: AzureOpenAIModelConfiguration) -> AzureOpenAIModelConfiguration:
+        return AzureOpenAIModelConfiguration(
+            azure_endpoint="https://Sanitized.openai.azure.com/",
+            azure_deployment=mock_model_config["azure_deployment"],
+            api_key=mock_model_config["api_key"],
+            api_version=mock_model_config["api_version"],
+        )
 
     @staticmethod
     def _transparent_mock_method(cls_to_mock, attribute_name: str) -> Mock:

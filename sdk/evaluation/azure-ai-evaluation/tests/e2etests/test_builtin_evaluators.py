@@ -16,6 +16,7 @@ from azure.ai.inference.models import (
     ImageContentItem,
     ImageUrl,
 )
+from azure.ai.evaluation import AzureOpenAIModelConfiguration
 from azure.ai.evaluation._version import VERSION
 from azure.ai.evaluation._common.constants import HarmSeverityLevel
 from azure.ai.evaluation._model_configurations import Conversation
@@ -1259,6 +1260,15 @@ class TestBuiltInEvaluators:
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
 class TestUserAgent:
     """Test suite to validate that the User-Agent header is overridable."""
+
+    @pytest.fixture(scope="session")
+    def mock_model_config(self, mock_model_config: AzureOpenAIModelConfiguration) -> AzureOpenAIModelConfiguration:
+        return AzureOpenAIModelConfiguration(
+            azure_endpoint="https://Sanitized.openai.azure.com/",
+            azure_deployment=mock_model_config["azure_deployment"],
+            api_key=mock_model_config["api_key"],
+            api_version=mock_model_config["api_version"],
+        )
 
     @staticmethod
     def _transparent_mock_method(cls_to_mock, attribute_name: str) -> Mock:
