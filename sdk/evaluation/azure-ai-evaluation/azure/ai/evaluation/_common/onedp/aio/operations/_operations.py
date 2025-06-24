@@ -1214,10 +1214,8 @@ class EvaluationsOperations:
 
         if _stream:
             deserialized = response.iter_bytes()
-        elif type(response.json()) == list:
+        else:
             deserialized = _deserialize(List[Dict[str, Any]], response.json())
-        else: 
-            deserialized = _deserialize(Dict[str, Any], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
