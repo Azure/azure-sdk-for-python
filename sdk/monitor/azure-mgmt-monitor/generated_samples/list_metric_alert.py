@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -30,9 +31,7 @@ def main():
         subscription_id="14ddf0c5-77c5-4b53-84f6-e1fa43ad68f7",
     )
 
-    response = client.metric_alerts.list_by_resource_group(
-        resource_group_name="gigtest",
-    )
+    response = client.metric_alerts.list_by_subscription()
     for item in response:
         print(item)
 

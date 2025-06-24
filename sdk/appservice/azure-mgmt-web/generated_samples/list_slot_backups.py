@@ -30,15 +30,14 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.web_apps.list_site_backups_slot(
+    response = client.web_apps.list_site_backups(
         resource_group_name="testrg123",
         name="tests346",
-        slot="staging",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2024-04-01/examples/ListSlotBackups.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2024-11-01/examples/ListSlotBackups.json
 if __name__ == "__main__":
     main()

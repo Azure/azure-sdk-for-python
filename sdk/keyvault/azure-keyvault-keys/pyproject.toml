@@ -5,18 +5,17 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "azure-keyvault-keys"
 authors = [
-    {name = "Microsoft Corporation", email = "azurekeyvault@microsoft.com"},
+    {name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com"},
 ]
-description = "Microsoft Azure Key Vault Keys Client Library for Python"
+description = "Microsoft Corporation Azure Key Vault Keys Client Library for Python"
 keywords = ["azure", "azure sdk"]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 license = {text = "MIT License"}
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -33,11 +32,11 @@ dependencies = [
 dynamic = ["version", "readme"]
 
 [project.urls]
-repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys"
+repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk"
 
 [tool.setuptools.dynamic]
 version = {attr = "azure.keyvault.keys._version.VERSION"}
-readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
+readme = {file = ["README.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
 exclude = ["samples*", "tests*", "azure", "azure.keyvault"]

@@ -15,12 +15,10 @@ from unittest.mock import patch
 
 TEST_AI_DEVICE_ID = "TEST_AI_DEVICE_ID"
 TEST_AI_DEVICE_LOCALE = "TEST_AI_DEVICE_LOCALE"
-TEST_OS_VERSION = "TEST_OS_VERSION"
 TEST_SDK_VERSION_PREFIX = "TEST_AZURE_SDK_VERSION_PREFIX"
 TEST_AZURE_MONITOR_CONTEXT = {
     "ai.device.id": TEST_AI_DEVICE_ID,
     "ai.device.locale": TEST_AI_DEVICE_LOCALE,
-    "ai.device.osVersion": TEST_OS_VERSION,
     "ai.device.type": "Other",
     "ai.internal.sdkVersion": "{}py1.2.3:otel4.5.6:ext7.8.9".format(
         TEST_SDK_VERSION_PREFIX,
@@ -35,7 +33,6 @@ TEST_AKS_ARM_NAMESPACE_ID = "TEST_AKS_ARM_NAMESPACE_ID"
 
 class TestUtils(unittest.TestCase):
     def setUp(self):
-        os.environ.clear()
         self._valid_instrumentation_key = "1234abcd-5678-4efa-8abc-1234567890ab"
 
     def test_nanoseconds_to_duration(self):
@@ -82,12 +79,188 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(tags.get("ai.device.oemName"), "testDeviceMake")
         self.assertEqual(tags.get("ai.application.ver"), "testApplicationVer")
 
+    # Default service.name fields should be used when kubernetes values are not present
+    def test_populate_part_a_fields_unknown_service(self):
+        resource = Resource(
+            {
+                "service.name": "unknown_servicefoobar",
+                "service.namespace": "testServiceNamespace",
+                "service.instance.id": "testServiceInstanceId",
+                "device.id": "testDeviceId",
+                "device.model.name": "testDeviceModel",
+                "device.manufacturer": "testDeviceMake",
+                "service.version": "testApplicationVer",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testServiceNamespace.unknown_servicefoobar")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), "testServiceInstanceId")
+        self.assertEqual(tags.get("ai.internal.nodeName"), "testServiceInstanceId")
+        self.assertEqual(tags.get("ai.device.id"), "testDeviceId")
+        self.assertEqual(tags.get("ai.device.model"), "testDeviceModel")
+        self.assertEqual(tags.get("ai.device.oemName"), "testDeviceMake")
+        self.assertEqual(tags.get("ai.application.ver"), "testApplicationVer")
+
     def test_populate_part_a_fields_default(self):
         resource = Resource({"service.name": "testServiceName"})
         tags = _utils._populate_part_a_fields(resource)
         self.assertIsNotNone(tags)
         self.assertEqual(tags.get("ai.cloud.role"), "testServiceName")
         self.assertEqual(tags.get("ai.cloud.roleInstance"), platform.node())
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+    def test_populate_part_a_fields_aks(self):
+        resource = Resource(
+            {
+                "k8s.deployment.name": "testDeploymentName",
+                "k8s.replicaset.name": "testReplicaSetName",
+                "k8s.statefulset.name": "testStatefulSetName",
+                "k8s.job.name": "testJobName",
+                "k8s.cronJob.name": "testCronJobName",
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "testPodName",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testDeploymentName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+    def test_populate_part_a_fields_aks_replica(self):
+        resource = Resource(
+            {
+                "k8s.replicaset.name": "testReplicaSetName",
+                "k8s.statefulset.name": "testStatefulSetName",
+                "k8s.job.name": "testJobName",
+                "k8s.cronjob.name": "testCronJobName",
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "testPodName",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testReplicaSetName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+    def test_populate_part_a_fields_aks_stateful(self):
+        resource = Resource(
+            {
+                "k8s.statefulset.name": "testStatefulSetName",
+                "k8s.job.name": "testJobName",
+                "k8s.cronjob.name": "testCronJobName",
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "testPodName",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testStatefulSetName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+    def test_populate_part_a_fields_aks_job(self):
+        resource = Resource(
+            {
+                "k8s.job.name": "testJobName",
+                "k8s.cronjob.name": "testCronJobName",
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "testPodName",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testJobName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+    def test_populate_part_a_fields_aks_cronjob(self):
+        resource = Resource(
+            {
+                "k8s.cronjob.name": "testCronJobName",
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "testPodName",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testCronJobName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+    def test_populate_part_a_fields_aks_daemon(self):
+        resource = Resource(
+            {
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "testPodName",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testDaemonSetName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+    # Test that undefined fields are ignored.
+    def test_populate_part_a_fields_aks_undefined(self):
+        resource = Resource(
+            {
+                "k8s.deployment.name": "",
+                "k8s.replicaset.name": None,
+                "k8s.statefulset.name": "",
+                "k8s.job.name": None,
+                "k8s.cronJob.name": "",
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "testPodName",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testDaemonSetName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+
+    def test_populate_part_a_fields_aks_with_service(self):
+        resource = Resource(
+            {
+                "service.name": "testServiceName",
+                "service.instance.id": "testServiceInstanceId",
+                "k8s.deployment.name": "testDeploymentName",
+                "k8s.replicaset.name": "testReplicaSetName",
+                "k8s.statefulset.name": "testStatefulSetName",
+                "k8s.job.name": "testJobName",
+                "k8s.cronjob.name": "testCronJobName",
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "testPodName",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testServiceName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), "testServiceInstanceId")
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+    # Default service.name fields should be ignored when kubernetes values are present
+    def test_populate_part_a_fields_aks_with_unknown_service(self):
+        resource = Resource(
+            {
+                "service.name": "unknown_servicefoobar",
+                "k8s.deployment.name": "testDeploymentName",
+                "k8s.replicaset.name": "testReplicaSetName",
+                "k8s.statefulset.name": "testStatefulSetName",
+                "k8s.job.name": "testJobName",
+                "k8s.cronjob.name": "testCronJobName",
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "testPodName",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testDeploymentName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
         self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
     @patch("azure.monitor.opentelemetry.exporter._utils.ns_to_iso_str", return_value=TEST_TIME)
@@ -201,7 +374,10 @@ class TestUtils(unittest.TestCase):
 
     @patch.dict(
         "azure.monitor.opentelemetry.exporter._utils.environ",
-        {"FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME},
+        {
+            "FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME,
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+        },
         clear=True,
     )
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
@@ -211,7 +387,10 @@ class TestUtils(unittest.TestCase):
 
     @patch.dict(
         "azure.monitor.opentelemetry.exporter._utils.environ",
-        {"FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME},
+        {
+            "FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME,
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+        },
         clear=True,
     )
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Linux")
@@ -221,7 +400,10 @@ class TestUtils(unittest.TestCase):
 
     @patch.dict(
         "azure.monitor.opentelemetry.exporter._utils.environ",
-        {"FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME},
+        {
+            "FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME,
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+        },
         clear=True,
     )
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Windows")
@@ -233,6 +415,7 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.environ",
         {
             "FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME,
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
             "PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY": "true",
         },
         clear=True,
@@ -246,6 +429,7 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.environ",
         {
             "FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME,
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
             "PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY": "true",
         },
         clear=True,
@@ -259,6 +443,7 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.environ",
         {
             "FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME,
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
             "PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY": "true",
         },
         clear=True,

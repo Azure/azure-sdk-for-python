@@ -11,9 +11,6 @@
   .PARAMETER ignoreLinksFile
   Specifies the file that contains a set of links to ignore when verifying.
 
-  .PARAMETER devOpsLogging
-  Switch that will enable devops specific logging for warnings.
-
   .PARAMETER recursive
   Check the links recurisvely. Applies to links starting with 'baseUrl' parameter. Defaults to true.
 
@@ -70,7 +67,6 @@
 param (
   [string[]] $urls,
   [string] $ignoreLinksFile = "$PSScriptRoot/ignore-links.txt",
-  [switch] $devOpsLogging = $false,
   [switch] $recursive = $true,
   [string] $baseUrl = "",
   [string] $rootUrl = "",
@@ -88,6 +84,8 @@ param (
 )
 
 Set-StrictMode -Version 3.0
+
+. "$PSScriptRoot/logging.ps1"
 
 $ProgressPreference = "SilentlyContinue"; # Disable invoke-webrequest progress dialog
 
@@ -211,30 +209,6 @@ function NormalizeUrl([string]$url) {
   return $uri
 }
 
-function LogWarning
-{
-  if ($devOpsLogging)
-  {
-    Write-Host "##vso[task.LogIssue type=warning;]$args"
-  }
-  else
-  {
-    Write-Warning "$args"
-  }
-}
-
-function LogError
-{
-  if ($devOpsLogging)
-  {
-    Write-Host "##vso[task.logissue type=error]$args"
-  }
-  else
-  {
-    Write-Error "$args"
-  }
-}
-
 function ResolveUri ([System.Uri]$referralUri, [string]$link)
 {
   # If the link is mailto, skip it.
@@ -283,14 +257,14 @@ function ParseLinks([string]$baseUri, [string]$htmlContent)
   $hrefRegex = "<a[^>]+href\s*=\s*[""']?(?<href>[^""']*)[""']?"
   $regexOptions = [System.Text.RegularExpressions.RegexOptions]"Singleline, IgnoreCase";
 
-  $hrefs = [RegEx]::Matches($htmlContent, $hrefRegex, $regexOptions);
+  $matches = [RegEx]::Matches($htmlContent, $hrefRegex, $regexOptions);
 
-  #$hrefs | Foreach-Object { Write-Host $_ }
+  Write-Verbose "Found $($matches.Count) raw href's in page $baseUri";
 
-  Write-Verbose "Found $($hrefs.Count) raw href's in page $baseUri";
-  [string[]] $links = $hrefs | ForEach-Object { ResolveUri $baseUri $_.Groups["href"].Value }
+  # Html encoded urls in anchor hrefs need to be decoded
+  $urls = $matches | ForEach-Object { [System.Web.HttpUtility]::HtmlDecode($_.Groups["href"].Value) }
 
-  #$links | Foreach-Object { Write-Host $_ }
+  [string[]] $links = $urls | ForEach-Object { ResolveUri $baseUri $_ }
 
   if ($null -eq $links) {
     $links = @()
@@ -554,9 +528,8 @@ foreach ($url in $urls) {
   $pageUrisToCheck.Enqueue($uri);
 }
 
-if ($devOpsLogging) {
-  Write-Host "##[group]Link checking details"
-}
+LogGroupStart "Link checking details"
+
 while ($pageUrisToCheck.Count -ne 0)
 {
   $pageUri = $pageUrisToCheck.Dequeue();
@@ -592,9 +565,7 @@ while ($pageUrisToCheck.Count -ne 0)
 }
 
 try {
-  if ($devOpsLogging) {
-    Write-Host "##[endgroup]"
-  }
+  LogGroupEnd
 
   if ($badLinks.Count -gt 0) {
     Write-Host "Summary of broken links:"

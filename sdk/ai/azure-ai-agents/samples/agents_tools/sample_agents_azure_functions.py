@@ -8,17 +8,18 @@
 DESCRIPTION:
     This sample demonstrates how to use azure function agent operations from
     the Azure Agents service using a synchronous client.
- 
+
 USAGE:
     python sample_agents_azure_functions.py
- 
+
     Before running the sample:
- 
-    pip install azure-ai-agents azure-identity
- 
+
+    pip install azure-ai-projects azure-ai-agents azure-identity
+
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - the Azure AI Agents endpoint.
-    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+                          page of your Azure AI Foundry portal.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
     3) STORAGE_SERVICE_ENDPONT - the storage service queue endpoint, triggering Azure function.
        Please see Getting Started with Azure Functions page for more information on Azure Functions:
@@ -26,16 +27,17 @@ USAGE:
 """
 
 import os
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import AzureFunctionStorageQueue, AzureFunctionTool, MessageRole
 from azure.identity import DefaultAzureCredential
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
 
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
 
     # [START create_agent_with_azure_function_tool]
     storage_service_endpoint = os.environ["STORAGE_SERVICE_ENDPONT"]
@@ -87,7 +89,6 @@ with agents_client:
 
     # Get messages from the thread
     messages = agents_client.messages.list(thread_id=thread.id)
-    print(f"Messages: {messages}")
 
     # Get the last message from agent
     last_msg = agents_client.messages.get_last_message_text_by_role(thread_id=thread.id, role=MessageRole.AGENT)

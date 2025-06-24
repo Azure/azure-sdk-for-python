@@ -20,11 +20,11 @@ class TestHybridComputeManagementPrivateLinkResourcesOperations(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_private_link_scope(self, resource_group):
+    def test_private_link_resources_list_by_private_link_scope(self, resource_group):
         response = self.client.private_link_resources.list_by_private_link_scope(
             resource_group_name=resource_group.name,
             scope_name="str",
-            api_version="2024-07-31-preview",
+            api_version="2025-02-19-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestHybridComputeManagementPrivateLinkResourcesOperations(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_private_link_resources_get(self, resource_group):
         response = self.client.private_link_resources.get(
             resource_group_name=resource_group.name,
             scope_name="str",
             group_name="str",
-            api_version="2024-07-31-preview",
+            api_version="2025-02-19-preview",
         )
 
         # please add some check logic here by yourself

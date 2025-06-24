@@ -7,11 +7,12 @@ import json
 import unittest
 
 from azure.core.credentials import AzureKeyCredential
-from azure.communication.callautomation import CommunicationUserIdentifier, CallConnectionClient, TransferCallResult
+from azure.communication.callautomation import CommunicationUserIdentifier, CallConnectionClient, TransferCallResult, MoveParticipantsResult
 from azure.core.paging import ItemPaged
 
 from azure.communication.callautomation._generated.models import (
     AddParticipantRequest,
+    MoveParticipantsRequest,
 )
 from unittest_helpers import mock_response
 
@@ -212,6 +213,71 @@ class TestCallConnectionClient(unittest.TestCase):
         user = CommunicationUserIdentifier(self.communication_user_id)
         response = call_connection.remove_participant(user)
         self.assertEqual(self.operation_context, response.operation_context)
+
+    def test_move_participants(self):
+        from_call_id = "20000000-0000-0000-0000-000000000000"
+        
+        def mock_send(request, **kwargs):
+            kwargs.pop("stream", None)
+            body = json.loads(request.content)
+            assert body["fromCall"] == from_call_id, "Parameter value not as expected"
+            assert len(body["targetParticipants"]) == 1, "Expected 1 participant to move"
+            if kwargs:
+                raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
+            return mock_response(
+                status_code=202,
+                json_payload={
+                    "participants": [self.call_participant], 
+                    "operationContext": self.operation_context,
+                    "fromCall": from_call_id
+                },
+            )
+
+        call_connection = CallConnectionClient(
+            endpoint="https://endpoint",
+            credential=AzureKeyCredential("fakeCredential=="),
+            call_connection_id=self.call_connection_id,
+            transport=Mock(send=mock_send),
+        )
+        user1 = CommunicationUserIdentifier(self.communication_user_id)
+
+        response = call_connection.move_participants(
+            target_participants=[user1],
+            from_call=from_call_id,
+            operation_context=self.operation_context,
+        )
+        
+        assert isinstance(response, MoveParticipantsResult)
+        self.assertEqual(self.operation_context, response.operation_context)
+        self.assertEqual(from_call_id, response.from_call)
+        self.assertEqual(len(response.participants), 1)
+        self.assertEqual(self.communication_user_id, response.participants[0].identifier.raw_id)
+
+        # Test with minimal parameters
+        response = call_connection.move_participants([user1], from_call_id)
+        assert isinstance(response, MoveParticipantsResult)
+        self.assertEqual(self.operation_context, response.operation_context)
+
+        # checking input and request match here
+        mock_move = Mock()
+        call_connection.move_participants = mock_move
+
+        expected_move_request = MoveParticipantsRequest(
+            target_participants=[serialize_identifier(user1)],
+            from_call=from_call_id,
+            operation_context=self.operation_context,
+        )
+
+        call_connection.move_participants(
+            target_participants=[user1],
+            from_call=from_call_id,
+            operation_context=self.operation_context,
+        )
+
+        actual_request = dict(mock_move.call_args[1].items())
+        self.assertEqual(expected_move_request.from_call, actual_request["from_call"])
+        self.assertEqual(expected_move_request.operation_context, actual_request["operation_context"])
+        self.assertEqual(len(expected_move_request.target_participants), len(actual_request["target_participants"]))
 
     def test_mute_participant(self):
         def mock_send(_, **kwargs):
