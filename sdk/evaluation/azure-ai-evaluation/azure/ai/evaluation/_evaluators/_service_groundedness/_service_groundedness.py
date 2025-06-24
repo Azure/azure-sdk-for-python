@@ -77,6 +77,7 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         azure_ai_project,
         *,
         threshold: int = 5,
+        _evaluate_query: bool = False,
         **kwargs,
     ):
         self.threshold = threshold
@@ -87,6 +88,7 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             azure_ai_project=azure_ai_project,
             credential=credential,
             threshold=self.threshold,
+            _evaluate_query=_evaluate_query,
             **kwargs,
         )
 

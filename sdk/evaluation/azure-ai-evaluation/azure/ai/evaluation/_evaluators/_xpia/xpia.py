@@ -76,11 +76,14 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         self,
         credential,
         azure_ai_project,
+        *,
+        _evaluate_query: bool = False,
     ):
         super().__init__(
             eval_metric=EvaluationMetrics.XPIA,
             azure_ai_project=azure_ai_project,
             credential=credential,
+            _evaluate_query=_evaluate_query,
         )
 
     @overload

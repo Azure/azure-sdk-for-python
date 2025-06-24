@@ -87,6 +87,7 @@ class ViolenceEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
         azure_ai_project,
         *,
         threshold: int = 3,
+        _evaluate_query: bool = False,
     ):
         super().__init__(
             eval_metric=EvaluationMetrics.VIOLENCE,
@@ -95,6 +96,7 @@ class ViolenceEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             conversation_aggregation_type=_AggregationType.MAX,
             threshold=threshold,
             _higher_is_better=False,
+            _evaluate_query=_evaluate_query,
         )
 
     @overload

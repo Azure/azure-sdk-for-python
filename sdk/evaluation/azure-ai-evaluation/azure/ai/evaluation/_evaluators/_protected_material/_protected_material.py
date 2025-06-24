@@ -59,11 +59,14 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         self,
         credential,
         azure_ai_project,
+        *,
+        _evaluate_query: bool = True,
     ):
         super().__init__(
             eval_metric=EvaluationMetrics.PROTECTED_MATERIAL,
             azure_ai_project=azure_ai_project,
             credential=credential,
+            _evaluate_query=_evaluate_query,
         )
 
     @overload

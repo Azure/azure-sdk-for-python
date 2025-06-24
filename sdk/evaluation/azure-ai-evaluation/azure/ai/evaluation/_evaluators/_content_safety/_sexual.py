@@ -87,6 +87,7 @@ class SexualEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
         azure_ai_project,
         *,
         threshold: int = 3,
+        _evaluate_query: bool = False,
     ):
         super().__init__(
             eval_metric=EvaluationMetrics.SEXUAL,
@@ -95,6 +96,7 @@ class SexualEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             conversation_aggregation_type=_AggregationType.MAX,
             threshold=threshold,
             _higher_is_better=False,
+            _evaluate_query=_evaluate_query,
         )
 
     @overload
@@ -147,7 +149,7 @@ class SexualEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             key "messages". Conversation turns are expected
             to be dictionaries with keys "content" and "role".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
-        :return: The fluency score.
+        :return: The sexual score.
         :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[str, float, Dict[str, List[Union[str, float]]]]]]
         """
         return super().__call__(*args, **kwargs)
