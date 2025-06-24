@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2024-11-01",
+  "commit": "13323333b4c7a77e3520e2f87e2f1bc228d0dcc5",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/purestorage/PureStorage.Block.Management",
+  "emitterVersion": "0.45.3"
+}
