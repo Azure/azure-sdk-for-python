@@ -108,8 +108,9 @@ This level is a 'pass'.
 
 
 
-# IMPORTANT NOTE
-There is a clear distinction between 'pass' levels and 'fail' levels. The distinction is that the tools are called correctly in order to reach the required output. If the agent was not able to reach the final output that addresses the user query, it cannot be either of the 'pass' levels, and vice versa. It is crucial that you ensure you are rating the agent's response with the correct level based on the tool calls made to address the user's query.
+# IMPORTANT NOTES
+- There is a clear distinction between 'pass' levels and 'fail' levels. The distinction is that the tools are called correctly in order to reach the required output. If the agent was not able to reach the final output that addresses the user query, it cannot be either of the 'pass' levels, and vice versa. It is crucial that you ensure you are rating the agent's response with the correct level based on the tool calls made to address the user's query.
+- You are NOT concerned with the correctness of the result of the tool. As long as the tool did not return an error, then the tool output is correct and accurate. Do not look into the correctness of the tool's result.
 
 # Data
 CONVERSATION : {{query}}
