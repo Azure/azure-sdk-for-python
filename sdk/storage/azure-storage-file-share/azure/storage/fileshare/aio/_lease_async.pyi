@@ -11,9 +11,9 @@ from typing import Union, Optional, Any
 
 from typing_extensions import Self
 
-from azure.core.tracing.decorator import distributed_trace
-from ._file_client import ShareFileClient
-from ._share_client import ShareClient
+from azure.core.tracing.decorator_async import distributed_trace_async
+from ._file_client_async import ShareFileClient
+from ._share_client_async import ShareClient
 
 
 class ShareLeaseClient:
@@ -24,26 +24,26 @@ class ShareLeaseClient:
         self, client: Union[ShareFileClient, ShareClient],
         lease_id: Optional[str] = None
     ) -> None: ...
-    def __enter__(self) -> Self: ...
-    def __exit__(
+    async def __aenter__(self) -> Self: ...
+    async def __aexit__(
         self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
     ) -> None: ...
-    @distributed_trace
-    def acquire(
+    @distributed_trace_async
+    async def acquire(
         self,
         *,
         lease_duration: int = -1,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None: ...
-    @distributed_trace
-    def renew(self, *, timeout: Optional[int] = None, **kwargs: Any) -> None: ...
-    @distributed_trace
-    def release(self, *, timeout: Optional[int] = None, **kwargs: Any) -> None: ...
-    @distributed_trace
-    def change(self, proposed_lease_id: str, *, timeout: Optional[int] = None, **kwargs: Any) -> None: ...
-    @distributed_trace
-    def break_lease(
+    @distributed_trace_async
+    async def renew(self, *, timeout: Optional[int] = None, **kwargs: Any) -> None: ...
+    @distributed_trace_async
+    async def release(self, *, timeout: Optional[int] = None, **kwargs: Any) -> None: ...
+    @distributed_trace_async
+    async def change(self, proposed_lease_id: str, *, timeout: Optional[int] = None, **kwargs: Any) -> None: ...
+    @distributed_trace_async
+    async def break_lease(
         self,
         *,
         lease_break_period: Optional[int] = None,

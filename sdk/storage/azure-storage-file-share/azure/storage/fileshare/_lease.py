@@ -6,14 +6,12 @@
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 import uuid
-
 from typing import Union, Optional, Any, TYPE_CHECKING
 
-from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
-
-from ._shared.response_handlers import return_response_headers, process_storage_error
+from azure.core.tracing.decorator import distributed_trace
 from ._generated.operations import FileOperations, ShareOperations
+from ._shared.response_handlers import return_response_headers, process_storage_error
 
 if TYPE_CHECKING:
     from datetime import datetime
