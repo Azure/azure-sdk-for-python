@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: skip-file
 
+from types import TracebackType
 from typing import Any, Dict, List, Literal, Optional, Union
 
 from typing_extensions import Self
@@ -45,6 +46,11 @@ class ShareClient(StorageAccountHostsMixin):
         max_range_size: int = 4 * 1024 * 1024,
         **kwargs: Any
     ) -> None: ...
+    def __enter__(self) -> Self: ...
+    def __exit__(
+        self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
+    ) -> None: ...
+    def close(self) -> None: ...
     @classmethod
     def from_share_url(
         cls,

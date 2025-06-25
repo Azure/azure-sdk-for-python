@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: skip-file
 
+from types import TracebackType
 from typing import Union, Optional, Any, Dict, List, Literal
 
 from typing_extensions import Self
@@ -24,10 +25,7 @@ from .._models import (
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 
-class ShareServiceClient(  # type: ignore[misc]
-    AsyncStorageAccountHostsMixin,
-    StorageAccountHostsMixin
-):
+class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore[misc]
     def __init__(
         self,
         account_url: str,
@@ -43,6 +41,11 @@ class ShareServiceClient(  # type: ignore[misc]
         max_range_size: int = 4 * 1024 * 1024,
         **kwargs: Any
     ) -> None: ...
+    async def __aenter__(self) -> Self: ...
+    async def __aexit__(
+        self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
+    ) -> None: ...
+    async def close(self) -> None: ...
     @classmethod
     def from_connection_string(
         cls,
