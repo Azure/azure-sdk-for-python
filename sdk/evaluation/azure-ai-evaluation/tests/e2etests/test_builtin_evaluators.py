@@ -1261,13 +1261,14 @@ class TestBuiltInEvaluators:
 class TestUserAgent:
     """Test suite to validate that the User-Agent header is overridable."""
 
-    @pytest.fixture(scope="session")
-    def mock_model_config(self, mock_model_config: AzureOpenAIModelConfiguration) -> AzureOpenAIModelConfiguration:
+    @pytest.fixture
+    def user_agent_model_config(self, model_config: AzureOpenAIModelConfiguration) -> AzureOpenAIModelConfiguration:
+
+        if model_config["azure_endpoint"]!= "https://Sanitized.api.cognitive.microsoft.com":
+            return model_config
+
         return AzureOpenAIModelConfiguration(
-            azure_endpoint="https://Sanitized.openai.azure.com/",
-            azure_deployment=mock_model_config["azure_deployment"],
-            api_key=mock_model_config["api_key"],
-            api_version=mock_model_config["api_version"],
+            **{**model_config, "azure_endpoint": "https://Sanitized.openai.azure.com/"},
         )
 
     @staticmethod
@@ -1333,7 +1334,9 @@ class TestUserAgent:
             RetrievalEvaluator,
         ],
     )
-    def test_prompty_evaluator(self, evaluator_cls, model_config: Dict[str, str], simple_conversation) -> None:
+    def test_prompty_evaluator(
+        self, evaluator_cls, user_agent_model_config: AzureOpenAIModelConfiguration, simple_conversation
+    ) -> None:
         """Validate that user agent can be overriden for prompty based evaluators."""
         base_user_agent = f"azure-ai-evaluation/{VERSION}"
         added_useragent = "test/1.0.0"
@@ -1343,7 +1346,7 @@ class TestUserAgent:
         from httpx import AsyncClient, Request
 
         with self._transparent_mock_method(AsyncClient, "send") as mock:  # OpenAI requests sent with httpx
-            evaluator = evaluator_cls(model_config)
+            evaluator = evaluator_cls(user_agent_model_config)
 
             with UserAgentSingleton.add_useragent_product(added_useragent):
                 evaluator(conversation=simple_conversation)
