@@ -5,6 +5,7 @@ from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfigurat
 
 from azure.ai.evaluation._constants import DEFAULT_AOAI_API_VERSION
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._user_agent import UserAgentSingleton
 from typing import Any, Dict, Union
 from azure.ai.evaluation._common._experimental import experimental
 
@@ -71,6 +72,9 @@ class AzureOpenAIGrader():
         :return: The OpenAI client.
         :rtype: [~openai.OpenAI, ~openai.AzureOpenAI]
         """
+        default_headers = {
+            "User-Agent": UserAgentSingleton().value
+        }
         if "azure_endpoint" in self._model_config:
            from openai import AzureOpenAI
            # TODO set default values?
@@ -79,6 +83,7 @@ class AzureOpenAIGrader():
                 api_key=self._model_config.get("api_key", None), # Default-style access to appease linters.
                 api_version=DEFAULT_AOAI_API_VERSION, # Force a known working version
                 azure_deployment=self._model_config.get("azure_deployment", ""),
+                default_headers=default_headers
             )
         from openai import OpenAI
         # TODO add default values for base_url and organization?
@@ -86,4 +91,5 @@ class AzureOpenAIGrader():
             api_key=self._model_config["api_key"],
             base_url=self._model_config.get("base_url", ""),
             organization=self._model_config.get("organization", ""),
+            default_headers=default_headers
         )

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import inspect
+import contextlib
 import json
 import logging
 import os
@@ -30,7 +31,7 @@ from .._constants import (
     DEFAULT_OAI_EVAL_RUN_NAME
 )
 from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig
-from .._user_agent import USER_AGENT
+from .._user_agent import UserAgentSingleton
 from ._batch_run import (
     EvalRunContext,
     CodeClient,
@@ -729,6 +730,8 @@ def evaluate(
         Defaults to false, which means that evaluations will continue regardless of failures.
         If such failures occur, metrics may be missing, and evidence of failures can be found in the evaluation's logs.
     :paramtype fail_on_evaluator_errors: bool
+    :keyword user_agent: A string to append to the default user-agent sent with evaluation http requests
+    :paramtype user_agent: Optional[str]
     :return: Evaluation results.
     :rtype: ~azure.ai.evaluation.EvaluationResult
 
@@ -752,17 +755,19 @@ def evaluate(
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
     """
     try:
-        return _evaluate(
-            evaluation_name=evaluation_name,
-            target=target,
-            data=data,
-            evaluators_and_graders=evaluators,
-            evaluator_config=evaluator_config,
-            azure_ai_project=azure_ai_project,
-            output_path=output_path,
-            fail_on_evaluator_errors=fail_on_evaluator_errors,
-            **kwargs,
-        )
+        user_agent: Optional[str] = kwargs.get("user_agent")
+        with UserAgentSingleton().add_useragent_product(user_agent) if user_agent else contextlib.nullcontext():
+            return _evaluate(
+                evaluation_name=evaluation_name,
+                target=target,
+                data=data,
+                evaluators_and_graders=evaluators,
+                evaluator_config=evaluator_config,
+                azure_ai_project=azure_ai_project,
+                output_path=output_path,
+                fail_on_evaluator_errors=fail_on_evaluator_errors,
+                **kwargs,
+            )
     except Exception as e:
         # Handle multiprocess bootstrap error
         bootstrap_error = (
@@ -997,7 +1002,7 @@ def _preprocess_data(
         batch_run_client = RunSubmitterClient()
         batch_run_data = input_data_df
     elif kwargs.pop("_use_pf_client", True):
-        batch_run_client = ProxyClient(user_agent=USER_AGENT)
+        batch_run_client = ProxyClient(user_agent=UserAgentSingleton().value)
         # Ensure the absolute path is passed to pf.run, as relative path doesn't work with
         # multiple evaluators. If the path is already absolute, abspath will return the original path.
         batch_run_data = os.path.abspath(data)
