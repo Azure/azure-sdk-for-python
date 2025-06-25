@@ -14,7 +14,7 @@
 ### Other Changes
 
 - Add logging errors for `401: Unauthorized` and `403: Forbidden` to assist in customer troubleshooting
-  ([#41727](https://github.com/Azure/azure-sdk-for-python/pull/41727))
+  ([#41767](https://github.com/Azure/azure-sdk-for-python/pull/41767))
 
 ## 1.0.0b38 (2025-06-17)
 
