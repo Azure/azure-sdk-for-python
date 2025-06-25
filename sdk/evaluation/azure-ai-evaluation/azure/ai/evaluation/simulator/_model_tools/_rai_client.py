@@ -10,7 +10,7 @@ import json
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client, get_http_client
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.ai.evaluation._user_agent import USER_AGENT
+from azure.ai.evaluation._user_agent import UserAgentSingleton
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 
 from ._identity_manager import APITokenManager
@@ -148,7 +148,7 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
         headers = {
             "Authorization": f"Bearer {token}",
             "Content-Type": "application/json",
-            "User-Agent": USER_AGENT,
+            "User-Agent": UserAgentSingleton().value,
         }
 
         session = self._create_async_client()
@@ -184,7 +184,7 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
         headers = {
             "Authorization": f"Bearer {token}",
             "Content-Type": "application/json",
-            "User-Agent": USER_AGENT,
+            "User-Agent": UserAgentSingleton().value,
         }
 
         session = self._create_async_client()

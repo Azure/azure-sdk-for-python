@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 #
@@ -25,13 +26,14 @@
 #
 # --------------------------------------------------------------------------
 
+
 from typing import Any, TYPE_CHECKING, Union
 
 from azure.core.credentials import AzureKeyCredential
 
+
 from .._patch import _parse_connection_string, WebPubSubServiceClientBase
 from ._client import WebPubSubServiceClient as WebPubSubServiceClientGenerated
-
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential

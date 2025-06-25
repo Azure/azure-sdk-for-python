@@ -15,6 +15,7 @@ import math
 import pandas as pd
 from tqdm import tqdm
 
+from azure.core.pipeline.policies import UserAgentPolicy
 from azure.ai.evaluation._legacy._adapters.entities import Run
 
 from azure.ai.evaluation._constants import (
@@ -26,6 +27,7 @@ from azure.ai.evaluation._constants import (
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation._version import VERSION
+from azure.ai.evaluation._user_agent import UserAgentSingleton
 from azure.ai.evaluation._azure._clients import LiteMLClient
 
 LOGGER = logging.getLogger(__name__)
@@ -148,7 +150,8 @@ def _log_metrics_and_instance_results_onedp(
     )
     client = EvaluationServiceOneDPClient(
         endpoint=project_url,
-        credential=credentials
+        credential=credentials,
+        user_agent_policy=UserAgentPolicy(base_user_agent=UserAgentSingleton().value)
     )
 
     # Massaging before artifacts are put on disk

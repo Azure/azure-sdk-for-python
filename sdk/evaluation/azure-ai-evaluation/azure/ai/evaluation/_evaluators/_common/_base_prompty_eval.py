@@ -20,9 +20,12 @@ from ..._common.utils import construct_prompty_model_config, validate_model_conf
 from . import EvaluatorBase
 
 try:
-    from ..._user_agent import USER_AGENT
+    from ..._user_agent import UserAgentSingleton
 except ImportError:
-    USER_AGENT = "None"
+    class UserAgentSingleton:
+        @property
+        def value(self) -> str:
+            return "None"
 
 T = TypeVar("T")
 
@@ -60,7 +63,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         super().__init__(eval_last_turn=eval_last_turn, threshold=threshold, _higher_is_better=_higher_is_better)
 
         subclass_name = self.__class__.__name__
-        user_agent = f"{USER_AGENT} (type=evaluator subtype={subclass_name})"
+        user_agent = f"{UserAgentSingleton().value} (type=evaluator subtype={subclass_name})"
         prompty_model_config = construct_prompty_model_config(
             validate_model_config(model_config),
             self._DEFAULT_OPEN_API_VERSION,
