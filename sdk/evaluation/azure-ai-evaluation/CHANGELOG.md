@@ -3,6 +3,7 @@
 ## 1.9.0 (Unreleased)
 
 ### Features Added
+
 - Added support for Azure Open AI evaluation via `AzureOpenAIScoreModelGrader` class, which serves as a wrapper around Azure Open AI score model configurations. This new grader object can be supplied to the main `evaluate` method as if it were a normal callable evaluator.
 
 
