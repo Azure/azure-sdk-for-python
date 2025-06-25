@@ -7,15 +7,10 @@
 """
 DESCRIPTION:
     This sample demonstrates how to use Agent operations with the Deep Research tool from
-    the Azure Agents service using a synchronous client. This sample uses a blocking call
-    `agents_client.runs.create_and_process` to process the Agent run. However, since research
-    results may take a few minutes to complete, it is recommended to use one of the two
-    streaming methods so you can see the progress of the Agent run in real-time:
-    /agents_streaming/sample_agents_stream_iteration_with_deep_research_tool.py
-    /agents_streaming/sample_agents_stream_eventhandler_with_deep_research_tool.py
+    the Azure Agents service, while iterating on streaming events, using a synchronous client.
 
 USAGE:
-    python sample_agents_deep_research.py
+    python sample_agents_stream_iteration_with_deep_research_tool.py
 
     Before running the sample:
 
@@ -35,14 +30,19 @@ USAGE:
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.agents.models import DeepResearchTool, MessageRole
-
-project_client = AIProjectClient(
-    endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
+from azure.ai.agents.models import (
+    DeepResearchTool,
+    MessageRole,
+    MessageDeltaChunk,
+    MessageDeltaTextContent,
+    MessageDeltaTextUrlCitationAnnotation,
+    RunStepDeltaChunk,
+    ThreadMessage,
+    ThreadRun,
+    AgentStreamEvent,
+    RunStep,
 )
 
-# [START create_agent_with_deep_research_tool]
 conn_id = os.environ["AZURE_BING_CONNECTION_ID"]
 
 # Initialize a Deep Research tool with Bing Connection ID and Deep Research model deployment name
@@ -52,7 +52,10 @@ deep_research_tool = DeepResearchTool(
 )
 
 # Create Agent with the Deep Research tool and process Agent run
-with project_client:
+with AIProjectClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
+    credential=DefaultAzureCredential(),
+) as project_client:
 
     with project_client.agents as agents_client:
 
@@ -62,8 +65,6 @@ with project_client:
             instructions="You are a helpful Agent that assists in researching scientific topics.",
             tools=deep_research_tool.definitions,
         )
-
-        # [END create_agent_with_deep_research_tool]
         print(f"Created agent, ID: {agent.id}")
 
         # Create thread for communication
@@ -83,13 +84,46 @@ with project_client:
         )
         print(f"Created message, ID: {message.id}")
 
-        # Create and process Agent run in thread with tools
-        print(f"Start processing the message... this may take a few minutes to finish. Be patient!")
-        run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
-        print(f"Run finished with status: {run.status}")
+        # Process Agent run and iterate over events streamed to the client.
+        # It may take a few minutes for the agent to complete the run.
+        with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id) as stream:
 
-        if run.status == "failed":
-            print(f"Run failed: {run.last_error}")
+            for event_type, event_data, _ in stream:
+
+                if isinstance(event_data, MessageDeltaChunk):
+                    print(f"Text delta received: {event_data.text}")
+                    if event_data.delta.content and isinstance(event_data.delta.content[0], MessageDeltaTextContent):
+                        delta_text_content = event_data.delta.content[0]
+                        if delta_text_content.text and delta_text_content.text.annotations:
+                            for delta_annotation in delta_text_content.text.annotations:
+                                if isinstance(delta_annotation, MessageDeltaTextUrlCitationAnnotation):
+                                    print(
+                                        f"URL citation delta received: [{delta_annotation.url_citation.title}]({delta_annotation.url_citation.url})"
+                                    )
+
+                elif isinstance(event_data, RunStepDeltaChunk):
+                    print(f"RunStepDeltaChunk received. ID: {event_data.id}.")
+
+                elif isinstance(event_data, ThreadMessage):
+                    print(f"ThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")
+
+                elif isinstance(event_data, ThreadRun):
+                    print(f"ThreadRun status: {event_data.status}")
+
+                    if event_data.status == "failed":
+                        print(f"Run failed. Error: {event_data.last_error}")
+
+                elif isinstance(event_data, RunStep):
+                    print(f"RunStep type: {event_data.type}, Status: {event_data.status}")
+
+                elif event_type == AgentStreamEvent.ERROR:
+                    print(f"An error occurred. Data: {event_data}")
+
+                elif event_type == AgentStreamEvent.DONE:
+                    print("Stream completed.")
+
+                else:
+                    print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
         # Delete the Agent when done
         agents_client.delete_agent(agent.id)

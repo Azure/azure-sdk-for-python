@@ -863,7 +863,7 @@ class ConnectionTool(Tool[ToolDefinitionT]):
         Initialize ConnectionTool with a connection_id.
 
         :param connection_id: Connection ID used by tool. All connection tools allow only one connection.
-        :raises ValueError: If the connection ID is not invalid.
+        :raises ValueError: If the connection ID is invalid.
         """
         if not _is_valid_connection_id(connection_id):
             raise ValueError(
@@ -900,7 +900,7 @@ class DeepResearchTool(Tool[DeepResearchToolDefinition]):
 
         :param bing_grounding_connection_id: Connection ID used by tool. Bing Grounding tools allow only one connection.
         :param deep_research_model: The Deep Research model deployment name.
-        :raises ValueError: If the connection ID is not invalid.
+        :raises ValueError: If the connection ID is invalid.
         """
 
         if not _is_valid_connection_id(bing_grounding_connection_id):
@@ -953,7 +953,7 @@ class BingGroundingTool(Tool[BingGroundingToolDefinition]):
         :param set_lang: The language to use for user interface strings when calling Bing API.
         :param count: The number of search results to return in the Bing API response.
         :param freshness: Filter search results by a specific time range.
-        :raises ValueError: If the connection ID is not invalid.
+        :raises ValueError: If the connection ID is invalid.
 
         .. seealso::
            `Bing Web Search API Query Parameters <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters>`_
