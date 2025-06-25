@@ -27,7 +27,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
             await self.client.private_endpoints.begin_delete(
                 resource_group_name=resource_group.name,
                 private_endpoint_name="str",
-                api_version="2024-07-01",
+                api_version="2023-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -40,7 +40,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
         response = await self.client.private_endpoints.get(
             resource_group_name=resource_group.name,
             private_endpoint_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
 
         # please add some check logic here by yourself
@@ -104,7 +104,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                         {
                             "auxiliaryMode": "str",
                             "auxiliarySku": "str",
-                            "defaultOutboundConnectivityEnabled": bool,
                             "disableTcpStateTracking": bool,
                             "dnsSettings": {
                                 "appliedDnsServers": ["str"],
@@ -280,13 +279,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                     }
                                                 ],
                                                 "ipConfigurations": [...],
-                                                "ipamPoolPrefixAllocations": [
-                                                    {
-                                                        "allocatedAddressPrefixes": ["str"],
-                                                        "id": "str",
-                                                        "numberOfIpAddresses": "str",
-                                                    }
-                                                ],
                                                 "name": "str",
                                                 "natGateway": {"id": "str"},
                                                 "networkSecurityGroup": {
@@ -340,7 +332,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                     "flowLogs": [
                                                         {
                                                             "enabled": bool,
-                                                            "enabledFilteringCriteria": "str",
                                                             "etag": "str",
                                                             "flowAnalyticsConfiguration": {
                                                                 "networkWatcherFlowAnalyticsConfiguration": {
@@ -353,14 +344,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                             },
                                                             "format": {"type": "str", "version": 0},
                                                             "id": "str",
-                                                            "identity": {
-                                                                "principalId": "str",
-                                                                "tenantId": "str",
-                                                                "type": "str",
-                                                                "userAssignedIdentities": {
-                                                                    "str": {"clientId": "str", "principalId": "str"}
-                                                                },
-                                                            },
                                                             "location": "str",
                                                             "name": "str",
                                                             "provisioningState": "str",
@@ -512,12 +495,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                     }
                                                 ],
                                                 "serviceEndpoints": [
-                                                    {
-                                                        "locations": ["str"],
-                                                        "networkIdentifier": {"id": "str"},
-                                                        "provisioningState": "str",
-                                                        "service": "str",
-                                                    }
+                                                    {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                                 ],
                                                 "sharingScope": "str",
                                                 "type": "str",
@@ -536,12 +514,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                             "name": "str",
                                             "provisioningState": "str",
                                             "publicIpAddresses": [{"id": "str"}],
-                                            "publicIpAddressesV6": [{"id": "str"}],
                                             "publicIpPrefixes": [{"id": "str"}],
-                                            "publicIpPrefixesV6": [{"id": "str"}],
                                             "resourceGuid": "str",
                                             "sku": {"name": "str"},
-                                            "sourceVirtualNetwork": {"id": "str"},
                                             "subnets": [{"id": "str"}],
                                             "tags": {"str": "str"},
                                             "type": "str",
@@ -635,12 +610,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                         "name": "str",
                                                         "provisioningState": "str",
                                                         "publicIpAddresses": [{"id": "str"}],
-                                                        "publicIpAddressesV6": [{"id": "str"}],
                                                         "publicIpPrefixes": [{"id": "str"}],
-                                                        "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
                                                         "sku": {"name": "str"},
-                                                        "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
                                                         "tags": {"str": "str"},
                                                         "type": "str",
@@ -658,13 +630,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                     "zones": ["str"],
                                                 },
                                                 "subnet": ...,
-                                            }
-                                        ],
-                                        "ipamPoolPrefixAllocations": [
-                                            {
-                                                "allocatedAddressPrefixes": ["str"],
-                                                "id": "str",
-                                                "numberOfIpAddresses": "str",
                                             }
                                         ],
                                         "name": "str",
@@ -720,7 +685,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                             "flowLogs": [
                                                 {
                                                     "enabled": bool,
-                                                    "enabledFilteringCriteria": "str",
                                                     "etag": "str",
                                                     "flowAnalyticsConfiguration": {
                                                         "networkWatcherFlowAnalyticsConfiguration": {
@@ -733,14 +697,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                     },
                                                     "format": {"type": "str", "version": 0},
                                                     "id": "str",
-                                                    "identity": {
-                                                        "principalId": "str",
-                                                        "tenantId": "str",
-                                                        "type": "str",
-                                                        "userAssignedIdentities": {
-                                                            "str": {"clientId": "str", "principalId": "str"}
-                                                        },
-                                                    },
                                                     "location": "str",
                                                     "name": "str",
                                                     "provisioningState": "str",
@@ -892,12 +848,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                             }
                                         ],
                                         "serviceEndpoints": [
-                                            {
-                                                "locations": ["str"],
-                                                "networkIdentifier": {"id": "str"},
-                                                "provisioningState": "str",
-                                                "service": "str",
-                                            }
+                                            {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                         ],
                                         "sharingScope": "str",
                                         "type": "str",
@@ -982,13 +933,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                 }
                                                             ],
                                                             "ipConfigurations": [...],
-                                                            "ipamPoolPrefixAllocations": [
-                                                                {
-                                                                    "allocatedAddressPrefixes": ["str"],
-                                                                    "id": "str",
-                                                                    "numberOfIpAddresses": "str",
-                                                                }
-                                                            ],
                                                             "name": "str",
                                                             "natGateway": {"id": "str"},
                                                             "networkSecurityGroup": {
@@ -1042,7 +986,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                 "flowLogs": [
                                                                     {
                                                                         "enabled": bool,
-                                                                        "enabledFilteringCriteria": "str",
                                                                         "etag": "str",
                                                                         "flowAnalyticsConfiguration": {
                                                                             "networkWatcherFlowAnalyticsConfiguration": {
@@ -1055,17 +998,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                         },
                                                                         "format": {"type": "str", "version": 0},
                                                                         "id": "str",
-                                                                        "identity": {
-                                                                            "principalId": "str",
-                                                                            "tenantId": "str",
-                                                                            "type": "str",
-                                                                            "userAssignedIdentities": {
-                                                                                "str": {
-                                                                                    "clientId": "str",
-                                                                                    "principalId": "str",
-                                                                                }
-                                                                            },
-                                                                        },
                                                                         "location": "str",
                                                                         "name": "str",
                                                                         "provisioningState": "str",
@@ -1222,7 +1154,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                             "serviceEndpoints": [
                                                                 {
                                                                     "locations": ["str"],
-                                                                    "networkIdentifier": {"id": "str"},
                                                                     "provisioningState": "str",
                                                                     "service": "str",
                                                                 }
@@ -1244,12 +1175,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                         "name": "str",
                                                         "provisioningState": "str",
                                                         "publicIpAddresses": [{"id": "str"}],
-                                                        "publicIpAddressesV6": [{"id": "str"}],
                                                         "publicIpPrefixes": [{"id": "str"}],
-                                                        "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
                                                         "sku": {"name": "str"},
-                                                        "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
                                                         "tags": {"str": "str"},
                                                         "type": "str",
@@ -1344,12 +1272,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                     "name": "str",
                                                                     "provisioningState": "str",
                                                                     "publicIpAddresses": [{"id": "str"}],
-                                                                    "publicIpAddressesV6": [{"id": "str"}],
                                                                     "publicIpPrefixes": [{"id": "str"}],
-                                                                    "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
                                                                     "sku": {"name": "str"},
-                                                                    "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
                                                                     "tags": {"str": "str"},
                                                                     "type": "str",
@@ -1367,13 +1292,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                 "zones": ["str"],
                                                             },
                                                             "subnet": ...,
-                                                        }
-                                                    ],
-                                                    "ipamPoolPrefixAllocations": [
-                                                        {
-                                                            "allocatedAddressPrefixes": ["str"],
-                                                            "id": "str",
-                                                            "numberOfIpAddresses": "str",
                                                         }
                                                     ],
                                                     "name": "str",
@@ -1429,7 +1347,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                         "flowLogs": [
                                                             {
                                                                 "enabled": bool,
-                                                                "enabledFilteringCriteria": "str",
                                                                 "etag": "str",
                                                                 "flowAnalyticsConfiguration": {
                                                                     "networkWatcherFlowAnalyticsConfiguration": {
@@ -1442,14 +1359,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                 },
                                                                 "format": {"type": "str", "version": 0},
                                                                 "id": "str",
-                                                                "identity": {
-                                                                    "principalId": "str",
-                                                                    "tenantId": "str",
-                                                                    "type": "str",
-                                                                    "userAssignedIdentities": {
-                                                                        "str": {"clientId": "str", "principalId": "str"}
-                                                                    },
-                                                                },
                                                                 "location": "str",
                                                                 "name": "str",
                                                                 "provisioningState": "str",
@@ -1603,7 +1512,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                     "serviceEndpoints": [
                                                         {
                                                             "locations": ["str"],
-                                                            "networkIdentifier": {"id": "str"},
                                                             "provisioningState": "str",
                                                             "service": "str",
                                                         }
@@ -1693,7 +1601,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                 "flowLogs": [
                                     {
                                         "enabled": bool,
-                                        "enabledFilteringCriteria": "str",
                                         "etag": "str",
                                         "flowAnalyticsConfiguration": {
                                             "networkWatcherFlowAnalyticsConfiguration": {
@@ -1706,14 +1613,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                         },
                                         "format": {"type": "str", "version": 0},
                                         "id": "str",
-                                        "identity": {
-                                            "principalId": "str",
-                                            "tenantId": "str",
-                                            "type": "str",
-                                            "userAssignedIdentities": {
-                                                "str": {"clientId": "str", "principalId": "str"}
-                                            },
-                                        },
                                         "location": "str",
                                         "name": "str",
                                         "provisioningState": "str",
@@ -1856,12 +1755,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                         "name": "str",
                                                         "provisioningState": "str",
                                                         "publicIpAddresses": [{"id": "str"}],
-                                                        "publicIpAddressesV6": [{"id": "str"}],
                                                         "publicIpPrefixes": [{"id": "str"}],
-                                                        "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
                                                         "sku": {"name": "str"},
-                                                        "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
                                                         "tags": {"str": "str"},
                                                         "type": "str",
@@ -1879,13 +1775,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                     "zones": ["str"],
                                                 },
                                                 "subnet": ...,
-                                            }
-                                        ],
-                                        "ipamPoolPrefixAllocations": [
-                                            {
-                                                "allocatedAddressPrefixes": ["str"],
-                                                "id": "str",
-                                                "numberOfIpAddresses": "str",
                                             }
                                         ],
                                         "name": "str",
@@ -1974,12 +1863,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                             }
                                         ],
                                         "serviceEndpoints": [
-                                            {
-                                                "locations": ["str"],
-                                                "networkIdentifier": {"id": "str"},
-                                                "provisioningState": "str",
-                                                "service": "str",
-                                            }
+                                            {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                         ],
                                         "sharingScope": "str",
                                         "type": "str",
@@ -1994,7 +1878,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                             "privateLinkService": {
                                 "alias": "str",
                                 "autoApproval": {"subscriptions": ["str"]},
-                                "destinationIPAddress": "str",
                                 "enableProxyProtocol": bool,
                                 "etag": "str",
                                 "extendedLocation": {"name": "str", "type": "str"},
@@ -2087,12 +1970,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                             "name": "str",
                                                             "provisioningState": "str",
                                                             "publicIpAddresses": [{"id": "str"}],
-                                                            "publicIpAddressesV6": [{"id": "str"}],
                                                             "publicIpPrefixes": [{"id": "str"}],
-                                                            "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
                                                             "sku": {"name": "str"},
-                                                            "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
                                                             "tags": {"str": "str"},
                                                             "type": "str",
@@ -2110,13 +1990,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                         "zones": ["str"],
                                                     },
                                                     "subnet": ...,
-                                                }
-                                            ],
-                                            "ipamPoolPrefixAllocations": [
-                                                {
-                                                    "allocatedAddressPrefixes": ["str"],
-                                                    "id": "str",
-                                                    "numberOfIpAddresses": "str",
                                                 }
                                             ],
                                             "name": "str",
@@ -2172,7 +2045,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                 "flowLogs": [
                                                     {
                                                         "enabled": bool,
-                                                        "enabledFilteringCriteria": "str",
                                                         "etag": "str",
                                                         "flowAnalyticsConfiguration": {
                                                             "networkWatcherFlowAnalyticsConfiguration": {
@@ -2185,14 +2057,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                         },
                                                         "format": {"type": "str", "version": 0},
                                                         "id": "str",
-                                                        "identity": {
-                                                            "principalId": "str",
-                                                            "tenantId": "str",
-                                                            "type": "str",
-                                                            "userAssignedIdentities": {
-                                                                "str": {"clientId": "str", "principalId": "str"}
-                                                            },
-                                                        },
                                                         "location": "str",
                                                         "name": "str",
                                                         "provisioningState": "str",
@@ -2344,12 +2208,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                 }
                                             ],
                                             "serviceEndpoints": [
-                                                {
-                                                    "locations": ["str"],
-                                                    "networkIdentifier": {"id": "str"},
-                                                    "provisioningState": "str",
-                                                    "service": "str",
-                                                }
+                                                {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                             ],
                                             "sharingScope": "str",
                                             "type": "str",
@@ -2435,13 +2294,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                         }
                                                     ],
                                                     "ipConfigurations": [...],
-                                                    "ipamPoolPrefixAllocations": [
-                                                        {
-                                                            "allocatedAddressPrefixes": ["str"],
-                                                            "id": "str",
-                                                            "numberOfIpAddresses": "str",
-                                                        }
-                                                    ],
                                                     "name": "str",
                                                     "natGateway": {"id": "str"},
                                                     "networkSecurityGroup": {
@@ -2495,7 +2347,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                         "flowLogs": [
                                                             {
                                                                 "enabled": bool,
-                                                                "enabledFilteringCriteria": "str",
                                                                 "etag": "str",
                                                                 "flowAnalyticsConfiguration": {
                                                                     "networkWatcherFlowAnalyticsConfiguration": {
@@ -2508,14 +2359,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                 },
                                                                 "format": {"type": "str", "version": 0},
                                                                 "id": "str",
-                                                                "identity": {
-                                                                    "principalId": "str",
-                                                                    "tenantId": "str",
-                                                                    "type": "str",
-                                                                    "userAssignedIdentities": {
-                                                                        "str": {"clientId": "str", "principalId": "str"}
-                                                                    },
-                                                                },
                                                                 "location": "str",
                                                                 "name": "str",
                                                                 "provisioningState": "str",
@@ -2669,7 +2512,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                     "serviceEndpoints": [
                                                         {
                                                             "locations": ["str"],
-                                                            "networkIdentifier": {"id": "str"},
                                                             "provisioningState": "str",
                                                             "service": "str",
                                                         }
@@ -2691,12 +2533,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                 "name": "str",
                                                 "provisioningState": "str",
                                                 "publicIpAddresses": [{"id": "str"}],
-                                                "publicIpAddressesV6": [{"id": "str"}],
                                                 "publicIpPrefixes": [{"id": "str"}],
-                                                "publicIpPrefixesV6": [{"id": "str"}],
                                                 "resourceGuid": "str",
                                                 "sku": {"name": "str"},
-                                                "sourceVirtualNetwork": {"id": "str"},
                                                 "subnets": [{"id": "str"}],
                                                 "tags": {"str": "str"},
                                                 "type": "str",
@@ -2791,12 +2630,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                             "name": "str",
                                                             "provisioningState": "str",
                                                             "publicIpAddresses": [{"id": "str"}],
-                                                            "publicIpAddressesV6": [{"id": "str"}],
                                                             "publicIpPrefixes": [{"id": "str"}],
-                                                            "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
                                                             "sku": {"name": "str"},
-                                                            "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
                                                             "tags": {"str": "str"},
                                                             "type": "str",
@@ -2814,13 +2650,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                         "zones": ["str"],
                                                     },
                                                     "subnet": ...,
-                                                }
-                                            ],
-                                            "ipamPoolPrefixAllocations": [
-                                                {
-                                                    "allocatedAddressPrefixes": ["str"],
-                                                    "id": "str",
-                                                    "numberOfIpAddresses": "str",
                                                 }
                                             ],
                                             "name": "str",
@@ -2876,7 +2705,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                 "flowLogs": [
                                                     {
                                                         "enabled": bool,
-                                                        "enabledFilteringCriteria": "str",
                                                         "etag": "str",
                                                         "flowAnalyticsConfiguration": {
                                                             "networkWatcherFlowAnalyticsConfiguration": {
@@ -2889,14 +2717,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                         },
                                                         "format": {"type": "str", "version": 0},
                                                         "id": "str",
-                                                        "identity": {
-                                                            "principalId": "str",
-                                                            "tenantId": "str",
-                                                            "type": "str",
-                                                            "userAssignedIdentities": {
-                                                                "str": {"clientId": "str", "principalId": "str"}
-                                                            },
-                                                        },
                                                         "location": "str",
                                                         "name": "str",
                                                         "provisioningState": "str",
@@ -3048,12 +2868,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                 }
                                             ],
                                             "serviceEndpoints": [
-                                                {
-                                                    "locations": ["str"],
-                                                    "networkIdentifier": {"id": "str"},
-                                                    "provisioningState": "str",
-                                                    "service": "str",
-                                                }
+                                                {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                             ],
                                             "sharingScope": "str",
                                             "type": "str",
@@ -3175,13 +2990,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                             }
                                                         ],
                                                         "ipConfigurations": [...],
-                                                        "ipamPoolPrefixAllocations": [
-                                                            {
-                                                                "allocatedAddressPrefixes": ["str"],
-                                                                "id": "str",
-                                                                "numberOfIpAddresses": "str",
-                                                            }
-                                                        ],
                                                         "name": "str",
                                                         "natGateway": {"id": "str"},
                                                         "networkSecurityGroup": {
@@ -3235,7 +3043,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                             "flowLogs": [
                                                                 {
                                                                     "enabled": bool,
-                                                                    "enabledFilteringCriteria": "str",
                                                                     "etag": "str",
                                                                     "flowAnalyticsConfiguration": {
                                                                         "networkWatcherFlowAnalyticsConfiguration": {
@@ -3248,17 +3055,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                     },
                                                                     "format": {"type": "str", "version": 0},
                                                                     "id": "str",
-                                                                    "identity": {
-                                                                        "principalId": "str",
-                                                                        "tenantId": "str",
-                                                                        "type": "str",
-                                                                        "userAssignedIdentities": {
-                                                                            "str": {
-                                                                                "clientId": "str",
-                                                                                "principalId": "str",
-                                                                            }
-                                                                        },
-                                                                    },
                                                                     "location": "str",
                                                                     "name": "str",
                                                                     "provisioningState": "str",
@@ -3412,7 +3208,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                         "serviceEndpoints": [
                                                             {
                                                                 "locations": ["str"],
-                                                                "networkIdentifier": {"id": "str"},
                                                                 "provisioningState": "str",
                                                                 "service": "str",
                                                             }
@@ -3434,12 +3229,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                     "name": "str",
                                                     "provisioningState": "str",
                                                     "publicIpAddresses": [{"id": "str"}],
-                                                    "publicIpAddressesV6": [{"id": "str"}],
                                                     "publicIpPrefixes": [{"id": "str"}],
-                                                    "publicIpPrefixesV6": [{"id": "str"}],
                                                     "resourceGuid": "str",
                                                     "sku": {"name": "str"},
-                                                    "sourceVirtualNetwork": {"id": "str"},
                                                     "subnets": [{"id": "str"}],
                                                     "tags": {"str": "str"},
                                                     "type": "str",
@@ -3534,12 +3326,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                 "name": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
-                                                                "publicIpAddressesV6": [{"id": "str"}],
                                                                 "publicIpPrefixes": [{"id": "str"}],
-                                                                "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
                                                                 "sku": {"name": "str"},
-                                                                "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
                                                                 "tags": {"str": "str"},
                                                                 "type": "str",
@@ -3557,13 +3346,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                             "zones": ["str"],
                                                         },
                                                         "subnet": ...,
-                                                    }
-                                                ],
-                                                "ipamPoolPrefixAllocations": [
-                                                    {
-                                                        "allocatedAddressPrefixes": ["str"],
-                                                        "id": "str",
-                                                        "numberOfIpAddresses": "str",
                                                     }
                                                 ],
                                                 "name": "str",
@@ -3619,7 +3401,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                     "flowLogs": [
                                                         {
                                                             "enabled": bool,
-                                                            "enabledFilteringCriteria": "str",
                                                             "etag": "str",
                                                             "flowAnalyticsConfiguration": {
                                                                 "networkWatcherFlowAnalyticsConfiguration": {
@@ -3632,14 +3413,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                             },
                                                             "format": {"type": "str", "version": 0},
                                                             "id": "str",
-                                                            "identity": {
-                                                                "principalId": "str",
-                                                                "tenantId": "str",
-                                                                "type": "str",
-                                                                "userAssignedIdentities": {
-                                                                    "str": {"clientId": "str", "principalId": "str"}
-                                                                },
-                                                            },
                                                             "location": "str",
                                                             "name": "str",
                                                             "provisioningState": "str",
@@ -3791,12 +3564,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                     }
                                                 ],
                                                 "serviceEndpoints": [
-                                                    {
-                                                        "locations": ["str"],
-                                                        "networkIdentifier": {"id": "str"},
-                                                        "provisioningState": "str",
-                                                        "service": "str",
-                                                    }
+                                                    {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                                 ],
                                                 "sharingScope": "str",
                                                 "type": "str",
@@ -3966,13 +3734,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                             }
                                                         ],
                                                         "ipConfigurations": [...],
-                                                        "ipamPoolPrefixAllocations": [
-                                                            {
-                                                                "allocatedAddressPrefixes": ["str"],
-                                                                "id": "str",
-                                                                "numberOfIpAddresses": "str",
-                                                            }
-                                                        ],
                                                         "name": "str",
                                                         "natGateway": {"id": "str"},
                                                         "networkSecurityGroup": {
@@ -4026,7 +3787,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                             "flowLogs": [
                                                                 {
                                                                     "enabled": bool,
-                                                                    "enabledFilteringCriteria": "str",
                                                                     "etag": "str",
                                                                     "flowAnalyticsConfiguration": {
                                                                         "networkWatcherFlowAnalyticsConfiguration": {
@@ -4039,17 +3799,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                     },
                                                                     "format": {"type": "str", "version": 0},
                                                                     "id": "str",
-                                                                    "identity": {
-                                                                        "principalId": "str",
-                                                                        "tenantId": "str",
-                                                                        "type": "str",
-                                                                        "userAssignedIdentities": {
-                                                                            "str": {
-                                                                                "clientId": "str",
-                                                                                "principalId": "str",
-                                                                            }
-                                                                        },
-                                                                    },
                                                                     "location": "str",
                                                                     "name": "str",
                                                                     "provisioningState": "str",
@@ -4203,7 +3952,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                         "serviceEndpoints": [
                                                             {
                                                                 "locations": ["str"],
-                                                                "networkIdentifier": {"id": "str"},
                                                                 "provisioningState": "str",
                                                                 "service": "str",
                                                             }
@@ -4225,12 +3973,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                     "name": "str",
                                                     "provisioningState": "str",
                                                     "publicIpAddresses": [{"id": "str"}],
-                                                    "publicIpAddressesV6": [{"id": "str"}],
                                                     "publicIpPrefixes": [{"id": "str"}],
-                                                    "publicIpPrefixesV6": [{"id": "str"}],
                                                     "resourceGuid": "str",
                                                     "sku": {"name": "str"},
-                                                    "sourceVirtualNetwork": {"id": "str"},
                                                     "subnets": [{"id": "str"}],
                                                     "tags": {"str": "str"},
                                                     "type": "str",
@@ -4324,12 +4069,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                 "name": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
-                                                                "publicIpAddressesV6": [{"id": "str"}],
                                                                 "publicIpPrefixes": [{"id": "str"}],
-                                                                "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
                                                                 "sku": {"name": "str"},
-                                                                "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
                                                                 "tags": {"str": "str"},
                                                                 "type": "str",
@@ -4347,13 +4089,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                             "zones": ["str"],
                                                         },
                                                         "subnet": ...,
-                                                    }
-                                                ],
-                                                "ipamPoolPrefixAllocations": [
-                                                    {
-                                                        "allocatedAddressPrefixes": ["str"],
-                                                        "id": "str",
-                                                        "numberOfIpAddresses": "str",
                                                     }
                                                 ],
                                                 "name": "str",
@@ -4409,7 +4144,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                     "flowLogs": [
                                                         {
                                                             "enabled": bool,
-                                                            "enabledFilteringCriteria": "str",
                                                             "etag": "str",
                                                             "flowAnalyticsConfiguration": {
                                                                 "networkWatcherFlowAnalyticsConfiguration": {
@@ -4422,14 +4156,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                             },
                                                             "format": {"type": "str", "version": 0},
                                                             "id": "str",
-                                                            "identity": {
-                                                                "principalId": "str",
-                                                                "tenantId": "str",
-                                                                "type": "str",
-                                                                "userAssignedIdentities": {
-                                                                    "str": {"clientId": "str", "principalId": "str"}
-                                                                },
-                                                            },
                                                             "location": "str",
                                                             "name": "str",
                                                             "provisioningState": "str",
@@ -4581,12 +4307,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                     }
                                                 ],
                                                 "serviceEndpoints": [
-                                                    {
-                                                        "locations": ["str"],
-                                                        "networkIdentifier": {"id": "str"},
-                                                        "provisioningState": "str",
-                                                        "service": "str",
-                                                    }
+                                                    {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                                 ],
                                                 "sharingScope": "str",
                                                 "type": "str",
@@ -4705,12 +4426,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                         "name": "str",
                                         "provisioningState": "str",
                                         "publicIpAddresses": [{"id": "str"}],
-                                        "publicIpAddressesV6": [{"id": "str"}],
                                         "publicIpPrefixes": [{"id": "str"}],
-                                        "publicIpPrefixesV6": [{"id": "str"}],
                                         "resourceGuid": "str",
                                         "sku": {"name": "str"},
-                                        "sourceVirtualNetwork": {"id": "str"},
                                         "subnets": [{"id": "str"}],
                                         "tags": {"str": "str"},
                                         "type": "str",
@@ -4729,9 +4447,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                 },
                                 "subnet": ...,
                             }
-                        ],
-                        "ipamPoolPrefixAllocations": [
-                            {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
                         ],
                         "name": "str",
                         "natGateway": {"id": "str"},
@@ -4786,7 +4501,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                             "flowLogs": [
                                 {
                                     "enabled": bool,
-                                    "enabledFilteringCriteria": "str",
                                     "etag": "str",
                                     "flowAnalyticsConfiguration": {
                                         "networkWatcherFlowAnalyticsConfiguration": {
@@ -4799,12 +4513,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                     },
                                     "format": {"type": "str", "version": 0},
                                     "id": "str",
-                                    "identity": {
-                                        "principalId": "str",
-                                        "tenantId": "str",
-                                        "type": "str",
-                                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                                    },
                                     "location": "str",
                                     "name": "str",
                                     "provisioningState": "str",
@@ -4824,7 +4532,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                 {
                                     "auxiliaryMode": "str",
                                     "auxiliarySku": "str",
-                                    "defaultOutboundConnectivityEnabled": bool,
                                     "disableTcpStateTracking": bool,
                                     "dnsSettings": {
                                         "appliedDnsServers": ["str"],
@@ -4979,12 +4686,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                     "name": "str",
                                                     "provisioningState": "str",
                                                     "publicIpAddresses": [{"id": "str"}],
-                                                    "publicIpAddressesV6": [{"id": "str"}],
                                                     "publicIpPrefixes": [{"id": "str"}],
-                                                    "publicIpPrefixesV6": [{"id": "str"}],
                                                     "resourceGuid": "str",
                                                     "sku": {"name": "str"},
-                                                    "sourceVirtualNetwork": {"id": "str"},
                                                     "subnets": [{"id": "str"}],
                                                     "tags": {"str": "str"},
                                                     "type": "str",
@@ -5058,12 +4762,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                 "name": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
-                                                                "publicIpAddressesV6": [{"id": "str"}],
                                                                 "publicIpPrefixes": [{"id": "str"}],
-                                                                "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
                                                                 "sku": {"name": "str"},
-                                                                "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
                                                                 "tags": {"str": "str"},
                                                                 "type": "str",
@@ -5120,7 +4821,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                     "privateLinkService": {
                                         "alias": "str",
                                         "autoApproval": {"subscriptions": ["str"]},
-                                        "destinationIPAddress": "str",
                                         "enableProxyProtocol": bool,
                                         "etag": "str",
                                         "extendedLocation": {"name": "str", "type": "str"},
@@ -5194,12 +4894,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                         "name": "str",
                                                         "provisioningState": "str",
                                                         "publicIpAddresses": [{"id": "str"}],
-                                                        "publicIpAddressesV6": [{"id": "str"}],
                                                         "publicIpPrefixes": [{"id": "str"}],
-                                                        "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
                                                         "sku": {"name": "str"},
-                                                        "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
                                                         "tags": {"str": "str"},
                                                         "type": "str",
@@ -5311,12 +5008,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                             "name": "str",
                                                             "provisioningState": "str",
                                                             "publicIpAddresses": [{"id": "str"}],
-                                                            "publicIpAddressesV6": [{"id": "str"}],
                                                             "publicIpPrefixes": [{"id": "str"}],
-                                                            "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
                                                             "sku": {"name": "str"},
-                                                            "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
                                                             "tags": {"str": "str"},
                                                             "type": "str",
@@ -5483,12 +5177,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                             "name": "str",
                                                             "provisioningState": "str",
                                                             "publicIpAddresses": [{"id": "str"}],
-                                                            "publicIpAddressesV6": [{"id": "str"}],
                                                             "publicIpPrefixes": [{"id": "str"}],
-                                                            "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
                                                             "sku": {"name": "str"},
-                                                            "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
                                                             "tags": {"str": "str"},
                                                             "type": "str",
@@ -5662,21 +5353,14 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                 "type": "str",
                             }
                         ],
-                        "serviceEndpoints": [
-                            {
-                                "locations": ["str"],
-                                "networkIdentifier": {"id": "str"},
-                                "provisioningState": "str",
-                                "service": "str",
-                            }
-                        ],
+                        "serviceEndpoints": [{"locations": ["str"], "provisioningState": "str", "service": "str"}],
                         "sharingScope": "str",
                         "type": "str",
                     },
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-07-01",
+                api_version="2023-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -5688,7 +5372,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
     async def test_private_endpoints_list(self, resource_group):
         response = self.client.private_endpoints.list(
             resource_group_name=resource_group.name,
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -5698,7 +5382,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
     @recorded_by_proxy_async
     async def test_private_endpoints_list_by_subscription(self, resource_group):
         response = self.client.private_endpoints.list_by_subscription(
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

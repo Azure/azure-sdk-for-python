@@ -24,7 +24,7 @@ class TestNetworkManagementAzureFirewallsOperations(AzureMgmtRecordedTestCase):
         response = self.client.azure_firewalls.begin_delete(
             resource_group_name=resource_group.name,
             azure_firewall_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -36,7 +36,7 @@ class TestNetworkManagementAzureFirewallsOperations(AzureMgmtRecordedTestCase):
         response = self.client.azure_firewalls.get(
             resource_group_name=resource_group.name,
             azure_firewall_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
 
         # please add some check logic here by yourself
@@ -70,7 +70,6 @@ class TestNetworkManagementAzureFirewallsOperations(AzureMgmtRecordedTestCase):
                         ],
                     }
                 ],
-                "autoscaleConfiguration": {"maxCapacity": 0, "minCapacity": 0},
                 "etag": "str",
                 "firewallPolicy": {"id": "str"},
                 "hubIPAddresses": {
@@ -158,7 +157,7 @@ class TestNetworkManagementAzureFirewallsOperations(AzureMgmtRecordedTestCase):
                 "virtualHub": {"id": "str"},
                 "zones": ["str"],
             },
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -171,7 +170,7 @@ class TestNetworkManagementAzureFirewallsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             azure_firewall_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -182,7 +181,7 @@ class TestNetworkManagementAzureFirewallsOperations(AzureMgmtRecordedTestCase):
     def test_azure_firewalls_list(self, resource_group):
         response = self.client.azure_firewalls.list(
             resource_group_name=resource_group.name,
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -192,7 +191,7 @@ class TestNetworkManagementAzureFirewallsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_azure_firewalls_list_all(self, resource_group):
         response = self.client.azure_firewalls.list_all(
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -204,7 +203,7 @@ class TestNetworkManagementAzureFirewallsOperations(AzureMgmtRecordedTestCase):
         response = self.client.azure_firewalls.begin_list_learned_prefixes(
             resource_group_name=resource_group.name,
             azure_firewall_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -221,11 +220,12 @@ class TestNetworkManagementAzureFirewallsOperations(AzureMgmtRecordedTestCase):
                 "fileName": "str",
                 "filters": [{"destinationPorts": ["str"], "destinations": ["str"], "sources": ["str"]}],
                 "flags": [{"type": "str"}],
+                "id": "str",
                 "numberOfPacketsToCapture": 0,
                 "protocol": "str",
                 "sasUrl": "str",
             },
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

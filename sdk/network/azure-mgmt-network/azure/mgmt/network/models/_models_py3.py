@@ -227,14 +227,10 @@ class EffectiveConnectivityConfiguration(_serialization.Model):
     :vartype hubs: list[~azure.mgmt.network.models.Hub]
     :ivar is_global: Flag if global mesh is supported. Known values are: "False" and "True".
     :vartype is_global: str or ~azure.mgmt.network.models.IsGlobal
-    :ivar connectivity_capabilities: Collection of additional settings to enhance specific topology
-     behaviors of the connectivity configuration resource.
-    :vartype connectivity_capabilities:
-     ~azure.mgmt.network.models.ConnectivityConfigurationPropertiesConnectivityCapabilities
     :ivar applies_to_groups: Groups for configuration.
     :vartype applies_to_groups: list[~azure.mgmt.network.models.ConnectivityGroupItem]
     :ivar provisioning_state: The provisioning state of the connectivity configuration resource.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar delete_existing_peering: Flag if need to remove current existing peerings. Known values
      are: "False" and "True".
@@ -255,10 +251,6 @@ class EffectiveConnectivityConfiguration(_serialization.Model):
         "connectivity_topology": {"key": "properties.connectivityTopology", "type": "str"},
         "hubs": {"key": "properties.hubs", "type": "[Hub]"},
         "is_global": {"key": "properties.isGlobal", "type": "str"},
-        "connectivity_capabilities": {
-            "key": "properties.connectivityCapabilities",
-            "type": "ConnectivityConfigurationPropertiesConnectivityCapabilities",
-        },
         "applies_to_groups": {"key": "properties.appliesToGroups", "type": "[ConnectivityGroupItem]"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "delete_existing_peering": {"key": "properties.deleteExistingPeering", "type": "str"},
@@ -274,9 +266,6 @@ class EffectiveConnectivityConfiguration(_serialization.Model):
         connectivity_topology: Optional[Union[str, "_models.ConnectivityTopology"]] = None,
         hubs: Optional[List["_models.Hub"]] = None,
         is_global: Optional[Union[str, "_models.IsGlobal"]] = None,
-        connectivity_capabilities: Optional[
-            "_models.ConnectivityConfigurationPropertiesConnectivityCapabilities"
-        ] = None,
         applies_to_groups: Optional[List["_models.ConnectivityGroupItem"]] = None,
         delete_existing_peering: Optional[Union[str, "_models.DeleteExistingPeering"]] = None,
         **kwargs: Any
@@ -295,10 +284,6 @@ class EffectiveConnectivityConfiguration(_serialization.Model):
         :paramtype hubs: list[~azure.mgmt.network.models.Hub]
         :keyword is_global: Flag if global mesh is supported. Known values are: "False" and "True".
         :paramtype is_global: str or ~azure.mgmt.network.models.IsGlobal
-        :keyword connectivity_capabilities: Collection of additional settings to enhance specific
-         topology behaviors of the connectivity configuration resource.
-        :paramtype connectivity_capabilities:
-         ~azure.mgmt.network.models.ConnectivityConfigurationPropertiesConnectivityCapabilities
         :keyword applies_to_groups: Groups for configuration.
         :paramtype applies_to_groups: list[~azure.mgmt.network.models.ConnectivityGroupItem]
         :keyword delete_existing_peering: Flag if need to remove current existing peerings. Known
@@ -312,7 +297,6 @@ class EffectiveConnectivityConfiguration(_serialization.Model):
         self.connectivity_topology = connectivity_topology
         self.hubs = hubs
         self.is_global = is_global
-        self.connectivity_capabilities = connectivity_capabilities
         self.applies_to_groups = applies_to_groups
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.delete_existing_peering = delete_existing_peering
@@ -337,14 +321,10 @@ class ActiveConnectivityConfiguration(EffectiveConnectivityConfiguration):
     :vartype hubs: list[~azure.mgmt.network.models.Hub]
     :ivar is_global: Flag if global mesh is supported. Known values are: "False" and "True".
     :vartype is_global: str or ~azure.mgmt.network.models.IsGlobal
-    :ivar connectivity_capabilities: Collection of additional settings to enhance specific topology
-     behaviors of the connectivity configuration resource.
-    :vartype connectivity_capabilities:
-     ~azure.mgmt.network.models.ConnectivityConfigurationPropertiesConnectivityCapabilities
     :ivar applies_to_groups: Groups for configuration.
     :vartype applies_to_groups: list[~azure.mgmt.network.models.ConnectivityGroupItem]
     :ivar provisioning_state: The provisioning state of the connectivity configuration resource.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar delete_existing_peering: Flag if need to remove current existing peerings. Known values
      are: "False" and "True".
@@ -369,10 +349,6 @@ class ActiveConnectivityConfiguration(EffectiveConnectivityConfiguration):
         "connectivity_topology": {"key": "properties.connectivityTopology", "type": "str"},
         "hubs": {"key": "properties.hubs", "type": "[Hub]"},
         "is_global": {"key": "properties.isGlobal", "type": "str"},
-        "connectivity_capabilities": {
-            "key": "properties.connectivityCapabilities",
-            "type": "ConnectivityConfigurationPropertiesConnectivityCapabilities",
-        },
         "applies_to_groups": {"key": "properties.appliesToGroups", "type": "[ConnectivityGroupItem]"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "delete_existing_peering": {"key": "properties.deleteExistingPeering", "type": "str"},
@@ -390,9 +366,6 @@ class ActiveConnectivityConfiguration(EffectiveConnectivityConfiguration):
         connectivity_topology: Optional[Union[str, "_models.ConnectivityTopology"]] = None,
         hubs: Optional[List["_models.Hub"]] = None,
         is_global: Optional[Union[str, "_models.IsGlobal"]] = None,
-        connectivity_capabilities: Optional[
-            "_models.ConnectivityConfigurationPropertiesConnectivityCapabilities"
-        ] = None,
         applies_to_groups: Optional[List["_models.ConnectivityGroupItem"]] = None,
         delete_existing_peering: Optional[Union[str, "_models.DeleteExistingPeering"]] = None,
         commit_time: Optional[datetime.datetime] = None,
@@ -413,10 +386,6 @@ class ActiveConnectivityConfiguration(EffectiveConnectivityConfiguration):
         :paramtype hubs: list[~azure.mgmt.network.models.Hub]
         :keyword is_global: Flag if global mesh is supported. Known values are: "False" and "True".
         :paramtype is_global: str or ~azure.mgmt.network.models.IsGlobal
-        :keyword connectivity_capabilities: Collection of additional settings to enhance specific
-         topology behaviors of the connectivity configuration resource.
-        :paramtype connectivity_capabilities:
-         ~azure.mgmt.network.models.ConnectivityConfigurationPropertiesConnectivityCapabilities
         :keyword applies_to_groups: Groups for configuration.
         :paramtype applies_to_groups: list[~azure.mgmt.network.models.ConnectivityGroupItem]
         :keyword delete_existing_peering: Flag if need to remove current existing peerings. Known
@@ -434,7 +403,6 @@ class ActiveConnectivityConfiguration(EffectiveConnectivityConfiguration):
             connectivity_topology=connectivity_topology,
             hubs=hubs,
             is_global=is_global,
-            connectivity_capabilities=connectivity_capabilities,
             applies_to_groups=applies_to_groups,
             delete_existing_peering=delete_existing_peering,
             **kwargs
@@ -528,8 +496,8 @@ class ActiveDefaultSecurityAdminRule(ActiveBaseSecurityAdminRule):
     :ivar direction: Indicates if the traffic matched against the rule in inbound or outbound.
      Known values are: "Inbound" and "Outbound".
     :vartype direction: str or ~azure.mgmt.network.models.SecurityConfigurationRuleDirection
-    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -681,8 +649,8 @@ class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):
     :ivar direction: Indicates if the traffic matched against the rule in inbound or outbound.
      Known values are: "Inbound" and "Outbound".
     :vartype direction: str or ~azure.mgmt.network.models.SecurityConfigurationRuleDirection
-    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -845,8 +813,7 @@ class AddressPrefixItem(_serialization.Model):
 
     :ivar address_prefix: Address prefix.
     :vartype address_prefix: str
-    :ivar address_prefix_type: Address prefix type. Known values are: "IPPrefix", "ServiceTag", and
-     "NetworkGroup".
+    :ivar address_prefix_type: Address prefix type. Known values are: "IPPrefix" and "ServiceTag".
     :vartype address_prefix_type: str or ~azure.mgmt.network.models.AddressPrefixType
     """
 
@@ -865,8 +832,8 @@ class AddressPrefixItem(_serialization.Model):
         """
         :keyword address_prefix: Address prefix.
         :paramtype address_prefix: str
-        :keyword address_prefix_type: Address prefix type. Known values are: "IPPrefix", "ServiceTag",
-         and "NetworkGroup".
+        :keyword address_prefix_type: Address prefix type. Known values are: "IPPrefix" and
+         "ServiceTag".
         :paramtype address_prefix_type: str or ~azure.mgmt.network.models.AddressPrefixType
         """
         super().__init__(**kwargs)
@@ -881,34 +848,20 @@ class AddressSpace(_serialization.Model):
     :ivar address_prefixes: A list of address blocks reserved for this virtual network in CIDR
      notation.
     :vartype address_prefixes: list[str]
-    :ivar ipam_pool_prefix_allocations: A list of IPAM Pools allocating IP address prefixes.
-    :vartype ipam_pool_prefix_allocations:
-     list[~azure.mgmt.network.models.IpamPoolPrefixAllocation]
     """
 
     _attribute_map = {
         "address_prefixes": {"key": "addressPrefixes", "type": "[str]"},
-        "ipam_pool_prefix_allocations": {"key": "ipamPoolPrefixAllocations", "type": "[IpamPoolPrefixAllocation]"},
     }
 
-    def __init__(
-        self,
-        *,
-        address_prefixes: Optional[List[str]] = None,
-        ipam_pool_prefix_allocations: Optional[List["_models.IpamPoolPrefixAllocation"]] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, address_prefixes: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword address_prefixes: A list of address blocks reserved for this virtual network in CIDR
          notation.
         :paramtype address_prefixes: list[str]
-        :keyword ipam_pool_prefix_allocations: A list of IPAM Pools allocating IP address prefixes.
-        :paramtype ipam_pool_prefix_allocations:
-         list[~azure.mgmt.network.models.IpamPoolPrefixAllocation]
         """
         super().__init__(**kwargs)
         self.address_prefixes = address_prefixes
-        self.ipam_pool_prefix_allocations = ipam_pool_prefix_allocations
 
 
 class ChildResource(_serialization.Model):
@@ -1044,8 +997,8 @@ class AdminRule(BaseAdminRule):
     :ivar direction: Indicates if the traffic matched against the rule in inbound or outbound.
      Known values are: "Inbound" and "Outbound".
     :vartype direction: str or ~azure.mgmt.network.models.SecurityConfigurationRuleDirection
-    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -1156,8 +1109,8 @@ class AdminRuleCollection(ChildResource):
     :vartype description: str
     :ivar applies_to_groups: Groups for configuration.
     :vartype applies_to_groups: list[~azure.mgmt.network.models.NetworkManagerSecurityGroupItem]
-    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -1264,60 +1217,6 @@ class AdminRuleListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
-
-
-class AdvertisedPublicPrefixProperties(_serialization.Model):
-    """Prefix properties required to perform validation using openssl signature.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar prefix: Advertised Public Prefix.
-    :vartype prefix: str
-    :ivar validation_id: Validation string that contains circuit peering info.
-    :vartype validation_id: str
-    :ivar signature: Signed string generated by encrypting validationId with a private key.
-    :vartype signature: str
-    :ivar validation_state: Advertised Public Prefix State that denotes if the prefix is validated
-     or not. Known values are: "NotConfigured", "Configuring", "Configured", "ValidationNeeded",
-     "ValidationFailed", "ManualValidationNeeded", "AsnValidationFailed",
-     "CertificateMissingInRoutingRegistry", "InvalidSignatureEncoding", and
-     "SignatureVerificationFailed".
-    :vartype validation_state: str or
-     ~azure.mgmt.network.models.AdvertisedPublicPrefixPropertiesValidationState
-    """
-
-    _validation = {
-        "validation_state": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "prefix": {"key": "prefix", "type": "str"},
-        "validation_id": {"key": "validationId", "type": "str"},
-        "signature": {"key": "signature", "type": "str"},
-        "validation_state": {"key": "validationState", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        prefix: Optional[str] = None,
-        validation_id: Optional[str] = None,
-        signature: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword prefix: Advertised Public Prefix.
-        :paramtype prefix: str
-        :keyword validation_id: Validation string that contains circuit peering info.
-        :paramtype validation_id: str
-        :keyword signature: Signed string generated by encrypting validationId with a private key.
-        :paramtype signature: str
-        """
-        super().__init__(**kwargs)
-        self.prefix = prefix
-        self.validation_id = validation_id
-        self.signature = signature
-        self.validation_state: Optional[Union[str, "_models.AdvertisedPublicPrefixPropertiesValidationState"]] = None
 
 
 class Resource(_serialization.Model):
@@ -1502,7 +1401,7 @@ class ApplicationGateway(Resource):
     :ivar resource_guid: The resource GUID property of the application gateway resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the application gateway resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar custom_error_configurations: Custom error configurations of the application gateway
      resource.
@@ -1879,7 +1778,7 @@ class ApplicationGatewayAuthenticationCertificate(SubResource):  # pylint: disab
     :ivar data: Certificate public data.
     :vartype data: str
     :ivar provisioning_state: The provisioning state of the authentication certificate resource.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -2140,7 +2039,7 @@ class ApplicationGatewayBackendAddressPool(SubResource):
     :ivar backend_addresses: Backend addresses.
     :vartype backend_addresses: list[~azure.mgmt.network.models.ApplicationGatewayBackendAddress]
     :ivar provisioning_state: The provisioning state of the backend address pool resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -2425,7 +2324,7 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
      will be prefixed. Default value is null.
     :vartype path: str
     :ivar provisioning_state: The provisioning state of the backend HTTP settings resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -2570,7 +2469,7 @@ class ApplicationGatewayBackendSettings(SubResource):
      name of the backend server for Tls protocol. Default value is false.
     :vartype pick_host_name_from_backend_address: bool
     :ivar provisioning_state: The provisioning state of the backend HTTP settings resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -2916,10 +2815,6 @@ class ApplicationGatewayFirewallRule(_serialization.Model):
     :ivar action: The string representation of the web application firewall rule action. Known
      values are: "None", "AnomalyScoring", "Allow", "Block", and "Log".
     :vartype action: str or ~azure.mgmt.network.models.ApplicationGatewayWafRuleActionTypes
-    :ivar sensitivity: The string representation of the web application firewall rule sensitivity.
-     Known values are: "None", "Low", "Medium", and "High".
-    :vartype sensitivity: str or
-     ~azure.mgmt.network.models.ApplicationGatewayWafRuleSensitivityTypes
     :ivar description: The description of the web application firewall rule.
     :vartype description: str
     """
@@ -2933,7 +2828,6 @@ class ApplicationGatewayFirewallRule(_serialization.Model):
         "rule_id_string": {"key": "ruleIdString", "type": "str"},
         "state": {"key": "state", "type": "str"},
         "action": {"key": "action", "type": "str"},
-        "sensitivity": {"key": "sensitivity", "type": "str"},
         "description": {"key": "description", "type": "str"},
     }
 
@@ -2944,7 +2838,6 @@ class ApplicationGatewayFirewallRule(_serialization.Model):
         rule_id_string: Optional[str] = None,
         state: Optional[Union[str, "_models.ApplicationGatewayWafRuleStateTypes"]] = None,
         action: Optional[Union[str, "_models.ApplicationGatewayWafRuleActionTypes"]] = None,
-        sensitivity: Optional[Union[str, "_models.ApplicationGatewayWafRuleSensitivityTypes"]] = None,
         description: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -2960,10 +2853,6 @@ class ApplicationGatewayFirewallRule(_serialization.Model):
         :keyword action: The string representation of the web application firewall rule action. Known
          values are: "None", "AnomalyScoring", "Allow", "Block", and "Log".
         :paramtype action: str or ~azure.mgmt.network.models.ApplicationGatewayWafRuleActionTypes
-        :keyword sensitivity: The string representation of the web application firewall rule
-         sensitivity. Known values are: "None", "Low", "Medium", and "High".
-        :paramtype sensitivity: str or
-         ~azure.mgmt.network.models.ApplicationGatewayWafRuleSensitivityTypes
         :keyword description: The description of the web application firewall rule.
         :paramtype description: str
         """
@@ -2972,7 +2861,6 @@ class ApplicationGatewayFirewallRule(_serialization.Model):
         self.rule_id_string = rule_id_string
         self.state = state
         self.action = action
-        self.sensitivity = sensitivity
         self.description = description
 
 
@@ -3038,7 +2926,7 @@ class ApplicationGatewayFirewallRuleSet(Resource):
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar provisioning_state: The provisioning state of the web application firewall rule set.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar rule_set_type: The type of the web application firewall rule set.
     :vartype rule_set_type: str
@@ -3105,32 +2993,6 @@ class ApplicationGatewayFirewallRuleSet(Resource):
         self.tiers = tiers
 
 
-class ApplicationGatewayForContainersReferenceDefinition(_serialization.Model):  # pylint: disable=name-too-long
-    """Defines an application gateway for containers reference.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Resource Id of the application gateway for containers. Required.
-    :vartype id: str
-    """
-
-    _validation = {
-        "id": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-    }
-
-    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
-        """
-        :keyword id: Resource Id of the application gateway for containers. Required.
-        :paramtype id: str
-        """
-        super().__init__(**kwargs)
-        self.id = id
-
-
 class ApplicationGatewayFrontendIPConfiguration(SubResource):  # pylint: disable=name-too-long
     """Frontend IP configuration of an application gateway.
 
@@ -3157,7 +3019,7 @@ class ApplicationGatewayFrontendIPConfiguration(SubResource):  # pylint: disable
      configuration.
     :vartype private_link_configuration: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the frontend IP configuration resource.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -3239,7 +3101,7 @@ class ApplicationGatewayFrontendPort(SubResource):
     :ivar port: Frontend port.
     :vartype port: int
     :ivar provisioning_state: The provisioning state of the frontend port resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -3389,7 +3251,7 @@ class ApplicationGatewayHttpListener(SubResource):
      multi-hosting.
     :vartype require_server_name_indication: bool
     :ivar provisioning_state: The provisioning state of the HTTP listener resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar custom_error_configurations: Custom error configurations of the HTTP listener.
     :vartype custom_error_configurations:
@@ -3511,8 +3373,7 @@ class ApplicationGatewayIPConfiguration(SubResource):
      its private address.
     :vartype subnet: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the application gateway IP configuration
-     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
-     "Deleting".
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -3580,7 +3441,7 @@ class ApplicationGatewayListener(SubResource):
     :ivar ssl_profile: SSL profile resource of the application gateway.
     :vartype ssl_profile: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the listener resource. Known values are:
-     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar host_names: List of Server Name Indications(SNI) for TLS Multi-site Listener that allows
      special wildcard characters as well.
@@ -3707,7 +3568,7 @@ class ApplicationGatewayLoadDistributionPolicy(SubResource):
     :vartype load_distribution_algorithm: str or
      ~azure.mgmt.network.models.ApplicationGatewayLoadDistributionAlgorithm
     :ivar provisioning_state: The provisioning state of the Load Distribution Policy resource.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -3937,7 +3798,7 @@ class ApplicationGatewayPathRule(SubResource):
     :ivar load_distribution_policy: Load Distribution Policy resource of URL path map path rule.
     :vartype load_distribution_policy: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the path rule resource. Known values are:
-     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar firewall_policy: Reference to the FirewallPolicy resource.
     :vartype firewall_policy: ~azure.mgmt.network.models.SubResource
@@ -4032,8 +3893,7 @@ class ApplicationGatewayPrivateEndpointConnection(SubResource):  # pylint: disab
     :vartype private_link_service_connection_state:
      ~azure.mgmt.network.models.PrivateLinkServiceConnectionState
     :ivar provisioning_state: The provisioning state of the application gateway private endpoint
-     connection resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating",
-     "Updating", and "Deleting".
+     connection resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar link_identifier: The consumer link id.
     :vartype link_identifier: str
@@ -4140,8 +4000,7 @@ class ApplicationGatewayPrivateLinkConfiguration(SubResource):  # pylint: disabl
     :vartype ip_configurations:
      list[~azure.mgmt.network.models.ApplicationGatewayPrivateLinkIpConfiguration]
     :ivar provisioning_state: The provisioning state of the application gateway private link
-     configuration. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
-     "Deleting".
+     configuration. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -4212,8 +4071,7 @@ class ApplicationGatewayPrivateLinkIpConfiguration(SubResource):  # pylint: disa
     :ivar primary: Whether the ip configuration is primary or not.
     :vartype primary: bool
     :ivar provisioning_state: The provisioning state of the application gateway private link IP
-     configuration. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
-     "Deleting".
+     configuration. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -4411,7 +4269,7 @@ class ApplicationGatewayProbe(SubResource):
     :ivar match: Criterion for classifying a healthy probe response.
     :vartype match: ~azure.mgmt.network.models.ApplicationGatewayProbeHealthResponseMatch
     :ivar provisioning_state: The provisioning state of the probe resource. Known values are:
-     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar port: Custom port which will be used for probing the backend servers. The valid value
      ranges from 1 to 65535. In case not set, port from http settings will be used. This property is
@@ -4687,7 +4545,7 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
     :ivar load_distribution_policy: Load Distribution Policy resource of the application gateway.
     :vartype load_distribution_policy: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the request routing rule resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -4936,7 +4794,7 @@ class ApplicationGatewayRewriteRuleSet(SubResource):
     :ivar rewrite_rules: Rewrite rules in the rewrite rule set.
     :vartype rewrite_rules: list[~azure.mgmt.network.models.ApplicationGatewayRewriteRule]
     :ivar provisioning_state: The provisioning state of the rewrite rule set resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -5000,7 +4858,7 @@ class ApplicationGatewayRoutingRule(SubResource):
     :ivar listener: Listener resource of the application gateway.
     :vartype listener: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the request routing rule resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -5143,7 +5001,7 @@ class ApplicationGatewaySslCertificate(SubResource):
      'Certificate' object stored in KeyVault.
     :vartype key_vault_secret_id: str
     :ivar provisioning_state: The provisioning state of the SSL certificate resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -5343,7 +5201,7 @@ class ApplicationGatewaySslProfile(SubResource):
     :vartype client_auth_configuration:
      ~azure.mgmt.network.models.ApplicationGatewayClientAuthConfiguration
     :ivar provisioning_state: The provisioning state of the HTTP listener resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -5423,7 +5281,7 @@ class ApplicationGatewayTrustedClientCertificate(SubResource):  # pylint: disabl
     :ivar client_cert_issuer_dn: Distinguished name of client certificate issuer.
     :vartype client_cert_issuer_dn: str
     :ivar provisioning_state: The provisioning state of the trusted client certificate resource.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -5492,7 +5350,7 @@ class ApplicationGatewayTrustedRootCertificate(SubResource):
      'Certificate' object stored in KeyVault.
     :vartype key_vault_secret_id: str
     :ivar provisioning_state: The provisioning state of the trusted root certificate resource.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -5614,7 +5472,7 @@ class ApplicationGatewayUrlPathMap(SubResource):
     :ivar path_rules: Path rule of URL path map resource.
     :vartype path_rules: list[~azure.mgmt.network.models.ApplicationGatewayPathRule]
     :ivar provisioning_state: The provisioning state of the URL path map resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -6067,7 +5925,7 @@ class ApplicationSecurityGroup(Resource):
      across subscriptions or resource groups.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the application security group resource.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -6760,7 +6618,7 @@ class AzureFirewall(Resource):
      traffic.
     :vartype management_ip_configuration: ~azure.mgmt.network.models.AzureFirewallIPConfiguration
     :ivar provisioning_state: The provisioning state of the Azure firewall resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar threat_intel_mode: The operation mode for Threat Intelligence. Known values are: "Alert",
      "Deny", and "Off".
@@ -6778,10 +6636,6 @@ class AzureFirewall(Resource):
     :ivar additional_properties: The additional properties used to further config this azure
      firewall.
     :vartype additional_properties: dict[str, str]
-    :ivar autoscale_configuration: Properties to provide a custom autoscale configuration to this
-     azure firewall.
-    :vartype autoscale_configuration:
-     ~azure.mgmt.network.models.AzureFirewallAutoscaleConfiguration
     """
 
     _validation = {
@@ -6822,10 +6676,6 @@ class AzureFirewall(Resource):
         "ip_groups": {"key": "properties.ipGroups", "type": "[AzureFirewallIpGroups]"},
         "sku": {"key": "properties.sku", "type": "AzureFirewallSku"},
         "additional_properties": {"key": "properties.additionalProperties", "type": "{str}"},
-        "autoscale_configuration": {
-            "key": "properties.autoscaleConfiguration",
-            "type": "AzureFirewallAutoscaleConfiguration",
-        },
     }
 
     def __init__(
@@ -6846,7 +6696,6 @@ class AzureFirewall(Resource):
         hub_ip_addresses: Optional["_models.HubIPAddresses"] = None,
         sku: Optional["_models.AzureFirewallSku"] = None,
         additional_properties: Optional[Dict[str, str]] = None,
-        autoscale_configuration: Optional["_models.AzureFirewallAutoscaleConfiguration"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6888,10 +6737,6 @@ class AzureFirewall(Resource):
         :keyword additional_properties: The additional properties used to further config this azure
          firewall.
         :paramtype additional_properties: dict[str, str]
-        :keyword autoscale_configuration: Properties to provide a custom autoscale configuration to
-         this azure firewall.
-        :paramtype autoscale_configuration:
-         ~azure.mgmt.network.models.AzureFirewallAutoscaleConfiguration
         """
         super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.zones = zones
@@ -6909,7 +6754,6 @@ class AzureFirewall(Resource):
         self.ip_groups: Optional[List["_models.AzureFirewallIpGroups"]] = None
         self.sku = sku
         self.additional_properties = additional_properties
-        self.autoscale_configuration = autoscale_configuration
 
 
 class AzureFirewallApplicationRule(_serialization.Model):
@@ -6998,7 +6842,7 @@ class AzureFirewallApplicationRuleCollection(SubResource):
     :ivar rules: Collection of rules used by a application rule collection.
     :vartype rules: list[~azure.mgmt.network.models.AzureFirewallApplicationRule]
     :ivar provisioning_state: The provisioning state of the application rule collection resource.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -7089,43 +6933,6 @@ class AzureFirewallApplicationRuleProtocol(_serialization.Model):
         self.port = port
 
 
-class AzureFirewallAutoscaleConfiguration(_serialization.Model):
-    """Azure Firewall Autoscale Configuration parameters.
-
-    :ivar min_capacity: The minimum number of capacity units for this azure firewall. Use null to
-     reset the value to the service default.
-    :vartype min_capacity: int
-    :ivar max_capacity: The maximum number of capacity units for this azure firewall. Use null to
-     reset the value to the service default.
-    :vartype max_capacity: int
-    """
-
-    _validation = {
-        "min_capacity": {"minimum": 2},
-        "max_capacity": {"minimum": 2},
-    }
-
-    _attribute_map = {
-        "min_capacity": {"key": "minCapacity", "type": "int"},
-        "max_capacity": {"key": "maxCapacity", "type": "int"},
-    }
-
-    def __init__(
-        self, *, min_capacity: Optional[int] = None, max_capacity: Optional[int] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword min_capacity: The minimum number of capacity units for this azure firewall. Use null
-         to reset the value to the service default.
-        :paramtype min_capacity: int
-        :keyword max_capacity: The maximum number of capacity units for this azure firewall. Use null
-         to reset the value to the service default.
-        :paramtype max_capacity: int
-        """
-        super().__init__(**kwargs)
-        self.min_capacity = min_capacity
-        self.max_capacity = max_capacity
-
-
 class AzureFirewallFqdnTag(Resource):
     """Azure Firewall FQDN Tag Resource.
 
@@ -7144,7 +6951,7 @@ class AzureFirewallFqdnTag(Resource):
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar provisioning_state: The provisioning state of the Azure firewall FQDN tag resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar fqdn_tag_name: The name of this FQDN Tag.
     :vartype fqdn_tag_name: str
@@ -7247,8 +7054,7 @@ class AzureFirewallIPConfiguration(SubResource):
      subnet is not null.
     :vartype public_ip_address: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the Azure firewall IP configuration
-     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
-     "Deleting".
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -7489,7 +7295,7 @@ class AzureFirewallNatRuleCollection(SubResource):
     :ivar rules: Collection of rules used by a NAT rule collection.
     :vartype rules: list[~azure.mgmt.network.models.AzureFirewallNatRule]
     :ivar provisioning_state: The provisioning state of the NAT rule collection resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -7641,7 +7447,7 @@ class AzureFirewallNetworkRuleCollection(SubResource):
     :ivar rules: Collection of rules used by a network rule collection.
     :vartype rules: list[~azure.mgmt.network.models.AzureFirewallNetworkRule]
     :ivar provisioning_state: The provisioning state of the network rule collection resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -8191,7 +7997,7 @@ class BackendAddressPool(SubResource):
      address pool.
     :vartype inbound_nat_rules: list[~azure.mgmt.network.models.SubResource]
     :ivar provisioning_state: The provisioning state of the backend address pool resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar drain_period_in_seconds: Amount of seconds Load Balancer waits for before sending RESET
      to client and backend address.
@@ -8429,7 +8235,7 @@ class BastionHost(Resource):
     :ivar network_acls:
     :vartype network_acls: ~azure.mgmt.network.models.BastionHostPropertiesFormatNetworkAcls
     :ivar provisioning_state: The provisioning state of the bastion host resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar scale_units: The scale units for the Bastion Host resource.
     :vartype scale_units: int
@@ -8445,12 +8251,6 @@ class BastionHost(Resource):
     :vartype enable_tunneling: bool
     :ivar enable_kerberos: Enable/Disable Kerberos feature of the Bastion Host resource.
     :vartype enable_kerberos: bool
-    :ivar enable_session_recording: Enable/Disable Session Recording feature of the Bastion Host
-     resource.
-    :vartype enable_session_recording: bool
-    :ivar enable_private_only_bastion: Enable/Disable Private Only feature of the Bastion Host
-     resource.
-    :vartype enable_private_only_bastion: bool
     """
 
     _validation = {
@@ -8482,8 +8282,6 @@ class BastionHost(Resource):
         "enable_shareable_link": {"key": "properties.enableShareableLink", "type": "bool"},
         "enable_tunneling": {"key": "properties.enableTunneling", "type": "bool"},
         "enable_kerberos": {"key": "properties.enableKerberos", "type": "bool"},
-        "enable_session_recording": {"key": "properties.enableSessionRecording", "type": "bool"},
-        "enable_private_only_bastion": {"key": "properties.enablePrivateOnlyBastion", "type": "bool"},
     }
 
     def __init__(
@@ -8505,8 +8303,6 @@ class BastionHost(Resource):
         enable_shareable_link: bool = False,
         enable_tunneling: bool = False,
         enable_kerberos: bool = False,
-        enable_session_recording: bool = False,
-        enable_private_only_bastion: bool = False,
         **kwargs: Any
     ) -> None:
         """
@@ -8543,12 +8339,6 @@ class BastionHost(Resource):
         :paramtype enable_tunneling: bool
         :keyword enable_kerberos: Enable/Disable Kerberos feature of the Bastion Host resource.
         :paramtype enable_kerberos: bool
-        :keyword enable_session_recording: Enable/Disable Session Recording feature of the Bastion Host
-         resource.
-        :paramtype enable_session_recording: bool
-        :keyword enable_private_only_bastion: Enable/Disable Private Only feature of the Bastion Host
-         resource.
-        :paramtype enable_private_only_bastion: bool
         """
         super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.zones = zones
@@ -8566,8 +8356,6 @@ class BastionHost(Resource):
         self.enable_shareable_link = enable_shareable_link
         self.enable_tunneling = enable_tunneling
         self.enable_kerberos = enable_kerberos
-        self.enable_session_recording = enable_session_recording
-        self.enable_private_only_bastion = enable_private_only_bastion
 
 
 class BastionHostIPConfiguration(SubResource):
@@ -8586,10 +8374,10 @@ class BastionHostIPConfiguration(SubResource):
     :vartype type: str
     :ivar subnet: Reference of the subnet resource.
     :vartype subnet: ~azure.mgmt.network.models.SubResource
-    :ivar public_ip_address: Reference of the PublicIP resource. Null for private only bastion.
+    :ivar public_ip_address: Reference of the PublicIP resource.
     :vartype public_ip_address: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the bastion host IP configuration resource.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_ip_allocation_method: Private IP allocation method. Known values are: "Static"
      and "Dynamic".
@@ -8631,7 +8419,7 @@ class BastionHostIPConfiguration(SubResource):
         :paramtype name: str
         :keyword subnet: Reference of the subnet resource.
         :paramtype subnet: ~azure.mgmt.network.models.SubResource
-        :keyword public_ip_address: Reference of the PublicIP resource. Null for private only bastion.
+        :keyword public_ip_address: Reference of the PublicIP resource.
         :paramtype public_ip_address: ~azure.mgmt.network.models.SubResource
         :keyword private_ip_allocation_method: Private IP allocation method. Known values are: "Static"
          and "Dynamic".
@@ -8960,8 +8748,8 @@ class BgpConnection(SubResource):
     :ivar hub_virtual_network_connection: The reference to the HubVirtualNetworkConnection
      resource.
     :vartype hub_virtual_network_connection: ~azure.mgmt.network.models.SubResource
-    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar connection_state: The current state of the VirtualHub to Peer. Known values are:
      "Unknown", "Connecting", "Connected", and "NotConnected".
@@ -9309,40 +9097,6 @@ class CheckPrivateLinkServiceVisibilityRequest(_serialization.Model):
         self.private_link_service_alias = private_link_service_alias
 
 
-class CircuitMetadataMap(_serialization.Model):
-    """CircuitMetadataMap.
-
-    :ivar name: Express Route Circuit Name.
-    :vartype name: str
-    :ivar link: Link to the Express Route circuit.
-    :vartype link: str
-    :ivar location: Peering location of the Express Route Circuit.
-    :vartype location: str
-    """
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "link": {"key": "link", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-    }
-
-    def __init__(
-        self, *, name: Optional[str] = None, link: Optional[str] = None, location: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword name: Express Route Circuit Name.
-        :paramtype name: str
-        :keyword link: Link to the Express Route circuit.
-        :paramtype link: str
-        :keyword location: Peering location of the Express Route Circuit.
-        :paramtype location: str
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.link = link
-        self.location = location
-
-
 class CloudErrorBody(_serialization.Model):
     """An error response from the service.
 
@@ -9395,213 +9149,6 @@ class CloudErrorBody(_serialization.Model):
         self.details = details
 
 
-class CommonErrorAdditionalInfo(_serialization.Model):
-    """The resource management error additional info.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar type: The additional info type.
-    :vartype type: str
-    :ivar info: The additional info.
-    :vartype info: JSON
-    """
-
-    _validation = {
-        "type": {"readonly": True},
-        "info": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "info": {"key": "info", "type": "object"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.type: Optional[str] = None
-        self.info: Optional[JSON] = None
-
-
-class CommonErrorDetail(_serialization.Model):
-    """The error detail.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details: list[~azure.mgmt.network.models.CommonErrorDetail]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~azure.mgmt.network.models.CommonErrorAdditionalInfo]
-    """
-
-    _validation = {
-        "code": {"readonly": True},
-        "message": {"readonly": True},
-        "target": {"readonly": True},
-        "details": {"readonly": True},
-        "additional_info": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-        "target": {"key": "target", "type": "str"},
-        "details": {"key": "details", "type": "[CommonErrorDetail]"},
-        "additional_info": {"key": "additionalInfo", "type": "[CommonErrorAdditionalInfo]"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.code: Optional[str] = None
-        self.message: Optional[str] = None
-        self.target: Optional[str] = None
-        self.details: Optional[List["_models.CommonErrorDetail"]] = None
-        self.additional_info: Optional[List["_models.CommonErrorAdditionalInfo"]] = None
-
-
-class CommonErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations. (This also follows the OData error response format.).
-
-    :ivar error: The error object.
-    :vartype error: ~azure.mgmt.network.models.CommonErrorDetail
-    """
-
-    _attribute_map = {
-        "error": {"key": "error", "type": "CommonErrorDetail"},
-    }
-
-    def __init__(self, *, error: Optional["_models.CommonErrorDetail"] = None, **kwargs: Any) -> None:
-        """
-        :keyword error: The error object.
-        :paramtype error: ~azure.mgmt.network.models.CommonErrorDetail
-        """
-        super().__init__(**kwargs)
-        self.error = error
-
-
-class CommonResource(_serialization.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.network.models.SystemData
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.name: Optional[str] = None
-        self.type: Optional[str] = None
-        self.system_data: Optional["_models.SystemData"] = None
-
-
-class CommonProxyResource(CommonResource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
-    tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.network.models.SystemData
-    """
-
-
-class CommonTrackedResource(CommonResource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which
-    has 'tags' and a 'location'.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.network.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "location": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "location": {"key": "location", "type": "str"},
-    }
-
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword location: The geo-location where the resource lives. Required.
-        :paramtype location: str
-        """
-        super().__init__(**kwargs)
-        self.tags = tags
-        self.location = location
-
-
 class Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties(
     _serialization.Model
 ):  # pylint: disable=name-too-long
@@ -9641,11 +9188,8 @@ class ConfigurationGroup(_serialization.Model):
     :vartype id: str
     :ivar description: A description of the network group.
     :vartype description: str
-    :ivar member_type: The type of the group member. Known values are: "VirtualNetwork" and
-     "Subnet".
-    :vartype member_type: str or ~azure.mgmt.network.models.GroupMemberType
     :ivar provisioning_state: The provisioning state of the scope assignment resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -9659,7 +9203,6 @@ class ConfigurationGroup(_serialization.Model):
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "description": {"key": "properties.description", "type": "str"},
-        "member_type": {"key": "properties.memberType", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
     }
@@ -9669,7 +9212,6 @@ class ConfigurationGroup(_serialization.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         description: Optional[str] = None,
-        member_type: Optional[Union[str, "_models.GroupMemberType"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9677,14 +9219,10 @@ class ConfigurationGroup(_serialization.Model):
         :paramtype id: str
         :keyword description: A description of the network group.
         :paramtype description: str
-        :keyword member_type: The type of the group member. Known values are: "VirtualNetwork" and
-         "Subnet".
-        :paramtype member_type: str or ~azure.mgmt.network.models.GroupMemberType
         """
         super().__init__(**kwargs)
         self.id = id
         self.description = description
-        self.member_type = member_type
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.resource_guid: Optional[str] = None
 
@@ -10390,7 +9928,7 @@ class ConnectionMonitorResult(_serialization.Model):
     :ivar notes: Optional notes to be associated with the connection monitor.
     :vartype notes: str
     :ivar provisioning_state: The provisioning state of the connection monitor. Known values are:
-     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar start_time: The date and time when the connection monitor was started.
     :vartype start_time: ~datetime.datetime
@@ -10524,7 +10062,7 @@ class ConnectionMonitorResultProperties(ConnectionMonitorParameters):
     :ivar notes: Optional notes to be associated with the connection monitor.
     :vartype notes: str
     :ivar provisioning_state: The provisioning state of the connection monitor. Known values are:
-     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar start_time: The date and time when the connection monitor was started.
     :vartype start_time: ~datetime.datetime
@@ -10957,89 +10495,6 @@ class ConnectionSharedKey(SubResource):
         self.value = value
 
 
-class ConnectionSharedKeyResult(SubResource):
-    """SharedKey Resource .
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar properties: Properties of the shared key.
-    :vartype properties: ~azure.mgmt.network.models.SharedKeyProperties
-    :ivar name: The name of the resource that is unique within a resource group. This name can be
-     used to access the resource.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    """
-
-    _validation = {
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "properties": {"key": "properties", "type": "SharedKeyProperties"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        properties: Optional["_models.SharedKeyProperties"] = None,
-        name: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword id: Resource ID.
-        :paramtype id: str
-        :keyword properties: Properties of the shared key.
-        :paramtype properties: ~azure.mgmt.network.models.SharedKeyProperties
-        :keyword name: The name of the resource that is unique within a resource group. This name can
-         be used to access the resource.
-        :paramtype name: str
-        """
-        super().__init__(id=id, **kwargs)
-        self.properties = properties
-        self.name = name
-        self.type: Optional[str] = None
-
-
-class ConnectionSharedKeyResultList(_serialization.Model):
-    """The list of shared keys for the vpn link connection. It should only contain one shared key for
-    each vpn link connection.
-
-    :ivar value: List of SharedKeys.
-    :vartype value: list[~azure.mgmt.network.models.ConnectionSharedKeyResult]
-    :ivar next_link: URL to get the next set of operation list results if there are any.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[ConnectionSharedKeyResult]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ConnectionSharedKeyResult"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: List of SharedKeys.
-        :paramtype value: list[~azure.mgmt.network.models.ConnectionSharedKeyResult]
-        :keyword next_link: URL to get the next set of operation list results if there are any.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
 class ConnectionStateSnapshot(_serialization.Model):
     """Connection state snapshot.
 
@@ -11164,14 +10619,10 @@ class ConnectivityConfiguration(ChildResource):
     :vartype hubs: list[~azure.mgmt.network.models.Hub]
     :ivar is_global: Flag if global mesh is supported. Known values are: "False" and "True".
     :vartype is_global: str or ~azure.mgmt.network.models.IsGlobal
-    :ivar connectivity_capabilities: Collection of additional settings to enhance specific topology
-     behaviors of the connectivity configuration resource.
-    :vartype connectivity_capabilities:
-     ~azure.mgmt.network.models.ConnectivityConfigurationPropertiesConnectivityCapabilities
     :ivar applies_to_groups: Groups for configuration.
     :vartype applies_to_groups: list[~azure.mgmt.network.models.ConnectivityGroupItem]
     :ivar provisioning_state: The provisioning state of the connectivity configuration resource.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar delete_existing_peering: Flag if need to remove current existing peerings. Known values
      are: "False" and "True".
@@ -11200,10 +10651,6 @@ class ConnectivityConfiguration(ChildResource):
         "connectivity_topology": {"key": "properties.connectivityTopology", "type": "str"},
         "hubs": {"key": "properties.hubs", "type": "[Hub]"},
         "is_global": {"key": "properties.isGlobal", "type": "str"},
-        "connectivity_capabilities": {
-            "key": "properties.connectivityCapabilities",
-            "type": "ConnectivityConfigurationPropertiesConnectivityCapabilities",
-        },
         "applies_to_groups": {"key": "properties.appliesToGroups", "type": "[ConnectivityGroupItem]"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "delete_existing_peering": {"key": "properties.deleteExistingPeering", "type": "str"},
@@ -11217,9 +10664,6 @@ class ConnectivityConfiguration(ChildResource):
         connectivity_topology: Optional[Union[str, "_models.ConnectivityTopology"]] = None,
         hubs: Optional[List["_models.Hub"]] = None,
         is_global: Optional[Union[str, "_models.IsGlobal"]] = None,
-        connectivity_capabilities: Optional[
-            "_models.ConnectivityConfigurationPropertiesConnectivityCapabilities"
-        ] = None,
         applies_to_groups: Optional[List["_models.ConnectivityGroupItem"]] = None,
         delete_existing_peering: Optional[Union[str, "_models.DeleteExistingPeering"]] = None,
         **kwargs: Any
@@ -11234,10 +10678,6 @@ class ConnectivityConfiguration(ChildResource):
         :paramtype hubs: list[~azure.mgmt.network.models.Hub]
         :keyword is_global: Flag if global mesh is supported. Known values are: "False" and "True".
         :paramtype is_global: str or ~azure.mgmt.network.models.IsGlobal
-        :keyword connectivity_capabilities: Collection of additional settings to enhance specific
-         topology behaviors of the connectivity configuration resource.
-        :paramtype connectivity_capabilities:
-         ~azure.mgmt.network.models.ConnectivityConfigurationPropertiesConnectivityCapabilities
         :keyword applies_to_groups: Groups for configuration.
         :paramtype applies_to_groups: list[~azure.mgmt.network.models.ConnectivityGroupItem]
         :keyword delete_existing_peering: Flag if need to remove current existing peerings. Known
@@ -11250,7 +10690,6 @@ class ConnectivityConfiguration(ChildResource):
         self.connectivity_topology = connectivity_topology
         self.hubs = hubs
         self.is_global = is_global
-        self.connectivity_capabilities = connectivity_capabilities
         self.applies_to_groups = applies_to_groups
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.delete_existing_peering = delete_existing_peering
@@ -11288,70 +10727,6 @@ class ConnectivityConfigurationListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
-
-
-class ConnectivityConfigurationPropertiesConnectivityCapabilities(
-    _serialization.Model
-):  # pylint: disable=name-too-long
-    """Collection of additional settings to enhance specific topology behaviors of the connectivity
-    configuration resource.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar connected_group_private_endpoints_scale: Option indicating the scale of private endpoints
-     allowed in the connected group of the connectivity configuration. Known values are: "Standard"
-     and "HighScale".
-    :vartype connected_group_private_endpoints_scale: str or
-     ~azure.mgmt.network.models.ConnectedGroupPrivateEndpointsScale
-    :ivar connected_group_address_overlap: Behavior to handle overlapped IP address space among
-     members of the connected group of the connectivity configuration. Known values are: "Allowed"
-     and "Disallowed".
-    :vartype connected_group_address_overlap: str or
-     ~azure.mgmt.network.models.ConnectedGroupAddressOverlap
-    :ivar peering_enforcement: Option indicating enforcement of peerings created by the
-     connectivity configuration. Known values are: "Unenforced" and "Enforced".
-    :vartype peering_enforcement: str or ~azure.mgmt.network.models.PeeringEnforcement
-    """
-
-    _validation = {
-        "connected_group_private_endpoints_scale": {"required": True},
-        "connected_group_address_overlap": {"required": True},
-        "peering_enforcement": {"required": True},
-    }
-
-    _attribute_map = {
-        "connected_group_private_endpoints_scale": {"key": "connectedGroupPrivateEndpointsScale", "type": "str"},
-        "connected_group_address_overlap": {"key": "connectedGroupAddressOverlap", "type": "str"},
-        "peering_enforcement": {"key": "peeringEnforcement", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        connected_group_private_endpoints_scale: Union[str, "_models.ConnectedGroupPrivateEndpointsScale"] = "Standard",
-        connected_group_address_overlap: Union[str, "_models.ConnectedGroupAddressOverlap"] = "Allowed",
-        peering_enforcement: Union[str, "_models.PeeringEnforcement"] = "Unenforced",
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword connected_group_private_endpoints_scale: Option indicating the scale of private
-         endpoints allowed in the connected group of the connectivity configuration. Known values are:
-         "Standard" and "HighScale".
-        :paramtype connected_group_private_endpoints_scale: str or
-         ~azure.mgmt.network.models.ConnectedGroupPrivateEndpointsScale
-        :keyword connected_group_address_overlap: Behavior to handle overlapped IP address space among
-         members of the connected group of the connectivity configuration. Known values are: "Allowed"
-         and "Disallowed".
-        :paramtype connected_group_address_overlap: str or
-         ~azure.mgmt.network.models.ConnectedGroupAddressOverlap
-        :keyword peering_enforcement: Option indicating enforcement of peerings created by the
-         connectivity configuration. Known values are: "Unenforced" and "Enforced".
-        :paramtype peering_enforcement: str or ~azure.mgmt.network.models.PeeringEnforcement
-        """
-        super().__init__(**kwargs)
-        self.connected_group_private_endpoints_scale = connected_group_private_endpoints_scale
-        self.connected_group_address_overlap = connected_group_address_overlap
-        self.peering_enforcement = peering_enforcement
 
 
 class ConnectivityDestination(_serialization.Model):
@@ -11740,7 +11115,7 @@ class ContainerNetworkInterface(SubResource):
     :vartype ip_configurations:
      list[~azure.mgmt.network.models.ContainerNetworkInterfaceIpConfiguration]
     :ivar provisioning_state: The provisioning state of the container network interface resource.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -11818,8 +11193,7 @@ class ContainerNetworkInterfaceConfiguration(SubResource):
      container network interface configuration.
     :vartype container_network_interfaces: list[~azure.mgmt.network.models.SubResource]
     :ivar provisioning_state: The provisioning state of the container network interface
-     configuration resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating",
-     "Updating", and "Deleting".
+     configuration resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -11881,8 +11255,7 @@ class ContainerNetworkInterfaceIpConfiguration(_serialization.Model):
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar provisioning_state: The provisioning state of the container network interface IP
-     configuration resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating",
-     "Updating", and "Deleting".
+     configuration resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -12074,7 +11447,7 @@ class CustomIpPrefix(Resource):
     :ivar failed_reason: The reason why resource is in failed state.
     :vartype failed_reason: str
     :ivar provisioning_state: The provisioning state of the custom IP prefix resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -12244,7 +11617,7 @@ class DdosCustomPolicy(Resource):
      subscriptions or resource groups.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the DDoS custom policy resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -12311,7 +11684,7 @@ class DdosProtectionPlan(_serialization.Model):
      across subscriptions or resource groups.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the DDoS protection plan resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar public_ip_addresses: The list of public IPs associated with the DDoS protection plan
      resource. This list is read-only.
@@ -12476,8 +11849,8 @@ class DefaultAdminRule(BaseAdminRule):
     :ivar direction: Indicates if the traffic matched against the rule in inbound or outbound.
      Known values are: "Inbound" and "Outbound".
     :vartype direction: str or ~azure.mgmt.network.models.SecurityConfigurationRuleDirection
-    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -12565,7 +11938,7 @@ class Delegation(SubResource):
     :ivar actions: The actions permitted to the service upon delegation.
     :vartype actions: list[str]
     :ivar provisioning_state: The provisioning state of the service delegation resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -12622,8 +11995,8 @@ class DelegationProperties(_serialization.Model):
 
     :ivar service_name: The service name to which the NVA is delegated.
     :vartype service_name: str
-    :ivar provisioning_state: Provisioning states of a resource. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :ivar provisioning_state: The current provisioning state. Known values are: "Succeeded",
+     "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -12844,7 +12217,7 @@ class DscpConfiguration(Resource):
     :ivar resource_guid: The resource GUID property of the DSCP Configuration resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the DSCP Configuration resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -13084,8 +12457,8 @@ class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):
     :ivar direction: Indicates if the traffic matched against the rule in inbound or outbound.
      Known values are: "Inbound" and "Outbound".
     :vartype direction: str or ~azure.mgmt.network.models.SecurityConfigurationRuleDirection
-    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -13671,8 +13044,8 @@ class EffectiveSecurityAdminRule(EffectiveBaseSecurityAdminRule):
     :ivar direction: Indicates if the traffic matched against the rule in inbound or outbound.
      Known values are: "Inbound" and "Outbound".
     :vartype direction: str or ~azure.mgmt.network.models.SecurityConfigurationRuleDirection
-    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -13904,77 +13277,6 @@ class Error(_serialization.Model):
         self.inner_error = inner_error
 
 
-class ErrorAdditionalInfo(_serialization.Model):
-    """The resource management error additional info.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar type: The additional info type.
-    :vartype type: str
-    :ivar info: The additional info.
-    :vartype info: JSON
-    """
-
-    _validation = {
-        "type": {"readonly": True},
-        "info": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "info": {"key": "info", "type": "object"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.type: Optional[str] = None
-        self.info: Optional[JSON] = None
-
-
-class ErrorDetail(_serialization.Model):
-    """The error detail.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details: list[~azure.mgmt.network.models.ErrorDetail]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~azure.mgmt.network.models.ErrorAdditionalInfo]
-    """
-
-    _validation = {
-        "code": {"readonly": True},
-        "message": {"readonly": True},
-        "target": {"readonly": True},
-        "details": {"readonly": True},
-        "additional_info": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-        "target": {"key": "target", "type": "str"},
-        "details": {"key": "details", "type": "[ErrorDetail]"},
-        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.code: Optional[str] = None
-        self.message: Optional[str] = None
-        self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorDetail"]] = None
-        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
-
-
 class ErrorDetails(_serialization.Model):
     """Common error details representation.
 
@@ -14077,90 +13379,6 @@ class EvaluatedNetworkSecurityGroup(_serialization.Model):
         self.applied_to = applied_to
         self.matched_rule = matched_rule
         self.rules_evaluation_result: Optional[List["_models.NetworkSecurityRulesEvaluationResult"]] = None
-
-
-class ExceptionEntry(_serialization.Model):
-    """Adds exception to allow a request when the condition is satisfied.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar match_variable: The variable on which we evaluate the exception condition. Required.
-     Known values are: "RequestURI", "RemoteAddr", and "RequestHeader".
-    :vartype match_variable: str or ~azure.mgmt.network.models.ExceptionEntryMatchVariable
-    :ivar values: Allowed values for the matchVariable.
-    :vartype values: list[str]
-    :ivar value_match_operator: Operates on the allowed values for the matchVariable. Required.
-     Known values are: "Equals", "Contains", "StartsWith", "EndsWith", and "IPMatch".
-    :vartype value_match_operator: str or
-     ~azure.mgmt.network.models.ExceptionEntryValueMatchOperator
-    :ivar selector_match_operator: When the matchVariable points to a key-value pair (e.g,
-     RequestHeader), this operates on the selector. Known values are: "Equals", "Contains",
-     "StartsWith", and "EndsWith".
-    :vartype selector_match_operator: str or
-     ~azure.mgmt.network.models.ExceptionEntrySelectorMatchOperator
-    :ivar selector: When the matchVariable points to a key-value pair (e.g, RequestHeader), this
-     identifies the key.
-    :vartype selector: str
-    :ivar exception_managed_rule_sets: The managed rule sets that are associated with the
-     exception.
-    :vartype exception_managed_rule_sets: list[~azure.mgmt.network.models.ExclusionManagedRuleSet]
-    """
-
-    _validation = {
-        "match_variable": {"required": True},
-        "value_match_operator": {"required": True},
-    }
-
-    _attribute_map = {
-        "match_variable": {"key": "matchVariable", "type": "str"},
-        "values": {"key": "values", "type": "[str]"},
-        "value_match_operator": {"key": "valueMatchOperator", "type": "str"},
-        "selector_match_operator": {"key": "selectorMatchOperator", "type": "str"},
-        "selector": {"key": "selector", "type": "str"},
-        "exception_managed_rule_sets": {"key": "exceptionManagedRuleSets", "type": "[ExclusionManagedRuleSet]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        match_variable: Union[str, "_models.ExceptionEntryMatchVariable"],
-        value_match_operator: Union[str, "_models.ExceptionEntryValueMatchOperator"],
-        values: Optional[List[str]] = None,
-        selector_match_operator: Optional[Union[str, "_models.ExceptionEntrySelectorMatchOperator"]] = None,
-        selector: Optional[str] = None,
-        exception_managed_rule_sets: Optional[List["_models.ExclusionManagedRuleSet"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword match_variable: The variable on which we evaluate the exception condition. Required.
-         Known values are: "RequestURI", "RemoteAddr", and "RequestHeader".
-        :paramtype match_variable: str or ~azure.mgmt.network.models.ExceptionEntryMatchVariable
-        :keyword values: Allowed values for the matchVariable.
-        :paramtype values: list[str]
-        :keyword value_match_operator: Operates on the allowed values for the matchVariable. Required.
-         Known values are: "Equals", "Contains", "StartsWith", "EndsWith", and "IPMatch".
-        :paramtype value_match_operator: str or
-         ~azure.mgmt.network.models.ExceptionEntryValueMatchOperator
-        :keyword selector_match_operator: When the matchVariable points to a key-value pair (e.g,
-         RequestHeader), this operates on the selector. Known values are: "Equals", "Contains",
-         "StartsWith", and "EndsWith".
-        :paramtype selector_match_operator: str or
-         ~azure.mgmt.network.models.ExceptionEntrySelectorMatchOperator
-        :keyword selector: When the matchVariable points to a key-value pair (e.g, RequestHeader), this
-         identifies the key.
-        :paramtype selector: str
-        :keyword exception_managed_rule_sets: The managed rule sets that are associated with the
-         exception.
-        :paramtype exception_managed_rule_sets:
-         list[~azure.mgmt.network.models.ExclusionManagedRuleSet]
-        """
-        super().__init__(**kwargs)
-        self.match_variable = match_variable
-        self.values = values
-        self.value_match_operator = value_match_operator
-        self.selector_match_operator = selector_match_operator
-        self.selector = selector
-        self.exception_managed_rule_sets = exception_managed_rule_sets
 
 
 class ExclusionManagedRule(_serialization.Model):
@@ -14386,7 +13604,7 @@ class ExpressRouteCircuit(Resource):
     :ivar stag: The identifier of the circuit traffic. Outer tag for QinQ encapsulation.
     :vartype stag: int
     :ivar provisioning_state: The provisioning state of the express route circuit resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar gateway_manager_etag: The GatewayManager Etag.
     :vartype gateway_manager_etag: str
@@ -14595,18 +13813,14 @@ class ExpressRouteCircuitAuthorization(SubResource):
     :ivar authorization_use_status: The authorization use status. Known values are: "Available" and
      "InUse".
     :vartype authorization_use_status: str or ~azure.mgmt.network.models.AuthorizationUseStatus
-    :ivar connection_resource_uri: The reference to the ExpressRoute connection resource using the
-     authorization.
-    :vartype connection_resource_uri: str
     :ivar provisioning_state: The provisioning state of the authorization resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
     _validation = {
         "etag": {"readonly": True},
         "type": {"readonly": True},
-        "connection_resource_uri": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
 
@@ -14617,7 +13831,6 @@ class ExpressRouteCircuitAuthorization(SubResource):
         "type": {"key": "type", "type": "str"},
         "authorization_key": {"key": "properties.authorizationKey", "type": "str"},
         "authorization_use_status": {"key": "properties.authorizationUseStatus", "type": "str"},
-        "connection_resource_uri": {"key": "properties.connectionResourceUri", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
@@ -14648,7 +13861,6 @@ class ExpressRouteCircuitAuthorization(SubResource):
         self.type: Optional[str] = None
         self.authorization_key = authorization_key
         self.authorization_use_status = authorization_use_status
-        self.connection_resource_uri: Optional[str] = None
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
@@ -14683,8 +13895,7 @@ class ExpressRouteCircuitConnection(SubResource):
      "Connected", "Connecting", and "Disconnected".
     :vartype circuit_connection_status: str or ~azure.mgmt.network.models.CircuitConnectionStatus
     :ivar provisioning_state: The provisioning state of the express route circuit connection
-     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
-     "Deleting".
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -14868,7 +14079,7 @@ class ExpressRouteCircuitPeering(SubResource):
     :ivar stats: The peering stats of express route circuit.
     :vartype stats: ~azure.mgmt.network.models.ExpressRouteCircuitStats
     :ivar provisioning_state: The provisioning state of the express route circuit peering resource.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar gateway_manager_etag: The GatewayManager Etag.
     :vartype gateway_manager_etag: str
@@ -15041,9 +14252,6 @@ class ExpressRouteCircuitPeeringConfig(_serialization.Model):
     :vartype customer_asn: int
     :ivar routing_registry_name: The RoutingRegistryName of the configuration.
     :vartype routing_registry_name: str
-    :ivar advertised_public_prefix_info: List of Prefix information required to perform validation.
-    :vartype advertised_public_prefix_info:
-     list[~azure.mgmt.network.models.AdvertisedPublicPrefixProperties]
     """
 
     _validation = {
@@ -15057,10 +14265,6 @@ class ExpressRouteCircuitPeeringConfig(_serialization.Model):
         "legacy_mode": {"key": "legacyMode", "type": "int"},
         "customer_asn": {"key": "customerASN", "type": "int"},
         "routing_registry_name": {"key": "routingRegistryName", "type": "str"},
-        "advertised_public_prefix_info": {
-            "key": "advertisedPublicPrefixInfo",
-            "type": "[AdvertisedPublicPrefixProperties]",
-        },
     }
 
     def __init__(
@@ -15071,7 +14275,6 @@ class ExpressRouteCircuitPeeringConfig(_serialization.Model):
         legacy_mode: Optional[int] = None,
         customer_asn: Optional[int] = None,
         routing_registry_name: Optional[str] = None,
-        advertised_public_prefix_info: Optional[List["_models.AdvertisedPublicPrefixProperties"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -15086,10 +14289,6 @@ class ExpressRouteCircuitPeeringConfig(_serialization.Model):
         :paramtype customer_asn: int
         :keyword routing_registry_name: The RoutingRegistryName of the configuration.
         :paramtype routing_registry_name: str
-        :keyword advertised_public_prefix_info: List of Prefix information required to perform
-         validation.
-        :paramtype advertised_public_prefix_info:
-         list[~azure.mgmt.network.models.AdvertisedPublicPrefixProperties]
         """
         super().__init__(**kwargs)
         self.advertised_public_prefixes = advertised_public_prefixes
@@ -15100,7 +14299,6 @@ class ExpressRouteCircuitPeeringConfig(_serialization.Model):
         self.legacy_mode = legacy_mode
         self.customer_asn = customer_asn
         self.routing_registry_name = routing_registry_name
-        self.advertised_public_prefix_info = advertised_public_prefix_info
 
 
 class ExpressRouteCircuitPeeringId(_serialization.Model):
@@ -15521,7 +14719,7 @@ class ExpressRouteConnection(SubResource):
     :ivar name: The name of the resource. Required.
     :vartype name: str
     :ivar provisioning_state: The provisioning state of the express route connection resource.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar express_route_circuit_peering: The ExpressRoute circuit peering.
     :vartype express_route_circuit_peering: ~azure.mgmt.network.models.ExpressRouteCircuitPeeringId
@@ -15691,8 +14889,7 @@ class ExpressRouteCrossConnection(Resource):
     :ivar service_provider_notes: Additional read only notes set by the connectivity provider.
     :vartype service_provider_notes: str
     :ivar provisioning_state: The provisioning state of the express route cross connection
-     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
-     "Deleting".
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar peerings: The list of peerings.
     :vartype peerings: list[~azure.mgmt.network.models.ExpressRouteCrossConnectionPeering]
@@ -15840,8 +15037,7 @@ class ExpressRouteCrossConnectionPeering(SubResource):
     :ivar microsoft_peering_config: The Microsoft peering configuration.
     :vartype microsoft_peering_config: ~azure.mgmt.network.models.ExpressRouteCircuitPeeringConfig
     :ivar provisioning_state: The provisioning state of the express route cross connection peering
-     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
-     "Deleting".
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar gateway_manager_etag: The GatewayManager Etag.
     :vartype gateway_manager_etag: str
@@ -16067,333 +15263,6 @@ class ExpressRouteCrossConnectionsRoutesTableSummaryListResult(_serialization.Mo
         self.next_link: Optional[str] = None
 
 
-class ExpressRouteFailoverCircuitResourceDetails(_serialization.Model):  # pylint: disable=name-too-long
-    """ExpressRouteFailoverCircuitResourceDetails.
-
-    :ivar nrp_resource_uri: NRP Resource URI of the circuit.
-    :vartype nrp_resource_uri: str
-    :ivar name: Circuit Name.
-    :vartype name: str
-    :ivar connection_name: Connection name associated with the circuit.
-    :vartype connection_name: str
-    """
-
-    _attribute_map = {
-        "nrp_resource_uri": {"key": "nrpResourceUri", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "connection_name": {"key": "connectionName", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        nrp_resource_uri: Optional[str] = None,
-        name: Optional[str] = None,
-        connection_name: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword nrp_resource_uri: NRP Resource URI of the circuit.
-        :paramtype nrp_resource_uri: str
-        :keyword name: Circuit Name.
-        :paramtype name: str
-        :keyword connection_name: Connection name associated with the circuit.
-        :paramtype connection_name: str
-        """
-        super().__init__(**kwargs)
-        self.nrp_resource_uri = nrp_resource_uri
-        self.name = name
-        self.connection_name = connection_name
-
-
-class ExpressRouteFailoverConnectionResourceDetails(_serialization.Model):  # pylint: disable=name-too-long
-    """ExpressRouteFailoverConnectionResourceDetails.
-
-    :ivar nrp_resource_uri: NRP Resource URI of the connection.
-    :vartype nrp_resource_uri: str
-    :ivar name: Connection Name.
-    :vartype name: str
-    :ivar status: The current status of the connection. Known values are: "Connected" and
-     "Disconnected".
-    :vartype status: str or ~azure.mgmt.network.models.FailoverConnectionStatus
-    :ivar last_updated_time: Time when the connection was last updated.
-    :vartype last_updated_time: str
-    """
-
-    _attribute_map = {
-        "nrp_resource_uri": {"key": "nrpResourceUri", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "status": {"key": "status", "type": "str"},
-        "last_updated_time": {"key": "lastUpdatedTime", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        nrp_resource_uri: Optional[str] = None,
-        name: Optional[str] = None,
-        status: Optional[Union[str, "_models.FailoverConnectionStatus"]] = None,
-        last_updated_time: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword nrp_resource_uri: NRP Resource URI of the connection.
-        :paramtype nrp_resource_uri: str
-        :keyword name: Connection Name.
-        :paramtype name: str
-        :keyword status: The current status of the connection. Known values are: "Connected" and
-         "Disconnected".
-        :paramtype status: str or ~azure.mgmt.network.models.FailoverConnectionStatus
-        :keyword last_updated_time: Time when the connection was last updated.
-        :paramtype last_updated_time: str
-        """
-        super().__init__(**kwargs)
-        self.nrp_resource_uri = nrp_resource_uri
-        self.name = name
-        self.status = status
-        self.last_updated_time = last_updated_time
-
-
-class ExpressRouteFailoverRedundantRoute(_serialization.Model):
-    """ExpressRouteFailoverRedundantRoute.
-
-    :ivar peering_locations: A list of all the peering locations for the redundant routes.
-    :vartype peering_locations: list[str]
-    :ivar routes: A list of all the redundant routes in the peering locations.
-    :vartype routes: list[str]
-    """
-
-    _attribute_map = {
-        "peering_locations": {"key": "peeringLocations", "type": "[str]"},
-        "routes": {"key": "routes", "type": "[str]"},
-    }
-
-    def __init__(
-        self, *, peering_locations: Optional[List[str]] = None, routes: Optional[List[str]] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword peering_locations: A list of all the peering locations for the redundant routes.
-        :paramtype peering_locations: list[str]
-        :keyword routes: A list of all the redundant routes in the peering locations.
-        :paramtype routes: list[str]
-        """
-        super().__init__(**kwargs)
-        self.peering_locations = peering_locations
-        self.routes = routes
-
-
-class ExpressRouteFailoverSingleTestDetails(_serialization.Model):
-    """ExpressRoute failover single test details.
-
-    :ivar peering_location: Peering location of the test.
-    :vartype peering_location: str
-    :ivar status: The current status of the test. Known values are: "NotStarted", "Starting",
-     "Running", "StartFailed", "Stopping", "Completed", "StopFailed", "Invalid", and "Expired".
-    :vartype status: str or ~azure.mgmt.network.models.FailoverTestStatusForSingleTest
-    :ivar start_time_utc: Time when the test was started.
-    :vartype start_time_utc: str
-    :ivar end_time_utc: Time when the test was completed.
-    :vartype end_time_utc: str
-    :ivar redundant_routes: List of routes received from this peering as well as some other peering
-     location.
-    :vartype redundant_routes: list[~azure.mgmt.network.models.ExpressRouteFailoverRedundantRoute]
-    :ivar non_redundant_routes: List of al the routes that were received only from this peering
-     location.
-    :vartype non_redundant_routes: list[str]
-    :ivar was_simulation_successful: Whether the failover simulation was successful or not.
-    :vartype was_simulation_successful: bool
-    :ivar failover_connection_details: List of all the failover connections for this peering
-     location.
-    :vartype failover_connection_details:
-     list[~azure.mgmt.network.models.FailoverConnectionDetails]
-    """
-
-    _attribute_map = {
-        "peering_location": {"key": "peeringLocation", "type": "str"},
-        "status": {"key": "status", "type": "str"},
-        "start_time_utc": {"key": "startTimeUtc", "type": "str"},
-        "end_time_utc": {"key": "endTimeUtc", "type": "str"},
-        "redundant_routes": {"key": "redundantRoutes", "type": "[ExpressRouteFailoverRedundantRoute]"},
-        "non_redundant_routes": {"key": "nonRedundantRoutes", "type": "[str]"},
-        "was_simulation_successful": {"key": "wasSimulationSuccessful", "type": "bool"},
-        "failover_connection_details": {"key": "failoverConnectionDetails", "type": "[FailoverConnectionDetails]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        peering_location: Optional[str] = None,
-        status: Optional[Union[str, "_models.FailoverTestStatusForSingleTest"]] = None,
-        start_time_utc: Optional[str] = None,
-        end_time_utc: Optional[str] = None,
-        redundant_routes: Optional[List["_models.ExpressRouteFailoverRedundantRoute"]] = None,
-        non_redundant_routes: Optional[List[str]] = None,
-        was_simulation_successful: Optional[bool] = None,
-        failover_connection_details: Optional[List["_models.FailoverConnectionDetails"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword peering_location: Peering location of the test.
-        :paramtype peering_location: str
-        :keyword status: The current status of the test. Known values are: "NotStarted", "Starting",
-         "Running", "StartFailed", "Stopping", "Completed", "StopFailed", "Invalid", and "Expired".
-        :paramtype status: str or ~azure.mgmt.network.models.FailoverTestStatusForSingleTest
-        :keyword start_time_utc: Time when the test was started.
-        :paramtype start_time_utc: str
-        :keyword end_time_utc: Time when the test was completed.
-        :paramtype end_time_utc: str
-        :keyword redundant_routes: List of routes received from this peering as well as some other
-         peering location.
-        :paramtype redundant_routes:
-         list[~azure.mgmt.network.models.ExpressRouteFailoverRedundantRoute]
-        :keyword non_redundant_routes: List of al the routes that were received only from this peering
-         location.
-        :paramtype non_redundant_routes: list[str]
-        :keyword was_simulation_successful: Whether the failover simulation was successful or not.
-        :paramtype was_simulation_successful: bool
-        :keyword failover_connection_details: List of all the failover connections for this peering
-         location.
-        :paramtype failover_connection_details:
-         list[~azure.mgmt.network.models.FailoverConnectionDetails]
-        """
-        super().__init__(**kwargs)
-        self.peering_location = peering_location
-        self.status = status
-        self.start_time_utc = start_time_utc
-        self.end_time_utc = end_time_utc
-        self.redundant_routes = redundant_routes
-        self.non_redundant_routes = non_redundant_routes
-        self.was_simulation_successful = was_simulation_successful
-        self.failover_connection_details = failover_connection_details
-
-
-class ExpressRouteFailoverStopApiParameters(_serialization.Model):
-    """Start packet capture parameters on virtual network gateway.
-
-    :ivar peering_location: Peering location of the test.
-    :vartype peering_location: str
-    :ivar was_simulation_successful: Whether the failover simulation was successful or not.
-    :vartype was_simulation_successful: bool
-    :ivar details: List of all the failover connections for this peering location.
-    :vartype details: list[~azure.mgmt.network.models.FailoverConnectionDetails]
-    """
-
-    _attribute_map = {
-        "peering_location": {"key": "peeringLocation", "type": "str"},
-        "was_simulation_successful": {"key": "wasSimulationSuccessful", "type": "bool"},
-        "details": {"key": "details", "type": "[FailoverConnectionDetails]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        peering_location: Optional[str] = None,
-        was_simulation_successful: Optional[bool] = None,
-        details: Optional[List["_models.FailoverConnectionDetails"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword peering_location: Peering location of the test.
-        :paramtype peering_location: str
-        :keyword was_simulation_successful: Whether the failover simulation was successful or not.
-        :paramtype was_simulation_successful: bool
-        :keyword details: List of all the failover connections for this peering location.
-        :paramtype details: list[~azure.mgmt.network.models.FailoverConnectionDetails]
-        """
-        super().__init__(**kwargs)
-        self.peering_location = peering_location
-        self.was_simulation_successful = was_simulation_successful
-        self.details = details
-
-
-class ExpressRouteFailoverTestDetails(_serialization.Model):
-    """ExpressRoute failover test details.
-
-    :ivar peering_location: Peering location of the test.
-    :vartype peering_location: str
-    :ivar circuits: All circuits in the peering location.
-    :vartype circuits: list[~azure.mgmt.network.models.ExpressRouteFailoverCircuitResourceDetails]
-    :ivar status: The current status of the test. Known values are: "NotStarted", "Starting",
-     "Running", "StartFailed", "Stopping", "Completed", "StopFailed", "Invalid", and "Expired".
-    :vartype status: str or ~azure.mgmt.network.models.FailoverTestStatus
-    :ivar start_time: Time when the test was started.
-    :vartype start_time: str
-    :ivar end_time: Time when the test was completed.
-    :vartype end_time: str
-    :ivar connections: All connections to the circuits in the peering location.
-    :vartype connections:
-     list[~azure.mgmt.network.models.ExpressRouteFailoverConnectionResourceDetails]
-    :ivar test_guid: The unique GUID associated with the test.
-    :vartype test_guid: str
-    :ivar test_type: The type of failover test. Known values are: "SingleSiteFailover",
-     "MultiSiteFailover", and "All".
-    :vartype test_type: str or ~azure.mgmt.network.models.FailoverTestType
-    :ivar issues: A list of all issues with the test.
-    :vartype issues: list[str]
-    """
-
-    _attribute_map = {
-        "peering_location": {"key": "peeringLocation", "type": "str"},
-        "circuits": {"key": "circuits", "type": "[ExpressRouteFailoverCircuitResourceDetails]"},
-        "status": {"key": "status", "type": "str"},
-        "start_time": {"key": "startTime", "type": "str"},
-        "end_time": {"key": "endTime", "type": "str"},
-        "connections": {"key": "connections", "type": "[ExpressRouteFailoverConnectionResourceDetails]"},
-        "test_guid": {"key": "testGuid", "type": "str"},
-        "test_type": {"key": "testType", "type": "str"},
-        "issues": {"key": "issues", "type": "[str]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        peering_location: Optional[str] = None,
-        circuits: Optional[List["_models.ExpressRouteFailoverCircuitResourceDetails"]] = None,
-        status: Optional[Union[str, "_models.FailoverTestStatus"]] = None,
-        start_time: Optional[str] = None,
-        end_time: Optional[str] = None,
-        connections: Optional[List["_models.ExpressRouteFailoverConnectionResourceDetails"]] = None,
-        test_guid: Optional[str] = None,
-        test_type: Optional[Union[str, "_models.FailoverTestType"]] = None,
-        issues: Optional[List[str]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword peering_location: Peering location of the test.
-        :paramtype peering_location: str
-        :keyword circuits: All circuits in the peering location.
-        :paramtype circuits:
-         list[~azure.mgmt.network.models.ExpressRouteFailoverCircuitResourceDetails]
-        :keyword status: The current status of the test. Known values are: "NotStarted", "Starting",
-         "Running", "StartFailed", "Stopping", "Completed", "StopFailed", "Invalid", and "Expired".
-        :paramtype status: str or ~azure.mgmt.network.models.FailoverTestStatus
-        :keyword start_time: Time when the test was started.
-        :paramtype start_time: str
-        :keyword end_time: Time when the test was completed.
-        :paramtype end_time: str
-        :keyword connections: All connections to the circuits in the peering location.
-        :paramtype connections:
-         list[~azure.mgmt.network.models.ExpressRouteFailoverConnectionResourceDetails]
-        :keyword test_guid: The unique GUID associated with the test.
-        :paramtype test_guid: str
-        :keyword test_type: The type of failover test. Known values are: "SingleSiteFailover",
-         "MultiSiteFailover", and "All".
-        :paramtype test_type: str or ~azure.mgmt.network.models.FailoverTestType
-        :keyword issues: A list of all issues with the test.
-        :paramtype issues: list[str]
-        """
-        super().__init__(**kwargs)
-        self.peering_location = peering_location
-        self.circuits = circuits
-        self.status = status
-        self.start_time = start_time
-        self.end_time = end_time
-        self.connections = connections
-        self.test_guid = test_guid
-        self.test_type = test_type
-        self.issues = issues
-
-
 class ExpressRouteGateway(Resource):
     """ExpressRoute gateway resource.
 
@@ -16417,7 +15286,7 @@ class ExpressRouteGateway(Resource):
     :ivar express_route_connections: List of ExpressRoute connections to the ExpressRoute gateway.
     :vartype express_route_connections: list[~azure.mgmt.network.models.ExpressRouteConnection]
     :ivar provisioning_state: The provisioning state of the express route gateway resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar virtual_hub: The Virtual Hub where the ExpressRoute gateway is or will be deployed.
     :vartype virtual_hub: ~azure.mgmt.network.models.VirtualHubId
@@ -16597,7 +15466,7 @@ class ExpressRouteLink(SubResource):
      "Disabled".
     :vartype admin_state: str or ~azure.mgmt.network.models.ExpressRouteLinkAdminState
     :ivar provisioning_state: The provisioning state of the express route link resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar mac_sec_config: MacSec configuration.
     :vartype mac_sec_config: ~azure.mgmt.network.models.ExpressRouteLinkMacSecConfig
@@ -16786,7 +15655,7 @@ class ExpressRoutePort(Resource):
      ExpressRoutePort resource.
     :vartype circuits: list[~azure.mgmt.network.models.SubResource]
     :ivar provisioning_state: The provisioning state of the express route port resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: The resource GUID property of the express route port resource.
     :vartype resource_guid: str
@@ -16908,7 +15777,7 @@ class ExpressRoutePortAuthorization(SubResource):
      authorization.
     :vartype circuit_resource_uri: str
     :ivar provisioning_state: The provisioning state of the authorization resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -17043,7 +15912,7 @@ class ExpressRoutePortsLocation(Resource):
     :vartype available_bandwidths:
      list[~azure.mgmt.network.models.ExpressRoutePortsLocationBandwidths]
     :ivar provisioning_state: The provisioning state of the express route port location resource.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -17312,8 +16181,7 @@ class ExpressRouteServiceProvider(Resource):
     :vartype bandwidths_offered:
      list[~azure.mgmt.network.models.ExpressRouteServiceProviderBandwidthsOffered]
     :ivar provisioning_state: The provisioning state of the express route service provider
-     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
-     "Deleting".
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -17456,47 +16324,6 @@ class ExtendedLocation(_serialization.Model):
         self.type = type
 
 
-class FailoverConnectionDetails(_serialization.Model):
-    """FailoverConnectionDetails.
-
-    :ivar failover_connection_name: Name of the failover connection.
-    :vartype failover_connection_name: str
-    :ivar failover_location: Location of the failover connection.
-    :vartype failover_location: str
-    :ivar is_verified: Whether the customer was able to establish connectivity through this
-     failover connection or not.
-    :vartype is_verified: bool
-    """
-
-    _attribute_map = {
-        "failover_connection_name": {"key": "failoverConnectionName", "type": "str"},
-        "failover_location": {"key": "failoverLocation", "type": "str"},
-        "is_verified": {"key": "isVerified", "type": "bool"},
-    }
-
-    def __init__(
-        self,
-        *,
-        failover_connection_name: Optional[str] = None,
-        failover_location: Optional[str] = None,
-        is_verified: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword failover_connection_name: Name of the failover connection.
-        :paramtype failover_connection_name: str
-        :keyword failover_location: Location of the failover connection.
-        :paramtype failover_location: str
-        :keyword is_verified: Whether the customer was able to establish connectivity through this
-         failover connection or not.
-        :paramtype is_verified: bool
-        """
-        super().__init__(**kwargs)
-        self.failover_connection_name = failover_connection_name
-        self.failover_location = failover_location
-        self.is_verified = is_verified
-
-
 class FilterItems(_serialization.Model):
     """Will contain the filter name and values to operate on.
 
@@ -17523,9 +16350,11 @@ class FilterItems(_serialization.Model):
         self.values = values
 
 
-class FirewallPacketCaptureParameters(_serialization.Model):
-    """Azure Firewall Packet Capture Parameters.
+class FirewallPacketCaptureParameters(SubResource):
+    """Azure Firewall Packet Capture Parameters resource.
 
+    :ivar id: Resource ID.
+    :vartype id: str
     :ivar duration_in_seconds: Duration of packet capture in seconds.
     :vartype duration_in_seconds: int
     :ivar number_of_packets_to_capture: Number of packets to be captured.
@@ -17549,18 +16378,20 @@ class FirewallPacketCaptureParameters(_serialization.Model):
     }
 
     _attribute_map = {
-        "duration_in_seconds": {"key": "durationInSeconds", "type": "int"},
-        "number_of_packets_to_capture": {"key": "numberOfPacketsToCapture", "type": "int"},
-        "sas_url": {"key": "sasUrl", "type": "str"},
-        "file_name": {"key": "fileName", "type": "str"},
-        "protocol": {"key": "protocol", "type": "str"},
-        "flags": {"key": "flags", "type": "[AzureFirewallPacketCaptureFlags]"},
-        "filters": {"key": "filters", "type": "[AzureFirewallPacketCaptureRule]"},
+        "id": {"key": "id", "type": "str"},
+        "duration_in_seconds": {"key": "properties.durationInSeconds", "type": "int"},
+        "number_of_packets_to_capture": {"key": "properties.numberOfPacketsToCapture", "type": "int"},
+        "sas_url": {"key": "properties.sasUrl", "type": "str"},
+        "file_name": {"key": "properties.fileName", "type": "str"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "flags": {"key": "properties.flags", "type": "[AzureFirewallPacketCaptureFlags]"},
+        "filters": {"key": "properties.filters", "type": "[AzureFirewallPacketCaptureRule]"},
     }
 
     def __init__(
         self,
         *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         duration_in_seconds: Optional[int] = None,
         number_of_packets_to_capture: Optional[int] = None,
         sas_url: Optional[str] = None,
@@ -17571,6 +16402,8 @@ class FirewallPacketCaptureParameters(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
+        :keyword id: Resource ID.
+        :paramtype id: str
         :keyword duration_in_seconds: Duration of packet capture in seconds.
         :paramtype duration_in_seconds: int
         :keyword number_of_packets_to_capture: Number of packets to be captured.
@@ -17587,7 +16420,7 @@ class FirewallPacketCaptureParameters(_serialization.Model):
         :keyword filters: Rules to filter packet captures.
         :paramtype filters: list[~azure.mgmt.network.models.AzureFirewallPacketCaptureRule]
         """
-        super().__init__(**kwargs)
+        super().__init__(id=id, **kwargs)
         self.duration_in_seconds = duration_in_seconds
         self.number_of_packets_to_capture = number_of_packets_to_capture
         self.sas_url = sas_url
@@ -17622,7 +16455,7 @@ class FirewallPolicy(Resource):
     :ivar rule_collection_groups: List of references to FirewallPolicyRuleCollectionGroups.
     :vartype rule_collection_groups: list[~azure.mgmt.network.models.SubResource]
     :ivar provisioning_state: The provisioning state of the firewall policy resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar base_policy: The parent firewall policy from which rules are inherited.
     :vartype base_policy: ~azure.mgmt.network.models.SubResource
@@ -18555,8 +17388,7 @@ class FirewallPolicyRuleCollectionGroup(SubResource):
     :ivar rule_collections: Group of Firewall Policy rule collections.
     :vartype rule_collections: list[~azure.mgmt.network.models.FirewallPolicyRuleCollection]
     :ivar provisioning_state: The provisioning state of the firewall policy rule collection group
-     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
-     "Deleting".
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -18850,18 +17682,12 @@ class FlowLog(Resource):
     :vartype tags: dict[str, str]
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
-    :ivar identity: FlowLog resource Managed Identity.
-    :vartype identity: ~azure.mgmt.network.models.ManagedServiceIdentity
     :ivar target_resource_id: ID of network security group to which flow log will be applied.
     :vartype target_resource_id: str
     :ivar target_resource_guid: Guid of network security group to which flow log will be applied.
     :vartype target_resource_guid: str
     :ivar storage_id: ID of the storage account which is used to store the flow log.
     :vartype storage_id: str
-    :ivar enabled_filtering_criteria: Optional field to filter network traffic logs based on SrcIP,
-     SrcPort, DstIP, DstPort, Protocol, Encryption, Direction and Action. If not specified, all
-     network traffic will be logged.
-    :vartype enabled_filtering_criteria: str
     :ivar enabled: Flag to enable/disable flow logging.
     :vartype enabled: bool
     :ivar retention_policy: Parameters that define the retention policy for flow log.
@@ -18871,8 +17697,8 @@ class FlowLog(Resource):
     :ivar flow_analytics_configuration: Parameters that define the configuration of traffic
      analytics.
     :vartype flow_analytics_configuration: ~azure.mgmt.network.models.TrafficAnalyticsProperties
-    :ivar provisioning_state: The provisioning state of the flow log. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :ivar provisioning_state: The provisioning state of the flow log. Known values are:
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -18891,11 +17717,9 @@ class FlowLog(Resource):
         "location": {"key": "location", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
         "etag": {"key": "etag", "type": "str"},
-        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "target_resource_id": {"key": "properties.targetResourceId", "type": "str"},
         "target_resource_guid": {"key": "properties.targetResourceGuid", "type": "str"},
         "storage_id": {"key": "properties.storageId", "type": "str"},
-        "enabled_filtering_criteria": {"key": "properties.enabledFilteringCriteria", "type": "str"},
         "enabled": {"key": "properties.enabled", "type": "bool"},
         "retention_policy": {"key": "properties.retentionPolicy", "type": "RetentionPolicyParameters"},
         "format": {"key": "properties.format", "type": "FlowLogFormatParameters"},
@@ -18912,10 +17736,8 @@ class FlowLog(Resource):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["_models.ManagedServiceIdentity"] = None,
         target_resource_id: Optional[str] = None,
         storage_id: Optional[str] = None,
-        enabled_filtering_criteria: Optional[str] = None,
         enabled: Optional[bool] = None,
         retention_policy: Optional["_models.RetentionPolicyParameters"] = None,
         format: Optional["_models.FlowLogFormatParameters"] = None,
@@ -18929,16 +17751,10 @@ class FlowLog(Resource):
         :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword identity: FlowLog resource Managed Identity.
-        :paramtype identity: ~azure.mgmt.network.models.ManagedServiceIdentity
         :keyword target_resource_id: ID of network security group to which flow log will be applied.
         :paramtype target_resource_id: str
         :keyword storage_id: ID of the storage account which is used to store the flow log.
         :paramtype storage_id: str
-        :keyword enabled_filtering_criteria: Optional field to filter network traffic logs based on
-         SrcIP, SrcPort, DstIP, DstPort, Protocol, Encryption, Direction and Action. If not specified,
-         all network traffic will be logged.
-        :paramtype enabled_filtering_criteria: str
         :keyword enabled: Flag to enable/disable flow logging.
         :paramtype enabled: bool
         :keyword retention_policy: Parameters that define the retention policy for flow log.
@@ -18951,11 +17767,9 @@ class FlowLog(Resource):
         """
         super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.etag: Optional[str] = None
-        self.identity = identity
         self.target_resource_id = target_resource_id
         self.target_resource_guid: Optional[str] = None
         self.storage_id = storage_id
-        self.enabled_filtering_criteria = enabled_filtering_criteria
         self.enabled = enabled
         self.retention_policy = retention_policy
         self.format = format
@@ -19002,14 +17816,8 @@ class FlowLogInformation(_serialization.Model):
     :ivar flow_analytics_configuration: Parameters that define the configuration of traffic
      analytics.
     :vartype flow_analytics_configuration: ~azure.mgmt.network.models.TrafficAnalyticsProperties
-    :ivar identity: FlowLog resource Managed Identity.
-    :vartype identity: ~azure.mgmt.network.models.ManagedServiceIdentity
     :ivar storage_id: ID of the storage account which is used to store the flow log. Required.
     :vartype storage_id: str
-    :ivar enabled_filtering_criteria: Optional field to filter network traffic logs based on SrcIP,
-     SrcPort, DstIP, DstPort, Protocol, Encryption, Direction and Action. If not specified, all
-     network traffic will be logged.
-    :vartype enabled_filtering_criteria: str
     :ivar enabled: Flag to enable/disable flow logging. Required.
     :vartype enabled: bool
     :ivar retention_policy: Parameters that define the retention policy for flow log.
@@ -19027,9 +17835,7 @@ class FlowLogInformation(_serialization.Model):
     _attribute_map = {
         "target_resource_id": {"key": "targetResourceId", "type": "str"},
         "flow_analytics_configuration": {"key": "flowAnalyticsConfiguration", "type": "TrafficAnalyticsProperties"},
-        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "storage_id": {"key": "properties.storageId", "type": "str"},
-        "enabled_filtering_criteria": {"key": "properties.enabledFilteringCriteria", "type": "str"},
         "enabled": {"key": "properties.enabled", "type": "bool"},
         "retention_policy": {"key": "properties.retentionPolicy", "type": "RetentionPolicyParameters"},
         "format": {"key": "properties.format", "type": "FlowLogFormatParameters"},
@@ -19042,8 +17848,6 @@ class FlowLogInformation(_serialization.Model):
         storage_id: str,
         enabled: bool,
         flow_analytics_configuration: Optional["_models.TrafficAnalyticsProperties"] = None,
-        identity: Optional["_models.ManagedServiceIdentity"] = None,
-        enabled_filtering_criteria: Optional[str] = None,
         retention_policy: Optional["_models.RetentionPolicyParameters"] = None,
         format: Optional["_models.FlowLogFormatParameters"] = None,
         **kwargs: Any
@@ -19055,14 +17859,8 @@ class FlowLogInformation(_serialization.Model):
         :keyword flow_analytics_configuration: Parameters that define the configuration of traffic
          analytics.
         :paramtype flow_analytics_configuration: ~azure.mgmt.network.models.TrafficAnalyticsProperties
-        :keyword identity: FlowLog resource Managed Identity.
-        :paramtype identity: ~azure.mgmt.network.models.ManagedServiceIdentity
         :keyword storage_id: ID of the storage account which is used to store the flow log. Required.
         :paramtype storage_id: str
-        :keyword enabled_filtering_criteria: Optional field to filter network traffic logs based on
-         SrcIP, SrcPort, DstIP, DstPort, Protocol, Encryption, Direction and Action. If not specified,
-         all network traffic will be logged.
-        :paramtype enabled_filtering_criteria: str
         :keyword enabled: Flag to enable/disable flow logging. Required.
         :paramtype enabled: bool
         :keyword retention_policy: Parameters that define the retention policy for flow log.
@@ -19073,9 +17871,7 @@ class FlowLogInformation(_serialization.Model):
         super().__init__(**kwargs)
         self.target_resource_id = target_resource_id
         self.flow_analytics_configuration = flow_analytics_configuration
-        self.identity = identity
         self.storage_id = storage_id
-        self.enabled_filtering_criteria = enabled_filtering_criteria
         self.enabled = enabled
         self.retention_policy = retention_policy
         self.format = format
@@ -19182,7 +17978,7 @@ class FrontendIPConfiguration(SubResource):
     :ivar gateway_load_balancer: The reference to gateway load balancer frontend IP.
     :vartype gateway_load_balancer: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the frontend IP configuration resource.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -19363,144 +18159,6 @@ class GatewayLoadBalancerTunnelInterface(_serialization.Model):
         self.type = type
 
 
-class GatewayResiliencyInformation(_serialization.Model):
-    """Gateway Resiliency Information.
-
-    :ivar overall_score: Current Resiliency Score for the gateway.
-    :vartype overall_score: str
-    :ivar score_change: Update in the Resiliency Score for the gateway from the last computed
-     score.
-    :vartype score_change: str
-    :ivar min_score_from_recommendations: Minimum increase expected in the score if the at least
-     one of the recommendations is applied for the gateway.
-    :vartype min_score_from_recommendations: str
-    :ivar max_score_from_recommendations: Maximum increase expected in the score if all of the
-     recommendations are applied for the gateway.
-    :vartype max_score_from_recommendations: str
-    :ivar last_computed_time: Timestamp denoting the last time when the resiliency score was
-     computed for the gateway.
-    :vartype last_computed_time: ~datetime.datetime
-    :ivar next_eligible_compute_time: Timestamp denoting the next eligible time to re-compute the
-     resiliency score for the gateway.
-    :vartype next_eligible_compute_time: ~datetime.datetime
-    :ivar components: List of Resiliency based Recommendation Components for the gateway.
-    :vartype components: list[~azure.mgmt.network.models.ResiliencyRecommendationComponents]
-    """
-
-    _attribute_map = {
-        "overall_score": {"key": "overallScore", "type": "str"},
-        "score_change": {"key": "scoreChange", "type": "str"},
-        "min_score_from_recommendations": {"key": "minScoreFromRecommendations", "type": "str"},
-        "max_score_from_recommendations": {"key": "maxScoreFromRecommendations", "type": "str"},
-        "last_computed_time": {"key": "lastComputedTime", "type": "iso-8601"},
-        "next_eligible_compute_time": {"key": "nextEligibleComputeTime", "type": "iso-8601"},
-        "components": {"key": "components", "type": "[ResiliencyRecommendationComponents]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        overall_score: Optional[str] = None,
-        score_change: Optional[str] = None,
-        min_score_from_recommendations: Optional[str] = None,
-        max_score_from_recommendations: Optional[str] = None,
-        last_computed_time: Optional[datetime.datetime] = None,
-        next_eligible_compute_time: Optional[datetime.datetime] = None,
-        components: Optional[List["_models.ResiliencyRecommendationComponents"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword overall_score: Current Resiliency Score for the gateway.
-        :paramtype overall_score: str
-        :keyword score_change: Update in the Resiliency Score for the gateway from the last computed
-         score.
-        :paramtype score_change: str
-        :keyword min_score_from_recommendations: Minimum increase expected in the score if the at least
-         one of the recommendations is applied for the gateway.
-        :paramtype min_score_from_recommendations: str
-        :keyword max_score_from_recommendations: Maximum increase expected in the score if all of the
-         recommendations are applied for the gateway.
-        :paramtype max_score_from_recommendations: str
-        :keyword last_computed_time: Timestamp denoting the last time when the resiliency score was
-         computed for the gateway.
-        :paramtype last_computed_time: ~datetime.datetime
-        :keyword next_eligible_compute_time: Timestamp denoting the next eligible time to re-compute
-         the resiliency score for the gateway.
-        :paramtype next_eligible_compute_time: ~datetime.datetime
-        :keyword components: List of Resiliency based Recommendation Components for the gateway.
-        :paramtype components: list[~azure.mgmt.network.models.ResiliencyRecommendationComponents]
-        """
-        super().__init__(**kwargs)
-        self.overall_score = overall_score
-        self.score_change = score_change
-        self.min_score_from_recommendations = min_score_from_recommendations
-        self.max_score_from_recommendations = max_score_from_recommendations
-        self.last_computed_time = last_computed_time
-        self.next_eligible_compute_time = next_eligible_compute_time
-        self.components = components
-
-
-class GatewayResiliencyRecommendation(_serialization.Model):
-    """Resiliency Recommendation details.
-
-    :ivar recommendation_title: Recommendation Title.
-    :vartype recommendation_title: str
-    :ivar recommendation_id: Recommendation Id.
-    :vartype recommendation_id: str
-    :ivar severity: Impact associated with the recommendation.
-    :vartype severity: str
-    :ivar recommendation_text: Recommendation details.
-    :vartype recommendation_text: str
-    :ivar call_to_action_text: Acton items to apply the recommendation.
-    :vartype call_to_action_text: str
-    :ivar call_to_action_link: Link to the public documentation for the associated recommendation.
-    :vartype call_to_action_link: str
-    """
-
-    _attribute_map = {
-        "recommendation_title": {"key": "recommendationTitle", "type": "str"},
-        "recommendation_id": {"key": "recommendationId", "type": "str"},
-        "severity": {"key": "severity", "type": "str"},
-        "recommendation_text": {"key": "recommendationText", "type": "str"},
-        "call_to_action_text": {"key": "callToActionText", "type": "str"},
-        "call_to_action_link": {"key": "callToActionLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        recommendation_title: Optional[str] = None,
-        recommendation_id: Optional[str] = None,
-        severity: Optional[str] = None,
-        recommendation_text: Optional[str] = None,
-        call_to_action_text: Optional[str] = None,
-        call_to_action_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword recommendation_title: Recommendation Title.
-        :paramtype recommendation_title: str
-        :keyword recommendation_id: Recommendation Id.
-        :paramtype recommendation_id: str
-        :keyword severity: Impact associated with the recommendation.
-        :paramtype severity: str
-        :keyword recommendation_text: Recommendation details.
-        :paramtype recommendation_text: str
-        :keyword call_to_action_text: Acton items to apply the recommendation.
-        :paramtype call_to_action_text: str
-        :keyword call_to_action_link: Link to the public documentation for the associated
-         recommendation.
-        :paramtype call_to_action_link: str
-        """
-        super().__init__(**kwargs)
-        self.recommendation_title = recommendation_title
-        self.recommendation_id = recommendation_id
-        self.severity = severity
-        self.recommendation_text = recommendation_text
-        self.call_to_action_text = call_to_action_text
-        self.call_to_action_link = call_to_action_link
-
-
 class GatewayRoute(_serialization.Model):
     """Gateway routing details.
 
@@ -19572,103 +18230,6 @@ class GatewayRouteListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-
-
-class GatewayRouteSet(_serialization.Model):
-    """GatewayRouteSet.
-
-    :ivar name: Route Set name.
-    :vartype name: str
-    :ivar locations: List of different locations from where the routes are learned.
-    :vartype locations: list[str]
-    :ivar details: List of different Route Sources.
-    :vartype details: dict[str, list[~azure.mgmt.network.models.RouteSourceDetails]]
-    """
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "locations": {"key": "locations", "type": "[str]"},
-        "details": {"key": "details", "type": "{[RouteSourceDetails]}"},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        locations: Optional[List[str]] = None,
-        details: Optional[Dict[str, List["_models.RouteSourceDetails"]]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword name: Route Set name.
-        :paramtype name: str
-        :keyword locations: List of different locations from where the routes are learned.
-        :paramtype locations: list[str]
-        :keyword details: List of different Route Sources.
-        :paramtype details: dict[str, list[~azure.mgmt.network.models.RouteSourceDetails]]
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.locations = locations
-        self.details = details
-
-
-class GatewayRouteSetsInformation(_serialization.Model):
-    """Gateway Route Sets Information.
-
-    :ivar last_computed_time: Timestamp denoting the last time when the route sets were computed
-     for the gateway.
-    :vartype last_computed_time: ~datetime.datetime
-    :ivar next_eligible_compute_time: Timestamp denoting the next eligible time to re-compute the
-     route sets for the gateway.
-    :vartype next_eligible_compute_time: ~datetime.datetime
-    :ivar route_set_version: Version for the route set.
-    :vartype route_set_version: str
-    :ivar route_sets: List of Gateway Route Sets.
-    :vartype route_sets: list[~azure.mgmt.network.models.GatewayRouteSet]
-    :ivar circuits_metadata_map: Dictionary containing map of the circuit id and circuit details.
-    :vartype circuits_metadata_map: dict[str, ~azure.mgmt.network.models.CircuitMetadataMap]
-    """
-
-    _attribute_map = {
-        "last_computed_time": {"key": "lastComputedTime", "type": "iso-8601"},
-        "next_eligible_compute_time": {"key": "nextEligibleComputeTime", "type": "iso-8601"},
-        "route_set_version": {"key": "routeSetVersion", "type": "str"},
-        "route_sets": {"key": "routeSets", "type": "[GatewayRouteSet]"},
-        "circuits_metadata_map": {"key": "circuitsMetadataMap", "type": "{CircuitMetadataMap}"},
-    }
-
-    def __init__(
-        self,
-        *,
-        last_computed_time: Optional[datetime.datetime] = None,
-        next_eligible_compute_time: Optional[datetime.datetime] = None,
-        route_set_version: Optional[str] = None,
-        route_sets: Optional[List["_models.GatewayRouteSet"]] = None,
-        circuits_metadata_map: Optional[Dict[str, "_models.CircuitMetadataMap"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword last_computed_time: Timestamp denoting the last time when the route sets were computed
-         for the gateway.
-        :paramtype last_computed_time: ~datetime.datetime
-        :keyword next_eligible_compute_time: Timestamp denoting the next eligible time to re-compute
-         the route sets for the gateway.
-        :paramtype next_eligible_compute_time: ~datetime.datetime
-        :keyword route_set_version: Version for the route set.
-        :paramtype route_set_version: str
-        :keyword route_sets: List of Gateway Route Sets.
-        :paramtype route_sets: list[~azure.mgmt.network.models.GatewayRouteSet]
-        :keyword circuits_metadata_map: Dictionary containing map of the circuit id and circuit
-         details.
-        :paramtype circuits_metadata_map: dict[str, ~azure.mgmt.network.models.CircuitMetadataMap]
-        """
-        super().__init__(**kwargs)
-        self.last_computed_time = last_computed_time
-        self.next_eligible_compute_time = next_eligible_compute_time
-        self.route_set_version = route_set_version
-        self.route_sets = route_sets
-        self.circuits_metadata_map = circuits_metadata_map
 
 
 class GenerateExpressRoutePortsLOARequest(_serialization.Model):
@@ -19842,7 +18403,7 @@ class GroupByVariable(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar variable_name: User Session clause variable. Required. Known values are: "ClientAddr",
-     "GeoLocation", "None", "ClientAddrXFFHeader", and "GeoLocationXFFHeader".
+     "GeoLocation", and "None".
     :vartype variable_name: str or
      ~azure.mgmt.network.models.ApplicationGatewayFirewallUserSessionVariable
     """
@@ -19860,7 +18421,7 @@ class GroupByVariable(_serialization.Model):
     ) -> None:
         """
         :keyword variable_name: User Session clause variable. Required. Known values are: "ClientAddr",
-         "GeoLocation", "None", "ClientAddrXFFHeader", and "GeoLocationXFFHeader".
+         "GeoLocation", and "None".
         :paramtype variable_name: str or
          ~azure.mgmt.network.models.ApplicationGatewayFirewallUserSessionVariable
         """
@@ -20121,7 +18682,7 @@ class HubIpConfiguration(SubResource):
     :ivar public_ip_address: The reference to the public IP resource.
     :vartype public_ip_address: ~azure.mgmt.network.models.PublicIPAddress
     :ivar provisioning_state: The provisioning state of the IP configuration resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -20302,7 +18863,7 @@ class HubRouteTable(SubResource):
     :ivar propagating_connections: List of all connections that advertise to this route table.
     :vartype propagating_connections: list[str]
     :ivar provisioning_state: The provisioning state of the RouteTable resource. Known values are:
-     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -20383,8 +18944,7 @@ class HubVirtualNetworkConnection(SubResource):
      route tables on this connection.
     :vartype routing_configuration: ~azure.mgmt.network.models.RoutingConfiguration
     :ivar provisioning_state: The provisioning state of the hub virtual network connection
-     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
-     "Deleting".
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -20551,7 +19111,7 @@ class InboundNatPool(SubResource):
      connection termination. This element is only used when the protocol is set to TCP.
     :vartype enable_tcp_reset: bool
     :ivar provisioning_state: The provisioning state of the inbound NAT pool resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -20696,7 +19256,7 @@ class InboundNatRule(SubResource):
     :ivar backend_address_pool: A reference to backendAddressPool resource.
     :vartype backend_address_pool: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the inbound NAT rule resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -20894,8 +19454,8 @@ class InboundSecurityRule(SubResource):
     :vartype rule_type: str or ~azure.mgmt.network.models.InboundSecurityRuleType
     :ivar rules: List of allowed rules.
     :vartype rules: list[~azure.mgmt.network.models.InboundSecurityRules]
-    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -21014,60 +19574,6 @@ class InboundSecurityRules(_serialization.Model):
         self.destination_port_range = destination_port_range
         self.destination_port_ranges = destination_port_ranges
         self.applies_on = applies_on
-
-
-class IntentContent(_serialization.Model):
-    """Intent information.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar description:
-    :vartype description: str
-    :ivar source_resource_id: Source resource id of the intent. Required.
-    :vartype source_resource_id: str
-    :ivar destination_resource_id: Destination resource id of the intent. Required.
-    :vartype destination_resource_id: str
-    :ivar ip_traffic: IP traffic information. Required.
-    :vartype ip_traffic: ~azure.mgmt.network.models.IPTraffic
-    """
-
-    _validation = {
-        "source_resource_id": {"required": True},
-        "destination_resource_id": {"required": True},
-        "ip_traffic": {"required": True},
-    }
-
-    _attribute_map = {
-        "description": {"key": "description", "type": "str"},
-        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
-        "destination_resource_id": {"key": "destinationResourceId", "type": "str"},
-        "ip_traffic": {"key": "ipTraffic", "type": "IPTraffic"},
-    }
-
-    def __init__(
-        self,
-        *,
-        source_resource_id: str,
-        destination_resource_id: str,
-        ip_traffic: "_models.IPTraffic",
-        description: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword description:
-        :paramtype description: str
-        :keyword source_resource_id: Source resource id of the intent. Required.
-        :paramtype source_resource_id: str
-        :keyword destination_resource_id: Destination resource id of the intent. Required.
-        :paramtype destination_resource_id: str
-        :keyword ip_traffic: IP traffic information. Required.
-        :paramtype ip_traffic: ~azure.mgmt.network.models.IPTraffic
-        """
-        super().__init__(**kwargs)
-        self.description = description
-        self.source_resource_id = source_resource_id
-        self.destination_resource_id = destination_resource_id
-        self.ip_traffic = ip_traffic
 
 
 class InternetIngressPublicIpsProperties(_serialization.Model):
@@ -21269,277 +19775,6 @@ class IpAllocationListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class IpamPool(CommonTrackedResource):
-    """Instance of Pool resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.network.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    :ivar properties: Properties of IpamPool resource properties which are specific to the Pool
-     resource. Required.
-    :vartype properties: ~azure.mgmt.network.models.IpamPoolProperties
-    :ivar etag: String representing unique etag for the resource document.
-    :vartype etag: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "location": {"required": True},
-        "properties": {"required": True},
-        "etag": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "location": {"key": "location", "type": "str"},
-        "properties": {"key": "properties", "type": "IpamPoolProperties"},
-        "etag": {"key": "etag", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: str,
-        properties: "_models.IpamPoolProperties",
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword location: The geo-location where the resource lives. Required.
-        :paramtype location: str
-        :keyword properties: Properties of IpamPool resource properties which are specific to the Pool
-         resource. Required.
-        :paramtype properties: ~azure.mgmt.network.models.IpamPoolProperties
-        """
-        super().__init__(tags=tags, location=location, **kwargs)
-        self.properties = properties
-        self.etag: Optional[str] = None
-
-
-class IpamPoolList(_serialization.Model):
-    """List of IpamPool.
-
-    :ivar value:
-    :vartype value: list[~azure.mgmt.network.models.IpamPool]
-    :ivar next_link: The link used to get the next page of operations.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[IpamPool]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.IpamPool"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value:
-        :paramtype value: list[~azure.mgmt.network.models.IpamPool]
-        :keyword next_link: The link used to get the next page of operations.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class IpamPoolPrefixAllocation(_serialization.Model):
-    """IpamPool prefix allocation reference.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar number_of_ip_addresses: Number of IP addresses to allocate.
-    :vartype number_of_ip_addresses: str
-    :ivar allocated_address_prefixes: List of assigned IP address prefixes in the IpamPool of the
-     associated resource.
-    :vartype allocated_address_prefixes: list[str]
-    :ivar id: Resource id of the associated Azure IpamPool resource.
-    :vartype id: str
-    """
-
-    _validation = {
-        "allocated_address_prefixes": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "number_of_ip_addresses": {"key": "numberOfIpAddresses", "type": "str"},
-        "allocated_address_prefixes": {"key": "allocatedAddressPrefixes", "type": "[str]"},
-        "id": {"key": "pool.id", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        number_of_ip_addresses: Optional[str] = None,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword number_of_ip_addresses: Number of IP addresses to allocate.
-        :paramtype number_of_ip_addresses: str
-        :keyword id: Resource id of the associated Azure IpamPool resource.
-        :paramtype id: str
-        """
-        super().__init__(**kwargs)
-        self.number_of_ip_addresses = number_of_ip_addresses
-        self.allocated_address_prefixes: Optional[List[str]] = None
-        self.id = id
-
-
-class IpamPoolProperties(_serialization.Model):
-    """Properties of IpamPool resource properties which are specific to the Pool resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar description:
-    :vartype description: str
-    :ivar display_name: String representing a friendly name for the resource.
-    :vartype display_name: str
-    :ivar ip_address_type: List of IP address type for the IpamPool.
-    :vartype ip_address_type: list[str or ~azure.mgmt.network.models.IpType]
-    :ivar parent_pool_name: String representing parent IpamPool resource name. If empty the
-     IpamPool will be a root pool.
-    :vartype parent_pool_name: str
-    :ivar address_prefixes: List of IP address prefixes of the resource. Required.
-    :vartype address_prefixes: list[str]
-    :ivar provisioning_state: Provisioning states of a resource. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
-    """
-
-    _validation = {
-        "ip_address_type": {"readonly": True},
-        "address_prefixes": {"required": True},
-    }
-
-    _attribute_map = {
-        "description": {"key": "description", "type": "str"},
-        "display_name": {"key": "displayName", "type": "str"},
-        "ip_address_type": {"key": "ipAddressType", "type": "[str]"},
-        "parent_pool_name": {"key": "parentPoolName", "type": "str"},
-        "address_prefixes": {"key": "addressPrefixes", "type": "[str]"},
-        "provisioning_state": {"key": "provisioningState", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        address_prefixes: List[str],
-        description: Optional[str] = None,
-        display_name: Optional[str] = None,
-        parent_pool_name: Optional[str] = None,
-        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword description:
-        :paramtype description: str
-        :keyword display_name: String representing a friendly name for the resource.
-        :paramtype display_name: str
-        :keyword parent_pool_name: String representing parent IpamPool resource name. If empty the
-         IpamPool will be a root pool.
-        :paramtype parent_pool_name: str
-        :keyword address_prefixes: List of IP address prefixes of the resource. Required.
-        :paramtype address_prefixes: list[str]
-        :keyword provisioning_state: Provisioning states of a resource. Known values are: "Failed",
-         "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-        :paramtype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
-        """
-        super().__init__(**kwargs)
-        self.description = description
-        self.display_name = display_name
-        self.ip_address_type: Optional[List[Union[str, "_models.IpType"]]] = None
-        self.parent_pool_name = parent_pool_name
-        self.address_prefixes = address_prefixes
-        self.provisioning_state = provisioning_state
-
-
-class IpamPoolUpdate(_serialization.Model):
-    """Represents the IpamPool update API request interface.
-
-    :ivar tags: Dictionary of :code:`<string>`.
-    :vartype tags: dict[str, str]
-    :ivar properties: Represents the IpamPool update properties.
-    :vartype properties: ~azure.mgmt.network.models.IpamPoolUpdateProperties
-    """
-
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-        "properties": {"key": "properties", "type": "IpamPoolUpdateProperties"},
-    }
-
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        properties: Optional["_models.IpamPoolUpdateProperties"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword tags: Dictionary of :code:`<string>`.
-        :paramtype tags: dict[str, str]
-        :keyword properties: Represents the IpamPool update properties.
-        :paramtype properties: ~azure.mgmt.network.models.IpamPoolUpdateProperties
-        """
-        super().__init__(**kwargs)
-        self.tags = tags
-        self.properties = properties
-
-
-class IpamPoolUpdateProperties(_serialization.Model):
-    """Represents the IpamPool update properties.
-
-    :ivar description:
-    :vartype description: str
-    :ivar display_name: String representing a friendly name for the resource.
-    :vartype display_name: str
-    """
-
-    _attribute_map = {
-        "description": {"key": "description", "type": "str"},
-        "display_name": {"key": "displayName", "type": "str"},
-    }
-
-    def __init__(self, *, description: Optional[str] = None, display_name: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword description:
-        :paramtype description: str
-        :keyword display_name: String representing a friendly name for the resource.
-        :paramtype display_name: str
-        """
-        super().__init__(**kwargs)
-        self.description = description
-        self.display_name = display_name
-
-
 class IPConfiguration(SubResource):
     """IP configuration.
 
@@ -21562,7 +19797,7 @@ class IPConfiguration(SubResource):
     :ivar public_ip_address: The reference to the public IP resource.
     :vartype public_ip_address: ~azure.mgmt.network.models.PublicIPAddress
     :ivar provisioning_state: The provisioning state of the IP configuration resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -21687,7 +19922,7 @@ class IPConfigurationProfile(SubResource):
      configuration.
     :vartype subnet: ~azure.mgmt.network.models.Subnet
     :ivar provisioning_state: The provisioning state of the IP configuration profile resource.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -21749,7 +19984,7 @@ class IpGroup(Resource):
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar provisioning_state: The provisioning state of the IpGroups resource. Known values are:
-     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar ip_addresses: IpAddresses/IpAddressPrefixes in the IpGroups resource.
     :vartype ip_addresses: list[str]
@@ -22011,69 +20246,6 @@ class IpTag(_serialization.Model):
         super().__init__(**kwargs)
         self.ip_tag_type = ip_tag_type
         self.tag = tag
-
-
-class IPTraffic(_serialization.Model):
-    """IP traffic information.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar source_ips: List of source IP addresses of the traffic.. Required.
-    :vartype source_ips: list[str]
-    :ivar destination_ips: List of destination IP addresses of the traffic.. Required.
-    :vartype destination_ips: list[str]
-    :ivar source_ports: The source ports of the traffic. Required.
-    :vartype source_ports: list[str]
-    :ivar destination_ports: The destination ports of the traffic. Required.
-    :vartype destination_ports: list[str]
-    :ivar protocols: Required.
-    :vartype protocols: list[str or ~azure.mgmt.network.models.NetworkProtocol]
-    """
-
-    _validation = {
-        "source_ips": {"required": True},
-        "destination_ips": {"required": True},
-        "source_ports": {"required": True},
-        "destination_ports": {"required": True},
-        "protocols": {"required": True},
-    }
-
-    _attribute_map = {
-        "source_ips": {"key": "sourceIps", "type": "[str]"},
-        "destination_ips": {"key": "destinationIps", "type": "[str]"},
-        "source_ports": {"key": "sourcePorts", "type": "[str]"},
-        "destination_ports": {"key": "destinationPorts", "type": "[str]"},
-        "protocols": {"key": "protocols", "type": "[str]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        source_ips: List[str],
-        destination_ips: List[str],
-        source_ports: List[str],
-        destination_ports: List[str],
-        protocols: List[Union[str, "_models.NetworkProtocol"]],
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword source_ips: List of source IP addresses of the traffic.. Required.
-        :paramtype source_ips: list[str]
-        :keyword destination_ips: List of destination IP addresses of the traffic.. Required.
-        :paramtype destination_ips: list[str]
-        :keyword source_ports: The source ports of the traffic. Required.
-        :paramtype source_ports: list[str]
-        :keyword destination_ports: The destination ports of the traffic. Required.
-        :paramtype destination_ports: list[str]
-        :keyword protocols: Required.
-        :paramtype protocols: list[str or ~azure.mgmt.network.models.NetworkProtocol]
-        """
-        super().__init__(**kwargs)
-        self.source_ips = source_ips
-        self.destination_ips = destination_ips
-        self.source_ports = source_ports
-        self.destination_ports = destination_ports
-        self.protocols = protocols
 
 
 class Ipv6CircuitConnectionConfig(_serialization.Model):
@@ -22788,7 +20960,7 @@ class LoadBalancer(Resource):
     :ivar resource_guid: The resource GUID property of the load balancer resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the load balancer resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -23042,102 +21214,6 @@ class LoadBalancerFrontendIPConfigurationListResult(_serialization.Model):  # py
         super().__init__(**kwargs)
         self.value = value
         self.next_link: Optional[str] = None
-
-
-class LoadBalancerHealthPerRule(_serialization.Model):
-    """The response for a Health API.
-
-    :ivar up: Number of backend instances associated to the LB rule that are considered healthy.
-    :vartype up: int
-    :ivar down: Number of backend instances associated to the LB rule that are considered
-     unhealthy.
-    :vartype down: int
-    :ivar load_balancer_backend_addresses: Information about the health per rule of the backend
-     addresses.
-    :vartype load_balancer_backend_addresses:
-     list[~azure.mgmt.network.models.LoadBalancerHealthPerRulePerBackendAddress]
-    """
-
-    _attribute_map = {
-        "up": {"key": "up", "type": "int"},
-        "down": {"key": "down", "type": "int"},
-        "load_balancer_backend_addresses": {
-            "key": "loadBalancerBackendAddresses",
-            "type": "[LoadBalancerHealthPerRulePerBackendAddress]",
-        },
-    }
-
-    def __init__(
-        self,
-        *,
-        up: Optional[int] = None,
-        down: Optional[int] = None,
-        load_balancer_backend_addresses: Optional[List["_models.LoadBalancerHealthPerRulePerBackendAddress"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword up: Number of backend instances associated to the LB rule that are considered healthy.
-        :paramtype up: int
-        :keyword down: Number of backend instances associated to the LB rule that are considered
-         unhealthy.
-        :paramtype down: int
-        :keyword load_balancer_backend_addresses: Information about the health per rule of the backend
-         addresses.
-        :paramtype load_balancer_backend_addresses:
-         list[~azure.mgmt.network.models.LoadBalancerHealthPerRulePerBackendAddress]
-        """
-        super().__init__(**kwargs)
-        self.up = up
-        self.down = down
-        self.load_balancer_backend_addresses = load_balancer_backend_addresses
-
-
-class LoadBalancerHealthPerRulePerBackendAddress(_serialization.Model):  # pylint: disable=name-too-long
-    """The information about health per rule per backend address.
-
-    :ivar ip_address: The IP address belonging to the backend address.
-    :vartype ip_address: str
-    :ivar network_interface_ip_configuration_id: Resource ID of the Network Interface IP
-     Configuration.
-    :vartype network_interface_ip_configuration_id: str
-    :ivar state: The current health of the backend instances that is associated to the LB rule.
-    :vartype state: str
-    :ivar reason: The explanation of the State.
-    :vartype reason: str
-    """
-
-    _attribute_map = {
-        "ip_address": {"key": "ipAddress", "type": "str"},
-        "network_interface_ip_configuration_id": {"key": "networkInterfaceIPConfigurationId", "type": "str"},
-        "state": {"key": "state", "type": "str"},
-        "reason": {"key": "reason", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        ip_address: Optional[str] = None,
-        network_interface_ip_configuration_id: Optional[str] = None,
-        state: Optional[str] = None,
-        reason: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword ip_address: The IP address belonging to the backend address.
-        :paramtype ip_address: str
-        :keyword network_interface_ip_configuration_id: Resource ID of the Network Interface IP
-         Configuration.
-        :paramtype network_interface_ip_configuration_id: str
-        :keyword state: The current health of the backend instances that is associated to the LB rule.
-        :paramtype state: str
-        :keyword reason: The explanation of the State.
-        :paramtype reason: str
-        """
-        super().__init__(**kwargs)
-        self.ip_address = ip_address
-        self.network_interface_ip_configuration_id = network_interface_ip_configuration_id
-        self.state = state
-        self.reason = reason
 
 
 class LoadBalancerListResult(_serialization.Model):
@@ -23409,11 +21485,8 @@ class LoadBalancingRule(SubResource):
     :ivar disable_outbound_snat: Configures SNAT for the VMs in the backend pool to use the
      publicIP address specified in the frontend of the load balancing rule.
     :vartype disable_outbound_snat: bool
-    :ivar enable_connection_tracking: Defines whether connections between 2 communicating endpoints
-     can be tracked and associated to the same backend VM over its lifetime when using UDP protocol.
-    :vartype enable_connection_tracking: bool
     :ivar provisioning_state: The provisioning state of the load balancing rule resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -23440,7 +21513,6 @@ class LoadBalancingRule(SubResource):
         "enable_floating_ip": {"key": "properties.enableFloatingIP", "type": "bool"},
         "enable_tcp_reset": {"key": "properties.enableTcpReset", "type": "bool"},
         "disable_outbound_snat": {"key": "properties.disableOutboundSnat", "type": "bool"},
-        "enable_connection_tracking": {"key": "properties.enableConnectionTracking", "type": "bool"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
@@ -23461,7 +21533,6 @@ class LoadBalancingRule(SubResource):
         enable_floating_ip: Optional[bool] = None,
         enable_tcp_reset: Optional[bool] = None,
         disable_outbound_snat: Optional[bool] = None,
-        enable_connection_tracking: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -23507,10 +21578,6 @@ class LoadBalancingRule(SubResource):
         :keyword disable_outbound_snat: Configures SNAT for the VMs in the backend pool to use the
          publicIP address specified in the frontend of the load balancing rule.
         :paramtype disable_outbound_snat: bool
-        :keyword enable_connection_tracking: Defines whether connections between 2 communicating
-         endpoints can be tracked and associated to the same backend VM over its lifetime when using UDP
-         protocol.
-        :paramtype enable_connection_tracking: bool
         """
         super().__init__(id=id, **kwargs)
         self.name = name
@@ -23528,7 +21595,6 @@ class LoadBalancingRule(SubResource):
         self.enable_floating_ip = enable_floating_ip
         self.enable_tcp_reset = enable_tcp_reset
         self.disable_outbound_snat = disable_outbound_snat
-        self.enable_connection_tracking = enable_connection_tracking
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
@@ -23560,7 +21626,7 @@ class LocalNetworkGateway(Resource):
     :ivar resource_guid: The resource GUID property of the local network gateway resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the local network gateway resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -23743,9 +21809,6 @@ class ManagedRuleOverride(_serialization.Model):
     :ivar action: Describes the override action to be applied when rule matches. Known values are:
      "AnomalyScoring", "Allow", "Block", "Log", and "JSChallenge".
     :vartype action: str or ~azure.mgmt.network.models.ActionType
-    :ivar sensitivity: Describes the override sensitivity to be applied when rule matches. Known
-     values are: "None", "Low", "Medium", and "High".
-    :vartype sensitivity: str or ~azure.mgmt.network.models.SensitivityType
     """
 
     _validation = {
@@ -23756,7 +21819,6 @@ class ManagedRuleOverride(_serialization.Model):
         "rule_id": {"key": "ruleId", "type": "str"},
         "state": {"key": "state", "type": "str"},
         "action": {"key": "action", "type": "str"},
-        "sensitivity": {"key": "sensitivity", "type": "str"},
     }
 
     def __init__(
@@ -23765,7 +21827,6 @@ class ManagedRuleOverride(_serialization.Model):
         rule_id: str,
         state: Optional[Union[str, "_models.ManagedRuleEnabledState"]] = None,
         action: Optional[Union[str, "_models.ActionType"]] = None,
-        sensitivity: Optional[Union[str, "_models.SensitivityType"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -23777,15 +21838,11 @@ class ManagedRuleOverride(_serialization.Model):
         :keyword action: Describes the override action to be applied when rule matches. Known values
          are: "AnomalyScoring", "Allow", "Block", "Log", and "JSChallenge".
         :paramtype action: str or ~azure.mgmt.network.models.ActionType
-        :keyword sensitivity: Describes the override sensitivity to be applied when rule matches. Known
-         values are: "None", "Low", "Medium", and "High".
-        :paramtype sensitivity: str or ~azure.mgmt.network.models.SensitivityType
         """
         super().__init__(**kwargs)
         self.rule_id = rule_id
         self.state = state
         self.action = action
-        self.sensitivity = sensitivity
 
 
 class ManagedRulesDefinition(_serialization.Model):
@@ -23793,8 +21850,6 @@ class ManagedRulesDefinition(_serialization.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar exceptions: The exceptions that are applied on the policy.
-    :vartype exceptions: list[~azure.mgmt.network.models.ExceptionEntry]
     :ivar exclusions: The Exclusions that are applied on the policy.
     :vartype exclusions: list[~azure.mgmt.network.models.OwaspCrsExclusionEntry]
     :ivar managed_rule_sets: The managed rule sets that are associated with the policy. Required.
@@ -23806,7 +21861,6 @@ class ManagedRulesDefinition(_serialization.Model):
     }
 
     _attribute_map = {
-        "exceptions": {"key": "exceptions", "type": "[ExceptionEntry]"},
         "exclusions": {"key": "exclusions", "type": "[OwaspCrsExclusionEntry]"},
         "managed_rule_sets": {"key": "managedRuleSets", "type": "[ManagedRuleSet]"},
     }
@@ -23815,13 +21869,10 @@ class ManagedRulesDefinition(_serialization.Model):
         self,
         *,
         managed_rule_sets: List["_models.ManagedRuleSet"],
-        exceptions: Optional[List["_models.ExceptionEntry"]] = None,
         exclusions: Optional[List["_models.OwaspCrsExclusionEntry"]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword exceptions: The exceptions that are applied on the policy.
-        :paramtype exceptions: list[~azure.mgmt.network.models.ExceptionEntry]
         :keyword exclusions: The Exclusions that are applied on the policy.
         :paramtype exclusions: list[~azure.mgmt.network.models.OwaspCrsExclusionEntry]
         :keyword managed_rule_sets: The managed rule sets that are associated with the policy.
@@ -23829,15 +21880,12 @@ class ManagedRulesDefinition(_serialization.Model):
         :paramtype managed_rule_sets: list[~azure.mgmt.network.models.ManagedRuleSet]
         """
         super().__init__(**kwargs)
-        self.exceptions = exceptions
         self.exclusions = exclusions
         self.managed_rule_sets = managed_rule_sets
 
 
 class ManagedRuleSet(_serialization.Model):
     """Defines a managed rule set.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
@@ -23847,21 +21895,17 @@ class ManagedRuleSet(_serialization.Model):
     :vartype rule_set_version: str
     :ivar rule_group_overrides: Defines the rule group overrides to apply to the rule set.
     :vartype rule_group_overrides: list[~azure.mgmt.network.models.ManagedRuleGroupOverride]
-    :ivar computed_disabled_rules: Stores the final list of disabled rule groups.
-    :vartype computed_disabled_rules: list[~azure.mgmt.network.models.ManagedRuleSetRuleGroup]
     """
 
     _validation = {
         "rule_set_type": {"required": True},
         "rule_set_version": {"required": True},
-        "computed_disabled_rules": {"readonly": True},
     }
 
     _attribute_map = {
         "rule_set_type": {"key": "ruleSetType", "type": "str"},
         "rule_set_version": {"key": "ruleSetVersion", "type": "str"},
         "rule_group_overrides": {"key": "ruleGroupOverrides", "type": "[ManagedRuleGroupOverride]"},
-        "computed_disabled_rules": {"key": "computedDisabledRules", "type": "[ManagedRuleSetRuleGroup]"},
     }
 
     def __init__(
@@ -23884,39 +21928,6 @@ class ManagedRuleSet(_serialization.Model):
         self.rule_set_type = rule_set_type
         self.rule_set_version = rule_set_version
         self.rule_group_overrides = rule_group_overrides
-        self.computed_disabled_rules: Optional[List["_models.ManagedRuleSetRuleGroup"]] = None
-
-
-class ManagedRuleSetRuleGroup(_serialization.Model):
-    """Defines a managed rule set rule group.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar rule_group_name: Name of the rule group. Required.
-    :vartype rule_group_name: str
-    :ivar rules: List of rules within the rule group.
-    :vartype rules: list[str]
-    """
-
-    _validation = {
-        "rule_group_name": {"required": True},
-    }
-
-    _attribute_map = {
-        "rule_group_name": {"key": "ruleGroupName", "type": "str"},
-        "rules": {"key": "rules", "type": "[str]"},
-    }
-
-    def __init__(self, *, rule_group_name: str, rules: Optional[List[str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword rule_group_name: Name of the rule group. Required.
-        :paramtype rule_group_name: str
-        :keyword rules: List of rules within the rule group.
-        :paramtype rules: list[str]
-        """
-        super().__init__(**kwargs)
-        self.rule_group_name = rule_group_name
-        self.rules = rules
 
 
 class ManagedServiceIdentity(_serialization.Model):
@@ -24301,27 +22312,18 @@ class NatGateway(Resource):
     :vartype etag: str
     :ivar idle_timeout_in_minutes: The idle timeout of the nat gateway.
     :vartype idle_timeout_in_minutes: int
-    :ivar public_ip_addresses: An array of public ip addresses V4 associated with the nat gateway
+    :ivar public_ip_addresses: An array of public ip addresses associated with the nat gateway
      resource.
     :vartype public_ip_addresses: list[~azure.mgmt.network.models.SubResource]
-    :ivar public_ip_addresses_v6: An array of public ip addresses V6 associated with the nat
-     gateway resource.
-    :vartype public_ip_addresses_v6: list[~azure.mgmt.network.models.SubResource]
-    :ivar public_ip_prefixes: An array of public ip prefixes V4 associated with the nat gateway
+    :ivar public_ip_prefixes: An array of public ip prefixes associated with the nat gateway
      resource.
     :vartype public_ip_prefixes: list[~azure.mgmt.network.models.SubResource]
-    :ivar public_ip_prefixes_v6: An array of public ip prefixes V6 associated with the nat gateway
-     resource.
-    :vartype public_ip_prefixes_v6: list[~azure.mgmt.network.models.SubResource]
     :ivar subnets: An array of references to the subnets using this nat gateway resource.
     :vartype subnets: list[~azure.mgmt.network.models.SubResource]
-    :ivar source_virtual_network: A reference to the source virtual network using this nat gateway
-     resource.
-    :vartype source_virtual_network: ~azure.mgmt.network.models.SubResource
     :ivar resource_guid: The resource GUID property of the NAT gateway resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the NAT gateway resource. Known values are:
-     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -24345,11 +22347,8 @@ class NatGateway(Resource):
         "etag": {"key": "etag", "type": "str"},
         "idle_timeout_in_minutes": {"key": "properties.idleTimeoutInMinutes", "type": "int"},
         "public_ip_addresses": {"key": "properties.publicIpAddresses", "type": "[SubResource]"},
-        "public_ip_addresses_v6": {"key": "properties.publicIpAddressesV6", "type": "[SubResource]"},
         "public_ip_prefixes": {"key": "properties.publicIpPrefixes", "type": "[SubResource]"},
-        "public_ip_prefixes_v6": {"key": "properties.publicIpPrefixesV6", "type": "[SubResource]"},
         "subnets": {"key": "properties.subnets", "type": "[SubResource]"},
-        "source_virtual_network": {"key": "properties.sourceVirtualNetwork", "type": "SubResource"},
         "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
@@ -24364,10 +22363,7 @@ class NatGateway(Resource):
         zones: Optional[List[str]] = None,
         idle_timeout_in_minutes: Optional[int] = None,
         public_ip_addresses: Optional[List["_models.SubResource"]] = None,
-        public_ip_addresses_v6: Optional[List["_models.SubResource"]] = None,
         public_ip_prefixes: Optional[List["_models.SubResource"]] = None,
-        public_ip_prefixes_v6: Optional[List["_models.SubResource"]] = None,
-        source_virtual_network: Optional["_models.SubResource"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -24384,21 +22380,12 @@ class NatGateway(Resource):
         :paramtype zones: list[str]
         :keyword idle_timeout_in_minutes: The idle timeout of the nat gateway.
         :paramtype idle_timeout_in_minutes: int
-        :keyword public_ip_addresses: An array of public ip addresses V4 associated with the nat
-         gateway resource.
+        :keyword public_ip_addresses: An array of public ip addresses associated with the nat gateway
+         resource.
         :paramtype public_ip_addresses: list[~azure.mgmt.network.models.SubResource]
-        :keyword public_ip_addresses_v6: An array of public ip addresses V6 associated with the nat
-         gateway resource.
-        :paramtype public_ip_addresses_v6: list[~azure.mgmt.network.models.SubResource]
-        :keyword public_ip_prefixes: An array of public ip prefixes V4 associated with the nat gateway
+        :keyword public_ip_prefixes: An array of public ip prefixes associated with the nat gateway
          resource.
         :paramtype public_ip_prefixes: list[~azure.mgmt.network.models.SubResource]
-        :keyword public_ip_prefixes_v6: An array of public ip prefixes V6 associated with the nat
-         gateway resource.
-        :paramtype public_ip_prefixes_v6: list[~azure.mgmt.network.models.SubResource]
-        :keyword source_virtual_network: A reference to the source virtual network using this nat
-         gateway resource.
-        :paramtype source_virtual_network: ~azure.mgmt.network.models.SubResource
         """
         super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.sku = sku
@@ -24406,11 +22393,8 @@ class NatGateway(Resource):
         self.etag: Optional[str] = None
         self.idle_timeout_in_minutes = idle_timeout_in_minutes
         self.public_ip_addresses = public_ip_addresses
-        self.public_ip_addresses_v6 = public_ip_addresses_v6
         self.public_ip_prefixes = public_ip_prefixes
-        self.public_ip_prefixes_v6 = public_ip_prefixes_v6
         self.subnets: Optional[List["_models.SubResource"]] = None
-        self.source_virtual_network = source_virtual_network
         self.resource_guid: Optional[str] = None
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
@@ -24446,7 +22430,7 @@ class NatGatewayListResult(_serialization.Model):
 class NatGatewaySku(_serialization.Model):
     """SKU of nat gateway.
 
-    :ivar name: Name of Nat Gateway SKU. Known values are: "Standard" and "StandardV2".
+    :ivar name: Name of Nat Gateway SKU. "Standard"
     :vartype name: str or ~azure.mgmt.network.models.NatGatewaySkuName
     """
 
@@ -24456,7 +22440,7 @@ class NatGatewaySku(_serialization.Model):
 
     def __init__(self, *, name: Optional[Union[str, "_models.NatGatewaySkuName"]] = None, **kwargs: Any) -> None:
         """
-        :keyword name: Name of Nat Gateway SKU. Known values are: "Standard" and "StandardV2".
+        :keyword name: Name of Nat Gateway SKU. "Standard"
         :paramtype name: str or ~azure.mgmt.network.models.NatGatewaySkuName
         """
         super().__init__(**kwargs)
@@ -24793,11 +22777,8 @@ class NetworkGroup(ChildResource):
     :vartype system_data: ~azure.mgmt.network.models.SystemData
     :ivar description: A description of the network group.
     :vartype description: str
-    :ivar member_type: The type of the group member. Known values are: "VirtualNetwork" and
-     "Subnet".
-    :vartype member_type: str or ~azure.mgmt.network.models.GroupMemberType
     :ivar provisioning_state: The provisioning state of the scope assignment resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -24820,29 +22801,18 @@ class NetworkGroup(ChildResource):
         "etag": {"key": "etag", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
         "description": {"key": "properties.description", "type": "str"},
-        "member_type": {"key": "properties.memberType", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        description: Optional[str] = None,
-        member_type: Optional[Union[str, "_models.GroupMemberType"]] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, description: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword description: A description of the network group.
         :paramtype description: str
-        :keyword member_type: The type of the group member. Known values are: "VirtualNetwork" and
-         "Subnet".
-        :paramtype member_type: str or ~azure.mgmt.network.models.GroupMemberType
         """
         super().__init__(**kwargs)
         self.system_data: Optional["_models.SystemData"] = None
         self.description = description
-        self.member_type = member_type
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.resource_guid: Optional[str] = None
 
@@ -25003,9 +22973,6 @@ class NetworkInterface(Resource):
     :ivar vnet_encryption_supported: Whether the virtual machine this nic is attached to supports
      encryption.
     :vartype vnet_encryption_supported: bool
-    :ivar default_outbound_connectivity_enabled: Whether default outbound connectivity for nic was
-     configured or not.
-    :vartype default_outbound_connectivity_enabled: bool
     :ivar enable_accelerated_networking: If the network interface is configured for accelerated
      networking. Not applicable to VM sizes which require accelerated networking.
     :vartype enable_accelerated_networking: bool
@@ -25022,7 +22989,7 @@ class NetworkInterface(Resource):
     :ivar resource_guid: The resource GUID property of the network interface resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the network interface resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar workload_type: WorkloadType of the NetworkInterface for BareMetal resources.
     :vartype workload_type: str
@@ -25051,7 +23018,6 @@ class NetworkInterface(Resource):
         "mac_address": {"readonly": True},
         "primary": {"readonly": True},
         "vnet_encryption_supported": {"readonly": True},
-        "default_outbound_connectivity_enabled": {"readonly": True},
         "hosted_workloads": {"readonly": True},
         "dscp_configuration": {"readonly": True},
         "resource_guid": {"readonly": True},
@@ -25075,10 +23041,6 @@ class NetworkInterface(Resource):
         "mac_address": {"key": "properties.macAddress", "type": "str"},
         "primary": {"key": "properties.primary", "type": "bool"},
         "vnet_encryption_supported": {"key": "properties.vnetEncryptionSupported", "type": "bool"},
-        "default_outbound_connectivity_enabled": {
-            "key": "properties.defaultOutboundConnectivityEnabled",
-            "type": "bool",
-        },
         "enable_accelerated_networking": {"key": "properties.enableAcceleratedNetworking", "type": "bool"},
         "disable_tcp_state_tracking": {"key": "properties.disableTcpStateTracking", "type": "bool"},
         "enable_ip_forwarding": {"key": "properties.enableIPForwarding", "type": "bool"},
@@ -25167,7 +23129,6 @@ class NetworkInterface(Resource):
         self.mac_address: Optional[str] = None
         self.primary: Optional[bool] = None
         self.vnet_encryption_supported: Optional[bool] = None
-        self.default_outbound_connectivity_enabled: Optional[bool] = None
         self.enable_accelerated_networking = enable_accelerated_networking
         self.disable_tcp_state_tracking = disable_tcp_state_tracking
         self.enable_ip_forwarding = enable_ip_forwarding
@@ -25323,7 +23284,7 @@ class NetworkInterfaceIPConfiguration(SubResource):
      included.
     :vartype application_security_groups: list[~azure.mgmt.network.models.ApplicationSecurityGroup]
     :ivar provisioning_state: The provisioning state of the network interface IP configuration.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_link_connection_properties: PrivateLinkConnection properties for the network
      interface.
@@ -25611,8 +23572,7 @@ class NetworkInterfaceTapConfiguration(SubResource):
     :ivar virtual_network_tap: The reference to the Virtual Network Tap resource.
     :vartype virtual_network_tap: ~azure.mgmt.network.models.VirtualNetworkTap
     :ivar provisioning_state: The provisioning state of the network interface tap configuration
-     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
-     "Deleting".
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -25716,7 +23676,7 @@ class NetworkManager(Resource):
     :vartype network_manager_scope_accesses: list[str or
      ~azure.mgmt.network.models.ConfigurationType]
     :ivar provisioning_state: The provisioning state of the network manager resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -25799,8 +23759,7 @@ class NetworkManagerCommit(_serialization.Model):
     :vartype target_locations: list[str]
     :ivar configuration_ids: List of configuration ids.
     :vartype configuration_ids: list[str]
-    :ivar commit_type: Commit Type. Required. Known values are: "SecurityAdmin", "Connectivity",
-     "SecurityUser", and "Routing".
+    :ivar commit_type: Commit Type. Required. Known values are: "SecurityAdmin" and "Connectivity".
     :vartype commit_type: str or ~azure.mgmt.network.models.ConfigurationType
     """
 
@@ -25830,8 +23789,8 @@ class NetworkManagerCommit(_serialization.Model):
         :paramtype target_locations: list[str]
         :keyword configuration_ids: List of configuration ids.
         :paramtype configuration_ids: list[str]
-        :keyword commit_type: Commit Type. Required. Known values are: "SecurityAdmin", "Connectivity",
-         "SecurityUser", and "Routing".
+        :keyword commit_type: Commit Type. Required. Known values are: "SecurityAdmin" and
+         "Connectivity".
         :paramtype commit_type: str or ~azure.mgmt.network.models.ConfigurationType
         """
         super().__init__(**kwargs)
@@ -25945,8 +23904,8 @@ class NetworkManagerDeploymentStatus(_serialization.Model):
     :vartype deployment_status: str or ~azure.mgmt.network.models.DeploymentStatus
     :ivar configuration_ids: List of configuration ids.
     :vartype configuration_ids: list[str]
-    :ivar deployment_type: Configuration Deployment Type. Known values are: "SecurityAdmin",
-     "Connectivity", "SecurityUser", and "Routing".
+    :ivar deployment_type: Configuration Deployment Type. Known values are: "SecurityAdmin" and
+     "Connectivity".
     :vartype deployment_type: str or ~azure.mgmt.network.models.ConfigurationType
     :ivar error_message: Error Message.
     :vartype error_message: str
@@ -25982,8 +23941,8 @@ class NetworkManagerDeploymentStatus(_serialization.Model):
         :paramtype deployment_status: str or ~azure.mgmt.network.models.DeploymentStatus
         :keyword configuration_ids: List of configuration ids.
         :paramtype configuration_ids: list[str]
-        :keyword deployment_type: Configuration Deployment Type. Known values are: "SecurityAdmin",
-         "Connectivity", "SecurityUser", and "Routing".
+        :keyword deployment_type: Configuration Deployment Type. Known values are: "SecurityAdmin" and
+         "Connectivity".
         :paramtype deployment_type: str or ~azure.mgmt.network.models.ConfigurationType
         :keyword error_message: Error Message.
         :paramtype error_message: str
@@ -26209,121 +24168,6 @@ class NetworkManagerPropertiesNetworkManagerScopes(_serialization.Model):  # pyl
         self.cross_tenant_scopes: Optional[List["_models.CrossTenantScopes"]] = None
 
 
-class NetworkManagerRoutingConfiguration(ChildResource):
-    """Defines the routing configuration.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar etag: A unique read-only string that changes whenever the resource is updated.
-    :vartype etag: str
-    :ivar system_data: The system metadata related to this resource.
-    :vartype system_data: ~azure.mgmt.network.models.SystemData
-    :ivar description: A description of the routing configuration.
-    :vartype description: str
-    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
-    :ivar resource_guid: Unique identifier for this resource.
-    :vartype resource_guid: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "etag": {"readonly": True},
-        "system_data": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "resource_guid": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "etag": {"key": "etag", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "description": {"key": "properties.description", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
-    }
-
-    def __init__(self, *, description: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword description: A description of the routing configuration.
-        :paramtype description: str
-        """
-        super().__init__(**kwargs)
-        self.system_data: Optional["_models.SystemData"] = None
-        self.description = description
-        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
-        self.resource_guid: Optional[str] = None
-
-
-class NetworkManagerRoutingConfigurationListResult(_serialization.Model):  # pylint: disable=name-too-long
-    """A list of network manager routing configurations.
-
-    :ivar value: Gets a page of routing configurations.
-    :vartype value: list[~azure.mgmt.network.models.NetworkManagerRoutingConfiguration]
-    :ivar next_link: Gets the URL to get the next page of results.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[NetworkManagerRoutingConfiguration]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.NetworkManagerRoutingConfiguration"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: Gets a page of routing configurations.
-        :paramtype value: list[~azure.mgmt.network.models.NetworkManagerRoutingConfiguration]
-        :keyword next_link: Gets the URL to get the next page of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class NetworkManagerRoutingGroupItem(_serialization.Model):
-    """Network manager routing group item.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar network_group_id: Network manager group Id. Required.
-    :vartype network_group_id: str
-    """
-
-    _validation = {
-        "network_group_id": {"required": True},
-    }
-
-    _attribute_map = {
-        "network_group_id": {"key": "networkGroupId", "type": "str"},
-    }
-
-    def __init__(self, *, network_group_id: str, **kwargs: Any) -> None:
-        """
-        :keyword network_group_id: Network manager group Id. Required.
-        :paramtype network_group_id: str
-        """
-        super().__init__(**kwargs)
-        self.network_group_id = network_group_id
-
-
 class NetworkManagerSecurityGroupItem(_serialization.Model):
     """Network manager security group item.
 
@@ -26377,7 +24221,7 @@ class NetworkProfile(Resource):
     :ivar resource_guid: The resource GUID property of the network profile resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the network profile resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -26593,7 +24437,7 @@ class NetworkSecurityGroup(Resource):
     :ivar resource_guid: The resource GUID property of the network security group resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the network security group resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -26731,196 +24575,6 @@ class NetworkSecurityGroupResult(_serialization.Model):
         self.evaluated_network_security_groups: Optional[List["_models.EvaluatedNetworkSecurityGroup"]] = None
 
 
-class SecurityPerimeterResource(_serialization.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.network.models.SecurityPerimeterSystemData
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SecurityPerimeterSystemData"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.name: Optional[str] = None
-        self.type: Optional[str] = None
-        self.system_data: Optional["_models.SecurityPerimeterSystemData"] = None
-
-
-class TrackedResource(SecurityPerimeterResource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which
-    has 'tags' and a 'location'.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.network.models.SecurityPerimeterSystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "location": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SecurityPerimeterSystemData"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "location": {"key": "location", "type": "str"},
-    }
-
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword location: The geo-location where the resource lives. Required.
-        :paramtype location: str
-        """
-        super().__init__(**kwargs)
-        self.tags = tags
-        self.location = location
-
-
-class NetworkSecurityPerimeter(TrackedResource):
-    """The Network Security Perimeter resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.network.models.SecurityPerimeterSystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    :ivar provisioning_state: The provisioning state of the scope assignment resource. Known values
-     are: "Succeeded", "Creating", "Updating", "Deleting", "Accepted", and "Failed".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.NspProvisioningState
-    :ivar perimeter_guid: perimeter guid of the network security perimeter.
-    :vartype perimeter_guid: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "location": {"required": True},
-        "provisioning_state": {"readonly": True},
-        "perimeter_guid": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SecurityPerimeterSystemData"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "location": {"key": "location", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "perimeter_guid": {"key": "properties.perimeterGuid", "type": "str"},
-    }
-
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword location: The geo-location where the resource lives. Required.
-        :paramtype location: str
-        """
-        super().__init__(tags=tags, location=location, **kwargs)
-        self.provisioning_state: Optional[Union[str, "_models.NspProvisioningState"]] = None
-        self.perimeter_guid: Optional[str] = None
-
-
-class NetworkSecurityPerimeterListResult(_serialization.Model):
-    """Result of the request to list NetworkSecurityPerimeter. It contains a list of network security
-    perimeters and a URL link to get the next set of results.
-
-    :ivar value: Gets a page of NetworkSecurityPerimeter.
-    :vartype value: list[~azure.mgmt.network.models.NetworkSecurityPerimeter]
-    :ivar next_link: Gets the URL to get the next page of results.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[NetworkSecurityPerimeter]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.NetworkSecurityPerimeter"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: Gets a page of NetworkSecurityPerimeter.
-        :paramtype value: list[~azure.mgmt.network.models.NetworkSecurityPerimeter]
-        :keyword next_link: Gets the URL to get the next page of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
 class NetworkSecurityRulesEvaluationResult(_serialization.Model):
     """Network security rules evaluation result.
 
@@ -27035,8 +24689,8 @@ class NetworkVirtualAppliance(Resource):
     :vartype virtual_appliance_connections: list[~azure.mgmt.network.models.SubResource]
     :ivar inbound_security_rules: List of references to InboundSecurityRules.
     :vartype inbound_security_rules: list[~azure.mgmt.network.models.SubResource]
-    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar deployment_type: The deployment type. PartnerManaged for the SaaS NVA.
     :vartype deployment_type: str
@@ -27183,51 +24837,6 @@ class NetworkVirtualAppliance(Resource):
         self.partner_managed_resource = partner_managed_resource
 
 
-class NetworkVirtualApplianceBootDiagnosticParameters(_serialization.Model):  # pylint: disable=name-too-long
-    """Specifies input parameters required to retrieve the boot diagnostic logs for an NVA instance.
-
-    :ivar instance_id: The network virtual appliance instance id for which boot diagnostic logs is
-     being requested.
-    :vartype instance_id: int
-    :ivar serial_console_storage_sas_url: Specifies the sas-url to the storage blob into which
-     serial console logs for the requested instance will be written.
-    :vartype serial_console_storage_sas_url: str
-    :ivar console_screenshot_storage_sas_url: Specifies the sas-url to the storage blob into which
-     console screen shot for the requested instance will be written.
-    :vartype console_screenshot_storage_sas_url: str
-    """
-
-    _attribute_map = {
-        "instance_id": {"key": "instanceId", "type": "int"},
-        "serial_console_storage_sas_url": {"key": "serialConsoleStorageSasUrl", "type": "str"},
-        "console_screenshot_storage_sas_url": {"key": "consoleScreenshotStorageSasUrl", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        instance_id: Optional[int] = None,
-        serial_console_storage_sas_url: Optional[str] = None,
-        console_screenshot_storage_sas_url: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword instance_id: The network virtual appliance instance id for which boot diagnostic logs
-         is being requested.
-        :paramtype instance_id: int
-        :keyword serial_console_storage_sas_url: Specifies the sas-url to the storage blob into which
-         serial console logs for the requested instance will be written.
-        :paramtype serial_console_storage_sas_url: str
-        :keyword console_screenshot_storage_sas_url: Specifies the sas-url to the storage blob into
-         which console screen shot for the requested instance will be written.
-        :paramtype console_screenshot_storage_sas_url: str
-        """
-        super().__init__(**kwargs)
-        self.instance_id = instance_id
-        self.serial_console_storage_sas_url = serial_console_storage_sas_url
-        self.console_screenshot_storage_sas_url = console_screenshot_storage_sas_url
-
-
 class NetworkVirtualApplianceConnection(SubResource):
     """NetworkVirtualApplianceConnection resource.
 
@@ -27240,8 +24849,7 @@ class NetworkVirtualApplianceConnection(SubResource):
     :ivar name_properties_name: The name of the resource.
     :vartype name_properties_name: str
     :ivar provisioning_state: The provisioning state of the NetworkVirtualApplianceConnection
-     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
-     "Deleting".
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar asn: Network Virtual Appliance ASN.
     :vartype asn: int
@@ -27347,28 +24955,6 @@ class NetworkVirtualApplianceConnectionList(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
-
-
-class NetworkVirtualApplianceInstanceId(_serialization.Model):
-    """NetworkVirtualApplianceInstanceId.
-
-    :ivar instance_id: The network virtual appliance instance id for which boot diagnostic logs is
-     being requested.
-    :vartype instance_id: int
-    """
-
-    _attribute_map = {
-        "instance_id": {"key": "instanceId", "type": "int"},
-    }
-
-    def __init__(self, *, instance_id: Optional[int] = None, **kwargs: Any) -> None:
-        """
-        :keyword instance_id: The network virtual appliance instance id for which boot diagnostic logs
-         is being requested.
-        :paramtype instance_id: int
-        """
-        super().__init__(**kwargs)
-        self.instance_id = instance_id
 
 
 class NetworkVirtualApplianceInstanceIds(_serialization.Model):
@@ -27646,7 +25232,7 @@ class NetworkWatcher(Resource):
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar provisioning_state: The provisioning state of the network watcher resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -27809,737 +25395,6 @@ class NextHopResult(_serialization.Model):
         self.next_hop_type = next_hop_type
         self.next_hop_ip_address = next_hop_ip_address
         self.route_table_id = route_table_id
-
-
-class SecurityPerimeterProxyResource(SecurityPerimeterResource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
-    tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.network.models.SecurityPerimeterSystemData
-    """
-
-
-class NspAccessRule(SecurityPerimeterProxyResource):
-    """The NSP access rule resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.network.models.SecurityPerimeterSystemData
-    :ivar provisioning_state: The provisioning state of the scope assignment resource. Known values
-     are: "Succeeded", "Creating", "Updating", "Deleting", "Accepted", and "Failed".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.NspProvisioningState
-    :ivar direction: Direction that specifies whether the access rules is inbound/outbound. Known
-     values are: "Inbound" and "Outbound".
-    :vartype direction: str or ~azure.mgmt.network.models.AccessRuleDirection
-    :ivar address_prefixes: Inbound address prefixes (IPv4/IPv6).
-    :vartype address_prefixes: list[str]
-    :ivar fully_qualified_domain_names: Outbound rules in fully qualified domain name format.
-    :vartype fully_qualified_domain_names: list[str]
-    :ivar subscriptions: List of subscription ids.
-    :vartype subscriptions: list[~azure.mgmt.network.models.SubscriptionId]
-    :ivar network_security_perimeters: Rule specified by the perimeter id.
-    :vartype network_security_perimeters: list[~azure.mgmt.network.models.PerimeterBasedAccessRule]
-    :ivar email_addresses: Outbound rules in email address format. This access rule type is
-     currently unavailable for use.
-    :vartype email_addresses: list[str]
-    :ivar phone_numbers: Outbound rules in phone number format. This access rule type is currently
-     unavailable for use.
-    :vartype phone_numbers: list[str]
-    :ivar service_tags: Inbound rules of type service tag. This access rule type is currently
-     unavailable for use.
-    :vartype service_tags: list[str]
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "network_security_perimeters": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SecurityPerimeterSystemData"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "direction": {"key": "properties.direction", "type": "str"},
-        "address_prefixes": {"key": "properties.addressPrefixes", "type": "[str]"},
-        "fully_qualified_domain_names": {"key": "properties.fullyQualifiedDomainNames", "type": "[str]"},
-        "subscriptions": {"key": "properties.subscriptions", "type": "[SubscriptionId]"},
-        "network_security_perimeters": {
-            "key": "properties.networkSecurityPerimeters",
-            "type": "[PerimeterBasedAccessRule]",
-        },
-        "email_addresses": {"key": "properties.emailAddresses", "type": "[str]"},
-        "phone_numbers": {"key": "properties.phoneNumbers", "type": "[str]"},
-        "service_tags": {"key": "properties.serviceTags", "type": "[str]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        direction: Optional[Union[str, "_models.AccessRuleDirection"]] = None,
-        address_prefixes: Optional[List[str]] = None,
-        fully_qualified_domain_names: Optional[List[str]] = None,
-        subscriptions: Optional[List["_models.SubscriptionId"]] = None,
-        email_addresses: Optional[List[str]] = None,
-        phone_numbers: Optional[List[str]] = None,
-        service_tags: Optional[List[str]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword direction: Direction that specifies whether the access rules is inbound/outbound.
-         Known values are: "Inbound" and "Outbound".
-        :paramtype direction: str or ~azure.mgmt.network.models.AccessRuleDirection
-        :keyword address_prefixes: Inbound address prefixes (IPv4/IPv6).
-        :paramtype address_prefixes: list[str]
-        :keyword fully_qualified_domain_names: Outbound rules in fully qualified domain name format.
-        :paramtype fully_qualified_domain_names: list[str]
-        :keyword subscriptions: List of subscription ids.
-        :paramtype subscriptions: list[~azure.mgmt.network.models.SubscriptionId]
-        :keyword email_addresses: Outbound rules in email address format. This access rule type is
-         currently unavailable for use.
-        :paramtype email_addresses: list[str]
-        :keyword phone_numbers: Outbound rules in phone number format. This access rule type is
-         currently unavailable for use.
-        :paramtype phone_numbers: list[str]
-        :keyword service_tags: Inbound rules of type service tag. This access rule type is currently
-         unavailable for use.
-        :paramtype service_tags: list[str]
-        """
-        super().__init__(**kwargs)
-        self.provisioning_state: Optional[Union[str, "_models.NspProvisioningState"]] = None
-        self.direction = direction
-        self.address_prefixes = address_prefixes
-        self.fully_qualified_domain_names = fully_qualified_domain_names
-        self.subscriptions = subscriptions
-        self.network_security_perimeters: Optional[List["_models.PerimeterBasedAccessRule"]] = None
-        self.email_addresses = email_addresses
-        self.phone_numbers = phone_numbers
-        self.service_tags = service_tags
-
-
-class NspAccessRuleListResult(_serialization.Model):
-    """Result of the request to list NSP access rules. Contains a list of NSP access rules and a URL
-    link to get the next set of results.
-
-    :ivar value: Gets a page of NSP access rule.
-    :vartype value: list[~azure.mgmt.network.models.NspAccessRule]
-    :ivar next_link: Gets the URL to get the next page of results.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[NspAccessRule]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.NspAccessRule"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: Gets a page of NSP access rule.
-        :paramtype value: list[~azure.mgmt.network.models.NspAccessRule]
-        :keyword next_link: Gets the URL to get the next page of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class NspAssociation(SecurityPerimeterProxyResource):
-    """The NSP resource association resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.network.models.SecurityPerimeterSystemData
-    :ivar provisioning_state: The provisioning state of the resource  association resource. Known
-     values are: "Succeeded", "Creating", "Updating", "Deleting", "Accepted", and "Failed".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.NspProvisioningState
-    :ivar private_link_resource: The PaaS resource to be associated.
-    :vartype private_link_resource: ~azure.mgmt.network.models.SubResource
-    :ivar profile: Profile id to which the PaaS resource is associated.
-    :vartype profile: ~azure.mgmt.network.models.SubResource
-    :ivar access_mode: Access mode on the association. Known values are: "Learning", "Enforced",
-     and "Audit".
-    :vartype access_mode: str or ~azure.mgmt.network.models.AssociationAccessMode
-    :ivar has_provisioning_issues: Specifies if there are provisioning issues.
-    :vartype has_provisioning_issues: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "has_provisioning_issues": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SecurityPerimeterSystemData"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "private_link_resource": {"key": "properties.privateLinkResource", "type": "SubResource"},
-        "profile": {"key": "properties.profile", "type": "SubResource"},
-        "access_mode": {"key": "properties.accessMode", "type": "str"},
-        "has_provisioning_issues": {"key": "properties.hasProvisioningIssues", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        private_link_resource: Optional["_models.SubResource"] = None,
-        profile: Optional["_models.SubResource"] = None,
-        access_mode: Optional[Union[str, "_models.AssociationAccessMode"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword private_link_resource: The PaaS resource to be associated.
-        :paramtype private_link_resource: ~azure.mgmt.network.models.SubResource
-        :keyword profile: Profile id to which the PaaS resource is associated.
-        :paramtype profile: ~azure.mgmt.network.models.SubResource
-        :keyword access_mode: Access mode on the association. Known values are: "Learning", "Enforced",
-         and "Audit".
-        :paramtype access_mode: str or ~azure.mgmt.network.models.AssociationAccessMode
-        """
-        super().__init__(**kwargs)
-        self.provisioning_state: Optional[Union[str, "_models.NspProvisioningState"]] = None
-        self.private_link_resource = private_link_resource
-        self.profile = profile
-        self.access_mode = access_mode
-        self.has_provisioning_issues: Optional[str] = None
-
-
-class NspAssociationsListResult(_serialization.Model):
-    """Result of the request to list NSP resource associations. Contains a list of NSP resource
-    associations and a URL link to get the next set of results.
-
-    :ivar value: Gets a page of NSP resource associations.
-    :vartype value: list[~azure.mgmt.network.models.NspAssociation]
-    :ivar next_link: Gets the URL to get the next page of results.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[NspAssociation]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.NspAssociation"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: Gets a page of NSP resource associations.
-        :paramtype value: list[~azure.mgmt.network.models.NspAssociation]
-        :keyword next_link: Gets the URL to get the next page of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class NspLink(SecurityPerimeterProxyResource):
-    """The network security perimeter link resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.network.models.SecurityPerimeterSystemData
-    :ivar provisioning_state: The provisioning state of the NSP Link resource. Known values are:
-     "Succeeded", "Creating", "Updating", "Deleting", "Accepted", "Failed", and
-     "WaitForRemoteCompletion".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.NspLinkProvisioningState
-    :ivar auto_approved_remote_perimeter_resource_id: Perimeter ARM Id for the remote NSP with
-     which the link gets created in Auto-approval mode. It should be used when the NSP admin have
-     Microsoft.Network/networkSecurityPerimeters/linkPerimeter/action permission on the remote NSP
-     resource.
-    :vartype auto_approved_remote_perimeter_resource_id: str
-    :ivar remote_perimeter_guid: Remote NSP Guid with which the link gets created.
-    :vartype remote_perimeter_guid: str
-    :ivar remote_perimeter_location: Remote NSP location with which the link gets created.
-    :vartype remote_perimeter_location: str
-    :ivar local_inbound_profiles: Local Inbound profile names to which Inbound is allowed. Use
-     ['*'] to allow inbound to all profiles.
-    :vartype local_inbound_profiles: list[str]
-    :ivar local_outbound_profiles: Local Outbound profile names from which Outbound is allowed. In
-     current version, it is readonly property and it's value is set to ['*'] to allow outbound from
-     all profiles. In later version, user will be able to modify it.
-    :vartype local_outbound_profiles: list[str]
-    :ivar remote_inbound_profiles: Remote Inbound profile names to which Inbound is allowed. Use
-     ['*'] to allow inbound to all profiles. This property can only be updated in auto-approval
-     mode.
-    :vartype remote_inbound_profiles: list[str]
-    :ivar remote_outbound_profiles: Remote Outbound profile names from which Outbound is allowed.
-     In current version, it is readonly property and it's value is set to ['*'] to allow outbound
-     from all profiles. In later version, user will be able to modify it.
-    :vartype remote_outbound_profiles: list[str]
-    :ivar description: A message passed to the owner of the remote NSP link resource with this
-     connection request. In case of Auto-approved flow, it is default to 'Auto Approved'. Restricted
-     to 140 chars.
-    :vartype description: str
-    :ivar status: The NSP link state. Known values are: "Approved", "Pending", "Rejected", and
-     "Disconnected".
-    :vartype status: str or ~azure.mgmt.network.models.NspLinkStatus
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "remote_perimeter_guid": {"readonly": True},
-        "remote_perimeter_location": {"readonly": True},
-        "local_inbound_profiles": {"unique": True},
-        "local_outbound_profiles": {"readonly": True, "unique": True},
-        "remote_inbound_profiles": {"unique": True},
-        "remote_outbound_profiles": {"readonly": True, "unique": True},
-        "status": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SecurityPerimeterSystemData"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "auto_approved_remote_perimeter_resource_id": {
-            "key": "properties.autoApprovedRemotePerimeterResourceId",
-            "type": "str",
-        },
-        "remote_perimeter_guid": {"key": "properties.remotePerimeterGuid", "type": "str"},
-        "remote_perimeter_location": {"key": "properties.remotePerimeterLocation", "type": "str"},
-        "local_inbound_profiles": {"key": "properties.localInboundProfiles", "type": "[str]"},
-        "local_outbound_profiles": {"key": "properties.localOutboundProfiles", "type": "[str]"},
-        "remote_inbound_profiles": {"key": "properties.remoteInboundProfiles", "type": "[str]"},
-        "remote_outbound_profiles": {"key": "properties.remoteOutboundProfiles", "type": "[str]"},
-        "description": {"key": "properties.description", "type": "str"},
-        "status": {"key": "properties.status", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        auto_approved_remote_perimeter_resource_id: Optional[str] = None,
-        local_inbound_profiles: Optional[List[str]] = None,
-        remote_inbound_profiles: Optional[List[str]] = None,
-        description: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword auto_approved_remote_perimeter_resource_id: Perimeter ARM Id for the remote NSP with
-         which the link gets created in Auto-approval mode. It should be used when the NSP admin have
-         Microsoft.Network/networkSecurityPerimeters/linkPerimeter/action permission on the remote NSP
-         resource.
-        :paramtype auto_approved_remote_perimeter_resource_id: str
-        :keyword local_inbound_profiles: Local Inbound profile names to which Inbound is allowed. Use
-         ['*'] to allow inbound to all profiles.
-        :paramtype local_inbound_profiles: list[str]
-        :keyword remote_inbound_profiles: Remote Inbound profile names to which Inbound is allowed. Use
-         ['*'] to allow inbound to all profiles. This property can only be updated in auto-approval
-         mode.
-        :paramtype remote_inbound_profiles: list[str]
-        :keyword description: A message passed to the owner of the remote NSP link resource with this
-         connection request. In case of Auto-approved flow, it is default to 'Auto Approved'. Restricted
-         to 140 chars.
-        :paramtype description: str
-        """
-        super().__init__(**kwargs)
-        self.provisioning_state: Optional[Union[str, "_models.NspLinkProvisioningState"]] = None
-        self.auto_approved_remote_perimeter_resource_id = auto_approved_remote_perimeter_resource_id
-        self.remote_perimeter_guid: Optional[str] = None
-        self.remote_perimeter_location: Optional[str] = None
-        self.local_inbound_profiles = local_inbound_profiles
-        self.local_outbound_profiles: Optional[List[str]] = None
-        self.remote_inbound_profiles = remote_inbound_profiles
-        self.remote_outbound_profiles: Optional[List[str]] = None
-        self.description = description
-        self.status: Optional[Union[str, "_models.NspLinkStatus"]] = None
-
-
-class NspLinkListResult(_serialization.Model):
-    """Result of the request to list NSP link resources. Contains a list of NSP link resources and a
-    URL link to get the next set of results.
-
-    :ivar value: Gets a page of NSP Link resources.
-    :vartype value: list[~azure.mgmt.network.models.NspLink]
-    :ivar next_link: Gets the URL to get the next page of results.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[NspLink]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.NspLink"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: Gets a page of NSP Link resources.
-        :paramtype value: list[~azure.mgmt.network.models.NspLink]
-        :keyword next_link: Gets the URL to get the next page of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class NspLinkReference(SecurityPerimeterProxyResource):
-    """The network security perimeter linkReference resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.network.models.SecurityPerimeterSystemData
-    :ivar provisioning_state: The provisioning state of the NSP LinkReference resource. Known
-     values are: "Succeeded", "Creating", "Updating", "Deleting", "Accepted", "Failed", and
-     "WaitForRemoteCompletion".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.NspLinkProvisioningState
-    :ivar remote_perimeter_resource_id: Perimeter ARM Id for the remote NSP with which the link is
-     created.
-    :vartype remote_perimeter_resource_id: str
-    :ivar remote_perimeter_guid: Remote NSP Guid with which the link is created.
-    :vartype remote_perimeter_guid: str
-    :ivar remote_perimeter_location: Remote NSP location with which the link gets created.
-    :vartype remote_perimeter_location: str
-    :ivar local_inbound_profiles: Local Inbound profile names to which Inbound is allowed. Use
-     ['*'] to allow inbound to all profiles.
-    :vartype local_inbound_profiles: list[str]
-    :ivar local_outbound_profiles: Local Outbound profile names from which Outbound is allowed. In
-     current version, it is readonly property and it's value is set to ['*'] to allow outbound from
-     all profiles. In later version, user will be able to modify it.
-    :vartype local_outbound_profiles: list[str]
-    :ivar remote_inbound_profiles: Remote Inbound profile names to which Inbound is allowed. ['*']
-     value implies inbound is allowed to all profiles at remote perimeter. This property can only be
-     updated from corresponding link resource present in remote perimeter.
-    :vartype remote_inbound_profiles: list[str]
-    :ivar remote_outbound_profiles: Remote Outbound profile names from which Outbound is allowed.
-     ['*'] value implies outbound is allowed from all profiles at remote perimeter. This property
-     can only be updated from corresponding link resource present in remote perimeter.
-    :vartype remote_outbound_profiles: list[str]
-    :ivar description: A message sent by the remote NSP link admin for connection request. In case
-     of Auto-approved flow, it is default to 'Auto Approved'.
-    :vartype description: str
-    :ivar status: The NSP linkReference state. It cannot be changed if link is created in
-     auto-approval mode. Known values are: "Approved", "Pending", "Rejected", and "Disconnected".
-    :vartype status: str or ~azure.mgmt.network.models.NspLinkStatus
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "remote_perimeter_resource_id": {"readonly": True},
-        "remote_perimeter_guid": {"readonly": True},
-        "remote_perimeter_location": {"readonly": True},
-        "local_inbound_profiles": {"unique": True},
-        "local_outbound_profiles": {"readonly": True, "unique": True},
-        "remote_inbound_profiles": {"readonly": True},
-        "remote_outbound_profiles": {"readonly": True},
-        "description": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SecurityPerimeterSystemData"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "remote_perimeter_resource_id": {"key": "properties.remotePerimeterResourceId", "type": "str"},
-        "remote_perimeter_guid": {"key": "properties.remotePerimeterGuid", "type": "str"},
-        "remote_perimeter_location": {"key": "properties.remotePerimeterLocation", "type": "str"},
-        "local_inbound_profiles": {"key": "properties.localInboundProfiles", "type": "[str]"},
-        "local_outbound_profiles": {"key": "properties.localOutboundProfiles", "type": "[str]"},
-        "remote_inbound_profiles": {"key": "properties.remoteInboundProfiles", "type": "[str]"},
-        "remote_outbound_profiles": {"key": "properties.remoteOutboundProfiles", "type": "[str]"},
-        "description": {"key": "properties.description", "type": "str"},
-        "status": {"key": "properties.status", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        local_inbound_profiles: Optional[List[str]] = None,
-        status: Optional[Union[str, "_models.NspLinkStatus"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword local_inbound_profiles: Local Inbound profile names to which Inbound is allowed. Use
-         ['*'] to allow inbound to all profiles.
-        :paramtype local_inbound_profiles: list[str]
-        :keyword status: The NSP linkReference state. It cannot be changed if link is created in
-         auto-approval mode. Known values are: "Approved", "Pending", "Rejected", and "Disconnected".
-        :paramtype status: str or ~azure.mgmt.network.models.NspLinkStatus
-        """
-        super().__init__(**kwargs)
-        self.provisioning_state: Optional[Union[str, "_models.NspLinkProvisioningState"]] = None
-        self.remote_perimeter_resource_id: Optional[str] = None
-        self.remote_perimeter_guid: Optional[str] = None
-        self.remote_perimeter_location: Optional[str] = None
-        self.local_inbound_profiles = local_inbound_profiles
-        self.local_outbound_profiles: Optional[List[str]] = None
-        self.remote_inbound_profiles: Optional[List[str]] = None
-        self.remote_outbound_profiles: Optional[List[str]] = None
-        self.description: Optional[str] = None
-        self.status = status
-
-
-class NspLinkReferenceListResult(_serialization.Model):
-    """Result of the request to list NSP linkReference resources. Contains a list of NSP linkReference
-    resources and a URL link to get the next set of results.
-
-    :ivar value: Gets a page of NSP LinkReference resources.
-    :vartype value: list[~azure.mgmt.network.models.NspLinkReference]
-    :ivar next_link: Gets the URL to get the next page of results.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[NspLinkReference]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.NspLinkReference"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: Gets a page of NSP LinkReference resources.
-        :paramtype value: list[~azure.mgmt.network.models.NspLinkReference]
-        :keyword next_link: Gets the URL to get the next page of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class NspLoggingConfiguration(SecurityPerimeterProxyResource):
-    """The NSP logging configuration.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.network.models.SecurityPerimeterSystemData
-    :ivar enabled_log_categories: The log categories to enable in the NSP logging configuration.
-    :vartype enabled_log_categories: list[str]
-    :ivar version: The version of the NSP logging configuration.
-    :vartype version: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SecurityPerimeterSystemData"},
-        "enabled_log_categories": {"key": "properties.enabledLogCategories", "type": "[str]"},
-        "version": {"key": "properties.version", "type": "str"},
-    }
-
-    def __init__(
-        self, *, enabled_log_categories: Optional[List[str]] = None, version: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword enabled_log_categories: The log categories to enable in the NSP logging configuration.
-        :paramtype enabled_log_categories: list[str]
-        :keyword version: The version of the NSP logging configuration.
-        :paramtype version: str
-        """
-        super().__init__(**kwargs)
-        self.enabled_log_categories = enabled_log_categories
-        self.version = version
-
-
-class NspLoggingConfigurationListResult(_serialization.Model):
-    """Result of the request to list NSP logging configuration. Contains a list of NSP logging
-    configurations and a URL link to get the next set of results.
-
-    :ivar value: Gets a page of NSP logging configuration.
-    :vartype value: list[~azure.mgmt.network.models.NspLoggingConfiguration]
-    :ivar next_link: Gets the URL to get the next page of results.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[NspLoggingConfiguration]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.NspLoggingConfiguration"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: Gets a page of NSP logging configuration.
-        :paramtype value: list[~azure.mgmt.network.models.NspLoggingConfiguration]
-        :keyword next_link: Gets the URL to get the next page of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class NspProfile(SecurityPerimeterProxyResource):
-    """The network security perimeter profile resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.network.models.SecurityPerimeterSystemData
-    :ivar access_rules_version: Version number that increases with every update to access rules
-     within the profile.
-    :vartype access_rules_version: str
-    :ivar diagnostic_settings_version: Version number that increases with every update to
-     diagnostic settings within the profile.
-    :vartype diagnostic_settings_version: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "access_rules_version": {"readonly": True},
-        "diagnostic_settings_version": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SecurityPerimeterSystemData"},
-        "access_rules_version": {"key": "properties.accessRulesVersion", "type": "str"},
-        "diagnostic_settings_version": {"key": "properties.diagnosticSettingsVersion", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.access_rules_version: Optional[str] = None
-        self.diagnostic_settings_version: Optional[str] = None
-
-
-class NspProfileListResult(_serialization.Model):
-    """Result of the request to list NSP profiles. Contains a list of NSP profiles and a URL link to
-    get the next set of results.
-
-    :ivar value: Gets a page of NSP profile.
-    :vartype value: list[~azure.mgmt.network.models.NspProfile]
-    :ivar next_link: Gets the URL to get the next page of results.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[NspProfile]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.NspProfile"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: Gets a page of NSP profile.
-        :paramtype value: list[~azure.mgmt.network.models.NspProfile]
-        :keyword next_link: Gets the URL to get the next page of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
 
 
 class O365BreakOutCategoryPolicies(_serialization.Model):
@@ -28783,95 +25638,6 @@ class OperationPropertiesFormatServiceSpecification(_serialization.Model):  # py
         self.log_specifications = log_specifications
 
 
-class OperationStatusResult(_serialization.Model):
-    """The current status of an async operation.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Fully qualified ID for the async operation.
-    :vartype id: str
-    :ivar resource_id: Fully qualified ID of the resource against which the original async
-     operation was started.
-    :vartype resource_id: str
-    :ivar name: Name of the async operation.
-    :vartype name: str
-    :ivar status: Operation status. Required.
-    :vartype status: str
-    :ivar percent_complete: Percent of the operation that is complete.
-    :vartype percent_complete: float
-    :ivar start_time: The start time of the operation.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: The end time of the operation.
-    :vartype end_time: ~datetime.datetime
-    :ivar operations: The operations list.
-    :vartype operations: list[~azure.mgmt.network.models.OperationStatusResult]
-    :ivar error: If present, details of the operation error.
-    :vartype error: ~azure.mgmt.network.models.ErrorDetail
-    """
-
-    _validation = {
-        "resource_id": {"readonly": True},
-        "status": {"required": True},
-        "percent_complete": {"maximum": 100, "minimum": 0},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "resource_id": {"key": "resourceId", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "status": {"key": "status", "type": "str"},
-        "percent_complete": {"key": "percentComplete", "type": "float"},
-        "start_time": {"key": "startTime", "type": "iso-8601"},
-        "end_time": {"key": "endTime", "type": "iso-8601"},
-        "operations": {"key": "operations", "type": "[OperationStatusResult]"},
-        "error": {"key": "error", "type": "ErrorDetail"},
-    }
-
-    def __init__(
-        self,
-        *,
-        status: str,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        name: Optional[str] = None,
-        percent_complete: Optional[float] = None,
-        start_time: Optional[datetime.datetime] = None,
-        end_time: Optional[datetime.datetime] = None,
-        operations: Optional[List["_models.OperationStatusResult"]] = None,
-        error: Optional["_models.ErrorDetail"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword id: Fully qualified ID for the async operation.
-        :paramtype id: str
-        :keyword name: Name of the async operation.
-        :paramtype name: str
-        :keyword status: Operation status. Required.
-        :paramtype status: str
-        :keyword percent_complete: Percent of the operation that is complete.
-        :paramtype percent_complete: float
-        :keyword start_time: The start time of the operation.
-        :paramtype start_time: ~datetime.datetime
-        :keyword end_time: The end time of the operation.
-        :paramtype end_time: ~datetime.datetime
-        :keyword operations: The operations list.
-        :paramtype operations: list[~azure.mgmt.network.models.OperationStatusResult]
-        :keyword error: If present, details of the operation error.
-        :paramtype error: ~azure.mgmt.network.models.ErrorDetail
-        """
-        super().__init__(**kwargs)
-        self.id = id
-        self.resource_id: Optional[str] = None
-        self.name = name
-        self.status = status
-        self.percent_complete = percent_complete
-        self.start_time = start_time
-        self.end_time = end_time
-        self.operations = operations
-        self.error = error
-
-
 class OrderBy(_serialization.Model):
     """Describes a column to sort.
 
@@ -28928,7 +25694,7 @@ class OutboundRule(SubResource):
      balanced across IPs in the backend IPs.
     :vartype backend_address_pool: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the outbound rule resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar protocol: The protocol for the outbound rule in load balancer. Known values are: "Tcp",
      "Udp", and "All".
@@ -29109,12 +25875,13 @@ class P2SConnectionConfiguration(SubResource):
     :vartype previous_configuration_policy_group_associations:
      list[~azure.mgmt.network.models.VpnServerConfigurationPolicyGroup]
     :ivar provisioning_state: The provisioning state of the P2SConnectionConfiguration resource.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
     _validation = {
         "etag": {"readonly": True},
+        "configuration_policy_group_associations": {"readonly": True},
         "previous_configuration_policy_group_associations": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
@@ -29145,7 +25912,6 @@ class P2SConnectionConfiguration(SubResource):
         vpn_client_address_pool: Optional["_models.AddressSpace"] = None,
         routing_configuration: Optional["_models.RoutingConfiguration"] = None,
         enable_internet_security: Optional[bool] = None,
-        configuration_policy_group_associations: Optional[List["_models.SubResource"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -29163,10 +25929,6 @@ class P2SConnectionConfiguration(SubResource):
         :keyword enable_internet_security: Flag indicating whether the enable internet security flag is
          turned on for the P2S Connections or not.
         :paramtype enable_internet_security: bool
-        :keyword configuration_policy_group_associations: List of Configuration Policy Groups that this
-         P2SConnectionConfiguration is attached to.
-        :paramtype configuration_policy_group_associations:
-         list[~azure.mgmt.network.models.SubResource]
         """
         super().__init__(id=id, **kwargs)
         self.name = name
@@ -29174,7 +25936,7 @@ class P2SConnectionConfiguration(SubResource):
         self.vpn_client_address_pool = vpn_client_address_pool
         self.routing_configuration = routing_configuration
         self.enable_internet_security = enable_internet_security
-        self.configuration_policy_group_associations = configuration_policy_group_associations
+        self.configuration_policy_group_associations: Optional[List["_models.SubResource"]] = None
         self.previous_configuration_policy_group_associations: Optional[
             List["_models.VpnServerConfigurationPolicyGroup"]
         ] = None
@@ -29280,7 +26042,7 @@ class P2SVpnGateway(Resource):
     :vartype p2_s_connection_configurations:
      list[~azure.mgmt.network.models.P2SConnectionConfiguration]
     :ivar provisioning_state: The provisioning state of the P2S VPN gateway resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar vpn_gateway_scale_unit: The scale unit for this p2s vpn gateway.
     :vartype vpn_gateway_scale_unit: int
@@ -29856,7 +26618,7 @@ class PacketCaptureResult(_serialization.Model):
      'SessionTimeLimitInSeconds' values.
     :vartype capture_settings: ~azure.mgmt.network.models.PacketCaptureSettings
     :ivar provisioning_state: The provisioning state of the packet capture session. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -29985,7 +26747,7 @@ class PacketCaptureResultProperties(PacketCaptureParameters):
      'SessionTimeLimitInSeconds' values.
     :vartype capture_settings: ~azure.mgmt.network.models.PacketCaptureSettings
     :ivar provisioning_state: The provisioning state of the packet capture session. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -30299,7 +27061,7 @@ class PatchRouteFilter(SubResource):
     :ivar ipv6_peerings: A collection of references to express route circuit ipv6 peerings.
     :vartype ipv6_peerings: list[~azure.mgmt.network.models.ExpressRouteCircuitPeering]
     :ivar provisioning_state: The provisioning state of the route filter resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -30371,7 +27133,7 @@ class PatchRouteFilterRule(SubResource):
      ['12076:5010','12076:5020'].
     :vartype communities: list[str]
     :ivar provisioning_state: The provisioning state of the route filter rule resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -30451,8 +27213,7 @@ class PeerExpressRouteCircuitConnection(SubResource):
      circuit connection.
     :vartype auth_resource_guid: str
     :ivar provisioning_state: The provisioning state of the peer express route circuit connection
-     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
-     "Deleting".
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -30613,124 +27374,6 @@ class PeerRoute(_serialization.Model):
         self.weight: Optional[int] = None
 
 
-class PerimeterAssociableResource(_serialization.Model):
-    """Resource that is onboarded to use network security perimeter. Also referred as perimeter
-    associable resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar name: The name of the resource that is unique within a resource group. This name can be
-     used to access the resource.
-    :vartype name: str
-    :ivar id: Identifier of the perimeter associable resource.
-    :vartype id: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar display_name: A friendly name for the properties of perimeter associable resources.
-    :vartype display_name: str
-    :ivar resource_type: Resource type/provider name.
-    :vartype resource_type: str
-    :ivar public_dns_zones: Public DNS zone names of the resources.
-    :vartype public_dns_zones: list[str]
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "type": {"readonly": True},
-        "display_name": {"readonly": True},
-        "resource_type": {"readonly": True},
-        "public_dns_zones": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "id": {"key": "id", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "display_name": {"key": "properties.displayName", "type": "str"},
-        "resource_type": {"key": "properties.resourceType", "type": "str"},
-        "public_dns_zones": {"key": "properties.publicDnsZones", "type": "[str]"},
-    }
-
-    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword name: The name of the resource that is unique within a resource group. This name can
-         be used to access the resource.
-        :paramtype name: str
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.id: Optional[str] = None
-        self.type: Optional[str] = None
-        self.display_name: Optional[str] = None
-        self.resource_type: Optional[str] = None
-        self.public_dns_zones: Optional[List[str]] = None
-
-
-class PerimeterAssociableResourcesListResult(_serialization.Model):
-    """Paged list of perimeter associable resources.
-
-    :ivar value: Gets paged list of perimeter associable resources.
-    :vartype value: list[~azure.mgmt.network.models.PerimeterAssociableResource]
-    :ivar next_link: Gets the URL to get the next page of results.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[PerimeterAssociableResource]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.PerimeterAssociableResource"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: Gets paged list of perimeter associable resources.
-        :paramtype value: list[~azure.mgmt.network.models.PerimeterAssociableResource]
-        :keyword next_link: Gets the URL to get the next page of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class PerimeterBasedAccessRule(_serialization.Model):
-    """PerimeterBasedAccessRule.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: NSP id in the ARM id format.
-    :vartype id: str
-    :ivar perimeter_guid: Resource guid of the NSP supplied.
-    :vartype perimeter_guid: str
-    :ivar location: Location of the NSP supplied.
-    :vartype location: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "perimeter_guid": {"readonly": True},
-        "location": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "perimeter_guid": {"key": "perimeterGuid", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.perimeter_guid: Optional[str] = None
-        self.location: Optional[str] = None
-
-
 class PolicySettings(_serialization.Model):
     """Defines contents of a web application firewall global configuration.
 
@@ -30887,173 +27530,6 @@ class PolicySettingsLogScrubbing(_serialization.Model):
         self.scrubbing_rules = scrubbing_rules
 
 
-class PoolAssociation(_serialization.Model):
-    """IpamPool association information.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar resource_id: Resource id of the associated Azure resource. Required.
-    :vartype resource_id: str
-    :ivar pool_id: IpamPool id for which the resource is associated to.
-    :vartype pool_id: str
-    :ivar description:
-    :vartype description: str
-    :ivar address_prefixes: List of assigned IP address prefixes in the IpamPool of the associated
-     resource.
-    :vartype address_prefixes: list[str]
-    :ivar reserved_prefixes: List of reserved IP address prefixes in the IpamPool of the associated
-     resource.
-    :vartype reserved_prefixes: list[str]
-    :ivar total_number_of_ip_addresses: Total number of assigned IP addresses of the association.
-    :vartype total_number_of_ip_addresses: str
-    :ivar number_of_reserved_ip_addresses: Total number of reserved IP addresses of the
-     association.
-    :vartype number_of_reserved_ip_addresses: str
-    :ivar created_at: Creation time of the association.
-    :vartype created_at: ~datetime.datetime
-    :ivar reservation_expires_at: Expire time for IP addresses reserved.
-    :vartype reservation_expires_at: ~datetime.datetime
-    """
-
-    _validation = {
-        "resource_id": {"required": True},
-        "address_prefixes": {"readonly": True},
-        "reserved_prefixes": {"readonly": True},
-        "total_number_of_ip_addresses": {"readonly": True},
-        "number_of_reserved_ip_addresses": {"readonly": True},
-        "created_at": {"readonly": True},
-        "reservation_expires_at": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "resource_id": {"key": "resourceId", "type": "str"},
-        "pool_id": {"key": "poolId", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "address_prefixes": {"key": "addressPrefixes", "type": "[str]"},
-        "reserved_prefixes": {"key": "reservedPrefixes", "type": "[str]"},
-        "total_number_of_ip_addresses": {"key": "totalNumberOfIPAddresses", "type": "str"},
-        "number_of_reserved_ip_addresses": {"key": "numberOfReservedIPAddresses", "type": "str"},
-        "created_at": {"key": "createdAt", "type": "iso-8601"},
-        "reservation_expires_at": {"key": "reservationExpiresAt", "type": "iso-8601"},
-    }
-
-    def __init__(
-        self, *, resource_id: str, pool_id: Optional[str] = None, description: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword resource_id: Resource id of the associated Azure resource. Required.
-        :paramtype resource_id: str
-        :keyword pool_id: IpamPool id for which the resource is associated to.
-        :paramtype pool_id: str
-        :keyword description:
-        :paramtype description: str
-        """
-        super().__init__(**kwargs)
-        self.resource_id = resource_id
-        self.pool_id = pool_id
-        self.description = description
-        self.address_prefixes: Optional[List[str]] = None
-        self.reserved_prefixes: Optional[List[str]] = None
-        self.total_number_of_ip_addresses: Optional[str] = None
-        self.number_of_reserved_ip_addresses: Optional[str] = None
-        self.created_at: Optional[datetime.datetime] = None
-        self.reservation_expires_at: Optional[datetime.datetime] = None
-
-
-class PoolAssociationList(_serialization.Model):
-    """List of PoolAssociation.
-
-    :ivar value:
-    :vartype value: list[~azure.mgmt.network.models.PoolAssociation]
-    :ivar next_link: The link used to get the next page of operations.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[PoolAssociation]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.PoolAssociation"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value:
-        :paramtype value: list[~azure.mgmt.network.models.PoolAssociation]
-        :keyword next_link: The link used to get the next page of operations.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class PoolUsage(_serialization.Model):
-    """IpamPool usage information.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar address_prefixes: List of IP address prefixes of the resource.
-    :vartype address_prefixes: list[str]
-    :ivar child_pools: List of IpamPool that are children of this IpamPool.
-    :vartype child_pools: list[~azure.mgmt.network.models.ResourceBasics]
-    :ivar allocated_address_prefixes: List of assigned IP address prefixes.
-    :vartype allocated_address_prefixes: list[str]
-    :ivar reserved_address_prefixes: List of reserved IP address prefixes. These IP addresses could
-     be reclaimed if not assigned in the given time.
-    :vartype reserved_address_prefixes: list[str]
-    :ivar available_address_prefixes: List of available IP address prefixes.
-    :vartype available_address_prefixes: list[str]
-    :ivar total_number_of_ip_addresses: Total number of IP addresses managed in the IpamPool.
-    :vartype total_number_of_ip_addresses: str
-    :ivar number_of_allocated_ip_addresses: Total number of assigned IP addresses in the IpamPool.
-    :vartype number_of_allocated_ip_addresses: str
-    :ivar number_of_reserved_ip_addresses: Total number of reserved IP addresses in the IpamPool.
-    :vartype number_of_reserved_ip_addresses: str
-    :ivar number_of_available_ip_addresses: Total number of available IP addresses in the IpamPool.
-    :vartype number_of_available_ip_addresses: str
-    """
-
-    _validation = {
-        "address_prefixes": {"readonly": True},
-        "child_pools": {"readonly": True},
-        "allocated_address_prefixes": {"readonly": True},
-        "reserved_address_prefixes": {"readonly": True},
-        "available_address_prefixes": {"readonly": True},
-        "total_number_of_ip_addresses": {"readonly": True},
-        "number_of_allocated_ip_addresses": {"readonly": True},
-        "number_of_reserved_ip_addresses": {"readonly": True},
-        "number_of_available_ip_addresses": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "address_prefixes": {"key": "addressPrefixes", "type": "[str]"},
-        "child_pools": {"key": "childPools", "type": "[ResourceBasics]"},
-        "allocated_address_prefixes": {"key": "allocatedAddressPrefixes", "type": "[str]"},
-        "reserved_address_prefixes": {"key": "reservedAddressPrefixes", "type": "[str]"},
-        "available_address_prefixes": {"key": "availableAddressPrefixes", "type": "[str]"},
-        "total_number_of_ip_addresses": {"key": "totalNumberOfIPAddresses", "type": "str"},
-        "number_of_allocated_ip_addresses": {"key": "numberOfAllocatedIPAddresses", "type": "str"},
-        "number_of_reserved_ip_addresses": {"key": "numberOfReservedIPAddresses", "type": "str"},
-        "number_of_available_ip_addresses": {"key": "numberOfAvailableIPAddresses", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.address_prefixes: Optional[List[str]] = None
-        self.child_pools: Optional[List["_models.ResourceBasics"]] = None
-        self.allocated_address_prefixes: Optional[List[str]] = None
-        self.reserved_address_prefixes: Optional[List[str]] = None
-        self.available_address_prefixes: Optional[List[str]] = None
-        self.total_number_of_ip_addresses: Optional[str] = None
-        self.number_of_allocated_ip_addresses: Optional[str] = None
-        self.number_of_reserved_ip_addresses: Optional[str] = None
-        self.number_of_available_ip_addresses: Optional[str] = None
-
-
 class PrepareNetworkPoliciesRequest(_serialization.Model):
     """Details of PrepareNetworkPolicies for Subnet.
 
@@ -31143,7 +27619,7 @@ class PrivateDnsZoneGroup(SubResource):
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar provisioning_state: The provisioning state of the private dns zone group resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_dns_zone_configs: A collection of private dns zone configurations of the private
      dns zone group.
@@ -31243,7 +27719,7 @@ class PrivateEndpoint(Resource):
      private endpoint.
     :vartype network_interfaces: list[~azure.mgmt.network.models.NetworkInterface]
     :ivar provisioning_state: The provisioning state of the private endpoint resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_link_service_connections: A grouping of information about the connection to the
      remote resource.
@@ -31387,7 +27863,7 @@ class PrivateEndpointConnection(SubResource):
     :vartype private_link_service_connection_state:
      ~azure.mgmt.network.models.PrivateLinkServiceConnectionState
     :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar link_identifier: The consumer link id.
     :vartype link_identifier: str
@@ -31600,13 +28076,11 @@ class PrivateLinkService(Resource):
      list[~azure.mgmt.network.models.FrontendIPConfiguration]
     :ivar ip_configurations: An array of private link service IP configurations.
     :vartype ip_configurations: list[~azure.mgmt.network.models.PrivateLinkServiceIpConfiguration]
-    :ivar destination_ip_address: The destination IP address of the private link service.
-    :vartype destination_ip_address: str
     :ivar network_interfaces: An array of references to the network interfaces created for this
      private link service.
     :vartype network_interfaces: list[~azure.mgmt.network.models.NetworkInterface]
     :ivar provisioning_state: The provisioning state of the private link service resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_endpoint_connections: An array of list about connections to the private endpoint.
     :vartype private_endpoint_connections:
@@ -31647,7 +28121,6 @@ class PrivateLinkService(Resource):
             "type": "[FrontendIPConfiguration]",
         },
         "ip_configurations": {"key": "properties.ipConfigurations", "type": "[PrivateLinkServiceIpConfiguration]"},
-        "destination_ip_address": {"key": "properties.destinationIPAddress", "type": "str"},
         "network_interfaces": {"key": "properties.networkInterfaces", "type": "[NetworkInterface]"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "private_endpoint_connections": {
@@ -31670,7 +28143,6 @@ class PrivateLinkService(Resource):
         extended_location: Optional["_models.ExtendedLocation"] = None,
         load_balancer_frontend_ip_configurations: Optional[List["_models.FrontendIPConfiguration"]] = None,
         ip_configurations: Optional[List["_models.PrivateLinkServiceIpConfiguration"]] = None,
-        destination_ip_address: Optional[str] = None,
         visibility: Optional["_models.PrivateLinkServicePropertiesVisibility"] = None,
         auto_approval: Optional["_models.PrivateLinkServicePropertiesAutoApproval"] = None,
         fqdns: Optional[List[str]] = None,
@@ -31693,8 +28165,6 @@ class PrivateLinkService(Resource):
         :keyword ip_configurations: An array of private link service IP configurations.
         :paramtype ip_configurations:
          list[~azure.mgmt.network.models.PrivateLinkServiceIpConfiguration]
-        :keyword destination_ip_address: The destination IP address of the private link service.
-        :paramtype destination_ip_address: str
         :keyword visibility: The visibility list of the private link service.
         :paramtype visibility: ~azure.mgmt.network.models.PrivateLinkServicePropertiesVisibility
         :keyword auto_approval: The auto-approval list of the private link service.
@@ -31710,7 +28180,6 @@ class PrivateLinkService(Resource):
         self.etag: Optional[str] = None
         self.load_balancer_frontend_ip_configurations = load_balancer_frontend_ip_configurations
         self.ip_configurations = ip_configurations
-        self.destination_ip_address = destination_ip_address
         self.network_interfaces: Optional[List["_models.NetworkInterface"]] = None
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = None
@@ -31736,8 +28205,7 @@ class PrivateLinkServiceConnection(SubResource):
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar provisioning_state: The provisioning state of the private link service connection
-     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
-     "Deleting".
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_link_service_id: The resource id of private link service.
     :vartype private_link_service_id: str
@@ -31882,8 +28350,7 @@ class PrivateLinkServiceIpConfiguration(SubResource):
     :ivar primary: Whether the ip configuration is primary or not.
     :vartype primary: bool
     :ivar provisioning_state: The provisioning state of the private link service IP configuration
-     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
-     "Deleting".
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_ip_address_version: Whether the specific IP configuration is IPv4 or IPv6.
      Default is IPv4. Known values are: "IPv4" and "IPv6".
@@ -32066,11 +28533,6 @@ class Probe(SubResource):
      period (in seconds) which allows two full probes before taking the instance out of rotation.
      The default value is 15, the minimum value is 5.
     :vartype interval_in_seconds: int
-    :ivar no_healthy_backends_behavior: Determines how new connections are handled by the load
-     balancer when all backend instances are probed down. Known values are: "AllProbedDown" and
-     "AllProbedUp".
-    :vartype no_healthy_backends_behavior: str or
-     ~azure.mgmt.network.models.ProbeNoHealthyBackendsBehavior
     :ivar number_of_probes: The number of probes where if no response, will result in stopping
      further traffic from being delivered to the endpoint. This values allows endpoints to be taken
      out of rotation faster or slower than the typical times used in Azure.
@@ -32084,7 +28546,7 @@ class Probe(SubResource):
      a protocol is set to http. Otherwise, it is not allowed. There is no default value.
     :vartype request_path: str
     :ivar provisioning_state: The provisioning state of the probe resource. Known values are:
-     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -32104,7 +28566,6 @@ class Probe(SubResource):
         "protocol": {"key": "properties.protocol", "type": "str"},
         "port": {"key": "properties.port", "type": "int"},
         "interval_in_seconds": {"key": "properties.intervalInSeconds", "type": "int"},
-        "no_healthy_backends_behavior": {"key": "properties.noHealthyBackendsBehavior", "type": "str"},
         "number_of_probes": {"key": "properties.numberOfProbes", "type": "int"},
         "probe_threshold": {"key": "properties.probeThreshold", "type": "int"},
         "request_path": {"key": "properties.requestPath", "type": "str"},
@@ -32119,7 +28580,6 @@ class Probe(SubResource):
         protocol: Optional[Union[str, "_models.ProbeProtocol"]] = None,
         port: Optional[int] = None,
         interval_in_seconds: Optional[int] = None,
-        no_healthy_backends_behavior: Optional[Union[str, "_models.ProbeNoHealthyBackendsBehavior"]] = None,
         number_of_probes: Optional[int] = None,
         probe_threshold: Optional[int] = None,
         request_path: Optional[str] = None,
@@ -32144,11 +28604,6 @@ class Probe(SubResource):
          timeout period (in seconds) which allows two full probes before taking the instance out of
          rotation. The default value is 15, the minimum value is 5.
         :paramtype interval_in_seconds: int
-        :keyword no_healthy_backends_behavior: Determines how new connections are handled by the load
-         balancer when all backend instances are probed down. Known values are: "AllProbedDown" and
-         "AllProbedUp".
-        :paramtype no_healthy_backends_behavior: str or
-         ~azure.mgmt.network.models.ProbeNoHealthyBackendsBehavior
         :keyword number_of_probes: The number of probes where if no response, will result in stopping
          further traffic from being delivered to the endpoint. This values allows endpoints to be taken
          out of rotation faster or slower than the typical times used in Azure.
@@ -32170,7 +28625,6 @@ class Probe(SubResource):
         self.protocol = protocol
         self.port = port
         self.interval_in_seconds = interval_in_seconds
-        self.no_healthy_backends_behavior = no_healthy_backends_behavior
         self.number_of_probes = number_of_probes
         self.probe_threshold = probe_threshold
         self.request_path = request_path
@@ -32225,44 +28679,6 @@ class ProtocolConfiguration(_serialization.Model):
         self.http_configuration = http_configuration
 
 
-class ProxyResource(_serialization.Model):
-    """Proxy resource representation.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar etag: A unique read-only string that changes whenever the resource is updated.
-    :vartype etag: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "etag": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "etag": {"key": "etag", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.name: Optional[str] = None
-        self.type: Optional[str] = None
-        self.etag: Optional[str] = None
-
-
 class PublicIPAddress(Resource):
     """Public IP address resource.
 
@@ -32310,7 +28726,7 @@ class PublicIPAddress(Resource):
     :ivar resource_guid: The resource GUID property of the public IP address resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the public IP address resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar service_public_ip_address: The service public IP address of the public IP address
      resource.
@@ -32557,8 +28973,7 @@ class PublicIPAddressListResult(_serialization.Model):
 class PublicIPAddressSku(_serialization.Model):
     """SKU of a public IP address.
 
-    :ivar name: Name of a public IP address SKU. Known values are: "Basic", "Standard", and
-     "StandardV2".
+    :ivar name: Name of a public IP address SKU. Known values are: "Basic" and "Standard".
     :vartype name: str or ~azure.mgmt.network.models.PublicIPAddressSkuName
     :ivar tier: Tier of a public IP address SKU. Known values are: "Regional", "Global", and
      "Global".
@@ -32578,8 +28993,7 @@ class PublicIPAddressSku(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword name: Name of a public IP address SKU. Known values are: "Basic", "Standard", and
-         "StandardV2".
+        :keyword name: Name of a public IP address SKU. Known values are: "Basic" and "Standard".
         :paramtype name: str or ~azure.mgmt.network.models.PublicIPAddressSkuName
         :keyword tier: Tier of a public IP address SKU. Known values are: "Regional", "Global", and
          "Global".
@@ -32683,7 +29097,7 @@ class PublicIPPrefix(Resource):
     :ivar resource_guid: The resource GUID property of the public IP prefix resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the public IP prefix resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar nat_gateway: NatGateway of Public IP Prefix.
     :vartype nat_gateway: ~azure.mgmt.network.models.NatGateway
@@ -32815,7 +29229,7 @@ class PublicIPPrefixListResult(_serialization.Model):
 class PublicIPPrefixSku(_serialization.Model):
     """SKU of a public IP prefix.
 
-    :ivar name: Name of a public IP prefix SKU. Known values are: "Standard" and "StandardV2".
+    :ivar name: Name of a public IP prefix SKU. "Standard"
     :vartype name: str or ~azure.mgmt.network.models.PublicIPPrefixSkuName
     :ivar tier: Tier of a public IP prefix SKU. Known values are: "Regional", "Global", and
      "Global".
@@ -32835,7 +29249,7 @@ class PublicIPPrefixSku(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword name: Name of a public IP prefix SKU. Known values are: "Standard" and "StandardV2".
+        :keyword name: Name of a public IP prefix SKU. "Standard"
         :paramtype name: str or ~azure.mgmt.network.models.PublicIPPrefixSkuName
         :keyword tier: Tier of a public IP prefix SKU. Known values are: "Regional", "Global", and
          "Global".
@@ -33121,293 +29535,6 @@ class RadiusServer(_serialization.Model):
         self.radius_server_secret = radius_server_secret
 
 
-class ReachabilityAnalysisIntent(CommonProxyResource):
-    """Configuration information or intent on which to do the analysis on.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.network.models.SystemData
-    :ivar properties: Represents the Reachability Analysis Intent properties. Required.
-    :vartype properties: ~azure.mgmt.network.models.ReachabilityAnalysisIntentProperties
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "properties": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "properties": {"key": "properties", "type": "ReachabilityAnalysisIntentProperties"},
-    }
-
-    def __init__(self, *, properties: "_models.ReachabilityAnalysisIntentProperties", **kwargs: Any) -> None:
-        """
-        :keyword properties: Represents the Reachability Analysis Intent properties. Required.
-        :paramtype properties: ~azure.mgmt.network.models.ReachabilityAnalysisIntentProperties
-        """
-        super().__init__(**kwargs)
-        self.properties = properties
-
-
-class ReachabilityAnalysisIntentListResult(_serialization.Model):
-    """A list of Reachability Analysis Intents.
-
-    :ivar value: Gets a page of Reachability Analysis Intents.
-    :vartype value: list[~azure.mgmt.network.models.ReachabilityAnalysisIntent]
-    :ivar next_link: Gets the URL to get the next page of results.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[ReachabilityAnalysisIntent]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ReachabilityAnalysisIntent"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: Gets a page of Reachability Analysis Intents.
-        :paramtype value: list[~azure.mgmt.network.models.ReachabilityAnalysisIntent]
-        :keyword next_link: Gets the URL to get the next page of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class ReachabilityAnalysisIntentProperties(_serialization.Model):
-    """Represents the Reachability Analysis Intent properties.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar provisioning_state: Provisioning states of a resource. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
-    :ivar description:
-    :vartype description: str
-    :ivar source_resource_id: Source resource id to verify the reachability path of. Required.
-    :vartype source_resource_id: str
-    :ivar destination_resource_id: Destination resource id to verify the reachability path of.
-     Required.
-    :vartype destination_resource_id: str
-    :ivar ip_traffic: IP traffic information. Required.
-    :vartype ip_traffic: ~azure.mgmt.network.models.IPTraffic
-    """
-
-    _validation = {
-        "source_resource_id": {"required": True},
-        "destination_resource_id": {"required": True},
-        "ip_traffic": {"required": True},
-    }
-
-    _attribute_map = {
-        "provisioning_state": {"key": "provisioningState", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
-        "destination_resource_id": {"key": "destinationResourceId", "type": "str"},
-        "ip_traffic": {"key": "ipTraffic", "type": "IPTraffic"},
-    }
-
-    def __init__(
-        self,
-        *,
-        source_resource_id: str,
-        destination_resource_id: str,
-        ip_traffic: "_models.IPTraffic",
-        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
-        description: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword provisioning_state: Provisioning states of a resource. Known values are: "Failed",
-         "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-        :paramtype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
-        :keyword description:
-        :paramtype description: str
-        :keyword source_resource_id: Source resource id to verify the reachability path of. Required.
-        :paramtype source_resource_id: str
-        :keyword destination_resource_id: Destination resource id to verify the reachability path of.
-         Required.
-        :paramtype destination_resource_id: str
-        :keyword ip_traffic: IP traffic information. Required.
-        :paramtype ip_traffic: ~azure.mgmt.network.models.IPTraffic
-        """
-        super().__init__(**kwargs)
-        self.provisioning_state = provisioning_state
-        self.description = description
-        self.source_resource_id = source_resource_id
-        self.destination_resource_id = destination_resource_id
-        self.ip_traffic = ip_traffic
-
-
-class ReachabilityAnalysisRun(CommonProxyResource):
-    """Configuration information for analysis run.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.network.models.SystemData
-    :ivar properties: Represents the Reachability Analysis Run properties. Required.
-    :vartype properties: ~azure.mgmt.network.models.ReachabilityAnalysisRunProperties
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "properties": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "properties": {"key": "properties", "type": "ReachabilityAnalysisRunProperties"},
-    }
-
-    def __init__(self, *, properties: "_models.ReachabilityAnalysisRunProperties", **kwargs: Any) -> None:
-        """
-        :keyword properties: Represents the Reachability Analysis Run properties. Required.
-        :paramtype properties: ~azure.mgmt.network.models.ReachabilityAnalysisRunProperties
-        """
-        super().__init__(**kwargs)
-        self.properties = properties
-
-
-class ReachabilityAnalysisRunListResult(_serialization.Model):
-    """A list of Reachability Analysis Run.
-
-    :ivar value: Gets a page of Reachability Analysis Runs.
-    :vartype value: list[~azure.mgmt.network.models.ReachabilityAnalysisRun]
-    :ivar next_link: Gets the URL to get the next page of results.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[ReachabilityAnalysisRun]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ReachabilityAnalysisRun"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: Gets a page of Reachability Analysis Runs.
-        :paramtype value: list[~azure.mgmt.network.models.ReachabilityAnalysisRun]
-        :keyword next_link: Gets the URL to get the next page of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class ReachabilityAnalysisRunProperties(_serialization.Model):
-    """Represents the Reachability Analysis Run properties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar description:
-    :vartype description: str
-    :ivar intent_id: Id of the intent resource to run analysis on. Required.
-    :vartype intent_id: str
-    :ivar intent_content: Intent information.
-    :vartype intent_content: ~azure.mgmt.network.models.IntentContent
-    :ivar analysis_result:
-    :vartype analysis_result: str
-    :ivar error_message:
-    :vartype error_message: str
-    :ivar provisioning_state: Provisioning states of a resource. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
-    """
-
-    _validation = {
-        "intent_id": {"required": True},
-        "intent_content": {"readonly": True},
-        "analysis_result": {"readonly": True},
-        "error_message": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "description": {"key": "description", "type": "str"},
-        "intent_id": {"key": "intentId", "type": "str"},
-        "intent_content": {"key": "intentContent", "type": "IntentContent"},
-        "analysis_result": {"key": "analysisResult", "type": "str"},
-        "error_message": {"key": "errorMessage", "type": "str"},
-        "provisioning_state": {"key": "provisioningState", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        intent_id: str,
-        description: Optional[str] = None,
-        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword description:
-        :paramtype description: str
-        :keyword intent_id: Id of the intent resource to run analysis on. Required.
-        :paramtype intent_id: str
-        :keyword provisioning_state: Provisioning states of a resource. Known values are: "Failed",
-         "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-        :paramtype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
-        """
-        super().__init__(**kwargs)
-        self.description = description
-        self.intent_id = intent_id
-        self.intent_content: Optional["_models.IntentContent"] = None
-        self.analysis_result: Optional[str] = None
-        self.error_message: Optional[str] = None
-        self.provisioning_state = provisioning_state
-
-
 class RecordSet(_serialization.Model):
     """A collective group of information about the record set information.
 
@@ -33419,8 +29546,8 @@ class RecordSet(_serialization.Model):
     :vartype record_set_name: str
     :ivar fqdn: Fqdn that resolves to private endpoint ip address.
     :vartype fqdn: str
-    :ivar provisioning_state: The provisioning state of the recordset. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :ivar provisioning_state: The provisioning state of the recordset. Known values are:
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar ttl: Recordset time to live.
     :vartype ttl: int
@@ -33492,82 +29619,6 @@ class ReferencedPublicIpAddress(_serialization.Model):
         self.id = id
 
 
-class ResiliencyRecommendationComponents(_serialization.Model):
-    """Gateway Resiliency based Recommendations.
-
-    :ivar name: Name of the Resiliency based Recommendation Component.
-    :vartype name: str
-    :ivar current_score: Current Score of the gateway.
-    :vartype current_score: str
-    :ivar max_score: Max score that the gateway can achieve if the specified recommendation is
-     applied.
-    :vartype max_score: str
-    :ivar recommendations: List of Gateway Resiliency based Recommendations.
-    :vartype recommendations: list[~azure.mgmt.network.models.GatewayResiliencyRecommendation]
-    """
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "current_score": {"key": "currentScore", "type": "str"},
-        "max_score": {"key": "maxScore", "type": "str"},
-        "recommendations": {"key": "recommendations", "type": "[GatewayResiliencyRecommendation]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        current_score: Optional[str] = None,
-        max_score: Optional[str] = None,
-        recommendations: Optional[List["_models.GatewayResiliencyRecommendation"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword name: Name of the Resiliency based Recommendation Component.
-        :paramtype name: str
-        :keyword current_score: Current Score of the gateway.
-        :paramtype current_score: str
-        :keyword max_score: Max score that the gateway can achieve if the specified recommendation is
-         applied.
-        :paramtype max_score: str
-        :keyword recommendations: List of Gateway Resiliency based Recommendations.
-        :paramtype recommendations: list[~azure.mgmt.network.models.GatewayResiliencyRecommendation]
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.current_score = current_score
-        self.max_score = max_score
-        self.recommendations = recommendations
-
-
-class ResourceBasics(_serialization.Model):
-    """Representation of basic resource information.
-
-    :ivar resource_id: ResourceId of the Azure resource.
-    :vartype resource_id: str
-    :ivar address_prefixes: List of IP address prefixes of the resource.
-    :vartype address_prefixes: list[str]
-    """
-
-    _attribute_map = {
-        "resource_id": {"key": "resourceId", "type": "str"},
-        "address_prefixes": {"key": "addressPrefixes", "type": "[str]"},
-    }
-
-    def __init__(
-        self, *, resource_id: Optional[str] = None, address_prefixes: Optional[List[str]] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword resource_id: ResourceId of the Azure resource.
-        :paramtype resource_id: str
-        :keyword address_prefixes: List of IP address prefixes of the resource.
-        :paramtype address_prefixes: list[str]
-        """
-        super().__init__(**kwargs)
-        self.resource_id = resource_id
-        self.address_prefixes = address_prefixes
-
-
 class ResourceNavigationLink(SubResource):
     """ResourceNavigationLink resource.
 
@@ -33587,7 +29638,7 @@ class ResourceNavigationLink(SubResource):
     :ivar link: Link to the external resource.
     :vartype link: str
     :ivar provisioning_state: The provisioning state of the resource navigation link resource.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -33715,7 +29766,7 @@ class Route(SubResource):
      only allowed in routes where the next hop type is VirtualAppliance.
     :vartype next_hop_ip_address: str
     :ivar provisioning_state: The provisioning state of the route resource. Known values are:
-     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar has_bgp_override: A value indicating whether this route overrides overlapping BGP routes
      regardless of LPM.
@@ -33803,7 +29854,7 @@ class RouteFilter(Resource):
     :ivar ipv6_peerings: A collection of references to express route circuit ipv6 peerings.
     :vartype ipv6_peerings: list[~azure.mgmt.network.models.ExpressRouteCircuitPeering]
     :ivar provisioning_state: The provisioning state of the route filter resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -33906,7 +29957,7 @@ class RouteFilterRule(SubResource):
      ['12076:5010','12076:5020'].
     :vartype communities: list[str]
     :ivar provisioning_state: The provisioning state of the route filter rule resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -34042,7 +30093,7 @@ class RouteMap(SubResource):
     :ivar rules: List of RouteMap rules to be applied.
     :vartype rules: list[~azure.mgmt.network.models.RouteMapRule]
     :ivar provisioning_state: The provisioning state of the RouteMap resource. Known values are:
-     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -34145,43 +30196,6 @@ class RouteMapRule(_serialization.Model):
         self.next_step_if_matched = next_step_if_matched
 
 
-class RouteSourceDetails(_serialization.Model):
-    """RouteSourceDetails.
-
-    :ivar circuit: Express Route Circuit identifier.
-    :vartype circuit: str
-    :ivar pri: Flag to indicate if the route learned from the primary device is active or passive.
-    :vartype pri: str
-    :ivar sec: Flag to indicate if the route learned from the secondary device is active or
-     passive.
-    :vartype sec: str
-    """
-
-    _attribute_map = {
-        "circuit": {"key": "circuit", "type": "str"},
-        "pri": {"key": "pri", "type": "str"},
-        "sec": {"key": "sec", "type": "str"},
-    }
-
-    def __init__(
-        self, *, circuit: Optional[str] = None, pri: Optional[str] = None, sec: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword circuit: Express Route Circuit identifier.
-        :paramtype circuit: str
-        :keyword pri: Flag to indicate if the route learned from the primary device is active or
-         passive.
-        :paramtype pri: str
-        :keyword sec: Flag to indicate if the route learned from the secondary device is active or
-         passive.
-        :paramtype sec: str
-        """
-        super().__init__(**kwargs)
-        self.circuit = circuit
-        self.pri = pri
-        self.sec = sec
-
-
 class RouteTable(Resource):
     """Route table resource.
 
@@ -34207,7 +30221,7 @@ class RouteTable(Resource):
      table. True means disable.
     :vartype disable_bgp_route_propagation: bool
     :ivar provisioning_state: The provisioning state of the route table resource. Known values are:
-     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: The resource GUID property of the route table.
     :vartype resource_guid: str
@@ -34375,7 +30389,7 @@ class RoutingIntent(SubResource):
     :ivar routing_policies: List of routing policies.
     :vartype routing_policies: list[~azure.mgmt.network.models.RoutingPolicy]
     :ivar provisioning_state: The provisioning state of the RoutingIntent resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -34461,299 +30475,6 @@ class RoutingPolicy(_serialization.Model):
         self.name = name
         self.destinations = destinations
         self.next_hop = next_hop
-
-
-class RoutingRule(ChildResource):
-    """Network routing rule.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar etag: A unique read-only string that changes whenever the resource is updated.
-    :vartype etag: str
-    :ivar system_data: The system metadata related to this resource.
-    :vartype system_data: ~azure.mgmt.network.models.SystemData
-    :ivar description: A description for this rule.
-    :vartype description: str
-    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
-    :ivar resource_guid: Unique identifier for this resource.
-    :vartype resource_guid: str
-    :ivar destination: Indicates the destination for this particular rule.
-    :vartype destination: ~azure.mgmt.network.models.RoutingRuleRouteDestination
-    :ivar next_hop: Indicates the next hop for this particular rule.
-    :vartype next_hop: ~azure.mgmt.network.models.RoutingRuleNextHop
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "etag": {"readonly": True},
-        "system_data": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "resource_guid": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "etag": {"key": "etag", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "description": {"key": "properties.description", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
-        "destination": {"key": "properties.destination", "type": "RoutingRuleRouteDestination"},
-        "next_hop": {"key": "properties.nextHop", "type": "RoutingRuleNextHop"},
-    }
-
-    def __init__(
-        self,
-        *,
-        description: Optional[str] = None,
-        destination: Optional["_models.RoutingRuleRouteDestination"] = None,
-        next_hop: Optional["_models.RoutingRuleNextHop"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword description: A description for this rule.
-        :paramtype description: str
-        :keyword destination: Indicates the destination for this particular rule.
-        :paramtype destination: ~azure.mgmt.network.models.RoutingRuleRouteDestination
-        :keyword next_hop: Indicates the next hop for this particular rule.
-        :paramtype next_hop: ~azure.mgmt.network.models.RoutingRuleNextHop
-        """
-        super().__init__(**kwargs)
-        self.system_data: Optional["_models.SystemData"] = None
-        self.description = description
-        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
-        self.resource_guid: Optional[str] = None
-        self.destination = destination
-        self.next_hop = next_hop
-
-
-class RoutingRuleCollection(ChildResource):
-    """Defines the routing rule collection.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar etag: A unique read-only string that changes whenever the resource is updated.
-    :vartype etag: str
-    :ivar system_data: The system metadata related to this resource.
-    :vartype system_data: ~azure.mgmt.network.models.SystemData
-    :ivar description: A description of the routing rule collection.
-    :vartype description: str
-    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
-    :ivar resource_guid: Unique identifier for this resource.
-    :vartype resource_guid: str
-    :ivar applies_to: Groups for configuration.
-    :vartype applies_to: list[~azure.mgmt.network.models.NetworkManagerRoutingGroupItem]
-    :ivar disable_bgp_route_propagation: Determines whether BGP route propagation is enabled.
-     Defaults to true. Known values are: "False" and "True".
-    :vartype disable_bgp_route_propagation: str or
-     ~azure.mgmt.network.models.DisableBgpRoutePropagation
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "etag": {"readonly": True},
-        "system_data": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "resource_guid": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "etag": {"key": "etag", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "description": {"key": "properties.description", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
-        "applies_to": {"key": "properties.appliesTo", "type": "[NetworkManagerRoutingGroupItem]"},
-        "disable_bgp_route_propagation": {"key": "properties.disableBgpRoutePropagation", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        description: Optional[str] = None,
-        applies_to: Optional[List["_models.NetworkManagerRoutingGroupItem"]] = None,
-        disable_bgp_route_propagation: Optional[Union[str, "_models.DisableBgpRoutePropagation"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword description: A description of the routing rule collection.
-        :paramtype description: str
-        :keyword applies_to: Groups for configuration.
-        :paramtype applies_to: list[~azure.mgmt.network.models.NetworkManagerRoutingGroupItem]
-        :keyword disable_bgp_route_propagation: Determines whether BGP route propagation is enabled.
-         Defaults to true. Known values are: "False" and "True".
-        :paramtype disable_bgp_route_propagation: str or
-         ~azure.mgmt.network.models.DisableBgpRoutePropagation
-        """
-        super().__init__(**kwargs)
-        self.system_data: Optional["_models.SystemData"] = None
-        self.description = description
-        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
-        self.resource_guid: Optional[str] = None
-        self.applies_to = applies_to
-        self.disable_bgp_route_propagation = disable_bgp_route_propagation
-
-
-class RoutingRuleCollectionListResult(_serialization.Model):
-    """Routing configuration rule collection list result.
-
-    :ivar value: A list of network manager routing configuration rule collections.
-    :vartype value: list[~azure.mgmt.network.models.RoutingRuleCollection]
-    :ivar next_link: Gets the URL to get the next set of results.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[RoutingRuleCollection]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.RoutingRuleCollection"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: A list of network manager routing configuration rule collections.
-        :paramtype value: list[~azure.mgmt.network.models.RoutingRuleCollection]
-        :keyword next_link: Gets the URL to get the next set of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class RoutingRuleListResult(_serialization.Model):
-    """Routing configuration rule list result.
-
-    :ivar value: A list of routing rules.
-    :vartype value: list[~azure.mgmt.network.models.RoutingRule]
-    :ivar next_link: The URL to get the next set of results.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[RoutingRule]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.RoutingRule"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: A list of routing rules.
-        :paramtype value: list[~azure.mgmt.network.models.RoutingRule]
-        :keyword next_link: The URL to get the next set of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class RoutingRuleNextHop(_serialization.Model):
-    """Next hop.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar next_hop_type: Next hop type. Required. Known values are: "Internet", "NoNextHop",
-     "VirtualAppliance", "VirtualNetworkGateway", and "VnetLocal".
-    :vartype next_hop_type: str or ~azure.mgmt.network.models.RoutingRuleNextHopType
-    :ivar next_hop_address: Next hop address. Only required if the next hop type is
-     VirtualAppliance.
-    :vartype next_hop_address: str
-    """
-
-    _validation = {
-        "next_hop_type": {"required": True},
-    }
-
-    _attribute_map = {
-        "next_hop_type": {"key": "nextHopType", "type": "str"},
-        "next_hop_address": {"key": "nextHopAddress", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        next_hop_type: Union[str, "_models.RoutingRuleNextHopType"],
-        next_hop_address: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword next_hop_type: Next hop type. Required. Known values are: "Internet", "NoNextHop",
-         "VirtualAppliance", "VirtualNetworkGateway", and "VnetLocal".
-        :paramtype next_hop_type: str or ~azure.mgmt.network.models.RoutingRuleNextHopType
-        :keyword next_hop_address: Next hop address. Only required if the next hop type is
-         VirtualAppliance.
-        :paramtype next_hop_address: str
-        """
-        super().__init__(**kwargs)
-        self.next_hop_type = next_hop_type
-        self.next_hop_address = next_hop_address
-
-
-class RoutingRuleRouteDestination(_serialization.Model):
-    """Route destination.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar type: Destination type. Required. Known values are: "AddressPrefix" and "ServiceTag".
-    :vartype type: str or ~azure.mgmt.network.models.RoutingRuleDestinationType
-    :ivar destination_address: Destination address. Required.
-    :vartype destination_address: str
-    """
-
-    _validation = {
-        "type": {"required": True},
-        "destination_address": {"required": True},
-    }
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "destination_address": {"key": "destinationAddress", "type": "str"},
-    }
-
-    def __init__(
-        self, *, type: Union[str, "_models.RoutingRuleDestinationType"], destination_address: str, **kwargs: Any
-    ) -> None:
-        """
-        :keyword type: Destination type. Required. Known values are: "AddressPrefix" and "ServiceTag".
-        :paramtype type: str or ~azure.mgmt.network.models.RoutingRuleDestinationType
-        :keyword destination_address: Destination address. Required.
-        :paramtype destination_address: str
-        """
-        super().__init__(**kwargs)
-        self.type = type
-        self.destination_address = destination_address
 
 
 class ScopeConnection(ChildResource):
@@ -34876,13 +30597,8 @@ class SecurityAdminConfiguration(ChildResource):
      services.
     :vartype apply_on_network_intent_policy_based_services: list[str or
      ~azure.mgmt.network.models.NetworkIntentPolicyBasedService]
-    :ivar network_group_address_space_aggregation_option: Determine update behavior for changes to
-     network groups referenced within the rules in this configuration. Known values are: "None" and
-     "Manual".
-    :vartype network_group_address_space_aggregation_option: str or
-     ~azure.mgmt.network.models.AddressSpaceAggregationOption
-    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -34909,10 +30625,6 @@ class SecurityAdminConfiguration(ChildResource):
             "key": "properties.applyOnNetworkIntentPolicyBasedServices",
             "type": "[str]",
         },
-        "network_group_address_space_aggregation_option": {
-            "key": "properties.networkGroupAddressSpaceAggregationOption",
-            "type": "str",
-        },
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
     }
@@ -34924,9 +30636,6 @@ class SecurityAdminConfiguration(ChildResource):
         apply_on_network_intent_policy_based_services: Optional[
             List[Union[str, "_models.NetworkIntentPolicyBasedService"]]
         ] = None,
-        network_group_address_space_aggregation_option: Optional[
-            Union[str, "_models.AddressSpaceAggregationOption"]
-        ] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -34936,17 +30645,11 @@ class SecurityAdminConfiguration(ChildResource):
          based services.
         :paramtype apply_on_network_intent_policy_based_services: list[str or
          ~azure.mgmt.network.models.NetworkIntentPolicyBasedService]
-        :keyword network_group_address_space_aggregation_option: Determine update behavior for changes
-         to network groups referenced within the rules in this configuration. Known values are: "None"
-         and "Manual".
-        :paramtype network_group_address_space_aggregation_option: str or
-         ~azure.mgmt.network.models.AddressSpaceAggregationOption
         """
         super().__init__(**kwargs)
         self.system_data: Optional["_models.SystemData"] = None
         self.description = description
         self.apply_on_network_intent_policy_based_services = apply_on_network_intent_policy_based_services
-        self.network_group_address_space_aggregation_option = network_group_address_space_aggregation_option
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.resource_guid: Optional[str] = None
 
@@ -35081,7 +30784,7 @@ class SecurityPartnerProvider(Resource):
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar provisioning_state: The provisioning state of the Security Partner Provider resource.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar security_provider_name: The security provider name. Known values are: "ZScaler", "IBoss",
      and "Checkpoint".
@@ -35178,70 +30881,6 @@ class SecurityPartnerProviderListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class SecurityPerimeterSystemData(_serialization.Model):
-    """Metadata pertaining to creation and last modification of the resource.
-
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: str or ~azure.mgmt.network.models.CreatedByType
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
-     are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: str or ~azure.mgmt.network.models.CreatedByType
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: ~datetime.datetime
-    """
-
-    _attribute_map = {
-        "created_by": {"key": "createdBy", "type": "str"},
-        "created_by_type": {"key": "createdByType", "type": "str"},
-        "created_at": {"key": "createdAt", "type": "iso-8601"},
-        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
-        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
-        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
-    }
-
-    def __init__(
-        self,
-        *,
-        created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
-        created_at: Optional[datetime.datetime] = None,
-        last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
-        last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword created_by: The identity that created the resource.
-        :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Known values are:
-         "User", "Application", "ManagedIdentity", and "Key".
-        :paramtype created_by_type: str or ~azure.mgmt.network.models.CreatedByType
-        :keyword created_at: The timestamp of resource creation (UTC).
-        :paramtype created_at: ~datetime.datetime
-        :keyword last_modified_by: The identity that last modified the resource.
-        :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
-         values are: "User", "Application", "ManagedIdentity", and "Key".
-        :paramtype last_modified_by_type: str or ~azure.mgmt.network.models.CreatedByType
-        :keyword last_modified_at: The timestamp of resource last modification (UTC).
-        :paramtype last_modified_at: ~datetime.datetime
-        """
-        super().__init__(**kwargs)
-        self.created_by = created_by
-        self.created_by_type = created_by_type
-        self.created_at = created_at
-        self.last_modified_by = last_modified_by
-        self.last_modified_by_type = last_modified_by_type
-        self.last_modified_at = last_modified_at
-
-
 class SecurityRule(SubResource):
     """Network security rule.
 
@@ -35301,7 +30940,7 @@ class SecurityRule(SubResource):
      on incoming or outgoing traffic. Known values are: "Inbound" and "Outbound".
     :vartype direction: str or ~azure.mgmt.network.models.SecurityRuleDirection
     :ivar provisioning_state: The provisioning state of the security rule resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -35519,363 +31158,6 @@ class SecurityRuleListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class SecurityUserConfiguration(ChildResource):
-    """Defines the security user configuration.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar etag: A unique read-only string that changes whenever the resource is updated.
-    :vartype etag: str
-    :ivar system_data: The system metadata related to this resource.
-    :vartype system_data: ~azure.mgmt.network.models.SystemData
-    :ivar description: A description of the security user configuration.
-    :vartype description: str
-    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
-    :ivar resource_guid: Unique identifier for this resource.
-    :vartype resource_guid: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "etag": {"readonly": True},
-        "system_data": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "resource_guid": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "etag": {"key": "etag", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "description": {"key": "properties.description", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
-    }
-
-    def __init__(self, *, description: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword description: A description of the security user configuration.
-        :paramtype description: str
-        """
-        super().__init__(**kwargs)
-        self.system_data: Optional["_models.SystemData"] = None
-        self.description = description
-        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
-        self.resource_guid: Optional[str] = None
-
-
-class SecurityUserConfigurationListResult(_serialization.Model):
-    """A list of network manager security user configurations.
-
-    :ivar value: Gets a page of security user configurations.
-    :vartype value: list[~azure.mgmt.network.models.SecurityUserConfiguration]
-    :ivar next_link: Gets the URL to get the next page of results.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[SecurityUserConfiguration]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.SecurityUserConfiguration"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: Gets a page of security user configurations.
-        :paramtype value: list[~azure.mgmt.network.models.SecurityUserConfiguration]
-        :keyword next_link: Gets the URL to get the next page of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class SecurityUserGroupItem(_serialization.Model):
-    """Network manager security user group item.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar network_group_id: Network manager group Id. Required.
-    :vartype network_group_id: str
-    """
-
-    _validation = {
-        "network_group_id": {"required": True},
-    }
-
-    _attribute_map = {
-        "network_group_id": {"key": "networkGroupId", "type": "str"},
-    }
-
-    def __init__(self, *, network_group_id: str, **kwargs: Any) -> None:
-        """
-        :keyword network_group_id: Network manager group Id. Required.
-        :paramtype network_group_id: str
-        """
-        super().__init__(**kwargs)
-        self.network_group_id = network_group_id
-
-
-class SecurityUserRule(ChildResource):
-    """Network security user rule.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar etag: A unique read-only string that changes whenever the resource is updated.
-    :vartype etag: str
-    :ivar system_data: The system metadata related to this resource.
-    :vartype system_data: ~azure.mgmt.network.models.SystemData
-    :ivar description: A description for this rule.
-    :vartype description: str
-    :ivar protocol: Network protocol this rule applies to. Known values are: "Tcp", "Udp", "Icmp",
-     "Esp", "Any", and "Ah".
-    :vartype protocol: str or ~azure.mgmt.network.models.SecurityConfigurationRuleProtocol
-    :ivar sources: The CIDR or source IP ranges.
-    :vartype sources: list[~azure.mgmt.network.models.AddressPrefixItem]
-    :ivar destinations: The destination address prefixes. CIDR or destination IP ranges.
-    :vartype destinations: list[~azure.mgmt.network.models.AddressPrefixItem]
-    :ivar source_port_ranges: The source port ranges.
-    :vartype source_port_ranges: list[str]
-    :ivar destination_port_ranges: The destination port ranges.
-    :vartype destination_port_ranges: list[str]
-    :ivar direction: Indicates if the traffic matched against the rule in inbound or outbound.
-     Known values are: "Inbound" and "Outbound".
-    :vartype direction: str or ~azure.mgmt.network.models.SecurityConfigurationRuleDirection
-    :ivar provisioning_state: The provisioning state of the security configuration user rule
-     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
-     "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
-    :ivar resource_guid: Unique identifier for this resource.
-    :vartype resource_guid: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "etag": {"readonly": True},
-        "system_data": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "resource_guid": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "etag": {"key": "etag", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "description": {"key": "properties.description", "type": "str"},
-        "protocol": {"key": "properties.protocol", "type": "str"},
-        "sources": {"key": "properties.sources", "type": "[AddressPrefixItem]"},
-        "destinations": {"key": "properties.destinations", "type": "[AddressPrefixItem]"},
-        "source_port_ranges": {"key": "properties.sourcePortRanges", "type": "[str]"},
-        "destination_port_ranges": {"key": "properties.destinationPortRanges", "type": "[str]"},
-        "direction": {"key": "properties.direction", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        description: Optional[str] = None,
-        protocol: Optional[Union[str, "_models.SecurityConfigurationRuleProtocol"]] = None,
-        sources: Optional[List["_models.AddressPrefixItem"]] = None,
-        destinations: Optional[List["_models.AddressPrefixItem"]] = None,
-        source_port_ranges: Optional[List[str]] = None,
-        destination_port_ranges: Optional[List[str]] = None,
-        direction: Optional[Union[str, "_models.SecurityConfigurationRuleDirection"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword description: A description for this rule.
-        :paramtype description: str
-        :keyword protocol: Network protocol this rule applies to. Known values are: "Tcp", "Udp",
-         "Icmp", "Esp", "Any", and "Ah".
-        :paramtype protocol: str or ~azure.mgmt.network.models.SecurityConfigurationRuleProtocol
-        :keyword sources: The CIDR or source IP ranges.
-        :paramtype sources: list[~azure.mgmt.network.models.AddressPrefixItem]
-        :keyword destinations: The destination address prefixes. CIDR or destination IP ranges.
-        :paramtype destinations: list[~azure.mgmt.network.models.AddressPrefixItem]
-        :keyword source_port_ranges: The source port ranges.
-        :paramtype source_port_ranges: list[str]
-        :keyword destination_port_ranges: The destination port ranges.
-        :paramtype destination_port_ranges: list[str]
-        :keyword direction: Indicates if the traffic matched against the rule in inbound or outbound.
-         Known values are: "Inbound" and "Outbound".
-        :paramtype direction: str or ~azure.mgmt.network.models.SecurityConfigurationRuleDirection
-        """
-        super().__init__(**kwargs)
-        self.system_data: Optional["_models.SystemData"] = None
-        self.description = description
-        self.protocol = protocol
-        self.sources = sources
-        self.destinations = destinations
-        self.source_port_ranges = source_port_ranges
-        self.destination_port_ranges = destination_port_ranges
-        self.direction = direction
-        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
-        self.resource_guid: Optional[str] = None
-
-
-class SecurityUserRuleCollection(ChildResource):
-    """Defines the security user rule collection.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar etag: A unique read-only string that changes whenever the resource is updated.
-    :vartype etag: str
-    :ivar system_data: The system metadata related to this resource.
-    :vartype system_data: ~azure.mgmt.network.models.SystemData
-    :ivar description: A description of the security user rule collection.
-    :vartype description: str
-    :ivar applies_to_groups: Groups for configuration.
-    :vartype applies_to_groups: list[~azure.mgmt.network.models.SecurityUserGroupItem]
-    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
-    :ivar resource_guid: Unique identifier for this resource.
-    :vartype resource_guid: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "etag": {"readonly": True},
-        "system_data": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "resource_guid": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "etag": {"key": "etag", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "description": {"key": "properties.description", "type": "str"},
-        "applies_to_groups": {"key": "properties.appliesToGroups", "type": "[SecurityUserGroupItem]"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        description: Optional[str] = None,
-        applies_to_groups: Optional[List["_models.SecurityUserGroupItem"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword description: A description of the security user rule collection.
-        :paramtype description: str
-        :keyword applies_to_groups: Groups for configuration.
-        :paramtype applies_to_groups: list[~azure.mgmt.network.models.SecurityUserGroupItem]
-        """
-        super().__init__(**kwargs)
-        self.system_data: Optional["_models.SystemData"] = None
-        self.description = description
-        self.applies_to_groups = applies_to_groups
-        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
-        self.resource_guid: Optional[str] = None
-
-
-class SecurityUserRuleCollectionListResult(_serialization.Model):
-    """Security user configuration rule collection list result.
-
-    :ivar value: A list of network manager security user configuration rule collections.
-    :vartype value: list[~azure.mgmt.network.models.SecurityUserRuleCollection]
-    :ivar next_link: Gets the URL to get the next set of results.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[SecurityUserRuleCollection]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.SecurityUserRuleCollection"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: A list of network manager security user configuration rule collections.
-        :paramtype value: list[~azure.mgmt.network.models.SecurityUserRuleCollection]
-        :keyword next_link: Gets the URL to get the next set of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class SecurityUserRuleListResult(_serialization.Model):
-    """security user rule list result.
-
-    :ivar value: A list of security user rules.
-    :vartype value: list[~azure.mgmt.network.models.SecurityUserRule]
-    :ivar next_link: The URL to get the next set of results.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[SecurityUserRule]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.SecurityUserRule"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: A list of security user rules.
-        :paramtype value: list[~azure.mgmt.network.models.SecurityUserRule]
-        :keyword next_link: The URL to get the next set of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
 class ServiceAssociationLink(SubResource):
     """ServiceAssociationLink resource.
 
@@ -35895,7 +31177,7 @@ class ServiceAssociationLink(SubResource):
     :ivar link: Link to the external resource.
     :vartype link: str
     :ivar provisioning_state: The provisioning state of the service association link resource.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar allow_delete: If true, the resource can be deleted.
     :vartype allow_delete: bool
@@ -36017,7 +31299,7 @@ class ServiceEndpointPolicy(Resource):
     :ivar resource_guid: The resource GUID property of the service endpoint policy resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the service endpoint policy resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar service_alias: The alias indicating if the policy belongs to a service.
     :vartype service_alias: str
@@ -36117,8 +31399,7 @@ class ServiceEndpointPolicyDefinition(SubResource):
     :ivar service_resources: A list of service resources.
     :vartype service_resources: list[str]
     :ivar provisioning_state: The provisioning state of the service endpoint policy definition
-     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
-     "Deleting".
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -36244,12 +31525,10 @@ class ServiceEndpointPropertiesFormat(_serialization.Model):
 
     :ivar service: The type of the endpoint service.
     :vartype service: str
-    :ivar network_identifier: SubResource as network identifier.
-    :vartype network_identifier: ~azure.mgmt.network.models.SubResource
     :ivar locations: A list of locations.
     :vartype locations: list[str]
     :ivar provisioning_state: The provisioning state of the service endpoint resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -36259,30 +31538,19 @@ class ServiceEndpointPropertiesFormat(_serialization.Model):
 
     _attribute_map = {
         "service": {"key": "service", "type": "str"},
-        "network_identifier": {"key": "networkIdentifier", "type": "SubResource"},
         "locations": {"key": "locations", "type": "[str]"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        service: Optional[str] = None,
-        network_identifier: Optional["_models.SubResource"] = None,
-        locations: Optional[List[str]] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, service: Optional[str] = None, locations: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword service: The type of the endpoint service.
         :paramtype service: str
-        :keyword network_identifier: SubResource as network identifier.
-        :paramtype network_identifier: ~azure.mgmt.network.models.SubResource
         :keyword locations: A list of locations.
         :paramtype locations: list[str]
         """
         super().__init__(**kwargs)
         self.service = service
-        self.network_identifier = network_identifier
         self.locations = locations
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
@@ -36472,46 +31740,6 @@ class SessionIds(_serialization.Model):
         self.session_ids = session_ids
 
 
-class SharedKeyProperties(_serialization.Model):
-    """Parameters for SharedKey.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar shared_key: The value of the shared key for the vpn link connection.
-    :vartype shared_key: str
-    :ivar shared_key_length: The length of the shared key for the vpn link connection.
-    :vartype shared_key_length: int
-    :ivar provisioning_state: The provisioning state of the SharedKey resource. Known values are:
-     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
-    """
-
-    _validation = {
-        "shared_key_length": {"maximum": 128, "minimum": 1},
-        "provisioning_state": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "shared_key": {"key": "sharedKey", "type": "str"},
-        "shared_key_length": {"key": "sharedKeyLength", "type": "int"},
-        "provisioning_state": {"key": "provisioningState", "type": "str"},
-    }
-
-    def __init__(
-        self, *, shared_key: Optional[str] = None, shared_key_length: Optional[int] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword shared_key: The value of the shared key for the vpn link connection.
-        :paramtype shared_key: str
-        :keyword shared_key_length: The length of the shared key for the vpn link connection.
-        :paramtype shared_key_length: int
-        """
-        super().__init__(**kwargs)
-        self.shared_key = shared_key
-        self.shared_key_length = shared_key_length
-        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
-
-
 class SignatureOverridesFilterValuesQuery(_serialization.Model):
     """Describes the filter values possibles for a given column.
 
@@ -36655,8 +31883,7 @@ class SingleQueryResult(_serialization.Model):
      values are: 1, 2, and 3.
     :vartype severity: int or ~azure.mgmt.network.models.FirewallPolicyIDPSSignatureSeverity
     :ivar direction: Describes in which direction signature is being enforced: 0 - OutBound, 1 -
-     InBound, 2 - Any, 3 - Internal, 4 - InternalOutbound, 5 - InternalInbound. Known values are: 0,
-     1, 2, 3, 4, and 5.
+     InBound, 2 - Any, 3 - Internal, 4 - InternalOutbound. Known values are: 0, 1, 2, 3, and 4.
     :vartype direction: int or ~azure.mgmt.network.models.FirewallPolicyIDPSSignatureDirection
     :ivar group: Describes the groups the signature belongs to.
     :vartype group: str
@@ -36716,8 +31943,7 @@ class SingleQueryResult(_serialization.Model):
          values are: 1, 2, and 3.
         :paramtype severity: int or ~azure.mgmt.network.models.FirewallPolicyIDPSSignatureSeverity
         :keyword direction: Describes in which direction signature is being enforced: 0 - OutBound, 1 -
-         InBound, 2 - Any, 3 - Internal, 4 - InternalOutbound, 5 - InternalInbound. Known values are: 0,
-         1, 2, 3, 4, and 5.
+         InBound, 2 - Any, 3 - Internal, 4 - InternalOutbound. Known values are: 0, 1, 2, 3, and 4.
         :paramtype direction: int or ~azure.mgmt.network.models.FirewallPolicyIDPSSignatureDirection
         :keyword group: Describes the groups the signature belongs to.
         :paramtype group: str
@@ -36753,8 +31979,8 @@ class SingleQueryResult(_serialization.Model):
 class Sku(_serialization.Model):
     """The sku of this Bastion Host.
 
-    :ivar name: The name of the sku of this Bastion Host. Known values are: "Basic", "Standard",
-     "Developer", and "Premium".
+    :ivar name: The name of this Bastion Host. Known values are: "Basic", "Standard", and
+     "Developer".
     :vartype name: str or ~azure.mgmt.network.models.BastionHostSkuName
     """
 
@@ -36764,145 +31990,12 @@ class Sku(_serialization.Model):
 
     def __init__(self, *, name: Union[str, "_models.BastionHostSkuName"] = "Standard", **kwargs: Any) -> None:
         """
-        :keyword name: The name of the sku of this Bastion Host. Known values are: "Basic", "Standard",
-         "Developer", and "Premium".
+        :keyword name: The name of this Bastion Host. Known values are: "Basic", "Standard", and
+         "Developer".
         :paramtype name: str or ~azure.mgmt.network.models.BastionHostSkuName
         """
         super().__init__(**kwargs)
         self.name = name
-
-
-class StaticCidr(CommonProxyResource):
-    """Instance of StaticCidr resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.network.models.SystemData
-    :ivar properties: Properties of static CIDR resource.
-    :vartype properties: ~azure.mgmt.network.models.StaticCidrProperties
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "properties": {"key": "properties", "type": "StaticCidrProperties"},
-    }
-
-    def __init__(self, *, properties: Optional["_models.StaticCidrProperties"] = None, **kwargs: Any) -> None:
-        """
-        :keyword properties: Properties of static CIDR resource.
-        :paramtype properties: ~azure.mgmt.network.models.StaticCidrProperties
-        """
-        super().__init__(**kwargs)
-        self.properties = properties
-
-
-class StaticCidrList(_serialization.Model):
-    """List of StaticCidr.
-
-    :ivar value:
-    :vartype value: list[~azure.mgmt.network.models.StaticCidr]
-    :ivar next_link: The link used to get the next page of operations.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[StaticCidr]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.StaticCidr"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value:
-        :paramtype value: list[~azure.mgmt.network.models.StaticCidr]
-        :keyword next_link: The link used to get the next page of operations.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class StaticCidrProperties(_serialization.Model):
-    """Properties of static CIDR resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar description:
-    :vartype description: str
-    :ivar number_of_ip_addresses_to_allocate: Number of IP addresses to allocate for a static CIDR
-     resource. The IP addresses will be assigned based on IpamPools available space.
-    :vartype number_of_ip_addresses_to_allocate: str
-    :ivar address_prefixes: List of IP address prefixes of the resource.
-    :vartype address_prefixes: list[str]
-    :ivar total_number_of_ip_addresses: Total number of IP addresses allocated for the static CIDR
-     resource.
-    :vartype total_number_of_ip_addresses: str
-    :ivar provisioning_state: Provisioning states of a resource. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
-    """
-
-    _validation = {
-        "total_number_of_ip_addresses": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "description": {"key": "description", "type": "str"},
-        "number_of_ip_addresses_to_allocate": {"key": "numberOfIPAddressesToAllocate", "type": "str"},
-        "address_prefixes": {"key": "addressPrefixes", "type": "[str]"},
-        "total_number_of_ip_addresses": {"key": "totalNumberOfIPAddresses", "type": "str"},
-        "provisioning_state": {"key": "provisioningState", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        description: Optional[str] = None,
-        number_of_ip_addresses_to_allocate: Optional[str] = None,
-        address_prefixes: Optional[List[str]] = None,
-        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword description:
-        :paramtype description: str
-        :keyword number_of_ip_addresses_to_allocate: Number of IP addresses to allocate for a static
-         CIDR resource. The IP addresses will be assigned based on IpamPools available space.
-        :paramtype number_of_ip_addresses_to_allocate: str
-        :keyword address_prefixes: List of IP address prefixes of the resource.
-        :paramtype address_prefixes: list[str]
-        :keyword provisioning_state: Provisioning states of a resource. Known values are: "Failed",
-         "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-        :paramtype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
-        """
-        super().__init__(**kwargs)
-        self.description = description
-        self.number_of_ip_addresses_to_allocate = number_of_ip_addresses_to_allocate
-        self.address_prefixes = address_prefixes
-        self.total_number_of_ip_addresses: Optional[str] = None
-        self.provisioning_state = provisioning_state
 
 
 class StaticMember(ChildResource):
@@ -36925,7 +32018,7 @@ class StaticMember(ChildResource):
     :ivar region: Resource region.
     :vartype region: str
     :ivar provisioning_state: The provisioning state of the scope assignment resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -37119,7 +32212,7 @@ class Subnet(SubResource):
      delegations and other user-defined properties.
     :vartype purpose: str
     :ivar provisioning_state: The provisioning state of the subnet resource. Known values are:
-     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_endpoint_network_policies: Enable or Disable apply network policies on private
      end point in the subnet. Known values are: "Enabled", "Disabled",
@@ -37143,9 +32236,6 @@ class Subnet(SubResource):
      connectivity for all VMs in the subnet. This property can only be set at the time of subnet
      creation and cannot be updated for an existing subnet.
     :vartype default_outbound_access: bool
-    :ivar ipam_pool_prefix_allocations: A list of IPAM Pools for allocating IP address prefixes.
-    :vartype ipam_pool_prefix_allocations:
-     list[~azure.mgmt.network.models.IpamPoolPrefixAllocation]
     """
 
     _validation = {
@@ -37188,10 +32278,6 @@ class Subnet(SubResource):
         },
         "sharing_scope": {"key": "properties.sharingScope", "type": "str"},
         "default_outbound_access": {"key": "properties.defaultOutboundAccess", "type": "bool"},
-        "ipam_pool_prefix_allocations": {
-            "key": "properties.ipamPoolPrefixAllocations",
-            "type": "[IpamPoolPrefixAllocation]",
-        },
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -37218,7 +32304,6 @@ class Subnet(SubResource):
         application_gateway_ip_configurations: Optional[List["_models.ApplicationGatewayIPConfiguration"]] = None,
         sharing_scope: Optional[Union[str, "_models.SharingScope"]] = None,
         default_outbound_access: Optional[bool] = None,
-        ipam_pool_prefix_allocations: Optional[List["_models.IpamPoolPrefixAllocation"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -37269,9 +32354,6 @@ class Subnet(SubResource):
          connectivity for all VMs in the subnet. This property can only be set at the time of subnet
          creation and cannot be updated for an existing subnet.
         :paramtype default_outbound_access: bool
-        :keyword ipam_pool_prefix_allocations: A list of IPAM Pools for allocating IP address prefixes.
-        :paramtype ipam_pool_prefix_allocations:
-         list[~azure.mgmt.network.models.IpamPoolPrefixAllocation]
         """
         super().__init__(id=id, **kwargs)
         self.name = name
@@ -37298,7 +32380,6 @@ class Subnet(SubResource):
         self.application_gateway_ip_configurations = application_gateway_ip_configurations
         self.sharing_scope = sharing_scope
         self.default_outbound_access = default_outbound_access
-        self.ipam_pool_prefix_allocations = ipam_pool_prefix_allocations
 
 
 class SubnetAssociation(_serialization.Model):
@@ -37358,26 +32439,6 @@ class SubnetListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
-
-
-class SubscriptionId(_serialization.Model):
-    """SubscriptionId.
-
-    :ivar id: Subscription id in the ARM id format.
-    :vartype id: str
-    """
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-    }
-
-    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
-        """
-        :keyword id: Subscription id in the ARM id format.
-        :paramtype id: str
-        """
-        super().__init__(**kwargs)
-        self.id = id
 
 
 class SwapResource(_serialization.Model):
@@ -38095,36 +33156,6 @@ class UnprepareNetworkPoliciesRequest(_serialization.Model):
         self.service_name = service_name
 
 
-class UpdateTagsRequest(_serialization.Model):
-    """Update tags request.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Network security perimeter identifier.
-    :vartype id: str
-    :ivar tags: List of tags for Network Security Perimeter.
-    :vartype tags: dict[str, str]
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword tags: List of tags for Network Security Perimeter.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.tags = tags
-
-
 class Usage(_serialization.Model):
     """The network resource usage.
 
@@ -38371,193 +33402,6 @@ class VerificationIPFlowResult(_serialization.Model):
         self.rule_name = rule_name
 
 
-class VerifierWorkspace(CommonTrackedResource):
-    """Instance of Verifier Workspace.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.network.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    :ivar properties: Properties of Verifier Workspace resource.
-    :vartype properties: ~azure.mgmt.network.models.VerifierWorkspaceProperties
-    :ivar etag: String representing unique etag for the resource document.
-    :vartype etag: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "location": {"required": True},
-        "etag": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "location": {"key": "location", "type": "str"},
-        "properties": {"key": "properties", "type": "VerifierWorkspaceProperties"},
-        "etag": {"key": "etag", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        properties: Optional["_models.VerifierWorkspaceProperties"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword location: The geo-location where the resource lives. Required.
-        :paramtype location: str
-        :keyword properties: Properties of Verifier Workspace resource.
-        :paramtype properties: ~azure.mgmt.network.models.VerifierWorkspaceProperties
-        """
-        super().__init__(tags=tags, location=location, **kwargs)
-        self.properties = properties
-        self.etag: Optional[str] = None
-
-
-class VerifierWorkspaceListResult(_serialization.Model):
-    """A list of Verifier Workspace.
-
-    :ivar value: Gets a page of Verifier Workspaces.
-    :vartype value: list[~azure.mgmt.network.models.VerifierWorkspace]
-    :ivar next_link: Gets the URL to get the next page of results.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[VerifierWorkspace]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.VerifierWorkspace"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: Gets a page of Verifier Workspaces.
-        :paramtype value: list[~azure.mgmt.network.models.VerifierWorkspace]
-        :keyword next_link: Gets the URL to get the next page of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class VerifierWorkspaceProperties(_serialization.Model):
-    """Properties of Verifier Workspace resource.
-
-    :ivar description:
-    :vartype description: str
-    :ivar provisioning_state: Provisioning states of a resource. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
-    """
-
-    _attribute_map = {
-        "description": {"key": "description", "type": "str"},
-        "provisioning_state": {"key": "provisioningState", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        description: Optional[str] = None,
-        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword description:
-        :paramtype description: str
-        :keyword provisioning_state: Provisioning states of a resource. Known values are: "Failed",
-         "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-        :paramtype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
-        """
-        super().__init__(**kwargs)
-        self.description = description
-        self.provisioning_state = provisioning_state
-
-
-class VerifierWorkspaceUpdate(_serialization.Model):
-    """Represents the VerifierWorkspace update API request interface.
-
-    :ivar tags: Dictionary of :code:`<string>`.
-    :vartype tags: dict[str, str]
-    :ivar properties: Represents the VerifierWorkspace update properties.
-    :vartype properties: ~azure.mgmt.network.models.VerifierWorkspaceUpdateProperties
-    """
-
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-        "properties": {"key": "properties", "type": "VerifierWorkspaceUpdateProperties"},
-    }
-
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        properties: Optional["_models.VerifierWorkspaceUpdateProperties"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword tags: Dictionary of :code:`<string>`.
-        :paramtype tags: dict[str, str]
-        :keyword properties: Represents the VerifierWorkspace update properties.
-        :paramtype properties: ~azure.mgmt.network.models.VerifierWorkspaceUpdateProperties
-        """
-        super().__init__(**kwargs)
-        self.tags = tags
-        self.properties = properties
-
-
-class VerifierWorkspaceUpdateProperties(_serialization.Model):
-    """Represents the VerifierWorkspace update properties.
-
-    :ivar description:
-    :vartype description: str
-    """
-
-    _attribute_map = {
-        "description": {"key": "description", "type": "str"},
-    }
-
-    def __init__(self, *, description: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword description:
-        :paramtype description: str
-        """
-        super().__init__(**kwargs)
-        self.description = description
-
-
 class VirtualApplianceAdditionalNicProperties(_serialization.Model):
     """Network Virtual Appliance Additional NIC properties.
 
@@ -38755,8 +33599,8 @@ class VirtualApplianceSite(SubResource):
     :vartype address_prefix: str
     :ivar o365_policy: Office 365 Policy.
     :vartype o365_policy: ~azure.mgmt.network.models.Office365PolicyProperties
-    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -38880,7 +33724,7 @@ class VirtualHub(Resource):
     :ivar route_table: The routeTable associated with this virtual hub.
     :vartype route_table: ~azure.mgmt.network.models.VirtualHubRouteTable
     :ivar provisioning_state: The provisioning state of the virtual hub resource. Known values are:
-     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar security_provider_name: The Security Provider name.
     :vartype security_provider_name: str
@@ -39231,7 +34075,7 @@ class VirtualHubRouteTableV2(SubResource):
     :ivar attached_connections: List of all connections attached to this route table v2.
     :vartype attached_connections: list[str]
     :ivar provisioning_state: The provisioning state of the virtual hub route table v2 resource.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -39357,7 +34201,7 @@ class VirtualNetwork(Resource):
     :ivar resource_guid: The resourceGuid property of the Virtual Network resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the virtual network resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar enable_ddos_protection: Indicates if DDoS protection is enabled for all the protected
      resources in the virtual network. It requires a DDoS protection plan associated with the
@@ -39378,13 +34222,6 @@ class VirtualNetwork(Resource):
     :vartype ip_allocations: list[~azure.mgmt.network.models.SubResource]
     :ivar flow_logs: A collection of references to flow log resources.
     :vartype flow_logs: list[~azure.mgmt.network.models.FlowLog]
-    :ivar private_endpoint_v_net_policies: Private Endpoint VNet Policies. Known values are:
-     "Disabled" and "Basic".
-    :vartype private_endpoint_v_net_policies: str or
-     ~azure.mgmt.network.models.PrivateEndpointVNetPolicies
-    :ivar default_public_nat_gateway: A reference to the default public nat gateway being used by
-     this virtual network resource.
-    :vartype default_public_nat_gateway: ~azure.mgmt.network.models.SubResource
     """
 
     _validation = {
@@ -39394,7 +34231,6 @@ class VirtualNetwork(Resource):
         "resource_guid": {"readonly": True},
         "provisioning_state": {"readonly": True},
         "flow_logs": {"readonly": True},
-        "default_public_nat_gateway": {"readonly": True},
     }
 
     _attribute_map = {
@@ -39419,8 +34255,6 @@ class VirtualNetwork(Resource):
         "encryption": {"key": "properties.encryption", "type": "VirtualNetworkEncryption"},
         "ip_allocations": {"key": "properties.ipAllocations", "type": "[SubResource]"},
         "flow_logs": {"key": "properties.flowLogs", "type": "[FlowLog]"},
-        "private_endpoint_v_net_policies": {"key": "properties.privateEndpointVNetPolicies", "type": "str"},
-        "default_public_nat_gateway": {"key": "properties.defaultPublicNatGateway", "type": "SubResource"},
     }
 
     def __init__(
@@ -39441,7 +34275,6 @@ class VirtualNetwork(Resource):
         bgp_communities: Optional["_models.VirtualNetworkBgpCommunities"] = None,
         encryption: Optional["_models.VirtualNetworkEncryption"] = None,
         ip_allocations: Optional[List["_models.SubResource"]] = None,
-        private_endpoint_v_net_policies: Optional[Union[str, "_models.PrivateEndpointVNetPolicies"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -39482,10 +34315,6 @@ class VirtualNetwork(Resource):
         :paramtype encryption: ~azure.mgmt.network.models.VirtualNetworkEncryption
         :keyword ip_allocations: Array of IpAllocation which reference this VNET.
         :paramtype ip_allocations: list[~azure.mgmt.network.models.SubResource]
-        :keyword private_endpoint_v_net_policies: Private Endpoint VNet Policies. Known values are:
-         "Disabled" and "Basic".
-        :paramtype private_endpoint_v_net_policies: str or
-         ~azure.mgmt.network.models.PrivateEndpointVNetPolicies
         """
         super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.extended_location = extended_location
@@ -39504,8 +34333,6 @@ class VirtualNetwork(Resource):
         self.encryption = encryption
         self.ip_allocations = ip_allocations
         self.flow_logs: Optional[List["_models.FlowLog"]] = None
-        self.private_endpoint_v_net_policies = private_endpoint_v_net_policies
-        self.default_public_nat_gateway: Optional["_models.SubResource"] = None
 
 
 class VirtualNetworkBgpCommunities(_serialization.Model):
@@ -39609,9 +34436,8 @@ class VirtualNetworkEncryption(_serialization.Model):
 
     :ivar enabled: Indicates if encryption is enabled on the virtual network. Required.
     :vartype enabled: bool
-    :ivar enforcement: If the encrypted VNet allows VM that does not support encryption. This field
-     is for future support, AllowUnencrypted is the only supported value at general availability.
-     Known values are: "DropUnencrypted" and "AllowUnencrypted".
+    :ivar enforcement: If the encrypted VNet allows VM that does not support encryption. Known
+     values are: "DropUnencrypted" and "AllowUnencrypted".
     :vartype enforcement: str or ~azure.mgmt.network.models.VirtualNetworkEncryptionEnforcement
     """
 
@@ -39634,9 +34460,8 @@ class VirtualNetworkEncryption(_serialization.Model):
         """
         :keyword enabled: Indicates if encryption is enabled on the virtual network. Required.
         :paramtype enabled: bool
-        :keyword enforcement: If the encrypted VNet allows VM that does not support encryption. This
-         field is for future support, AllowUnencrypted is the only supported value at general
-         availability. Known values are: "DropUnencrypted" and "AllowUnencrypted".
+        :keyword enforcement: If the encrypted VNet allows VM that does not support encryption. Known
+         values are: "DropUnencrypted" and "AllowUnencrypted".
         :paramtype enforcement: str or ~azure.mgmt.network.models.VirtualNetworkEncryptionEnforcement
         """
         super().__init__(**kwargs)
@@ -39663,8 +34488,6 @@ class VirtualNetworkGateway(Resource):
     :vartype extended_location: ~azure.mgmt.network.models.ExtendedLocation
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
-    :ivar identity: The identity of the virtual network gateway, if configured.
-    :vartype identity: ~azure.mgmt.network.models.ManagedServiceIdentity
     :ivar auto_scale_configuration: Autoscale configuration for virutal network gateway.
     :vartype auto_scale_configuration:
      ~azure.mgmt.network.models.VirtualNetworkGatewayAutoScaleConfiguration
@@ -39685,15 +34508,8 @@ class VirtualNetworkGateway(Resource):
     :ivar enable_private_ip_address: Whether private IP needs to be enabled on this gateway for
      connections or not.
     :vartype enable_private_ip_address: bool
-    :ivar virtual_network_gateway_migration_status: The reference to the
-     VirtualNetworkGatewayMigrationStatus which represents the status of migration.
-    :vartype virtual_network_gateway_migration_status:
-     ~azure.mgmt.network.models.VirtualNetworkGatewayMigrationStatus
     :ivar active: ActiveActive flag.
     :vartype active: bool
-    :ivar enable_high_bandwidth_vpn_gateway: To enable Advanced Connectivity feature for VPN
-     gateway.
-    :vartype enable_high_bandwidth_vpn_gateway: bool
     :ivar disable_ip_sec_replay_protection: disableIPSecReplayProtection flag.
     :vartype disable_ip_sec_replay_protection: bool
     :ivar gateway_default_site: The reference to the LocalNetworkGateway resource which represents
@@ -39719,7 +34535,7 @@ class VirtualNetworkGateway(Resource):
     :ivar resource_guid: The resource GUID property of the virtual network gateway resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the virtual network gateway resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar enable_dns_forwarding: Whether dns forwarding is enabled or not.
     :vartype enable_dns_forwarding: bool
@@ -39742,9 +34558,6 @@ class VirtualNetworkGateway(Resource):
     :ivar admin_state: Property to indicate if the Express Route Gateway serves traffic when there
      are multiple Express Route Gateways in the vnet. Known values are: "Enabled" and "Disabled".
     :vartype admin_state: str or ~azure.mgmt.network.models.AdminState
-    :ivar resiliency_model: Property to indicate if the Express Route Gateway has resiliency model
-     of MultiHomed or SingleHomed. Known values are: "SingleHomed" and "MultiHomed".
-    :vartype resiliency_model: str or ~azure.mgmt.network.models.ResiliencyModel
     """
 
     _validation = {
@@ -39764,7 +34577,6 @@ class VirtualNetworkGateway(Resource):
         "tags": {"key": "tags", "type": "{str}"},
         "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
         "etag": {"key": "etag", "type": "str"},
-        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "auto_scale_configuration": {
             "key": "properties.autoScaleConfiguration",
             "type": "VirtualNetworkGatewayAutoScaleConfiguration",
@@ -39775,12 +34587,7 @@ class VirtualNetworkGateway(Resource):
         "vpn_gateway_generation": {"key": "properties.vpnGatewayGeneration", "type": "str"},
         "enable_bgp": {"key": "properties.enableBgp", "type": "bool"},
         "enable_private_ip_address": {"key": "properties.enablePrivateIpAddress", "type": "bool"},
-        "virtual_network_gateway_migration_status": {
-            "key": "properties.virtualNetworkGatewayMigrationStatus",
-            "type": "VirtualNetworkGatewayMigrationStatus",
-        },
         "active": {"key": "properties.activeActive", "type": "bool"},
-        "enable_high_bandwidth_vpn_gateway": {"key": "properties.enableHighBandwidthVpnGateway", "type": "bool"},
         "disable_ip_sec_replay_protection": {"key": "properties.disableIPSecReplayProtection", "type": "bool"},
         "gateway_default_site": {"key": "properties.gatewayDefaultSite", "type": "SubResource"},
         "sku": {"key": "properties.sku", "type": "VirtualNetworkGatewaySku"},
@@ -39801,7 +34608,6 @@ class VirtualNetworkGateway(Resource):
         "allow_virtual_wan_traffic": {"key": "properties.allowVirtualWanTraffic", "type": "bool"},
         "allow_remote_vnet_traffic": {"key": "properties.allowRemoteVnetTraffic", "type": "bool"},
         "admin_state": {"key": "properties.adminState", "type": "str"},
-        "resiliency_model": {"key": "properties.resiliencyModel", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -39811,7 +34617,6 @@ class VirtualNetworkGateway(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
-        identity: Optional["_models.ManagedServiceIdentity"] = None,
         auto_scale_configuration: Optional["_models.VirtualNetworkGatewayAutoScaleConfiguration"] = None,
         ip_configurations: Optional[List["_models.VirtualNetworkGatewayIPConfiguration"]] = None,
         gateway_type: Optional[Union[str, "_models.VirtualNetworkGatewayType"]] = None,
@@ -39819,9 +34624,7 @@ class VirtualNetworkGateway(Resource):
         vpn_gateway_generation: Optional[Union[str, "_models.VpnGatewayGeneration"]] = None,
         enable_bgp: Optional[bool] = None,
         enable_private_ip_address: Optional[bool] = None,
-        virtual_network_gateway_migration_status: Optional["_models.VirtualNetworkGatewayMigrationStatus"] = None,
         active: Optional[bool] = None,
-        enable_high_bandwidth_vpn_gateway: Optional[bool] = None,
         disable_ip_sec_replay_protection: Optional[bool] = None,
         gateway_default_site: Optional["_models.SubResource"] = None,
         sku: Optional["_models.VirtualNetworkGatewaySku"] = None,
@@ -39836,7 +34639,6 @@ class VirtualNetworkGateway(Resource):
         allow_virtual_wan_traffic: Optional[bool] = None,
         allow_remote_vnet_traffic: Optional[bool] = None,
         admin_state: Optional[Union[str, "_models.AdminState"]] = None,
-        resiliency_model: Optional[Union[str, "_models.ResiliencyModel"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -39848,8 +34650,6 @@ class VirtualNetworkGateway(Resource):
         :paramtype tags: dict[str, str]
         :keyword extended_location: The extended location of type local virtual network gateway.
         :paramtype extended_location: ~azure.mgmt.network.models.ExtendedLocation
-        :keyword identity: The identity of the virtual network gateway, if configured.
-        :paramtype identity: ~azure.mgmt.network.models.ManagedServiceIdentity
         :keyword auto_scale_configuration: Autoscale configuration for virutal network gateway.
         :paramtype auto_scale_configuration:
          ~azure.mgmt.network.models.VirtualNetworkGatewayAutoScaleConfiguration
@@ -39870,15 +34670,8 @@ class VirtualNetworkGateway(Resource):
         :keyword enable_private_ip_address: Whether private IP needs to be enabled on this gateway for
          connections or not.
         :paramtype enable_private_ip_address: bool
-        :keyword virtual_network_gateway_migration_status: The reference to the
-         VirtualNetworkGatewayMigrationStatus which represents the status of migration.
-        :paramtype virtual_network_gateway_migration_status:
-         ~azure.mgmt.network.models.VirtualNetworkGatewayMigrationStatus
         :keyword active: ActiveActive flag.
         :paramtype active: bool
-        :keyword enable_high_bandwidth_vpn_gateway: To enable Advanced Connectivity feature for VPN
-         gateway.
-        :paramtype enable_high_bandwidth_vpn_gateway: bool
         :keyword disable_ip_sec_replay_protection: disableIPSecReplayProtection flag.
         :paramtype disable_ip_sec_replay_protection: bool
         :keyword gateway_default_site: The reference to the LocalNetworkGateway resource which
@@ -39920,14 +34713,10 @@ class VirtualNetworkGateway(Resource):
          there are multiple Express Route Gateways in the vnet. Known values are: "Enabled" and
          "Disabled".
         :paramtype admin_state: str or ~azure.mgmt.network.models.AdminState
-        :keyword resiliency_model: Property to indicate if the Express Route Gateway has resiliency
-         model of MultiHomed or SingleHomed. Known values are: "SingleHomed" and "MultiHomed".
-        :paramtype resiliency_model: str or ~azure.mgmt.network.models.ResiliencyModel
         """
         super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.extended_location = extended_location
         self.etag: Optional[str] = None
-        self.identity = identity
         self.auto_scale_configuration = auto_scale_configuration
         self.ip_configurations = ip_configurations
         self.gateway_type = gateway_type
@@ -39935,9 +34724,7 @@ class VirtualNetworkGateway(Resource):
         self.vpn_gateway_generation = vpn_gateway_generation
         self.enable_bgp = enable_bgp
         self.enable_private_ip_address = enable_private_ip_address
-        self.virtual_network_gateway_migration_status = virtual_network_gateway_migration_status
         self.active = active
-        self.enable_high_bandwidth_vpn_gateway = enable_high_bandwidth_vpn_gateway
         self.disable_ip_sec_replay_protection = disable_ip_sec_replay_protection
         self.gateway_default_site = gateway_default_site
         self.sku = sku
@@ -39955,7 +34742,6 @@ class VirtualNetworkGateway(Resource):
         self.allow_virtual_wan_traffic = allow_virtual_wan_traffic
         self.allow_remote_vnet_traffic = allow_remote_vnet_traffic
         self.admin_state = admin_state
-        self.resiliency_model = resiliency_model
 
 
 class VirtualNetworkGatewayAutoScaleBounds(_serialization.Model):
@@ -40057,9 +34843,6 @@ class VirtualNetworkGatewayConnection(Resource):
     :ivar connection_mode: The connection mode for this connection. Known values are: "Default",
      "ResponderOnly", and "InitiatorOnly".
     :vartype connection_mode: str or ~azure.mgmt.network.models.VirtualNetworkGatewayConnectionMode
-    :ivar tunnel_properties: Tunnel properties for virtual network gateway connection.
-    :vartype tunnel_properties:
-     list[~azure.mgmt.network.models.VirtualNetworkGatewayConnectionTunnelProperties]
     :ivar shared_key: The IPSec shared key.
     :vartype shared_key: str
     :ivar connection_status: Virtual Network Gateway connection status. Known values are:
@@ -40093,8 +34876,7 @@ class VirtualNetworkGatewayConnection(Resource):
      resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the virtual network gateway connection
-     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
-     "Deleting".
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar express_route_gateway_bypass: Bypass ExpressRoute Gateway for data forwarding.
     :vartype express_route_gateway_bypass: bool
@@ -40135,10 +34917,6 @@ class VirtualNetworkGatewayConnection(Resource):
         "routing_weight": {"key": "properties.routingWeight", "type": "int"},
         "dpd_timeout_seconds": {"key": "properties.dpdTimeoutSeconds", "type": "int"},
         "connection_mode": {"key": "properties.connectionMode", "type": "str"},
-        "tunnel_properties": {
-            "key": "properties.tunnelProperties",
-            "type": "[VirtualNetworkGatewayConnectionTunnelProperties]",
-        },
         "shared_key": {"key": "properties.sharedKey", "type": "str"},
         "connection_status": {"key": "properties.connectionStatus", "type": "str"},
         "tunnel_connection_status": {"key": "properties.tunnelConnectionStatus", "type": "[TunnelConnectionHealth]"},
@@ -40177,7 +34955,6 @@ class VirtualNetworkGatewayConnection(Resource):
         routing_weight: Optional[int] = None,
         dpd_timeout_seconds: Optional[int] = None,
         connection_mode: Optional[Union[str, "_models.VirtualNetworkGatewayConnectionMode"]] = None,
-        tunnel_properties: Optional[List["_models.VirtualNetworkGatewayConnectionTunnelProperties"]] = None,
         shared_key: Optional[str] = None,
         peer: Optional["_models.SubResource"] = None,
         enable_bgp: Optional[bool] = None,
@@ -40225,9 +35002,6 @@ class VirtualNetworkGatewayConnection(Resource):
          "ResponderOnly", and "InitiatorOnly".
         :paramtype connection_mode: str or
          ~azure.mgmt.network.models.VirtualNetworkGatewayConnectionMode
-        :keyword tunnel_properties: Tunnel properties for virtual network gateway connection.
-        :paramtype tunnel_properties:
-         list[~azure.mgmt.network.models.VirtualNetworkGatewayConnectionTunnelProperties]
         :keyword shared_key: The IPSec shared key.
         :paramtype shared_key: str
         :keyword peer: The reference to peerings resource.
@@ -40266,7 +35040,6 @@ class VirtualNetworkGatewayConnection(Resource):
         self.routing_weight = routing_weight
         self.dpd_timeout_seconds = dpd_timeout_seconds
         self.connection_mode = connection_mode
-        self.tunnel_properties = tunnel_properties
         self.shared_key = shared_key
         self.connection_status: Optional[Union[str, "_models.VirtualNetworkGatewayConnectionStatus"]] = None
         self.tunnel_connection_status: Optional[List["_models.TunnelConnectionHealth"]] = None
@@ -40358,8 +35131,7 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):  # pylint: disable=na
      resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the virtual network gateway connection
-     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
-     "Deleting".
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar express_route_gateway_bypass: Bypass ExpressRoute Gateway for data forwarding.
     :vartype express_route_gateway_bypass: bool
@@ -40567,34 +35339,6 @@ class VirtualNetworkGatewayConnectionListResult(_serialization.Model):  # pylint
         self.next_link: Optional[str] = None
 
 
-class VirtualNetworkGatewayConnectionTunnelProperties(_serialization.Model):  # pylint: disable=name-too-long
-    """VirtualNetworkGatewayConnectionTunnelProperties.
-
-    :ivar tunnel_ip_address: Tunnel remote IP address.
-    :vartype tunnel_ip_address: str
-    :ivar bgp_peering_address: Tunnel BGP peering address.
-    :vartype bgp_peering_address: str
-    """
-
-    _attribute_map = {
-        "tunnel_ip_address": {"key": "tunnelIpAddress", "type": "str"},
-        "bgp_peering_address": {"key": "bgpPeeringAddress", "type": "str"},
-    }
-
-    def __init__(
-        self, *, tunnel_ip_address: Optional[str] = None, bgp_peering_address: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword tunnel_ip_address: Tunnel remote IP address.
-        :paramtype tunnel_ip_address: str
-        :keyword bgp_peering_address: Tunnel BGP peering address.
-        :paramtype bgp_peering_address: str
-        """
-        super().__init__(**kwargs)
-        self.tunnel_ip_address = tunnel_ip_address
-        self.bgp_peering_address = bgp_peering_address
-
-
 class VirtualNetworkGatewayIPConfiguration(SubResource):
     """IP configuration for virtual network gateway.
 
@@ -40617,8 +35361,7 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
     :ivar private_ip_address: Private IP Address for this gateway.
     :vartype private_ip_address: str
     :ivar provisioning_state: The provisioning state of the virtual network gateway IP
-     configuration resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating",
-     "Updating", and "Deleting".
+     configuration resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -40737,91 +35480,6 @@ class VirtualNetworkGatewayListResult(_serialization.Model):
         self.next_link: Optional[str] = None
 
 
-class VirtualNetworkGatewayMigrationParameters(_serialization.Model):
-    """Virtual network gateway migration parameters.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar migration_type: MigrationType for the virtual network gateway. Required.
-     "UpgradeDeploymentToStandardIP"
-    :vartype migration_type: str or ~azure.mgmt.network.models.VirtualNetworkGatewayMigrationType
-    :ivar resource_url: Resource url that needs to be passed in to migration.
-    :vartype resource_url: str
-    """
-
-    _validation = {
-        "migration_type": {"required": True},
-    }
-
-    _attribute_map = {
-        "migration_type": {"key": "migrationType", "type": "str"},
-        "resource_url": {"key": "resourceUrl", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        migration_type: Union[str, "_models.VirtualNetworkGatewayMigrationType"],
-        resource_url: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword migration_type: MigrationType for the virtual network gateway. Required.
-         "UpgradeDeploymentToStandardIP"
-        :paramtype migration_type: str or ~azure.mgmt.network.models.VirtualNetworkGatewayMigrationType
-        :keyword resource_url: Resource url that needs to be passed in to migration.
-        :paramtype resource_url: str
-        """
-        super().__init__(**kwargs)
-        self.migration_type = migration_type
-        self.resource_url = resource_url
-
-
-class VirtualNetworkGatewayMigrationStatus(_serialization.Model):
-    """Migration status for the Virtual Network Gateway.
-
-    :ivar state: Represent the current state of gateway migration. Known values are: "None",
-     "InProgress", "Succeeded", and "Failed".
-    :vartype state: str or ~azure.mgmt.network.models.VirtualNetworkGatewayMigrationState
-    :ivar phase: Represent the current migration phase of gateway. Known values are: "None",
-     "Prepare", "PrepareSucceeded", "Execute", "ExecuteSucceeded", "Commit", "CommitSucceeded",
-     "AbortSucceeded", and "Abort".
-    :vartype phase: str or ~azure.mgmt.network.models.VirtualNetworkGatewayMigrationPhase
-    :ivar error_message: Error if any occurs during migration.
-    :vartype error_message: str
-    """
-
-    _attribute_map = {
-        "state": {"key": "state", "type": "str"},
-        "phase": {"key": "phase", "type": "str"},
-        "error_message": {"key": "errorMessage", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        state: Optional[Union[str, "_models.VirtualNetworkGatewayMigrationState"]] = None,
-        phase: Optional[Union[str, "_models.VirtualNetworkGatewayMigrationPhase"]] = None,
-        error_message: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword state: Represent the current state of gateway migration. Known values are: "None",
-         "InProgress", "Succeeded", and "Failed".
-        :paramtype state: str or ~azure.mgmt.network.models.VirtualNetworkGatewayMigrationState
-        :keyword phase: Represent the current migration phase of gateway. Known values are: "None",
-         "Prepare", "PrepareSucceeded", "Execute", "ExecuteSucceeded", "Commit", "CommitSucceeded",
-         "AbortSucceeded", and "Abort".
-        :paramtype phase: str or ~azure.mgmt.network.models.VirtualNetworkGatewayMigrationPhase
-        :keyword error_message: Error if any occurs during migration.
-        :paramtype error_message: str
-        """
-        super().__init__(**kwargs)
-        self.state = state
-        self.phase = phase
-        self.error_message = error_message
-
-
 class VirtualNetworkGatewayNatRule(SubResource):
     """VirtualNetworkGatewayNatRule Resource.
 
@@ -40837,7 +35495,7 @@ class VirtualNetworkGatewayNatRule(SubResource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar provisioning_state: The provisioning state of the NAT Rule resource. Known values are:
-     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar type_properties_type: The type of NAT rule for VPN NAT. Known values are: "Static" and
      "Dynamic".
@@ -40938,8 +35596,7 @@ class VirtualNetworkGatewayPolicyGroup(SubResource):
      vngClientConnectionConfigurations.
     :vartype vng_client_connection_configurations: list[~azure.mgmt.network.models.SubResource]
     :ivar provisioning_state: The provisioning state of the VirtualNetworkGatewayPolicyGroup
-     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
-     "Deleting".
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -41204,7 +35861,7 @@ class VirtualNetworkPeering(SubResource):
      are: "FullyInSync", "RemoteNotInSync", "LocalNotInSync", and "LocalAndRemoteNotInSync".
     :vartype peering_sync_level: str or ~azure.mgmt.network.models.VirtualNetworkPeeringLevel
     :ivar provisioning_state: The provisioning state of the virtual network peering resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar do_not_verify_remote_gateways: If we need to verify the provisioning state of the remote
      gateway.
@@ -41436,7 +36093,7 @@ class VirtualNetworkTap(Resource):
     :ivar resource_guid: The resource GUID property of the virtual network tap resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the virtual network tap resource. Known
-     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar destination_network_interface_ip_configuration: The reference to the private IP Address
      of the collector nic that will receive the tap.
@@ -41652,8 +36309,8 @@ class VirtualRouter(Resource):
     :vartype hosted_gateway: ~azure.mgmt.network.models.SubResource
     :ivar peerings: List of references to VirtualRouterPeerings.
     :vartype peerings: list[~azure.mgmt.network.models.SubResource]
-    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -41788,8 +36445,8 @@ class VirtualRouterPeering(SubResource):
     :vartype peer_asn: int
     :ivar peer_ip: Peer IP.
     :vartype peer_ip: str
-    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
-     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -41902,7 +36559,7 @@ class VirtualWAN(Resource):
     :vartype office365_local_breakout_category: str or
      ~azure.mgmt.network.models.OfficeTrafficCategory
     :ivar provisioning_state: The provisioning state of the virtual WAN resource. Known values are:
-     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar type_properties_type: The type of the VirtualWAN.
     :vartype type_properties_type: str
@@ -42148,8 +36805,7 @@ class VngClientConnectionConfiguration(SubResource):
      virtualNetworkGatewayPolicyGroups.
     :vartype virtual_network_gateway_policy_groups: list[~azure.mgmt.network.models.SubResource]
     :ivar provisioning_state: The provisioning state of the VngClientConnectionConfiguration
-     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
-     "Deleting".
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -42670,8 +37326,7 @@ class VpnClientRevokedCertificate(SubResource):
     :ivar thumbprint: The revoked VPN client certificate thumbprint.
     :vartype thumbprint: str
     :ivar provisioning_state: The provisioning state of the VPN client revoked certificate
-     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
-     "Deleting".
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -42729,7 +37384,7 @@ class VpnClientRootCertificate(SubResource):
     :ivar public_cert_data: The certificate public data. Required.
     :vartype public_cert_data: str
     :ivar provisioning_state: The provisioning state of the VPN client root certificate resource.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -42820,7 +37475,7 @@ class VpnConnection(SubResource):
     :ivar use_local_azure_ip_address: Use local azure ip to initiate connection.
     :vartype use_local_azure_ip_address: bool
     :ivar provisioning_state: The provisioning state of the VPN connection resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar vpn_link_connections: List of all vpn site link connections to the gateway.
     :vartype vpn_link_connections: list[~azure.mgmt.network.models.VpnSiteLinkConnection]
@@ -43069,7 +37724,7 @@ class VpnGateway(Resource):
     :ivar bgp_settings: Local network gateway's BGP speaker settings.
     :vartype bgp_settings: ~azure.mgmt.network.models.BgpSettings
     :ivar provisioning_state: The provisioning state of the VPN gateway resource. Known values are:
-     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar vpn_gateway_scale_unit: The scale unit for this vpn gateway.
     :vartype vpn_gateway_scale_unit: int
@@ -43217,7 +37872,7 @@ class VpnGatewayNatRule(SubResource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar provisioning_state: The provisioning state of the NAT Rule resource. Known values are:
-     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar type_properties_type: The type of NAT rule for VPN NAT. Known values are: "Static" and
      "Dynamic".
@@ -43769,8 +38424,7 @@ class VpnServerConfigurationPolicyGroup(SubResource):
     :ivar p2_s_connection_configurations: List of references to P2SConnectionConfigurations.
     :vartype p2_s_connection_configurations: list[~azure.mgmt.network.models.SubResource]
     :ivar provisioning_state: The provisioning state of the VpnServerConfigurationPolicyGroup
-     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
-     "Deleting".
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -43975,7 +38629,7 @@ class VpnSite(Resource):
     :ivar bgp_properties: The set of bgp properties.
     :vartype bgp_properties: ~azure.mgmt.network.models.BgpSettings
     :ivar provisioning_state: The provisioning state of the VPN site resource. Known values are:
-     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar is_security_site: IsSecuritySite flag.
     :vartype is_security_site: bool
@@ -44114,7 +38768,7 @@ class VpnSiteLink(SubResource):
     :ivar bgp_properties: The set of bgp properties.
     :vartype bgp_properties: ~azure.mgmt.network.models.VpnLinkBgpSettings
     :ivar provisioning_state: The provisioning state of the VPN site link resource. Known values
-     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -44223,7 +38877,7 @@ class VpnSiteLinkConnection(SubResource):
     :ivar use_local_azure_ip_address: Use local azure ip to initiate connection.
     :vartype use_local_azure_ip_address: bool
     :ivar provisioning_state: The provisioning state of the VPN site link connection resource.
-     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar ingress_nat_rules: List of ingress NatRules.
     :vartype ingress_nat_rules: list[~azure.mgmt.network.models.SubResource]
@@ -44498,8 +39152,7 @@ class WebApplicationFirewallPolicy(Resource):
     :ivar application_gateways: A collection of references to application gateways.
     :vartype application_gateways: list[~azure.mgmt.network.models.ApplicationGateway]
     :ivar provisioning_state: The provisioning state of the web application firewall policy
-     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
-     "Deleting".
+     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_state: Resource status of the policy. Known values are: "Creating", "Enabling",
      "Enabled", "Disabling", "Disabled", and "Deleting".
@@ -44511,10 +39164,6 @@ class WebApplicationFirewallPolicy(Resource):
     :vartype http_listeners: list[~azure.mgmt.network.models.SubResource]
     :ivar path_based_rules: A collection of references to application gateway path rules.
     :vartype path_based_rules: list[~azure.mgmt.network.models.SubResource]
-    :ivar application_gateway_for_containers: A collection of references to application gateway for
-     containers.
-    :vartype application_gateway_for_containers:
-     list[~azure.mgmt.network.models.ApplicationGatewayForContainersReferenceDefinition]
     """
 
     _validation = {
@@ -44526,7 +39175,6 @@ class WebApplicationFirewallPolicy(Resource):
         "resource_state": {"readonly": True},
         "http_listeners": {"readonly": True},
         "path_based_rules": {"readonly": True},
-        "application_gateway_for_containers": {"readonly": True},
     }
 
     _attribute_map = {
@@ -44544,10 +39192,6 @@ class WebApplicationFirewallPolicy(Resource):
         "managed_rules": {"key": "properties.managedRules", "type": "ManagedRulesDefinition"},
         "http_listeners": {"key": "properties.httpListeners", "type": "[SubResource]"},
         "path_based_rules": {"key": "properties.pathBasedRules", "type": "[SubResource]"},
-        "application_gateway_for_containers": {
-            "key": "properties.applicationGatewayForContainers",
-            "type": "[ApplicationGatewayForContainersReferenceDefinition]",
-        },
     }
 
     def __init__(
@@ -44585,9 +39229,6 @@ class WebApplicationFirewallPolicy(Resource):
         self.managed_rules = managed_rules
         self.http_listeners: Optional[List["_models.SubResource"]] = None
         self.path_based_rules: Optional[List["_models.SubResource"]] = None
-        self.application_gateway_for_containers: Optional[
-            List["_models.ApplicationGatewayForContainersReferenceDefinition"]
-        ] = None
 
 
 class WebApplicationFirewallPolicyListResult(_serialization.Model):

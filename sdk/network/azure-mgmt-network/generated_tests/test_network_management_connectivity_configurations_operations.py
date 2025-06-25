@@ -25,7 +25,7 @@ class TestNetworkManagementConnectivityConfigurationsOperations(AzureMgmtRecorde
             resource_group_name=resource_group.name,
             network_manager_name="str",
             configuration_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
 
         # please add some check logic here by yourself
@@ -42,11 +42,6 @@ class TestNetworkManagementConnectivityConfigurationsOperations(AzureMgmtRecorde
                 "appliesToGroups": [
                     {"groupConnectivity": "str", "networkGroupId": "str", "isGlobal": "str", "useHubGateway": "str"}
                 ],
-                "connectivityCapabilities": {
-                    "connectedGroupAddressOverlap": "Allowed",
-                    "connectedGroupPrivateEndpointsScale": "Standard",
-                    "peeringEnforcement": "Unenforced",
-                },
                 "connectivityTopology": "str",
                 "deleteExistingPeering": "str",
                 "description": "str",
@@ -67,7 +62,7 @@ class TestNetworkManagementConnectivityConfigurationsOperations(AzureMgmtRecorde
                 },
                 "type": "str",
             },
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
 
         # please add some check logic here by yourself
@@ -80,7 +75,7 @@ class TestNetworkManagementConnectivityConfigurationsOperations(AzureMgmtRecorde
             resource_group_name=resource_group.name,
             network_manager_name="str",
             configuration_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -92,7 +87,7 @@ class TestNetworkManagementConnectivityConfigurationsOperations(AzureMgmtRecorde
         response = self.client.connectivity_configurations.list(
             resource_group_name=resource_group.name,
             network_manager_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

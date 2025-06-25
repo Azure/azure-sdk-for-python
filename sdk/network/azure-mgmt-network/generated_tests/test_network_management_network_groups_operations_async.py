@@ -26,7 +26,7 @@ class TestNetworkManagementNetworkGroupsOperationsAsync(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             network_manager_name="str",
             network_group_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
 
         # please add some check logic here by yourself
@@ -43,7 +43,6 @@ class TestNetworkManagementNetworkGroupsOperationsAsync(AzureMgmtRecordedTestCas
                 "description": "str",
                 "etag": "str",
                 "id": "str",
-                "memberType": "str",
                 "name": "str",
                 "provisioningState": "str",
                 "resourceGuid": "str",
@@ -57,7 +56,7 @@ class TestNetworkManagementNetworkGroupsOperationsAsync(AzureMgmtRecordedTestCas
                 },
                 "type": "str",
             },
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
 
         # please add some check logic here by yourself
@@ -71,7 +70,7 @@ class TestNetworkManagementNetworkGroupsOperationsAsync(AzureMgmtRecordedTestCas
                 resource_group_name=resource_group.name,
                 network_manager_name="str",
                 network_group_name="str",
-                api_version="2024-07-01",
+                api_version="2023-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -84,7 +83,7 @@ class TestNetworkManagementNetworkGroupsOperationsAsync(AzureMgmtRecordedTestCas
         response = self.client.network_groups.list(
             resource_group_name=resource_group.name,
             network_manager_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

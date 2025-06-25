@@ -27,7 +27,7 @@ class TestNetworkManagementExpressRouteCircuitPeeringsOperationsAsync(AzureMgmtR
                 resource_group_name=resource_group.name,
                 circuit_name="str",
                 peering_name="str",
-                api_version="2024-07-01",
+                api_version="2023-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -41,7 +41,7 @@ class TestNetworkManagementExpressRouteCircuitPeeringsOperationsAsync(AzureMgmtR
             resource_group_name=resource_group.name,
             circuit_name="str",
             peering_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
 
         # please add some check logic here by yourself
@@ -79,9 +79,6 @@ class TestNetworkManagementExpressRouteCircuitPeeringsOperationsAsync(AzureMgmtR
                     "ipv6PeeringConfig": {
                         "microsoftPeeringConfig": {
                             "advertisedCommunities": ["str"],
-                            "advertisedPublicPrefixInfo": [
-                                {"prefix": "str", "signature": "str", "validationId": "str", "validationState": "str"}
-                            ],
                             "advertisedPublicPrefixes": ["str"],
                             "advertisedPublicPrefixesState": "str",
                             "customerASN": 0,
@@ -96,9 +93,6 @@ class TestNetworkManagementExpressRouteCircuitPeeringsOperationsAsync(AzureMgmtR
                     "lastModifiedBy": "str",
                     "microsoftPeeringConfig": {
                         "advertisedCommunities": ["str"],
-                        "advertisedPublicPrefixInfo": [
-                            {"prefix": "str", "signature": "str", "validationId": "str", "validationState": "str"}
-                        ],
                         "advertisedPublicPrefixes": ["str"],
                         "advertisedPublicPrefixesState": "str",
                         "customerASN": 0,
@@ -135,7 +129,7 @@ class TestNetworkManagementExpressRouteCircuitPeeringsOperationsAsync(AzureMgmtR
                     "type": "str",
                     "vlanId": 0,
                 },
-                api_version="2024-07-01",
+                api_version="2023-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -148,7 +142,7 @@ class TestNetworkManagementExpressRouteCircuitPeeringsOperationsAsync(AzureMgmtR
         response = self.client.express_route_circuit_peerings.list(
             resource_group_name=resource_group.name,
             circuit_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

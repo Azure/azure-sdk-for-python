@@ -25,7 +25,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
         response = self.client.load_balancers.begin_delete(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
         response = self.client.load_balancers.get(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
 
         # please add some check logic here by yourself
@@ -174,13 +174,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                 }
                                             ],
                                             "ipConfigurations": [...],
-                                            "ipamPoolPrefixAllocations": [
-                                                {
-                                                    "allocatedAddressPrefixes": ["str"],
-                                                    "id": "str",
-                                                    "numberOfIpAddresses": "str",
-                                                }
-                                            ],
                                             "name": "str",
                                             "natGateway": {"id": "str"},
                                             "networkSecurityGroup": {
@@ -234,7 +227,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                 "flowLogs": [
                                                     {
                                                         "enabled": bool,
-                                                        "enabledFilteringCriteria": "str",
                                                         "etag": "str",
                                                         "flowAnalyticsConfiguration": {
                                                             "networkWatcherFlowAnalyticsConfiguration": {
@@ -247,14 +239,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                         },
                                                         "format": {"type": "str", "version": 0},
                                                         "id": "str",
-                                                        "identity": {
-                                                            "principalId": "str",
-                                                            "tenantId": "str",
-                                                            "type": "str",
-                                                            "userAssignedIdentities": {
-                                                                "str": {"clientId": "str", "principalId": "str"}
-                                                            },
-                                                        },
                                                         "location": "str",
                                                         "name": "str",
                                                         "provisioningState": "str",
@@ -274,7 +258,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                     {
                                                         "auxiliaryMode": "str",
                                                         "auxiliarySku": "str",
-                                                        "defaultOutboundConnectivityEnabled": bool,
                                                         "disableTcpStateTracking": bool,
                                                         "dnsSettings": {
                                                             "appliedDnsServers": ["str"],
@@ -373,7 +356,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                         "privateLinkService": {
                                                             "alias": "str",
                                                             "autoApproval": {"subscriptions": ["str"]},
-                                                            "destinationIPAddress": "str",
                                                             "enableProxyProtocol": bool,
                                                             "etag": "str",
                                                             "extendedLocation": {"name": "str", "type": "str"},
@@ -668,7 +650,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                         {
                                                             "auxiliaryMode": "str",
                                                             "auxiliarySku": "str",
-                                                            "defaultOutboundConnectivityEnabled": bool,
                                                             "disableTcpStateTracking": bool,
                                                             "dnsSettings": {
                                                                 "appliedDnsServers": ["str"],
@@ -740,7 +721,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                 "flowLogs": [
                                                                     {
                                                                         "enabled": bool,
-                                                                        "enabledFilteringCriteria": "str",
                                                                         "etag": "str",
                                                                         "flowAnalyticsConfiguration": {
                                                                             "networkWatcherFlowAnalyticsConfiguration": {
@@ -753,17 +733,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                         },
                                                                         "format": {"type": "str", "version": 0},
                                                                         "id": "str",
-                                                                        "identity": {
-                                                                            "principalId": "str",
-                                                                            "tenantId": "str",
-                                                                            "type": "str",
-                                                                            "userAssignedIdentities": {
-                                                                                "str": {
-                                                                                    "clientId": "str",
-                                                                                    "principalId": "str",
-                                                                                }
-                                                                            },
-                                                                        },
                                                                         "location": "str",
                                                                         "name": "str",
                                                                         "provisioningState": "str",
@@ -841,7 +810,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                             "privateLinkService": {
                                                                 "alias": "str",
                                                                 "autoApproval": {"subscriptions": ["str"]},
-                                                                "destinationIPAddress": "str",
                                                                 "enableProxyProtocol": bool,
                                                                 "etag": "str",
                                                                 "extendedLocation": {"name": "str", "type": "str"},
@@ -1061,12 +1029,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                 }
                                             ],
                                             "serviceEndpoints": [
-                                                {
-                                                    "locations": ["str"],
-                                                    "networkIdentifier": {"id": "str"},
-                                                    "provisioningState": "str",
-                                                    "service": "str",
-                                                }
+                                                {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                             ],
                                             "sharingScope": "str",
                                             "type": "str",
@@ -1085,12 +1048,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                         "name": "str",
                                         "provisioningState": "str",
                                         "publicIpAddresses": [{"id": "str"}],
-                                        "publicIpAddressesV6": [{"id": "str"}],
                                         "publicIpPrefixes": [{"id": "str"}],
-                                        "publicIpPrefixesV6": [{"id": "str"}],
                                         "resourceGuid": "str",
                                         "sku": {"name": "str"},
-                                        "sourceVirtualNetwork": {"id": "str"},
                                         "subnets": [{"id": "str"}],
                                         "tags": {"str": "str"},
                                         "type": "str",
@@ -1184,12 +1144,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                     "name": "str",
                                                     "provisioningState": "str",
                                                     "publicIpAddresses": [{"id": "str"}],
-                                                    "publicIpAddressesV6": [{"id": "str"}],
                                                     "publicIpPrefixes": [{"id": "str"}],
-                                                    "publicIpPrefixesV6": [{"id": "str"}],
                                                     "resourceGuid": "str",
                                                     "sku": {"name": "str"},
-                                                    "sourceVirtualNetwork": {"id": "str"},
                                                     "subnets": [{"id": "str"}],
                                                     "tags": {"str": "str"},
                                                     "type": "str",
@@ -1208,9 +1165,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                             },
                                             "subnet": ...,
                                         }
-                                    ],
-                                    "ipamPoolPrefixAllocations": [
-                                        {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
                                     ],
                                     "name": "str",
                                     "natGateway": {"id": "str"},
@@ -1265,7 +1219,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                         "flowLogs": [
                                             {
                                                 "enabled": bool,
-                                                "enabledFilteringCriteria": "str",
                                                 "etag": "str",
                                                 "flowAnalyticsConfiguration": {
                                                     "networkWatcherFlowAnalyticsConfiguration": {
@@ -1278,14 +1231,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                 },
                                                 "format": {"type": "str", "version": 0},
                                                 "id": "str",
-                                                "identity": {
-                                                    "principalId": "str",
-                                                    "tenantId": "str",
-                                                    "type": "str",
-                                                    "userAssignedIdentities": {
-                                                        "str": {"clientId": "str", "principalId": "str"}
-                                                    },
-                                                },
                                                 "location": "str",
                                                 "name": "str",
                                                 "provisioningState": "str",
@@ -1305,7 +1250,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                             {
                                                 "auxiliaryMode": "str",
                                                 "auxiliarySku": "str",
-                                                "defaultOutboundConnectivityEnabled": bool,
                                                 "disableTcpStateTracking": bool,
                                                 "dnsSettings": {
                                                     "appliedDnsServers": ["str"],
@@ -1402,7 +1346,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                 "privateLinkService": {
                                                     "alias": "str",
                                                     "autoApproval": {"subscriptions": ["str"]},
-                                                    "destinationIPAddress": "str",
                                                     "enableProxyProtocol": bool,
                                                     "etag": "str",
                                                     "extendedLocation": {"name": "str", "type": "str"},
@@ -1476,12 +1419,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                     "name": "str",
                                                                     "provisioningState": "str",
                                                                     "publicIpAddresses": [{"id": "str"}],
-                                                                    "publicIpAddressesV6": [{"id": "str"}],
                                                                     "publicIpPrefixes": [{"id": "str"}],
-                                                                    "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
                                                                     "sku": {"name": "str"},
-                                                                    "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
                                                                     "tags": {"str": "str"},
                                                                     "type": "str",
@@ -1664,12 +1604,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                         "name": "str",
                                                                         "provisioningState": "str",
                                                                         "publicIpAddresses": [{"id": "str"}],
-                                                                        "publicIpAddressesV6": [{"id": "str"}],
                                                                         "publicIpPrefixes": [{"id": "str"}],
-                                                                        "publicIpPrefixesV6": [{"id": "str"}],
                                                                         "resourceGuid": "str",
                                                                         "sku": {"name": "str"},
-                                                                        "sourceVirtualNetwork": {"id": "str"},
                                                                         "subnets": [{"id": "str"}],
                                                                         "tags": {"str": "str"},
                                                                         "type": "str",
@@ -1816,7 +1753,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                 {
                                                     "auxiliaryMode": "str",
                                                     "auxiliarySku": "str",
-                                                    "defaultOutboundConnectivityEnabled": bool,
                                                     "disableTcpStateTracking": bool,
                                                     "dnsSettings": {
                                                         "appliedDnsServers": ["str"],
@@ -1888,7 +1824,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                         "flowLogs": [
                                                             {
                                                                 "enabled": bool,
-                                                                "enabledFilteringCriteria": "str",
                                                                 "etag": "str",
                                                                 "flowAnalyticsConfiguration": {
                                                                     "networkWatcherFlowAnalyticsConfiguration": {
@@ -1901,14 +1836,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                 },
                                                                 "format": {"type": "str", "version": 0},
                                                                 "id": "str",
-                                                                "identity": {
-                                                                    "principalId": "str",
-                                                                    "tenantId": "str",
-                                                                    "type": "str",
-                                                                    "userAssignedIdentities": {
-                                                                        "str": {"clientId": "str", "principalId": "str"}
-                                                                    },
-                                                                },
                                                                 "location": "str",
                                                                 "name": "str",
                                                                 "provisioningState": "str",
@@ -1983,7 +1910,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                     "privateLinkService": {
                                                         "alias": "str",
                                                         "autoApproval": {"subscriptions": ["str"]},
-                                                        "destinationIPAddress": "str",
                                                         "enableProxyProtocol": bool,
                                                         "etag": "str",
                                                         "extendedLocation": {"name": "str", "type": "str"},
@@ -2057,12 +1983,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                         "name": "str",
                                                                         "provisioningState": "str",
                                                                         "publicIpAddresses": [{"id": "str"}],
-                                                                        "publicIpAddressesV6": [{"id": "str"}],
                                                                         "publicIpPrefixes": [{"id": "str"}],
-                                                                        "publicIpPrefixesV6": [{"id": "str"}],
                                                                         "resourceGuid": "str",
                                                                         "sku": {"name": "str"},
-                                                                        "sourceVirtualNetwork": {"id": "str"},
                                                                         "subnets": [{"id": "str"}],
                                                                         "tags": {"str": "str"},
                                                                         "type": "str",
@@ -2177,12 +2100,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                             "name": "str",
                                                                             "provisioningState": "str",
                                                                             "publicIpAddresses": [{"id": "str"}],
-                                                                            "publicIpAddressesV6": [{"id": "str"}],
                                                                             "publicIpPrefixes": [{"id": "str"}],
-                                                                            "publicIpPrefixesV6": [{"id": "str"}],
                                                                             "resourceGuid": "str",
                                                                             "sku": {"name": "str"},
-                                                                            "sourceVirtualNetwork": {"id": "str"},
                                                                             "subnets": [{"id": "str"}],
                                                                             "tags": {"str": "str"},
                                                                             "type": "str",
@@ -2328,12 +2248,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                         }
                                     ],
                                     "serviceEndpoints": [
-                                        {
-                                            "locations": ["str"],
-                                            "networkIdentifier": {"id": "str"},
-                                            "provisioningState": "str",
-                                            "service": "str",
-                                        }
+                                        {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                     ],
                                     "sharingScope": "str",
                                     "type": "str",
@@ -2418,13 +2333,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                             }
                                                         ],
                                                         "ipConfigurations": [...],
-                                                        "ipamPoolPrefixAllocations": [
-                                                            {
-                                                                "allocatedAddressPrefixes": ["str"],
-                                                                "id": "str",
-                                                                "numberOfIpAddresses": "str",
-                                                            }
-                                                        ],
                                                         "name": "str",
                                                         "natGateway": {"id": "str"},
                                                         "networkSecurityGroup": {
@@ -2478,7 +2386,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                             "flowLogs": [
                                                                 {
                                                                     "enabled": bool,
-                                                                    "enabledFilteringCriteria": "str",
                                                                     "etag": "str",
                                                                     "flowAnalyticsConfiguration": {
                                                                         "networkWatcherFlowAnalyticsConfiguration": {
@@ -2491,17 +2398,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                     },
                                                                     "format": {"type": "str", "version": 0},
                                                                     "id": "str",
-                                                                    "identity": {
-                                                                        "principalId": "str",
-                                                                        "tenantId": "str",
-                                                                        "type": "str",
-                                                                        "userAssignedIdentities": {
-                                                                            "str": {
-                                                                                "clientId": "str",
-                                                                                "principalId": "str",
-                                                                            }
-                                                                        },
-                                                                    },
                                                                     "location": "str",
                                                                     "name": "str",
                                                                     "provisioningState": "str",
@@ -2521,7 +2417,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                 {
                                                                     "auxiliaryMode": "str",
                                                                     "auxiliarySku": "str",
-                                                                    "defaultOutboundConnectivityEnabled": bool,
                                                                     "disableTcpStateTracking": bool,
                                                                     "dnsSettings": {
                                                                         "appliedDnsServers": ["str"],
@@ -2623,7 +2518,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                     "privateLinkService": {
                                                                         "alias": "str",
                                                                         "autoApproval": {"subscriptions": ["str"]},
-                                                                        "destinationIPAddress": "str",
                                                                         "enableProxyProtocol": bool,
                                                                         "etag": "str",
                                                                         "extendedLocation": {
@@ -2875,7 +2769,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                     {
                                                                         "auxiliaryMode": "str",
                                                                         "auxiliarySku": "str",
-                                                                        "defaultOutboundConnectivityEnabled": bool,
                                                                         "disableTcpStateTracking": bool,
                                                                         "dnsSettings": {
                                                                             "appliedDnsServers": ["str"],
@@ -2952,7 +2845,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                             "flowLogs": [
                                                                                 {
                                                                                     "enabled": bool,
-                                                                                    "enabledFilteringCriteria": "str",
                                                                                     "etag": "str",
                                                                                     "flowAnalyticsConfiguration": {
                                                                                         "networkWatcherFlowAnalyticsConfiguration": {
@@ -2968,17 +2860,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                         "version": 0,
                                                                                     },
                                                                                     "id": "str",
-                                                                                    "identity": {
-                                                                                        "principalId": "str",
-                                                                                        "tenantId": "str",
-                                                                                        "type": "str",
-                                                                                        "userAssignedIdentities": {
-                                                                                            "str": {
-                                                                                                "clientId": "str",
-                                                                                                "principalId": "str",
-                                                                                            }
-                                                                                        },
-                                                                                    },
                                                                                     "location": "str",
                                                                                     "name": "str",
                                                                                     "provisioningState": "str",
@@ -3058,7 +2939,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                         "privateLinkService": {
                                                                             "alias": "str",
                                                                             "autoApproval": {"subscriptions": ["str"]},
-                                                                            "destinationIPAddress": "str",
                                                                             "enableProxyProtocol": bool,
                                                                             "etag": "str",
                                                                             "extendedLocation": {
@@ -3234,7 +3114,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                         "serviceEndpoints": [
                                                             {
                                                                 "locations": ["str"],
-                                                                "networkIdentifier": {"id": "str"},
                                                                 "provisioningState": "str",
                                                                 "service": "str",
                                                             }
@@ -3256,12 +3135,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                     "name": "str",
                                                     "provisioningState": "str",
                                                     "publicIpAddresses": [{"id": "str"}],
-                                                    "publicIpAddressesV6": [{"id": "str"}],
                                                     "publicIpPrefixes": [{"id": "str"}],
-                                                    "publicIpPrefixesV6": [{"id": "str"}],
                                                     "resourceGuid": "str",
                                                     "sku": {"name": "str"},
-                                                    "sourceVirtualNetwork": {"id": "str"},
                                                     "subnets": [{"id": "str"}],
                                                     "tags": {"str": "str"},
                                                     "type": "str",
@@ -3356,12 +3232,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                 "name": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
-                                                                "publicIpAddressesV6": [{"id": "str"}],
                                                                 "publicIpPrefixes": [{"id": "str"}],
-                                                                "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
                                                                 "sku": {"name": "str"},
-                                                                "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
                                                                 "tags": {"str": "str"},
                                                                 "type": "str",
@@ -3379,13 +3252,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                             "zones": ["str"],
                                                         },
                                                         "subnet": ...,
-                                                    }
-                                                ],
-                                                "ipamPoolPrefixAllocations": [
-                                                    {
-                                                        "allocatedAddressPrefixes": ["str"],
-                                                        "id": "str",
-                                                        "numberOfIpAddresses": "str",
                                                     }
                                                 ],
                                                 "name": "str",
@@ -3441,7 +3307,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                     "flowLogs": [
                                                         {
                                                             "enabled": bool,
-                                                            "enabledFilteringCriteria": "str",
                                                             "etag": "str",
                                                             "flowAnalyticsConfiguration": {
                                                                 "networkWatcherFlowAnalyticsConfiguration": {
@@ -3454,14 +3319,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                             },
                                                             "format": {"type": "str", "version": 0},
                                                             "id": "str",
-                                                            "identity": {
-                                                                "principalId": "str",
-                                                                "tenantId": "str",
-                                                                "type": "str",
-                                                                "userAssignedIdentities": {
-                                                                    "str": {"clientId": "str", "principalId": "str"}
-                                                                },
-                                                            },
                                                             "location": "str",
                                                             "name": "str",
                                                             "provisioningState": "str",
@@ -3481,7 +3338,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                         {
                                                             "auxiliaryMode": "str",
                                                             "auxiliarySku": "str",
-                                                            "defaultOutboundConnectivityEnabled": bool,
                                                             "disableTcpStateTracking": bool,
                                                             "dnsSettings": {
                                                                 "appliedDnsServers": ["str"],
@@ -3580,7 +3436,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                             "privateLinkService": {
                                                                 "alias": "str",
                                                                 "autoApproval": {"subscriptions": ["str"]},
-                                                                "destinationIPAddress": "str",
                                                                 "enableProxyProtocol": bool,
                                                                 "etag": "str",
                                                                 "extendedLocation": {"name": "str", "type": "str"},
@@ -3824,7 +3679,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                             {
                                                                 "auxiliaryMode": "str",
                                                                 "auxiliarySku": "str",
-                                                                "defaultOutboundConnectivityEnabled": bool,
                                                                 "disableTcpStateTracking": bool,
                                                                 "dnsSettings": {
                                                                     "appliedDnsServers": ["str"],
@@ -3896,7 +3750,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                     "flowLogs": [
                                                                         {
                                                                             "enabled": bool,
-                                                                            "enabledFilteringCriteria": "str",
                                                                             "etag": "str",
                                                                             "flowAnalyticsConfiguration": {
                                                                                 "networkWatcherFlowAnalyticsConfiguration": {
@@ -3909,17 +3762,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                             },
                                                                             "format": {"type": "str", "version": 0},
                                                                             "id": "str",
-                                                                            "identity": {
-                                                                                "principalId": "str",
-                                                                                "tenantId": "str",
-                                                                                "type": "str",
-                                                                                "userAssignedIdentities": {
-                                                                                    "str": {
-                                                                                        "clientId": "str",
-                                                                                        "principalId": "str",
-                                                                                    }
-                                                                                },
-                                                                            },
                                                                             "location": "str",
                                                                             "name": "str",
                                                                             "provisioningState": "str",
@@ -3997,7 +3839,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                 "privateLinkService": {
                                                                     "alias": "str",
                                                                     "autoApproval": {"subscriptions": ["str"]},
-                                                                    "destinationIPAddress": "str",
                                                                     "enableProxyProtocol": bool,
                                                                     "etag": "str",
                                                                     "extendedLocation": {"name": "str", "type": "str"},
@@ -4166,12 +4007,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                     }
                                                 ],
                                                 "serviceEndpoints": [
-                                                    {
-                                                        "locations": ["str"],
-                                                        "networkIdentifier": {"id": "str"},
-                                                        "provisioningState": "str",
-                                                        "service": "str",
-                                                    }
+                                                    {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                                 ],
                                                 "sharingScope": "str",
                                                 "type": "str",
@@ -4310,9 +4146,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                         }
                                     ],
                                     "ipConfigurations": [...],
-                                    "ipamPoolPrefixAllocations": [
-                                        {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
-                                    ],
                                     "name": "str",
                                     "natGateway": {"id": "str"},
                                     "networkSecurityGroup": {
@@ -4366,7 +4199,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                         "flowLogs": [
                                             {
                                                 "enabled": bool,
-                                                "enabledFilteringCriteria": "str",
                                                 "etag": "str",
                                                 "flowAnalyticsConfiguration": {
                                                     "networkWatcherFlowAnalyticsConfiguration": {
@@ -4379,14 +4211,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                 },
                                                 "format": {"type": "str", "version": 0},
                                                 "id": "str",
-                                                "identity": {
-                                                    "principalId": "str",
-                                                    "tenantId": "str",
-                                                    "type": "str",
-                                                    "userAssignedIdentities": {
-                                                        "str": {"clientId": "str", "principalId": "str"}
-                                                    },
-                                                },
                                                 "location": "str",
                                                 "name": "str",
                                                 "provisioningState": "str",
@@ -4406,7 +4230,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                             {
                                                 "auxiliaryMode": "str",
                                                 "auxiliarySku": "str",
-                                                "defaultOutboundConnectivityEnabled": bool,
                                                 "disableTcpStateTracking": bool,
                                                 "dnsSettings": {
                                                     "appliedDnsServers": ["str"],
@@ -4642,7 +4465,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                 "privateLinkService": {
                                                     "alias": "str",
                                                     "autoApproval": {"subscriptions": ["str"]},
-                                                    "destinationIPAddress": "str",
                                                     "enableProxyProtocol": bool,
                                                     "etag": "str",
                                                     "extendedLocation": {"name": "str", "type": "str"},
@@ -5009,7 +4831,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                 {
                                                     "auxiliaryMode": "str",
                                                     "auxiliarySku": "str",
-                                                    "defaultOutboundConnectivityEnabled": bool,
                                                     "disableTcpStateTracking": bool,
                                                     "dnsSettings": {
                                                         "appliedDnsServers": ["str"],
@@ -5220,7 +5041,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                         "flowLogs": [
                                                             {
                                                                 "enabled": bool,
-                                                                "enabledFilteringCriteria": "str",
                                                                 "etag": "str",
                                                                 "flowAnalyticsConfiguration": {
                                                                     "networkWatcherFlowAnalyticsConfiguration": {
@@ -5233,14 +5053,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                 },
                                                                 "format": {"type": "str", "version": 0},
                                                                 "id": "str",
-                                                                "identity": {
-                                                                    "principalId": "str",
-                                                                    "tenantId": "str",
-                                                                    "type": "str",
-                                                                    "userAssignedIdentities": {
-                                                                        "str": {"clientId": "str", "principalId": "str"}
-                                                                    },
-                                                                },
                                                                 "location": "str",
                                                                 "name": "str",
                                                                 "provisioningState": "str",
@@ -5315,7 +5127,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                     "privateLinkService": {
                                                         "alias": "str",
                                                         "autoApproval": {"subscriptions": ["str"]},
-                                                        "destinationIPAddress": "str",
                                                         "enableProxyProtocol": bool,
                                                         "etag": "str",
                                                         "extendedLocation": {"name": "str", "type": "str"},
@@ -5610,12 +5421,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                         }
                                     ],
                                     "serviceEndpoints": [
-                                        {
-                                            "locations": ["str"],
-                                            "networkIdentifier": {"id": "str"},
-                                            "provisioningState": "str",
-                                            "service": "str",
-                                        }
+                                        {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                     ],
                                     "sharingScope": "str",
                                     "type": "str",
@@ -5634,12 +5440,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                 "name": "str",
                                 "provisioningState": "str",
                                 "publicIpAddresses": [{"id": "str"}],
-                                "publicIpAddressesV6": [{"id": "str"}],
                                 "publicIpPrefixes": [{"id": "str"}],
-                                "publicIpPrefixesV6": [{"id": "str"}],
                                 "resourceGuid": "str",
                                 "sku": {"name": "str"},
-                                "sourceVirtualNetwork": {"id": "str"},
                                 "subnets": [{"id": "str"}],
                                 "tags": {"str": "str"},
                                 "type": "str",
@@ -5731,12 +5534,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                             "name": "str",
                                             "provisioningState": "str",
                                             "publicIpAddresses": [{"id": "str"}],
-                                            "publicIpAddressesV6": [{"id": "str"}],
                                             "publicIpPrefixes": [{"id": "str"}],
-                                            "publicIpPrefixesV6": [{"id": "str"}],
                                             "resourceGuid": "str",
                                             "sku": {"name": "str"},
-                                            "sourceVirtualNetwork": {"id": "str"},
                                             "subnets": [{"id": "str"}],
                                             "tags": {"str": "str"},
                                             "type": "str",
@@ -5755,9 +5555,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                     },
                                     "subnet": ...,
                                 }
-                            ],
-                            "ipamPoolPrefixAllocations": [
-                                {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
                             ],
                             "name": "str",
                             "natGateway": {"id": "str"},
@@ -5812,7 +5609,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                 "flowLogs": [
                                     {
                                         "enabled": bool,
-                                        "enabledFilteringCriteria": "str",
                                         "etag": "str",
                                         "flowAnalyticsConfiguration": {
                                             "networkWatcherFlowAnalyticsConfiguration": {
@@ -5825,14 +5621,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                         },
                                         "format": {"type": "str", "version": 0},
                                         "id": "str",
-                                        "identity": {
-                                            "principalId": "str",
-                                            "tenantId": "str",
-                                            "type": "str",
-                                            "userAssignedIdentities": {
-                                                "str": {"clientId": "str", "principalId": "str"}
-                                            },
-                                        },
                                         "location": "str",
                                         "name": "str",
                                         "provisioningState": "str",
@@ -5852,7 +5640,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                     {
                                         "auxiliaryMode": "str",
                                         "auxiliarySku": "str",
-                                        "defaultOutboundConnectivityEnabled": bool,
                                         "disableTcpStateTracking": bool,
                                         "dnsSettings": {
                                             "appliedDnsServers": ["str"],
@@ -6012,12 +5799,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                         "name": "str",
                                                         "provisioningState": "str",
                                                         "publicIpAddresses": [{"id": "str"}],
-                                                        "publicIpAddressesV6": [{"id": "str"}],
                                                         "publicIpPrefixes": [{"id": "str"}],
-                                                        "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
                                                         "sku": {"name": "str"},
-                                                        "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
                                                         "tags": {"str": "str"},
                                                         "type": "str",
@@ -6143,7 +5927,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                         "privateLinkService": {
                                             "alias": "str",
                                             "autoApproval": {"subscriptions": ["str"]},
-                                            "destinationIPAddress": "str",
                                             "enableProxyProtocol": bool,
                                             "etag": "str",
                                             "extendedLocation": {"name": "str", "type": "str"},
@@ -6419,12 +6202,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                 "name": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
-                                                                "publicIpAddressesV6": [{"id": "str"}],
                                                                 "publicIpPrefixes": [{"id": "str"}],
-                                                                "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
                                                                 "sku": {"name": "str"},
-                                                                "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
                                                                 "tags": {"str": "str"},
                                                                 "type": "str",
@@ -6569,7 +6349,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                         {
                                             "auxiliaryMode": "str",
                                             "auxiliarySku": "str",
-                                            "defaultOutboundConnectivityEnabled": bool,
                                             "disableTcpStateTracking": bool,
                                             "dnsSettings": {
                                                 "appliedDnsServers": ["str"],
@@ -6731,12 +6510,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                             "name": "str",
                                                             "provisioningState": "str",
                                                             "publicIpAddresses": [{"id": "str"}],
-                                                            "publicIpAddressesV6": [{"id": "str"}],
                                                             "publicIpPrefixes": [{"id": "str"}],
-                                                            "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
                                                             "sku": {"name": "str"},
-                                                            "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
                                                             "tags": {"str": "str"},
                                                             "type": "str",
@@ -6837,7 +6613,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                 "flowLogs": [
                                                     {
                                                         "enabled": bool,
-                                                        "enabledFilteringCriteria": "str",
                                                         "etag": "str",
                                                         "flowAnalyticsConfiguration": {
                                                             "networkWatcherFlowAnalyticsConfiguration": {
@@ -6850,14 +6625,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                         },
                                                         "format": {"type": "str", "version": 0},
                                                         "id": "str",
-                                                        "identity": {
-                                                            "principalId": "str",
-                                                            "tenantId": "str",
-                                                            "type": "str",
-                                                            "userAssignedIdentities": {
-                                                                "str": {"clientId": "str", "principalId": "str"}
-                                                            },
-                                                        },
                                                         "location": "str",
                                                         "name": "str",
                                                         "provisioningState": "str",
@@ -6932,7 +6699,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                             "privateLinkService": {
                                                 "alias": "str",
                                                 "autoApproval": {"subscriptions": ["str"]},
-                                                "destinationIPAddress": "str",
                                                 "enableProxyProtocol": bool,
                                                 "etag": "str",
                                                 "extendedLocation": {"name": "str", "type": "str"},
@@ -7139,12 +6905,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                     "name": "str",
                                                                     "provisioningState": "str",
                                                                     "publicIpAddresses": [{"id": "str"}],
-                                                                    "publicIpAddressesV6": [{"id": "str"}],
                                                                     "publicIpPrefixes": [{"id": "str"}],
-                                                                    "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
                                                                     "sku": {"name": "str"},
-                                                                    "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
                                                                     "tags": {"str": "str"},
                                                                     "type": "str",
@@ -7287,14 +7050,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                     "type": "str",
                                 }
                             ],
-                            "serviceEndpoints": [
-                                {
-                                    "locations": ["str"],
-                                    "networkIdentifier": {"id": "str"},
-                                    "provisioningState": "str",
-                                    "service": "str",
-                                }
-                            ],
+                            "serviceEndpoints": [{"locations": ["str"], "provisioningState": "str", "service": "str"}],
                             "sharingScope": "str",
                             "type": "str",
                         },
@@ -7459,13 +7215,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                             }
                                         ],
                                         "ipConfigurations": [...],
-                                        "ipamPoolPrefixAllocations": [
-                                            {
-                                                "allocatedAddressPrefixes": ["str"],
-                                                "id": "str",
-                                                "numberOfIpAddresses": "str",
-                                            }
-                                        ],
                                         "name": "str",
                                         "natGateway": {"id": "str"},
                                         "networkSecurityGroup": {
@@ -7519,7 +7268,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                             "flowLogs": [
                                                 {
                                                     "enabled": bool,
-                                                    "enabledFilteringCriteria": "str",
                                                     "etag": "str",
                                                     "flowAnalyticsConfiguration": {
                                                         "networkWatcherFlowAnalyticsConfiguration": {
@@ -7532,14 +7280,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                     },
                                                     "format": {"type": "str", "version": 0},
                                                     "id": "str",
-                                                    "identity": {
-                                                        "principalId": "str",
-                                                        "tenantId": "str",
-                                                        "type": "str",
-                                                        "userAssignedIdentities": {
-                                                            "str": {"clientId": "str", "principalId": "str"}
-                                                        },
-                                                    },
                                                     "location": "str",
                                                     "name": "str",
                                                     "provisioningState": "str",
@@ -7559,7 +7299,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                 {
                                                     "auxiliaryMode": "str",
                                                     "auxiliarySku": "str",
-                                                    "defaultOutboundConnectivityEnabled": bool,
                                                     "disableTcpStateTracking": bool,
                                                     "dnsSettings": {
                                                         "appliedDnsServers": ["str"],
@@ -7656,7 +7395,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                     "privateLinkService": {
                                                         "alias": "str",
                                                         "autoApproval": {"subscriptions": ["str"]},
-                                                        "destinationIPAddress": "str",
                                                         "enableProxyProtocol": bool,
                                                         "etag": "str",
                                                         "extendedLocation": {"name": "str", "type": "str"},
@@ -7948,7 +7686,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                     {
                                                         "auxiliaryMode": "str",
                                                         "auxiliarySku": "str",
-                                                        "defaultOutboundConnectivityEnabled": bool,
                                                         "disableTcpStateTracking": bool,
                                                         "dnsSettings": {
                                                             "appliedDnsServers": ["str"],
@@ -8020,7 +7757,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                             "flowLogs": [
                                                                 {
                                                                     "enabled": bool,
-                                                                    "enabledFilteringCriteria": "str",
                                                                     "etag": "str",
                                                                     "flowAnalyticsConfiguration": {
                                                                         "networkWatcherFlowAnalyticsConfiguration": {
@@ -8033,17 +7769,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                     },
                                                                     "format": {"type": "str", "version": 0},
                                                                     "id": "str",
-                                                                    "identity": {
-                                                                        "principalId": "str",
-                                                                        "tenantId": "str",
-                                                                        "type": "str",
-                                                                        "userAssignedIdentities": {
-                                                                            "str": {
-                                                                                "clientId": "str",
-                                                                                "principalId": "str",
-                                                                            }
-                                                                        },
-                                                                    },
                                                                     "location": "str",
                                                                     "name": "str",
                                                                     "provisioningState": "str",
@@ -8118,7 +7843,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                         "privateLinkService": {
                                                             "alias": "str",
                                                             "autoApproval": {"subscriptions": ["str"]},
-                                                            "destinationIPAddress": "str",
                                                             "enableProxyProtocol": bool,
                                                             "etag": "str",
                                                             "extendedLocation": {"name": "str", "type": "str"},
@@ -8338,12 +8062,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                             }
                                         ],
                                         "serviceEndpoints": [
-                                            {
-                                                "locations": ["str"],
-                                                "networkIdentifier": {"id": "str"},
-                                                "provisioningState": "str",
-                                                "service": "str",
-                                            }
+                                            {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                         ],
                                         "sharingScope": "str",
                                         "type": "str",
@@ -8362,12 +8081,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                     "name": "str",
                                     "provisioningState": "str",
                                     "publicIpAddresses": [{"id": "str"}],
-                                    "publicIpAddressesV6": [{"id": "str"}],
                                     "publicIpPrefixes": [{"id": "str"}],
-                                    "publicIpPrefixesV6": [{"id": "str"}],
                                     "resourceGuid": "str",
                                     "sku": {"name": "str"},
-                                    "sourceVirtualNetwork": {"id": "str"},
                                     "subnets": [{"id": "str"}],
                                     "tags": {"str": "str"},
                                     "type": "str",
@@ -8461,12 +8177,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                 "name": "str",
                                                 "provisioningState": "str",
                                                 "publicIpAddresses": [{"id": "str"}],
-                                                "publicIpAddressesV6": [{"id": "str"}],
                                                 "publicIpPrefixes": [{"id": "str"}],
-                                                "publicIpPrefixesV6": [{"id": "str"}],
                                                 "resourceGuid": "str",
                                                 "sku": {"name": "str"},
-                                                "sourceVirtualNetwork": {"id": "str"},
                                                 "subnets": [{"id": "str"}],
                                                 "tags": {"str": "str"},
                                                 "type": "str",
@@ -8485,9 +8198,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                         },
                                         "subnet": ...,
                                     }
-                                ],
-                                "ipamPoolPrefixAllocations": [
-                                    {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
                                 ],
                                 "name": "str",
                                 "natGateway": {"id": "str"},
@@ -8542,7 +8252,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                     "flowLogs": [
                                         {
                                             "enabled": bool,
-                                            "enabledFilteringCriteria": "str",
                                             "etag": "str",
                                             "flowAnalyticsConfiguration": {
                                                 "networkWatcherFlowAnalyticsConfiguration": {
@@ -8555,14 +8264,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                             },
                                             "format": {"type": "str", "version": 0},
                                             "id": "str",
-                                            "identity": {
-                                                "principalId": "str",
-                                                "tenantId": "str",
-                                                "type": "str",
-                                                "userAssignedIdentities": {
-                                                    "str": {"clientId": "str", "principalId": "str"}
-                                                },
-                                            },
                                             "location": "str",
                                             "name": "str",
                                             "provisioningState": "str",
@@ -8582,7 +8283,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                         {
                                             "auxiliaryMode": "str",
                                             "auxiliarySku": "str",
-                                            "defaultOutboundConnectivityEnabled": bool,
                                             "disableTcpStateTracking": bool,
                                             "dnsSettings": {
                                                 "appliedDnsServers": ["str"],
@@ -8679,7 +8379,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                             "privateLinkService": {
                                                 "alias": "str",
                                                 "autoApproval": {"subscriptions": ["str"]},
-                                                "destinationIPAddress": "str",
                                                 "enableProxyProtocol": bool,
                                                 "etag": "str",
                                                 "extendedLocation": {"name": "str", "type": "str"},
@@ -8753,12 +8452,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                 "name": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
-                                                                "publicIpAddressesV6": [{"id": "str"}],
                                                                 "publicIpPrefixes": [{"id": "str"}],
-                                                                "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
                                                                 "sku": {"name": "str"},
-                                                                "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
                                                                 "tags": {"str": "str"},
                                                                 "type": "str",
@@ -8941,12 +8637,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                     "name": "str",
                                                                     "provisioningState": "str",
                                                                     "publicIpAddresses": [{"id": "str"}],
-                                                                    "publicIpAddressesV6": [{"id": "str"}],
                                                                     "publicIpPrefixes": [{"id": "str"}],
-                                                                    "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
                                                                     "sku": {"name": "str"},
-                                                                    "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
                                                                     "tags": {"str": "str"},
                                                                     "type": "str",
@@ -9093,7 +8786,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                             {
                                                 "auxiliaryMode": "str",
                                                 "auxiliarySku": "str",
-                                                "defaultOutboundConnectivityEnabled": bool,
                                                 "disableTcpStateTracking": bool,
                                                 "dnsSettings": {
                                                     "appliedDnsServers": ["str"],
@@ -9165,7 +8857,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                     "flowLogs": [
                                                         {
                                                             "enabled": bool,
-                                                            "enabledFilteringCriteria": "str",
                                                             "etag": "str",
                                                             "flowAnalyticsConfiguration": {
                                                                 "networkWatcherFlowAnalyticsConfiguration": {
@@ -9178,14 +8869,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                             },
                                                             "format": {"type": "str", "version": 0},
                                                             "id": "str",
-                                                            "identity": {
-                                                                "principalId": "str",
-                                                                "tenantId": "str",
-                                                                "type": "str",
-                                                                "userAssignedIdentities": {
-                                                                    "str": {"clientId": "str", "principalId": "str"}
-                                                                },
-                                                            },
                                                             "location": "str",
                                                             "name": "str",
                                                             "provisioningState": "str",
@@ -9260,7 +8943,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                 "privateLinkService": {
                                                     "alias": "str",
                                                     "autoApproval": {"subscriptions": ["str"]},
-                                                    "destinationIPAddress": "str",
                                                     "enableProxyProtocol": bool,
                                                     "etag": "str",
                                                     "extendedLocation": {"name": "str", "type": "str"},
@@ -9334,12 +9016,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                     "name": "str",
                                                                     "provisioningState": "str",
                                                                     "publicIpAddresses": [{"id": "str"}],
-                                                                    "publicIpAddressesV6": [{"id": "str"}],
                                                                     "publicIpPrefixes": [{"id": "str"}],
-                                                                    "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
                                                                     "sku": {"name": "str"},
-                                                                    "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
                                                                     "tags": {"str": "str"},
                                                                     "type": "str",
@@ -9451,12 +9130,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                         "name": "str",
                                                                         "provisioningState": "str",
                                                                         "publicIpAddresses": [{"id": "str"}],
-                                                                        "publicIpAddressesV6": [{"id": "str"}],
                                                                         "publicIpPrefixes": [{"id": "str"}],
-                                                                        "publicIpPrefixesV6": [{"id": "str"}],
                                                                         "resourceGuid": "str",
                                                                         "sku": {"name": "str"},
-                                                                        "sourceVirtualNetwork": {"id": "str"},
                                                                         "subnets": [{"id": "str"}],
                                                                         "tags": {"str": "str"},
                                                                         "type": "str",
@@ -9602,12 +9278,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                     }
                                 ],
                                 "serviceEndpoints": [
-                                    {
-                                        "locations": ["str"],
-                                        "networkIdentifier": {"id": "str"},
-                                        "provisioningState": "str",
-                                        "service": "str",
-                                    }
+                                    {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                 ],
                                 "sharingScope": "str",
                                 "type": "str",
@@ -9692,13 +9363,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                         }
                                                     ],
                                                     "ipConfigurations": [...],
-                                                    "ipamPoolPrefixAllocations": [
-                                                        {
-                                                            "allocatedAddressPrefixes": ["str"],
-                                                            "id": "str",
-                                                            "numberOfIpAddresses": "str",
-                                                        }
-                                                    ],
                                                     "name": "str",
                                                     "natGateway": {"id": "str"},
                                                     "networkSecurityGroup": {
@@ -9752,7 +9416,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                         "flowLogs": [
                                                             {
                                                                 "enabled": bool,
-                                                                "enabledFilteringCriteria": "str",
                                                                 "etag": "str",
                                                                 "flowAnalyticsConfiguration": {
                                                                     "networkWatcherFlowAnalyticsConfiguration": {
@@ -9765,14 +9428,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                 },
                                                                 "format": {"type": "str", "version": 0},
                                                                 "id": "str",
-                                                                "identity": {
-                                                                    "principalId": "str",
-                                                                    "tenantId": "str",
-                                                                    "type": "str",
-                                                                    "userAssignedIdentities": {
-                                                                        "str": {"clientId": "str", "principalId": "str"}
-                                                                    },
-                                                                },
                                                                 "location": "str",
                                                                 "name": "str",
                                                                 "provisioningState": "str",
@@ -9792,7 +9447,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                             {
                                                                 "auxiliaryMode": "str",
                                                                 "auxiliarySku": "str",
-                                                                "defaultOutboundConnectivityEnabled": bool,
                                                                 "disableTcpStateTracking": bool,
                                                                 "dnsSettings": {
                                                                     "appliedDnsServers": ["str"],
@@ -9891,7 +9545,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                 "privateLinkService": {
                                                                     "alias": "str",
                                                                     "autoApproval": {"subscriptions": ["str"]},
-                                                                    "destinationIPAddress": "str",
                                                                     "enableProxyProtocol": bool,
                                                                     "etag": "str",
                                                                     "extendedLocation": {"name": "str", "type": "str"},
@@ -10140,7 +9793,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                 {
                                                                     "auxiliaryMode": "str",
                                                                     "auxiliarySku": "str",
-                                                                    "defaultOutboundConnectivityEnabled": bool,
                                                                     "disableTcpStateTracking": bool,
                                                                     "dnsSettings": {
                                                                         "appliedDnsServers": ["str"],
@@ -10212,7 +9864,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                         "flowLogs": [
                                                                             {
                                                                                 "enabled": bool,
-                                                                                "enabledFilteringCriteria": "str",
                                                                                 "etag": "str",
                                                                                 "flowAnalyticsConfiguration": {
                                                                                     "networkWatcherFlowAnalyticsConfiguration": {
@@ -10225,17 +9876,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                 },
                                                                                 "format": {"type": "str", "version": 0},
                                                                                 "id": "str",
-                                                                                "identity": {
-                                                                                    "principalId": "str",
-                                                                                    "tenantId": "str",
-                                                                                    "type": "str",
-                                                                                    "userAssignedIdentities": {
-                                                                                        "str": {
-                                                                                            "clientId": "str",
-                                                                                            "principalId": "str",
-                                                                                        }
-                                                                                    },
-                                                                                },
                                                                                 "location": "str",
                                                                                 "name": "str",
                                                                                 "provisioningState": "str",
@@ -10313,7 +9953,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                     "privateLinkService": {
                                                                         "alias": "str",
                                                                         "autoApproval": {"subscriptions": ["str"]},
-                                                                        "destinationIPAddress": "str",
                                                                         "enableProxyProtocol": bool,
                                                                         "etag": "str",
                                                                         "extendedLocation": {
@@ -10487,7 +10126,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                     "serviceEndpoints": [
                                                         {
                                                             "locations": ["str"],
-                                                            "networkIdentifier": {"id": "str"},
                                                             "provisioningState": "str",
                                                             "service": "str",
                                                         }
@@ -10509,12 +10147,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                 "name": "str",
                                                 "provisioningState": "str",
                                                 "publicIpAddresses": [{"id": "str"}],
-                                                "publicIpAddressesV6": [{"id": "str"}],
                                                 "publicIpPrefixes": [{"id": "str"}],
-                                                "publicIpPrefixesV6": [{"id": "str"}],
                                                 "resourceGuid": "str",
                                                 "sku": {"name": "str"},
-                                                "sourceVirtualNetwork": {"id": "str"},
                                                 "subnets": [{"id": "str"}],
                                                 "tags": {"str": "str"},
                                                 "type": "str",
@@ -10609,12 +10244,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                             "name": "str",
                                                             "provisioningState": "str",
                                                             "publicIpAddresses": [{"id": "str"}],
-                                                            "publicIpAddressesV6": [{"id": "str"}],
                                                             "publicIpPrefixes": [{"id": "str"}],
-                                                            "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
                                                             "sku": {"name": "str"},
-                                                            "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
                                                             "tags": {"str": "str"},
                                                             "type": "str",
@@ -10632,13 +10264,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                         "zones": ["str"],
                                                     },
                                                     "subnet": ...,
-                                                }
-                                            ],
-                                            "ipamPoolPrefixAllocations": [
-                                                {
-                                                    "allocatedAddressPrefixes": ["str"],
-                                                    "id": "str",
-                                                    "numberOfIpAddresses": "str",
                                                 }
                                             ],
                                             "name": "str",
@@ -10694,7 +10319,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                 "flowLogs": [
                                                     {
                                                         "enabled": bool,
-                                                        "enabledFilteringCriteria": "str",
                                                         "etag": "str",
                                                         "flowAnalyticsConfiguration": {
                                                             "networkWatcherFlowAnalyticsConfiguration": {
@@ -10707,14 +10331,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                         },
                                                         "format": {"type": "str", "version": 0},
                                                         "id": "str",
-                                                        "identity": {
-                                                            "principalId": "str",
-                                                            "tenantId": "str",
-                                                            "type": "str",
-                                                            "userAssignedIdentities": {
-                                                                "str": {"clientId": "str", "principalId": "str"}
-                                                            },
-                                                        },
                                                         "location": "str",
                                                         "name": "str",
                                                         "provisioningState": "str",
@@ -10734,7 +10350,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                     {
                                                         "auxiliaryMode": "str",
                                                         "auxiliarySku": "str",
-                                                        "defaultOutboundConnectivityEnabled": bool,
                                                         "disableTcpStateTracking": bool,
                                                         "dnsSettings": {
                                                             "appliedDnsServers": ["str"],
@@ -10833,7 +10448,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                         "privateLinkService": {
                                                             "alias": "str",
                                                             "autoApproval": {"subscriptions": ["str"]},
-                                                            "destinationIPAddress": "str",
                                                             "enableProxyProtocol": bool,
                                                             "etag": "str",
                                                             "extendedLocation": {"name": "str", "type": "str"},
@@ -11077,7 +10691,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                         {
                                                             "auxiliaryMode": "str",
                                                             "auxiliarySku": "str",
-                                                            "defaultOutboundConnectivityEnabled": bool,
                                                             "disableTcpStateTracking": bool,
                                                             "dnsSettings": {
                                                                 "appliedDnsServers": ["str"],
@@ -11149,7 +10762,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                 "flowLogs": [
                                                                     {
                                                                         "enabled": bool,
-                                                                        "enabledFilteringCriteria": "str",
                                                                         "etag": "str",
                                                                         "flowAnalyticsConfiguration": {
                                                                             "networkWatcherFlowAnalyticsConfiguration": {
@@ -11162,17 +10774,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                         },
                                                                         "format": {"type": "str", "version": 0},
                                                                         "id": "str",
-                                                                        "identity": {
-                                                                            "principalId": "str",
-                                                                            "tenantId": "str",
-                                                                            "type": "str",
-                                                                            "userAssignedIdentities": {
-                                                                                "str": {
-                                                                                    "clientId": "str",
-                                                                                    "principalId": "str",
-                                                                                }
-                                                                            },
-                                                                        },
                                                                         "location": "str",
                                                                         "name": "str",
                                                                         "provisioningState": "str",
@@ -11250,7 +10851,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                             "privateLinkService": {
                                                                 "alias": "str",
                                                                 "autoApproval": {"subscriptions": ["str"]},
-                                                                "destinationIPAddress": "str",
                                                                 "enableProxyProtocol": bool,
                                                                 "etag": "str",
                                                                 "extendedLocation": {"name": "str", "type": "str"},
@@ -11419,12 +11019,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                 }
                                             ],
                                             "serviceEndpoints": [
-                                                {
-                                                    "locations": ["str"],
-                                                    "networkIdentifier": {"id": "str"},
-                                                    "provisioningState": "str",
-                                                    "service": "str",
-                                                }
+                                                {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                             ],
                                             "sharingScope": "str",
                                             "type": "str",
@@ -11477,7 +11072,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                         "backendAddressPools": [{"id": "str"}],
                         "backendPort": 0,
                         "disableOutboundSnat": bool,
-                        "enableConnectionTracking": bool,
                         "enableFloatingIP": bool,
                         "enableTcpReset": bool,
                         "etag": "str",
@@ -11517,7 +11111,6 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                         "intervalInSeconds": 0,
                         "loadBalancingRules": [{"id": "str"}],
                         "name": "str",
-                        "noHealthyBackendsBehavior": "str",
                         "numberOfProbes": 0,
                         "port": 0,
                         "probeThreshold": 0,
@@ -11533,7 +11126,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -11546,7 +11139,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             load_balancer_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
 
         # please add some check logic here by yourself
@@ -11556,7 +11149,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_load_balancers_list_all(self, resource_group):
         response = self.client.load_balancers.list_all(
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -11567,7 +11160,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
     def test_load_balancers_list(self, resource_group):
         response = self.client.load_balancers.list(
             resource_group_name=resource_group.name,
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -11579,7 +11172,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
         response = self.client.load_balancers.begin_swap_public_ip_addresses(
             location="str",
             parameters={"frontendIPConfigurations": [{"id": "str", "publicIPAddress": {"id": "str"}}]},
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -11593,7 +11186,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
             load_balancer_name="str",
             backend_pool_name="str",
             parameters={"ipAddress": "str", "ipConfiguration": {"id": "str"}},
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -11605,7 +11198,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
         response = self.client.load_balancers.migrate_to_ip_based(
             group_name="str",
             load_balancer_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
 
         # please add some check logic here by yourself

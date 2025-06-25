@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -76,7 +75,6 @@ from .operations import (
     InboundSecurityRuleOperations,
     IpAllocationsOperations,
     IpGroupsOperations,
-    IpamPoolsOperations,
     LoadBalancerBackendAddressPoolsOperations,
     LoadBalancerFrontendIPConfigurationsOperations,
     LoadBalancerLoadBalancingRulesOperations,
@@ -96,19 +94,9 @@ from .operations import (
     NetworkManagementClientOperationsMixin,
     NetworkManagerCommitsOperations,
     NetworkManagerDeploymentStatusOperations,
-    NetworkManagerRoutingConfigurationsOperations,
     NetworkManagersOperations,
     NetworkProfilesOperations,
     NetworkSecurityGroupsOperations,
-    NetworkSecurityPerimeterAccessRulesOperations,
-    NetworkSecurityPerimeterAssociableResourceTypesOperations,
-    NetworkSecurityPerimeterAssociationsOperations,
-    NetworkSecurityPerimeterLinkReferencesOperations,
-    NetworkSecurityPerimeterLinksOperations,
-    NetworkSecurityPerimeterLoggingConfigurationsOperations,
-    NetworkSecurityPerimeterOperationStatusesOperations,
-    NetworkSecurityPerimeterProfilesOperations,
-    NetworkSecurityPerimetersOperations,
     NetworkVirtualApplianceConnectionsOperations,
     NetworkVirtualAppliancesOperations,
     NetworkWatchersOperations,
@@ -121,8 +109,6 @@ from .operations import (
     PrivateLinkServicesOperations,
     PublicIPAddressesOperations,
     PublicIPPrefixesOperations,
-    ReachabilityAnalysisIntentsOperations,
-    ReachabilityAnalysisRunsOperations,
     ResourceNavigationLinksOperations,
     RouteFilterRulesOperations,
     RouteFiltersOperations,
@@ -130,26 +116,19 @@ from .operations import (
     RouteTablesOperations,
     RoutesOperations,
     RoutingIntentOperations,
-    RoutingRuleCollectionsOperations,
-    RoutingRulesOperations,
     ScopeConnectionsOperations,
     SecurityAdminConfigurationsOperations,
     SecurityPartnerProvidersOperations,
     SecurityRulesOperations,
-    SecurityUserConfigurationsOperations,
-    SecurityUserRuleCollectionsOperations,
-    SecurityUserRulesOperations,
     ServiceAssociationLinksOperations,
     ServiceEndpointPoliciesOperations,
     ServiceEndpointPolicyDefinitionsOperations,
     ServiceTagInformationOperations,
     ServiceTagsOperations,
-    StaticCidrsOperations,
     StaticMembersOperations,
     SubnetsOperations,
     SubscriptionNetworkManagerConnectionsOperations,
     UsagesOperations,
-    VerifierWorkspacesOperations,
     VipSwapOperations,
     VirtualApplianceSitesOperations,
     VirtualApplianceSkusOperations,
@@ -311,10 +290,6 @@ class NetworkManagementClient(
      FirewallPolicyRuleCollectionGroupDraftsOperations operations
     :vartype firewall_policy_rule_collection_group_drafts:
      azure.mgmt.network.operations.FirewallPolicyRuleCollectionGroupDraftsOperations
-    :ivar ipam_pools: IpamPoolsOperations operations
-    :vartype ipam_pools: azure.mgmt.network.operations.IpamPoolsOperations
-    :ivar static_cidrs: StaticCidrsOperations operations
-    :vartype static_cidrs: azure.mgmt.network.operations.StaticCidrsOperations
     :ivar ip_allocations: IpAllocationsOperations operations
     :vartype ip_allocations: azure.mgmt.network.operations.IpAllocationsOperations
     :ivar ip_groups: IpGroupsOperations operations
@@ -376,15 +351,6 @@ class NetworkManagementClient(
     :vartype network_groups: azure.mgmt.network.operations.NetworkGroupsOperations
     :ivar static_members: StaticMembersOperations operations
     :vartype static_members: azure.mgmt.network.operations.StaticMembersOperations
-    :ivar network_manager_routing_configurations: NetworkManagerRoutingConfigurationsOperations
-     operations
-    :vartype network_manager_routing_configurations:
-     azure.mgmt.network.operations.NetworkManagerRoutingConfigurationsOperations
-    :ivar routing_rule_collections: RoutingRuleCollectionsOperations operations
-    :vartype routing_rule_collections:
-     azure.mgmt.network.operations.RoutingRuleCollectionsOperations
-    :ivar routing_rules: RoutingRulesOperations operations
-    :vartype routing_rules: azure.mgmt.network.operations.RoutingRulesOperations
     :ivar scope_connections: ScopeConnectionsOperations operations
     :vartype scope_connections: azure.mgmt.network.operations.ScopeConnectionsOperations
     :ivar security_admin_configurations: SecurityAdminConfigurationsOperations operations
@@ -394,14 +360,6 @@ class NetworkManagementClient(
     :vartype admin_rule_collections: azure.mgmt.network.operations.AdminRuleCollectionsOperations
     :ivar admin_rules: AdminRulesOperations operations
     :vartype admin_rules: azure.mgmt.network.operations.AdminRulesOperations
-    :ivar security_user_configurations: SecurityUserConfigurationsOperations operations
-    :vartype security_user_configurations:
-     azure.mgmt.network.operations.SecurityUserConfigurationsOperations
-    :ivar security_user_rule_collections: SecurityUserRuleCollectionsOperations operations
-    :vartype security_user_rule_collections:
-     azure.mgmt.network.operations.SecurityUserRuleCollectionsOperations
-    :ivar security_user_rules: SecurityUserRulesOperations operations
-    :vartype security_user_rules: azure.mgmt.network.operations.SecurityUserRulesOperations
     :ivar network_profiles: NetworkProfilesOperations operations
     :vartype network_profiles: azure.mgmt.network.operations.NetworkProfilesOperations
     :ivar network_security_groups: NetworkSecurityGroupsOperations operations
@@ -410,48 +368,6 @@ class NetworkManagementClient(
     :vartype security_rules: azure.mgmt.network.operations.SecurityRulesOperations
     :ivar default_security_rules: DefaultSecurityRulesOperations operations
     :vartype default_security_rules: azure.mgmt.network.operations.DefaultSecurityRulesOperations
-    :ivar network_security_perimeters: NetworkSecurityPerimetersOperations operations
-    :vartype network_security_perimeters:
-     azure.mgmt.network.operations.NetworkSecurityPerimetersOperations
-    :ivar network_security_perimeter_profiles: NetworkSecurityPerimeterProfilesOperations
-     operations
-    :vartype network_security_perimeter_profiles:
-     azure.mgmt.network.operations.NetworkSecurityPerimeterProfilesOperations
-    :ivar network_security_perimeter_access_rules: NetworkSecurityPerimeterAccessRulesOperations
-     operations
-    :vartype network_security_perimeter_access_rules:
-     azure.mgmt.network.operations.NetworkSecurityPerimeterAccessRulesOperations
-    :ivar network_security_perimeter_associations: NetworkSecurityPerimeterAssociationsOperations
-     operations
-    :vartype network_security_perimeter_associations:
-     azure.mgmt.network.operations.NetworkSecurityPerimeterAssociationsOperations
-    :ivar network_security_perimeter_associable_resource_types:
-     NetworkSecurityPerimeterAssociableResourceTypesOperations operations
-    :vartype network_security_perimeter_associable_resource_types:
-     azure.mgmt.network.operations.NetworkSecurityPerimeterAssociableResourceTypesOperations
-    :ivar network_security_perimeter_links: NetworkSecurityPerimeterLinksOperations operations
-    :vartype network_security_perimeter_links:
-     azure.mgmt.network.operations.NetworkSecurityPerimeterLinksOperations
-    :ivar network_security_perimeter_link_references:
-     NetworkSecurityPerimeterLinkReferencesOperations operations
-    :vartype network_security_perimeter_link_references:
-     azure.mgmt.network.operations.NetworkSecurityPerimeterLinkReferencesOperations
-    :ivar network_security_perimeter_logging_configurations:
-     NetworkSecurityPerimeterLoggingConfigurationsOperations operations
-    :vartype network_security_perimeter_logging_configurations:
-     azure.mgmt.network.operations.NetworkSecurityPerimeterLoggingConfigurationsOperations
-    :ivar network_security_perimeter_operation_statuses:
-     NetworkSecurityPerimeterOperationStatusesOperations operations
-    :vartype network_security_perimeter_operation_statuses:
-     azure.mgmt.network.operations.NetworkSecurityPerimeterOperationStatusesOperations
-    :ivar reachability_analysis_intents: ReachabilityAnalysisIntentsOperations operations
-    :vartype reachability_analysis_intents:
-     azure.mgmt.network.operations.ReachabilityAnalysisIntentsOperations
-    :ivar reachability_analysis_runs: ReachabilityAnalysisRunsOperations operations
-    :vartype reachability_analysis_runs:
-     azure.mgmt.network.operations.ReachabilityAnalysisRunsOperations
-    :ivar verifier_workspaces: VerifierWorkspacesOperations operations
-    :vartype verifier_workspaces: azure.mgmt.network.operations.VerifierWorkspacesOperations
     :ivar network_virtual_appliances: NetworkVirtualAppliancesOperations operations
     :vartype network_virtual_appliances:
      azure.mgmt.network.operations.NetworkVirtualAppliancesOperations
@@ -770,8 +686,6 @@ class NetworkManagementClient(
         self.firewall_policy_rule_collection_group_drafts = FirewallPolicyRuleCollectionGroupDraftsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.ipam_pools = IpamPoolsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.static_cidrs = StaticCidrsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.ip_allocations = IpAllocationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.ip_groups = IpGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.load_balancers = LoadBalancersOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -826,13 +740,6 @@ class NetworkManagementClient(
         )
         self.network_groups = NetworkGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.static_members = StaticMembersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.network_manager_routing_configurations = NetworkManagerRoutingConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.routing_rule_collections = RoutingRuleCollectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.routing_rules = RoutingRulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.scope_connections = ScopeConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -843,15 +750,6 @@ class NetworkManagementClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.admin_rules = AdminRulesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.security_user_configurations = SecurityUserConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.security_user_rule_collections = SecurityUserRuleCollectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.security_user_rules = SecurityUserRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.network_profiles = NetworkProfilesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -860,46 +758,6 @@ class NetworkManagementClient(
         )
         self.security_rules = SecurityRulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.default_security_rules = DefaultSecurityRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.network_security_perimeters = NetworkSecurityPerimetersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.network_security_perimeter_profiles = NetworkSecurityPerimeterProfilesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.network_security_perimeter_access_rules = NetworkSecurityPerimeterAccessRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.network_security_perimeter_associations = NetworkSecurityPerimeterAssociationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.network_security_perimeter_associable_resource_types = (
-            NetworkSecurityPerimeterAssociableResourceTypesOperations(
-                self._client, self._config, self._serialize, self._deserialize
-            )
-        )
-        self.network_security_perimeter_links = NetworkSecurityPerimeterLinksOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.network_security_perimeter_link_references = NetworkSecurityPerimeterLinkReferencesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.network_security_perimeter_logging_configurations = (
-            NetworkSecurityPerimeterLoggingConfigurationsOperations(
-                self._client, self._config, self._serialize, self._deserialize
-            )
-        )
-        self.network_security_perimeter_operation_statuses = NetworkSecurityPerimeterOperationStatusesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.reachability_analysis_intents = ReachabilityAnalysisIntentsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.reachability_analysis_runs = ReachabilityAnalysisRunsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.verifier_workspaces = VerifierWorkspacesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.network_virtual_appliances = NetworkVirtualAppliancesOperations(

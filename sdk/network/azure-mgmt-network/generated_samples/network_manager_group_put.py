@@ -35,11 +35,11 @@ def main():
         resource_group_name="rg1",
         network_manager_name="testNetworkManager",
         network_group_name="testNetworkGroup",
-        parameters={"properties": {"description": "A sample group", "memberType": "VirtualNetwork"}},
+        parameters={"properties": {"description": "A sample group"}},
     )
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-07-01/examples/NetworkManagerGroupPut.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-11-01/examples/NetworkManagerGroupPut.json
 if __name__ == "__main__":
     main()

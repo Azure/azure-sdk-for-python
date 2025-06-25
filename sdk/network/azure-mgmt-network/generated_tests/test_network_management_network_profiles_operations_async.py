@@ -27,7 +27,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
             await self.client.network_profiles.begin_delete(
                 resource_group_name=resource_group.name,
                 network_profile_name="str",
-                api_version="2024-07-01",
+                api_version="2023-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -40,7 +40,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.network_profiles.get(
             resource_group_name=resource_group.name,
             network_profile_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
 
         # please add some check logic here by yourself
@@ -132,12 +132,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                     "name": "str",
                                                     "provisioningState": "str",
                                                     "publicIpAddresses": [{"id": "str"}],
-                                                    "publicIpAddressesV6": [{"id": "str"}],
                                                     "publicIpPrefixes": [{"id": "str"}],
-                                                    "publicIpPrefixesV6": [{"id": "str"}],
                                                     "resourceGuid": "str",
                                                     "sku": {"name": "str"},
-                                                    "sourceVirtualNetwork": {"id": "str"},
                                                     "subnets": [{"id": "str"}],
                                                     "tags": {"str": "str"},
                                                     "type": "str",
@@ -156,9 +153,6 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                             },
                                             "subnet": ...,
                                         }
-                                    ],
-                                    "ipamPoolPrefixAllocations": [
-                                        {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
                                     ],
                                     "name": "str",
                                     "natGateway": {"id": "str"},
@@ -213,7 +207,6 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                         "flowLogs": [
                                             {
                                                 "enabled": bool,
-                                                "enabledFilteringCriteria": "str",
                                                 "etag": "str",
                                                 "flowAnalyticsConfiguration": {
                                                     "networkWatcherFlowAnalyticsConfiguration": {
@@ -226,14 +219,6 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                 },
                                                 "format": {"type": "str", "version": 0},
                                                 "id": "str",
-                                                "identity": {
-                                                    "principalId": "str",
-                                                    "tenantId": "str",
-                                                    "type": "str",
-                                                    "userAssignedIdentities": {
-                                                        "str": {"clientId": "str", "principalId": "str"}
-                                                    },
-                                                },
                                                 "location": "str",
                                                 "name": "str",
                                                 "provisioningState": "str",
@@ -253,7 +238,6 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                             {
                                                 "auxiliaryMode": "str",
                                                 "auxiliarySku": "str",
-                                                "defaultOutboundConnectivityEnabled": bool,
                                                 "disableTcpStateTracking": bool,
                                                 "dnsSettings": {
                                                     "appliedDnsServers": ["str"],
@@ -419,12 +403,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                 "name": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
-                                                                "publicIpAddressesV6": [{"id": "str"}],
                                                                 "publicIpPrefixes": [{"id": "str"}],
-                                                                "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
                                                                 "sku": {"name": "str"},
-                                                                "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
                                                                 "tags": {"str": "str"},
                                                                 "type": "str",
@@ -501,12 +482,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                             "name": "str",
                                                                             "provisioningState": "str",
                                                                             "publicIpAddresses": [{"id": "str"}],
-                                                                            "publicIpAddressesV6": [{"id": "str"}],
                                                                             "publicIpPrefixes": [{"id": "str"}],
-                                                                            "publicIpPrefixesV6": [{"id": "str"}],
                                                                             "resourceGuid": "str",
                                                                             "sku": {"name": "str"},
-                                                                            "sourceVirtualNetwork": {"id": "str"},
                                                                             "subnets": [{"id": "str"}],
                                                                             "tags": {"str": "str"},
                                                                             "type": "str",
@@ -632,7 +610,6 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                 "privateLinkService": {
                                                     "alias": "str",
                                                     "autoApproval": {"subscriptions": ["str"]},
-                                                    "destinationIPAddress": "str",
                                                     "enableProxyProtocol": bool,
                                                     "etag": "str",
                                                     "extendedLocation": {"name": "str", "type": "str"},
@@ -706,12 +683,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                     "name": "str",
                                                                     "provisioningState": "str",
                                                                     "publicIpAddresses": [{"id": "str"}],
-                                                                    "publicIpAddressesV6": [{"id": "str"}],
                                                                     "publicIpPrefixes": [{"id": "str"}],
-                                                                    "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
                                                                     "sku": {"name": "str"},
-                                                                    "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
                                                                     "tags": {"str": "str"},
                                                                     "type": "str",
@@ -894,12 +868,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                         "name": "str",
                                                                         "provisioningState": "str",
                                                                         "publicIpAddresses": [{"id": "str"}],
-                                                                        "publicIpAddressesV6": [{"id": "str"}],
                                                                         "publicIpPrefixes": [{"id": "str"}],
-                                                                        "publicIpPrefixesV6": [{"id": "str"}],
                                                                         "resourceGuid": "str",
                                                                         "sku": {"name": "str"},
-                                                                        "sourceVirtualNetwork": {"id": "str"},
                                                                         "subnets": [{"id": "str"}],
                                                                         "tags": {"str": "str"},
                                                                         "type": "str",
@@ -1070,12 +1041,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                         "name": "str",
                                                                         "provisioningState": "str",
                                                                         "publicIpAddresses": [{"id": "str"}],
-                                                                        "publicIpAddressesV6": [{"id": "str"}],
                                                                         "publicIpPrefixes": [{"id": "str"}],
-                                                                        "publicIpPrefixesV6": [{"id": "str"}],
                                                                         "resourceGuid": "str",
                                                                         "sku": {"name": "str"},
-                                                                        "sourceVirtualNetwork": {"id": "str"},
                                                                         "subnets": [{"id": "str"}],
                                                                         "tags": {"str": "str"},
                                                                         "type": "str",
@@ -1220,7 +1188,6 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                 {
                                                     "auxiliaryMode": "str",
                                                     "auxiliarySku": "str",
-                                                    "defaultOutboundConnectivityEnabled": bool,
                                                     "disableTcpStateTracking": bool,
                                                     "dnsSettings": {
                                                         "appliedDnsServers": ["str"],
@@ -1386,12 +1353,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                     "name": "str",
                                                                     "provisioningState": "str",
                                                                     "publicIpAddresses": [{"id": "str"}],
-                                                                    "publicIpAddressesV6": [{"id": "str"}],
                                                                     "publicIpPrefixes": [{"id": "str"}],
-                                                                    "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
                                                                     "sku": {"name": "str"},
-                                                                    "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
                                                                     "tags": {"str": "str"},
                                                                     "type": "str",
@@ -1470,12 +1434,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                 "name": "str",
                                                                                 "provisioningState": "str",
                                                                                 "publicIpAddresses": [{"id": "str"}],
-                                                                                "publicIpAddressesV6": [{"id": "str"}],
                                                                                 "publicIpPrefixes": [{"id": "str"}],
-                                                                                "publicIpPrefixesV6": [{"id": "str"}],
                                                                                 "resourceGuid": "str",
                                                                                 "sku": {"name": "str"},
-                                                                                "sourceVirtualNetwork": {"id": "str"},
                                                                                 "subnets": [{"id": "str"}],
                                                                                 "tags": {"str": "str"},
                                                                                 "type": "str",
@@ -1576,7 +1537,6 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                         "flowLogs": [
                                                             {
                                                                 "enabled": bool,
-                                                                "enabledFilteringCriteria": "str",
                                                                 "etag": "str",
                                                                 "flowAnalyticsConfiguration": {
                                                                     "networkWatcherFlowAnalyticsConfiguration": {
@@ -1589,14 +1549,6 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                 },
                                                                 "format": {"type": "str", "version": 0},
                                                                 "id": "str",
-                                                                "identity": {
-                                                                    "principalId": "str",
-                                                                    "tenantId": "str",
-                                                                    "type": "str",
-                                                                    "userAssignedIdentities": {
-                                                                        "str": {"clientId": "str", "principalId": "str"}
-                                                                    },
-                                                                },
                                                                 "location": "str",
                                                                 "name": "str",
                                                                 "provisioningState": "str",
@@ -1671,7 +1623,6 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                     "privateLinkService": {
                                                         "alias": "str",
                                                         "autoApproval": {"subscriptions": ["str"]},
-                                                        "destinationIPAddress": "str",
                                                         "enableProxyProtocol": bool,
                                                         "etag": "str",
                                                         "extendedLocation": {"name": "str", "type": "str"},
@@ -1745,12 +1696,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                         "name": "str",
                                                                         "provisioningState": "str",
                                                                         "publicIpAddresses": [{"id": "str"}],
-                                                                        "publicIpAddressesV6": [{"id": "str"}],
                                                                         "publicIpPrefixes": [{"id": "str"}],
-                                                                        "publicIpPrefixesV6": [{"id": "str"}],
                                                                         "resourceGuid": "str",
                                                                         "sku": {"name": "str"},
-                                                                        "sourceVirtualNetwork": {"id": "str"},
                                                                         "subnets": [{"id": "str"}],
                                                                         "tags": {"str": "str"},
                                                                         "type": "str",
@@ -1865,12 +1813,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                             "name": "str",
                                                                             "provisioningState": "str",
                                                                             "publicIpAddresses": [{"id": "str"}],
-                                                                            "publicIpAddressesV6": [{"id": "str"}],
                                                                             "publicIpPrefixes": [{"id": "str"}],
-                                                                            "publicIpPrefixesV6": [{"id": "str"}],
                                                                             "resourceGuid": "str",
                                                                             "sku": {"name": "str"},
-                                                                            "sourceVirtualNetwork": {"id": "str"},
                                                                             "subnets": [{"id": "str"}],
                                                                             "tags": {"str": "str"},
                                                                             "type": "str",
@@ -2044,12 +1989,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                             "name": "str",
                                                                             "provisioningState": "str",
                                                                             "publicIpAddresses": [{"id": "str"}],
-                                                                            "publicIpAddressesV6": [{"id": "str"}],
                                                                             "publicIpPrefixes": [{"id": "str"}],
-                                                                            "publicIpPrefixesV6": [{"id": "str"}],
                                                                             "resourceGuid": "str",
                                                                             "sku": {"name": "str"},
-                                                                            "sourceVirtualNetwork": {"id": "str"},
                                                                             "subnets": [{"id": "str"}],
                                                                             "tags": {"str": "str"},
                                                                             "type": "str",
@@ -2193,12 +2135,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                         }
                                     ],
                                     "serviceEndpoints": [
-                                        {
-                                            "locations": ["str"],
-                                            "networkIdentifier": {"id": "str"},
-                                            "provisioningState": "str",
-                                            "service": "str",
-                                        }
+                                        {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                     ],
                                     "sharingScope": "str",
                                     "type": "str",
@@ -2292,12 +2229,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                         "name": "str",
                                                         "provisioningState": "str",
                                                         "publicIpAddresses": [{"id": "str"}],
-                                                        "publicIpAddressesV6": [{"id": "str"}],
                                                         "publicIpPrefixes": [{"id": "str"}],
-                                                        "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
                                                         "sku": {"name": "str"},
-                                                        "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
                                                         "tags": {"str": "str"},
                                                         "type": "str",
@@ -2315,13 +2249,6 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                     "zones": ["str"],
                                                 },
                                                 "subnet": ...,
-                                            }
-                                        ],
-                                        "ipamPoolPrefixAllocations": [
-                                            {
-                                                "allocatedAddressPrefixes": ["str"],
-                                                "id": "str",
-                                                "numberOfIpAddresses": "str",
                                             }
                                         ],
                                         "name": "str",
@@ -2377,7 +2304,6 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                             "flowLogs": [
                                                 {
                                                     "enabled": bool,
-                                                    "enabledFilteringCriteria": "str",
                                                     "etag": "str",
                                                     "flowAnalyticsConfiguration": {
                                                         "networkWatcherFlowAnalyticsConfiguration": {
@@ -2390,14 +2316,6 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                     },
                                                     "format": {"type": "str", "version": 0},
                                                     "id": "str",
-                                                    "identity": {
-                                                        "principalId": "str",
-                                                        "tenantId": "str",
-                                                        "type": "str",
-                                                        "userAssignedIdentities": {
-                                                            "str": {"clientId": "str", "principalId": "str"}
-                                                        },
-                                                    },
                                                     "location": "str",
                                                     "name": "str",
                                                     "provisioningState": "str",
@@ -2417,7 +2335,6 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                 {
                                                     "auxiliaryMode": "str",
                                                     "auxiliarySku": "str",
-                                                    "defaultOutboundConnectivityEnabled": bool,
                                                     "disableTcpStateTracking": bool,
                                                     "dnsSettings": {
                                                         "appliedDnsServers": ["str"],
@@ -2583,12 +2500,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                     "name": "str",
                                                                     "provisioningState": "str",
                                                                     "publicIpAddresses": [{"id": "str"}],
-                                                                    "publicIpAddressesV6": [{"id": "str"}],
                                                                     "publicIpPrefixes": [{"id": "str"}],
-                                                                    "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
                                                                     "sku": {"name": "str"},
-                                                                    "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
                                                                     "tags": {"str": "str"},
                                                                     "type": "str",
@@ -2667,12 +2581,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                 "name": "str",
                                                                                 "provisioningState": "str",
                                                                                 "publicIpAddresses": [{"id": "str"}],
-                                                                                "publicIpAddressesV6": [{"id": "str"}],
                                                                                 "publicIpPrefixes": [{"id": "str"}],
-                                                                                "publicIpPrefixesV6": [{"id": "str"}],
                                                                                 "resourceGuid": "str",
                                                                                 "sku": {"name": "str"},
-                                                                                "sourceVirtualNetwork": {"id": "str"},
                                                                                 "subnets": [{"id": "str"}],
                                                                                 "tags": {"str": "str"},
                                                                                 "type": "str",
@@ -2798,7 +2709,6 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                     "privateLinkService": {
                                                         "alias": "str",
                                                         "autoApproval": {"subscriptions": ["str"]},
-                                                        "destinationIPAddress": "str",
                                                         "enableProxyProtocol": bool,
                                                         "etag": "str",
                                                         "extendedLocation": {"name": "str", "type": "str"},
@@ -2872,12 +2782,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                         "name": "str",
                                                                         "provisioningState": "str",
                                                                         "publicIpAddresses": [{"id": "str"}],
-                                                                        "publicIpAddressesV6": [{"id": "str"}],
                                                                         "publicIpPrefixes": [{"id": "str"}],
-                                                                        "publicIpPrefixesV6": [{"id": "str"}],
                                                                         "resourceGuid": "str",
                                                                         "sku": {"name": "str"},
-                                                                        "sourceVirtualNetwork": {"id": "str"},
                                                                         "subnets": [{"id": "str"}],
                                                                         "tags": {"str": "str"},
                                                                         "type": "str",
@@ -3063,12 +2970,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                             "name": "str",
                                                                             "provisioningState": "str",
                                                                             "publicIpAddresses": [{"id": "str"}],
-                                                                            "publicIpAddressesV6": [{"id": "str"}],
                                                                             "publicIpPrefixes": [{"id": "str"}],
-                                                                            "publicIpPrefixesV6": [{"id": "str"}],
                                                                             "resourceGuid": "str",
                                                                             "sku": {"name": "str"},
-                                                                            "sourceVirtualNetwork": {"id": "str"},
                                                                             "subnets": [{"id": "str"}],
                                                                             "tags": {"str": "str"},
                                                                             "type": "str",
@@ -3242,12 +3146,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                             "name": "str",
                                                                             "provisioningState": "str",
                                                                             "publicIpAddresses": [{"id": "str"}],
-                                                                            "publicIpAddressesV6": [{"id": "str"}],
                                                                             "publicIpPrefixes": [{"id": "str"}],
-                                                                            "publicIpPrefixesV6": [{"id": "str"}],
                                                                             "resourceGuid": "str",
                                                                             "sku": {"name": "str"},
-                                                                            "sourceVirtualNetwork": {"id": "str"},
                                                                             "subnets": [{"id": "str"}],
                                                                             "tags": {"str": "str"},
                                                                             "type": "str",
@@ -3392,7 +3293,6 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                     {
                                                         "auxiliaryMode": "str",
                                                         "auxiliarySku": "str",
-                                                        "defaultOutboundConnectivityEnabled": bool,
                                                         "disableTcpStateTracking": bool,
                                                         "dnsSettings": {
                                                             "appliedDnsServers": ["str"],
@@ -3558,12 +3458,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                         "name": "str",
                                                                         "provisioningState": "str",
                                                                         "publicIpAddresses": [{"id": "str"}],
-                                                                        "publicIpAddressesV6": [{"id": "str"}],
                                                                         "publicIpPrefixes": [{"id": "str"}],
-                                                                        "publicIpPrefixesV6": [{"id": "str"}],
                                                                         "resourceGuid": "str",
                                                                         "sku": {"name": "str"},
-                                                                        "sourceVirtualNetwork": {"id": "str"},
                                                                         "subnets": [{"id": "str"}],
                                                                         "tags": {"str": "str"},
                                                                         "type": "str",
@@ -3644,18 +3541,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                     "publicIpAddresses": [
                                                                                         {"id": "str"}
                                                                                     ],
-                                                                                    "publicIpAddressesV6": [
-                                                                                        {"id": "str"}
-                                                                                    ],
                                                                                     "publicIpPrefixes": [{"id": "str"}],
-                                                                                    "publicIpPrefixesV6": [
-                                                                                        {"id": "str"}
-                                                                                    ],
                                                                                     "resourceGuid": "str",
                                                                                     "sku": {"name": "str"},
-                                                                                    "sourceVirtualNetwork": {
-                                                                                        "id": "str"
-                                                                                    },
                                                                                     "subnets": [{"id": "str"}],
                                                                                     "tags": {"str": "str"},
                                                                                     "type": "str",
@@ -3756,7 +3644,6 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                             "flowLogs": [
                                                                 {
                                                                     "enabled": bool,
-                                                                    "enabledFilteringCriteria": "str",
                                                                     "etag": "str",
                                                                     "flowAnalyticsConfiguration": {
                                                                         "networkWatcherFlowAnalyticsConfiguration": {
@@ -3769,17 +3656,6 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                     },
                                                                     "format": {"type": "str", "version": 0},
                                                                     "id": "str",
-                                                                    "identity": {
-                                                                        "principalId": "str",
-                                                                        "tenantId": "str",
-                                                                        "type": "str",
-                                                                        "userAssignedIdentities": {
-                                                                            "str": {
-                                                                                "clientId": "str",
-                                                                                "principalId": "str",
-                                                                            }
-                                                                        },
-                                                                    },
                                                                     "location": "str",
                                                                     "name": "str",
                                                                     "provisioningState": "str",
@@ -3854,7 +3730,6 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                         "privateLinkService": {
                                                             "alias": "str",
                                                             "autoApproval": {"subscriptions": ["str"]},
-                                                            "destinationIPAddress": "str",
                                                             "enableProxyProtocol": bool,
                                                             "etag": "str",
                                                             "extendedLocation": {"name": "str", "type": "str"},
@@ -3931,12 +3806,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                             "name": "str",
                                                                             "provisioningState": "str",
                                                                             "publicIpAddresses": [{"id": "str"}],
-                                                                            "publicIpAddressesV6": [{"id": "str"}],
                                                                             "publicIpPrefixes": [{"id": "str"}],
-                                                                            "publicIpPrefixesV6": [{"id": "str"}],
                                                                             "resourceGuid": "str",
                                                                             "sku": {"name": "str"},
-                                                                            "sourceVirtualNetwork": {"id": "str"},
                                                                             "subnets": [{"id": "str"}],
                                                                             "tags": {"str": "str"},
                                                                             "type": "str",
@@ -4053,12 +3925,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                 "name": "str",
                                                                                 "provisioningState": "str",
                                                                                 "publicIpAddresses": [{"id": "str"}],
-                                                                                "publicIpAddressesV6": [{"id": "str"}],
                                                                                 "publicIpPrefixes": [{"id": "str"}],
-                                                                                "publicIpPrefixesV6": [{"id": "str"}],
                                                                                 "resourceGuid": "str",
                                                                                 "sku": {"name": "str"},
-                                                                                "sourceVirtualNetwork": {"id": "str"},
                                                                                 "subnets": [{"id": "str"}],
                                                                                 "tags": {"str": "str"},
                                                                                 "type": "str",
@@ -4236,12 +4105,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                 "name": "str",
                                                                                 "provisioningState": "str",
                                                                                 "publicIpAddresses": [{"id": "str"}],
-                                                                                "publicIpAddressesV6": [{"id": "str"}],
                                                                                 "publicIpPrefixes": [{"id": "str"}],
-                                                                                "publicIpPrefixesV6": [{"id": "str"}],
                                                                                 "resourceGuid": "str",
                                                                                 "sku": {"name": "str"},
-                                                                                "sourceVirtualNetwork": {"id": "str"},
                                                                                 "subnets": [{"id": "str"}],
                                                                                 "tags": {"str": "str"},
                                                                                 "type": "str",
@@ -4385,12 +4251,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                             }
                                         ],
                                         "serviceEndpoints": [
-                                            {
-                                                "locations": ["str"],
-                                                "networkIdentifier": {"id": "str"},
-                                                "provisioningState": "str",
-                                                "service": "str",
-                                            }
+                                            {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                         ],
                                         "sharingScope": "str",
                                         "type": "str",
@@ -4419,7 +4280,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
 
         # please add some check logic here by yourself
@@ -4432,7 +4293,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             network_profile_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
 
         # please add some check logic here by yourself
@@ -4442,7 +4303,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
     @recorded_by_proxy_async
     async def test_network_profiles_list_all(self, resource_group):
         response = self.client.network_profiles.list_all(
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -4453,7 +4314,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
     async def test_network_profiles_list(self, resource_group):
         response = self.client.network_profiles.list(
             resource_group_name=resource_group.name,
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
