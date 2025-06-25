@@ -14,10 +14,10 @@ from .entities import Run
 
 
 try:
-    from promptflow.client import PFClient as _PFClient
+    from promptflow.client import PFClient
 except ImportError:
 
-    class _PFClient:
+    class PFClient:
         def __init__(self, **kwargs):
             self._config = Configuration(override_config=kwargs.pop("config", None))
 
@@ -46,6 +46,3 @@ except ImportError:
 
         def get_metrics(self, run: Union[str, Run]) -> Dict[str, Any]:
             return {}
-
-
-PFClient: TypeAlias = _PFClient
