@@ -28,17 +28,17 @@
   - Added enum `SfmcOperationStatus`
   - Added model `TrackedResource`
   - Added model `ZoneFaultSimulationContent`
-  - Operation `ManagedClustersOperations` added method `begin_start_fault_simulation`
-  - Operation `ManagedClustersOperations` added method `begin_stop_fault_simulation`
-  - Operation `ManagedClustersOperations` added method `get_fault_simulation`
-  - Operation `ManagedClustersOperations` added method `list_fault_simulation`
-  - Operation `NodeTypesOperations` added method `begin_deallocate`
-  - Operation `NodeTypesOperations` added method `begin_redeploy`
-  - Operation `NodeTypesOperations` added method `begin_start`
-  - Operation `NodeTypesOperations` added method `begin_start_fault_simulation`
-  - Operation `NodeTypesOperations` added method `begin_stop_fault_simulation`
-  - Operation `NodeTypesOperations` added method `get_fault_simulation`
-  - Operation `NodeTypesOperations` added method `list_fault_simulation`
+  - Operation group `ManagedClustersOperations` added method `begin_start_fault_simulation`
+  - Operation group `ManagedClustersOperations` added method `begin_stop_fault_simulation`
+  - Operation group `ManagedClustersOperations` added method `get_fault_simulation`
+  - Operation group `ManagedClustersOperations` added method `list_fault_simulation`
+  - Operation group `NodeTypesOperations` added method `begin_deallocate`
+  - Operation group `NodeTypesOperations` added method `begin_redeploy`
+  - Operation group `NodeTypesOperations` added method `begin_start`
+  - Operation group `NodeTypesOperations` added method `begin_start_fault_simulation`
+  - Operation group `NodeTypesOperations` added method `begin_stop_fault_simulation`
+  - Operation group `NodeTypesOperations` added method `get_fault_simulation`
+  - Operation group `NodeTypesOperations` added method `list_fault_simulation`
 
 ### Breaking Changes
 
