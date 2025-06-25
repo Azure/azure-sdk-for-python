@@ -1,3 +1,5 @@
+import unittest
+
 import pytest
 import os
 import pathlib
@@ -19,7 +21,7 @@ from azure.ai.evaluation._exceptions import EvaluationException, ErrorMessage
 
 
 @pytest.mark.unittest
-class TestUtils:
+class TestUtils(unittest.TestCase):
     def test_nltk_tokenize(self):
 
         # Test with English text
@@ -375,7 +377,7 @@ class TestUtils:
         query = [
             {
                 "role": "system",
-                "content": ["This is a system message."]
+                "content": "This is a system message."
             },
             {
                 "role": "user",
@@ -384,13 +386,17 @@ class TestUtils:
             {
                 "role": "assistant",
                 "content": [{"type": "text", "text": "It's sunny today."}]
+            },
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": "Will it rain tomorrow?"}]
             }
         ]
 
         result = _get_conversation_history(query, include_system_messages=True)
         expected = {
             'system_message': "This is a system message.",
-            'user_queries': [[["What is the weather?"]]],
+            'user_queries': [[["What is the weather?"]], [["Will it rain tomorrow?"]]],
             'agent_responses': [[["It's sunny today."]]]
         }
         assert result == expected
@@ -528,6 +534,10 @@ class TestUtils:
             {
                 "role": "assistant",
                 "content": [{"type": "text", "text": "AI stands for Artificial Intelligence."}]
+            },
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": "Tell me more."}]
             }
         ]
 
@@ -539,6 +549,8 @@ class TestUtils:
             "  What is AI?\n\n"
             "Agent turn 1:\n"
             "  AI stands for Artificial Intelligence.\n\n"
+            "User turn 2:\n"
+            "  Tell me more.\n\n"
         )
         assert result == expected
     def test__get_agent_response(self):
@@ -838,7 +850,7 @@ class TestUtils:
             {"role": "assistant", "content": [{"type": "text", "text": "You have one order on file."}]}
         ]
 
-        formatted = reformat_agent_response(response)
+        formatted = reformat_agent_response(response, include_tool_messages=True)
 
         assert "[TOOL_CALL] get_orders(account_number=\"123\")" in formatted
         assert "[TOOL_RESULT] [{ \"order_id\": \"A1\" }]" in formatted
@@ -869,7 +881,7 @@ class TestUtils:
             }
         }]
         expected_output = (
-            "TOOL DEFINITIONS:\n"
+            "TOOL_DEFINITIONS:\n"
             "- search: Searches the web. (inputs: query, lang)"
         )
         self.assertEqual(reformat_tool_definitions(tools), expected_output)
@@ -881,7 +893,7 @@ class TestUtils:
             "parameters": {}
         }]
         expected_output = (
-            "TOOL DEFINITIONS:\n"
+            "TOOL_DEFINITIONS:\n"
             "- ping: Check if server is reachable. (inputs: no parameters)"
         )
         self.assertEqual(reformat_tool_definitions(tools), expected_output)
@@ -889,7 +901,7 @@ class TestUtils:
     def test_tool_missing_description_and_parameters(self):
         tools = [{"name": "noop"}]
         expected_output = (
-            "TOOL DEFINITIONS:\n"
+            "TOOL_DEFINITIONS:\n"
             "- noop:  (inputs: no parameters)"
         )
         self.assertEqual(reformat_tool_definitions(tools), expected_output)
@@ -902,7 +914,7 @@ class TestUtils:
             }
         }]
         expected_output = (
-            "TOOL DEFINITIONS:\n"
+            "TOOL_DEFINITIONS:\n"
             "- unnamed_tool: Does something. (inputs: x)"
         )
         self.assertEqual(reformat_tool_definitions(tools), expected_output)
@@ -925,7 +937,7 @@ class TestUtils:
             }
         ]
         expected_output = (
-            "TOOL DEFINITIONS:\n"
+            "TOOL_DEFINITIONS:\n"
             "- alpha: Tool A. (inputs: a1)\n"
             "- beta: Tool B. (inputs: no parameters)"
         )
@@ -933,5 +945,5 @@ class TestUtils:
 
     def test_empty_tool_list(self):
         tools = []
-        expected_output = "TOOL DEFINITIONS:"
+        expected_output = "TOOL_DEFINITIONS:"
         self.assertEqual(reformat_tool_definitions(tools), expected_output)

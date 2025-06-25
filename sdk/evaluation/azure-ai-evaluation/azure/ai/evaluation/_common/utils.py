@@ -533,11 +533,13 @@ def _get_conversation_history(query, include_system_messages=False):
             category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
         )
-    return {
-        'system_message': system_message,
+    result = {
         'user_queries': all_user_queries,
         'agent_responses': all_agent_responses
     }
+    if include_system_messages:
+        result['system_message'] = system_message
+    return result
 
 
 def _pretty_format_conversation_history(conversation_history):
