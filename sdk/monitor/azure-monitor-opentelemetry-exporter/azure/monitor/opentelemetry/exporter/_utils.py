@@ -9,7 +9,7 @@ import platform
 import threading
 import time
 import warnings
-from typing import Callable, Dict, Any
+from typing import Callable, Dict, Any, Optional
 
 from opentelemetry.semconv.resource import ResourceAttributes
 from opentelemetry.sdk.resources import Resource
@@ -292,21 +292,26 @@ def _get_cloud_role_instance(resource: Resource) -> str:
     return platform.node()  # hostname default
 
 
-def _is_synthetic_source(properties: Attributes) -> bool:
+def _is_synthetic_source(properties: Optional[Any]) -> bool:
     # TODO: Use semconv symbol when released in upstream
+    if not properties:
+        return False
     synthetic_type = properties.get("user_agent.synthetic.type")  # type: ignore
     return synthetic_type in ("bot", "test")
 
 
-def _is_synthetic_load(properties: Attributes) -> bool:
+def _is_synthetic_load(properties: Optional[Any]) -> bool:
     """
     Check if the request is from a synthetic load test by examining the HTTP user agent.
 
     :param properties: The attributes/properties to check for user agent information
-    :type properties: Attributes
+    :type properties: Optional[Any]
     :return: True if the user agent contains "AlwaysOn", False otherwise
     :rtype: bool
     """
+    if not properties:
+        return False
+    
     # Check both old and new semantic convention attributes for HTTP user agent
     user_agent = (
         properties.get("user_agent.original") or  # type: ignore  # New semantic convention
@@ -319,12 +324,12 @@ def _is_synthetic_load(properties: Attributes) -> bool:
     return False
 
 
-def _is_any_synthetic_source(properties: Attributes) -> bool:
+def _is_any_synthetic_source(properties: Optional[Any]) -> bool:
     """
     Check if the telemetry should be marked as synthetic from any source.
 
     :param properties: The attributes/properties to check
-    :type properties: Attributes
+    :type properties: Optional[Any]
     :return: True if any synthetic source is detected, False otherwise
     :rtype: bool
     """
