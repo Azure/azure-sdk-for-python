@@ -28,7 +28,7 @@ from .._constants import (
     Prefixes,
     _InternalEvaluationMetrics,
     BINARY_AGGREGATE_SUFFIX,
-    DEFAULT_OAI_EVAL_RUN_NAME
+    DEFAULT_OAI_EVAL_RUN_NAME,
 )
 from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig
 from .._user_agent import UserAgentSingleton
@@ -44,7 +44,8 @@ from ._utils import (
     _log_metrics_and_instance_results,
     _trace_destination_from_project_scope,
     _write_output,
-    DataLoaderFactory, _log_metrics_and_instance_results_onedp,
+    DataLoaderFactory,
+    _log_metrics_and_instance_results_onedp,
 )
 from ._batch_run.batch_clients import BatchClient, BatchClientRun
 
@@ -52,8 +53,9 @@ from ._evaluate_aoai import (
     _begin_aoai_evaluation,
     _split_evaluators_and_grader_configs,
     _get_evaluation_run_results,
-    OAIEvalRunCreationInfo
+    OAIEvalRunCreationInfo,
 )
+
 LOGGER = logging.getLogger(__name__)
 
 # For metrics (aggregates) whose metric names intentionally differ from their
@@ -70,11 +72,13 @@ class __EvaluatorInfo(TypedDict):
     metrics: Dict[str, Any]
     run_summary: Dict[str, Any]
 
+
 class __ValidatedData(TypedDict):
-    '''
+    """
     Simple dictionary that contains ALL pre-processed data and
     the resultant objects that are needed for downstream evaluation.
-    '''
+    """
+
     evaluators: Dict[str, Callable]
     graders: Dict[str, AzureOpenAIGrader]
     input_data_df: pd.DataFrame
@@ -256,7 +260,9 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
         if len(parts) >= 3:
             evaluator_name = parts[1]
         else:
-            LOGGER.warning("Skipping column '%s' due to unexpected format. Expected at least three parts separated by '.'", col)
+            LOGGER.warning(
+                "Skipping column '%s' due to unexpected format. Expected at least three parts separated by '.'", col
+            )
             continue
         if evaluator_name:
             # Count the occurrences of each unique value (pass/fail)
@@ -722,8 +728,8 @@ def evaluate(
     :keyword output_path: The local folder or file path to save evaluation results to if set. If folder path is provided
           the results will be saved to a file named `evaluation_results.json` in the folder.
     :paramtype output_path: Optional[str]
-    :keyword azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint 
-        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :keyword azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name.
     :paramtype azure_ai_project: Optional[Union[str, ~azure.ai.evaluation.AzureAIProject]]
     :keyword fail_on_evaluator_errors: Whether or not the evaluation should cancel early with an EvaluationException
         if ANY evaluator fails during their evaluation.
@@ -743,15 +749,15 @@ def evaluate(
             :language: python
             :dedent: 8
             :caption: Run an evaluation on local data with one or more evaluators using azure.ai.evaluation.AzureAIProject
-        
+
     .. admonition:: Example using Azure AI Project URL:
-                
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
             :start-after: [START evaluate_method]
             :end-before: [END evaluate_method]
             :language: python
             :dedent: 8
-            :caption: Run an evaluation on local data with one or more evaluators using Azure AI Project URL in following format 
+            :caption: Run an evaluation on local data with one or more evaluators using Azure AI Project URL in following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
     """
     try:
@@ -838,7 +844,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
 ) -> EvaluationResult:
     if fail_on_evaluator_errors:
         _print_fail_flag_warning()
-    
+
     # Turn inputted mess of data into a dataframe, apply targets if needed
     # split graders and evaluators, and verify that column mappings are sensible.
     validated_data = _preprocess_data(
@@ -851,7 +857,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         evaluation_name=evaluation_name,
         **kwargs,
     )
-    
+
     # extract relevant info from validated data
     column_mapping = validated_data["column_mapping"]
     evaluators = validated_data["evaluators"]
@@ -869,29 +875,25 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     if need_oai_run:
         try:
             aoi_name = evaluation_name if evaluation_name else DEFAULT_OAI_EVAL_RUN_NAME
-            eval_run_info_list = _begin_aoai_evaluation(
-                graders,
-                column_mapping,
-                input_data_df,
-                aoi_name
-            )
+            eval_run_info_list = _begin_aoai_evaluation(graders, column_mapping, input_data_df, aoi_name)
             need_get_oai_results = len(eval_run_info_list) > 0
         except EvaluationException as e:
             if need_local_run:
                 # If there are normal evaluators, don't stop execution and try to run
                 # those.
-                LOGGER.warning("Remote Azure Open AI grader evaluations failed during run creation." +
-                               " Continuing with local evaluators.")
+                LOGGER.warning(
+                    "Remote Azure Open AI grader evaluations failed during run creation."
+                    + " Continuing with local evaluators."
+                )
                 LOGGER.warning(e)
             else:
                 raise e
-    
+
     # Evaluate 'normal' evaluators. This includes built-in evaluators and any user-supplied callables.
     if need_local_run:
         try:
-            eval_result_df, eval_metrics, per_evaluator_results = _run_callable_evaluators(     
-                validated_data=validated_data,
-                fail_on_evaluator_errors=fail_on_evaluator_errors
+            eval_result_df, eval_metrics, per_evaluator_results = _run_callable_evaluators(
+                validated_data=validated_data, fail_on_evaluator_errors=fail_on_evaluator_errors
             )
             results_df = eval_result_df
             metrics = eval_metrics
@@ -909,7 +911,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     # Retrieve OAI eval run results if needed.
     if need_get_oai_results:
         try:
-            aoai_results, aoai_metrics = _get_evaluation_run_results(eval_run_info_list) # type: ignore
+            aoai_results, aoai_metrics = _get_evaluation_run_results(eval_run_info_list)  # type: ignore
             # Post build TODO: add equivalent of  _print_summary(per_evaluator_results) here
 
             # Combine results if both evaluators and graders are present
@@ -961,22 +963,17 @@ def _preprocess_data(
     azure_ai_project: Optional[Union[str, AzureAIProject]] = None,
     evaluation_name: Optional[str] = None,
     **kwargs,
-    ) -> __ValidatedData:
+) -> __ValidatedData:
     # Process evaluator config to replace ${target.} with ${data.}
     if evaluator_config is None:
         evaluator_config = {}
 
     input_data_df = _validate_and_load_data(
-        target,
-        data,
-        evaluators_and_graders,
-        output_path,
-        azure_ai_project,
-        evaluation_name
+        target, data, evaluators_and_graders, output_path, azure_ai_project, evaluation_name
     )
     if target is not None:
         _validate_columns_for_target(input_data_df, target)
-        
+
     # extract column mapping dicts into dictionary mapping evaluator name to column mapping
     column_mapping = _process_column_mappings(
         {
@@ -1133,10 +1130,11 @@ def _run_callable_evaluators(
 
     return eval_result_df, eval_metrics, per_evaluator_results
 
+
 def _map_names_to_builtins(
-        evaluators: Dict[str, Callable],
-        graders: Dict[str, AzureOpenAIGrader],
-    ) -> Dict[str, str]:
+    evaluators: Dict[str, Callable],
+    graders: Dict[str, AzureOpenAIGrader],
+) -> Dict[str, str]:
     """
     Construct a mapping from user-supplied evaluator names to which known, built-in
     evaluator or grader they refer to. Custom evaluators are excluded from the mapping
@@ -1148,9 +1146,10 @@ def _map_names_to_builtins(
     :type graders: Dict[str, AzureOpenAIGrader]
     :param evaluator_config: The configuration for evaluators.
     :type evaluator_config: Optional[Dict[str, EvaluatorConfig]]
-    
+
     """
     from .._eval_mapping import EVAL_CLASS_MAP
+
     name_map = {}
 
     for name, evaluator in evaluators.items():
@@ -1164,11 +1163,12 @@ def _map_names_to_builtins(
         if not found_eval:
             # Skip custom evaluators - we only want to track built-in evaluators
             pass
-    
-    for  name, grader in graders.items():
+
+    for name, grader in graders.items():
         name_map[name] = grader.id
 
     return name_map
+
 
 def _turn_error_logs_into_exception(log_path: str) -> None:
     """Produce an EvaluationException using the contents of the inputted

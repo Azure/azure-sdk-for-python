@@ -14,6 +14,7 @@ from ..._common.utils import construct_prompty_model_config, validate_model_conf
 try:
     from ..._user_agent import UserAgentSingleton
 except ImportError:
+
     class UserAgentSingleton:
         @property
         def value(self) -> str:
@@ -38,7 +39,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param threshold: The threshold for the groundedness evaluator. Default is 3.
     :type threshold: int
-        
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/evaluation_samples_evaluate.py
@@ -57,13 +58,13 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :caption: Initialize with threshold and call a GroundednessEvaluator.
 
     .. admonition:: Example using Azure AI Project URL:
-        
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
             :start-after: [START groundedness_evaluator]
             :end-before: [END groundedness_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call GroundednessEvaluator using Azure AI Project URL in the following format 
+            :caption: Initialize and call GroundednessEvaluator using Azure AI Project URL in the following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     .. note::
@@ -92,7 +93,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
             threshold=threshold,
-            _higher_is_better=self._higher_is_better
+            _higher_is_better=self._higher_is_better,
         )
         self._model_config = model_config
         self.threshold = threshold

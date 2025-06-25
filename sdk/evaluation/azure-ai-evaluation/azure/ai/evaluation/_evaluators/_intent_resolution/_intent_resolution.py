@@ -16,6 +16,7 @@ from azure.ai.evaluation._common._experimental import experimental
 
 logger = logging.getLogger(__name__)
 
+
 @experimental
 class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
@@ -37,13 +38,13 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :caption: Initialize and call an IntentResolutionEvaluator with a query and response.
 
     .. admonition:: Example using Azure AI Project URL:
-                
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
             :start-after: [START intent_resolution_evaluator]
             :end-before: [END intent_resolution_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call IntentResolutionEvaluator using Azure AI Project URL in the following format 
+            :caption: Initialize and call IntentResolutionEvaluator using Azure AI Project URL in the following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     """
@@ -60,23 +61,19 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *,
-                 threshold = _DEFAULT_INTENT_RESOLUTION_THRESHOLD,
-                 **kwargs):
+    def __init__(self, model_config, *, threshold=_DEFAULT_INTENT_RESOLUTION_THRESHOLD, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
-        super().__init__(model_config=model_config, prompty_file=prompty_path,
-                         result_key=self._RESULT_KEY,
-                         **kwargs)
+        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY, **kwargs)
 
     @overload
     def __call__(
         self,
         *,
-        query            : Union[str, List[dict]],
-        response         : Union[str, List[dict]],
-        tool_definitions : Optional[Union[dict, List[dict]]] = None,
+        query: Union[str, List[dict]],
+        response: Union[str, List[dict]],
+        tool_definitions: Optional[Union[dict, List[dict]]] = None,
     ) -> Dict[str, Union[str, float]]:
         """Evaluate intent resolution for a given query, response and optional tool definitions.
         The query and response can be either a string or a list of messages.
@@ -119,7 +116,7 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         For detailed parameter types and return value documentation, see the overloaded __call__ definition.
         """
         return super().__call__(*args, **kwargs)
-    
+
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:  # type: ignore[override]
         """Do intent resolution evaluation.
@@ -139,14 +136,18 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 target=ErrorTarget.INTENT_RESOLUTION_EVALUATOR,
             )
         # reformat query and response to the format expected by the prompty flow
-        eval_input['query'] = reformat_conversation_history(eval_input["query"], logger)
-        eval_input['response'] = reformat_agent_response(eval_input["response"], logger)
+        eval_input["query"] = reformat_conversation_history(eval_input["query"], logger)
+        eval_input["response"] = reformat_agent_response(eval_input["response"], logger)
 
         llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         # llm_output should always be a dictionary because the response_format of prompty is set to json_object, but checking anyway
         if isinstance(llm_output, dict):
-            score  = llm_output.get("score", math.nan)
-            if not check_score_is_valid(score, IntentResolutionEvaluator._MIN_INTENT_RESOLUTION_SCORE, IntentResolutionEvaluator._MAX_INTENT_RESOLUTION_SCORE):
+            score = llm_output.get("score", math.nan)
+            if not check_score_is_valid(
+                score,
+                IntentResolutionEvaluator._MIN_INTENT_RESOLUTION_SCORE,
+                IntentResolutionEvaluator._MAX_INTENT_RESOLUTION_SCORE,
+            ):
                 raise EvaluationException(
                     message=f"Invalid score value: {score}. Expected a number in range [{IntentResolutionEvaluator._MIN_INTENT_RESOLUTION_SCORE}, {IntentResolutionEvaluator._MAX_INTENT_RESOLUTION_SCORE}].",
                     internal_message="Invalid score value.",
@@ -155,14 +156,14 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 )
             reason = llm_output.get("explanation", "")
             score = float(score)
-            score_result = 'pass' if score >= self.threshold else 'fail'
+            score_result = "pass" if score >= self.threshold else "fail"
 
             response_dict = {
-                             f"{self._result_key}"           : score,
-                             f"{self._result_key}_result"    : score_result,
-                             f"{self._result_key}_threshold" : self.threshold,
-                             f"{self._result_key}_reason"    : reason,
-                        }
+                f"{self._result_key}": score,
+                f"{self._result_key}_result": score_result,
+                f"{self._result_key}_threshold": self.threshold,
+                f"{self._result_key}_reason": reason,
+            }
             return response_dict
         # If llm_output is not a dictionary, return NaN for the score. This should never happen
         if logger:

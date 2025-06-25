@@ -53,6 +53,7 @@ class Simulator:
     @staticmethod
     def __user_agent() -> str:
         return f"{UserAgentSingleton().value} (type=simulator; subtype=Simulator)"
+
     @staticmethod
     def _validate_model_config(model_config: Any):
         """
