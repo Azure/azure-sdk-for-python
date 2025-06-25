@@ -251,14 +251,14 @@ class BaseExporter:
                     if not self._is_stats_exporter():
                         if response_error.status_code == 401:
                             logger.error(
-                                "Retryable server side error: %s. "
-                                "Your Application Insights resource may be configured to use entra ID authentication." \
+                                "Retryable server side error: %s. " \
+                                "Your Application Insights resource may be configured to use entra ID authentication. " \
                                 "Please make sure your application is configured to use the correct token credential.",
                                 response_error.message,
                             )
                         elif response_error.status_code == 403:
                             logger.error(
-                                "Retryable server side error: %s.",
+                                "Retryable server side error: %s. " \
                                 "Your application may be configured with a token credential " \
                                 "but your Application Insights resource may be configured incorrectly. Please make sure " \
                                 "your Application Insights resource has enabled entra Id authentication and " \
@@ -461,9 +461,9 @@ def _format_storage_telemetry_item(item: TelemetryItem) -> TelemetryItem:
 def _get_authentication_credential(**kwargs: Any) -> Optional[ManagedIdentityCredential]:
     if "credential" in kwargs:
         return kwargs.get("credential")
+    auth_string = os.getenv(_APPLICATIONINSIGHTS_AUTHENTICATION_STRING, "")
     try:
         if _APPLICATIONINSIGHTS_AUTHENTICATION_STRING in os.environ:
-            auth_string = os.getenv(_APPLICATIONINSIGHTS_AUTHENTICATION_STRING, "")
             kv_pairs = auth_string.split(";")
             auth_string_d = dict(s.split("=") for s in kv_pairs)
             auth_string_d = {key.lower(): value for key, value in auth_string_d.items()}
