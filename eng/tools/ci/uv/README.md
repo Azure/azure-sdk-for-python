@@ -23,6 +23,15 @@ The scripts contained within this directory are self-contained validation script
     ```
   - Doing the above will allow us to install the check as a `tool` (which will have an isolated venv) and enable easy access via a named entrypoint on the PATH.
   - We will need to be more explicit about cleaning up the venv being used in CI, versus `uv run` which is purely ephemeral unless told otherwise.
+- Another option would be to:
+  - ```
+    tools/
+      ci/
+        uv/
+          whl.py
+          mindependency.py
+          pyproject.toml -> reference both
+    ```
 
 ### How do I debug when I'm modifying a new `uv` check?
 
