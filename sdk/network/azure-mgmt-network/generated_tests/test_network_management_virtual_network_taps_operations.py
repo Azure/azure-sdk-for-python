@@ -25,7 +25,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
         response = self.client.virtual_network_taps.begin_delete(
             resource_group_name=resource_group.name,
             tap_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
         response = self.client.virtual_network_taps.get(
             resource_group_name=resource_group.name,
             tap_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
 
         # please add some check logic here by yourself
@@ -124,9 +124,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                     }
                                 ],
                                 "ipConfigurations": [...],
-                                "ipamPoolPrefixAllocations": [
-                                    {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
-                                ],
                                 "name": "str",
                                 "natGateway": {"id": "str"},
                                 "networkSecurityGroup": {
@@ -180,7 +177,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                     "flowLogs": [
                                         {
                                             "enabled": bool,
-                                            "enabledFilteringCriteria": "str",
                                             "etag": "str",
                                             "flowAnalyticsConfiguration": {
                                                 "networkWatcherFlowAnalyticsConfiguration": {
@@ -193,14 +189,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                             },
                                             "format": {"type": "str", "version": 0},
                                             "id": "str",
-                                            "identity": {
-                                                "principalId": "str",
-                                                "tenantId": "str",
-                                                "type": "str",
-                                                "userAssignedIdentities": {
-                                                    "str": {"clientId": "str", "principalId": "str"}
-                                                },
-                                            },
                                             "location": "str",
                                             "name": "str",
                                             "provisioningState": "str",
@@ -220,7 +208,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                         {
                                             "auxiliaryMode": "str",
                                             "auxiliarySku": "str",
-                                            "defaultOutboundConnectivityEnabled": bool,
                                             "disableTcpStateTracking": bool,
                                             "dnsSettings": {
                                                 "appliedDnsServers": ["str"],
@@ -428,7 +415,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                             "privateLinkService": {
                                                 "alias": "str",
                                                 "autoApproval": {"subscriptions": ["str"]},
-                                                "destinationIPAddress": "str",
                                                 "enableProxyProtocol": bool,
                                                 "etag": "str",
                                                 "extendedLocation": {"name": "str", "type": "str"},
@@ -669,7 +655,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                             {
                                                 "auxiliaryMode": "str",
                                                 "auxiliarySku": "str",
-                                                "defaultOutboundConnectivityEnabled": bool,
                                                 "disableTcpStateTracking": bool,
                                                 "dnsSettings": {
                                                     "appliedDnsServers": ["str"],
@@ -856,7 +841,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                     "flowLogs": [
                                                         {
                                                             "enabled": bool,
-                                                            "enabledFilteringCriteria": "str",
                                                             "etag": "str",
                                                             "flowAnalyticsConfiguration": {
                                                                 "networkWatcherFlowAnalyticsConfiguration": {
@@ -869,14 +853,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                             },
                                                             "format": {"type": "str", "version": 0},
                                                             "id": "str",
-                                                            "identity": {
-                                                                "principalId": "str",
-                                                                "tenantId": "str",
-                                                                "type": "str",
-                                                                "userAssignedIdentities": {
-                                                                    "str": {"clientId": "str", "principalId": "str"}
-                                                                },
-                                                            },
                                                             "location": "str",
                                                             "name": "str",
                                                             "provisioningState": "str",
@@ -951,7 +927,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                 "privateLinkService": {
                                                     "alias": "str",
                                                     "autoApproval": {"subscriptions": ["str"]},
-                                                    "destinationIPAddress": "str",
                                                     "enableProxyProtocol": bool,
                                                     "etag": "str",
                                                     "extendedLocation": {"name": "str", "type": "str"},
@@ -1120,12 +1095,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                     }
                                 ],
                                 "serviceEndpoints": [
-                                    {
-                                        "locations": ["str"],
-                                        "networkIdentifier": {"id": "str"},
-                                        "provisioningState": "str",
-                                        "service": "str",
-                                    }
+                                    {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                 ],
                                 "sharingScope": "str",
                                 "type": "str",
@@ -1144,12 +1114,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                             "name": "str",
                             "provisioningState": "str",
                             "publicIpAddresses": [{"id": "str"}],
-                            "publicIpAddressesV6": [{"id": "str"}],
                             "publicIpPrefixes": [{"id": "str"}],
-                            "publicIpPrefixesV6": [{"id": "str"}],
                             "resourceGuid": "str",
                             "sku": {"name": "str"},
-                            "sourceVirtualNetwork": {"id": "str"},
                             "subnets": [{"id": "str"}],
                             "tags": {"str": "str"},
                             "type": "str",
@@ -1241,12 +1208,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                         "name": "str",
                                         "provisioningState": "str",
                                         "publicIpAddresses": [{"id": "str"}],
-                                        "publicIpAddressesV6": [{"id": "str"}],
                                         "publicIpPrefixes": [{"id": "str"}],
-                                        "publicIpPrefixesV6": [{"id": "str"}],
                                         "resourceGuid": "str",
                                         "sku": {"name": "str"},
-                                        "sourceVirtualNetwork": {"id": "str"},
                                         "subnets": [{"id": "str"}],
                                         "tags": {"str": "str"},
                                         "type": "str",
@@ -1265,9 +1229,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                 },
                                 "subnet": ...,
                             }
-                        ],
-                        "ipamPoolPrefixAllocations": [
-                            {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
                         ],
                         "name": "str",
                         "natGateway": {"id": "str"},
@@ -1322,7 +1283,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                             "flowLogs": [
                                 {
                                     "enabled": bool,
-                                    "enabledFilteringCriteria": "str",
                                     "etag": "str",
                                     "flowAnalyticsConfiguration": {
                                         "networkWatcherFlowAnalyticsConfiguration": {
@@ -1335,12 +1295,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                     },
                                     "format": {"type": "str", "version": 0},
                                     "id": "str",
-                                    "identity": {
-                                        "principalId": "str",
-                                        "tenantId": "str",
-                                        "type": "str",
-                                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                                    },
                                     "location": "str",
                                     "name": "str",
                                     "provisioningState": "str",
@@ -1360,7 +1314,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                 {
                                     "auxiliaryMode": "str",
                                     "auxiliarySku": "str",
-                                    "defaultOutboundConnectivityEnabled": bool,
                                     "disableTcpStateTracking": bool,
                                     "dnsSettings": {
                                         "appliedDnsServers": ["str"],
@@ -1515,12 +1468,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                     "name": "str",
                                                     "provisioningState": "str",
                                                     "publicIpAddresses": [{"id": "str"}],
-                                                    "publicIpAddressesV6": [{"id": "str"}],
                                                     "publicIpPrefixes": [{"id": "str"}],
-                                                    "publicIpPrefixesV6": [{"id": "str"}],
                                                     "resourceGuid": "str",
                                                     "sku": {"name": "str"},
-                                                    "sourceVirtualNetwork": {"id": "str"},
                                                     "subnets": [{"id": "str"}],
                                                     "tags": {"str": "str"},
                                                     "type": "str",
@@ -1622,7 +1572,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                     "privateLinkService": {
                                         "alias": "str",
                                         "autoApproval": {"subscriptions": ["str"]},
-                                        "destinationIPAddress": "str",
                                         "enableProxyProtocol": bool,
                                         "etag": "str",
                                         "extendedLocation": {"name": "str", "type": "str"},
@@ -1861,7 +1810,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                     {
                                         "auxiliaryMode": "str",
                                         "auxiliarySku": "str",
-                                        "defaultOutboundConnectivityEnabled": bool,
                                         "disableTcpStateTracking": bool,
                                         "dnsSettings": {
                                             "appliedDnsServers": ["str"],
@@ -2021,12 +1969,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                         "name": "str",
                                                         "provisioningState": "str",
                                                         "publicIpAddresses": [{"id": "str"}],
-                                                        "publicIpAddressesV6": [{"id": "str"}],
                                                         "publicIpPrefixes": [{"id": "str"}],
-                                                        "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
                                                         "sku": {"name": "str"},
-                                                        "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
                                                         "tags": {"str": "str"},
                                                         "type": "str",
@@ -2103,7 +2048,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                             "flowLogs": [
                                                 {
                                                     "enabled": bool,
-                                                    "enabledFilteringCriteria": "str",
                                                     "etag": "str",
                                                     "flowAnalyticsConfiguration": {
                                                         "networkWatcherFlowAnalyticsConfiguration": {
@@ -2116,14 +2060,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                     },
                                                     "format": {"type": "str", "version": 0},
                                                     "id": "str",
-                                                    "identity": {
-                                                        "principalId": "str",
-                                                        "tenantId": "str",
-                                                        "type": "str",
-                                                        "userAssignedIdentities": {
-                                                            "str": {"clientId": "str", "principalId": "str"}
-                                                        },
-                                                    },
                                                     "location": "str",
                                                     "name": "str",
                                                     "provisioningState": "str",
@@ -2198,7 +2134,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                         "privateLinkService": {
                                             "alias": "str",
                                             "autoApproval": {"subscriptions": ["str"]},
-                                            "destinationIPAddress": "str",
                                             "enableProxyProtocol": bool,
                                             "etag": "str",
                                             "extendedLocation": {"name": "str", "type": "str"},
@@ -2366,14 +2301,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                 "type": "str",
                             }
                         ],
-                        "serviceEndpoints": [
-                            {
-                                "locations": ["str"],
-                                "networkIdentifier": {"id": "str"},
-                                "provisioningState": "str",
-                                "service": "str",
-                            }
-                        ],
+                        "serviceEndpoints": [{"locations": ["str"], "provisioningState": "str", "service": "str"}],
                         "sharingScope": "str",
                         "type": "str",
                     },
@@ -2533,9 +2461,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                     }
                                 ],
                                 "ipConfigurations": [...],
-                                "ipamPoolPrefixAllocations": [
-                                    {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
-                                ],
                                 "name": "str",
                                 "natGateway": {"id": "str"},
                                 "networkSecurityGroup": {
@@ -2589,7 +2514,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                     "flowLogs": [
                                         {
                                             "enabled": bool,
-                                            "enabledFilteringCriteria": "str",
                                             "etag": "str",
                                             "flowAnalyticsConfiguration": {
                                                 "networkWatcherFlowAnalyticsConfiguration": {
@@ -2602,14 +2526,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                             },
                                             "format": {"type": "str", "version": 0},
                                             "id": "str",
-                                            "identity": {
-                                                "principalId": "str",
-                                                "tenantId": "str",
-                                                "type": "str",
-                                                "userAssignedIdentities": {
-                                                    "str": {"clientId": "str", "principalId": "str"}
-                                                },
-                                            },
                                             "location": "str",
                                             "name": "str",
                                             "provisioningState": "str",
@@ -2629,7 +2545,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                         {
                                             "auxiliaryMode": "str",
                                             "auxiliarySku": "str",
-                                            "defaultOutboundConnectivityEnabled": bool,
                                             "disableTcpStateTracking": bool,
                                             "dnsSettings": {
                                                 "appliedDnsServers": ["str"],
@@ -2726,7 +2641,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                             "privateLinkService": {
                                                 "alias": "str",
                                                 "autoApproval": {"subscriptions": ["str"]},
-                                                "destinationIPAddress": "str",
                                                 "enableProxyProtocol": bool,
                                                 "etag": "str",
                                                 "extendedLocation": {"name": "str", "type": "str"},
@@ -2987,7 +2901,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                             {
                                                 "auxiliaryMode": "str",
                                                 "auxiliarySku": "str",
-                                                "defaultOutboundConnectivityEnabled": bool,
                                                 "disableTcpStateTracking": bool,
                                                 "dnsSettings": {
                                                     "appliedDnsServers": ["str"],
@@ -3059,7 +2972,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                     "flowLogs": [
                                                         {
                                                             "enabled": bool,
-                                                            "enabledFilteringCriteria": "str",
                                                             "etag": "str",
                                                             "flowAnalyticsConfiguration": {
                                                                 "networkWatcherFlowAnalyticsConfiguration": {
@@ -3072,14 +2984,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                             },
                                                             "format": {"type": "str", "version": 0},
                                                             "id": "str",
-                                                            "identity": {
-                                                                "principalId": "str",
-                                                                "tenantId": "str",
-                                                                "type": "str",
-                                                                "userAssignedIdentities": {
-                                                                    "str": {"clientId": "str", "principalId": "str"}
-                                                                },
-                                                            },
                                                             "location": "str",
                                                             "name": "str",
                                                             "provisioningState": "str",
@@ -3154,7 +3058,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                 "privateLinkService": {
                                                     "alias": "str",
                                                     "autoApproval": {"subscriptions": ["str"]},
-                                                    "destinationIPAddress": "str",
                                                     "enableProxyProtocol": bool,
                                                     "etag": "str",
                                                     "extendedLocation": {"name": "str", "type": "str"},
@@ -3343,12 +3246,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                     }
                                 ],
                                 "serviceEndpoints": [
-                                    {
-                                        "locations": ["str"],
-                                        "networkIdentifier": {"id": "str"},
-                                        "provisioningState": "str",
-                                        "service": "str",
-                                    }
+                                    {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                 ],
                                 "sharingScope": "str",
                                 "type": "str",
@@ -3367,12 +3265,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                             "name": "str",
                             "provisioningState": "str",
                             "publicIpAddresses": [{"id": "str"}],
-                            "publicIpAddressesV6": [{"id": "str"}],
                             "publicIpPrefixes": [{"id": "str"}],
-                            "publicIpPrefixesV6": [{"id": "str"}],
                             "resourceGuid": "str",
                             "sku": {"name": "str"},
-                            "sourceVirtualNetwork": {"id": "str"},
                             "subnets": [{"id": "str"}],
                             "tags": {"str": "str"},
                             "type": "str",
@@ -3463,12 +3358,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                         "name": "str",
                                         "provisioningState": "str",
                                         "publicIpAddresses": [{"id": "str"}],
-                                        "publicIpAddressesV6": [{"id": "str"}],
                                         "publicIpPrefixes": [{"id": "str"}],
-                                        "publicIpPrefixesV6": [{"id": "str"}],
                                         "resourceGuid": "str",
                                         "sku": {"name": "str"},
-                                        "sourceVirtualNetwork": {"id": "str"},
                                         "subnets": [{"id": "str"}],
                                         "tags": {"str": "str"},
                                         "type": "str",
@@ -3487,9 +3379,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                 },
                                 "subnet": ...,
                             }
-                        ],
-                        "ipamPoolPrefixAllocations": [
-                            {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
                         ],
                         "name": "str",
                         "natGateway": {"id": "str"},
@@ -3544,7 +3433,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                             "flowLogs": [
                                 {
                                     "enabled": bool,
-                                    "enabledFilteringCriteria": "str",
                                     "etag": "str",
                                     "flowAnalyticsConfiguration": {
                                         "networkWatcherFlowAnalyticsConfiguration": {
@@ -3557,12 +3445,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                     },
                                     "format": {"type": "str", "version": 0},
                                     "id": "str",
-                                    "identity": {
-                                        "principalId": "str",
-                                        "tenantId": "str",
-                                        "type": "str",
-                                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                                    },
                                     "location": "str",
                                     "name": "str",
                                     "provisioningState": "str",
@@ -3582,7 +3464,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                 {
                                     "auxiliaryMode": "str",
                                     "auxiliarySku": "str",
-                                    "defaultOutboundConnectivityEnabled": bool,
                                     "disableTcpStateTracking": bool,
                                     "dnsSettings": {
                                         "appliedDnsServers": ["str"],
@@ -3679,7 +3560,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                     "privateLinkService": {
                                         "alias": "str",
                                         "autoApproval": {"subscriptions": ["str"]},
-                                        "destinationIPAddress": "str",
                                         "enableProxyProtocol": bool,
                                         "etag": "str",
                                         "extendedLocation": {"name": "str", "type": "str"},
@@ -3753,12 +3633,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                         "name": "str",
                                                         "provisioningState": "str",
                                                         "publicIpAddresses": [{"id": "str"}],
-                                                        "publicIpAddressesV6": [{"id": "str"}],
                                                         "publicIpPrefixes": [{"id": "str"}],
-                                                        "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
                                                         "sku": {"name": "str"},
-                                                        "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
                                                         "tags": {"str": "str"},
                                                         "type": "str",
@@ -3999,7 +3876,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                     {
                                         "auxiliaryMode": "str",
                                         "auxiliarySku": "str",
-                                        "defaultOutboundConnectivityEnabled": bool,
                                         "disableTcpStateTracking": bool,
                                         "dnsSettings": {
                                             "appliedDnsServers": ["str"],
@@ -4071,7 +3947,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                             "flowLogs": [
                                                 {
                                                     "enabled": bool,
-                                                    "enabledFilteringCriteria": "str",
                                                     "etag": "str",
                                                     "flowAnalyticsConfiguration": {
                                                         "networkWatcherFlowAnalyticsConfiguration": {
@@ -4084,14 +3959,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                     },
                                                     "format": {"type": "str", "version": 0},
                                                     "id": "str",
-                                                    "identity": {
-                                                        "principalId": "str",
-                                                        "tenantId": "str",
-                                                        "type": "str",
-                                                        "userAssignedIdentities": {
-                                                            "str": {"clientId": "str", "principalId": "str"}
-                                                        },
-                                                    },
                                                     "location": "str",
                                                     "name": "str",
                                                     "provisioningState": "str",
@@ -4166,7 +4033,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                         "privateLinkService": {
                                             "alias": "str",
                                             "autoApproval": {"subscriptions": ["str"]},
-                                            "destinationIPAddress": "str",
                                             "enableProxyProtocol": bool,
                                             "etag": "str",
                                             "extendedLocation": {"name": "str", "type": "str"},
@@ -4240,12 +4106,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                             "name": "str",
                                                             "provisioningState": "str",
                                                             "publicIpAddresses": [{"id": "str"}],
-                                                            "publicIpAddressesV6": [{"id": "str"}],
                                                             "publicIpPrefixes": [{"id": "str"}],
-                                                            "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
                                                             "sku": {"name": "str"},
-                                                            "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
                                                             "tags": {"str": "str"},
                                                             "type": "str",
@@ -4415,14 +4278,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                 "type": "str",
                             }
                         ],
-                        "serviceEndpoints": [
-                            {
-                                "locations": ["str"],
-                                "networkIdentifier": {"id": "str"},
-                                "provisioningState": "str",
-                                "service": "str",
-                            }
-                        ],
+                        "serviceEndpoints": [{"locations": ["str"], "provisioningState": "str", "service": "str"}],
                         "sharingScope": "str",
                         "type": "str",
                     },
@@ -4449,7 +4305,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -4462,7 +4318,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             tap_name="str",
             tap_parameters={"tags": {"str": "str"}},
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
 
         # please add some check logic here by yourself
@@ -4472,7 +4328,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
     @recorded_by_proxy
     def test_virtual_network_taps_list_all(self, resource_group):
         response = self.client.virtual_network_taps.list_all(
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -4483,7 +4339,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
     def test_virtual_network_taps_list_by_resource_group(self, resource_group):
         response = self.client.virtual_network_taps.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -25,7 +25,7 @@ class TestNetworkManagementVirtualNetworkPeeringsOperations(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             virtual_network_name="str",
             virtual_network_peering_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestNetworkManagementVirtualNetworkPeeringsOperations(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             virtual_network_name="str",
             virtual_network_peering_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
 
         # please add some check logic here by yourself
@@ -59,45 +59,25 @@ class TestNetworkManagementVirtualNetworkPeeringsOperations(AzureMgmtRecordedTes
                 "enableOnlyIPv6Peering": bool,
                 "etag": "str",
                 "id": "str",
-                "localAddressSpace": {
-                    "addressPrefixes": ["str"],
-                    "ipamPoolPrefixAllocations": [
-                        {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
-                    ],
-                },
+                "localAddressSpace": {"addressPrefixes": ["str"]},
                 "localSubnetNames": ["str"],
-                "localVirtualNetworkAddressSpace": {
-                    "addressPrefixes": ["str"],
-                    "ipamPoolPrefixAllocations": [
-                        {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
-                    ],
-                },
+                "localVirtualNetworkAddressSpace": {"addressPrefixes": ["str"]},
                 "name": "str",
                 "peerCompleteVnets": bool,
                 "peeringState": "str",
                 "peeringSyncLevel": "str",
                 "provisioningState": "str",
-                "remoteAddressSpace": {
-                    "addressPrefixes": ["str"],
-                    "ipamPoolPrefixAllocations": [
-                        {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
-                    ],
-                },
+                "remoteAddressSpace": {"addressPrefixes": ["str"]},
                 "remoteBgpCommunities": {"virtualNetworkCommunity": "str", "regionalCommunity": "str"},
                 "remoteSubnetNames": ["str"],
                 "remoteVirtualNetwork": {"id": "str"},
-                "remoteVirtualNetworkAddressSpace": {
-                    "addressPrefixes": ["str"],
-                    "ipamPoolPrefixAllocations": [
-                        {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
-                    ],
-                },
+                "remoteVirtualNetworkAddressSpace": {"addressPrefixes": ["str"]},
                 "remoteVirtualNetworkEncryption": {"enabled": bool, "enforcement": "str"},
                 "resourceGuid": "str",
                 "type": "str",
                 "useRemoteGateways": bool,
             },
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -109,7 +89,7 @@ class TestNetworkManagementVirtualNetworkPeeringsOperations(AzureMgmtRecordedTes
         response = self.client.virtual_network_peerings.list(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

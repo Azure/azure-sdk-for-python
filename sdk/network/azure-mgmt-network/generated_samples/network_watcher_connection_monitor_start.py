@@ -16,7 +16,7 @@ from azure.mgmt.network import NetworkManagementClient
     pip install azure-identity
     pip install azure-mgmt-network
 # USAGE
-    python nsp_access_rule_delete.py
+    python network_watcher_connection_monitor_start.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,17 +28,16 @@ from azure.mgmt.network import NetworkManagementClient
 def main():
     client = NetworkManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subId",
+        subscription_id="subid",
     )
 
-    client.network_security_perimeter_access_rules.delete(
+    client.connection_monitors.begin_start(
         resource_group_name="rg1",
-        network_security_perimeter_name="nsp1",
-        profile_name="profile1",
-        access_rule_name="accessRule1",
-    )
+        network_watcher_name="nw1",
+        connection_monitor_name="cm1",
+    ).result()
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-07-01/examples/NspAccessRuleDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-11-01/examples/NetworkWatcherConnectionMonitorStart.json
 if __name__ == "__main__":
     main()

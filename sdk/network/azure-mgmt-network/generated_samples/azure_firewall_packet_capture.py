@@ -35,20 +35,26 @@ def main():
         resource_group_name="rg1",
         azure_firewall_name="azureFirewall1",
         parameters={
-            "durationInSeconds": 300,
-            "fileName": "azureFirewallPacketCapture",
-            "filters": [
-                {"destinationPorts": ["4500"], "destinations": ["20.1.2.0"], "sources": ["20.1.1.0"]},
-                {"destinationPorts": ["123", "80"], "destinations": ["10.1.2.0"], "sources": ["10.1.1.0", "10.1.1.1"]},
-            ],
-            "flags": [{"type": "syn"}, {"type": "fin"}],
-            "numberOfPacketsToCapture": 5000,
-            "protocol": "Any",
-            "sasUrl": "someSASURL",
+            "properties": {
+                "durationInSeconds": 300,
+                "fileName": "azureFirewallPacketCapture",
+                "filters": [
+                    {"destinationPorts": ["4500"], "destinations": ["20.1.2.0"], "sources": ["20.1.1.0"]},
+                    {
+                        "destinationPorts": ["123", "80"],
+                        "destinations": ["10.1.2.0"],
+                        "sources": ["10.1.1.0", "10.1.1.1"],
+                    },
+                ],
+                "flags": [{"type": "syn"}, {"type": "fin"}],
+                "numberOfPacketsToCapture": 5000,
+                "protocol": "Any",
+                "sasUrl": "someSASURL",
+            }
         },
     ).result()
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-07-01/examples/AzureFirewallPacketCapture.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-11-01/examples/AzureFirewallPacketCapture.json
 if __name__ == "__main__":
     main()

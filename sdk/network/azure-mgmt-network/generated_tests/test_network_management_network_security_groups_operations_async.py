@@ -27,7 +27,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
             await self.client.network_security_groups.begin_delete(
                 resource_group_name=resource_group.name,
                 network_security_group_name="str",
-                api_version="2024-07-01",
+                api_version="2023-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -40,7 +40,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
         response = await self.client.network_security_groups.get(
             resource_group_name=resource_group.name,
             network_security_group_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
 
         # please add some check logic here by yourself
@@ -104,7 +104,6 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                     "flowLogs": [
                         {
                             "enabled": bool,
-                            "enabledFilteringCriteria": "str",
                             "etag": "str",
                             "flowAnalyticsConfiguration": {
                                 "networkWatcherFlowAnalyticsConfiguration": {
@@ -117,12 +116,6 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                             },
                             "format": {"type": "str", "version": 0},
                             "id": "str",
-                            "identity": {
-                                "principalId": "str",
-                                "tenantId": "str",
-                                "type": "str",
-                                "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                            },
                             "location": "str",
                             "name": "str",
                             "provisioningState": "str",
@@ -142,7 +135,6 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                         {
                             "auxiliaryMode": "str",
                             "auxiliarySku": "str",
-                            "defaultOutboundConnectivityEnabled": bool,
                             "disableTcpStateTracking": bool,
                             "dnsSettings": {
                                 "appliedDnsServers": ["str"],
@@ -318,13 +310,6 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                     }
                                                 ],
                                                 "ipConfigurations": [...],
-                                                "ipamPoolPrefixAllocations": [
-                                                    {
-                                                        "allocatedAddressPrefixes": ["str"],
-                                                        "id": "str",
-                                                        "numberOfIpAddresses": "str",
-                                                    }
-                                                ],
                                                 "name": "str",
                                                 "natGateway": {"id": "str"},
                                                 "networkSecurityGroup": ...,
@@ -482,12 +467,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                     }
                                                 ],
                                                 "serviceEndpoints": [
-                                                    {
-                                                        "locations": ["str"],
-                                                        "networkIdentifier": {"id": "str"},
-                                                        "provisioningState": "str",
-                                                        "service": "str",
-                                                    }
+                                                    {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                                 ],
                                                 "sharingScope": "str",
                                                 "type": "str",
@@ -506,12 +486,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                             "name": "str",
                                             "provisioningState": "str",
                                             "publicIpAddresses": [{"id": "str"}],
-                                            "publicIpAddressesV6": [{"id": "str"}],
                                             "publicIpPrefixes": [{"id": "str"}],
-                                            "publicIpPrefixesV6": [{"id": "str"}],
                                             "resourceGuid": "str",
                                             "sku": {"name": "str"},
-                                            "sourceVirtualNetwork": {"id": "str"},
                                             "subnets": [{"id": "str"}],
                                             "tags": {"str": "str"},
                                             "type": "str",
@@ -605,12 +582,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                         "name": "str",
                                                         "provisioningState": "str",
                                                         "publicIpAddresses": [{"id": "str"}],
-                                                        "publicIpAddressesV6": [{"id": "str"}],
                                                         "publicIpPrefixes": [{"id": "str"}],
-                                                        "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
                                                         "sku": {"name": "str"},
-                                                        "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
                                                         "tags": {"str": "str"},
                                                         "type": "str",
@@ -628,13 +602,6 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                     "zones": ["str"],
                                                 },
                                                 "subnet": ...,
-                                            }
-                                        ],
-                                        "ipamPoolPrefixAllocations": [
-                                            {
-                                                "allocatedAddressPrefixes": ["str"],
-                                                "id": "str",
-                                                "numberOfIpAddresses": "str",
                                             }
                                         ],
                                         "name": "str",
@@ -794,12 +761,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                             }
                                         ],
                                         "serviceEndpoints": [
-                                            {
-                                                "locations": ["str"],
-                                                "networkIdentifier": {"id": "str"},
-                                                "provisioningState": "str",
-                                                "service": "str",
-                                            }
+                                            {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                         ],
                                         "sharingScope": "str",
                                         "type": "str",
@@ -884,13 +846,6 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                 }
                                                             ],
                                                             "ipConfigurations": [...],
-                                                            "ipamPoolPrefixAllocations": [
-                                                                {
-                                                                    "allocatedAddressPrefixes": ["str"],
-                                                                    "id": "str",
-                                                                    "numberOfIpAddresses": "str",
-                                                                }
-                                                            ],
                                                             "name": "str",
                                                             "natGateway": {"id": "str"},
                                                             "networkSecurityGroup": ...,
@@ -1052,7 +1007,6 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                             "serviceEndpoints": [
                                                                 {
                                                                     "locations": ["str"],
-                                                                    "networkIdentifier": {"id": "str"},
                                                                     "provisioningState": "str",
                                                                     "service": "str",
                                                                 }
@@ -1074,12 +1028,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                         "name": "str",
                                                         "provisioningState": "str",
                                                         "publicIpAddresses": [{"id": "str"}],
-                                                        "publicIpAddressesV6": [{"id": "str"}],
                                                         "publicIpPrefixes": [{"id": "str"}],
-                                                        "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
                                                         "sku": {"name": "str"},
-                                                        "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
                                                         "tags": {"str": "str"},
                                                         "type": "str",
@@ -1174,12 +1125,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                     "name": "str",
                                                                     "provisioningState": "str",
                                                                     "publicIpAddresses": [{"id": "str"}],
-                                                                    "publicIpAddressesV6": [{"id": "str"}],
                                                                     "publicIpPrefixes": [{"id": "str"}],
-                                                                    "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
                                                                     "sku": {"name": "str"},
-                                                                    "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
                                                                     "tags": {"str": "str"},
                                                                     "type": "str",
@@ -1197,13 +1145,6 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                 "zones": ["str"],
                                                             },
                                                             "subnet": ...,
-                                                        }
-                                                    ],
-                                                    "ipamPoolPrefixAllocations": [
-                                                        {
-                                                            "allocatedAddressPrefixes": ["str"],
-                                                            "id": "str",
-                                                            "numberOfIpAddresses": "str",
                                                         }
                                                     ],
                                                     "name": "str",
@@ -1367,7 +1308,6 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                     "serviceEndpoints": [
                                                         {
                                                             "locations": ["str"],
-                                                            "networkIdentifier": {"id": "str"},
                                                             "provisioningState": "str",
                                                             "service": "str",
                                                         }
@@ -1552,12 +1492,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                     "name": "str",
                                                     "provisioningState": "str",
                                                     "publicIpAddresses": [{"id": "str"}],
-                                                    "publicIpAddressesV6": [{"id": "str"}],
                                                     "publicIpPrefixes": [{"id": "str"}],
-                                                    "publicIpPrefixesV6": [{"id": "str"}],
                                                     "resourceGuid": "str",
                                                     "sku": {"name": "str"},
-                                                    "sourceVirtualNetwork": {"id": "str"},
                                                     "subnets": [{"id": "str"}],
                                                     "tags": {"str": "str"},
                                                     "type": "str",
@@ -1576,9 +1513,6 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                             },
                                             "subnet": ...,
                                         }
-                                    ],
-                                    "ipamPoolPrefixAllocations": [
-                                        {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
                                     ],
                                     "name": "str",
                                     "natGateway": {"id": "str"},
@@ -1666,12 +1600,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                         }
                                     ],
                                     "serviceEndpoints": [
-                                        {
-                                            "locations": ["str"],
-                                            "networkIdentifier": {"id": "str"},
-                                            "provisioningState": "str",
-                                            "service": "str",
-                                        }
+                                        {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                     ],
                                     "sharingScope": "str",
                                     "type": "str",
@@ -1682,7 +1611,6 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                             "privateLinkService": {
                                 "alias": "str",
                                 "autoApproval": {"subscriptions": ["str"]},
-                                "destinationIPAddress": "str",
                                 "enableProxyProtocol": bool,
                                 "etag": "str",
                                 "extendedLocation": {"name": "str", "type": "str"},
@@ -1775,12 +1703,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                             "name": "str",
                                                             "provisioningState": "str",
                                                             "publicIpAddresses": [{"id": "str"}],
-                                                            "publicIpAddressesV6": [{"id": "str"}],
                                                             "publicIpPrefixes": [{"id": "str"}],
-                                                            "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
                                                             "sku": {"name": "str"},
-                                                            "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
                                                             "tags": {"str": "str"},
                                                             "type": "str",
@@ -1798,13 +1723,6 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                         "zones": ["str"],
                                                     },
                                                     "subnet": ...,
-                                                }
-                                            ],
-                                            "ipamPoolPrefixAllocations": [
-                                                {
-                                                    "allocatedAddressPrefixes": ["str"],
-                                                    "id": "str",
-                                                    "numberOfIpAddresses": "str",
                                                 }
                                             ],
                                             "name": "str",
@@ -1964,12 +1882,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                 }
                                             ],
                                             "serviceEndpoints": [
-                                                {
-                                                    "locations": ["str"],
-                                                    "networkIdentifier": {"id": "str"},
-                                                    "provisioningState": "str",
-                                                    "service": "str",
-                                                }
+                                                {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                             ],
                                             "sharingScope": "str",
                                             "type": "str",
@@ -2055,13 +1968,6 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                         }
                                                     ],
                                                     "ipConfigurations": [...],
-                                                    "ipamPoolPrefixAllocations": [
-                                                        {
-                                                            "allocatedAddressPrefixes": ["str"],
-                                                            "id": "str",
-                                                            "numberOfIpAddresses": "str",
-                                                        }
-                                                    ],
                                                     "name": "str",
                                                     "natGateway": {"id": "str"},
                                                     "networkSecurityGroup": ...,
@@ -2223,7 +2129,6 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                     "serviceEndpoints": [
                                                         {
                                                             "locations": ["str"],
-                                                            "networkIdentifier": {"id": "str"},
                                                             "provisioningState": "str",
                                                             "service": "str",
                                                         }
@@ -2245,12 +2150,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                 "name": "str",
                                                 "provisioningState": "str",
                                                 "publicIpAddresses": [{"id": "str"}],
-                                                "publicIpAddressesV6": [{"id": "str"}],
                                                 "publicIpPrefixes": [{"id": "str"}],
-                                                "publicIpPrefixesV6": [{"id": "str"}],
                                                 "resourceGuid": "str",
                                                 "sku": {"name": "str"},
-                                                "sourceVirtualNetwork": {"id": "str"},
                                                 "subnets": [{"id": "str"}],
                                                 "tags": {"str": "str"},
                                                 "type": "str",
@@ -2345,12 +2247,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                             "name": "str",
                                                             "provisioningState": "str",
                                                             "publicIpAddresses": [{"id": "str"}],
-                                                            "publicIpAddressesV6": [{"id": "str"}],
                                                             "publicIpPrefixes": [{"id": "str"}],
-                                                            "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
                                                             "sku": {"name": "str"},
-                                                            "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
                                                             "tags": {"str": "str"},
                                                             "type": "str",
@@ -2368,13 +2267,6 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                         "zones": ["str"],
                                                     },
                                                     "subnet": ...,
-                                                }
-                                            ],
-                                            "ipamPoolPrefixAllocations": [
-                                                {
-                                                    "allocatedAddressPrefixes": ["str"],
-                                                    "id": "str",
-                                                    "numberOfIpAddresses": "str",
                                                 }
                                             ],
                                             "name": "str",
@@ -2534,12 +2426,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                 }
                                             ],
                                             "serviceEndpoints": [
-                                                {
-                                                    "locations": ["str"],
-                                                    "networkIdentifier": {"id": "str"},
-                                                    "provisioningState": "str",
-                                                    "service": "str",
-                                                }
+                                                {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                             ],
                                             "sharingScope": "str",
                                             "type": "str",
@@ -2700,12 +2587,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                 "name": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
-                                                                "publicIpAddressesV6": [{"id": "str"}],
                                                                 "publicIpPrefixes": [{"id": "str"}],
-                                                                "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
                                                                 "sku": {"name": "str"},
-                                                                "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
                                                                 "tags": {"str": "str"},
                                                                 "type": "str",
@@ -2723,13 +2607,6 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                             "zones": ["str"],
                                                         },
                                                         "subnet": ...,
-                                                    }
-                                                ],
-                                                "ipamPoolPrefixAllocations": [
-                                                    {
-                                                        "allocatedAddressPrefixes": ["str"],
-                                                        "id": "str",
-                                                        "numberOfIpAddresses": "str",
                                                     }
                                                 ],
                                                 "name": "str",
@@ -2818,12 +2695,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                     }
                                                 ],
                                                 "serviceEndpoints": [
-                                                    {
-                                                        "locations": ["str"],
-                                                        "networkIdentifier": {"id": "str"},
-                                                        "provisioningState": "str",
-                                                        "service": "str",
-                                                    }
+                                                    {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                                 ],
                                                 "sharingScope": "str",
                                                 "type": "str",
@@ -2934,13 +2806,6 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                             }
                                                         ],
                                                         "ipConfigurations": [...],
-                                                        "ipamPoolPrefixAllocations": [
-                                                            {
-                                                                "allocatedAddressPrefixes": ["str"],
-                                                                "id": "str",
-                                                                "numberOfIpAddresses": "str",
-                                                            }
-                                                        ],
                                                         "name": "str",
                                                         "natGateway": {"id": "str"},
                                                         "networkSecurityGroup": ...,
@@ -3102,7 +2967,6 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                         "serviceEndpoints": [
                                                             {
                                                                 "locations": ["str"],
-                                                                "networkIdentifier": {"id": "str"},
                                                                 "provisioningState": "str",
                                                                 "service": "str",
                                                             }
@@ -3124,12 +2988,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                     "name": "str",
                                                     "provisioningState": "str",
                                                     "publicIpAddresses": [{"id": "str"}],
-                                                    "publicIpAddressesV6": [{"id": "str"}],
                                                     "publicIpPrefixes": [{"id": "str"}],
-                                                    "publicIpPrefixesV6": [{"id": "str"}],
                                                     "resourceGuid": "str",
                                                     "sku": {"name": "str"},
-                                                    "sourceVirtualNetwork": {"id": "str"},
                                                     "subnets": [{"id": "str"}],
                                                     "tags": {"str": "str"},
                                                     "type": "str",
@@ -3224,12 +3085,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                 "name": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
-                                                                "publicIpAddressesV6": [{"id": "str"}],
                                                                 "publicIpPrefixes": [{"id": "str"}],
-                                                                "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
                                                                 "sku": {"name": "str"},
-                                                                "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
                                                                 "tags": {"str": "str"},
                                                                 "type": "str",
@@ -3247,13 +3105,6 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                             "zones": ["str"],
                                                         },
                                                         "subnet": ...,
-                                                    }
-                                                ],
-                                                "ipamPoolPrefixAllocations": [
-                                                    {
-                                                        "allocatedAddressPrefixes": ["str"],
-                                                        "id": "str",
-                                                        "numberOfIpAddresses": "str",
                                                     }
                                                 ],
                                                 "name": "str",
@@ -3413,12 +3264,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                     }
                                                 ],
                                                 "serviceEndpoints": [
-                                                    {
-                                                        "locations": ["str"],
-                                                        "networkIdentifier": {"id": "str"},
-                                                        "provisioningState": "str",
-                                                        "service": "str",
-                                                    }
+                                                    {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                                 ],
                                                 "sharingScope": "str",
                                                 "type": "str",
@@ -3588,13 +3434,6 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                             }
                                                         ],
                                                         "ipConfigurations": [...],
-                                                        "ipamPoolPrefixAllocations": [
-                                                            {
-                                                                "allocatedAddressPrefixes": ["str"],
-                                                                "id": "str",
-                                                                "numberOfIpAddresses": "str",
-                                                            }
-                                                        ],
                                                         "name": "str",
                                                         "natGateway": {"id": "str"},
                                                         "networkSecurityGroup": ...,
@@ -3756,7 +3595,6 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                         "serviceEndpoints": [
                                                             {
                                                                 "locations": ["str"],
-                                                                "networkIdentifier": {"id": "str"},
                                                                 "provisioningState": "str",
                                                                 "service": "str",
                                                             }
@@ -3778,12 +3616,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                     "name": "str",
                                                     "provisioningState": "str",
                                                     "publicIpAddresses": [{"id": "str"}],
-                                                    "publicIpAddressesV6": [{"id": "str"}],
                                                     "publicIpPrefixes": [{"id": "str"}],
-                                                    "publicIpPrefixesV6": [{"id": "str"}],
                                                     "resourceGuid": "str",
                                                     "sku": {"name": "str"},
-                                                    "sourceVirtualNetwork": {"id": "str"},
                                                     "subnets": [{"id": "str"}],
                                                     "tags": {"str": "str"},
                                                     "type": "str",
@@ -3877,12 +3712,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                 "name": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
-                                                                "publicIpAddressesV6": [{"id": "str"}],
                                                                 "publicIpPrefixes": [{"id": "str"}],
-                                                                "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
                                                                 "sku": {"name": "str"},
-                                                                "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
                                                                 "tags": {"str": "str"},
                                                                 "type": "str",
@@ -3900,13 +3732,6 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                             "zones": ["str"],
                                                         },
                                                         "subnet": ...,
-                                                    }
-                                                ],
-                                                "ipamPoolPrefixAllocations": [
-                                                    {
-                                                        "allocatedAddressPrefixes": ["str"],
-                                                        "id": "str",
-                                                        "numberOfIpAddresses": "str",
                                                     }
                                                 ],
                                                 "name": "str",
@@ -4066,12 +3891,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                     }
                                                 ],
                                                 "serviceEndpoints": [
-                                                    {
-                                                        "locations": ["str"],
-                                                        "networkIdentifier": {"id": "str"},
-                                                        "provisioningState": "str",
-                                                        "service": "str",
-                                                    }
+                                                    {"locations": ["str"], "provisioningState": "str", "service": "str"}
                                                 ],
                                                 "sharingScope": "str",
                                                 "type": "str",
@@ -4221,12 +4041,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                             "name": "str",
                                             "provisioningState": "str",
                                             "publicIpAddresses": [{"id": "str"}],
-                                            "publicIpAddressesV6": [{"id": "str"}],
                                             "publicIpPrefixes": [{"id": "str"}],
-                                            "publicIpPrefixesV6": [{"id": "str"}],
                                             "resourceGuid": "str",
                                             "sku": {"name": "str"},
-                                            "sourceVirtualNetwork": {"id": "str"},
                                             "subnets": [{"id": "str"}],
                                             "tags": {"str": "str"},
                                             "type": "str",
@@ -4245,9 +4062,6 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                     },
                                     "subnet": ...,
                                 }
-                            ],
-                            "ipamPoolPrefixAllocations": [
-                                {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
                             ],
                             "name": "str",
                             "natGateway": {"id": "str"},
@@ -4305,7 +4119,6 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                         {
                                             "auxiliaryMode": "str",
                                             "auxiliarySku": "str",
-                                            "defaultOutboundConnectivityEnabled": bool,
                                             "disableTcpStateTracking": bool,
                                             "dnsSettings": {
                                                 "appliedDnsServers": ["str"],
@@ -4467,12 +4280,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                             "name": "str",
                                                             "provisioningState": "str",
                                                             "publicIpAddresses": [{"id": "str"}],
-                                                            "publicIpAddressesV6": [{"id": "str"}],
                                                             "publicIpPrefixes": [{"id": "str"}],
-                                                            "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
                                                             "sku": {"name": "str"},
-                                                            "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
                                                             "tags": {"str": "str"},
                                                             "type": "str",
@@ -4546,12 +4356,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                         "name": "str",
                                                                         "provisioningState": "str",
                                                                         "publicIpAddresses": [{"id": "str"}],
-                                                                        "publicIpAddressesV6": [{"id": "str"}],
                                                                         "publicIpPrefixes": [{"id": "str"}],
-                                                                        "publicIpPrefixesV6": [{"id": "str"}],
                                                                         "resourceGuid": "str",
                                                                         "sku": {"name": "str"},
-                                                                        "sourceVirtualNetwork": {"id": "str"},
                                                                         "subnets": [{"id": "str"}],
                                                                         "tags": {"str": "str"},
                                                                         "type": "str",
@@ -4608,7 +4415,6 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                             "privateLinkService": {
                                                 "alias": "str",
                                                 "autoApproval": {"subscriptions": ["str"]},
-                                                "destinationIPAddress": "str",
                                                 "enableProxyProtocol": bool,
                                                 "etag": "str",
                                                 "extendedLocation": {"name": "str", "type": "str"},
@@ -4682,12 +4488,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                 "name": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
-                                                                "publicIpAddressesV6": [{"id": "str"}],
                                                                 "publicIpPrefixes": [{"id": "str"}],
-                                                                "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
                                                                 "sku": {"name": "str"},
-                                                                "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
                                                                 "tags": {"str": "str"},
                                                                 "type": "str",
@@ -4799,12 +4602,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                     "name": "str",
                                                                     "provisioningState": "str",
                                                                     "publicIpAddresses": [{"id": "str"}],
-                                                                    "publicIpAddressesV6": [{"id": "str"}],
                                                                     "publicIpPrefixes": [{"id": "str"}],
-                                                                    "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
                                                                     "sku": {"name": "str"},
-                                                                    "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
                                                                     "tags": {"str": "str"},
                                                                     "type": "str",
@@ -4975,12 +4775,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                     "name": "str",
                                                                     "provisioningState": "str",
                                                                     "publicIpAddresses": [{"id": "str"}],
-                                                                    "publicIpAddressesV6": [{"id": "str"}],
                                                                     "publicIpPrefixes": [{"id": "str"}],
-                                                                    "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
                                                                     "sku": {"name": "str"},
-                                                                    "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
                                                                     "tags": {"str": "str"},
                                                                     "type": "str",
@@ -5123,14 +4920,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                     "type": "str",
                                 }
                             ],
-                            "serviceEndpoints": [
-                                {
-                                    "locations": ["str"],
-                                    "networkIdentifier": {"id": "str"},
-                                    "provisioningState": "str",
-                                    "service": "str",
-                                }
-                            ],
+                            "serviceEndpoints": [{"locations": ["str"], "provisioningState": "str", "service": "str"}],
                             "sharingScope": "str",
                             "type": "str",
                         }
@@ -5138,7 +4928,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-07-01",
+                api_version="2023-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -5152,7 +4942,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
             resource_group_name=resource_group.name,
             network_security_group_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
 
         # please add some check logic here by yourself
@@ -5162,7 +4952,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
     @recorded_by_proxy_async
     async def test_network_security_groups_list_all(self, resource_group):
         response = self.client.network_security_groups.list_all(
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -5173,7 +4963,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
     async def test_network_security_groups_list(self, resource_group):
         response = self.client.network_security_groups.list(
             resource_group_name=resource_group.name,
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

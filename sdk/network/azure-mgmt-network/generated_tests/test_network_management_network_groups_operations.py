@@ -25,7 +25,7 @@ class TestNetworkManagementNetworkGroupsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_manager_name="str",
             network_group_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
 
         # please add some check logic here by yourself
@@ -42,7 +42,6 @@ class TestNetworkManagementNetworkGroupsOperations(AzureMgmtRecordedTestCase):
                 "description": "str",
                 "etag": "str",
                 "id": "str",
-                "memberType": "str",
                 "name": "str",
                 "provisioningState": "str",
                 "resourceGuid": "str",
@@ -56,7 +55,7 @@ class TestNetworkManagementNetworkGroupsOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
 
         # please add some check logic here by yourself
@@ -69,7 +68,7 @@ class TestNetworkManagementNetworkGroupsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_manager_name="str",
             network_group_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -81,7 +80,7 @@ class TestNetworkManagementNetworkGroupsOperations(AzureMgmtRecordedTestCase):
         response = self.client.network_groups.list(
             resource_group_name=resource_group.name,
             network_manager_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

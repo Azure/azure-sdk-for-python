@@ -44,12 +44,7 @@ class TestNetworkManagementLocalNetworkGatewaysOperationsAsync(AzureMgmtRecorded
                     "fqdn": "str",
                     "gatewayIpAddress": "str",
                     "id": "str",
-                    "localNetworkAddressSpace": {
-                        "addressPrefixes": ["str"],
-                        "ipamPoolPrefixAllocations": [
-                            {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
-                        ],
-                    },
+                    "localNetworkAddressSpace": {"addressPrefixes": ["str"]},
                     "location": "str",
                     "name": "str",
                     "provisioningState": "str",
@@ -57,7 +52,7 @@ class TestNetworkManagementLocalNetworkGatewaysOperationsAsync(AzureMgmtRecorded
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-07-01",
+                api_version="2023-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -70,7 +65,7 @@ class TestNetworkManagementLocalNetworkGatewaysOperationsAsync(AzureMgmtRecorded
         response = await self.client.local_network_gateways.get(
             resource_group_name=resource_group.name,
             local_network_gateway_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
 
         # please add some check logic here by yourself
@@ -83,7 +78,7 @@ class TestNetworkManagementLocalNetworkGatewaysOperationsAsync(AzureMgmtRecorded
             await self.client.local_network_gateways.begin_delete(
                 resource_group_name=resource_group.name,
                 local_network_gateway_name="str",
-                api_version="2024-07-01",
+                api_version="2023-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -97,7 +92,7 @@ class TestNetworkManagementLocalNetworkGatewaysOperationsAsync(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             local_network_gateway_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
 
         # please add some check logic here by yourself
@@ -108,7 +103,7 @@ class TestNetworkManagementLocalNetworkGatewaysOperationsAsync(AzureMgmtRecorded
     async def test_local_network_gateways_list(self, resource_group):
         response = self.client.local_network_gateways.list(
             resource_group_name=resource_group.name,
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

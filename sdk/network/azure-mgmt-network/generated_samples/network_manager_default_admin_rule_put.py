@@ -16,7 +16,7 @@ from azure.mgmt.network import NetworkManagementClient
     pip install azure-identity
     pip install azure-mgmt-network
 # USAGE
-    python nsp_access_rule_put.py
+    python network_manager_default_admin_rule_put.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,19 +28,20 @@ from azure.mgmt.network import NetworkManagementClient
 def main():
     client = NetworkManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subId",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.network_security_perimeter_access_rules.create_or_update(
+    response = client.admin_rules.create_or_update(
         resource_group_name="rg1",
-        network_security_perimeter_name="nsp1",
-        profile_name="profile1",
-        access_rule_name="accessRule1",
-        parameters={"properties": {"addressPrefixes": ["10.11.0.0/16", "10.10.1.0/24"], "direction": "Inbound"}},
+        network_manager_name="testNetworkManager",
+        configuration_name="myTestSecurityConfig",
+        rule_collection_name="testRuleCollection",
+        rule_name="SampleDefaultAdminRule",
+        admin_rule={"kind": "Default", "properties": {"flag": "AllowVnetInbound"}},
     )
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-07-01/examples/NspAccessRulePut.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-11-01/examples/NetworkManagerDefaultAdminRulePut.json
 if __name__ == "__main__":
     main()

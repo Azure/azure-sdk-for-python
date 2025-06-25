@@ -25,7 +25,7 @@ class TestNetworkManagementExpressRouteCircuitAuthorizationsOperations(AzureMgmt
             resource_group_name=resource_group.name,
             circuit_name="str",
             authorization_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestNetworkManagementExpressRouteCircuitAuthorizationsOperations(AzureMgmt
             resource_group_name=resource_group.name,
             circuit_name="str",
             authorization_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
 
         # please add some check logic here by yourself
@@ -54,14 +54,13 @@ class TestNetworkManagementExpressRouteCircuitAuthorizationsOperations(AzureMgmt
             authorization_parameters={
                 "authorizationKey": "str",
                 "authorizationUseStatus": "str",
-                "connectionResourceUri": "str",
                 "etag": "str",
                 "id": "str",
                 "name": "str",
                 "provisioningState": "str",
                 "type": "str",
             },
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -73,7 +72,7 @@ class TestNetworkManagementExpressRouteCircuitAuthorizationsOperations(AzureMgmt
         response = self.client.express_route_circuit_authorizations.list(
             resource_group_name=resource_group.name,
             circuit_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

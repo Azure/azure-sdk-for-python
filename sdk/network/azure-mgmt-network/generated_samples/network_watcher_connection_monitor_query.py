@@ -16,7 +16,7 @@ from azure.mgmt.network import NetworkManagementClient
     pip install azure-identity
     pip install azure-mgmt-network
 # USAGE
-    python verifier_workspace_delete.py
+    python network_watcher_connection_monitor_query.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,16 +28,17 @@ from azure.mgmt.network import NetworkManagementClient
 def main():
     client = NetworkManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-0000-0000-0000-000000000000",
+        subscription_id="subid",
     )
 
-    client.verifier_workspaces.begin_delete(
+    response = client.connection_monitors.begin_query(
         resource_group_name="rg1",
-        network_manager_name="testNetworkManager",
-        workspace_name="testWorkspace",
+        network_watcher_name="nw1",
+        connection_monitor_name="cm1",
     ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-07-01/examples/VerifierWorkspaceDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-11-01/examples/NetworkWatcherConnectionMonitorQuery.json
 if __name__ == "__main__":
     main()

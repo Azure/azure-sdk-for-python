@@ -33,11 +33,11 @@ def main():
 
     response = client.bastion_hosts.get(
         resource_group_name="rg1",
-        bastion_host_name="bastionhosttenant",
+        bastion_host_name="bastionhosttenant'",
     )
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-07-01/examples/BastionHostGetWithZones.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-11-01/examples/BastionHostGetWithZones.json
 if __name__ == "__main__":
     main()

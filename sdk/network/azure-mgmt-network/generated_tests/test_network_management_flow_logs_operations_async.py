@@ -29,7 +29,6 @@ class TestNetworkManagementFlowLogsOperationsAsync(AzureMgmtRecordedTestCase):
                 flow_log_name="str",
                 parameters={
                     "enabled": bool,
-                    "enabledFilteringCriteria": "str",
                     "etag": "str",
                     "flowAnalyticsConfiguration": {
                         "networkWatcherFlowAnalyticsConfiguration": {
@@ -42,12 +41,6 @@ class TestNetworkManagementFlowLogsOperationsAsync(AzureMgmtRecordedTestCase):
                     },
                     "format": {"type": "str", "version": 0},
                     "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
                     "location": "str",
                     "name": "str",
                     "provisioningState": "str",
@@ -58,7 +51,7 @@ class TestNetworkManagementFlowLogsOperationsAsync(AzureMgmtRecordedTestCase):
                     "targetResourceId": "str",
                     "type": "str",
                 },
-                api_version="2024-07-01",
+                api_version="2023-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -73,7 +66,7 @@ class TestNetworkManagementFlowLogsOperationsAsync(AzureMgmtRecordedTestCase):
             network_watcher_name="str",
             flow_log_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
 
         # please add some check logic here by yourself
@@ -86,7 +79,7 @@ class TestNetworkManagementFlowLogsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             flow_log_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
 
         # please add some check logic here by yourself
@@ -100,7 +93,7 @@ class TestNetworkManagementFlowLogsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 network_watcher_name="str",
                 flow_log_name="str",
-                api_version="2024-07-01",
+                api_version="2023-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -113,7 +106,7 @@ class TestNetworkManagementFlowLogsOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.flow_logs.list(
             resource_group_name=resource_group.name,
             network_watcher_name="str",
-            api_version="2024-07-01",
+            api_version="2023-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

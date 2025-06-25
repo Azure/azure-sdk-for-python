@@ -55,8 +55,6 @@ from ._operations import FirewallPolicyIdpsSignaturesFilterValuesOperations  # t
 from ._operations import FirewallPolicyDraftsOperations  # type: ignore
 from ._operations import FirewallPolicyDeploymentsOperations  # type: ignore
 from ._operations import FirewallPolicyRuleCollectionGroupDraftsOperations  # type: ignore
-from ._operations import IpamPoolsOperations  # type: ignore
-from ._operations import StaticCidrsOperations  # type: ignore
 from ._operations import IpAllocationsOperations  # type: ignore
 from ._operations import IpGroupsOperations  # type: ignore
 from ._operations import LoadBalancersOperations  # type: ignore
@@ -79,32 +77,14 @@ from ._operations import ManagementGroupNetworkManagerConnectionsOperations  # t
 from ._operations import ConnectivityConfigurationsOperations  # type: ignore
 from ._operations import NetworkGroupsOperations  # type: ignore
 from ._operations import StaticMembersOperations  # type: ignore
-from ._operations import NetworkManagerRoutingConfigurationsOperations  # type: ignore
-from ._operations import RoutingRuleCollectionsOperations  # type: ignore
-from ._operations import RoutingRulesOperations  # type: ignore
 from ._operations import ScopeConnectionsOperations  # type: ignore
 from ._operations import SecurityAdminConfigurationsOperations  # type: ignore
 from ._operations import AdminRuleCollectionsOperations  # type: ignore
 from ._operations import AdminRulesOperations  # type: ignore
-from ._operations import SecurityUserConfigurationsOperations  # type: ignore
-from ._operations import SecurityUserRuleCollectionsOperations  # type: ignore
-from ._operations import SecurityUserRulesOperations  # type: ignore
 from ._operations import NetworkProfilesOperations  # type: ignore
 from ._operations import NetworkSecurityGroupsOperations  # type: ignore
 from ._operations import SecurityRulesOperations  # type: ignore
 from ._operations import DefaultSecurityRulesOperations  # type: ignore
-from ._operations import NetworkSecurityPerimetersOperations  # type: ignore
-from ._operations import NetworkSecurityPerimeterProfilesOperations  # type: ignore
-from ._operations import NetworkSecurityPerimeterAccessRulesOperations  # type: ignore
-from ._operations import NetworkSecurityPerimeterAssociationsOperations  # type: ignore
-from ._operations import NetworkSecurityPerimeterAssociableResourceTypesOperations  # type: ignore
-from ._operations import NetworkSecurityPerimeterLinksOperations  # type: ignore
-from ._operations import NetworkSecurityPerimeterLinkReferencesOperations  # type: ignore
-from ._operations import NetworkSecurityPerimeterLoggingConfigurationsOperations  # type: ignore
-from ._operations import NetworkSecurityPerimeterOperationStatusesOperations  # type: ignore
-from ._operations import ReachabilityAnalysisIntentsOperations  # type: ignore
-from ._operations import ReachabilityAnalysisRunsOperations  # type: ignore
-from ._operations import VerifierWorkspacesOperations  # type: ignore
 from ._operations import NetworkVirtualAppliancesOperations  # type: ignore
 from ._operations import VirtualApplianceSitesOperations  # type: ignore
 from ._operations import VirtualApplianceSkusOperations  # type: ignore
@@ -217,8 +197,6 @@ __all__ = [
     "FirewallPolicyDraftsOperations",
     "FirewallPolicyDeploymentsOperations",
     "FirewallPolicyRuleCollectionGroupDraftsOperations",
-    "IpamPoolsOperations",
-    "StaticCidrsOperations",
     "IpAllocationsOperations",
     "IpGroupsOperations",
     "LoadBalancersOperations",
@@ -241,32 +219,14 @@ __all__ = [
     "ConnectivityConfigurationsOperations",
     "NetworkGroupsOperations",
     "StaticMembersOperations",
-    "NetworkManagerRoutingConfigurationsOperations",
-    "RoutingRuleCollectionsOperations",
-    "RoutingRulesOperations",
     "ScopeConnectionsOperations",
     "SecurityAdminConfigurationsOperations",
     "AdminRuleCollectionsOperations",
     "AdminRulesOperations",
-    "SecurityUserConfigurationsOperations",
-    "SecurityUserRuleCollectionsOperations",
-    "SecurityUserRulesOperations",
     "NetworkProfilesOperations",
     "NetworkSecurityGroupsOperations",
     "SecurityRulesOperations",
     "DefaultSecurityRulesOperations",
-    "NetworkSecurityPerimetersOperations",
-    "NetworkSecurityPerimeterProfilesOperations",
-    "NetworkSecurityPerimeterAccessRulesOperations",
-    "NetworkSecurityPerimeterAssociationsOperations",
-    "NetworkSecurityPerimeterAssociableResourceTypesOperations",
-    "NetworkSecurityPerimeterLinksOperations",
-    "NetworkSecurityPerimeterLinkReferencesOperations",
-    "NetworkSecurityPerimeterLoggingConfigurationsOperations",
-    "NetworkSecurityPerimeterOperationStatusesOperations",
-    "ReachabilityAnalysisIntentsOperations",
-    "ReachabilityAnalysisRunsOperations",
-    "VerifierWorkspacesOperations",
     "NetworkVirtualAppliancesOperations",
     "VirtualApplianceSitesOperations",
     "VirtualApplianceSkusOperations",
