@@ -45,6 +45,7 @@ todo: discover this
 
 - You **must** include `uv` in the list of dependencies for your script. This will enable access to `uv pip` from within the environment without assuming anything about a global `uv` install. This will enable `subprocess.run([sys.executable, '-m', 'uv', 'pip', 'install', 'packagename'])` with all the efficiency implied by using `uv`.
 - You **must** `uv add --script tools/ci/uv/whl.py "-r eng/ci_tools.txt"` to ensure that the generic pinned dependencies are present on your script.
+- You **must** preface your scripts with `azpy`. So the `whl` check would be `azpy-whl.py`.
 - You **must** cleave to the common argparse definition to ensure that all the checks have similar entrypoint behavior.
   - This does not exist yet.
 
