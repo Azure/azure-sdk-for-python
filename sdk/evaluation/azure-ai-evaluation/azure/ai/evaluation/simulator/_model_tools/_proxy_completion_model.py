@@ -9,7 +9,7 @@ import uuid
 from typing import Any, Dict, List, Optional, cast, Union
 
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client
-from azure.ai.evaluation._user_agent import USER_AGENT
+from azure.ai.evaluation._user_agent import UserAgentSingleton
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 from azure.ai.evaluation._common.onedp._client import AIProjectClient
@@ -166,7 +166,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
         proxy_headers = {
             "Authorization": f"Bearer {token}",
             "Content-Type": "application/json",
-            "User-Agent": USER_AGENT,
+            "User-Agent": UserAgentSingleton().value,
         }
 
         headers = {
@@ -252,7 +252,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
                 proxy_headers = {
                     "Authorization": f"Bearer {token}",
                     "Content-Type": "application/json",
-                    "User-Agent": USER_AGENT,
+                    "User-Agent": UserAgentSingleton().value,
                 }
                 response = await exp_retry_client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
                     self.result_url, headers=proxy_headers

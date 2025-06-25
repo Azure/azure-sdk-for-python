@@ -12,9 +12,12 @@ from azure.ai.evaluation._model_configurations import Conversation
 from ..._common.utils import construct_prompty_model_config, validate_model_config
 
 try:
-    from ..._user_agent import USER_AGENT
+    from ..._user_agent import UserAgentSingleton
 except ImportError:
-    USER_AGENT = "None"
+    class UserAgentSingleton:
+        @property
+        def value(self) -> str:
+            return "None"
 
 
 class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
@@ -165,7 +168,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             prompty_model_config = construct_prompty_model_config(
                 validate_model_config(self._model_config),
                 self._DEFAULT_OPEN_API_VERSION,
-                USER_AGENT,
+                UserAgentSingleton().value,
             )
             self._flow = AsyncPrompty.load(source=self._prompty_file, model=prompty_model_config)
 

@@ -25,6 +25,7 @@
 #
 # --------------------------------------------------------------------------
 
+
 from typing import Any, TYPE_CHECKING, Optional, Union, Awaitable
 from datetime import datetime, timedelta
 import jwt
@@ -35,6 +36,7 @@ from azure.core.credentials import AzureKeyCredential
 
 from ._client import WebPubSubServiceClient as WebPubSubServiceClientGenerated
 from ._operations._patch import _UTC_TZ
+from ._models import GroupMember
 
 
 if TYPE_CHECKING:
@@ -193,7 +195,7 @@ class WebPubSubServiceClient(WebPubSubServiceClientBase, WebPubSubServiceClientG
         return cls(hub=hub, credential=credential, **kwargs)
 
 
-__all__ = ["WebPubSubServiceClient"]
+__all__ = ["WebPubSubServiceClient", "GroupMember"]
 
 
 def patch_sdk():
