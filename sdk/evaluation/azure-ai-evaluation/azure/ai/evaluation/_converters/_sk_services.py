@@ -292,9 +292,12 @@ class SKAgentConverter:
                     message.metadata["created"]
                 )
             if isinstance(item, TextContent):
-                message_dict["content"].append(
-                    {"type": "text", "text": item.to_dict()["text"]}
-                )
+                item_text = item.to_dict()["text"]
+                if message.role == AuthorRole.SYSTEM:  # to match other converters
+                    message_dict["content"] = item_text
+                else:
+                    message_dict["content"] = [{"type": "text", "text": item_text}]
+
             elif isinstance(item, FunctionCallContent):
                 item_dict = item.to_dict()
                 item_func = item_dict["function"]
