@@ -247,6 +247,24 @@ class BaseExporter:
                     if self._should_collect_stats():
                         _update_requests_map(_REQ_RETRY_NAME[1], value=response_error.status_code)
                     result = ExportResult.FAILED_RETRYABLE
+                    # Log error for 401: Unauthorized, 403: Forbidden to assist with customer troubleshooting
+                    if not self._is_stats_exporter():
+                        if response_error.status_code == 401:
+                            logger.error(
+                                "Retryable server side error: %s. "
+                                "Your Application Insights resource may be configured to use entra ID authentication." \
+                                "Please make sure your application is configured to use the correct token credential.",
+                                response_error.message,
+                            )
+                        elif response_error.status_code == 403:
+                            logger.error(
+                                "Retryable server side error: %s.",
+                                "Your application may be configured with a token credential " \
+                                "but your Application Insights resource may be configured incorrectly. Please make sure " \
+                                "your Application Insights resource has enabled entra Id authentication and " \
+                                "has the correct `Monitoring Metrics Publisher` role assigned.",
+                                response_error.message,
+                            )
                 elif _is_throttle_code(response_error.status_code):
                     if self._should_collect_stats():
                         _update_requests_map(_REQ_THROTTLE_NAME[1], value=response_error.status_code)
