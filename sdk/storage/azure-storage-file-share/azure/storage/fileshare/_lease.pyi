@@ -15,27 +15,17 @@ from azure.core.tracing.decorator import distributed_trace
 from ._file_client import ShareFileClient
 from ._share_client import ShareClient
 
-
 class ShareLeaseClient:
     id: str
     etag: Optional[str]
     last_modified: Optional[datetime]
-    def __init__(
-        self, client: Union[ShareFileClient, ShareClient],
-        lease_id: Optional[str] = None
-    ) -> None: ...
+    def __init__(self, client: Union[ShareFileClient, ShareClient], lease_id: Optional[str] = None) -> None: ...
     def __enter__(self) -> Self: ...
     def __exit__(
         self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
     ) -> None: ...
     @distributed_trace
-    def acquire(
-        self,
-        *,
-        lease_duration: int = -1,
-        timeout: Optional[int] = None,
-        **kwargs: Any
-    ) -> None: ...
+    def acquire(self, *, lease_duration: int = -1, timeout: Optional[int] = None, **kwargs: Any) -> None: ...
     @distributed_trace
     def renew(self, *, timeout: Optional[int] = None, **kwargs: Any) -> None: ...
     @distributed_trace
@@ -44,9 +34,5 @@ class ShareLeaseClient:
     def change(self, proposed_lease_id: str, *, timeout: Optional[int] = None, **kwargs: Any) -> None: ...
     @distributed_trace
     def break_lease(
-        self,
-        *,
-        lease_break_period: Optional[int] = None,
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, *, lease_break_period: Optional[int] = None, timeout: Optional[int] = None, **kwargs: Any
     ) -> int: ...
