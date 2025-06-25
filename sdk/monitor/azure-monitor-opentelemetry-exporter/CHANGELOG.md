@@ -1,10 +1,29 @@
 # Release History
 
-## 1.0.0b38 (Unreleased)
+## 1.0.0b39 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
+
+### Bugs Fixed
+
+- Suppress stdout side effect of add permissions to file for local storage on Windows
+  ([#41727](https://github.com/Azure/azure-sdk-for-python/pull/41727))
+
+### Other Changes
+
+- Add logging errors for `401: Unauthorized` and `403: Forbidden` to assist in customer troubleshooting
+  ([#41767](https://github.com/Azure/azure-sdk-for-python/pull/41767))
+
+## 1.0.0b38 (2025-06-17)
+
+### Features Added
+
+- Add AMW deduplicating flag, SentToAMW, for AKS Attach
+  ([#41410](https://github.com/Azure/azure-sdk-for-python/pull/41410))
+- Implement APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED env var for AKS Attach .
+  ([#41383](https://github.com/Azure/azure-sdk-for-python/pull/41383))
 
 ### Bugs Fixed
 - Fix for issue #41470. Added back exception message, removed earlier due to linting errors
@@ -33,6 +52,8 @@
 
 - Extend version range for `psutil` to include 7.x
   ([#40459](https://github.com/Azure/azure-sdk-for-python/pull/40459))
+- Add folder permissions for local files
+  ([#41384](https://github.com/Azure/azure-sdk-for-python/pull/41384))
 
 ## 1.0.0b36 (2025-04-07)
 

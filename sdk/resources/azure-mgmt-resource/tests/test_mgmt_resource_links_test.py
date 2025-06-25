@@ -6,13 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-# covered ops:
-#   operations: 1/1
-#   resource_links: 5/5
-
-import unittest
-
-import azure.mgmt.resource
+from azure.mgmt.resource.links import ManagementLinkClient
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 import pytest
 
@@ -21,7 +15,7 @@ import pytest
 class TestMgmtResourceLinks(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(azure.mgmt.resource.ManagementLinkClient)
+        self.client = self.create_mgmt_client(ManagementLinkClient)
 
     @RandomNameResourceGroupPreparer()
     @recorded_by_proxy
