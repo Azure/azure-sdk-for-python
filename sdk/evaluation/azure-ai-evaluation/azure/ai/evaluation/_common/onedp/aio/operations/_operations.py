@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -31,13 +31,14 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._model_base import SdkJSONEncoder, _deserialize
-from ..._serialization import Deserializer, Serializer
+from ..._utils.model_base import SdkJSONEncoder, _deserialize
+from ..._utils.serialization import Deserializer, Serializer
 from ..._validation import api_version_validation
 from ...operations._operations import (
     build_connections_get_request,
     build_connections_get_with_credentials_request,
     build_connections_list_request,
+    build_connections_list_with_credentials_request,
     build_datasets_create_or_update_version_request,
     build_datasets_delete_version_request,
     build_datasets_get_credentials_request,
@@ -55,7 +56,9 @@ from ...operations._operations import (
     build_evaluation_results_list_versions_request,
     build_evaluation_results_start_pending_upload_request,
     build_evaluations_check_annotation_request,
+    build_evaluations_create_agent_evaluation_request,
     build_evaluations_create_run_request,
+    build_evaluations_get_agent_evaluation_results_request,
     build_evaluations_get_request,
     build_evaluations_list_request,
     build_evaluations_operation_results_request,
@@ -76,6 +79,7 @@ from ...operations._operations import (
     build_red_teams_get_template_parameters_request,
     build_red_teams_get_template_parameters_with_type_request,
     build_red_teams_list_request,
+    build_red_teams_operation_results_request,
     build_red_teams_submit_simulation_request,
     build_red_teams_upload_run_request,
     build_red_teams_upload_update_run_request,
@@ -85,28 +89,6 @@ from .._configuration import AIProjectClientConfiguration
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 JSON = MutableMapping[str, Any]
-
-
-class ServicePatternsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.onedp.aio.AIProjectClient`'s
-        :attr:`service_patterns` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-        self.building_blocks = ServicePatternsBuildingBlocksOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
 
 
 class ConnectionsOperations:
@@ -265,7 +247,7 @@ class ConnectionsOperations:
         top: Optional[int] = None,
         skip: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.Connection"]:
+    ) -> AsyncItemPaged["_models.Connection"]:
         """List all connections in the project, without populating connection credentials.
 
         :keyword connection_type: List connections of this specific type. Known values are:
@@ -301,6 +283,113 @@ class ConnectionsOperations:
             if not next_link:
 
                 _request = build_connections_list_request(
+                    connection_type=connection_type,
+                    default_connection=default_connection,
+                    top=top,
+                    skip=skip,
+                    maxpagesize=maxpagesize,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.Connection], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def list_with_credentials(
+        self,
+        *,
+        connection_type: Optional[Union[str, _models.ConnectionType]] = None,
+        default_connection: Optional[bool] = None,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.Connection"]:
+        """List all connections in the project, with their connection credentials.
+
+        :keyword connection_type: List connections of this specific type. Known values are:
+         "AzureOpenAI", "AzureBlob", "AzureStorageAccount", "CognitiveSearch", "CosmosDB", "ApiKey",
+         "AppConfig", "AppInsights", and "CustomKeys". Default value is None.
+        :paramtype connection_type: str or ~azure.ai.projects.onedp.models.ConnectionType
+        :keyword default_connection: List connections that are default connections. Default value is
+         None.
+        :paramtype default_connection: bool
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of Connection
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.onedp.models.Connection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        maxpagesize = kwargs.pop("maxpagesize", None)
+        cls: ClsType[List[_models.Connection]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_connections_list_with_credentials_request(
                     connection_type=connection_type,
                     default_connection=default_connection,
                     top=top,
@@ -474,7 +563,7 @@ class EvaluationsOperations:
         top: Optional[int] = None,
         skip: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.Evaluation"]:
+    ) -> AsyncItemPaged["_models.Evaluation"]:
         """List evaluation runs.
 
         :keyword tags: Comma-separated list of tag names (and optionally values). Example:
@@ -622,7 +711,7 @@ class EvaluationsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
+        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
     )
     async def create_run(
         self, evaluation: Union[_models.Evaluation, JSON, IO[bytes]], **kwargs: Any
@@ -676,7 +765,7 @@ class EvaluationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [201]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -695,10 +784,199 @@ class EvaluationsOperations:
 
         return deserialized  # type: ignore
 
+    @overload
+    async def create_agent_evaluation(
+        self, evaluation: _models.AgentEvaluationRequest, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentEvaluation:
+        """Creates an agent evaluation run.
+
+        :param evaluation: Agent evaluation to be run. Required.
+        :type evaluation: ~azure.ai.projects.onedp.models.AgentEvaluationRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentEvaluation. The AgentEvaluation is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.onedp.models.AgentEvaluation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_agent_evaluation(
+        self, evaluation: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentEvaluation:
+        """Creates an agent evaluation run.
+
+        :param evaluation: Agent evaluation to be run. Required.
+        :type evaluation: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentEvaluation. The AgentEvaluation is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.onedp.models.AgentEvaluation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_agent_evaluation(
+        self, evaluation: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentEvaluation:
+        """Creates an agent evaluation run.
+
+        :param evaluation: Agent evaluation to be run. Required.
+        :type evaluation: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentEvaluation. The AgentEvaluation is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.onedp.models.AgentEvaluation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "accept"]},
+        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
+    )
+    async def create_agent_evaluation(
+        self, evaluation: Union[_models.AgentEvaluationRequest, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.AgentEvaluation:
+        """Creates an agent evaluation run.
+
+        :param evaluation: Agent evaluation to be run. Is one of the following types:
+         AgentEvaluationRequest, JSON, IO[bytes] Required.
+        :type evaluation: ~azure.ai.projects.onedp.models.AgentEvaluationRequest or JSON or IO[bytes]
+        :return: AgentEvaluation. The AgentEvaluation is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.onedp.models.AgentEvaluation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentEvaluation] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(evaluation, (IOBase, bytes)):
+            _content = evaluation
+        else:
+            _content = json.dumps(evaluation, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_evaluations_create_agent_evaluation_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.AgentEvaluation, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "run_id", "accept"]},
+    )
+    async def get_agent_evaluation_results(self, run_id: str, **kwargs: Any) -> _models.AgentEvaluation:
+        """Get agent evaluation results.
+
+        :param run_id: Agent run id, for agent API v1, it's ``[thread_id]:[run_id]``; for agent API v2,
+         it's only the run_id. Required.
+        :type run_id: str
+        :return: AgentEvaluation. The AgentEvaluation is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.onedp.models.AgentEvaluation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AgentEvaluation] = kwargs.pop("cls", None)
+
+        _request = build_evaluations_get_agent_evaluation_results_request(
+            run_id=run_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.AgentEvaluation, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
     )
     async def check_annotation(self, **kwargs: Any) -> List[str]:
         """Check annotation supported by the service.
@@ -807,7 +1085,7 @@ class EvaluationsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
+        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
     )
     async def submit_annotation(
         self, annotation_dto: Union[_models.AnnotationDTO, JSON, IO[bytes]], **kwargs: Any
@@ -883,7 +1161,7 @@ class EvaluationsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "operation_id", "accept"]},
+        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "operation_id", "accept"]},
     )
     async def operation_results(self, operation_id: str, **kwargs: Any) -> List[Dict[str, Any]]:
         """Poll for the operation results.
@@ -995,7 +1273,7 @@ class EvaluationsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
+        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
     )
     async def upload_run(
         self, evaluation: Union[_models.EvaluationUpload, JSON, IO[bytes]], **kwargs: Any
@@ -1125,7 +1403,7 @@ class EvaluationsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "name", "content_type", "accept"]},
+        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "name", "content_type", "accept"]},
     )
     async def upload_update_run(
         self, name: str, evaluation: Union[_models.EvaluationUpload, JSON, IO[bytes]], **kwargs: Any
@@ -1229,7 +1507,7 @@ class DatasetsOperations:
         tags: Optional[str] = None,
         list_view_type: Optional[Union[str, _models.ListViewType]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.DatasetVersion"]:
+    ) -> AsyncItemPaged["_models.DatasetVersion"]:
         """List all versions of the given DatasetVersion.
 
         :param name: The name of the resource. Required.
@@ -1338,7 +1616,7 @@ class DatasetsOperations:
         tags: Optional[str] = None,
         list_view_type: Optional[Union[str, _models.ListViewType]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.DatasetVersion"]:
+    ) -> AsyncItemPaged["_models.DatasetVersion"]:
         """List the latest version of each DatasetVersion.
 
         :keyword top: Top count of results, top count cannot be greater than the page size. If topCount
@@ -1937,7 +2215,7 @@ class IndexesOperations:
         tags: Optional[str] = None,
         list_view_type: Optional[Union[str, _models.ListViewType]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.Index"]:
+    ) -> AsyncItemPaged["_models.Index"]:
         """List all versions of the given Index.
 
         :param name: The name of the resource. Required.
@@ -2046,7 +2324,7 @@ class IndexesOperations:
         tags: Optional[str] = None,
         list_view_type: Optional[Union[str, _models.ListViewType]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.Index"]:
+    ) -> AsyncItemPaged["_models.Index"]:
         """List the latest version of each Index.
 
         :keyword top: Top count of results, top count cannot be greater than the page size. If topCount
@@ -2487,7 +2765,7 @@ class DeploymentsOperations:
         top: Optional[int] = None,
         skip: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.Deployment"]:
+    ) -> AsyncItemPaged["_models.Deployment"]:
         """List all deployed models in the project.
 
         :keyword model_publisher: Model publisher to filter models by. Default value is None.
@@ -2679,7 +2957,7 @@ class RedTeamsOperations:
     )
     def list(
         self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.RedTeam"]:
+    ) -> AsyncItemPaged["_models.RedTeam"]:
         """List a redteam by name.
 
         :keyword top: The number of result items to return. Default value is None.
@@ -2819,7 +3097,7 @@ class RedTeamsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
+        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
     )
     async def create_run(self, red_team: Union[_models.RedTeam, JSON, IO[bytes]], **kwargs: Any) -> _models.RedTeam:
         """Creates a redteam run.
@@ -2871,7 +3149,7 @@ class RedTeamsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [201]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -2941,7 +3219,7 @@ class RedTeamsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
+        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
     )
     async def upload_run(
         self, redteam: Union[_models.RedTeamUpload, JSON, IO[bytes]], **kwargs: Any
@@ -3071,7 +3349,7 @@ class RedTeamsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "name", "content_type", "accept"]},
+        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "name", "content_type", "accept"]},
     )
     async def upload_update_run(
         self, name: str, redteam: Union[_models.RedTeamUpload, JSON, IO[bytes]], **kwargs: Any
@@ -3150,7 +3428,7 @@ class RedTeamsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "type", "accept"]},
+        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "type", "accept"]},
     )
     async def get_jail_break_dataset_with_type(self, type: str, **kwargs: Any) -> List[str]:
         """Get the jailbreak dataset with type.
@@ -3214,11 +3492,22 @@ class RedTeamsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "risk_types", "lang", "strategy", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": [
+                "api_version",
+                "client_request_id",
+                "risk_types",
+                "risk_category",
+                "lang",
+                "strategy",
+                "accept",
+            ]
+        },
     )
     async def get_attack_objectives(
         self,
         *,
+        risk_category: str,
         risk_types: Optional[List[str]] = None,
         lang: Optional[str] = None,
         strategy: Optional[str] = None,
@@ -3226,6 +3515,8 @@ class RedTeamsOperations:
     ) -> List[_models.AttackObjective]:
         """Get the attack objectives.
 
+        :keyword risk_category: Risk category for the attack objectives. Required.
+        :paramtype risk_category: str
         :keyword risk_types: Risk types for the attack objectives dataset. Default value is None.
         :paramtype risk_types: list[str]
         :keyword lang: The language for the attack objectives dataset, defaults to 'en'. Default value
@@ -3251,6 +3542,7 @@ class RedTeamsOperations:
         cls: ClsType[List[_models.AttackObjective]] = kwargs.pop("cls", None)
 
         _request = build_red_teams_get_attack_objectives_request(
+            risk_category=risk_category,
             risk_types=risk_types,
             lang=lang,
             strategy=strategy,
@@ -3292,7 +3584,7 @@ class RedTeamsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "accept"]},
+        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
     )
     async def get_jail_break_dataset(self, **kwargs: Any) -> List[str]:
         """Get the jailbreak dataset.
@@ -3353,7 +3645,7 @@ class RedTeamsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "type", "accept"]},
+        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "type", "accept"]},
     )
     async def get_template_parameters_with_type(self, type: str, **kwargs: Any) -> str:
         """Get template parameters with type.
@@ -3417,7 +3709,7 @@ class RedTeamsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "accept"]},
+        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
     )
     async def get_template_parameters(self, **kwargs: Any) -> str:
         """Get template parameters.
@@ -3478,7 +3770,7 @@ class RedTeamsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "path", "accept"]},
+        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "path", "accept"]},
     )
     async def get_template_parameters_image(self, *, path: str, **kwargs: Any) -> str:
         """Get the template parameters image.
@@ -3590,7 +3882,7 @@ class RedTeamsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
+        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
     )
     async def submit_simulation(
         self, body: Union[_models.SimulationDTO, JSON, IO[bytes]], **kwargs: Any
@@ -3663,6 +3955,70 @@ class RedTeamsOperations:
 
         return deserialized  # type: ignore
 
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "operation_id", "accept"]},
+    )
+    async def operation_results(self, operation_id: str, **kwargs: Any) -> _models.ChatCompletions:
+        """Poll for the operation results.
+
+        :param operation_id: Operation ID for the polling operation. Required.
+        :type operation_id: str
+        :return: ChatCompletions. The ChatCompletions is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.onedp.models.ChatCompletions
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ChatCompletions] = kwargs.pop("cls", None)
+
+        _request = build_red_teams_operation_results_request(
+            operation_id=operation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ChatCompletions, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
 
 class EvaluationResultsOperations:
     """
@@ -3697,7 +4053,7 @@ class EvaluationResultsOperations:
         tags: Optional[str] = None,
         list_view_type: Optional[Union[str, _models.ListViewType]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.EvaluationResult"]:
+    ) -> AsyncItemPaged["_models.EvaluationResult"]:
         """List all versions of the given EvaluationResult.
 
         :param name: The name of the resource. Required.
@@ -3811,7 +4167,7 @@ class EvaluationResultsOperations:
         tags: Optional[str] = None,
         list_view_type: Optional[Union[str, _models.ListViewType]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.EvaluationResult"]:
+    ) -> AsyncItemPaged["_models.EvaluationResult"]:
         """List the latest version of each EvaluationResult.
 
         :keyword top: Top count of results, top count cannot be greater than the page size. If topCount
@@ -4474,21 +4830,3 @@ class EvaluationResultsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
-class ServicePatternsBuildingBlocksOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.onedp.aio.AIProjectClient`'s
-        :attr:`building_blocks` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
