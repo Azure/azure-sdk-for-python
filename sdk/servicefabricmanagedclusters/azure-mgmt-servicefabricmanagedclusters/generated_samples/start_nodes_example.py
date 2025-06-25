@@ -15,7 +15,7 @@ from azure.mgmt.servicefabricmanagedclusters import ServiceFabricManagedClusters
     pip install azure-identity
     pip install azure-mgmt-servicefabricmanagedclusters
 # USAGE
-    python node_type_put_operation_example_min.py
+    python start_nodes_example.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,26 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.node_types.begin_create_or_update(
+    client.node_types.begin_start(
         resource_group_name="resRg",
         cluster_name="myCluster",
         node_type_name="BE",
-        parameters={
-            "properties": {
-                "dataDiskSizeGB": 200,
-                "isPrimary": False,
-                "vmImageOffer": "WindowsServer",
-                "vmImagePublisher": "MicrosoftWindowsServer",
-                "vmImageSku": "2016-Datacenter-Server-Core",
-                "vmImageVersion": "latest",
-                "vmInstanceCount": 10,
-                "vmSize": "Standard_D3",
-            }
-        },
+        parameters={"nodes": ["BE_0", "BE_1"]},
     ).result()
-    print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/NodeTypePutOperation_example_min.json
+# x-ms-original-file: 2025-03-01-preview/StartNodes_example.json
 if __name__ == "__main__":
     main()
