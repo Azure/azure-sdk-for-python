@@ -169,7 +169,7 @@ class AdversarialTemplateHandler:
             if isinstance(self.rai_client, RAIClient):
                 parameters = await self.rai_client.get_contentharm_parameters()
             elif isinstance(self.rai_client, AIProjectClient):
-                parameters = literal_eval(self.rai_client.red_teams.get_template_parameters())
+                parameters = literal_eval(self.rai_client.red_teams.get_template_parameters(client_request_id={"parameters": {}, "response": {}}))
             
             for k in parameters.keys():
                 template_key = util.get_template_key(k)
