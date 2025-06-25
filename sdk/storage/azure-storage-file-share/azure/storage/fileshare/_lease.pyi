@@ -3,69 +3,31 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=docstring-keyword-should-match-keyword-only
+# pylint: skip-file
 
-import uuid
-
+from datetime import datetime
 from typing import Union, Optional, Any, TYPE_CHECKING
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 
+from ._file_client import ShareFileClient
+from ._share_client import ShareClient
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._generated.operations import FileOperations, ShareOperations
 
-if TYPE_CHECKING:
-    from datetime import datetime
-    from azure.storage.fileshare import ShareClient, ShareFileClient
-
-
-class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
-    """Creates a new ShareLeaseClient.
-
-    This client provides lease operations on a ShareClient or ShareFileClient.
-
-    :param client:
-        The client of the file or share to lease.
-    :type client: ~azure.storage.fileshare.ShareFileClient or
-        ~azure.storage.fileshare.ShareClient
-    :param str lease_id:
-        A string representing the lease ID of an existing lease. This value does not
-        need to be specified in order to acquire a new lease, or break one.
-    """
-
+class ShareLeaseClient:
     id: str
-    """The ID of the lease currently being maintained. This will be `None` if no
-        lease has yet been acquired."""
     etag: Optional[str]
-    """The ETag of the lease currently being maintained. This will be `None` if no
-        lease has yet been acquired or modified."""
     last_modified: Optional["datetime"]
-    """The last modified timestamp of the lease currently being maintained.
-        This will be `None` if no lease has yet been acquired or modified."""
-
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
+    def __init__(
         self, client: Union["ShareFileClient", "ShareClient"],
         lease_id: Optional[str] = None
-    ) -> None:
-        self.id = lease_id or str(uuid.uuid4())
-        self.last_modified = None
-        self.etag = None
-        if hasattr(client, 'file_name'):
-            self._client = client._client.file  # type: ignore
-            self._snapshot = None
-        elif hasattr(client, 'share_name'):
-            self._client = client._client.share
-            self._snapshot = client.snapshot
-        else:
-            raise TypeError("Lease must use ShareFileClient or ShareClient.")
-
+    ) -> None: ...
     def __enter__(self):
         return self
-
     def __exit__(self, *args: Any):
         self.release()
-
     @distributed_trace
     def acquire(self, **kwargs: Any) -> None:
         """Requests a new lease. This operation establishes and manages a lock on a
