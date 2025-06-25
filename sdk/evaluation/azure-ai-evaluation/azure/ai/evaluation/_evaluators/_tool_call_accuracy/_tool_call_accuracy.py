@@ -71,6 +71,15 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _MIN_TOOL_CALL_ACCURACY_SCORE = 1
     _DEFAULT_TOOL_CALL_ACCURACY_SCORE = 3
 
+    _NO_TOOL_CALLS_MESSAGE = "No tool calls found in response or provided tool_calls."
+    _NO_TOOL_DEFINITIONS_MESSAGE = "Tool definitions must be provided."
+    _TOOL_DEFINITIONS_MISSING_MESSAGE = "Tool definitions for all tool calls must be provided."
+    _INVALID_SCORE_MESSAGE = "Tool call accuracy score must be between 1 and 5."
+
+    _LLM_SCORE_KEY = "tool_calls_success_level"
+    _EXCESS_TOOL_CALLS_KEY = "excess_tool_calls"
+    _MISSING_TOOL_CALLS_KEY = "missing_tool_calls"
+
     id = "id"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
@@ -150,9 +159,9 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 tool_calls = parsed_tool_calls
 
         if not tool_calls:
-            return {"error_message": "No tool calls found in response or provided tool_calls."}
+            return {"error_message": self._NO_TOOL_CALLS_MESSAGE}
         if not tool_definitions or len(tool_definitions) == 0:
-            return {"error_message": "Tool definitions must be provided."}
+            return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
 
         if not isinstance(tool_calls, list):
             tool_calls = [tool_calls]
@@ -162,9 +171,9 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         try:
             needed_tool_definitions = self._extract_needed_tool_definitions(tool_calls, tool_definitions)
         except EvaluationException as e:
-            return {"error_message": "Tool definitions for all tool calls must be provided."}
+            return {"error_message": self._TOOL_DEFINITIONS_MISSING_MESSAGE}
         if len(needed_tool_definitions) == 0:
-            return {"error_message": "Tool definitions for all tool calls must be provided."}
+            return {"error_message": self._TOOL_DEFINITIONS_MISSING_MESSAGE}
 
         return {
             "query": query,
@@ -188,7 +197,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
 
         if isinstance(llm_output, dict):
-            score = llm_output.get("tool_calls_success_level", None)
+            score = llm_output.get(self._LLM_SCORE_KEY, None)
             if not score or not check_score_is_valid(score, ToolCallAccuracyEvaluator._MIN_TOOL_CALL_ACCURACY_SCORE, ToolCallAccuracyEvaluator._MAX_TOOL_CALL_ACCURACY_SCORE):
                 raise EvaluationException(
                     message=f"Invalid score value: {score}. Expected a number in range [{ToolCallAccuracyEvaluator._MIN_TOOL_CALL_ACCURACY_SCORE}, {ToolCallAccuracyEvaluator._MAX_TOOL_CALL_ACCURACY_SCORE}].",
@@ -208,8 +217,8 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_reason": reason,
                 'applicable': True,
                 'per_tool_call_details': llm_output.get('additional_details', {}),
-                'excess_tool_calls': llm_output.get('excess_tool_calls', {}),
-                'missing_tool_calls': llm_output.get('missing_tool_calls', {}),
+                self._EXCESS_TOOL_CALLS_KEY: llm_output.get(self._EXCESS_TOOL_CALLS_KEY, {}),
+                self._MISSING_TOOL_CALLS_KEY: llm_output.get(self._MISSING_TOOL_CALLS_KEY, {}),
             }
             return response_dict
             
@@ -255,8 +264,8 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             f"{self._result_key}_reason": error_message,
             "applicable": False,
             "per_tool_call_details": {},
-            "excess_tool_calls": {},
-            "missing_tool_calls": {},
+            self._EXCESS_TOOL_CALLS_KEY: {},
+            self._MISSING_TOOL_CALLS_KEY: {},
 
         }
     

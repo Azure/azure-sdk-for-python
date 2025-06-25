@@ -21,8 +21,8 @@ async def flow_side_effect(timeout, **kwargs):
             "chain_of_thought": "The tool calls were very correct that I returned a huge number!",
             "tool_calls_success_level": 25,
             "additional_details": {},
-            "excess_tool_calls": {},
-            "missing_tool_calls": {}
+            ToolCallAccuracyEvaluator._EXCESS_TOOL_CALLS_KEY: {},
+            ToolCallAccuracyEvaluator._MISSING_TOOL_CALLS_KEY: {}
         }
 
     score = 1  # Default score for "all bad"
@@ -39,8 +39,8 @@ async def flow_side_effect(timeout, **kwargs):
             "tool_calls_made_by_agent": total_calls,
             "correct_tool_calls_made_by_agent": good_calls
         },
-        "excess_tool_calls": {"total": 0},
-        "missing_tool_calls": {"total": 0}
+        ToolCallAccuracyEvaluator._EXCESS_TOOL_CALLS_KEY: {"total": 0},
+        ToolCallAccuracyEvaluator._MISSING_TOOL_CALLS_KEY: {"total": 0}
     }
 
 
@@ -102,8 +102,8 @@ class TestToolCallAccuracyEvaluator:
         assert f"{key}_reason" in result
         assert result[f"{key}_reason"] == "Evaluated 2 tool calls with 1 correct calls."
         assert "per_tool_call_details" in result
-        assert "excess_tool_calls" in result
-        assert "missing_tool_calls" in result
+        assert ToolCallAccuracyEvaluator._EXCESS_TOOL_CALLS_KEY in result
+        assert ToolCallAccuracyEvaluator._MISSING_TOOL_CALLS_KEY in result
         assert result["applicable"] is True
 
     def test_evaluate_tools_valid2(self, mock_model_config):
@@ -161,8 +161,8 @@ class TestToolCallAccuracyEvaluator:
         assert f"{key}_reason" in result
         assert result[f"{key}_reason"] == "Evaluated 2 tool calls with 0 correct calls."
         assert "per_tool_call_details" in result
-        assert "excess_tool_calls" in result
-        assert "missing_tool_calls" in result
+        assert ToolCallAccuracyEvaluator._EXCESS_TOOL_CALLS_KEY in result
+        assert ToolCallAccuracyEvaluator._MISSING_TOOL_CALLS_KEY in result
         assert result["applicable"] is True
 
     def test_evaluate_tools_valid3(self, mock_model_config):
@@ -220,8 +220,8 @@ class TestToolCallAccuracyEvaluator:
         assert f"{key}_reason" in result
         assert result[f"{key}_reason"] == "Evaluated 2 tool calls with 2 correct calls."
         assert "per_tool_call_details" in result
-        assert "excess_tool_calls" in result
-        assert "missing_tool_calls" in result
+        assert ToolCallAccuracyEvaluator._EXCESS_TOOL_CALLS_KEY in result
+        assert ToolCallAccuracyEvaluator._MISSING_TOOL_CALLS_KEY in result
         assert result["applicable"] is True
 
     def test_evaluate_tools_one_eval_fails(self, mock_model_config):
@@ -304,13 +304,13 @@ class TestToolCallAccuracyEvaluator:
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == "not applicable"
+        assert result[key] == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
         assert result[f"{key}_result"] == "pass"
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
-        assert result[f"{key}_reason"] == "Tool definitions for all tool calls must be provided."
+        assert result[f"{key}_reason"] == ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE
         assert result["per_tool_call_details"] == {}
-        assert result["excess_tool_calls"] == {}
-        assert result["missing_tool_calls"] == {}
+        assert result[ToolCallAccuracyEvaluator._EXCESS_TOOL_CALLS_KEY] == {}
+        assert result[ToolCallAccuracyEvaluator._MISSING_TOOL_CALLS_KEY] == {}
         assert result["applicable"] is False
 
     def test_evaluate_tools_all_not_applicable(self, mock_model_config):
@@ -344,13 +344,13 @@ class TestToolCallAccuracyEvaluator:
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == "not applicable"
+        assert result[key] == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
         assert result[f"{key}_result"] == "pass"
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
-        assert result[f"{key}_reason"] == "Tool definitions for all tool calls must be provided."
+        assert result[f"{key}_reason"] == ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE
         assert result["per_tool_call_details"] == {}
-        assert result["excess_tool_calls"] == {}
-        assert result["missing_tool_calls"] == {}
+        assert result[ToolCallAccuracyEvaluator._EXCESS_TOOL_CALLS_KEY] == {}
+        assert result[ToolCallAccuracyEvaluator._MISSING_TOOL_CALLS_KEY] == {}
         assert result["applicable"] is False
 
     def test_evaluate_tools_no_tools(self, mock_model_config):
@@ -377,11 +377,11 @@ class TestToolCallAccuracyEvaluator:
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == "not applicable"
+        assert result[key] == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
         assert result[f"{key}_result"] == "pass"
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
-        assert result[f"{key}_reason"] == "No tool calls found in response or provided tool_calls."
+        assert result[f"{key}_reason"] == ToolCallAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE
         assert result["per_tool_call_details"] == {}
-        assert result["excess_tool_calls"] == {}
-        assert result["missing_tool_calls"] == {}
+        assert result[ToolCallAccuracyEvaluator._EXCESS_TOOL_CALLS_KEY] == {}
+        assert result[ToolCallAccuracyEvaluator._MISSING_TOOL_CALLS_KEY] == {}
         assert result["applicable"] is False
