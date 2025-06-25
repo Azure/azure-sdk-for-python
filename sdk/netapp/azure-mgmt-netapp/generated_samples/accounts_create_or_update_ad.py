@@ -45,7 +45,7 @@ def main():
                         "ldapOverTLS": False,
                         "ldapSigning": False,
                         "organizationalUnit": "OU=Engineering",
-                        "password": "<REDACTED>",
+                        "password": "ad_password",
                         "site": "SiteName",
                         "smbServerName": "SMBServer",
                         "username": "ad_user_name",
@@ -57,6 +57,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/preview/2025-01-01-preview/examples/Accounts_CreateOrUpdateAD.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2025-03-01/examples/Accounts_CreateOrUpdateAD.json
 if __name__ == "__main__":
     main()
