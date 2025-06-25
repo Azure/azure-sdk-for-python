@@ -168,8 +168,9 @@ class AsyncPrompty:
         self._outputs: Dict[str, Any] = configs.get("outputs", {})
         self._name: str = configs.get("name", path.stem)
         self._logger = logger or get_logger(__name__)
-        self._token_credential: Union[TokenCredential, AsyncTokenCredential] = \
+        self._token_credential: Union[TokenCredential, AsyncTokenCredential] = (
             token_credential or AsyncAzureTokenProvider()
+        )
 
     @property
     def path(self) -> Path:
@@ -290,9 +291,7 @@ class AsyncPrompty:
         # for better debugging and real-time status updates.
         max_retries = 0
 
-        default_headers = {
-            "User-Agent": UserAgentSingleton().value
-        }
+        default_headers = {"User-Agent": UserAgentSingleton().value}
 
         api_client: Union[AsyncAzureOpenAI, AsyncOpenAI]
         if isinstance(connection, AzureOpenAIConnection):
@@ -302,9 +301,9 @@ class AsyncPrompty:
                 azure_deployment=connection.azure_deployment,
                 api_version=connection.api_version,
                 max_retries=max_retries,
-                azure_ad_token_provider=(self.get_token_provider(self._token_credential)
-                    if not connection.api_key
-                    else None),
+                azure_ad_token_provider=(
+                    self.get_token_provider(self._token_credential) if not connection.api_key else None
+                ),
                 default_headers=default_headers,
             )
         elif isinstance(connection, OpenAIConnection):
@@ -420,6 +419,7 @@ class AsyncPrompty:
         :return: The token provider if a credential is provided, otherwise None.
         :rtype: Optional[AsyncAzureADTokenProvider]
         """
+
         async def _wrapper() -> str:
             token = cred.get_token(TokenScope.COGNITIVE_SERVICES_MANAGEMENT)
             if isinstance(token, Awaitable):

@@ -8,7 +8,7 @@ from azure.ai.evaluation._version import VERSION
 
 
 class UserAgentSingleton:
-    __BASE_USER_AGENT:str = "{}/{}".format("azure-ai-evaluation", VERSION)
+    __BASE_USER_AGENT: str = "{}/{}".format("azure-ai-evaluation", VERSION)
 
     @property
     def value(self):
@@ -35,4 +35,3 @@ class UserAgentSingleton:
         yield
 
         cls.__BASE_USER_AGENT = old_useragent
-

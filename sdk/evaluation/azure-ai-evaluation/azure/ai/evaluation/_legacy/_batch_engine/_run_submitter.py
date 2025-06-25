@@ -108,16 +108,13 @@ class RunSubmitter:
                         f"Referenced run {previous.name} has {len(previous.outputs)} outputs, "
                         f"but {len(run.inputs)} inputs are provided."
                     )
-                
+
                 # load in the previous run's outputs and inputs into the list of dictionaries to allow for
                 # the previous run's outputs to be used as inputs for the current run
                 run.inputs = [
-                    {
-                        "run.outputs": previous.outputs[i],
-                        "run.inputs": previous.inputs[i],
-                        **run.inputs[i]
-                    }
-                    for i in range(len(run.inputs))]
+                    {"run.outputs": previous.outputs[i], "run.inputs": previous.inputs[i], **run.inputs[i]}
+                    for i in range(len(run.inputs))
+                ]
 
         self._validate_column_mapping(run.column_mapping)
 
@@ -197,9 +194,7 @@ class RunSubmitter:
     @staticmethod
     def _validate_inputs(run: Run):
         if not run.inputs and not run.previous_run:
-            raise BatchEngineValidationError(
-                "Either data, or a previous run must be specified for the evaluation run."
-            )
+            raise BatchEngineValidationError("Either data, or a previous run must be specified for the evaluation run.")
 
     @staticmethod
     def _validate_column_mapping(column_mapping: Mapping[str, str]):

@@ -126,6 +126,7 @@ def construct_prompty_model_config(
 
     return prompty_model_config
 
+
 def is_onedp_project(azure_ai_project: AzureAIProject) -> bool:
     """Check if the Azure AI project is an OneDP project.
 
@@ -137,6 +138,7 @@ def is_onedp_project(azure_ai_project: AzureAIProject) -> bool:
     if isinstance(azure_ai_project, str):
         return True
     return False
+
 
 def validate_azure_ai_project(o: object) -> AzureAIProject:
     fields = {"subscription_id": str, "resource_group_name": str, "project_name": str}
@@ -291,7 +293,8 @@ def _validate_typed_dict(o: object, t: Type[T_TypedDict]) -> T_TypedDict:
 
     return cast(T_TypedDict, o)
 
-def check_score_is_valid(score: Union[str, float], min_score = 1, max_score = 5) -> bool:
+
+def check_score_is_valid(score: Union[str, float], min_score=1, max_score=5) -> bool:
     """Check if the score is valid, i.e. is convertable to number and is in the range [min_score, max_score].
 
     :param score: The score to check.
@@ -309,6 +312,7 @@ def check_score_is_valid(score: Union[str, float], min_score = 1, max_score = 5)
         return False
 
     return min_score <= numeric_score <= max_score
+
 
 def parse_quality_evaluator_reason_score(llm_output: str, valid_score_range: str = "[1-5]") -> Tuple[float, str]:
     """Parse the output of prompt-based quality evaluators that return a score and reason.
@@ -481,12 +485,14 @@ def validate_conversation(conversation):
             ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
         )
 
+
 def _extract_text_from_content(content):
     text = []
     for msg in content:
-        if 'text' in msg:
-            text.append(msg['text'])
+        if "text" in msg:
+            text.append(msg["text"])
     return text
+
 
 def _get_conversation_history(query):
     all_user_queries = []
@@ -494,26 +500,26 @@ def _get_conversation_history(query):
     all_agent_responses = []
     cur_agent_response = []
     for msg in query:
-        if not 'role' in msg:
+        if not "role" in msg:
             continue
-        if msg['role'] == 'user' and 'content' in msg:
+        if msg["role"] == "user" and "content" in msg:
             if cur_agent_response != []:
                 all_agent_responses.append(cur_agent_response)
                 cur_agent_response = []
-            text_in_msg = _extract_text_from_content(msg['content'])
+            text_in_msg = _extract_text_from_content(msg["content"])
             if text_in_msg:
                 cur_user_query.append(text_in_msg)
 
-        if msg['role'] == 'assistant' and 'content' in msg:
-            if cur_user_query !=[]:
+        if msg["role"] == "assistant" and "content" in msg:
+            if cur_user_query != []:
                 all_user_queries.append(cur_user_query)
                 cur_user_query = []
-            text_in_msg = _extract_text_from_content(msg['content'])
+            text_in_msg = _extract_text_from_content(msg["content"])
             if text_in_msg:
                 cur_agent_response.append(text_in_msg)
-    if cur_user_query !=[]:
+    if cur_user_query != []:
         all_user_queries.append(cur_user_query)
-    if cur_agent_response !=[]:
+    if cur_agent_response != []:
         all_agent_responses.append(cur_agent_response)
 
     if len(all_user_queries) != len(all_agent_responses) + 1:
@@ -525,27 +531,28 @@ def _get_conversation_history(query):
             blame=ErrorBlame.USER_ERROR,
         )
 
-    return {
-            'user_queries'    : all_user_queries,
-            'agent_responses' : all_agent_responses
-           }
+    return {"user_queries": all_user_queries, "agent_responses": all_agent_responses}
+
 
 def _pretty_format_conversation_history(conversation_history):
     """Formats the conversation history for better readability."""
     formatted_history = ""
-    for i, (user_query, agent_response) in enumerate(zip(conversation_history['user_queries'], conversation_history['agent_responses']+[None])):
-        formatted_history+=f"User turn {i+1}:\n"
+    for i, (user_query, agent_response) in enumerate(
+        zip(conversation_history["user_queries"], conversation_history["agent_responses"] + [None])
+    ):
+        formatted_history += f"User turn {i+1}:\n"
         for msg in user_query:
-            formatted_history+="  " + "\n  ".join(msg)
-        formatted_history+="\n\n"
+            formatted_history += "  " + "\n  ".join(msg)
+        formatted_history += "\n\n"
         if agent_response:
-            formatted_history+=f"Agent turn {i+1}:\n"
+            formatted_history += f"Agent turn {i+1}:\n"
             for msg in agent_response:
-                formatted_history+="  " + "\n  ".join(msg)
-            formatted_history+="\n\n"
+                formatted_history += "  " + "\n  ".join(msg)
+            formatted_history += "\n\n"
     return formatted_history
 
-def reformat_conversation_history(query, logger = None):
+
+def reformat_conversation_history(query, logger=None):
     """Reformats the conversation history to a more compact representation."""
     try:
         conversation_history = _get_conversation_history(query)
@@ -562,17 +569,19 @@ def reformat_conversation_history(query, logger = None):
             logger.warning(f"Conversation history could not be parsed, falling back to original query: {query}")
         return query
 
+
 def _get_agent_response(agent_response_msgs):
     """Extracts the text from the agent response content."""
     agent_response_text = []
     for msg in agent_response_msgs:
-        if 'role' in msg and msg['role'] == 'assistant' and 'content' in msg:
-            text = _extract_text_from_content(msg['content'])
+        if "role" in msg and msg["role"] == "assistant" and "content" in msg:
+            text = _extract_text_from_content(msg["content"])
             if text:
                 agent_response_text.extend(text)
     return agent_response_text
 
-def reformat_agent_response(response, logger = None):
+
+def reformat_agent_response(response, logger=None):
     try:
         if response is None or response == []:
             return ""
@@ -580,7 +589,9 @@ def reformat_agent_response(response, logger = None):
         if agent_response == []:
             # If no message could be extracted, likely the format changed, fallback to the original response in that case
             if logger:
-                logger.warning(f"Empty agent response extracted, likely due to input schema change. Falling back to using the original response: {response}")
+                logger.warning(
+                    f"Empty agent response extracted, likely due to input schema change. Falling back to using the original response: {response}"
+                )
             return response
         return "\n".join(agent_response)
     except:
@@ -589,6 +600,7 @@ def reformat_agent_response(response, logger = None):
         if logger:
             logger.warning(f"Agent response could not be parsed, falling back to original response: {response}")
         return response
+
 
 def upload(path: str, container_client: ContainerClient, logger=None):
     """Upload files or directories to Azure Blob Storage using a container client.
@@ -618,7 +630,7 @@ def upload(path: str, container_client: ContainerClient, logger=None):
     local_paths = []
 
     if os.path.isdir(path):
-        for (root, _, filenames) in os.walk(path):
+        for root, _, filenames in os.walk(path):
             upload_path = ""
             if root != path:
                 rel_path = os.path.relpath(root, path)

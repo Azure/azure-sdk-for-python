@@ -40,10 +40,11 @@ from .utils import get_harm_severity_level, retrieve_content_type
 USER_TEXT_TEMPLATE_DICT: Dict[str, Template] = {
     "DEFAULT": Template("<Human>{$query}</><System>{$response}</>"),
 }
-ML_WORKSPACE  = "https://management.azure.com/.default"
+ML_WORKSPACE = "https://management.azure.com/.default"
 COG_SRV_WORKSPACE = "https://ai.azure.com/.default"
 
 INFERENCE_OF_SENSITIVE_ATTRIBUTES = "inference_sensitive_attributes"
+
 
 def get_formatted_template(data: dict, annotation_task: str) -> str:
     """Given the task and input data, produce a formatted string that will serve as the main
@@ -67,16 +68,13 @@ def get_formatted_template(data: dict, annotation_task: str) -> str:
         }
         return json.dumps(as_dict)
     if annotation_task == Tasks.CODE_VULNERABILITY:
-        as_dict = {
-            "context": data.get("query", ""),
-            "completion": data.get("response", "")
-        }
+        as_dict = {"context": data.get("query", ""), "completion": data.get("response", "")}
         return json.dumps(as_dict)
     if annotation_task == Tasks.UNGROUNDED_ATTRIBUTES:
         as_dict = {
             "query": data.get("query", ""),
             "response": data.get("response", ""),
-            "context": data.get("context", "")
+            "context": data.get("context", ""),
         }
         return json.dumps(as_dict)
     as_dict = {
@@ -97,7 +95,11 @@ def get_common_headers(token: str, evaluator_name: Optional[str] = None) -> Dict
     :return: The common headers.
     :rtype: Dict
     """
-    user_agent = f"{UserAgentSingleton().value} (type=evaluator; subtype={evaluator_name})" if evaluator_name else UserAgentSingleton().value
+    user_agent = (
+        f"{UserAgentSingleton().value} (type=evaluator; subtype={evaluator_name})"
+        if evaluator_name
+        else UserAgentSingleton().value
+    )
     return {
         "Authorization": f"Bearer {token}",
         "User-Agent": user_agent,
@@ -109,7 +111,10 @@ def get_async_http_client_with_timeout() -> AsyncHttpPipeline:
         retry_policy=AsyncRetryPolicy(timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT)
     )
 
-async def ensure_service_availability_onedp(client: AIProjectClient, token: str, capability: Optional[str] = None) -> None:
+
+async def ensure_service_availability_onedp(
+    client: AIProjectClient, token: str, capability: Optional[str] = None
+) -> None:
     """Check if the Responsible AI service is available in the region and has the required capability, if relevant.
 
     :param client: The AI project client.
@@ -122,7 +127,7 @@ async def ensure_service_availability_onedp(client: AIProjectClient, token: str,
     """
     headers = get_common_headers(token)
     capabilities = client.evaluations.check_annotation(headers=headers)
-    
+
     if capability and capability not in capabilities:
         msg = f"The needed capability '{capability}' is not supported by the RAI service in this region."
         raise EvaluationException(
@@ -133,7 +138,8 @@ async def ensure_service_availability_onedp(client: AIProjectClient, token: str,
             blame=ErrorBlame.USER_ERROR,
             tsg_link="https://aka.ms/azsdk/python/evaluation/safetyevaluator/troubleshoot",
         )
-    
+
+
 async def ensure_service_availability(rai_svc_url: str, token: str, capability: Optional[str] = None) -> None:
     """Check if the Responsible AI service is available in the region and has the required capability, if relevant.
 
@@ -253,12 +259,7 @@ async def submit_request(
 
 
 async def submit_request_onedp(
-    client: AIProjectClient, 
-    data: dict, 
-    metric: str, 
-    token: str, 
-    annotation_task: str, 
-    evaluator_name: str
+    client: AIProjectClient, data: dict, metric: str, token: str, annotation_task: str, evaluator_name: str
 ) -> str:
     """Submit request to Responsible AI service for evaluation and return operation ID
 
@@ -322,6 +323,7 @@ async def fetch_result(operation_id: str, rai_svc_url: str, credential: TokenCre
         sleep_time = RAIService.SLEEP_TIME**request_count
         await asyncio.sleep(sleep_time)
 
+
 async def fetch_result_onedp(client: AIProjectClient, operation_id: str, token: str) -> Dict:
     """Fetch the annotation result from Responsible AI service
 
@@ -345,10 +347,13 @@ async def fetch_result_onedp(client: AIProjectClient, operation_id: str, token: 
             request_count += 1
             time_elapsed = time.time() - start
             if time_elapsed > RAIService.TIMEOUT:
-                raise TimeoutError(f"Fetching annotation result {request_count} times out after {time_elapsed:.2f} seconds")
+                raise TimeoutError(
+                    f"Fetching annotation result {request_count} times out after {time_elapsed:.2f} seconds"
+                )
 
             sleep_time = RAIService.SLEEP_TIME**request_count
             await asyncio.sleep(sleep_time)
+
 
 def parse_response(  # pylint: disable=too-many-branches,too-many-statements
     batch_response: List[Dict], metric_name: str, metric_display_name: Optional[str] = None
@@ -378,10 +383,13 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
         result = {}
         if not batch_response or len(batch_response[0]) == 0:
             return {}
-        if metric_name == EvaluationMetrics.UNGROUNDED_ATTRIBUTES and INFERENCE_OF_SENSITIVE_ATTRIBUTES in batch_response[0]:
-            batch_response[0] = { 
-                EvaluationMetrics.UNGROUNDED_ATTRIBUTES: batch_response[0][INFERENCE_OF_SENSITIVE_ATTRIBUTES] 
-            } 
+        if (
+            metric_name == EvaluationMetrics.UNGROUNDED_ATTRIBUTES
+            and INFERENCE_OF_SENSITIVE_ATTRIBUTES in batch_response[0]
+        ):
+            batch_response[0] = {
+                EvaluationMetrics.UNGROUNDED_ATTRIBUTES: batch_response[0][INFERENCE_OF_SENSITIVE_ATTRIBUTES]
+            }
         if metric_name == EvaluationMetrics.PROTECTED_MATERIAL and metric_name not in batch_response[0]:
             pm_metric_names = {"artwork", "fictional_characters", "logos_and_brands"}
             for pm_metric_name in pm_metric_names:
@@ -417,7 +425,10 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
             result[metric_display_name + "_information_gathering"] = (
                 parsed_response["information_gathering"] if "information_gathering" in parsed_response else math.nan
             )
-        if metric_name == EvaluationMetrics.CODE_VULNERABILITY or metric_name == EvaluationMetrics.UNGROUNDED_ATTRIBUTES:
+        if (
+            metric_name == EvaluationMetrics.CODE_VULNERABILITY
+            or metric_name == EvaluationMetrics.UNGROUNDED_ATTRIBUTES
+        ):
             # Add all attributes under the details.
             details = {}
             for key, value in parsed_response.items():
@@ -583,7 +594,9 @@ async def get_rai_svc_url(project_scope: AzureAIProject, token: str) -> str:
     return rai_url
 
 
-async def fetch_or_reuse_token(credential: TokenCredential, token: Optional[str] = None, workspace: Optional[str] = ML_WORKSPACE) -> str:
+async def fetch_or_reuse_token(
+    credential: TokenCredential, token: Optional[str] = None, workspace: Optional[str] = ML_WORKSPACE
+) -> str:
     """Get token. Fetch a new token if the current token is near expiry
 
        :param credential: The Azure authentication credential.
@@ -625,8 +638,8 @@ async def evaluate_with_rai_service(
     :type data: dict
     :param metric_name: The evaluation metric to use.
     :type metric_name: str
-    :param project_scope: The Azure AI project, which can either be a string representing the project endpoint 
-        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :param project_scope: The Azure AI project, which can either be a string representing the project endpoint
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name.
     :type project_scope: Union[str, AzureAIProject]
     :param credential: The Azure authentication credential.
     :type credential: ~azure.core.credentials.TokenCredential
@@ -641,7 +654,11 @@ async def evaluate_with_rai_service(
     """
 
     if is_onedp_project(project_scope):
-        client = AIProjectClient(endpoint=project_scope, credential=credential, user_agent_policy=UserAgentPolicy(base_user_agent=UserAgentSingleton().value))
+        client = AIProjectClient(
+            endpoint=project_scope,
+            credential=credential,
+            user_agent_policy=UserAgentPolicy(base_user_agent=UserAgentSingleton().value),
+        )
         token = await fetch_or_reuse_token(credential=credential, workspace=COG_SRV_WORKSPACE)
         await ensure_service_availability_onedp(client, token, annotation_task)
         operation_id = await submit_request_onedp(client, data, metric_name, token, annotation_task, evaluator_name)
@@ -660,6 +677,7 @@ async def evaluate_with_rai_service(
         result = parse_response(annotation_response, metric_name, metric_display_name)
 
         return result
+
 
 def generate_payload_multimodal(content_type: str, messages, metric: str) -> Dict:
     """Generate the payload for the annotation request
@@ -691,6 +709,7 @@ def generate_payload_multimodal(content_type: str, messages, metric: str) -> Dic
         "Contents": [{"messages": messages}],
         "AnnotationTask": task,
     }
+
 
 async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, token: str) -> str:
     """Submit request to Responsible AI service for evaluation and return operation ID
@@ -737,8 +756,9 @@ async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, tok
     operation_id = result["location"].split("/")[-1]
     return operation_id
 
+
 async def submit_multimodal_request_onedp(client: AIProjectClient, messages, metric: str, token: str) -> str:
-    
+
     #  handle inference sdk strongly type messages
     if len(messages) > 0 and not isinstance(messages[0], dict):
         try:
@@ -754,37 +774,42 @@ async def submit_multimodal_request_onedp(client: AIProjectClient, messages, met
     ## fetch system and assistant messages from the list of messages
     filtered_messages = [message for message in messages if message["role"] != "system"]
     assistant_messages = [message for message in messages if message["role"] == "assistant"]
-    
+
     ## prepare for request
     content_type = retrieve_content_type(assistant_messages, metric)
     payload = generate_payload_multimodal(content_type, filtered_messages, metric)
     headers = get_common_headers(token)
-    
+
     response = client.evaluations.submit_annotation(payload, headers=headers)
-    
+
     result = json.loads(response)
     operation_id = result["location"].split("/")[-1]
     return operation_id
+
 
 async def evaluate_with_rai_service_multimodal(
     messages, metric_name: str, project_scope: Union[str, AzureAIProject], credential: TokenCredential
 ):
     """ "Evaluate the content safety of the response using Responsible AI service
-       :param messages: The normalized list of messages.
-       :type messages: str
-       :param metric_name: The evaluation metric to use.
-       :type metric_name: str
-       :param project_scope: The Azure AI project, which can either be a string representing the project endpoint 
-            or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
-       :type project_scope: Union[str, AzureAIProject]
-       :param credential: The Azure authentication credential.
-       :type credential: ~azure.core.credentials.TokenCredential
-       :return: The parsed annotation result.
-       :rtype: List[List[Dict]]
+    :param messages: The normalized list of messages.
+    :type messages: str
+    :param metric_name: The evaluation metric to use.
+    :type metric_name: str
+    :param project_scope: The Azure AI project, which can either be a string representing the project endpoint
+         or an instance of AzureAIProject. It contains subscription id, resource group, and project name.
+    :type project_scope: Union[str, AzureAIProject]
+    :param credential: The Azure authentication credential.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :return: The parsed annotation result.
+    :rtype: List[List[Dict]]
     """
 
     if is_onedp_project(project_scope):
-        client = AIProjectClient(endpoint=project_scope, credential=credential, user_agent_policy=UserAgentPolicy(base_user_agent=UserAgentSingleton().value))
+        client = AIProjectClient(
+            endpoint=project_scope,
+            credential=credential,
+            user_agent_policy=UserAgentPolicy(base_user_agent=UserAgentSingleton().value),
+        )
         token = await fetch_or_reuse_token(credential=credential, workspace=COG_SRV_WORKSPACE)
         await ensure_service_availability_onedp(client, token, Tasks.CONTENT_HARM)
         operation_id = await submit_multimodal_request_onedp(client, messages, metric_name, token)
