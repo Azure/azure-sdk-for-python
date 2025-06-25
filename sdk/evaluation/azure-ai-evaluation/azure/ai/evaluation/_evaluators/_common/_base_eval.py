@@ -288,7 +288,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
 
         return multi_modal_converter
 
-    def _convert_kwargs_to_eval_input(self, **kwargs) -> Union[List[Dict], List[DerivedEvalInput]]:
+    def _convert_kwargs_to_eval_input(self, **kwargs) -> Union[List[Dict], List[DerivedEvalInput], Dict[str, Any]]:
         """Convert an arbitrary input into a list of inputs for evaluators.
         It is assumed that evaluators generally make use of their inputs in one of two ways.
         Either they receive a collection of keyname inputs that are all single values
