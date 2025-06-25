@@ -4,7 +4,6 @@
 
 ### Features Added
 
-  - Client `ServiceFabricManagedClustersManagementClient` added method `send_request`
   - Enum `DiskType` added member `PREMIUM_V2_LRS`
   - Enum `DiskType` added member `PREMIUM_ZRS`
   - Enum `DiskType` added member `STANDARD_SSD_ZRS`
@@ -29,17 +28,17 @@
   - Added enum `SfmcOperationStatus`
   - Added model `TrackedResource`
   - Added model `ZoneFaultSimulationContent`
-  - Model `ManagedClustersOperations` added method `begin_start_fault_simulation`
-  - Model `ManagedClustersOperations` added method `begin_stop_fault_simulation`
-  - Model `ManagedClustersOperations` added method `get_fault_simulation`
-  - Model `ManagedClustersOperations` added method `list_fault_simulation`
-  - Model `NodeTypesOperations` added method `begin_deallocate`
-  - Model `NodeTypesOperations` added method `begin_redeploy`
-  - Model `NodeTypesOperations` added method `begin_start`
-  - Model `NodeTypesOperations` added method `begin_start_fault_simulation`
-  - Model `NodeTypesOperations` added method `begin_stop_fault_simulation`
-  - Model `NodeTypesOperations` added method `get_fault_simulation`
-  - Model `NodeTypesOperations` added method `list_fault_simulation`
+  - Operation `ManagedClustersOperations` added method `begin_start_fault_simulation`
+  - Operation `ManagedClustersOperations` added method `begin_stop_fault_simulation`
+  - Operation `ManagedClustersOperations` added method `get_fault_simulation`
+  - Operation `ManagedClustersOperations` added method `list_fault_simulation`
+  - Operation `NodeTypesOperations` added method `begin_deallocate`
+  - Operation `NodeTypesOperations` added method `begin_redeploy`
+  - Operation `NodeTypesOperations` added method `begin_start`
+  - Operation `NodeTypesOperations` added method `begin_start_fault_simulation`
+  - Operation `NodeTypesOperations` added method `begin_stop_fault_simulation`
+  - Operation `NodeTypesOperations` added method `get_fault_simulation`
+  - Operation `NodeTypesOperations` added method `list_fault_simulation`
 
 ### Breaking Changes
 
