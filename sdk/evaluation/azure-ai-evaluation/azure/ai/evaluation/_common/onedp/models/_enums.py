@@ -9,7 +9,7 @@
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
-
+# cspell:ignore ANSII, ATBASH, UPIA, LEETSPEAK, ENTRA_ID, REDTEAM, Entra
 class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Strategies for attacks."""
 
