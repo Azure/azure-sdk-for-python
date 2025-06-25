@@ -37,10 +37,17 @@ with project_client:
     agents_client = project_client.agents
 
     # [START upload_file_and_create_agent_with_file_search]
-    # We will upload the local file to Azure and will use it for vector store creation.
-    asset_uri = os.environ["AZURE_BLOB_URI"]
+    # If provided, we will upload the local file to Azure and will use it for vector store creation.
+    # Otherwise, we'll use a previously created dataset reference
+    if "AZURE_BLOB_URI" in os.environ:
+        asset_uri = os.environ["AZURE_BLOB_URI"]
+    else:
+        dataset_name = os.environ["AZURE_DATASET_NAME"]
+        dataset_version = os.environ["AZURE_DATASET_VERSION"]
+        dataset = project_client.datasets.get(name=dataset_name, version=dataset_version)
+        asset_uri = dataset.id
 
-    # Create a vector store with no file and wait for it to be processed
+    # Create a vector store and wait for it to be processed
     ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
     vector_store = agents_client.vector_stores.create_and_poll(data_sources=[ds], name="sample_vector_store")
     print(f"Created vector store, vector store ID: {vector_store.id}")
