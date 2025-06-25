@@ -108,7 +108,7 @@ AGENT_RESPONSE:
   [TOOL_RESULT] "Gone Girl" by Gillian Flynn
   I recommend *Gone Girl* by Gillian Flynn — a gripping psychological thriller.
 
-TOOL DEFINITIONS:
+TOOL_DEFINITIONS:
 - get_book: Returns a book recommendation based on genre. (inputs: genre)
 
 EXPECTED OUTPUT:
@@ -139,7 +139,7 @@ User turn 2:
 AGENT_RESPONSE:
   You might enjoy *The Book Thief* by Markus Zusak — a powerful story set during World War II.
 
-TOOL DEFINITIONS:
+TOOL_DEFINITIONS:
 - get_book: Returns book suggestions based on genre. (inputs: genre)
 
 EXPECTED OUTPUT:
@@ -172,7 +172,7 @@ AGENT_RESPONSE:
   [TOOL_RESULT] 22°C, partly cloudy
   Paris is currently 22°C and partly cloudy.
 
-TOOL DEFINITIONS:
+TOOL_DEFINITIONS:
 - get_weather: Provides current weather details for a city. (inputs: city)
 
 EXPECTED OUTPUT:
@@ -205,7 +205,7 @@ AGENT_RESPONSE:
   [TOOL_RESULT] "The Notebook" by Nicholas Sparks
   You might enjoy *The Notebook* by Nicholas Sparks.
 
-TOOL DEFINITIONS:
+TOOL_DEFINITIONS:
 - get_book: Returns book suggestions based on genre. (inputs: genre)
 
 EXPECTED OUTPUT:
@@ -236,7 +236,7 @@ User turn 1:
 AGENT_RESPONSE:
   It's probably sunny this time of year.
 
-TOOL DEFINITIONS:
+TOOL_DEFINITIONS:
 - get_weather: Retrieve current weather. (inputs: city)
 
 EXPECTED OUTPUT:
@@ -267,7 +267,7 @@ User turn 2:
 AGENT_RESPONSE:
   You might enjoy *The Da Vinci Code*.
 
-TOOL DEFINITIONS:
+TOOL_DEFINITIONS:
 - get_book: Get book suggestions by genre. (inputs: genre)
 
 EXPECTED OUTPUT:
@@ -298,7 +298,7 @@ User turn 1:
 AGENT_RESPONSE:
   Europe has different time zones.
 
-TOOL DEFINITIONS:
+TOOL_DEFINITIONS:
 - get_time: Return current time for a city. (inputs: city)
 
 EXPECTED OUTPUT:
@@ -329,7 +329,7 @@ User turn 2:
 AGENT_RESPONSE:
   Fantasy often includes magical elements and world-building.
 
-TOOL DEFINITIONS:
+TOOL_DEFINITIONS:
 - get_book: Retrieve books filtered by genre. (inputs: genre)
 
 EXPECTED OUTPUT:
@@ -360,7 +360,7 @@ User turn 1:
 AGENT_RESPONSE:
   I prefer mornings to evenings. How about you?
 
-TOOL DEFINITIONS:
+TOOL_DEFINITIONS:
 - get_time: Return time for a given city. (inputs: city)
 
 EXPECTED OUTPUT:
@@ -391,7 +391,7 @@ User turn 2:
 AGENT_RESPONSE:
   I once visited Rome in summer. Beautiful city!
 
-TOOL DEFINITIONS:
+TOOL_DEFINITIONS:
 - get_weather: Provides weather data for a given city. (inputs: city, unit)
 
 EXPECTED OUTPUT:

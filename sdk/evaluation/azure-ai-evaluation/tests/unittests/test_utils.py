@@ -369,6 +369,32 @@ class TestUtils:
         }
         assert result == expected
 
+
+    def test__get_conversation_history_with_system_messages(self):
+        """Test _get_conversation_history with system messages"""
+        query = [
+            {
+                "role": "system",
+                "content": ["This is a system message."]
+            },
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": "What is the weather?"}]
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "It's sunny today."}]
+            }
+        ]
+
+        result = _get_conversation_history(query, include_system_messages=True)
+        expected = {
+            'system_message': "This is a system message.",
+            'user_queries': [[["What is the weather?"]]],
+            'agent_responses': [[["It's sunny today."]]]
+        }
+        assert result == expected
+
     def test__get_conversation_history_with_invalid_data(self):
         """Test _get_conversation_history with edge cases"""
         # Test with messages missing role
@@ -436,6 +462,24 @@ class TestUtils:
         )
         assert result == expected
 
+    def test__pretty_format_conversation_history_with_system_messages(self):
+        """Test _pretty_format_conversation_history with system messages"""
+        conversation_history = {
+            'system_message': "This is a system message.",
+            'user_queries': [[["What is the weather?"]]],
+            'agent_responses': [[["It's sunny today."]]]
+        }
+
+        result = _pretty_format_conversation_history(conversation_history)
+        expected = (
+            "SYSTEM_PROMPT:\n"
+            "  This is a system message.\n\n"
+            "User turn 1:\n"
+            "  What is the weather?\n\n"
+            "Agent turn 1:\n"
+            "  It's sunny today.\n\n"
+        )
+        assert result == expected
     def test_reformat_conversation_history(self):
         """Test reformat_conversation_history function"""
         # Test valid conversation
@@ -470,6 +514,33 @@ class TestUtils:
         result = reformat_conversation_history(invalid_query)
         assert result == invalid_query
 
+    def test_reformat_conversation_history_with_system_messages(self):
+        """Test reformat_conversation_history with system messages"""
+        query = [
+            {
+                "role": "system",
+                "content": "This is a system message."
+            },
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": "What is AI?"}]
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "AI stands for Artificial Intelligence."}]
+            }
+        ]
+
+        result = reformat_conversation_history(query, include_system_messages=True)
+        expected = (
+            "SYSTEM_PROMPT:\n"
+            "  This is a system message.\n\n"
+            "User turn 1:\n"
+            "  What is AI?\n\n"
+            "Agent turn 1:\n"
+            "  AI stands for Artificial Intelligence.\n\n"
+        )
+        assert result == expected
     def test__get_agent_response(self):
         """Test _get_agent_response function"""
         # Test with valid agent response
@@ -532,6 +603,30 @@ class TestUtils:
 
         result = _get_agent_response(agent_response_msgs)
         assert result == ["Valid message"]
+
+    def test__get_agent_response_with_tool_messages(self):
+        """Test _get_agent_response with tool messages"""
+        agent_response_msgs = [
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "text", "text": "Hello!"},
+                    {"type": "tool_call", "tool_call_id": "123", "name": "get_weather", "arguments": {"location": "Seattle"}}
+                ]
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "123",
+                "content": [{"type": "tool_result", "tool_result": "It's sunny in Seattle."}]
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "How can I help you?"}]
+            }
+        ]
+
+        result = _get_agent_response(agent_response_msgs, include_tool_messages=True)
+        assert result == ["Hello!", "[TOOL_CALL] get_weather(location=\"Seattle\")", "[TOOL_RESULT] It's sunny in Seattle.", "How can I help you?"]
 
     def test_reformat_agent_response(self):
         """Test reformat_agent_response function"""

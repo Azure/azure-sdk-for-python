@@ -544,7 +544,7 @@ def _pretty_format_conversation_history(conversation_history):
     """Formats the conversation history for better readability."""
     formatted_history = ""
     if 'system_message' in conversation_history and conversation_history['system_message'] is not None:
-        formatted_history += "SYSTEM MESSAGE:\n"
+        formatted_history += "SYSTEM_PROMPT:\n"
         formatted_history += "  " + conversation_history['system_message'] + "\n\n"
     for i, (user_query, agent_response) in enumerate(
             zip(conversation_history['user_queries'], conversation_history['agent_responses'] + [None])):
@@ -641,7 +641,7 @@ def reformat_agent_response(response, logger=None, include_tool_messages=False):
 
 
 def reformat_tool_definitions(tool_definitions, logger=None):
-    output_lines = ["TOOL DEFINITIONS:"]
+    output_lines = ["TOOL_DEFINITIONS:"]
     for tool in tool_definitions:
         name = tool.get("name", "unnamed_tool")
         desc = tool.get("description", "").strip()
