@@ -158,8 +158,9 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}": score,
                 f"{self._result_key}_result": score_result,
                 f"{self._result_key}_threshold": self.threshold,
-                f"{self._result_key}_reason": reason,
-                f"{self._result_key}_additional_details": llm_output
+                f"{self._result_key}_reason": reason
+                # Uncomment the following line in the next iteration after UI contracts are validated.
+                # f"{self._result_key}_additional_details": llm_output
             }
         if logger:
             logger.warning("LLM output is not a dictionary, returning NaN for the score.")
