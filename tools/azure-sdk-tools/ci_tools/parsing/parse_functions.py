@@ -373,6 +373,7 @@ def parse_pyproject(
     # "give me the package metadata for this folder."
     # We can avoid this expensive operation if we parse the version out of the _version or version file directly.
     parsed_version = project_config.get("version", None)
+
     if not parsed_version:
         parsed_version_py = get_version_py(pyproject_filename)
 
@@ -448,6 +449,7 @@ def get_version_py(setup_path: str) -> Optional[str]:
         "local",
         "scripts",
         "images",
+        ".tox"
     }
 
     file_path, _ = os.path.split(setup_path)
