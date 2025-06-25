@@ -34,17 +34,17 @@ jobs:
     strategy:
       matrix:
         linux:
-          imageName: 'ubuntu-20.04'
-          poolName: 'azsdk-pool-mms-ubuntu-2004-general'
+          imageName: 'ubuntu-24.04'
+          poolName: 'azsdk-pool'
         # windows:
         #   imageName: 'windows-2022'
-        #   poolName: 'azsdk-pool-mms-win-2022-general'
+        #   poolName: 'azsdk-pool'
         # mac:
         #   imageName: 'macos-latest'
         #   poolName: 'Azure Pipelines'
 
     pool:
-      vmImage: $(imageName)
+      demands: ImageOverride -equals $(imageName)
       name: '$(poolName)'
 
     steps:

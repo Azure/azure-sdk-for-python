@@ -19,6 +19,8 @@ from ._shared.models import (
     MicrosoftTeamsAppProperties,
     MicrosoftTeamsUserIdentifier,
     MicrosoftTeamsUserProperties,
+    TeamsExtensionUserProperties,
+    TeamsExtensionUserIdentifier,
 )
 from ._version import VERSION
 
@@ -39,6 +41,8 @@ __all__ = [
     "MicrosoftTeamsAppProperties",
     "MicrosoftTeamsUserIdentifier",
     "MicrosoftTeamsUserProperties",
+    "TeamsExtensionUserProperties",
+    "TeamsExtensionUserIdentifier",
 ]
 
 __VERSION__ = VERSION
