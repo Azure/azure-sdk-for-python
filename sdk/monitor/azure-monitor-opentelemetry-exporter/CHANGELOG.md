@@ -1,5 +1,18 @@
 # Release History
 
+## 1.0.0b39 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Suppress stdout side effect of add permissions to file for local storage on Windows
+  ([#41727](https://github.com/Azure/azure-sdk-for-python/pull/41727))
+
+### Other Changes
+
 ## 1.0.0b38 (2025-06-17)
 
 ### Features Added
@@ -36,6 +49,8 @@
 
 - Extend version range for `psutil` to include 7.x
   ([#40459](https://github.com/Azure/azure-sdk-for-python/pull/40459))
+- Add folder permissions for local files
+  ([#41384](https://github.com/Azure/azure-sdk-for-python/pull/41384))
 
 ## 1.0.0b36 (2025-04-07)
 

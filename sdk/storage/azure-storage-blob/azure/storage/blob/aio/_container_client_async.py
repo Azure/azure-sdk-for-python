@@ -143,6 +143,22 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         self._client = self._build_generated_client()
         self._configure_encryption(kwargs)
 
+    async def __aenter__(self) -> Self:
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *args) -> None:
+        await self._client.__aexit__(*args)
+
+    async def close(self) -> None:
+        """This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+
+        :return: None
+        :rtype: None
+        """
+        await self._client.close()
+
     def _build_generated_client(self) -> AzureBlobStorage:
         client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         client._config.version = self._api_version  # type: ignore [assignment] # pylint: disable=protected-access
