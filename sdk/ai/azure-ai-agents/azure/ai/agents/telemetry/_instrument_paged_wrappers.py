@@ -54,13 +54,19 @@ class _AsyncInstrumentedItemPaged(AsyncItemPaged, _SpanLogger):
     def __init__(
         self,
         async_iter: AsyncItemPaged,
-        instrumentation_fun: Callable[[AbstractSpan, Any], None],
-        span: Optional[AbstractSpan],
+        server_address: str,
+        thread_id: str,
+        start_span_function: Callable[[str, str], AbstractSpan],
+        item_instrumentation_function: Callable[[AbstractSpan, Any], None],
+        run_id: Optional[str] = None,
     ) -> None:
         super().__init__()
         self._iter = async_iter
-        self._inst_fun = instrumentation_fun
-        self._span = span
+        self._server_address = server_address
+        self._thread_id = thread_id
+        self._run_id = run_id
+        self._start_span_function = start_span_function
+        self._item_instrumentation_function = item_instrumentation_function
         self._gen: Optional[AsyncIterator[Any]] = None
 
     def __getattr__(self, name: str) -> Any:
@@ -77,20 +83,17 @@ class _AsyncInstrumentedItemPaged(AsyncItemPaged, _SpanLogger):
 
     def __aiter__(self) -> AsyncIterator[Any]:
         async def _gen() -> AsyncIterator[Any]:
-            try:
-                async for val in self._iter:
-                    if self._span is not None:
-                        self.log_to_span_safe(val, self._inst_fun, self._span)
-                    yield val
-            finally:
-                if self._span is not None:
+            async for val in self._iter:
+                span = self._start_span_function(self._server_address, self._thread_id, self._run_id)
+                if span is not None:
+                    self.log_to_span_safe(val, self._item_instrumentation_function, span)
                     # We cast None to TracebackType, because traceback is
                     # not used in the downstream code.
-                    self._span.__exit__(None, None, cast(TracebackType, None))
+                    span.__exit__(None, None, cast(TracebackType, None))
+                    span = None
+                yield val
 
         if self._gen is None:
-            if self._span is not None:
-                self._span.__enter__()
             self._gen = _gen()
         return self._gen
 
@@ -101,13 +104,19 @@ class _InstrumentedItemPaged(ItemPaged, _SpanLogger):
     def __init__(
         self,
         iter_val: ItemPaged,
-        instrumentation_fun: Callable[[AbstractSpan, Any], None],
-        span: Optional[AbstractSpan],
+        server_address: str,
+        thread_id: str,
+        start_span_function: Callable[[str, str], AbstractSpan],
+        item_instrumentation_function: Callable[[AbstractSpan, Any], None],
+        run_id: Optional[str] = None,
     ) -> None:
         super().__init__()
         self._iter = iter_val
-        self._inst_fun = instrumentation_fun
-        self._span = span
+        self._server_address = server_address
+        self._thread_id = thread_id
+        self._run_id = run_id
+        self._start_span_function = start_span_function
+        self._item_instrumentation_function = item_instrumentation_function
         self._gen: Optional[Iterator[Any]] = None
 
     def __getattr__(self, name: str) -> Any:
@@ -124,19 +133,16 @@ class _InstrumentedItemPaged(ItemPaged, _SpanLogger):
 
     def __iter__(self) -> Iterator[Any]:
         def _gen() -> Iterator[Any]:
-            try:
-                for val in self._iter:
-                    if self._span is not None:
-                        self.log_to_span_safe(val, self._inst_fun, self._span)
-                    yield val
-            finally:
-                if self._span is not None:
+            for val in self._iter:
+                span = self._start_span_function(self._server_address, self._thread_id, self._run_id)
+                if span is not None:
+                    self.log_to_span_safe(val, self._item_instrumentation_function, span)
                     # We cast None to TracebackType, because traceback is
                     # not used in the downstream code.
-                    self._span.__exit__(None, None, cast(TracebackType, None))
+                    span.__exit__(None, None, cast(TracebackType, None))
+                    span = None
+                yield val
 
         if self._gen is None:
-            if self._span is not None:
-                self._span.__enter__()
             self._gen = _gen()
         return self._gen
