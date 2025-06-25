@@ -267,7 +267,7 @@ class AzureRAIServiceTarget(PromptChatTarget):
                 if not self.is_one_dp_project:
                     operation_result = self._client._client.get_operation_result(operation_id=operation_id)
                 else:
-                    operation_result = self._client._client.operation_results(operation_id=operation_id)
+                    operation_result = self._client._client.operation_results(operation_id=operation_id, client_request_id={"parameters": {}, "response": {}})
                 
                 # Check if we have a valid result
                 if operation_result:

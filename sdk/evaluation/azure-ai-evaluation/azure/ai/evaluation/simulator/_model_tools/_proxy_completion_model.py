@@ -208,7 +208,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             flag = True
             while flag:
                 try:
-                    response = session.evaluations.operation_results(operation_id, headers=headers)
+                    response = session.evaluations.operation_results(operation_id, headers=headers, client_request_id={"parameters": {}, "response": {}})
                 except Exception as e:
                     from types import SimpleNamespace  # pylint: disable=forgotten-debug-statement
                     response = SimpleNamespace(status_code=202, text=str(e), json=lambda: {"error": str(e)})

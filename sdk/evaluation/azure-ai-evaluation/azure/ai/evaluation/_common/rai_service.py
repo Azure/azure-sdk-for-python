@@ -125,8 +125,8 @@ async def ensure_service_availability_onedp(client: AIProjectClient, token: str,
     :raises Exception: If the service is not available in the region or the capability is not available.
     """
     headers = get_common_headers(token)
-    capabilities = client.evaluations.check_annotation(headers=headers)
-    
+    capabilities = client.evaluations.check_annotation(headers=headers, client_request_id={"parameters": {}, "response": {}})
+
     if capability and capability not in capabilities:
         msg = f"The needed capability '{capability}' is not supported by the RAI service in this region."
         raise EvaluationException(
@@ -344,7 +344,7 @@ async def fetch_result_onedp(client: AIProjectClient, operation_id: str, token: 
     while True:
         headers = get_common_headers(token)
         try:
-            return client.evaluations.operation_results(operation_id, headers=headers)
+            return client.evaluations.operation_results(operation_id, headers=headers, client_request_id={"parameters": {}, "response": {}})
         except HttpResponseError:
             request_count += 1
             time_elapsed = time.time() - start
