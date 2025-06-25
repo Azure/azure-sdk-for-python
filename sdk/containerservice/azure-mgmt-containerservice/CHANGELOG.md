@@ -1,5 +1,20 @@
 # Release History
 
+## 38.0.0 (2025-07-20)
+
+### Features Added
+
+  - Model ManagedCluster has a new parameter ai_toolchain_operator_profile
+  - Model ManagedCluster has a new parameter node_provisioning_profile
+
+### Breaking Changes
+
+  - Removed operation group ContainerServiceOperations
+  - Removed operation group LoadBalancersOperations
+  - Removed operation group ManagedClusterSnapshotsOperations
+  - Removed operation group ManagedNamespacesOperations
+  - Removed operation group OperationStatusResultOperations
+
 ## 37.0.0 (2025-06-11)
 
 ### Features Added
