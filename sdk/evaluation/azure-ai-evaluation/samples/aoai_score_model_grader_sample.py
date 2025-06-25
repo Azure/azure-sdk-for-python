@@ -264,7 +264,6 @@ def demonstrate_score_model_grader():
         
     except Exception as e:
         print(f"\n❌ Error during evaluation: {str(e)}")
-        print("\nFalling back to demonstration mode...")
 
     # Clean up
     if os.path.exists(data_file):
