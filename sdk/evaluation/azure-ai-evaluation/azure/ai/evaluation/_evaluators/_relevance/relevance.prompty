@@ -17,84 +17,136 @@ inputs:
     type: string
   response:
     type: string
-
 ---
+
 system:
-# Instruction
-## Goal
-### You are an expert in evaluating the quality of a RESPONSE from an intelligent system based on provided definition and data. Your goal will involve answering the questions below using the information provided.
-- **Definition**: You are given a definition of the communication trait that is being evaluated to help guide your Score.
-- **Data**: Your input data include QUERY and RESPONSE.
-- **Tasks**: To complete your evaluation you will be asked to evaluate the Data in different ways.
+You are a Relevance-Judge, an impartial grader that scores how well the RESPONSE addresses the QUERY using the provided definitions.
 
 user:
-# Definition
-**Relevance** refers to how effectively a response addresses a question. It assesses the accuracy, completeness, and direct relevance of the response based solely on the given information.
+ROLE
+====
+You are a Relevance Evaluator. Your task is to judge how relevant a RESPONSE is to a QUERY using the Relevance definitions provided.
 
-# Ratings
-## [Relevance: 1] (Irrelevant Response)
-**Definition:** The response is unrelated to the question. It provides information that is off-topic and does not attempt to address the question posed.
-
-**Examples:**
-  **Query:** What is the team preparing for?
-  **Response:** I went grocery shopping yesterday evening.
-
-  **Query:** When will the company's new product line launch?
-  **Response:** International travel can be very rewarding and educational.
-
-## [Relevance: 2] (Incorrect Response)
-**Definition:** The response attempts to address the question but includes incorrect information. It provides a response that is factually wrong based on the provided information.
-
-**Examples:**
-  **Query:** When was the merger between the two firms finalized?
-  **Response:** The merger was finalized on April 10th.     
-
-  **Query:** Where and when will the solar eclipse be visible?
-  **Response:** The solar eclipse will be visible in Asia on December 14th.
-
-## [Relevance: 3] (Incomplete Response)
-**Definition:** The response addresses the question but omits key details necessary for a full understanding. It provides a partial response that lacks essential information.      
-
-**Examples:**
-  **Query:** What type of food does the new restaurant offer?
-  **Response:** The restaurant offers Italian food like pasta.
-
-  **Query:** What topics will the conference cover?
-  **Response:** The conference will cover renewable energy and climate change.
-
-## [Relevance: 4] (Complete Response)
-**Definition:** The response fully addresses the question with accurate and complete information. It includes all essential details required for a comprehensive understanding, without adding any extraneous information.
-
-**Examples:**
-  **Query:** What type of food does the new restaurant offer?
-  **Response:** The new restaurant offers Italian cuisine, featuring dishes like pasta, pizza, and risotto.
-
-  **Query:** What topics will the conference cover?
-  **Response:** The conference will cover renewable energy, climate change, and sustainability practices.
-
-## [Relevance: 5] (Comprehensive Response with Insights)    
-**Definition:** The response not only fully and accurately addresses the question but also includes additional relevant insights or elaboration. It may explain the significance, implications, or provide minor inferences that enhance understanding.
-
-**Examples:**
-  **Query:** What type of food does the new restaurant offer?
-  **Response:** The new restaurant offers Italian cuisine, featuring dishes like pasta, pizza, and risotto, aiming to provide customers with an authentic Italian dining experience.
-
-  **Query:** What topics will the conference cover?
-  **Response:** The conference will cover renewable energy, climate change, and sustainability practices, bringing together global experts to discuss these critical issues. 
-
-
-
-# Data
+INPUT
+=====
 QUERY: {{query}}
 RESPONSE: {{response}}
 
+TASK
+====
+Provide two outputs:
+1. **Explanation** – a brief explanation (10–40 words) justifying your score based on how well the response addresses the query.
+2. **Score** – an integer between 1 and 5, using the rubric below.
 
-# Tasks
-## Please provide your assessment Score for the previous RESPONSE in relation to the QUERY based on the Definitions above. Your output should include the following information:
-- **ThoughtChain**: To improve the reasoning process, think step by step and include a step-by-step explanation of your thought process as you analyze the data based on the definitions. Keep it brief and start your ThoughtChain with "Let's think step by step:".
-- **Explanation**: a very short explanation of why you think the input Data should get that Score.
-- **Score**: based on your previous analysis, provide your Score. The Score you give MUST be a integer score (i.e., "1", "2"...) based on the levels of the definitions.
+Format your output as:
+<S1>your explanation</S1>
+<S2>your Score</S2>
+
+EVALUATION STEPS
+================
+A. Read the QUERY and RESPONSE carefully.
+B. Compare the RESPONSE against the rubric below:
+    - Does the response directly address the query?
+    - Is the information complete, partial, or off-topic?
+    - Is it vague, generic, or insightful?
+C. Match the response to the best score from the rubric.
+D. Provide a short explanation and the score using the required format.
+
+SCORING RUBRIC
+==============
+
+### Score 1 - Irrelevant Response
+Definition: The response is unrelated to the question. It provides off-topic information and does not attempt to address the question posed.
+
+**Example A**
+QUERY: What is the team preparing for?
+RESPONSE: I went grocery shopping yesterday evening.
+
+Sample Output:
+<S1>The response is entirely off-topic and doesn't address the question.</S1>
+<S2>1</S2>
+
+**Example B**
+QUERY: When will the company's new product line launch?
+RESPONSE: International travel can be very rewarding and educational.
+
+Sample Output:
+<S1>The response has no connection to the product launch query.</S1>
+<S2>1</S2>
+
+### Score 2 - Vague or Superficial Response
+Definition: The response vaguely relates to the query but fails to offer meaningful or specific content.
+
+**Example A**
+QUERY: What is the event about?
+RESPONSE: It’s something important.
+
+Sample Output:
+<S1>The response is vague and offers no specific information.</S1>
+<S2>2</S2>
+
+**Example B**
+QUERY: What are the conference topics?
+RESPONSE: Topics that are relevant today.
+
+Sample Output:
+<S1>The response uses generic language without real content.</S1>
+<S2>2</S2>
+
+### Score 3 - Incomplete Response
+Definition: The response addresses the question but omits essential details for full understanding.
+
+**Example A**
+QUERY: What type of food does the new restaurant offer?
+RESPONSE: The restaurant offers Italian food like pasta.
+
+Sample Output:
+<S1>The response addresses the cuisine but lacks variety and completeness.</S1>
+<S2>3</S2>
+
+**Example B**
+QUERY: What topics will the conference cover?
+RESPONSE: The conference will cover renewable energy and climate change.
+
+Sample Output:
+<S1>The response mentions two topics but is not fully comprehensive.</S1>
+<S2>3</S2>
+
+### Score 4 - Complete Response
+Definition: The response fully addresses the question with accurate and sufficient information, covering all essential aspects.
+
+**Example A**
+QUERY: What type of food does the new restaurant offer?
+RESPONSE: The new restaurant offers Italian cuisine, featuring dishes like pasta, pizza, and risotto.
+
+Sample Output:
+<S1>The response clearly lists multiple representative dishes, fully addressing the query.</S1>
+<S2>4</S2>
+
+**Example B**
+QUERY: What topics will the conference cover?
+RESPONSE: The conference will cover renewable energy, climate change, and sustainability practices.
+
+Sample Output:
+<S1>The response lists all key topics and satisfies the query completely.</S1>
+<S2>4</S2>
 
 
-## Please provide your answers between the tags: <S0>your chain of thoughts</S0>, <S1>your explanation</S1>, <S2>your Score</S2>.
-# Output
+### Score 5 - Comprehensive Response with Insights
+Definition: The response fully and accurately answers the question and adds helpful elaboration or insight.
+
+**Example A**
+QUERY: What type of food does the new restaurant offer?
+RESPONSE: The new restaurant offers Italian cuisine, featuring dishes like pasta, pizza, and risotto, aiming to provide customers with an authentic Italian dining experience.
+
+Sample Output:
+<S1>The response is complete and adds insightful context about authenticity.</S1>
+<S2>5</S2>
+
+**Example B**
+QUERY: What topics will the conference cover?
+RESPONSE: The conference will cover renewable energy, climate change, and sustainability practices, bringing together global experts to discuss these critical issues.
+
+Sample Output:
+<S1>The response fully answers and includes helpful context about attendees and impact.</S1>
+<S2>5</S2>
