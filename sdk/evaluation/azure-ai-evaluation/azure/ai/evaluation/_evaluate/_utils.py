@@ -15,6 +15,7 @@ import math
 import pandas as pd
 from tqdm import tqdm
 
+from azure.core.pipeline.policies import UserAgentPolicy
 from azure.ai.evaluation._legacy._adapters.entities import Run
 
 from azure.ai.evaluation._constants import (
@@ -26,6 +27,7 @@ from azure.ai.evaluation._constants import (
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation._version import VERSION
+from azure.ai.evaluation._user_agent import UserAgentSingleton
 from azure.ai.evaluation._azure._clients import LiteMLClient
 
 LOGGER = logging.getLogger(__name__)
@@ -129,6 +131,7 @@ def process_message_content(content, images_folder_path):
             f.write(image_data_binary)
     return None
 
+
 def _log_metrics_and_instance_results_onedp(
     metrics: Dict[str, Any],
     instance_results: pd.DataFrame,
@@ -148,7 +151,8 @@ def _log_metrics_and_instance_results_onedp(
     )
     client = EvaluationServiceOneDPClient(
         endpoint=project_url,
-        credential=credentials
+        credential=credentials,
+        user_agent_policy=UserAgentPolicy(base_user_agent=UserAgentSingleton().value),
     )
 
     # Massaging before artifacts are put on disk
@@ -177,13 +181,11 @@ def _log_metrics_and_instance_results_onedp(
             EvaluationRunProperties.EVALUATION_RUN: "promptflow.BatchRun",
             EvaluationRunProperties.EVALUATION_SDK: f"azure-ai-evaluation:{VERSION}",
             "_azureml.evaluate_artifacts": json.dumps([{"path": artifact_name, "type": "table"}]),
-        }               
+        }
         properties.update(_convert_name_map_into_property_entries(name_map))
 
         create_evaluation_result_response = client.create_evaluation_result(
-            name=uuid.uuid4(),
-            path=tmpdir,
-            metrics=metrics
+            name=uuid.uuid4(), path=tmpdir, metrics=metrics
         )
 
         upload_run_response = client.start_evaluation_run(
@@ -198,13 +200,14 @@ def _log_metrics_and_instance_results_onedp(
                 display_name=evaluation_name,
                 status="Completed",
                 outputs={
-                    'evaluationResultId': create_evaluation_result_response.id,
+                    "evaluationResultId": create_evaluation_result_response.id,
                 },
                 properties=properties,
-            )
+            ),
         )
 
     return update_run_response.properties.get("AiStudioEvaluationUri")
+
 
 def _log_metrics_and_instance_results(
     metrics: Dict[str, Any],
@@ -268,11 +271,11 @@ def _log_metrics_and_instance_results(
             # We are doing that only for the pure evaluation runs.
             if run is None:
                 properties = {
-                        EvaluationRunProperties.RUN_TYPE: "eval_run",
-                        EvaluationRunProperties.EVALUATION_RUN: "promptflow.BatchRun",
-                        EvaluationRunProperties.EVALUATION_SDK: f"azure-ai-evaluation:{VERSION}",
-                        "_azureml.evaluate_artifacts": json.dumps([{"path": artifact_name, "type": "table"}]),
-                    }
+                    EvaluationRunProperties.RUN_TYPE: "eval_run",
+                    EvaluationRunProperties.EVALUATION_RUN: "promptflow.BatchRun",
+                    EvaluationRunProperties.EVALUATION_SDK: f"azure-ai-evaluation:{VERSION}",
+                    "_azureml.evaluate_artifacts": json.dumps([{"path": artifact_name, "type": "table"}]),
+                }
                 properties.update(_convert_name_map_into_property_entries(name_map))
                 ev_run.write_properties_to_run_history(properties=properties)
             else:
@@ -410,9 +413,11 @@ def set_event_loop_policy() -> None:
         # On Windows seems to be a problem with EventLoopPolicy, use this snippet to work around it
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())  # type: ignore[attr-defined]
 
+
 # textwrap.wrap tries to do fancy nonsense that we don't want
 def _wrap(s, w):
-    return [s[i:i + w] for i in range(0, len(s), w)]
+    return [s[i : i + w] for i in range(0, len(s), w)]
+
 
 def _convert_name_map_into_property_entries(
     name_map: Dict[str, str], segment_length: int = 950, max_segments: int = 10
@@ -436,7 +441,7 @@ def _convert_name_map_into_property_entries(
     num_segments = math.ceil(len(name_map_string) / segment_length)
     # Property map is somehow still too long to encode within the space
     # we allow, so give up, but make sure the service knows we gave up
-    if (num_segments > max_segments):
+    if num_segments > max_segments:
         return {EvaluationRunProperties.NAME_MAP_LENGTH: -1}
 
     result: Dict[str, Any] = {EvaluationRunProperties.NAME_MAP_LENGTH: num_segments}
@@ -445,6 +450,7 @@ def _convert_name_map_into_property_entries(
         segment_key = f"{EvaluationRunProperties.NAME_MAP}_{i}"
         result[segment_key] = segments_list[i]
     return result
+
 
 class JSONLDataFileLoader:
     def __init__(self, filename: Union[os.PathLike, str]):
