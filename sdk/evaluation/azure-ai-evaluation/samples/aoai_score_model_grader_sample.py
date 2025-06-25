@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
@@ -181,10 +179,10 @@ def demonstrate_score_model_grader():
     try:
         # 1. Configure Azure OpenAI model using environment variables
         model_config = AzureOpenAIModelConfiguration(
-            azure_endpoint=os.environ.get("4o_mini_target_endpoint"),
-            api_key=os.environ.get("4o_mini_target_endpoint_key"),
+            azure_endpoint=os.environ.get("endpoint"),
+            api_key=os.environ.get("key"),
             azure_deployment=os.environ.get(
-                "4o_mini_target_endpoint_deployment_name"
+                "deployment_name"
             ),
             api_version="2024-12-01-preview"
         )
@@ -232,7 +230,8 @@ def demonstrate_score_model_grader():
             data=data_file,
             evaluators={
                 "conversation_quality": conversation_quality_grader
-            }
+            },
+            azure_ai_project=os.environ.get("AZURE_AI_PROJECT_ENDPOINT")
         )
 
         # 4. Display results
@@ -274,175 +273,6 @@ def demonstrate_score_model_grader():
         print(f"\n🧹 Cleaned up temporary file: {data_file}")
 
 
-def demonstrate_configuration_only():
-    """Demonstrate grader configuration without running actual evaluation."""
-    
-    try:
-        # Create sample data
-        data_file = create_sample_data()
-        
-        print("📝 Testing grader configuration...")
-        
-        # Configure with placeholder values for testing
-        model_config = AzureOpenAIModelConfiguration(
-            azure_endpoint="https://test-endpoint.openai.azure.com/",
-            api_key="test-key",
-            azure_deployment="gpt-4o-mini",
-            api_version="2024-12-01-preview"
-        )
-
-        # Create a simple grader to test
-        test_grader = AzureOpenAIScoreModelGrader(
-            model_config=model_config,
-            name="Test Quality Grader",
-            model="gpt-4o-mini",
-            input=[
-                {
-                    "role": "system",
-                    "content": "You are a test evaluator."
-                },
-                {
-                    "role": "user",
-                    "content": "Rate this: {{ data.conversation }}"
-                }
-            ]
-        )
-        
-        print("✅ Grader creation successful!")
-        print(f"   - Grader ID: {test_grader.id}")
-        print(f"   - Grader name: {test_grader._grader_config.name}")
-        print(f"   - Grader model: {test_grader._grader_config.model}")
-        print(f"   - Input messages: {len(test_grader._grader_config.input)}")
-        
-        print("\n🚧 Implementation Status:")
-        print("   - Sample data created: ✅")
-        print("   - AzureOpenAIScoreModelGrader class: ✅ (implemented)")
-        print("   - Integration with evaluate(): ✅ (ready for testing)")
-        print("\n📖 Ready for use!")
-        print("   Configure with real API credentials to run evaluations")
-        
-        # Clean up
-        if os.path.exists(data_file):
-            os.remove(data_file)
-        
-    except Exception as e:
-        print(f"❌ Error testing implementation: {e}")
-        print("\n🚧 Implementation Status:")
-        print("   - Sample data created: ✅")
-        print("   - AzureOpenAIScoreModelGrader class: ❌ (error)")
-        print("   - Integration with evaluate(): ❌ (needs fixing)")
-
-
-def demonstrate_different_grader_types():
-    """Show examples of different score model grader configurations."""
-
-    print("\n=== Different Score Model Grader Examples ===\n")
-
-    examples = [
-        {
-            "name": "Helpfulness Grader",
-            "description": (
-                "Evaluates how helpful the AI response is to the user"
-            ),
-            "config": {
-                "name": "Helpfulness Assessment",
-                "input": [
-                    {
-                        "role": "system",
-                        "content": (
-                            "Rate how helpful this AI response is in "
-                            "addressing the user's needs."
-                        )
-                    },
-                    {
-                        "role": "user",
-                        "content": (
-                            "User Question: {{ data.question }}\n"
-                            "AI Response: {{ data.response }}\n\n"
-                            "Helpfulness score (0.0-1.0):"
-                        )
-                    }
-                ],
-                "range": [0.0, 1.0],
-                "pass_threshold": 0.6
-            }
-        },
-        {
-            "name": "Factual Accuracy Grader",
-            "description": (
-                "Checks factual accuracy against reference information"
-            ),
-            "config": {
-                "name": "Factual Accuracy Check",
-                "input": [
-                    {
-                        "role": "system",
-                        "content": (
-                            "You are a fact-checker. Compare the AI response "
-                            "with reference information and rate accuracy."
-                        )
-                    },
-                    {
-                        "role": "user",
-                        "content": (
-                            "Reference: {{ data.reference }}\n"
-                            "AI Response: {{ data.response }}\n\n"
-                            "Accuracy score (0.0-1.0):"
-                        )
-                    }
-                ],
-                "range": [0.0, 1.0],
-                "pass_threshold": 0.8
-            }
-        },
-        {
-            "name": "Clarity Grader",
-            "description": (
-                "Evaluates how clear and understandable the response is"
-            ),
-            "config": {
-                "name": "Response Clarity",
-                "input": [
-                    {
-                        "role": "developer",
-                        "content": (
-                            "Evaluate the clarity and understandability "
-                            "of this AI response."
-                        )
-                    },
-                    {
-                        "role": "user",
-                        "content": (
-                            "Response: {{ data.response }}\n\n"
-                            "Clarity score (0.0-1.0, where 1.0 is perfectly "
-                            "clear):"
-                        )
-                    }
-                ],
-                "range": [0.0, 1.0],
-                "pass_threshold": 0.7,
-                "sampling_params": {
-                    "temperature": 0.1,
-                    "max_tokens": 150
-                }
-            }
-        }
-    ]
-
-    for example in examples:
-        print(f"🎯 {example['name']}")
-        print(f"   Description: {example['description']}")
-        print("   Configuration:")
-        config = example['config']
-        print(f"     - Name: {config['name']}")
-        print(f"     - Input Messages: {len(config['input'])} messages")
-        print(f"     - Range: {config['range']}")
-        print(f"     - Pass Threshold: {config['pass_threshold']}")
-        if 'sampling_params' in config:
-            print(f"     - Sampling Params: {config['sampling_params']}")
-        print()
-
-
 if __name__ == "__main__":
     print("🚀 Starting Azure OpenAI Score Model Grader Demo\n")
     
@@ -459,12 +289,8 @@ if __name__ == "__main__":
         print("⚠️  Missing environment variables:")
         for var in missing_vars:
             print(f"   - {var}")
-        print("\nRunning in demonstration mode...\n")
-        demonstrate_configuration_only()
     else:
         print("✅ All environment variables found")
         demonstrate_score_model_grader()
-    
-    demonstrate_different_grader_types()
     
     print("\n🎉 Demo completed!")
