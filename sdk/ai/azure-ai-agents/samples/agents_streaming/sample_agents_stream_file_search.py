@@ -82,9 +82,11 @@ with project_client:
         thread_id=thread.id, role="user", content="Hello, what Contoso products do you know?"
     )
     print(f"Created message, ID: {message.id}")
-    
+
     references = {}
-    with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id, include=[RunAdditionalFieldList.FILE_SEARCH_CONTENTS]) as stream:
+    with agents_client.runs.stream(
+        thread_id=thread.id, agent_id=agent.id, include=[RunAdditionalFieldList.FILE_SEARCH_CONTENTS]
+    ) as stream:
 
         for event_type, event_data, _ in stream:
             if isinstance(event_data, MessageDeltaChunk):
@@ -93,14 +95,21 @@ with project_client:
                     delta_text_content = event_data.delta.content[0]
                     if delta_text_content.text and delta_text_content.text.annotations:
                         for delta_annotation in delta_text_content.text.annotations:
-                            if isinstance(delta_annotation, MessageDeltaTextFileCitationAnnotation) \
-                              and isinstance(delta_annotation.file_citation, MessageDeltaTextFileCitationAnnotationObject) \
-                              and delta_annotation.file_citation.file_id and delta_annotation.text:
-                                citation = os.path.split(asset_file_path)[-1] if delta_annotation.file_citation.file_id == file.id else delta_annotation.file_citation.file_id
-                                references[delta_annotation.text] = citation
-                                print(
-                                    f"File citation delta received: [{citation}]"
+                            if (
+                                isinstance(delta_annotation, MessageDeltaTextFileCitationAnnotation)
+                                and isinstance(
+                                    delta_annotation.file_citation, MessageDeltaTextFileCitationAnnotationObject
                                 )
+                                and delta_annotation.file_citation.file_id
+                                and delta_annotation.text
+                            ):
+                                citation = (
+                                    os.path.split(asset_file_path)[-1]
+                                    if delta_annotation.file_citation.file_id == file.id
+                                    else delta_annotation.file_citation.file_id
+                                )
+                                references[delta_annotation.text] = citation
+                                print(f"File citation delta received: [{citation}]")
                 for ref, citation in references.items():
                     text = text.replace(ref, f" [{citation}]")
                 print(f"Text delta received: {text}")
@@ -121,11 +130,17 @@ with project_client:
                 print(f"RunStep type: {event_data.type}, Status: {event_data.status}")
                 if isinstance(event_data.step_details, RunStepToolCallDetails):
                     for tool_call in event_data.step_details.tool_calls:
-                        if isinstance(tool_call, RunStepFileSearchToolCall) and tool_call.file_search \
-                          and tool_call.file_search.results and tool_call.file_search.results[0].content \
-                          and tool_call.file_search.results[0].content[0].text:
-                            print("The search tool has found the next relevant content in "
-                                  f"the file {tool_call.file_search.results[0].file_name}:")
+                        if (
+                            isinstance(tool_call, RunStepFileSearchToolCall)
+                            and tool_call.file_search
+                            and tool_call.file_search.results
+                            and tool_call.file_search.results[0].content
+                            and tool_call.file_search.results[0].content[0].text
+                        ):
+                            print(
+                                "The search tool has found the next relevant content in "
+                                f"the file {tool_call.file_search.results[0].file_name}:"
+                            )
                             # Note: technically we may have several search results, however in our example
                             # we only have one file, so we are taking the only result.
                             print(tool_call.file_search.results[0].content[0].text)
@@ -139,8 +154,6 @@ with project_client:
 
             else:
                 print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
-    
-    
 
     # Delete the file when done
     agents_client.vector_stores.delete(vector_store.id)
@@ -162,6 +175,8 @@ with project_client:
         if msg.text_messages:
             last_text = msg.text_messages[-1].text.value
             for annotation in msg.text_messages[-1].text.annotations:
-                citation = file_name if annotation.file_citation.file_id == file.id else annotation.file_citation.file_id
+                citation = (
+                    file_name if annotation.file_citation.file_id == file.id else annotation.file_citation.file_id
+                )
                 last_text = last_text.replace(annotation.text, f" [{citation}]")
             print(f"{msg.role}: {last_text}")

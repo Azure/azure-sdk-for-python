@@ -65,6 +65,9 @@ from ._models import (
     RequiredFunctionToolCall,
     RunStep,
     RunStepDeltaChunk,
+    DeepResearchToolDefinition,
+    DeepResearchDetails,
+    DeepResearchBingGroundingConnection,
     BingGroundingSearchConfiguration,
     BingGroundingSearchToolParameters,
     BingCustomSearchToolDefinition,
@@ -860,7 +863,7 @@ class ConnectionTool(Tool[ToolDefinitionT]):
         Initialize ConnectionTool with a connection_id.
 
         :param connection_id: Connection ID used by tool. All connection tools allow only one connection.
-        :raises ValueError: If the connection id is invalid.
+        :raises ValueError: If the connection ID is invalid.
         """
         if not _is_valid_connection_id(connection_id):
             raise ValueError(
@@ -886,6 +889,56 @@ class ConnectionTool(Tool[ToolDefinitionT]):
         pass
 
 
+class DeepResearchTool(Tool[DeepResearchToolDefinition]):
+    """
+    A tool that uses a Deep Research AI model, together with Bing Grounding, to answer user queries.
+    """
+
+    def __init__(self, bing_grounding_connection_id: str, deep_research_model: str):
+        """
+        Initialize a Deep Research tool with a Bing Grounding Connection ID and Deep Research model deployment name.
+
+        :param bing_grounding_connection_id: Connection ID used by tool. Bing Grounding tools allow only one connection.
+        :param deep_research_model: The Deep Research model deployment name.
+        :raises ValueError: If the connection ID is invalid.
+        """
+
+        if not _is_valid_connection_id(bing_grounding_connection_id):
+            raise ValueError(
+                "Connection ID '"
+                + bing_grounding_connection_id
+                + "' does not fit the format:"
+                + "'/subscriptions/<subscription_id>/resourceGroups/<resource_group_name>/"
+                + "providers/<provider_name>/accounts/<account_name>/projects/<project_name>/connections/<connection_name>'"
+            )
+
+        self._deep_research_details = DeepResearchDetails(
+            deep_research_model=deep_research_model,
+            deep_research_bing_grounding_connections=[DeepResearchBingGroundingConnection(connection_id=bing_grounding_connection_id)],
+        )
+
+    @property
+    def definitions(self) -> List[DeepResearchToolDefinition]:
+        """
+        Get the Deep Research tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [DeepResearchToolDefinition(deep_research=self._deep_research_details)]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the tool resources.
+
+        :rtype: ToolResources
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
+
+
 class BingGroundingTool(Tool[BingGroundingToolDefinition]):
     """
     A tool that searches for information using Bing.
@@ -900,7 +953,7 @@ class BingGroundingTool(Tool[BingGroundingToolDefinition]):
         :param set_lang: The language to use for user interface strings when calling Bing API.
         :param count: The number of search results to return in the Bing API response.
         :param freshness: Filter search results by a specific time range.
-        :raises ValueError: If the connection id is invalid.
+        :raises ValueError: If the connection ID is invalid.
 
         .. seealso::
            `Bing Web Search API Query Parameters <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters>`_
@@ -1878,6 +1931,7 @@ __all__: List[str] = [
     "BaseAgentEventHandler",
     "CodeInterpreterTool",
     "ConnectedAgentTool",
+    "DeepResearchTool",
     "AsyncAgentEventHandler",
     "FileSearchTool",
     "FunctionTool",

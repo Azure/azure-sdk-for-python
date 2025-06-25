@@ -9,20 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import (
-    Any,
-    AsyncIterable,
-    AsyncIterator,
-    Callable,
-    Dict,
-    IO,
-    List,
-    Optional,
-    TYPE_CHECKING,
-    TypeVar,
-    Union,
-    overload,
-)
+from typing import Any, AsyncIterator, Callable, Dict, IO, List, Optional, TYPE_CHECKING, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -284,7 +271,7 @@ class ThreadsOperations:
         order: Optional[Union[str, _models.ListSortOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.AgentThread"]:
+    ) -> AsyncItemPaged["_models.AgentThread"]:
         """Gets a list of threads that were previously created.
 
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
@@ -861,7 +848,7 @@ class MessagesOperations:
         order: Optional[Union[str, _models.ListSortOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ThreadMessage"]:
+    ) -> AsyncItemPaged["_models.ThreadMessage"]:
         """Gets a list of messages that exist on a thread.
 
         :param thread_id: Identifier of the thread. Required.
@@ -1557,7 +1544,7 @@ class RunsOperations:
         order: Optional[Union[str, _models.ListSortOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ThreadRun"]:
+    ) -> AsyncItemPaged["_models.ThreadRun"]:
         """Gets a list of runs for a specified thread.
 
         :param thread_id: Identifier of the thread. Required.
@@ -2197,7 +2184,7 @@ class RunStepsOperations:
         order: Optional[Union[str, _models.ListSortOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.RunStep"]:
+    ) -> AsyncItemPaged["_models.RunStep"]:
         """Gets a list of run steps from a thread run.
 
         :param thread_id: Identifier of the thread. Required.
@@ -2646,7 +2633,7 @@ class VectorStoresOperations:
         order: Optional[Union[str, _models.ListSortOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.VectorStore"]:
+    ) -> AsyncItemPaged["_models.VectorStore"]:
         """Returns a list of vector stores.
 
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
@@ -3216,7 +3203,7 @@ class VectorStoreFilesOperations:
         order: Optional[Union[str, _models.ListSortOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.VectorStoreFile"]:
+    ) -> AsyncItemPaged["_models.VectorStoreFile"]:
         """Returns a list of vector store files.
 
         :param vector_store_id: Identifier of the vector store. Required.
@@ -3904,7 +3891,7 @@ class VectorStoreFileBatchesOperations:
         order: Optional[Union[str, _models.ListSortOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.VectorStoreFile"]:
+    ) -> AsyncItemPaged["_models.VectorStoreFile"]:
         """Returns a list of vector store files in a batch.
 
         :param vector_store_id: Identifier of the vector store. Required.
@@ -4232,7 +4219,7 @@ class AgentsClientOperationsMixin(
         order: Optional[Union[str, _models.ListSortOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.Agent"]:
+    ) -> AsyncItemPaged["_models.Agent"]:
         """Gets a list of agents that were previously created.
 
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
