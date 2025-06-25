@@ -1,8 +1,91 @@
 # Release History
 
-## 0.0.0 (2025-07-21)
+## 30.0.0 (2025-07-21)
 
-change log generation was timeout!!! You need to write it manually!!!
+### Features Added
+
+  - Added operation ConnectionMonitorsOperations.begin_query
+  - Added operation ConnectionMonitorsOperations.begin_start
+  - Model FirewallPacketCaptureParameters has a new parameter id
+
+### Breaking Changes
+
+  - Model ActiveConnectivityConfiguration no longer has parameter connectivity_capabilities
+  - Model AddressSpace no longer has parameter ipam_pool_prefix_allocations
+  - Model ApplicationGatewayFirewallRule no longer has parameter sensitivity
+  - Model AzureFirewall no longer has parameter autoscale_configuration
+  - Model BastionHost no longer has parameter enable_private_only_bastion
+  - Model BastionHost no longer has parameter enable_session_recording
+  - Model ConfigurationGroup no longer has parameter member_type
+  - Model ConnectivityConfiguration no longer has parameter connectivity_capabilities
+  - Model EffectiveConnectivityConfiguration no longer has parameter connectivity_capabilities
+  - Model ExpressRouteCircuitAuthorization no longer has parameter connection_resource_uri
+  - Model ExpressRouteCircuitPeeringConfig no longer has parameter advertised_public_prefix_info
+  - Model FlowLog no longer has parameter enabled_filtering_criteria
+  - Model FlowLog no longer has parameter identity
+  - Model FlowLogInformation no longer has parameter enabled_filtering_criteria
+  - Model FlowLogInformation no longer has parameter identity
+  - Model LoadBalancingRule no longer has parameter enable_connection_tracking
+  - Model ManagedRuleOverride no longer has parameter sensitivity
+  - Model ManagedRuleSet no longer has parameter computed_disabled_rules
+  - Model ManagedRulesDefinition no longer has parameter exceptions
+  - Model NatGateway no longer has parameter public_ip_addresses_v6
+  - Model NatGateway no longer has parameter public_ip_prefixes_v6
+  - Model NatGateway no longer has parameter source_virtual_network
+  - Model NetworkGroup no longer has parameter member_type
+  - Model NetworkInterface no longer has parameter default_outbound_connectivity_enabled
+  - Model PrivateLinkService no longer has parameter destination_ip_address
+  - Model Probe no longer has parameter no_healthy_backends_behavior
+  - Model SecurityAdminConfiguration no longer has parameter network_group_address_space_aggregation_option
+  - Model ServiceEndpointPropertiesFormat no longer has parameter network_identifier
+  - Model Subnet no longer has parameter ipam_pool_prefix_allocations
+  - Model VirtualNetwork no longer has parameter default_public_nat_gateway
+  - Model VirtualNetwork no longer has parameter private_endpoint_v_net_policies
+  - Model VirtualNetworkGateway no longer has parameter enable_high_bandwidth_vpn_gateway
+  - Model VirtualNetworkGateway no longer has parameter identity
+  - Model VirtualNetworkGateway no longer has parameter resiliency_model
+  - Model VirtualNetworkGateway no longer has parameter virtual_network_gateway_migration_status
+  - Model VirtualNetworkGatewayConnection no longer has parameter tunnel_properties
+  - Model WebApplicationFirewallPolicy no longer has parameter application_gateway_for_containers
+  - Operation ExpressRouteCrossConnectionsOperations.list no longer has parameter filter
+  - Removed operation InboundSecurityRuleOperations.get
+  - Removed operation LoadBalancerLoadBalancingRulesOperations.begin_health
+  - Removed operation NetworkVirtualAppliancesOperations.begin_get_boot_diagnostic_logs
+  - Removed operation NetworkVirtualAppliancesOperations.begin_reimage
+  - Removed operation VirtualNetworkGatewaysOperations.begin_get_failover_all_test_details
+  - Removed operation VirtualNetworkGatewaysOperations.begin_get_failover_single_test_details
+  - Removed operation VirtualNetworkGatewaysOperations.begin_get_resiliency_information
+  - Removed operation VirtualNetworkGatewaysOperations.begin_get_routes_information
+  - Removed operation VirtualNetworkGatewaysOperations.begin_invoke_abort_migration
+  - Removed operation VirtualNetworkGatewaysOperations.begin_invoke_commit_migration
+  - Removed operation VirtualNetworkGatewaysOperations.begin_invoke_execute_migration
+  - Removed operation VirtualNetworkGatewaysOperations.begin_invoke_prepare_migration
+  - Removed operation VirtualNetworkGatewaysOperations.begin_start_express_route_site_failover_simulation
+  - Removed operation VirtualNetworkGatewaysOperations.begin_stop_express_route_site_failover_simulation
+  - Removed operation VpnLinkConnectionsOperations.begin_set_or_init_default_shared_key
+  - Removed operation VpnLinkConnectionsOperations.get_all_shared_keys
+  - Removed operation VpnLinkConnectionsOperations.get_default_shared_key
+  - Removed operation VpnLinkConnectionsOperations.list_default_shared_key
+  - Removed operation group IpamPoolsOperations
+  - Removed operation group NetworkManagerRoutingConfigurationsOperations
+  - Removed operation group NetworkSecurityPerimeterAccessRulesOperations
+  - Removed operation group NetworkSecurityPerimeterAssociableResourceTypesOperations
+  - Removed operation group NetworkSecurityPerimeterAssociationsOperations
+  - Removed operation group NetworkSecurityPerimeterLinkReferencesOperations
+  - Removed operation group NetworkSecurityPerimeterLinksOperations
+  - Removed operation group NetworkSecurityPerimeterLoggingConfigurationsOperations
+  - Removed operation group NetworkSecurityPerimeterOperationStatusesOperations
+  - Removed operation group NetworkSecurityPerimeterProfilesOperations
+  - Removed operation group NetworkSecurityPerimetersOperations
+  - Removed operation group ReachabilityAnalysisIntentsOperations
+  - Removed operation group ReachabilityAnalysisRunsOperations
+  - Removed operation group RoutingRuleCollectionsOperations
+  - Removed operation group RoutingRulesOperations
+  - Removed operation group SecurityUserConfigurationsOperations
+  - Removed operation group SecurityUserRuleCollectionsOperations
+  - Removed operation group SecurityUserRulesOperations
+  - Removed operation group StaticCidrsOperations
+  - Removed operation group VerifierWorkspacesOperations
 
 ## 29.0.0 (2025-05-22)
 
