@@ -90,10 +90,10 @@ def version_set_dev_main() -> None:
     for target_package in target_packages:
         try:
             new_version = get_dev_version(target_package.version, build_id)
-            print("{0}: {1} -> {2}".format(target_package.name, target_package.version, new_version))
-
+            print(f"Processing {target_package.name}.")
             process_requires(target_package.setup_filename, True)
             set_version_py(target_package.setup_filename, new_version)
             set_dev_classifier(target_package.setup_filename, new_version)
+            print("{0}: {1} -> {2}".format(target_package.name, target_package.version, new_version))
         except:
             print("Could not set dev version for package: {0}".format(target_package.name))

@@ -28,6 +28,7 @@ from .._generated.models import (
 from .._models import (
     CallConnectionProperties,
     RecordingProperties,
+    RecordingResult,
     ChannelAffinity,
     CallInvite,
     AzureCommunicationsRecordingStorage,
@@ -904,6 +905,20 @@ class CallAutomationClient:
             recording_id=recording_id, **kwargs
         )
         return RecordingProperties._from_generated(recording_state_result)  # pylint:disable=protected-access
+
+    @distributed_trace_async
+    async def get_recording_response(self, recording_id: str, **kwargs) -> RecordingResult:
+        """Get call recording result.
+        :param recording_id: The recording id.
+        :type recording_id: str
+        :return: recording result
+        :rtype: ~azure.communication.callautomation.RecordingResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        recording_result = await self._call_recording_client.get_recording_result(
+            recording_id=recording_id, **kwargs
+        )
+        return RecordingResult._from_generated(recording_result)  # pylint:disable=protected-access
 
     @distributed_trace_async
     async def download_recording(

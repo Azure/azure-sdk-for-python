@@ -10,7 +10,7 @@ from io import IOBase, UnsupportedOperation
 from typing import Any, Dict, Optional, Tuple
 from typing_extensions import Self
 
-from azure.core.pipeline.transport import HttpTransport, RequestsTransportResponse
+from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
 from azure.core.rest import HttpRequest
 from azure.storage.blob._serialize import get_api_version
 from requests import Response
@@ -92,7 +92,7 @@ class NonSeekableStream(IOBase):
         return self.wrapped_stream.tell()
 
 
-class MockHttpClientResponse(Response):
+class MockClientResponse(Response):
     def __init__(
         self, url: str,
         body_bytes: bytes,
@@ -100,7 +100,7 @@ class MockHttpClientResponse(Response):
         status: int = 200,
         reason: str = "OK"
     ) -> None:
-        super(MockHttpClientResponse).__init__()
+        super(MockClientResponse).__init__()
         self._url = url
         self._body = body_bytes
         self._content = body_bytes
@@ -113,9 +113,9 @@ class MockHttpClientResponse(Response):
         self.raw = HTTPResponse()
 
 
-class MockStorageTransport(HttpTransport):
+class MockLegacyTransport(RequestsTransport):
     """
-    This transport returns legacy http response objects from azure core and is
+    This transport returns http response objects from azure core pipelines and is
     intended only to test our backwards compatibility support.
     """
     def send(self, request: HttpRequest, **kwargs: Any) -> RequestsTransportResponse:
@@ -132,7 +132,7 @@ class MockStorageTransport(HttpTransport):
 
             rest_response = RequestsTransportResponse(
                 request=request,
-                requests_response=MockHttpClientResponse(
+                requests_response=MockClientResponse(
                     request.url,
                     b"Hello World!",
                     headers,
@@ -142,7 +142,7 @@ class MockStorageTransport(HttpTransport):
             # get_blob_properties
             rest_response = RequestsTransportResponse(
                 request=request,
-                requests_response=MockHttpClientResponse(
+                requests_response=MockClientResponse(
                     request.url,
                     b"",
                     {
@@ -155,7 +155,7 @@ class MockStorageTransport(HttpTransport):
             # upload_blob
             rest_response = RequestsTransportResponse(
                 request=request,
-                requests_response=MockHttpClientResponse(
+                requests_response=MockClientResponse(
                     request.url,
                     b"",
                     {
@@ -169,7 +169,7 @@ class MockStorageTransport(HttpTransport):
             # delete_blob
             rest_response = RequestsTransportResponse(
                 request=request,
-                requests_response=MockHttpClientResponse(
+                requests_response=MockClientResponse(
                     request.url,
                     b"",
                     {
@@ -180,7 +180,7 @@ class MockStorageTransport(HttpTransport):
                 )
             )
         else:
-            raise ValueError("The request is not accepted as part of MockStorageTransport.")
+            raise ValueError("The request is not accepted as part of MockLegacyTransport.")
         return rest_response
 
     def __enter__(self) -> Self:

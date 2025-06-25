@@ -25,6 +25,7 @@ import test_config
 from azure.cosmos.aio import CosmosClient, _retry_utility_async, DatabaseProxy
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 from azure.cosmos.partition_key import PartitionKey
+from azure.cosmos import ThroughputProperties
 
 
 class TimeoutTransport(AsyncioRequestsTransport):
@@ -956,7 +957,6 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
             assert expected_offer_type == offer.properties.get('offerType')
 
     async def test_offer_read_and_query_async(self):
-
         # Create database.
         db = self.database_for_test
 
@@ -968,7 +968,6 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         self.__validate_offer_response_body(expected_offer, collection_properties.get('_self'), None)
 
     async def test_offer_replace_async(self):
-
         collection = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # Read Offer
         expected_offer = await collection.get_throughput()
@@ -984,7 +983,6 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         assert expected_offer.offer_throughput + 100 == replaced_offer.offer_throughput
 
     async def test_index_progress_headers_async(self):
-
         created_db = self.database_for_test
         consistent_coll = created_db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         created_container = created_db.get_container_client(container=consistent_coll)
@@ -1006,6 +1004,35 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         assert HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers
 
         await created_db.delete_container(none_coll)
+
+    async def test_replace_throughput_offer_with_int(self):
+        created_db = self.database_for_test
+        collection = created_db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
+
+        new_throughput = ThroughputProperties(offer_throughput=2500)
+        await collection.replace_throughput(new_throughput.offer_throughput)
+
+        retrieve_throughput = await collection.get_throughput()
+        assert getattr(retrieve_throughput, "offer_throughput") == getattr(new_throughput, "offer_throughput")
+
+    async def test_replace_throughput_offer_with_object(self):
+        created_db = self.database_for_test
+        collection = created_db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
+
+        new_throughput = ThroughputProperties(offer_throughput=2500)
+        await collection.replace_throughput(new_throughput)
+
+        retrieve_throughput = await collection.get_throughput()
+        assert getattr(retrieve_throughput, "offer_throughput") == getattr(new_throughput, "offer_throughput")
+
+    async def test_negative_replace_throughput_with_all_configs_set(self):
+        created_db = self.database_for_test
+        collection = created_db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
+
+        new_throughput = ThroughputProperties(offer_throughput=2500, auto_scale_max_throughput=4000, auto_scale_increment_percent=5)
+
+        with pytest.raises(KeyError):
+            await collection.replace_throughput(new_throughput)
 
     async def _mock_execute_function(self, function, *args, **kwargs):
         if HttpHeaders.PartitionKey in args[4].headers:

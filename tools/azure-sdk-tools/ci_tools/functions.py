@@ -15,7 +15,7 @@ from ci_tools.parsing import ParsedSetup, get_config_setting, get_pyproject
 from pypi_tools.pypi import PyPIClient
 
 import os, sys, platform, glob, re, logging
-from typing import List, Any, Optional
+from typing import List, Any, Optional, Tuple
 
 INACTIVE_CLASSIFIER = "Development Status :: 7 - Inactive"
 
@@ -42,10 +42,7 @@ MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
     "azure-mgmt-core",
 ]
 
-TEST_COMPATIBILITY_MAP = {
-    "azure-ai-ml": ">=3.7",
-    "azure-ai-evaluation": ">=3.9, !=3.13.*"
-}
+TEST_COMPATIBILITY_MAP = {"azure-ai-ml": ">=3.7", "azure-ai-evaluation": ">=3.9, !=3.13.*"}
 TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
     "azure-storage-blob": "pypy",
     "azure-storage-queue": "pypy",
@@ -55,6 +52,7 @@ TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
     "azure-servicebus": "pypy",
     "azure-ai-projects": "pypy",
     "azure-ai-agents": "pypy",
+    "azure-identity-broker": "pypy",
 }
 
 omit_regression = (
@@ -407,7 +405,7 @@ def process_requires(setup_py_path: str, is_dev_build: bool = False):
     else:
         logging.info("Packages not available on PyPI:{}".format(requirement_to_update))
         update_requires(setup_py_path, requirement_to_update)
-        logging.info("Package requirement is updated in setup.py")
+        logging.info(f"Package requirement is updated in {'pyproject.toml' if pkg_details.is_pyproject else 'setup.py'}.")
 
 
 def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> Optional[str]:
@@ -697,7 +695,9 @@ def is_package_compatible(
     return True
 
 
-def get_total_coverage(coverage_file: str, coverage_config_file: str, package_name: str, repo_root: Optional[str] = None) -> Optional[float]:
+def get_total_coverage(
+    coverage_file: str, coverage_config_file: str, package_name: str, repo_root: Optional[str] = None
+) -> Optional[float]:
     try:
         import coverage
         from coverage.exceptions import NoDataError
@@ -717,7 +717,9 @@ def get_total_coverage(coverage_file: str, coverage_config_file: str, package_na
     try:
         if repo_root:
             os.chdir(repo_root)
-        logging.info(f"Running coverage report against \"{coverage_file}\" with \"{coverage_config_file}\" from \"{os.getcwd()}\".")
+        logging.info(
+            f'Running coverage report against "{coverage_file}" with "{coverage_config_file}" from "{os.getcwd()}".'
+        )
         report = cov.report()
     except NoDataError as e:
         logging.info(f"Package {package_name} did not generate any coverage output: {e}")
@@ -891,3 +893,55 @@ def handle_incompatible_minimum_dev_reqs(
                     cleansed_reqs.append(cleansed_dev_requirement_line)
 
     return cleansed_reqs
+
+
+def verify_package_classifiers(package_name: str, package_version: str, package_classifiers: List[str]) -> Tuple[bool, Optional[str]]:
+    """
+    Verify that the package classifiers match the expected classifiers.
+    :param str package_name: The name of the package being verified. Used for detail in the error response.
+    :param str package_version: The version of the package being verified.
+    :param List[str] package_classifiers: The classifiers of the package being verified.
+    :returns: A tuple, (x, y), where x is whether the package version matches its classifiers, and y is an error message or None.
+    """
+
+    dev_status = parse(package_version)
+
+    # gather all development‐status classifiers
+    dev_classifiers = [c for c in package_classifiers if c.startswith("Development Status ::")]
+
+    # beta releases: enforce that only development status 4 is present
+    if dev_status.is_prerelease:
+        for c in dev_classifiers:
+            if "4 - Beta" not in c:
+                return False, f"{package_name} has version {package_version} and is a beta release, but has development status '{c}'. Expected 'Development Status :: 4 - Beta' ONLY."
+        return True, None
+
+    # ga releases: all development statuses must be >= 5
+    for c in dev_classifiers:
+        try:
+            # "Development Status :: 5 - Production/Stable"
+            # or Development Status :: 6 - Mature
+            # or Development Status :: 7 - Inactive
+            num = int(c.split("::")[1].split("-")[0].strip())
+        except (IndexError, ValueError):
+            return False, f"{package_name} has version {package_version} and is a GA release, but failed to pull a status number from status '{c}'. Expecting format identical to 'Development Status :: 5 - Production/Stable'."
+        if num < 5:
+            return False, f"{package_name} has version {package_version} and is a GA release, but had development status '{c}'. Expecting a development classifier that is equal or greater than 'Development Status :: 5 - Production/Stable'."
+    return True, None
+
+def get_pip_command(python_exe: Optional[str] = None) -> List[str]:
+    """
+    Determine whether to use 'uv pip' or regular 'pip' based on environment.
+
+    :param str python_exe: The Python executable to use (if not using the default).
+    :return: List of command arguments for pip.
+    :rtype: List[str]
+    
+    """
+    # Check TOX_PIP_IMPL environment variable (aligns with tox.ini configuration)
+    pip_impl = os.environ.get('TOX_PIP_IMPL', 'pip').lower()
+
+    if pip_impl == 'uv':
+        return ["uv", "pip"]
+    else:
+        return [python_exe if python_exe else sys.executable, "-m", "pip"]

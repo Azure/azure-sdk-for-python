@@ -171,3 +171,4 @@ component-detection-pip-report.json
 **/.project
 **/.pydevproject
 **/.settings
+.github/prompts/copilot-instructions.md

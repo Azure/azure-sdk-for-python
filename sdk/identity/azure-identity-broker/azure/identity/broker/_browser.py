@@ -196,6 +196,8 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
                 instance_discovery=self._instance_discovery,
                 enable_broker_on_windows=True,
                 enable_broker_on_mac=True,
+                enable_broker_on_linux=True,
+                enable_broker_on_wsl=True,
                 enable_pii_log=self._enable_support_logging,
             )
 
@@ -231,6 +233,8 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
             instance_discovery=self._instance_discovery,
             enable_broker_on_windows=False,
             enable_broker_on_mac=False,
+            enable_broker_on_linux=False,
+            enable_broker_on_wsl=False,
             enable_pii_log=self._enable_support_logging,
         )
 
