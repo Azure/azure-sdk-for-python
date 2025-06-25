@@ -6,6 +6,7 @@ import os
 from typing import Dict, List, Optional, Union
 
 from azure.core.credentials import TokenCredential
+from azure.core.pipeline.policies import UserAgentPolicy
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager
 from azure.ai.evaluation._common.raiclient import MachineLearningServicesClient
@@ -13,6 +14,7 @@ from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._common.utils import is_onedp_project
 from azure.ai.evaluation._common.onedp import AIProjectClient
 from azure.ai.evaluation._common import EvaluationServiceOneDPClient
+from azure.ai.evaluation._user_agent import UserAgentSingleton
 import jwt
 import time
 import ast
@@ -31,6 +33,9 @@ class GeneratedRAIClient:
         self.azure_ai_project = azure_ai_project
         self.token_manager = token_manager
         
+
+        user_agent_policy=UserAgentPolicy(base_user_agent=UserAgentSingleton().value)
+
         if not is_onedp_project(azure_ai_project):
             # Service URL construction
             if "RAI_SVC_URL" in os.environ:
@@ -47,9 +52,9 @@ class GeneratedRAIClient:
                 credential=self.token_manager,
             ).rai_svc
         else:
-            self._client = AIProjectClient(endpoint=azure_ai_project, credential=token_manager).red_teams
-            self._operations_client = AIProjectClient(endpoint=azure_ai_project, credential=token_manager).evaluations
-            self._evaluation_onedp_client = EvaluationServiceOneDPClient(endpoint=azure_ai_project, credential=token_manager)
+            self._client = AIProjectClient(endpoint=azure_ai_project, credential=token_manager, user_agent_policy=user_agent_policy).red_teams
+            self._operations_client = AIProjectClient(endpoint=azure_ai_project, credential=token_manager, user_agent_policy=user_agent_policy).evaluations
+            self._evaluation_onedp_client = EvaluationServiceOneDPClient(endpoint=azure_ai_project, credential=token_manager, user_agent_policy=user_agent_policy)
         
     def _get_service_discovery_url(self):
         """Get the service discovery URL.

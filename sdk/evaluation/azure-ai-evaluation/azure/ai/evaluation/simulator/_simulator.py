@@ -19,13 +19,10 @@ from azure.ai.evaluation._common.utils import construct_prompty_model_config
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 
 from .._exceptions import ErrorBlame, ErrorCategory, EvaluationException
-from .._user_agent import USER_AGENT
+from .._user_agent import UserAgentSingleton
 from ._conversation.constants import ConversationRole
 from ._helpers import ConversationHistory, Turn
 from ._utils import JsonLineChatProtocol
-
-
-USER_AGENT += " (type=simulator; subtype=Simulator)"
 
 
 @experimental
@@ -53,6 +50,9 @@ class Simulator:
         if "api_version" not in self.model_config:
             self.model_config["api_version"] = "2024-06-01"  # type: ignore
 
+    @staticmethod
+    def __user_agent() -> str:
+        return f"{UserAgentSingleton().value} (type=simulator; subtype=Simulator)"
     @staticmethod
     def _validate_model_config(model_config: Any):
         """
@@ -378,7 +378,7 @@ class Simulator:
                     prompty_model_config = construct_prompty_model_config(
                         model_config=prompty_model_config,  # type: ignore
                         default_api_version="2024-06-01",
-                        user_agent=USER_AGENT,
+                        user_agent=self.__user_agent(),
                     )
                     return AsyncPrompty.load(source=prompty_path, model=prompty_model_config)  # type: ignore
             except FileNotFoundError as e:
@@ -392,7 +392,7 @@ class Simulator:
         prompty_model_config = construct_prompty_model_config(
             model_config=prompty_model_config,  # type: ignore
             default_api_version="2024-06-01",
-            user_agent=USER_AGENT,
+            user_agent=self.__user_agent(),
         )
         return AsyncPrompty.load(
             source=user_simulator_prompty,
@@ -517,7 +517,7 @@ class Simulator:
                     prompty_model_config = construct_prompty_model_config(
                         model_config=prompty_model_config,  # type: ignore
                         default_api_version="2024-06-01",
-                        user_agent=USER_AGENT,
+                        user_agent=self.__user_agent(),
                     )
                     return AsyncPrompty.load(source=prompty_path, model=prompty_model_config)  # type: ignore
             except FileNotFoundError as e:
@@ -531,7 +531,7 @@ class Simulator:
         prompty_model_config = construct_prompty_model_config(
             model_config=prompty_model_config,  # type: ignore
             default_api_version="2024-06-01",
-            user_agent=USER_AGENT,
+            user_agent=self.__user_agent(),
         )
         return AsyncPrompty.load(
             source=query_response_generating_prompty,
