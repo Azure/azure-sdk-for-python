@@ -265,7 +265,6 @@ def demonstrate_score_model_grader():
     except Exception as e:
         print(f"\n❌ Error during evaluation: {str(e)}")
         print("\nFalling back to demonstration mode...")
-        demonstrate_configuration_only()
 
     # Clean up
     if os.path.exists(data_file):
@@ -278,9 +277,9 @@ if __name__ == "__main__":
     
     # Check if environment variables are set
     required_vars = [
-        "4o_mini_target_endpoint",
-        "4o_mini_target_endpoint_key", 
-        "4o_mini_target_endpoint_deployment_name"
+        "endpoint",
+        "key", 
+        "deployment_name"
     ]
     
     missing_vars = [var for var in required_vars if not os.environ.get(var)]
