@@ -23,6 +23,8 @@ USAGE:
     6) AZURE_PROJECT_NAME
 
 """
+
+
 class EvaluationThresholdSamples(object):
     def evaluation_classes_methods_with_thresholds(self):
         # [START threshold_evaluate_method]
@@ -67,8 +69,12 @@ class EvaluationThresholdSamples(object):
         from azure.ai.evaluation import BleuScoreEvaluator
 
         bleu_evaluator = BleuScoreEvaluator(threshold=0.3)
-        bleu_score = bleu_evaluator(response="Lyon is the capital of France.", ground_truth="Paris is the capital of France.")
-        print(f"BLEU Score: {bleu_score['bleu_score']}, Result: {bleu_score['bleu_result']}, Threshold: {bleu_score['bleu_threshold']}")
+        bleu_score = bleu_evaluator(
+            response="Lyon is the capital of France.", ground_truth="Paris is the capital of France."
+        )
+        print(
+            f"BLEU Score: {bleu_score['bleu_score']}, Result: {bleu_score['bleu_result']}, Threshold: {bleu_score['bleu_threshold']}"
+        )
         # [END threshold_bleu_score_evaluator]
 
         # [START threshold_coherence_evaluator]
@@ -82,7 +88,9 @@ class EvaluationThresholdSamples(object):
         }
         coherence_evaluator = CoherenceEvaluator(model_config=model_config, threshold=2)
         coherence_evaluator(query="What is the capital of France?", response="Paris is the capital of France.")
-        print(f"Coherence Score: {coherence_evaluator['coherence']}, Result: {coherence_evaluator['coherence_result']}, Threshold: {coherence_evaluator['coherence_threshold']}")
+        print(
+            f"Coherence Score: {coherence_evaluator['coherence']}, Result: {coherence_evaluator['coherence_result']}, Threshold: {coherence_evaluator['coherence_threshold']}"
+        )
         # [END coherence_evaluator]
 
         # [START threshold_content_safety_evaluator]
@@ -117,7 +125,9 @@ class EvaluationThresholdSamples(object):
         }
         credential = DefaultAzureCredential()
 
-        hate_unfairness_eval = HateUnfairnessEvaluator(azure_ai_project=azure_ai_project, credential=credential, threshold=1)
+        hate_unfairness_eval = HateUnfairnessEvaluator(
+            azure_ai_project=azure_ai_project, credential=credential, threshold=1
+        )
         hate_unfairness_eval(
             query="What is the capital of France?",
             response="Paris",
@@ -248,13 +258,13 @@ class EvaluationThresholdSamples(object):
         }
 
         qa_eval = QAEvaluator(
-            model_config=model_config, 
+            model_config=model_config,
             groundedness_threshold=2,
             relevance_threshold=2,
             coherence_threshold=2,
             fluency_threshold=2,
             similarity_threshold=2,
-            f1_score_threshold=0.5
+            f1_score_threshold=0.5,
         )
         qa_eval(query="This's the color?", response="Black", ground_truth="gray", context="gray")
         # [END threshold_qa_evaluator]
@@ -311,10 +321,7 @@ class EvaluationThresholdSamples(object):
         from azure.ai.evaluation import RougeScoreEvaluator, RougeType
 
         rouge_evaluator = RougeScoreEvaluator(
-            rouge_type=RougeType.ROUGE_4, 
-            precision_threshold=0.5,
-            recall_threshold=0.5,
-            f1_score_threshold=0.5
+            rouge_type=RougeType.ROUGE_4, precision_threshold=0.5, recall_threshold=0.5, f1_score_threshold=0.5
         )
         rouge_evaluator(response="Paris is the capital of France.", ground_truth="France's capital is Paris.")
         # [END threshold_rouge_score_evaluator]
@@ -349,7 +356,9 @@ class EvaluationThresholdSamples(object):
         }
         credential = DefaultAzureCredential()
 
-        groundedness_pro_eval = GroundednessProEvaluator(azure_ai_project=azure_ai_project, credential=credential, threshold=2)
+        groundedness_pro_eval = GroundednessProEvaluator(
+            azure_ai_project=azure_ai_project, credential=credential, threshold=2
+        )
         groundedness_pro_eval(
             query="What shape has 4 equilateral sides?",
             response="Rhombus",
@@ -361,59 +370,27 @@ class EvaluationThresholdSamples(object):
         from azure.ai.evaluation import DocumentRetrievalEvaluator
 
         retrieval_ground_truth = [
-            {
-                "document_id": "1",
-                "query_relevance_judgement": 4
-            },
-            {
-                "document_id": "2",
-                "query_relevance_judgement": 2
-            },
-            {
-                "document_id": "3",
-                "query_relevance_judgement": 3
-            },
-            {
-                "document_id": "4",
-                "query_relevance_judgement": 1
-            },
-            {
-                "document_id": "5",
-                "query_relevance_judgement": 0
-            },
+            {"document_id": "1", "query_relevance_judgement": 4},
+            {"document_id": "2", "query_relevance_judgement": 2},
+            {"document_id": "3", "query_relevance_judgement": 3},
+            {"document_id": "4", "query_relevance_judgement": 1},
+            {"document_id": "5", "query_relevance_judgement": 0},
         ]
 
         retrieved_documents = [
-            {
-                "document_id": "2",
-                "query_relevance_judgement": 45.1
-            },
-            {
-                "document_id": "6",
-                "query_relevance_judgement": 35.8
-            },
-            {
-                "document_id": "3",
-                "query_relevance_judgement": 29.2
-            },
-            {
-                "document_id": "5",
-                "query_relevance_judgement": 25.4
-            },
-            {
-                "document_id": "7",
-                "query_relevance_judgement": 18.8
-            },
+            {"document_id": "2", "query_relevance_judgement": 45.1},
+            {"document_id": "6", "query_relevance_judgement": 35.8},
+            {"document_id": "3", "query_relevance_judgement": 29.2},
+            {"document_id": "5", "query_relevance_judgement": 25.4},
+            {"document_id": "7", "query_relevance_judgement": 18.8},
         ]
 
-        threshold = {
-            "ndcg@3": 0.7,
-            "xdcg@3": 70,
-            "fidelity": 0.7
-        }
+        threshold = {"ndcg@3": 0.7, "xdcg@3": 70, "fidelity": 0.7}
 
         document_retrieval_evaluator = DocumentRetrievalEvaluator(threshold=threshold)
-        document_retrieval_evaluator(retrieval_ground_truth=retrieval_ground_truth, retrieved_documents=retrieved_documents)        
+        document_retrieval_evaluator(
+            retrieval_ground_truth=retrieval_ground_truth, retrieved_documents=retrieved_documents
+        )
         # [END document_retrieval_evaluator]
 
 

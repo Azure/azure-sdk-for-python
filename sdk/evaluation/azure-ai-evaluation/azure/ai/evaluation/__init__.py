@@ -55,9 +55,12 @@ _patch_all = []
 # in ai.projects. So we only import it if it's available and the user has ai.projects.
 try:
     from ._converters._ai_services import AIAgentConverter
+
     _patch_all.append("AIAgentConverter")
 except ImportError:
-    print("[INFO] Could not import AIAgentConverter. Please install the dependency with `pip install azure-ai-projects`.")
+    print(
+        "[INFO] Could not import AIAgentConverter. Please install the dependency with `pip install azure-ai-projects`."
+    )
 
 
 __all__ = [

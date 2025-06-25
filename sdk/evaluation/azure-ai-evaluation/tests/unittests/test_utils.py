@@ -12,7 +12,7 @@ from azure.ai.evaluation._common.utils import (
     _pretty_format_conversation_history,
     reformat_conversation_history,
     _get_agent_response,
-    reformat_agent_response
+    reformat_agent_response,
 )
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorMessage
 
@@ -271,7 +271,7 @@ class TestUtils:
         content = [
             {"type": "text", "text": "Hello world"},
             {"type": "text", "text": "How are you?"},
-            {"type": "image_url", "image_url": {"url": "http://example.com/image.jpg"}}
+            {"type": "image_url", "image_url": {"url": "http://example.com/image.jpg"}},
         ]
         result = _extract_text_from_content(content)
         assert result == ["Hello world", "How are you?"]
@@ -283,7 +283,7 @@ class TestUtils:
         # Test with content without text
         content = [
             {"type": "image_url", "image_url": {"url": "http://example.com/image.jpg"}},
-            {"type": "other", "data": "some data"}
+            {"type": "other", "data": "some data"},
         ]
         result = _extract_text_from_content(content)
         assert result == []
@@ -292,7 +292,7 @@ class TestUtils:
         content = [
             {"type": "text", "text": "First message"},
             {"type": "image_url", "image_url": {"url": "http://example.com/image.jpg"}},
-            {"type": "text", "text": "Second message"}
+            {"type": "text", "text": "Second message"},
         ]
         result = _extract_text_from_content(content)
         assert result == ["First message", "Second message"]
@@ -301,45 +301,27 @@ class TestUtils:
         """Test _get_conversation_history function"""
         # Test basic conversation
         query = [
-            {
-                "role": "user",
-                "content": [{"type": "text", "text": "What is the weather?"}]
-            },
-            {
-                "role": "assistant", 
-                "content": [{"type": "text", "text": "It's sunny today."}]
-            },
-            {
-                "role": "user",
-                "content": [{"type": "text", "text": "Will it rain tomorrow?"}]
-            }
+            {"role": "user", "content": [{"type": "text", "text": "What is the weather?"}]},
+            {"role": "assistant", "content": [{"type": "text", "text": "It's sunny today."}]},
+            {"role": "user", "content": [{"type": "text", "text": "Will it rain tomorrow?"}]},
         ]
-        
+
         result = _get_conversation_history(query)
         expected = {
-            'user_queries': [[["What is the weather?"]], [["Will it rain tomorrow?"]]],
-            'agent_responses': [[["It's sunny today."]]]
+            "user_queries": [[["What is the weather?"]], [["Will it rain tomorrow?"]]],
+            "agent_responses": [[["It's sunny today."]]],
         }
         assert result == expected
 
         # Test conversation with multiple messages per turn
         query = [
-            {
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": "Hello"},
-                    {"type": "text", "text": "How are you?"}
-                ]
-            },
+            {"role": "user", "content": [{"type": "text", "text": "Hello"}, {"type": "text", "text": "How are you?"}]},
             {
                 "role": "assistant",
-                "content": [
-                    {"type": "text", "text": "Hi there!"},
-                    {"type": "text", "text": "I'm doing well, thanks."}
-                ]
-            }
+                "content": [{"type": "text", "text": "Hi there!"}, {"type": "text", "text": "I'm doing well, thanks."}],
+            },
         ]
-        
+
         # there is an assertion because there is one user query ["Hello", "How are you?"] and one agent response ["Hi there!", "I'm doing well, thanks."]
         # the user query length needs to be one more than the agent response length
         with pytest.raises(EvaluationException, match=str(ErrorMessage.MALFORMED_CONVERSATION_HISTORY)):
@@ -347,24 +329,15 @@ class TestUtils:
 
         # Test conversation ending with user message
         query = [
-            {
-                "role": "user",
-                "content": [{"type": "text", "text": "First question"}]
-            },
-            {
-                "role": "assistant",
-                "content": [{"type": "text", "text": "First answer"}]
-            },
-            {
-                "role": "user", 
-                "content": [{"type": "text", "text": "Second question"}]
-            }
+            {"role": "user", "content": [{"type": "text", "text": "First question"}]},
+            {"role": "assistant", "content": [{"type": "text", "text": "First answer"}]},
+            {"role": "user", "content": [{"type": "text", "text": "Second question"}]},
         ]
-        
+
         result = _get_conversation_history(query)
         expected = {
-            'user_queries': [[["First question"]], [["Second question"]]],
-            'agent_responses': [[["First answer"]]]
+            "user_queries": [[["First question"]], [["Second question"]]],
+            "agent_responses": [[["First answer"]]],
         }
         assert result == expected
 
@@ -373,42 +346,27 @@ class TestUtils:
         # Test with messages missing role
         query = [
             {"content": [{"type": "text", "text": "No role"}]},
-            {
-                "role": "user",
-                "content": [{"type": "text", "text": "Has role"}]
-            }
+            {"role": "user", "content": [{"type": "text", "text": "Has role"}]},
         ]
-        
+
         result = _get_conversation_history(query)
-        expected = {
-            'user_queries': [[["Has role"]]],
-            'agent_responses': []
-        }
+        expected = {"user_queries": [[["Has role"]]], "agent_responses": []}
         assert result == expected
 
         # Test with messages missing content
-        query = [
-            {"role": "user"},
-            {
-                "role": "user",
-                "content": [{"type": "text", "text": "Has content"}]
-            }
-        ]
-        
+        query = [{"role": "user"}, {"role": "user", "content": [{"type": "text", "text": "Has content"}]}]
+
         result = _get_conversation_history(query)
-        expected = {
-            'user_queries': [[["Has content"]]],
-            'agent_responses': []
-        }
+        expected = {"user_queries": [[["Has content"]]], "agent_responses": []}
         assert result == expected
 
     def test__pretty_format_conversation_history(self):
         """Test _pretty_format_conversation_history function"""
         conversation_history = {
-            'user_queries': [[["What is the weather?"]], [["Will it rain tomorrow?"]]],
-            'agent_responses': [[["It's sunny today."]]]
+            "user_queries": [[["What is the weather?"]], [["Will it rain tomorrow?"]]],
+            "agent_responses": [[["It's sunny today."]]],
         }
-        
+
         result = _pretty_format_conversation_history(conversation_history)
         expected = (
             "User turn 1:\n"
@@ -422,10 +380,10 @@ class TestUtils:
 
         # Test with multiple messages per turn
         conversation_history = {
-            'user_queries': [[["Hello", "How are you?"]]],
-            'agent_responses': [[["Hi there!", "I'm doing well, thanks."]]]
+            "user_queries": [[["Hello", "How are you?"]]],
+            "agent_responses": [[["Hi there!", "I'm doing well, thanks."]]],
         }
-        
+
         result = _pretty_format_conversation_history(conversation_history)
         expected = (
             "User turn 1:\n"
@@ -439,20 +397,11 @@ class TestUtils:
         """Test reformat_conversation_history function"""
         # Test valid conversation
         query = [
-            {
-                "role": "user",
-                "content": [{"type": "text", "text": "What is AI?"}]
-            },
-            {
-                "role": "assistant",
-                "content": [{"type": "text", "text": "AI stands for Artificial Intelligence."}]
-            },
-            {
-                "role": "user",
-                "content": [{"type": "text", "text": "Tell me more."}]
-            }
+            {"role": "user", "content": [{"type": "text", "text": "What is AI?"}]},
+            {"role": "assistant", "content": [{"type": "text", "text": "AI stands for Artificial Intelligence."}]},
+            {"role": "user", "content": [{"type": "text", "text": "Tell me more."}]},
         ]
-        
+
         result = reformat_conversation_history(query)
         expected = (
             "User turn 1:\n"
@@ -475,43 +424,28 @@ class TestUtils:
         agent_response_msgs = [
             {
                 "role": "assistant",
-                "content": [
-                    {"type": "text", "text": "Hello!"},
-                    {"type": "text", "text": "How can I help you?"}
-                ]
+                "content": [{"type": "text", "text": "Hello!"}, {"type": "text", "text": "How can I help you?"}],
             }
         ]
-        
+
         result = _get_agent_response(agent_response_msgs)
         assert result == ["Hello!", "How can I help you?"]
 
         # Test with multiple assistant messages
         agent_response_msgs = [
-            {
-                "role": "assistant",
-                "content": [{"type": "text", "text": "First response"}]
-            },
-            {
-                "role": "assistant", 
-                "content": [{"type": "text", "text": "Second response"}]
-            }
+            {"role": "assistant", "content": [{"type": "text", "text": "First response"}]},
+            {"role": "assistant", "content": [{"type": "text", "text": "Second response"}]},
         ]
-        
+
         result = _get_agent_response(agent_response_msgs)
         assert result == ["First response", "Second response"]
 
         # Test with non-assistant messages
         agent_response_msgs = [
-            {
-                "role": "user",
-                "content": [{"type": "text", "text": "User message"}]
-            },
-            {
-                "role": "assistant",
-                "content": [{"type": "text", "text": "Assistant message"}]
-            }
+            {"role": "user", "content": [{"type": "text", "text": "User message"}]},
+            {"role": "assistant", "content": [{"type": "text", "text": "Assistant message"}]},
         ]
-        
+
         result = _get_agent_response(agent_response_msgs)
         assert result == ["Assistant message"]
 
@@ -523,12 +457,9 @@ class TestUtils:
         agent_response_msgs = [
             {"content": [{"type": "text", "text": "No role"}]},
             {"role": "assistant"},
-            {
-                "role": "assistant",
-                "content": [{"type": "text", "text": "Valid message"}]
-            }
+            {"role": "assistant", "content": [{"type": "text", "text": "Valid message"}]},
         ]
-        
+
         result = _get_agent_response(agent_response_msgs)
         assert result == ["Valid message"]
 
@@ -538,13 +469,10 @@ class TestUtils:
         response = [
             {
                 "role": "assistant",
-                "content": [
-                    {"type": "text", "text": "Hello!"},
-                    {"type": "text", "text": "How can I help you?"}
-                ]
+                "content": [{"type": "text", "text": "Hello!"}, {"type": "text", "text": "How can I help you?"}],
             }
         ]
-        
+
         result = reformat_agent_response(response)
         assert result == "Hello!\nHow can I help you?"
 
@@ -554,12 +482,7 @@ class TestUtils:
         assert result == ""
 
         # Test with no valid assistant messages
-        response = [
-            {
-                "role": "user",
-                "content": [{"type": "text", "text": "User message"}]
-            }
-        ]
+        response = [{"role": "user", "content": [{"type": "text", "text": "User message"}]}]
         result = reformat_agent_response(response)
         assert result == response
 
@@ -575,47 +498,34 @@ class TestUtils:
             {"text": "Missing type field"},
             {"type": "text"},  # Missing text field
             {"type": "text", "text": ""},  # Empty text
-            {"type": "text", "text": "Valid text"}
+            {"type": "text", "text": "Valid text"},
         ]
         result = _extract_text_from_content(malformed_content)
-        assert result == ['Missing type field', '', 'Valid text']
+        assert result == ["Missing type field", "", "Valid text"]
 
         # Test _get_conversation_history assertion error
         query_with_unbalanced_turns = [
-            {
-                "role": "assistant",
-                "content": [{"type": "text", "text": "Response without user query"}]
-            }
+            {"role": "assistant", "content": [{"type": "text", "text": "Response without user query"}]}
         ]
-        
+
         with pytest.raises(EvaluationException, match=str(ErrorMessage.MALFORMED_CONVERSATION_HISTORY)):
             _get_conversation_history(query_with_unbalanced_turns)
 
     def test_extract_text_from_content_with_list(self):
         """Test _extract_text_from_content function with list input."""
         # Test with list of dict content
-        content = [
-            {"text": "Hello"},
-            {"text": " world"}
-        ]
+        content = [{"text": "Hello"}, {"text": " world"}]
         assert _extract_text_from_content(content) == ["Hello", " world"]
-        
+
         # Test with mixed content (text and non-text)
-        content = [
-            {"text": "Hello"},
-            {"type": "image", "url": "image.jpg"},
-            {"text": " world"}
-        ]
+        content = [{"text": "Hello"}, {"type": "image", "url": "image.jpg"}, {"text": " world"}]
         assert _extract_text_from_content(content) == ["Hello", " world"]
-        
+
         # Test with empty list
         assert _extract_text_from_content([]) == []
-        
+
         # Test with non-text items only
-        content = [
-            {"type": "image", "url": "image.jpg"},
-            {"type": "video", "url": "video.mp4"}
-        ]
+        content = [{"type": "image", "url": "image.jpg"}, {"type": "video", "url": "video.mp4"}]
         assert _extract_text_from_content(content) == []
 
     def test_get_conversation_history_with_queries_and_responses(self):
@@ -624,16 +534,13 @@ class TestUtils:
         conversation = [
             {"role": "user", "content": [{"text": "Hello"}]},
             {"role": "assistant", "content": [{"text": "Hi there!"}]},
-            {"role": "user", "content": [{"text": "How are you?"}]}
+            {"role": "user", "content": [{"text": "How are you?"}]},
         ]
-        
+
         result = _get_conversation_history(conversation)
-        expected = {
-            'user_queries': [[["Hello"]], [["How are you?"]]],
-            'agent_responses': [[["Hi there!"]]]
-        }
+        expected = {"user_queries": [[["Hello"]], [["How are you?"]]], "agent_responses": [[["Hi there!"]]]}
         assert result == expected
-        
+
         conversation = []
         with pytest.raises(EvaluationException, match=str(ErrorMessage.MALFORMED_CONVERSATION_HISTORY)):
             _get_conversation_history(conversation)
@@ -641,11 +548,8 @@ class TestUtils:
     def test_pretty_format_conversation_history_with_dict(self):
         """Test _pretty_format_conversation_history function with dict input."""
         # Test with conversation history dict
-        conversation_history = {
-            'user_queries': [[["Hello"]], [["How are you?"]]],
-            'agent_responses': [[["Hi there!"]]]
-        }
-        
+        conversation_history = {"user_queries": [[["Hello"]], [["How are you?"]]], "agent_responses": [[["Hi there!"]]]}
+
         formatted = _pretty_format_conversation_history(conversation_history)
         assert "User turn 1:" in formatted
         assert "Hello" in formatted
@@ -660,14 +564,14 @@ class TestUtils:
         conversation = [
             {"role": "user", "content": [{"text": "What's the weather?"}]},
             {"role": "assistant", "content": [{"text": "It's sunny today."}]},
-            {"role": "user", "content": [{"text": "Will it rain tomorrow?"}]}
+            {"role": "user", "content": [{"text": "Will it rain tomorrow?"}]},
         ]
-        
+
         # Test reformatting
         formatted = reformat_conversation_history(conversation)
         assert isinstance(formatted, str)
         assert "User turn" in formatted
-        
+
         # Test fallback behavior with malformed conversation
         malformed_conversation = {"invalid": "data"}
         formatted = reformat_conversation_history(malformed_conversation)
@@ -679,15 +583,15 @@ class TestUtils:
         messages = [
             {"role": "assistant", "content": [{"text": "Hello!"}]},
             {"role": "user", "content": [{"text": "Hi"}]},
-            {"role": "assistant", "content": [{"text": "How can I help?"}]}
+            {"role": "assistant", "content": [{"text": "How can I help?"}]},
         ]
-        
+
         result = _get_agent_response(messages)
         assert result == ["Hello!", "How can I help?"]
-        
+
         # Test with empty list
         assert _get_agent_response([]) == []
-        
+
         # Test with no assistant messages
         messages = [{"role": "user", "content": [{"text": "Hello"}]}]
         assert _get_agent_response(messages) == []
@@ -697,15 +601,15 @@ class TestUtils:
         # Test with list of messages
         response = [
             {"role": "assistant", "content": [{"text": "Hello!"}]},
-            {"role": "assistant", "content": [{"text": "How can I help?"}]}
+            {"role": "assistant", "content": [{"text": "How can I help?"}]},
         ]
-        
+
         formatted = reformat_agent_response(response)
         assert formatted == "Hello!\nHow can I help?"
-        
+
         # Test with empty response
         assert reformat_agent_response([]) == ""
-        
+
         # Test fallback behavior
         malformed_response = {"invalid": "structure"}
         formatted = reformat_agent_response(malformed_response)
@@ -713,22 +617,19 @@ class TestUtils:
 
     def test_utility_functions_edge_cases(self):
         """Test edge cases and error handling for utility functions."""
-        
+
         # Test _extract_text_from_content with malformed data
-        malformed_content = [
-            {"missing_text": "Hello"},
-            {"text": "world"}
-        ]
+        malformed_content = [{"missing_text": "Hello"}, {"text": "world"}]
         # Should handle gracefully and extract what it can
         result = _extract_text_from_content(malformed_content)
         assert result == ["world"]
-        
+
         # Test functions with very large inputs
         large_content = [{"text": "x" * 1000}] * 10
         result = _extract_text_from_content(large_content)
         assert len(result) == 10
         assert all(len(text) == 1000 for text in result)
-        
+
         # Test with unicode content
         unicode_content = [{"text": "Hello 世界 🌍"}]
         result = _extract_text_from_content(unicode_content)

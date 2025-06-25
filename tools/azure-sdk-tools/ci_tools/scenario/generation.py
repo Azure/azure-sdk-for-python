@@ -131,7 +131,7 @@ def create_package_and_install(
 
                         # parse the specifier
                         requirement = parse_require(req)
-                        req_name = requirement.key
+                        req_name = requirement.name
                         req_specifier = requirement.specifier if len(requirement.specifier) else None
 
                         # if we have the package already present...
@@ -160,7 +160,7 @@ def create_package_and_install(
                                 )
                             except subprocess.CalledProcessError as e:
                                 requirement = parse_require(addition)
-                                non_present_reqs.append(requirement.key)
+                                non_present_reqs.append(requirement.name)
 
                         additional_downloaded_reqs = [
                             os.path.abspath(os.path.join(tmp_dl_folder, pth)) for pth in os.listdir(tmp_dl_folder)
