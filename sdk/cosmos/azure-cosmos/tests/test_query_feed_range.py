@@ -22,7 +22,7 @@ def add_all_pk_values_to_set(items: List[Mapping[str, str]], pk_value_set: Set[s
     if len(items) == 0:
         return
 
-    pk_values = [item['pk'] for item in items]
+    pk_values = [item['pk'] for item in items if 'pk' in item]
     pk_value_set.update(pk_values)
 
 @pytest.fixture(scope="class", autouse=True)
