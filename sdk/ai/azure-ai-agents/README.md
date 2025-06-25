@@ -373,8 +373,7 @@ with project_client:
 ### Create Agent with Deep Research tool
 
 To enable your Agent to do a detailed research of a topic, use the `DeepResearchTool` along with a connection to a Bing Grounding resource.
-
-This scenarios requires you to specify two model deployments. One is the chat model that does arbitration, and is
+This scenarios requires you to specify two model deployments. One is the generic chat model that does arbitration, and is
 specified as usual when you call the `create_agent` method. The other is the Deep Research model, which is specified
 when you define the `DeepResearchTool`.
 
@@ -399,7 +398,7 @@ with project_client:
         agent = agents_client.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"],
             name="my-agent",
-            instructions="You are a helpful agent",
+            instructions="You are a helpful Agent that assists in researching scientific topics.",
             tools=deep_research_tool.definitions,
         )
 ```

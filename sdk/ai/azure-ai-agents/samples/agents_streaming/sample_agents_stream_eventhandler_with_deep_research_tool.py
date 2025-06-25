@@ -9,6 +9,12 @@ DESCRIPTION:
     This sample demonstrates how to use Agent operations with the Deep Research tool from
     the Azure Agents service, while using an event handler and a synchronous client.
 
+    See also other Deep Research tool samples:
+    - /agents_tools/sample_agents_deep_research.py
+    - /agents_streaming/sample_agents_stream_iteration_with_deep_research_tool.py
+
+    For more information see the Deep Research Tool document: https://aka.ms/agents-deep-research
+
 USAGE:
     python sample_agents_stream_eventhandler_with_deep_research_tool.py
 

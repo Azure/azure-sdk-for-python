@@ -9,10 +9,12 @@ DESCRIPTION:
     This sample demonstrates how to use Agent operations with the Deep Research tool from
     the Azure Agents service using a synchronous client. This sample uses a blocking call
     `agents_client.runs.create_and_process` to process the Agent run. However, since research
-    results may take a few minutes to complete, it is recommended to use one of the two
-    streaming methods so you can see the progress of the Agent run in real-time:
-    /agents_streaming/sample_agents_stream_iteration_with_deep_research_tool.py
-    /agents_streaming/sample_agents_stream_eventhandler_with_deep_research_tool.py
+    results may take a few minutes to complete, it's recommended to use one of the two
+    streaming samples so you can see the progress of the Agent run in real-time:
+    - /agents_streaming/sample_agents_stream_iteration_with_deep_research_tool.py
+    - /agents_streaming/sample_agents_stream_eventhandler_with_deep_research_tool.py
+
+    For more information see the Deep Research Tool document: https://aka.ms/agents-deep-research
 
 USAGE:
     python sample_agents_deep_research.py
