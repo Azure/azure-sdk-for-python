@@ -311,7 +311,7 @@ def _is_synthetic_load(properties: Optional[Any]) -> bool:
     """
     if not properties:
         return False
-    
+
     # Check both old and new semantic convention attributes for HTTP user agent
     user_agent = (
         properties.get("user_agent.original") or  # type: ignore  # New semantic convention
