@@ -20,6 +20,7 @@ _SYSTEM = "system"
 _USER = "user"
 _AGENT = "assistant"
 _TOOL = "tool"
+_DEVELOPER = "developer"  # part of the semantic kernel
 
 # Constant definitions for what tool details include.
 _TOOL_CALL = "tool_call"
@@ -121,6 +122,17 @@ class UserMessage(Message):
     """
 
     role: str = _USER
+
+
+class SKDeveloperMessagege(Message):
+    """Represents a developer message in a conversation with agents, assistants, and tools.
+    This is used in the context of Semantic Kernel (SK) agents.
+
+    :param role: The role of the message sender, which is always 'developer'.
+    :type role: str
+    """
+
+    role: str = _DEVELOPER
 
 
 class ToolMessage(Message):
