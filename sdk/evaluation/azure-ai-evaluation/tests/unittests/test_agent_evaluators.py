@@ -27,8 +27,8 @@ class TestEvaluate:
             }]
         )
         assert not result["applicable"]
-        assert result["tool_call_accurate"] == "not applicable"
-        assert "No tool calls found in response or provided tool_calls." in result["tool_call_accurate_reason"]
+        assert result["tool_call_accuracy"] == "not applicable"
+        assert "No tool calls found in response or provided tool_calls." in result["tool_call_accuracy_reason"]
 
         # Test with missing tool_definitions
         result = tool_call_accuracy(
@@ -43,8 +43,8 @@ class TestEvaluate:
             }]
         )
         assert not result["applicable"]
-        assert result["tool_call_accurate"] == "not applicable"
-        assert "Tool definitions must be provided." in result["tool_call_accurate_reason"]
+        assert result["tool_call_accuracy"] == "not applicable"
+        assert "Tool definitions must be provided." in result["tool_call_accuracy_reason"]
 
         # Test with response that has no tool calls
         result = tool_call_accuracy(
@@ -65,8 +65,8 @@ class TestEvaluate:
             }]
         )
         assert not result["applicable"]
-        assert result["tool_call_accurate"] == "not applicable"
-        assert "No tool calls found in response or provided tool_calls." in result["tool_call_accurate_reason"]
+        assert result["tool_call_accuracy"] == "not applicable"
+        assert "No tool calls found in response or provided tool_calls." in result["tool_call_accuracy_reason"]
 
         # Test with tool call for which definition is not provided
         result = tool_call_accuracy(
@@ -91,5 +91,5 @@ class TestEvaluate:
             }]
         )
         assert not result["applicable"]
-        assert result["tool_call_accurate"] == "not applicable"
-        assert "Tool definitions for all tool calls must be provided." in result["tool_call_accurate_reason"]
+        assert result["tool_call_accuracy"] == "not applicable"
+        assert "Tool definitions for all tool calls must be provided." in result["tool_call_accuracy_reason"]

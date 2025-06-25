@@ -65,7 +65,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
 
     _PROMPTY_FILE = "tool_call_accuracy.prompty"
-    _RESULT_KEY = "tool_call_accurate"
+    _RESULT_KEY = "tool_call_accuracy"
 
     _MAX_TOOL_CALL_ACCURACY_SCORE = 5
     _MIN_TOOL_CALL_ACCURACY_SCORE = 1
