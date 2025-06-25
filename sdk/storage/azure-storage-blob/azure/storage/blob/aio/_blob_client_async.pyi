@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 # pylint: skip-file
 
-from contextlib import AbstractAsyncContextManager
 from datetime import datetime
 from types import TracebackType
 from typing import (
@@ -24,6 +23,7 @@ from typing import (
     Tuple,
     Union,
 )
+from typing_extensions import Self
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -55,7 +55,6 @@ class BlobClient(  # type: ignore[misc]
     AsyncStorageAccountHostsMixin,
     StorageAccountHostsMixin,
     StorageEncryptionMixin,
-    AbstractAsyncContextManager
 ):
     def __init__(
         self,
@@ -80,7 +79,7 @@ class BlobClient(  # type: ignore[misc]
         use_byte_buffer: Optional[bool] = None,
         **kwargs: Any
     ) -> None: ...
-    async def __aenter__(self) -> "BlobClient": ...
+    async def __aenter__(self) -> Self: ...
     async def __aexit__(
         self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
     ) -> None: ...
@@ -106,7 +105,7 @@ class BlobClient(  # type: ignore[misc]
         min_large_block_upload_threshold: int = 4 * 1024 * 1024 + 1,
         use_byte_buffer: Optional[bool] = None,
         **kwargs: Any
-    ) -> "BlobClient": ...
+    ) -> Self: ...
     @classmethod
     def from_connection_string(
         cls,
@@ -130,7 +129,7 @@ class BlobClient(  # type: ignore[misc]
         min_large_block_upload_threshold: int = 4 * 1024 * 1024 + 1,
         use_byte_buffer: Optional[bool] = None,
         **kwargs: Any
-    ) -> "BlobClient": ...
+    ) -> Self: ...
     @distributed_trace_async
     async def get_account_information(self, **kwargs: Any) -> Dict[str, str]: ...
     @distributed_trace_async

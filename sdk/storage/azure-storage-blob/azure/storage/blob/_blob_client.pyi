@@ -21,6 +21,7 @@ from typing import (
     Tuple,
     Union,
 )
+from typing_extensions import Self
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
@@ -75,7 +76,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         use_byte_buffer: Optional[bool] = None,
         **kwargs: Any
     ) -> None: ...
-    def __enter__(self) -> "BlobClient": ...
+    def __enter__(self) -> Self: ...
     def __exit__(
         self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
     ) -> None: ...
@@ -101,7 +102,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         min_large_block_upload_threshold: int = 4 * 1024 * 1024 + 1,
         use_byte_buffer: Optional[bool] = None,
         **kwargs: Any
-    ) -> "BlobClient": ...
+    ) -> Self: ...
     @classmethod
     def from_connection_string(
         cls,
@@ -125,7 +126,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         min_large_block_upload_threshold: int = 4 * 1024 * 1024 + 1,
         use_byte_buffer: Optional[bool] = None,
         **kwargs: Any
-    ) -> "BlobClient": ...
+    ) -> Self: ...
     @distributed_trace
     def get_account_information(self, **kwargs: Any) -> Dict[str, str]: ...
     @distributed_trace
