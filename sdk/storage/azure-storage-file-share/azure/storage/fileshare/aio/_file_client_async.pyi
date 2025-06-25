@@ -38,7 +38,6 @@ from .._models import ContentSettings, NTFSAttributes
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 
-
 class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore [misc]
     snapshot: Optional[str]
     def __init__(
