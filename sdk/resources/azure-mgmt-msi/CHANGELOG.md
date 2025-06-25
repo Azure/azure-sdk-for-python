@@ -1,5 +1,9 @@
 # Release History
 
+## 0.0.0 (2025-07-21)
+
+change log generation failed!!! You need to write it manually!!!
+
 ## 7.1.0b1 (2023-02-16)
 
 ### Other Changes
