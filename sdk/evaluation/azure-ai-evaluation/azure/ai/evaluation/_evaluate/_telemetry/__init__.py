@@ -17,7 +17,6 @@ from typing_extensions import ParamSpec
 
 from azure.ai.evaluation._model_configurations import AzureAIProject, EvaluationResult
 
-from ..._user_agent import USER_AGENT
 from .._utils import _trace_destination_from_project_scope
 
 LOGGER = logging.getLogger(__name__)

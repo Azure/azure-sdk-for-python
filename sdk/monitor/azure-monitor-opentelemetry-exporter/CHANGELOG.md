@@ -1,5 +1,6 @@
 # Release History
 
+<<<<<<< jacksonweber/add-synthetic-source-full-support
 ## 1.0.0b39 (Unreleased)
 
 ### Features Added
@@ -8,10 +9,19 @@
   ([#41733](https://github.com/Azure/azure-sdk-for-python/pull/41733))
 
 ### Breaking Changes
+=======
+## 1.0.0b39 (2025-06-25)
+>>>>>>> main
 
 ### Bugs Fixed
 
+- Suppress stdout side effect of add permissions to file for local storage on Windows
+  ([#41727](https://github.com/Azure/azure-sdk-for-python/pull/41727))
+
 ### Other Changes
+
+- Add logging errors for `401: Unauthorized` and `403: Forbidden` to assist in customer troubleshooting
+  ([#41767](https://github.com/Azure/azure-sdk-for-python/pull/41767))
 
 ## 1.0.0b38 (2025-06-17)
 

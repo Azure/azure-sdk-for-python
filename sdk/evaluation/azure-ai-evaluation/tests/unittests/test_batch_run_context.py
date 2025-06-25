@@ -7,7 +7,7 @@ from azure.ai.evaluation._legacy._adapters._check import MISSING_LEGACY_SDK
 
 from azure.ai.evaluation._constants import PF_BATCH_TIMEOUT_SEC, PF_BATCH_TIMEOUT_SEC_DEFAULT
 from azure.ai.evaluation._evaluate._batch_run import CodeClient, EvalRunContext, ProxyClient
-from azure.ai.evaluation._user_agent import USER_AGENT
+from azure.ai.evaluation._user_agent import UserAgentSingleton
 
 
 @pytest.fixture
@@ -39,7 +39,7 @@ class TestEvalRunContext:
             print(f"mock_recover_openai_api.call_count: {mock_recover_openai_api.call_count}")
             pass
 
-            mock_append_user_agent.assert_called_once_with(USER_AGENT)
+            mock_append_user_agent.assert_called_once_with(UserAgentSingleton().value)
 
     @pytest.mark.skipif(MISSING_LEGACY_SDK, reason="This test has a promptflow dependency")
     def test_with_pfclient(self, mocker, pf_client_mock):

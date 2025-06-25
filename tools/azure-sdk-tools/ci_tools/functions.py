@@ -7,7 +7,7 @@ import stat
 from ast import Not
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version, parse, InvalidVersion
-from pkg_resources import Requirement
+from packaging.requirements import Requirement
 import io
 
 from ci_tools.variables import discover_repo_root, DEV_BUILD_IDENTIFIER, str_to_bool
@@ -52,6 +52,7 @@ TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
     "azure-servicebus": "pypy",
     "azure-ai-projects": "pypy",
     "azure-ai-agents": "pypy",
+    "azure-identity-broker": "pypy",
 }
 
 omit_regression = (
@@ -369,12 +370,12 @@ def process_requires(setup_py_path: str, is_dev_build: bool = False):
     """
 
     pkg_details = ParsedSetup.from_path(setup_py_path)
-    azure_requirements = [Requirement.parse(r) for r in pkg_details.requires if r.startswith("azure")]
+    azure_requirements = [Requirement(r) for r in pkg_details.requires if r.startswith("azure")]
 
     # Find package requirements that are not available on PyPI
     requirement_to_update = {}
     for req in azure_requirements:
-        pkg_name = req.key
+        pkg_name = req.name
         spec = SpecifierSet(str(req).replace(pkg_name, ""))
 
         if not is_required_version_on_pypi(pkg_name, spec) or is_dev_build:
@@ -673,7 +674,7 @@ def is_package_compatible(
 
     for immutable_requirement in immutable_requirements:
         for package_requirement in package_requirements:
-            if package_requirement.key == immutable_requirement.key:
+            if package_requirement.name == immutable_requirement.name:
                 # if the dev_req line has a requirement that conflicts with the immutable requirement,
                 # we need to resolve it. We KNOW that the immutable requirement will be of form package==version,
                 # so we can reliably pull out the version and check it against the specifier of the dev_req line.
@@ -743,7 +744,7 @@ def resolve_compatible_package(package_name: str, immutable_requirements: List[R
     """
 
     pypi = PyPIClient()
-    immovable_pkgs = {req.key: req for req in immutable_requirements}
+    immovable_pkgs = {req.name: req for req in immutable_requirements}
 
     # Let's use a real use-case to walk through this function. We're going to use the azure-ai-language-conversations
     # package as an example.
@@ -935,7 +936,7 @@ def get_pip_command(python_exe: Optional[str] = None) -> List[str]:
     :param str python_exe: The Python executable to use (if not using the default).
     :return: List of command arguments for pip.
     :rtype: List[str]
-    
+
     """
     # Check TOX_PIP_IMPL environment variable (aligns with tox.ini configuration)
     pip_impl = os.environ.get('TOX_PIP_IMPL', 'pip').lower()

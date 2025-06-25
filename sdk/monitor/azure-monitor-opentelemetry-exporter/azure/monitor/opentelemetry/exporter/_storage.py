@@ -226,6 +226,8 @@ class LocalFileStorage:
                         "/inheritance:r",
                     ],
                     check=False,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
                 )
                 if result.returncode == 0:
                     return True

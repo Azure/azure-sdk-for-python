@@ -49,17 +49,12 @@ class _CallbackChatTarget(PromptChatTarget):
         logger.info(f"Sending the following prompt to the prompt target: {request}")
 
         # response_context contains "messages", "stream", "session_state, "context"
-        response_context = await self._callback(messages=messages, stream=self._stream, session_state=None, context=None) # type: ignore
+        response_context = await self._callback(messages=messages, stream=self._stream, session_state=None, context=None)  # type: ignore
 
         response_text = response_context["messages"][-1]["content"]
-        response_entry = construct_response_from_request(
-            request=request, response_text_pieces=[response_text]
-        )
+        response_entry = construct_response_from_request(request=request, response_text_pieces=[response_text])
 
-        logger.info(
-            "Received the following response from the prompt target"
-            + f"{response_text}"
-        )
+        logger.info("Received the following response from the prompt target" + f"{response_text}")
         return response_entry
 
     def _validate_request(self, *, prompt_request: PromptRequestResponse) -> None:
