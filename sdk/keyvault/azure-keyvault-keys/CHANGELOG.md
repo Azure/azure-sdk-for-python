@@ -1,6 +1,16 @@
 # Release History
 
-## 4.11.0 (2025-06-10)
+## 4.11.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 4.11.0 (2025-06-16)
 
 ### Features Added
 
@@ -10,7 +20,16 @@
   [#37507](https://github.com/Azure/azure-sdk-for-python/pull/37507)
 
 ### Bugs Fixed
+
 - Fixed a bug where `KeyVaultRSAPublicKey` and `KeyVaultRSAPrivateKey` were not correctly implementing the `cryptography` library's `RSAPublicKey` and `RSAPrivateKey` interfaces, causing instantiation errors. ([#41205](https://github.com/Azure/azure-sdk-for-python/pull/41205))
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 4.10.0. Only code written against a beta version such as 4.11.0b1 may be affected.
+
+- The following enums have been moved:
+  - `EncryptionAlgorithm.ckm_aes_key_wrap` -> `KeyWrapAlgorithm.ckm_aes_key_wrap`
+  - `EncryptionAlgorithm.ckm_aes_key_wrap_pad` -> `KeyWrapAlgorithm.ckm_aes_key_wrap_pad`
 
 ### Other Changes
 

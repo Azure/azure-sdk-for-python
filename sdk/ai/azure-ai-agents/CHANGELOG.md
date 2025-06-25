@@ -4,6 +4,7 @@
 
 ## 1.1.0b3 (Unreleased)
 
+<<<<<<< m-hietala/fixing_tracing_issue_with_paged_lists
 ### Features Added
 
 ### Breaking Changes
@@ -14,6 +15,11 @@
 ### Other Changes
 
 ### Sample updates
+=======
+### Sample updates
+- The file search samples were updated to demonstrate retrieving text associated with citations.
+- Added samples for file search citation with streaming.
+>>>>>>> feature/azure-ai-agents/1.1.0b3
 
 ## 1.1.0b2 (2025-06-09)
 
@@ -61,6 +67,7 @@
 ### Breaking Changes
 
 - enable_auto_function_calls supports positional arguments instead of keyword arguments.
+- Please see the [agents migration guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/AGENTS_MIGRATION_GUIDE.md) on how to use `azure-ai-projects` with `azure-ai-agents` package.
   
 ### Features Added
 

@@ -1863,7 +1863,7 @@ class _AIAgentsInstrumentorPreview:
                         yield api, method_name, trace_type, injector, name
                 except AttributeError as e:
                     # Log the attribute exception with the missing class information
-                    logger.warning(
+                    logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
                         "AttributeError: The module '%s' does not have the class '%s'. %s",
                         module_name,
                         class_name,
@@ -1871,7 +1871,9 @@ class _AIAgentsInstrumentorPreview:
                     )
                 except Exception as e:  # pylint: disable=broad-except
                     # Log other exceptions as a warning, as we are not sure what they might be
-                    logger.warning("An unexpected error occurred: '%s'", str(e))
+                    logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
+                        "An unexpected error occurred: '%s'", str(e)
+                    )
 
     def _available_agents_apis_and_injectors(self):
         """

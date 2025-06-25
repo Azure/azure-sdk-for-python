@@ -10,7 +10,7 @@ import datetime
 import logging
 
 try:
-    from azure.mgmt.resource import ResourceManagementClient
+    from azure.mgmt.resource.resources import ResourceManagementClient
 except ImportError:
     pass
 
