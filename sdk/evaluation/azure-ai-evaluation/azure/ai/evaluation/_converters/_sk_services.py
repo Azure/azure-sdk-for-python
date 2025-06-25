@@ -26,7 +26,7 @@ from ._models import (
     ToolDefinition,
     ToolCall,
     EvaluatorData,
-    SKDeveloperMessagege,
+    SKDeveloperMessage,
 )
 
 
@@ -334,7 +334,7 @@ class SKAgentConverter:
             elif message.role == AuthorRole.USER:
                 convert_message = UserMessage(**message_dict)
             elif message.role == AuthorRole.DEVELOPER:
-                convert_message = SKDeveloperMessagege(**message_dict)
+                convert_message = SKDeveloperMessage(**message_dict)
             elif message.role == AuthorRole.ASSISTANT:
                 convert_message = SKAssistantMessage(**message_dict)
             elif message.role == AuthorRole.TOOL:
