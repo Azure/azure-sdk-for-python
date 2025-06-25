@@ -11,13 +11,14 @@ import re
 import traceback
 import typing
 from abc import abstractmethod
+from datetime import datetime
 from pathlib import Path
 from typing import List, Optional, Union
 
 from marshmallow import RAISE, fields
 from marshmallow.exceptions import ValidationError
 from marshmallow.fields import Field, Nested
-from marshmallow.utils import from_iso_datetime, resolve_field_instance
+from marshmallow.utils import resolve_field_instance
 
 from ..._utils._arm_id_utils import AMLVersionedArmId, is_ARM_id_for_resource, parse_name_label, parse_name_version
 from ..._utils._experimental import _is_warning_cached
@@ -249,7 +250,12 @@ class DateTimeStr(fields.Str):
 
     def _validate(self, value):
         try:
-            from_iso_datetime(value)
+            # Replace marshmallow's from_iso_datetime with Python's built-in datetime parsing
+            # This supports ISO 8601 format parsing starting from Python 3.7
+            if not isinstance(value, str):
+                raise ValueError("Value must be a string")
+            # Handle Z suffix by replacing with +00:00 for ISO 8601 compatibility
+            datetime.fromisoformat(value.replace('Z', '+00:00'))
         except Exception as e:
             raise ValidationError(f"Not a valid ISO8601-formatted datetime string: {value}") from e
 
