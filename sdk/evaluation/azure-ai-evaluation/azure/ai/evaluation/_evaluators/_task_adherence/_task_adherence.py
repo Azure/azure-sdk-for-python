@@ -13,6 +13,7 @@ from azure.ai.evaluation._common.utils import parse_quality_evaluator_reason_sco
 from azure.ai.evaluation._model_configurations import Message
 from azure.ai.evaluation._common._experimental import experimental
 
+
 @experimental
 class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """The Task Adherence evaluator assesses how well an AI-generated response follows the assigned task based on:
@@ -42,15 +43,15 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :language: python
             :dedent: 8
             :caption: Initialize and call an TaskAdherenceEvaluator with a query and response.
-    
+
     .. admonition:: Example using Azure AI Project URL:
-        
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
             :start-after: [START task_adherence_evaluator]
             :end-before: [END task_adherence_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call TaskAdherenceEvaluator using Azure AI Project URL in the following format 
+            :caption: Initialize and call TaskAdherenceEvaluator using Azure AI Project URL in the following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     """
@@ -65,14 +66,11 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold=_DEFAULT_TASK_ADHERENCE_SCORE,
-                 **kwargs):
+    def __init__(self, model_config, *, threshold=_DEFAULT_TASK_ADHERENCE_SCORE, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
-        super().__init__(model_config=model_config, prompty_file=prompty_path,
-                         result_key=self._RESULT_KEY,
-                         **kwargs)
+        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY, **kwargs)
 
     @overload
     def __call__(
@@ -85,7 +83,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """Evaluate task adherence for a given query, response, and optional tool defintions.
         The query and response can be either a string or a list of messages.
 
-        
+
         Example with string inputs and no tools:
             evaluator = TaskAdherenceEvaluator(model_config)
             query = "What is the weather today?"
@@ -113,9 +111,9 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     @override
     def __call__(  # pylint: disable=docstring-missing-param
-            self,
-            *args,
-            **kwargs,
+        self,
+        *args,
+        **kwargs,
     ):
         """
         Invokes the instance using the overloaded __call__ signature.
@@ -149,7 +147,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if llm_output:
             score, reason = parse_quality_evaluator_reason_score(llm_output, valid_score_range="[1-5]")
 
-            score_result = 'pass' if score >= self.threshold else 'fail'
+            score_result = "pass" if score >= self.threshold else "fail"
 
             return {
                 f"{self._result_key}": score,
@@ -159,4 +157,3 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             }
 
         return {self._result_key: math.nan}
-

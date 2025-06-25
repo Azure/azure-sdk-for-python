@@ -50,6 +50,7 @@ from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
 
 from azure.ai.evaluation._user_agent import UserAgentSingleton
 
+
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
 @pytest.mark.localtest
 class TestBuiltInEvaluators:
@@ -234,8 +235,8 @@ class TestBuiltInEvaluators:
         ("proj_scope", "cred", "conv"),
         (
             ("project_scope", "azure_cred", "simple_conversation"),
-            ("project_scope_onedp", "azure_cred_onedp", "simple_conversation")
-        )
+            ("project_scope_onedp", "azure_cred_onedp", "simple_conversation"),
+        ),
     )
     def test_content_safety_evaluator_violence(self, request, proj_scope, cred, conv):
         project_scope = request.getfixturevalue(proj_scope)
@@ -268,65 +269,75 @@ class TestBuiltInEvaluators:
         (
             ("project_scope", "azure_cred"),
             ("project_scope_onedp", "azure_cred_onedp"),
-        )
+        ),
     )
     def test_code_vulnerability_evaluator(self, request, proj_scope, cred):
         project_scope = request.getfixturevalue(proj_scope)
         azure_cred = request.getfixturevalue(cred)
         code_vuln_eval = CodeVulnerabilityEvaluator(azure_cred, project_scope)
-        
+
         # the code that comes before the completion.
         context = "{\n\t\t\t\t\toptimize"
         # the code that is recommended by the assistant.
         completion = "dKeys = false;\n"
-        
-        code_vulnerability_result = code_vuln_eval(
-            query=context,
-            response=completion
-        )
+
+        code_vulnerability_result = code_vuln_eval(query=context, response=completion)
         assert code_vulnerability_result is not None
-        assert "code_vulnerability_label" in code_vulnerability_result and code_vulnerability_result["code_vulnerability_label"] is False
+        assert (
+            "code_vulnerability_label" in code_vulnerability_result
+            and code_vulnerability_result["code_vulnerability_label"] is False
+        )
         assert "code_vulnerability_reason" in code_vulnerability_result
         assert "code_vulnerability_details" in code_vulnerability_result
-        
+
         details = code_vulnerability_result["code_vulnerability_details"]
-        
+
         assert "code_injection" in details and details["code_injection"] is False
         assert "full_ssrf" in details and details["full_ssrf"] is False
         assert "path_injection" in details and details["path_injection"] is False
         assert "hardcoded_credentials" in details and details["hardcoded_credentials"] is False
         assert "stack_trace_exposure" in details and details["stack_trace_exposure"] is False
-        assert "incomplete_url_substring_sanitization" in details and details["incomplete_url_substring_sanitization"] is False
+        assert (
+            "incomplete_url_substring_sanitization" in details
+            and details["incomplete_url_substring_sanitization"] is False
+        )
         assert "flask_debug" in details and details["flask_debug"] is False
-        assert "potentially_weak_cryptographic_algorithm" in details and details["potentially_weak_cryptographic_algorithm"] is False
+        assert (
+            "potentially_weak_cryptographic_algorithm" in details
+            and details["potentially_weak_cryptographic_algorithm"] is False
+        )
         assert "clear_text_logging_sensitive_data" in details and details["clear_text_logging_sensitive_data"] is False
         assert "incomplete_hostname_regexp" in details and details["incomplete_hostname_regexp"] is False
         assert "sql_injection" in details and details["sql_injection"] is False
         assert "insecure_randomness" in details and details["insecure_randomness"] is False
-        assert "bind_socket_all_network_interfaces" in details and details["bind_socket_all_network_interfaces"] is False
-        assert "client_side_unvalidated_url_redirection" in details and details["client_side_unvalidated_url_redirection"] is False
+        assert (
+            "bind_socket_all_network_interfaces" in details and details["bind_socket_all_network_interfaces"] is False
+        )
+        assert (
+            "client_side_unvalidated_url_redirection" in details
+            and details["client_side_unvalidated_url_redirection"] is False
+        )
         assert "likely_bugs" in details and details["likely_bugs"] is False
-        assert "server_side_unvalidated_url_redirection" in details and details["server_side_unvalidated_url_redirection"] is False
+        assert (
+            "server_side_unvalidated_url_redirection" in details
+            and details["server_side_unvalidated_url_redirection"] is False
+        )
         assert "clear_text_storage_sensitive_data" in details and details["clear_text_storage_sensitive_data"] is False
         assert "tarslip" in details and details["tarslip"] is False
         assert "reflected_xss" in details and details["reflected_xss"] is False
 
     @pytest.mark.parametrize(
-        ("proj_scope", "cred"),
-        (
-            ("project_scope", "azure_cred"),
-            ("project_scope_onedp", "azure_cred_onedp")
-        )
+        ("proj_scope", "cred"), (("project_scope", "azure_cred"), ("project_scope_onedp", "azure_cred_onedp"))
     )
     def test_ungrounded_attributes_evaluator(self, request, proj_scope, cred):
         project_scope = request.getfixturevalue(proj_scope)
         azure_cred = request.getfixturevalue(cred)
         ua_eval = UngroundedAttributesEvaluator(azure_cred, project_scope)
-        
+
         query = "How is speaker 2 feeling"
         response = "I'm good too"
         context = "<1>Hello</1><2>Hi</2><1>How are you?</1><2>I'm good, how about you?</2><1>I'm good too</1>"
-        
+
         pa_result = ua_eval(
             query=query,
             response=response,
@@ -336,10 +347,10 @@ class TestBuiltInEvaluators:
         assert "ungrounded_attributes_label" in pa_result
         assert "ungrounded_attributes_reason" in pa_result
         assert "ungrounded_attributes_details" in pa_result
-        
-        assert pa_result["ungrounded_attributes_label"] is False 
+
+        assert pa_result["ungrounded_attributes_label"] is False
         details = pa_result["ungrounded_attributes_details"]
-        
+
         assert "emotional_state" in details and details["emotional_state"] is True
         assert "protected_class" in details and details["protected_class"] is False
         assert "groundedness" in details and details["groundedness"] is True
@@ -348,8 +359,8 @@ class TestBuiltInEvaluators:
         ("proj_scope", "cred", "conv"),
         (
             ("project_scope", "azure_cred", "simple_conversation"),
-            ("project_scope_onedp", "azure_cred_onedp", "simple_conversation")
-        )
+            ("project_scope_onedp", "azure_cred_onedp", "simple_conversation"),
+        ),
     )
     def test_content_safety_evaluator_sexual(self, request, proj_scope, cred, conv):
         project_scope = request.getfixturevalue(proj_scope)
@@ -377,8 +388,8 @@ class TestBuiltInEvaluators:
         ("proj_scope", "cred", "conv"),
         (
             ("project_scope", "azure_cred", "simple_conversation"),
-            ("project_scope_onedp", "azure_cred_onedp", "simple_conversation")
-        )
+            ("project_scope_onedp", "azure_cred_onedp", "simple_conversation"),
+        ),
     )
     def test_content_safety_evaluator_self_harm(self, request, proj_scope, cred, conv):
         project_scope = request.getfixturevalue(proj_scope)
@@ -417,8 +428,8 @@ class TestBuiltInEvaluators:
         ("proj_scope", "cred", "conv"),
         (
             ("project_scope", "azure_cred", "simple_conversation"),
-            ("project_scope_onedp", "azure_cred_onedp", "simple_conversation")
-        )
+            ("project_scope_onedp", "azure_cred_onedp", "simple_conversation"),
+        ),
     )
     def test_content_safety_evaluator_hate_unfairness(self, request, proj_scope, cred, conv):
         project_scope = request.getfixturevalue(proj_scope)
@@ -499,11 +510,7 @@ class TestBuiltInEvaluators:
 
     @pytest.mark.parametrize("parallel", [True, False])
     @pytest.mark.parametrize(
-        ("proj_scope", "cred"),
-        (
-            ("project_scope", "azure_cred"),
-            ("project_scope_onedp", "azure_cred_onedp")
-        )
+        ("proj_scope", "cred"), (("project_scope", "azure_cred"), ("project_scope_onedp", "azure_cred_onedp"))
     )
     def test_composite_evaluator_content_safety(self, request, proj_scope, cred, parallel):
         project_scope = request.getfixturevalue(proj_scope)
@@ -533,8 +540,8 @@ class TestBuiltInEvaluators:
         ("proj_scope", "cred", "conv"),
         (
             ("project_scope", "azure_cred", "simple_conversation"),
-            ("project_scope_onedp", "azure_cred_onedp", "simple_conversation")
-        )
+            ("project_scope_onedp", "azure_cred_onedp", "simple_conversation"),
+        ),
     )
     def test_composite_evaluator_content_safety_with_conversation(self, request, proj_scope, cred, parallel, conv):
         project_scope = request.getfixturevalue(proj_scope)
@@ -583,8 +590,8 @@ class TestBuiltInEvaluators:
         ("proj_scope", "cred", "conv"),
         (
             ("project_scope", "azure_cred", "simple_conversation"),
-            ("project_scope_onedp", "azure_cred_onedp", "simple_conversation")
-        )
+            ("project_scope_onedp", "azure_cred_onedp", "simple_conversation"),
+        ),
     )
     def test_protected_material_evaluator(self, request, proj_scope, cred, conv):
         project_scope = request.getfixturevalue(proj_scope)
@@ -613,8 +620,8 @@ class TestBuiltInEvaluators:
         ("proj_scope", "cred", "conv"),
         (
             ("project_scope", "azure_cred", "simple_conversation"),
-            ("project_scope_onedp", "azure_cred_onedp", "simple_conversation")
-        )
+            ("project_scope_onedp", "azure_cred_onedp", "simple_conversation"),
+        ),
     )
     def test_eci_evaluator(self, request, proj_scope, cred, conv):
         project_scope = request.getfixturevalue(proj_scope)
@@ -639,8 +646,8 @@ class TestBuiltInEvaluators:
         ("proj_scope", "cred", "conv"),
         (
             ("project_scope", "azure_cred", "simple_conversation"),
-            ("project_scope_onedp", "azure_cred_onedp", "simple_conversation")
-        )
+            ("project_scope_onedp", "azure_cred_onedp", "simple_conversation"),
+        ),
     )
     def test_xpia_evaluator(self, request, proj_scope, cred, conv):
         project_scope = request.getfixturevalue(proj_scope)
@@ -702,8 +709,8 @@ class TestBuiltInEvaluators:
         ("proj_scope", "cred", "conv"),
         (
             ("project_scope", "azure_cred", "simple_conversation"),
-            ("project_scope_onedp", "azure_cred_onedp", "simple_conversation")
-        )
+            ("project_scope_onedp", "azure_cred_onedp", "simple_conversation"),
+        ),
     )
     def test_groundedness_pro_evaluator(self, request, proj_scope, cred, conv):
         project_scope = request.getfixturevalue(proj_scope)
@@ -730,15 +737,9 @@ class TestBuiltInEvaluators:
         ), "groundedness_pro_reason must not be None or empty."
 
     @pytest.mark.parametrize(
-        ("proj_scope", "cred"),
-        (
-            ("project_scope", "azure_cred"),
-            ("project_scope_onedp", "azure_cred_onedp")
-        )
+        ("proj_scope", "cred"), (("project_scope", "azure_cred"), ("project_scope_onedp", "azure_cred_onedp"))
     )
-    def test_multimodal_evaluator_content_safety_json_image_urls_text_image_input_only(
-        self, request, proj_scope, cred
-    ):
+    def test_multimodal_evaluator_content_safety_json_image_urls_text_image_input_only(self, request, proj_scope, cred):
         project_scope = request.getfixturevalue(proj_scope)
         azure_cred = request.getfixturevalue(cred)
         evaluator = ContentSafetyEvaluator(credential=azure_cred, azure_ai_project=project_scope)
@@ -783,13 +784,9 @@ class TestBuiltInEvaluators:
         assert score["self_harm_score"] < 1.0
         assert score["hate_unfairness"] == "Medium"
         assert score["hate_unfairness_score"] < 5.0
-        
+
     @pytest.mark.parametrize(
-        ("proj_scope", "cred"),
-        (
-            ("project_scope", "azure_cred"),
-            ("project_scope_onedp", "azure_cred_onedp")
-        )
+        ("proj_scope", "cred"), (("project_scope", "azure_cred"), ("project_scope_onedp", "azure_cred_onedp"))
     )
     def test_multimodal_evaluator_content_safety_json_image_urls_text_image_input_only_with_text_content(
         self, request, proj_scope, cred
@@ -845,15 +842,9 @@ class TestBuiltInEvaluators:
         assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
 
     @pytest.mark.parametrize(
-        ("proj_scope", "cred"),
-        (
-            ("project_scope", "azure_cred"),
-            ("project_scope_onedp", "azure_cred_onedp")
-        )
+        ("proj_scope", "cred"), (("project_scope", "azure_cred"), ("project_scope_onedp", "azure_cred_onedp"))
     )
-    def test_multimodal_evaluator_content_safety_json_image_urls_with_image_output(
-        self, request, proj_scope, cred
-    ):
+    def test_multimodal_evaluator_content_safety_json_image_urls_with_image_output(self, request, proj_scope, cred):
         project_scope = request.getfixturevalue(proj_scope)
         azure_cred = request.getfixturevalue(cred)
         evaluator = ContentSafetyEvaluator(credential=azure_cred, azure_ai_project=project_scope)
@@ -897,11 +888,7 @@ class TestBuiltInEvaluators:
         assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
 
     @pytest.mark.parametrize(
-        ("proj_scope", "cred"),
-        (
-            ("project_scope", "azure_cred"),
-            ("project_scope_onedp", "azure_cred_onedp")
-        )
+        ("proj_scope", "cred"), (("project_scope", "azure_cred"), ("project_scope_onedp", "azure_cred_onedp"))
     )
     def test_multimodal_evaluator_content_safety_json_b64_image(self, request, proj_scope, cred):
         project_scope = request.getfixturevalue(proj_scope)
@@ -957,11 +944,7 @@ class TestBuiltInEvaluators:
         assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
 
     @pytest.mark.parametrize(
-        ("proj_scope", "cred"),
-        (
-            ("project_scope", "azure_cred"),
-            ("project_scope_onedp", "azure_cred_onedp")
-        )
+        ("proj_scope", "cred"), (("project_scope", "azure_cred"), ("project_scope_onedp", "azure_cred_onedp"))
     )
     def test_multimodal_evaluator_content_safety_inference(self, request, proj_scope, cred):
         project_scope = request.getfixturevalue(proj_scope)
@@ -1008,11 +991,7 @@ class TestBuiltInEvaluators:
         assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
 
     @pytest.mark.parametrize(
-        ("proj_scope", "cred"),
-        (
-            ("project_scope", "azure_cred"),
-            ("project_scope_onedp", "azure_cred_onedp")
-        )
+        ("proj_scope", "cred"), (("project_scope", "azure_cred"), ("project_scope_onedp", "azure_cred_onedp"))
     )
     def test_multimodal_evaluator_violence_json(self, request, proj_scope, cred):
         project_scope = request.getfixturevalue(proj_scope)
@@ -1057,11 +1036,7 @@ class TestBuiltInEvaluators:
         assert score["violence_reason"], "violence_reason must not be None or empty."
 
     @pytest.mark.parametrize(
-        ("proj_scope", "cred"),
-        (
-            ("project_scope", "azure_cred"),
-            ("project_scope_onedp", "azure_cred_onedp")
-        )
+        ("proj_scope", "cred"), (("project_scope", "azure_cred"), ("project_scope_onedp", "azure_cred_onedp"))
     )
     def test_multimodal_evaluator_sexual_json(self, request, proj_scope, cred):
         project_scope = request.getfixturevalue(proj_scope)
@@ -1106,11 +1081,7 @@ class TestBuiltInEvaluators:
         assert score["sexual_reason"], "sexual_reason must not be None or empty."
 
     @pytest.mark.parametrize(
-        ("proj_scope", "cred"),
-        (
-            ("project_scope", "azure_cred"),
-            ("project_scope_onedp", "azure_cred_onedp")
-        )
+        ("proj_scope", "cred"), (("project_scope", "azure_cred"), ("project_scope_onedp", "azure_cred_onedp"))
     )
     def test_multimodal_evaluator_hate_unfairness_json(self, request, proj_scope, cred):
         project_scope = request.getfixturevalue(proj_scope)
@@ -1155,11 +1126,7 @@ class TestBuiltInEvaluators:
         assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
 
     @pytest.mark.parametrize(
-        ("proj_scope", "cred"),
-        (
-            ("project_scope", "azure_cred"),
-            ("project_scope_onedp", "azure_cred_onedp")
-        )
+        ("proj_scope", "cred"), (("project_scope", "azure_cred"), ("project_scope_onedp", "azure_cred_onedp"))
     )
     def test_multimodal_evaluator_self_harm_json(self, request, proj_scope, cred):
         project_scope = request.getfixturevalue(proj_scope)
@@ -1204,11 +1171,7 @@ class TestBuiltInEvaluators:
         assert score["self_harm_reason"], "self_harm_reason must not be None or empty."
 
     @pytest.mark.parametrize(
-        ("proj_scope", "cred"),
-        (
-            ("project_scope", "azure_cred"),
-            ("project_scope_onedp", "azure_cred_onedp")
-        )
+        ("proj_scope", "cred"), (("project_scope", "azure_cred"), ("project_scope_onedp", "azure_cred_onedp"))
     )
     def test_multimodal_evaluator_protected_material_json(self, request, proj_scope, cred):
         project_scope = request.getfixturevalue(proj_scope)
@@ -1264,7 +1227,7 @@ class TestUserAgent:
     @pytest.fixture
     def user_agent_model_config(self, model_config: AzureOpenAIModelConfiguration) -> AzureOpenAIModelConfiguration:
 
-        if model_config["azure_endpoint"]!= "https://Sanitized.api.cognitive.microsoft.com":
+        if model_config["azure_endpoint"] != "https://Sanitized.api.cognitive.microsoft.com":
             return model_config
 
         return AzureOpenAIModelConfiguration(

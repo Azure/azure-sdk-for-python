@@ -22,6 +22,7 @@ from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._user_agent import UserAgentSingleton
 from azure.ai.evaluation._version import VERSION
 
+
 @pytest.fixture
 def csv_file():
     data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
@@ -514,13 +515,12 @@ class TestUserAgent:
     @pytest.fixture(scope="session")
     def user_agent_model_config(self, model_config: AzureOpenAIModelConfiguration) -> AzureOpenAIModelConfiguration:
 
-        if model_config["azure_endpoint"]!= "https://Sanitized.api.cognitive.microsoft.com":
+        if model_config["azure_endpoint"] != "https://Sanitized.api.cognitive.microsoft.com":
             return model_config
 
         return AzureOpenAIModelConfiguration(
             **{**model_config, "azure_endpoint": "https://Sanitized.openai.azure.com/"},
         )
-
 
     @staticmethod
     def _transparent_mock_method(cls_to_mock, attribute_name: str) -> Mock:

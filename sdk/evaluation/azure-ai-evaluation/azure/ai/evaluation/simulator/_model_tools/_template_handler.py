@@ -149,14 +149,16 @@ class AdversarialTemplateHandler:
     """
     Initialize the AdversarialTemplateHandler.
 
-    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint 
-        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name.
     :type azure_ai_project: Union[str, AzureAIProject]
     :param rai_client: The RAI client or AI Project client used for fetching parameters.
     :type rai_client: Union[~azure.ai.evaluation.simulator._model_tools.RAIClient, ~azure.ai.evaluation._common.onedp._client.AIProjectClient]
     """
 
-    def __init__(self, azure_ai_project: Union[str, AzureAIProject], rai_client: Union[RAIClient, AIProjectClient]) -> None:
+    def __init__(
+        self, azure_ai_project: Union[str, AzureAIProject], rai_client: Union[RAIClient, AIProjectClient]
+    ) -> None:
         self.azure_ai_project = azure_ai_project
         self.categorized_ch_parameters: Optional[Dict[str, _CategorizedParameter]] = None
         self.rai_client = rai_client
@@ -170,7 +172,7 @@ class AdversarialTemplateHandler:
                 parameters = await self.rai_client.get_contentharm_parameters()
             elif isinstance(self.rai_client, AIProjectClient):
                 parameters = literal_eval(self.rai_client.red_teams.get_template_parameters())
-            
+
             for k in parameters.keys():
                 template_key = util.get_template_key(k)
                 categorized_parameters[template_key] = {

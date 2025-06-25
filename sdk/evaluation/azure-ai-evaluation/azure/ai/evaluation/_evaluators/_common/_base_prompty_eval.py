@@ -22,10 +22,12 @@ from . import EvaluatorBase
 try:
     from ..._user_agent import UserAgentSingleton
 except ImportError:
+
     class UserAgentSingleton:
         @property
         def value(self) -> str:
             return "None"
+
 
 T = TypeVar("T")
 
@@ -53,8 +55,17 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
     _LLM_CALL_TIMEOUT = 600
     _DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
 
-    def __init__(self, *, result_key: str, prompty_file: str, model_config: dict, eval_last_turn: bool = False,
-                 threshold: int = 3, _higher_is_better: bool = False, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        result_key: str,
+        prompty_file: str,
+        model_config: dict,
+        eval_last_turn: bool = False,
+        threshold: int = 3,
+        _higher_is_better: bool = False,
+        **kwargs,
+    ) -> None:
         self._result_key = result_key
         self._is_reasoning_model = kwargs.get("is_reasoning_model", False)
         self._prompty_file = prompty_file
@@ -70,8 +81,9 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
             user_agent,
         )
 
-        self._flow = AsyncPrompty.load(source=self._prompty_file, model=prompty_model_config,
-                                       is_reasoning_model=self._is_reasoning_model)
+        self._flow = AsyncPrompty.load(
+            source=self._prompty_file, model=prompty_model_config, is_reasoning_model=self._is_reasoning_model
+        )
 
     # __call__ not overridden here because child classes have such varied signatures that there's no point
     # defining a default here.
@@ -135,7 +147,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                 score = float(match.group())
                 binary_result = self._get_binary_result(score)
             return {
-                self._result_key: float(score), 
+                self._result_key: float(score),
                 f"gpt_{self._result_key}": float(score),
                 f"{self._result_key}_result": binary_result,
                 f"{self._result_key}_threshold": self._threshold,
@@ -143,7 +155,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
 
         binary_result = self._get_binary_result(score)
         return {
-            self._result_key: float(score), 
+            self._result_key: float(score),
             f"gpt_{self._result_key}": float(score),
             f"{self._result_key}_result": binary_result,
             f"{self._result_key}_threshold": self._threshold,
