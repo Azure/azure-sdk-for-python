@@ -23,23 +23,23 @@ class TestBasicThresholdBehavior:
         """Test threshold behavior in BleuScoreEvaluator."""
         # Create the evaluator
         evaluator = BleuScoreEvaluator(threshold=threshold)
-        
+
         # Create a result dictionary with the expected values
         result = {
             "bleu_score": score,
             "bleu_result": EVALUATION_PASS_FAIL_MAPPING[should_pass],
-            "bleu_threshold": threshold
+            "bleu_threshold": threshold,
         }
-        
+
         # Configure mock to return our result
         mock_call.return_value = result
-        
+
         # Because we're mocking the __call__ method directly, we need to call the mock
         mock_result = mock_call(ground_truth="reference", response="candidate")
-        
+
         # Verify threshold is correctly included in output
         assert mock_result["bleu_threshold"] == threshold
-        
+
         # Verify pass/fail based on threshold comparison
         assert mock_result["bleu_result"] == EVALUATION_PASS_FAIL_MAPPING[should_pass]
 
@@ -49,23 +49,23 @@ class TestBasicThresholdBehavior:
         """Test threshold behavior in GleuScoreEvaluator."""
         # Create the evaluator
         evaluator = GleuScoreEvaluator(threshold=threshold)
-        
+
         # Create a result dictionary with the expected values
         result = {
             "gleu_score": score,
             "gleu_result": EVALUATION_PASS_FAIL_MAPPING[should_pass],
-            "gleu_threshold": threshold
+            "gleu_threshold": threshold,
         }
-        
+
         # Configure mock to return our result
         mock_call.return_value = result
-        
+
         # Because we're mocking the __call__ method directly, we need to call the mock
         mock_result = mock_call(ground_truth="reference", response="candidate")
-        
+
         # Verify threshold is correctly included in output
         assert mock_result["gleu_threshold"] == threshold
-        
+
         # Verify pass/fail based on threshold comparison
         assert mock_result["gleu_result"] == EVALUATION_PASS_FAIL_MAPPING[should_pass]
 
@@ -75,23 +75,23 @@ class TestBasicThresholdBehavior:
         """Test threshold behavior in MeteorScoreEvaluator."""
         # Create the evaluator
         evaluator = MeteorScoreEvaluator(threshold=threshold)
-        
+
         # Create a result dictionary with the expected values
         result = {
             "meteor_score": score,
             "meteor_result": EVALUATION_PASS_FAIL_MAPPING[should_pass],
-            "meteor_threshold": threshold
+            "meteor_threshold": threshold,
         }
-        
+
         # Configure mock to return our result
         mock_call.return_value = result
-        
+
         # Because we're mocking the __call__ method directly, we need to call the mock
         mock_result = mock_call(ground_truth="reference", response="candidate")
-        
+
         # Verify threshold is correctly included in output
         assert mock_result["meteor_threshold"] == threshold
-        
+
         # Verify pass/fail based on threshold comparison
         assert mock_result["meteor_result"] == EVALUATION_PASS_FAIL_MAPPING[should_pass]
 
@@ -101,23 +101,23 @@ class TestBasicThresholdBehavior:
         """Test threshold behavior in F1ScoreEvaluator."""
         # Create the evaluator
         evaluator = F1ScoreEvaluator(threshold=threshold)
-        
+
         # Create a result dictionary with the expected values
         result = {
             "f1_score": score,
             "f1_score_result": EVALUATION_PASS_FAIL_MAPPING[should_pass],
-            "f1_score_threshold": threshold
+            "f1_score_threshold": threshold,
         }
-        
+
         # Configure mock to return our result
         mock_call.return_value = result
-        
+
         # Because we're mocking the __call__ method directly, we need to call the mock
         mock_result = mock_call(ground_truth="reference", response="candidate")
-        
+
         # Verify threshold is correctly included in output
         assert mock_result["f1_score_threshold"] == threshold
-        
+
         # Verify pass/fail based on threshold comparison
         assert mock_result["f1_score_result"] == EVALUATION_PASS_FAIL_MAPPING[should_pass]
 
@@ -125,96 +125,79 @@ class TestBasicThresholdBehavior:
 @pytest.mark.unittest
 class TestRougeThresholdBehavior:
     """Tests for threshold behavior in Rouge evaluators which use individual threshold parameters."""
-    
+
     def test_rouge_default_threshold(self):
         """Test that default thresholds are set correctly in Rouge evaluator."""
         evaluator = RougeScoreEvaluator(rouge_type=RougeType.ROUGE_1)
-        
+
         # Default thresholds should be 0.5 for precision, recall, and f1_score
         assert evaluator._threshold["precision"] == 0.5
         assert evaluator._threshold["recall"] == 0.5
         assert evaluator._threshold["f1_score"] == 0.5
-    
+
     def test_rouge_custom_threshold(self):
         """Test that custom thresholds work correctly in Rouge evaluator."""
         evaluator = RougeScoreEvaluator(
-            rouge_type=RougeType.ROUGE_L, 
-            precision_threshold=0.9,
-            recall_threshold=0.1,
-            f1_score_threshold=0.75
+            rouge_type=RougeType.ROUGE_L, precision_threshold=0.9, recall_threshold=0.1, f1_score_threshold=0.75
         )
-        
+
         # Custom thresholds should be set
         assert evaluator._threshold["precision"] == 0.9
         assert evaluator._threshold["recall"] == 0.1
         assert evaluator._threshold["f1_score"] == 0.75
-    
+
     @patch("azure.ai.evaluation._evaluators._rouge._rouge.RougeScoreEvaluator.__call__")
     def test_rouge_threshold_behavior(self, mock_call):
         """Test threshold behavior with mocked Rouge scores."""
         evaluator = RougeScoreEvaluator(
-            rouge_type=RougeType.ROUGE_L, 
-            precision_threshold=0.9,
-            recall_threshold=0.1,
-            f1_score_threshold=0.75
+            rouge_type=RougeType.ROUGE_L, precision_threshold=0.9, recall_threshold=0.1, f1_score_threshold=0.75
         )
-        
+
         # Mock results with precision passing, recall failing, and f1_score passing
         result = {
             "rouge_precision": 0.95,  # Above threshold (0.9) - should pass
-            "rouge_recall": 0.05,     # Below threshold (0.1) - should fail
-            "rouge_f1_score": 0.8,    # Above threshold (0.75) - should pass
+            "rouge_recall": 0.05,  # Below threshold (0.1) - should fail
+            "rouge_f1_score": 0.8,  # Above threshold (0.75) - should pass
             "rouge_precision_result": EVALUATION_PASS_FAIL_MAPPING[True],
             "rouge_recall_result": EVALUATION_PASS_FAIL_MAPPING[False],
             "rouge_f1_score_result": EVALUATION_PASS_FAIL_MAPPING[True],
         }
-        
+
         # Configure mock to return our result
         mock_call.return_value = result
-        
+
         # Because we're mocking the __call__ method directly, we need to call the mock
         mock_result = mock_call(ground_truth="reference", response="candidate")
-        
+
         # Check threshold-based results
         assert mock_result["rouge_precision_result"] == EVALUATION_PASS_FAIL_MAPPING[True]
         assert mock_result["rouge_recall_result"] == EVALUATION_PASS_FAIL_MAPPING[False]
         assert mock_result["rouge_f1_score_result"] == EVALUATION_PASS_FAIL_MAPPING[True]
-    
-    @pytest.mark.parametrize(
-        "rouge_type",
-        [
-            RougeType.ROUGE_1,
-            RougeType.ROUGE_2,
-            RougeType.ROUGE_4,
-            RougeType.ROUGE_L
-        ]
-    )
+
+    @pytest.mark.parametrize("rouge_type", [RougeType.ROUGE_1, RougeType.ROUGE_2, RougeType.ROUGE_4, RougeType.ROUGE_L])
     @patch("azure.ai.evaluation._evaluators._rouge._rouge.RougeScoreEvaluator.__call__")
     def test_rouge_different_types(self, mock_call, rouge_type):
         """Test that different Rouge types work correctly with thresholds."""
         evaluator = RougeScoreEvaluator(
-            rouge_type=rouge_type, 
-            precision_threshold=0.5,
-            recall_threshold=0.5,
-            f1_score_threshold=0.5
+            rouge_type=rouge_type, precision_threshold=0.5, recall_threshold=0.5, f1_score_threshold=0.5
         )
-        
+
         # Mock scores that all pass the threshold
         result = {
             "rouge_precision": 0.6,
-            "rouge_recall": 0.6, 
+            "rouge_recall": 0.6,
             "rouge_f1_score": 0.6,
             "rouge_precision_result": EVALUATION_PASS_FAIL_MAPPING[True],
             "rouge_recall_result": EVALUATION_PASS_FAIL_MAPPING[True],
             "rouge_f1_score_result": EVALUATION_PASS_FAIL_MAPPING[True],
         }
-        
+
         # Configure mock to return our result
         mock_call.return_value = result
-        
+
         # Because we're mocking the __call__ method directly, we need to call the mock
         mock_result = mock_call(ground_truth="reference", response="candidate")
-        
+
         # All results should pass since all scores are above threshold
         assert mock_result["rouge_precision_result"] == EVALUATION_PASS_FAIL_MAPPING[True]
         assert mock_result["rouge_recall_result"] == EVALUATION_PASS_FAIL_MAPPING[True]
@@ -229,11 +212,11 @@ class TestActualThresholdBehavior:
         """Test that MeteorScoreEvaluator correctly handles decimal scores for threshold comparison."""
         # This test validates the fix for the bug where int(score_value) was used instead of float(score_value)
         evaluator = MeteorScoreEvaluator(threshold=0.5)
-        
+
         # Using identical strings should give a high METEOR score (> 0.5)
         result = evaluator(ground_truth="Hello world", response="Hello world")
-        
-        # The score should be > 0.5 and result should be "pass" 
+
+        # The score should be > 0.5 and result should be "pass"
         assert result["meteor_score"] > 0.5
         assert result["meteor_result"] == "pass"
         assert result["meteor_threshold"] == 0.5
@@ -242,10 +225,10 @@ class TestActualThresholdBehavior:
         """Test that BleuScoreEvaluator correctly handles decimal scores for threshold comparison."""
         # This test validates the fix for the bug where int(score_value) was used instead of float(score_value)
         evaluator = BleuScoreEvaluator(threshold=0.1)
-        
+
         # Using identical strings should give a BLEU score > 0.1
         result = evaluator(ground_truth="Hello world", response="Hello world")
-        
+
         # The score should be > 0.1 and result should be "pass"
         assert result["bleu_score"] > 0.1
         assert result["bleu_result"] == "pass"
@@ -258,7 +241,7 @@ class TestActualThresholdBehavior:
         result_low = evaluator_low(ground_truth="Hello world", response="Hello world")
         assert result_low["meteor_score"] > 0.1
         assert result_low["meteor_result"] == "pass"
-        
+
         # Test where threshold is set very high - should fail
         evaluator_high = MeteorScoreEvaluator(threshold=1.0)
         result_high = evaluator_high(ground_truth="Hello world", response="Hello world")

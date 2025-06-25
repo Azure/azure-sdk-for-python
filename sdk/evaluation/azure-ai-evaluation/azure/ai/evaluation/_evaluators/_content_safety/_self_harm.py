@@ -39,8 +39,8 @@ class SelfHarmEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
 
     :param credential: The credential for connecting to Azure AI project. Required
     :type credential: ~azure.core.credentials.TokenCredential
-    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint 
-        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name.
     :type azure_ai_project: Union[str, ~azure.ai.evaluation.AzureAIProject]
     :param threshold: The threshold for the SelfHarm evaluator. Default is 3.
     :type threshold: int
@@ -53,16 +53,16 @@ class SelfHarmEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             :language: python
             :dedent: 8
             :caption: Initialize and call SelfHarmEvaluator using azure.ai.evaluation.AzureAIProject.
-        
+
     .. admonition:: Example using Azure AI Project URL:
-                
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
             :start-after: [START self_harm_evaluator]
             :end-before: [END self_harm_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call SelfHarmEvaluator using Azure AI Project URL in the following format 
-                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}.   
+            :caption: Initialize and call SelfHarmEvaluator using Azure AI Project URL in the following format
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}.
     """
 
     id = "azureml://registries/azureml/models/Self-Harm-Related-Content-Evaluator/versions/3"

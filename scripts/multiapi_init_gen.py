@@ -40,9 +40,10 @@ except:
     )
     import azure.common
 
-import pkg_resources
-
-pkg_resources.declare_namespace("azure")
+# all of the azure packages that are namespace packages have a __init__ that looks like:
+# __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
+# so we can use the namespace package without explicitly declaring a parent azure namespace. At least according
+# to the docs.
 
 _LOGGER = logging.getLogger(__name__)
 

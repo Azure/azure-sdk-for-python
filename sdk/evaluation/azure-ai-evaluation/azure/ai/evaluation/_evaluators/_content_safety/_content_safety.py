@@ -22,8 +22,8 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
 
     :param credential: The credential for connecting to Azure AI project. Required
     :type credential: ~azure.core.credentials.TokenCredential
-    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint 
-        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name.
     :type azure_ai_project: Union[str, ~azure.ai.evaluation.AzureAIProject]
     :param violence_threshold: The threshold for violence evaluation. Default is 3.
     :type violence_threshold: int
@@ -47,19 +47,19 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
             :language: python
             :dedent: 8
             :caption: Initialize and call ContentSafetyEvaluator using azure.ai.evaluation.AzureAIProject.
-    
+
     .. admonition:: Example using Azure AI Project URL:
-    
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
             :start-after: [START content_safety_evaluator]
             :end-before: [END content_safety_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call ContentSafetyEvaluator using Azure AI Project URL in the following format 
+            :caption: Initialize and call ContentSafetyEvaluator using Azure AI Project URL in the following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}.
-    
+
     .. admonition:: Example with Threshold:
-    
+
         .. literalinclude:: ../samples/evaluation_samples_threshold.py
             :start-after: [START threshold_content_safety_evaluator]
             :end-before: [END threshold_content_safety_evaluator]
@@ -73,16 +73,16 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
     _OPTIONAL_PARAMS = ["query"]
     
     def __init__(
-        self, 
-        credential, 
+        self,
+        credential,
         azure_ai_project,
-        *, 
+        *,
         violence_threshold: int = 3,
         sexual_threshold: int = 3,
         self_harm_threshold: int = 3,
         hate_unfairness_threshold: int = 3,
         _evaluate_query: bool = False,
-        **kwargs
+        **kwargs,
     ):
         # Type checking
         for name, value in [
@@ -93,7 +93,7 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
         ]:
             if not isinstance(value, int):
                 raise TypeError(f"{name} must be an int, got {type(value)}")
-        
+
         evaluators = [
             ViolenceEvaluator(credential, azure_ai_project, threshold=violence_threshold, _evaluate_query=_evaluate_query),
             SexualEvaluator(credential, azure_ai_project, threshold=sexual_threshold, _evaluate_query=_evaluate_query),

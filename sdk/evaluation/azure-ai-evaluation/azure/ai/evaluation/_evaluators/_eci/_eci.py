@@ -22,8 +22,8 @@ class ECIEvaluator(RaiServiceEvaluatorBase):
 
     :param credential: The credential for connecting to Azure AI project. Required
     :type credential: ~azure.core.credentials.TokenCredential
-    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint 
-        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name.
     :type azure_ai_project: Union[str, ~azure.ai.evaluation.AzureAIProject]
     :return: Whether or not ECI was found in the response without a disclaimer, with AI-generated reasoning
     :rtype: Dict[str, str]

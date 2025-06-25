@@ -26,7 +26,7 @@ import pytest
 import sys
 import asyncio
 from unittest.mock import Mock
-from pkg_resources import parse_version
+from packaging.version import Version
 import aiohttp
 
 
@@ -1050,7 +1050,7 @@ async def test_close_too_soon_works_fine(caplog, port, http_request):
 
 
 @pytest.mark.skipif(
-    parse_version(aiohttp.__version__) >= parse_version("3.10"),
+    Version(aiohttp.__version__) >= Version("3.10"),
     reason="aiohttp 3.10 introduced separate connection timeout",
 )
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -1073,7 +1073,7 @@ async def test_aiohttp_timeout_response(http_request):
 
 
 @pytest.mark.skipif(
-    parse_version(aiohttp.__version__) < parse_version("3.10"),
+    Version(aiohttp.__version__) < Version("3.10"),
     reason="aiohttp 3.10 introduced separate connection timeout",
 )
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)

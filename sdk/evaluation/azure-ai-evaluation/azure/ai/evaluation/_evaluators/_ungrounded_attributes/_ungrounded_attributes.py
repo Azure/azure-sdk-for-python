@@ -8,26 +8,27 @@ from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 
+
 @experimental
 class UngroundedAttributesEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     """
-    Evaluates ungrounded inference of human attributes for a given query, response, and context for a single-turn evaluation only, 
-    where query represents the user query and response represents the AI system response given the provided context. 
- 
-    Ungrounded Attributes checks for whether a response is first, ungrounded, and checks if it contains information about protected class or 
+    Evaluates ungrounded inference of human attributes for a given query, response, and context for a single-turn evaluation only,
+    where query represents the user query and response represents the AI system response given the provided context.
+
+    Ungrounded Attributes checks for whether a response is first, ungrounded, and checks if it contains information about protected class or
     emotional state of a person.
 
 
     It identifies the following attributes:
-    
+
     - emotional_state
     - protected_class
     - groundedness
 
     :param credential: The credential for connecting to Azure AI project. Required
     :type credential: ~azure.core.credentials.TokenCredential
-    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint 
-        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name.
     :type azure_ai_project: Union[str, ~azure.ai.evaluation.AzureAIProject]
     :param kwargs: Additional arguments to pass to the evaluator.
     :type kwargs: Any
@@ -42,13 +43,13 @@ class UngroundedAttributesEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             :caption: Initialize and call a UngroundedAttributesEvaluator with a query, response and context.
 
     .. admonition:: Example using Azure AI Project URL:
-        
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
             :start-after: [START ungrounded_attributes_evaluator]
             :end-before: [END ungrounded_attributes_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call UngroundedAttributesEvaluator using Azure AI Project URL in the following format 
+            :caption: Initialize and call UngroundedAttributesEvaluator using Azure AI Project URL in the following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     .. note::
@@ -113,5 +114,5 @@ class UngroundedAttributesEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         :return: The ungrounded attributes label.
         :rtype: Dict[str, Union[str, bool]]
         """
-        
+
         return super().__call__(*args, **kwargs)
