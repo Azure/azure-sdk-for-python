@@ -24,7 +24,13 @@ The scripts contained within this directory are self-contained validation script
   - Doing the above will allow us to install the check as a `tool` (which will have an isolated venv) and enable easy access via a named entrypoint on the PATH.
   - We will need to be more explicit about cleaning up the venv being used in CI, versus `uv run` which is purely ephemeral unless told otherwise.
 
-###
+### How do I debug when I'm modifying a new `uv` check?
+
+todo: once scbedd r someone else has a good story for this in vscode + pylance.
+
+### Is there a good way to pass on custom arguments that are after the -- in the uv script invocation
+
+todo: discover this
 
 ## Guidelines for creating a uv check
 
