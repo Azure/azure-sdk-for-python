@@ -21,7 +21,7 @@ from ci_tools.ci_interactions import output_ci_warning
 from ci_tools.scenario.generation import replace_dev_reqs
 from ci_tools.functions import cleanup_directory
 from ci_tools.parsing import ParsedSetup
-from pkg_resources import parse_requirements, RequirementParseError
+from packaging.requirements import Requirement
 import logging
 
 logging.getLogger().setLevel(logging.INFO)
@@ -58,7 +58,7 @@ def compare_req_to_injected_reqs(parsed_req, injected_packages):
 
     return any(parsed_req.name in req for req in injected_packages)
 
-
+# todo: verify this code
 def inject_custom_reqs(file, injected_packages, package_dir):
     req_lines = []
     injected_packages = [p for p in re.split(r"[\s,]", injected_packages) if p]
@@ -69,7 +69,7 @@ def inject_custom_reqs(file, injected_packages, package_dir):
             for line in f:
                 logging.info("Attempting to parse {}".format(line))
                 try:
-                    parsed_req = [req for req in parse_requirements(line)]
+                    parsed_req = Requirement(line.strip())
                 except Exception as e:
                     logging.error(e)
                     parsed_req = [None]
