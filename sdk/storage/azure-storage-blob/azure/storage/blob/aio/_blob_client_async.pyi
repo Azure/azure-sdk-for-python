@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: skip-file
 
+from contextlib import AbstractAsyncContextManager
 from datetime import datetime
 from types import TracebackType
 from typing import (
@@ -52,6 +53,7 @@ from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 
 class BlobClient(  # type: ignore[misc]
+    AbstractAsyncContextManager,
     AsyncStorageAccountHostsMixin,
     StorageAccountHostsMixin,
     StorageEncryptionMixin,
