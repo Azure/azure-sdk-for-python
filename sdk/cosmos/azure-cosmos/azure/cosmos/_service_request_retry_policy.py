@@ -87,6 +87,11 @@ class ServiceRequestRetryPolicy(object):
                     location_endpoint = self.resolve_next_region_service_endpoint()
 
             self.request.route_to_location(location_endpoint)
+            return True
+        # Check if the next retry about to be done is safe
+        if (self.failover_retry_count + 1) >= self.total_retries:
+            return False
+        self.failover_retry_count += 1
         return True
 
     # This function prepares the request to go to the second endpoint in the same region

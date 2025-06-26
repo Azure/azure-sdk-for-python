@@ -65,6 +65,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 self.REGION3: self.REGIONAL_ENDPOINT}
             original_location_cache.read_regional_routing_contexts = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT,
                                                                       self.REGIONAL_ENDPOINT]
+            expected_counter = len(original_location_cache.read_regional_routing_contexts)
             try:
                 # Mock the function to return the ServiceRequestException we retry
                 mf = self.MockExecuteServiceRequestException()
@@ -72,13 +73,41 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 await container.read_item(created_item['id'], created_item['pk'])
                 pytest.fail("Exception was not raised.")
             except ServiceRequestError:
-                assert mf.counter == 3
+                assert mf.counter == expected_counter
+            finally:
+                _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
+
+            # Now we test with a query operation, iterating through items sends request without request object
+            # retry policy should eventually raise an exception as it should stop retrying with a max retry attempt
+            # equal to the available read region locations
+
+            # Change the location cache to have 3 preferred read regions and 3 available read endpoints by location
+            original_location_cache = mock_client.client_connection._global_endpoint_manager.location_cache
+            original_location_cache.account_read_locations = [self.REGION1, self.REGION2, self.REGION3]
+            original_location_cache.available_read_regional_endpoints_by_locations = {
+                self.REGION1: self.REGIONAL_ENDPOINT,
+                self.REGION2: self.REGIONAL_ENDPOINT,
+                self.REGION3: self.REGIONAL_ENDPOINT}
+            original_location_cache.read_regional_routing_contexts = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT,
+                                                                      self.REGIONAL_ENDPOINT]
+            expected_counter = len(original_location_cache.read_regional_routing_contexts)
+
+            try:
+                # Mock the function to return the ServiceRequestException we retry
+                mf = self.MockExecuteServiceRequestException()
+                _retry_utility_async.ExecuteFunctionAsync = mf
+                items = [item async for item in container.query_items(query="SELECT * FROM c",
+                                                                      partition_key=created_item['pk'])]
+                pytest.fail("Exception was not raised.")
+            except ServiceRequestError:
+                assert mf.counter == expected_counter
             finally:
                 _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
             # Now we change the location cache to have only 1 preferred read region
             original_location_cache.account_read_locations = [self.REGION1]
             original_location_cache.read_regional_routing_contexts = [self.REGIONAL_ENDPOINT]
+            expected_counter = len(original_location_cache.read_regional_routing_contexts)
             try:
                 # Reset the function to reset the counter
                 mf = self.MockExecuteServiceRequestException()
@@ -86,7 +115,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 await container.read_item(created_item['id'], created_item['pk'])
                 pytest.fail("Exception was not raised.")
             except ServiceRequestError:
-                assert mf.counter == 1
+                assert mf.counter == expected_counter
             finally:
                 _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
@@ -96,6 +125,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             original_location_cache.available_write_regional_endpoints_by_locations = {
                 self.REGION1: self.REGIONAL_ENDPOINT,
                 self.REGION2: self.REGIONAL_ENDPOINT}
+            expected_counter = len(original_location_cache.write_regional_routing_contexts)
             try:
                 # Reset the function to reset the counter
                 mf = self.MockExecuteServiceRequestException()
@@ -103,7 +133,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
                 pytest.fail("Exception was not raised.")
             except ServiceRequestError:
-                assert mf.counter == 2
+                assert mf.counter == expected_counter
             finally:
                 _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
