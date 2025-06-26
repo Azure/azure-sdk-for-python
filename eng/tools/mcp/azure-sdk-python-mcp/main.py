@@ -277,7 +277,6 @@ def init_local_tool_arm(tsp_config_path: str, repo_path: str, commit_id: str) ->
             text=True,
             stdin=subprocess.DEVNULL,  # Explicitly close stdin
             cwd=repo_path,
-            check=True,
         )
         subprocess.run(
             [sys.executable, "-m", "pip", "install", "setuptools"],
@@ -285,7 +284,6 @@ def init_local_tool_arm(tsp_config_path: str, repo_path: str, commit_id: str) ->
             text=True,
             stdin=subprocess.DEVNULL,  # Explicitly close stdin
             cwd=repo_path,
-            check=True,
         )
         logger.info("Install dependencies for SDK generation")
 
