@@ -868,7 +868,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.target, "messaging")
 
-    def test_span_to_envelope_producer_messaging(self)
+    def test_span_to_envelope_producer_messaging(self):
         exporter = self._exporter
         start_time = 1575494316027613500
         end_time = start_time + 1001000000
