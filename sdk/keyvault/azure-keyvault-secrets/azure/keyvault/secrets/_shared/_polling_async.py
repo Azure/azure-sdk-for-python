@@ -2,15 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import logging
 from typing import Any, Callable, cast
 
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpTransport
 from azure.core.polling import AsyncPollingMethod
-
-logger = logging.getLogger(__name__)
 
 
 class AsyncDeleteRecoverPollingMethod(AsyncPollingMethod):
@@ -35,13 +32,13 @@ class AsyncDeleteRecoverPollingMethod(AsyncPollingMethod):
     """
 
     def __init__(
-            self,
-            pipeline_response: PipelineResponse,
-            command: Callable,
-            final_resource: Any,
-            finished: bool,
-            interval: int = 2
-        ) -> None:
+        self,
+        pipeline_response: PipelineResponse,
+        command: Callable,
+        final_resource: Any,
+        finished: bool,
+        interval: int = 2,
+    ) -> None:
         self._pipeline_response = pipeline_response
         self._command = command
         self._resource = final_resource
@@ -66,16 +63,12 @@ class AsyncDeleteRecoverPollingMethod(AsyncPollingMethod):
                 raise
 
     async def run(self) -> None:
-        try:
-            while not self.finished():
-                await self._update_status()
-                if not self.finished():
-                    # We should always ask the client's transport to sleep, instead of sleeping directly
-                    transport: AsyncHttpTransport = cast(AsyncHttpTransport, self._pipeline_response.context.transport)
-                    await transport.sleep(self._polling_interval)
-        except Exception as e:
-            logger.warning(str(e))
-            raise
+        while not self.finished():
+            await self._update_status()
+            if not self.finished():
+                # We should always ask the client's transport to sleep, instead of sleeping directly
+                transport: AsyncHttpTransport = cast(AsyncHttpTransport, self._pipeline_response.context.transport)
+                await transport.sleep(self._polling_interval)
 
     def finished(self) -> bool:
         return self._finished
