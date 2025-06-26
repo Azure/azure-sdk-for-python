@@ -2223,8 +2223,8 @@ class RedTeam(_Model):
 
     :ivar id: Identifier of the red team. Required.
     :vartype id: str
-    :ivar scan_name: Name of the red-team scan.
-    :vartype scan_name: str
+    :ivar display_name: Name of the red-team display name.
+    :vartype display_name: str
     :ivar num_turns: Number of simulation rounds. Required.
     :vartype num_turns: int
     :ivar attack_strategies: List of attack strategies or nested lists of attack strategies.
@@ -2257,8 +2257,10 @@ class RedTeam(_Model):
 
     id: str = rest_field(visibility=["read"])
     """Identifier of the red team. Required."""
-    scan_name: Optional[str] = rest_field(name="scanName", visibility=["read", "create", "update", "delete", "query"])
-    """Name of the red-team scan."""
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the red-team display name."""
     num_turns: int = rest_field(name="numTurns", visibility=["read", "create", "update", "delete", "query"])
     """Number of simulation rounds. Required."""
     attack_strategies: List[Union[str, "_models.AttackStrategy"]] = rest_field(
@@ -2302,7 +2304,7 @@ class RedTeam(_Model):
         attack_strategies: List[Union[str, "_models.AttackStrategy"]],
         simulation_only: bool,
         risk_categories: List[Union[str, "_models.RiskCategory"]],
-        scan_name: Optional[str] = None,
+        display_name: Optional[str] = None,
         application_scenario: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, str]] = None,
