@@ -68,13 +68,30 @@ def _resolve_field_instance(cls_or_instance):
         )
 
 
+def _filter_field_kwargs(**kwargs):
+    """
+    Helper function to filter kwargs to only include parameters that are 
+    valid for marshmallow 4.x Field constructor.
+    
+    Returns a dict containing only valid Field parameters.
+    """
+    valid_field_params = {}
+    for param in ['load_default', 'dump_default', 'missing', 'allow_none', 'validate', 
+                  'required', 'load_only', 'dump_only', 'error_messages', 'metadata', 'data_key']:
+        if param in kwargs:
+            valid_field_params[param] = kwargs[param]
+    return valid_field_params
+
+
 class StringTransformedEnum(Field):
     def __init__(self, **kwargs):
-        # pop marshmallow unknown args to avoid warnings
+        # Extract custom parameters that are not supported by Field in marshmallow 4.x
         self.allowed_values = kwargs.pop("allowed_values", None)
         self.casing_transform = kwargs.pop("casing_transform", lambda x: x.lower())
         self.pass_original = kwargs.pop("pass_original", False)
-        super().__init__(**kwargs)
+        
+        # Only pass valid Field parameters to parent constructor
+        super().__init__(**_filter_field_kwargs(**kwargs))
         if isinstance(self.allowed_values, str):
             self.allowed_values = [self.allowed_values]
         self.allowed_values = [self.casing_transform(x) for x in self.allowed_values]
@@ -284,9 +301,12 @@ class ArmStr(Field):
     """A string represents an ARM ID for some AzureML resource."""
 
     def __init__(self, **kwargs):
+        # Extract custom parameters that are not supported by Field in marshmallow 4.x
         self.azureml_type = kwargs.pop("azureml_type", None)
         self.pattern = kwargs.pop("pattern", r"^azureml:.+")
-        super().__init__(**kwargs)
+        
+        # Only pass valid Field parameters to parent constructor
+        super().__init__(**_filter_field_kwargs(**kwargs))
 
     def _jsonschema_type_mapping(self):
         schema = {
@@ -338,6 +358,7 @@ class ArmVersionedStr(ArmStr):
     """A string represents an ARM ID for some AzureML resource with version."""
 
     def __init__(self, **kwargs):
+        # Extract custom parameters that are not supported by Field in marshmallow 4.x
         self.allow_default_version = kwargs.pop("allow_default_version", False)
         super().__init__(**kwargs)
 
@@ -459,13 +480,17 @@ class UnionField(fields.Field):
     """A field that can be one of multiple types."""
 
     def __init__(self, union_fields: List[fields.Field], is_strict=False, **kwargs):
-        super().__init__(**kwargs)
+        # Store custom parameter separately
+        self.is_strict = is_strict
+        
+        # Only pass valid Field parameters to parent constructor
+        super().__init__(**_filter_field_kwargs(**kwargs))
         try:
             # add the validation and make sure union_fields must be subclasses or instances of
             # marshmallow.Field
             self._union_fields = [_resolve_field_instance(cls_or_instance) for cls_or_instance in union_fields]
             # TODO: make serialization/de-serialization work in the same way as json schema when is_strict is True
-            self.is_strict = is_strict  # S\When True, combine fields with oneOf instead of anyOf at schema generation
+            # When True, combine fields with oneOf instead of anyOf at schema generation
         except ValueError as error:
             raise ValueError(
                 'Elements of "union_fields" must be subclasses or instances of marshmallow.Field.'
@@ -935,8 +960,11 @@ class RegistryStr(Field):
     """A string represents a registry ID for some AzureML resource."""
 
     def __init__(self, **kwargs):
+        # Extract custom parameters that are not supported by Field in marshmallow 4.x
         self.azureml_type = kwargs.pop("azureml_type", None)
-        super().__init__(**kwargs)
+        
+        # Only pass valid Field parameters to parent constructor
+        super().__init__(**_filter_field_kwargs(**kwargs))
 
     def _jsonschema_type_mapping(self):
         schema = {
