@@ -370,6 +370,29 @@ class MsrestPetAPTrue(MsrestModel):
         self.name = name
 
 
+class MsrestClientNameAndJsonEncodedNameModel(MsrestModel):
+    _attribute_map = {
+        "client_name": {"key": "wireName", "type": "str"},
+    }
+
+    def __init__(self, *, client_name: str, **kwargs) -> None:
+        super().__init__(**kwargs)
+        self.client_name = client_name
+
+
+class MsrestReadonlyModel(MsrestModel):
+    _validation = {
+        "id": {"readonly": True},
+    }
+    _attribute_map = {
+        "id": {"key": "readonlyProp", "type": "str"},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+
+
 __all__: List[str] = [
     "HybridPet",
     "HybridDog",
@@ -401,6 +424,8 @@ __all__: List[str] = [
     "MsrestFlattenModel",
     "HybridPetAPTrue",
     "MsrestPetAPTrue",
+    "MsrestClientNameAndJsonEncodedNameModel",
+    "MsrestReadonlyModel",
 ]  # Add all objects you want publicly available to users at this package level
 
 

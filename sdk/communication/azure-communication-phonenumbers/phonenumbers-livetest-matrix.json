@@ -6,7 +6,7 @@
   },
   "matrix": {
     "Agent": {
-      "ubuntu-22.04": {
+      "ubuntu-24.04": {
         "OSVmImage": "env:LINUXVMIMAGE",
         "Pool": "env:LINUXPOOL",
         "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "true"
@@ -31,20 +31,20 @@
   "include": [
     {
       "CoverageConfig": {
-        "ubuntu2004_39_coverage": {
+        "ubuntu2404_39_coverage": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.9",
           "CoverageArg": "",
           "TestSamples": "false",
-          "AZURE_TEST_AGENT": "UBUNTU_2004_PYTHON39",
+          "AZURE_TEST_AGENT": "UBUNTU_2404_PYTHON39",
           "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "false"
         }
       }
     },
     {
       "Config": {
-        "Ubuntu2004_3120": {
+        "Ubuntu2404_3120": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.12",

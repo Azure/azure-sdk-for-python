@@ -7,7 +7,7 @@ import stat
 from ast import Not
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version, parse, InvalidVersion
-from pkg_resources import Requirement
+from packaging.requirements import Requirement
 import io
 
 from ci_tools.variables import discover_repo_root, DEV_BUILD_IDENTIFIER, str_to_bool
@@ -52,6 +52,7 @@ TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
     "azure-servicebus": "pypy",
     "azure-ai-projects": "pypy",
     "azure-ai-agents": "pypy",
+    "azure-identity-broker": "pypy",
 }
 
 omit_regression = (
@@ -369,12 +370,12 @@ def process_requires(setup_py_path: str, is_dev_build: bool = False):
     """
 
     pkg_details = ParsedSetup.from_path(setup_py_path)
-    azure_requirements = [Requirement.parse(r) for r in pkg_details.requires if r.startswith("azure")]
+    azure_requirements = [Requirement(r) for r in pkg_details.requires if r.startswith("azure")]
 
     # Find package requirements that are not available on PyPI
     requirement_to_update = {}
     for req in azure_requirements:
-        pkg_name = req.key
+        pkg_name = req.name
         spec = SpecifierSet(str(req).replace(pkg_name, ""))
 
         if not is_required_version_on_pypi(pkg_name, spec) or is_dev_build:
@@ -404,7 +405,7 @@ def process_requires(setup_py_path: str, is_dev_build: bool = False):
     else:
         logging.info("Packages not available on PyPI:{}".format(requirement_to_update))
         update_requires(setup_py_path, requirement_to_update)
-        logging.info("Package requirement is updated in setup.py")
+        logging.info(f"Package requirement is updated in {'pyproject.toml' if pkg_details.is_pyproject else 'setup.py'}.")
 
 
 def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> Optional[str]:
@@ -673,7 +674,7 @@ def is_package_compatible(
 
     for immutable_requirement in immutable_requirements:
         for package_requirement in package_requirements:
-            if package_requirement.key == immutable_requirement.key:
+            if package_requirement.name == immutable_requirement.name:
                 # if the dev_req line has a requirement that conflicts with the immutable requirement,
                 # we need to resolve it. We KNOW that the immutable requirement will be of form package==version,
                 # so we can reliably pull out the version and check it against the specifier of the dev_req line.
@@ -743,7 +744,7 @@ def resolve_compatible_package(package_name: str, immutable_requirements: List[R
     """
 
     pypi = PyPIClient()
-    immovable_pkgs = {req.key: req for req in immutable_requirements}
+    immovable_pkgs = {req.name: req for req in immutable_requirements}
 
     # Let's use a real use-case to walk through this function. We're going to use the azure-ai-language-conversations
     # package as an example.
@@ -927,3 +928,20 @@ def verify_package_classifiers(package_name: str, package_version: str, package_
         if num < 5:
             return False, f"{package_name} has version {package_version} and is a GA release, but had development status '{c}'. Expecting a development classifier that is equal or greater than 'Development Status :: 5 - Production/Stable'."
     return True, None
+
+def get_pip_command(python_exe: Optional[str] = None) -> List[str]:
+    """
+    Determine whether to use 'uv pip' or regular 'pip' based on environment.
+
+    :param str python_exe: The Python executable to use (if not using the default).
+    :return: List of command arguments for pip.
+    :rtype: List[str]
+
+    """
+    # Check TOX_PIP_IMPL environment variable (aligns with tox.ini configuration)
+    pip_impl = os.environ.get('TOX_PIP_IMPL', 'pip').lower()
+
+    if pip_impl == 'uv':
+        return ["uv", "pip"]
+    else:
+        return [python_exe if python_exe else sys.executable, "-m", "pip"]

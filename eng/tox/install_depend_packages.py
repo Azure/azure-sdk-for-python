@@ -13,13 +13,13 @@ import re
 
 from subprocess import check_call
 from typing import TYPE_CHECKING, Callable, Optional
-from pkg_resources import parse_version, Requirement
 from pypi_tools.pypi import PyPIClient
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version
+from packaging.requirements import Requirement
 
 from ci_tools.parsing import ParsedSetup, parse_require
-from ci_tools.functions import compare_python_version, handle_incompatible_minimum_dev_reqs
+from ci_tools.functions import compare_python_version, handle_incompatible_minimum_dev_reqs, get_pip_command
 
 from typing import List
 
@@ -186,7 +186,7 @@ def process_bounded_versions(originating_pkg_name: str, pkg_name: str, versions:
     # lower bound general
     if pkg_name in MINIMUM_VERSION_GENERIC_OVERRIDES:
         versions = [
-            v for v in versions if parse_version(v) >= parse_version(MINIMUM_VERSION_GENERIC_OVERRIDES[pkg_name])
+            v for v in versions if Version(v) >= Version(MINIMUM_VERSION_GENERIC_OVERRIDES[pkg_name])
         ]
 
     # lower bound platform-specific
@@ -195,7 +195,7 @@ def process_bounded_versions(originating_pkg_name: str, pkg_name: str, versions:
             restrictions = PLATFORM_SPECIFIC_MINIMUM_OVERRIDES[platform_bound]
 
             if pkg_name in restrictions:
-                versions = [v for v in versions if parse_version(v) >= parse_version(restrictions[pkg_name])]
+                versions = [v for v in versions if Version(v) >= Version(restrictions[pkg_name])]
 
     # lower bound package-specific
     if (
@@ -205,13 +205,13 @@ def process_bounded_versions(originating_pkg_name: str, pkg_name: str, versions:
         versions = [
             v
             for v in versions
-            if parse_version(v) >= parse_version(MINIMUM_VERSION_SPECIFIC_OVERRIDES[originating_pkg_name][pkg_name])
+            if Version(v) >= Version(MINIMUM_VERSION_SPECIFIC_OVERRIDES[originating_pkg_name][pkg_name])
         ]
 
     # upper bound general
     if pkg_name in MAXIMUM_VERSION_GENERIC_OVERRIDES:
         versions = [
-            v for v in versions if parse_version(v) <= parse_version(MAXIMUM_VERSION_GENERIC_OVERRIDES[pkg_name])
+            v for v in versions if Version(v) <= Version(MAXIMUM_VERSION_GENERIC_OVERRIDES[pkg_name])
         ]
 
     # upper bound platform
@@ -220,7 +220,7 @@ def process_bounded_versions(originating_pkg_name: str, pkg_name: str, versions:
             restrictions = PLATFORM_SPECIFIC_MAXIMUM_OVERRIDES[platform_bound]
 
             if pkg_name in restrictions:
-                versions = [v for v in versions if parse_version(v) <= parse_version(restrictions[pkg_name])]
+                versions = [v for v in versions if Version(v) <= Version(restrictions[pkg_name])]
 
     # upper bound package-specific
     if (
@@ -230,7 +230,7 @@ def process_bounded_versions(originating_pkg_name: str, pkg_name: str, versions:
         versions = [
             v
             for v in versions
-            if parse_version(v) <= parse_version(MAXIMUM_VERSION_SPECIFIC_OVERRIDES[originating_pkg_name][pkg_name])
+            if Version(v) <= Version(MAXIMUM_VERSION_SPECIFIC_OVERRIDES[originating_pkg_name][pkg_name])
         ]
 
     return versions
@@ -241,7 +241,7 @@ def process_requirement(req, dependency_type, orig_pkg_name):
 
     # find package name and requirement specifier from requires
     requirement = parse_require(req)
-    pkg_name = requirement.key
+    pkg_name = requirement.name
     spec = requirement.specifier if len(requirement.specifier) else None
 
     # Filter out requirements with environment markers that don't match the current environment
@@ -313,7 +313,7 @@ def check_req_against_exclusion(req, req_to_exclude):
 
 
 def filter_dev_requirements(
-    setup_py_path,
+    package_directory,
     released_packages,
     temp_dir,
     additional_filter_fn: Optional[Callable[[str, List[str], List[Requirement]], List[str]]] = None,
@@ -326,7 +326,7 @@ def filter_dev_requirements(
     by the package).
     """
     # This method returns list of requirements from dev_requirements by filtering out packages in given list
-    dev_req_path = os.path.join(os.path.dirname(setup_py_path), DEV_REQ_FILE)
+    dev_req_path = os.path.join(package_directory, DEV_REQ_FILE)
     requirements = []
     with open(dev_req_path, "r") as dev_req_file:
         requirements = dev_req_file.readlines()
@@ -334,7 +334,7 @@ def filter_dev_requirements(
     # filter out any package available on PyPI (released_packages)
     # include packages without relative reference and packages not available on PyPI
     released_packages = [parse_require(p) for p in released_packages]
-    released_package_names = [p.key for p in released_packages]
+    released_package_names = [p.name for p in released_packages]
     # find prebuilt whl paths in dev requiremente
     prebuilt_dev_reqs = [os.path.basename(req.replace("\n", "")) for req in requirements if os.path.sep in req]
     # filter any req if wheel is for a released package
@@ -350,7 +350,7 @@ def filter_dev_requirements(
 
     if additional_filter_fn:
         # this filter function handles the case where a dev requirement is incompatible with the current set of targeted packages
-        filtered_req = additional_filter_fn(setup_py_path, filtered_req, released_packages)
+        filtered_req = additional_filter_fn(package_directory, filtered_req, released_packages)
 
     logging.info("Filtered dev requirements: %s", filtered_req)
 
@@ -366,12 +366,8 @@ def filter_dev_requirements(
 
 def install_packages(packages, req_file):
     # install list of given packages from PyPI
-    commands = [
-        sys.executable,
-        "-m",
-        "pip",
-        "install",
-    ]
+    commands = get_pip_command()
+    commands.append("install")
 
     if packages:
         commands.extend(packages)
@@ -412,10 +408,12 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    setup_path = os.path.join(os.path.abspath(args.target_package), "setup.py")
+
+    setup_path = os.path.join(os.path.abspath(args.target_package))
 
     if not (os.path.exists(setup_path) and os.path.exists(args.work_dir)):
         logging.error("Invalid arguments. Please make sure target directory and working directory are valid path")
         sys.exit(1)
+
 
     install_dependent_packages(setup_path, args.dependency_type, args.work_dir)
