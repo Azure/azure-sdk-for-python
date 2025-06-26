@@ -757,7 +757,7 @@ class RedTeam:
                 if "tense" in strategy:
                     objectives_response = await self.generated_rai_client.get_attack_objectives(
                         risk_type=content_harm_risk,
-                        risk_category=other_risk,
+                        risk_category=risk_cat_value,
                         application_scenario=application_scenario or "",
                         strategy="tense",
                         scan_session_id=self.scan_session_id
@@ -765,7 +765,7 @@ class RedTeam:
                 else:
                     objectives_response = await self.generated_rai_client.get_attack_objectives(
                         risk_type=content_harm_risk,
-                        risk_category=other_risk,
+                        risk_category=risk_cat_value,
                         application_scenario=application_scenario or "",
                         strategy=None,
                         scan_session_id=self.scan_session_id
