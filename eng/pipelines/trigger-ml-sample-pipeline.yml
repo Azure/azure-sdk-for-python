@@ -23,7 +23,6 @@ jobs:
 
     pool:
       name: azsdk-pool
-      demands: ImageOverride -equals 'ubuntu-24.04'
 
     steps:
     - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
