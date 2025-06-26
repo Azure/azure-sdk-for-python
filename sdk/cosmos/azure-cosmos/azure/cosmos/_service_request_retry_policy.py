@@ -30,7 +30,7 @@ class ServiceRequestRetryPolicy(object):
             else:
                 self.total_retries = len(self.global_endpoint_manager.location_cache.write_regional_routing_contexts)
 
-    def ShouldRetry(self):
+    def ShouldRetry(self):  # pylint: disable=too-many-return-statements
         """Returns true if the request should retry based on preferred regions and retries already done.
 
         :returns: a boolean stating whether the request should be retried
