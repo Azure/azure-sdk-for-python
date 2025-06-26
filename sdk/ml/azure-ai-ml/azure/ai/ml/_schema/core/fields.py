@@ -18,7 +18,7 @@ from typing import List, Optional, Union
 from marshmallow import RAISE, fields
 from marshmallow.exceptions import ValidationError
 from marshmallow.fields import Field, Nested
-from marshmallow.utils import resolve_field_instance
+
 
 from ..._utils._arm_id_utils import AMLVersionedArmId, is_ARM_id_for_resource, parse_name_label, parse_name_version
 from ..._utils._experimental import _is_warning_cached
@@ -46,6 +46,28 @@ from ..core.schema import PathAwareSchema
 
 module_logger = logging.getLogger(__name__)
 T = typing.TypeVar("T")
+
+
+def _resolve_field_instance(cls_or_instance):
+    """
+    Helper function to replace marshmallow.utils.resolve_field_instance
+    which was removed in marshmallow 4.x.
+    
+    Returns a field instance from either a field class or field instance.
+    """
+    from marshmallow.base import FieldABC
+    
+    if isinstance(cls_or_instance, FieldABC):
+        # Already a field instance
+        return cls_or_instance
+    elif isinstance(cls_or_instance, type) and issubclass(cls_or_instance, FieldABC):
+        # Field class, instantiate it
+        return cls_or_instance()
+    else:
+        # Not a valid field class or instance
+        raise ValueError(
+            f'Expected a field class or instance, got {cls_or_instance!r}'
+        )
 
 
 class StringTransformedEnum(Field):
@@ -442,7 +464,7 @@ class UnionField(fields.Field):
         try:
             # add the validation and make sure union_fields must be subclasses or instances of
             # marshmallow.base.FieldABC
-            self._union_fields = [resolve_field_instance(cls_or_instance) for cls_or_instance in union_fields]
+            self._union_fields = [_resolve_field_instance(cls_or_instance) for cls_or_instance in union_fields]
             # TODO: make serialization/de-serialization work in the same way as json schema when is_strict is True
             self.is_strict = is_strict  # S\When True, combine fields with oneOf instead of anyOf at schema generation
         except ValueError as error:
@@ -555,7 +577,7 @@ class TypeSensitiveUnionField(UnionField):
         for type_name, type_sensitive_fields in type_sensitive_fields_dict.items():
             union_fields.extend(type_sensitive_fields)
             self._type_sensitive_fields_dict[type_name] = [
-                resolve_field_instance(cls_or_instance) for cls_or_instance in type_sensitive_fields
+                _resolve_field_instance(cls_or_instance) for cls_or_instance in type_sensitive_fields
             ]
 
         super(TypeSensitiveUnionField, self).__init__(union_fields, **kwargs)
@@ -880,7 +902,7 @@ class ExperimentalField(fields.Field):
     def __init__(self, experimental_field: fields.Field, **kwargs):
         super().__init__(**kwargs)
         try:
-            self._experimental_field = resolve_field_instance(experimental_field)
+            self._experimental_field = _resolve_field_instance(experimental_field)
             self.required = experimental_field.required
         except ValueError as error:
             raise ValueError(
