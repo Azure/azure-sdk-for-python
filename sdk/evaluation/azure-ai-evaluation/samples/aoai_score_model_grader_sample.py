@@ -36,10 +36,7 @@ def create_sample_data() -> str:
         {
             "conversation": {
                 "messages": [
-                    {
-                        "content": "How can I improve my Python coding skills?",
-                        "role": "user"
-                    },
+                    {"content": "How can I improve my Python coding skills?", "role": "user"},
                     {
                         "content": (
                             "Here are some effective ways to improve your "
@@ -51,39 +48,27 @@ def create_sample_data() -> str:
                             "or tutorials. The key is consistent practice and "
                             "building projects that challenge you."
                         ),
-                        "role": "assistant"
-                    }
+                        "role": "assistant",
+                    },
                 ]
             },
             "expected_quality": "high",
-            "context": "Programming advice request"
+            "context": "Programming advice request",
         },
         {
             "conversation": {
                 "messages": [
-                    {
-                        "content": "What is Python?",
-                        "role": "user"
-                    },
-                    {
-                        "content": "Python is a programming language.",
-                        "role": "assistant"
-                    }
+                    {"content": "What is Python?", "role": "user"},
+                    {"content": "Python is a programming language.", "role": "assistant"},
                 ]
             },
             "expected_quality": "low",
-            "context": "Basic definition request"
+            "context": "Basic definition request",
         },
         {
             "conversation": {
                 "messages": [
-                    {
-                        "content": (
-                            "Can you explain machine learning concepts "
-                            "for a beginner?"
-                        ),
-                        "role": "user"
-                    },
+                    {"content": ("Can you explain machine learning concepts " "for a beginner?"), "role": "user"},
                     {
                         "content": (
                             "Machine learning is a subset of artificial "
@@ -100,39 +85,27 @@ def create_sample_data() -> str:
                             "and reinforcement learning (learning through "
                             "trial and error)."
                         ),
-                        "role": "assistant"
-                    }
+                        "role": "assistant",
+                    },
                 ]
             },
             "expected_quality": "high",
-            "context": "Educational explanation request"
+            "context": "Educational explanation request",
         },
         {
             "conversation": {
                 "messages": [
-                    {
-                        "content": "Help me debug this code",
-                        "role": "user"
-                    },
-                    {
-                        "content": "Sure, please share your code.",
-                        "role": "assistant"
-                    }
+                    {"content": "Help me debug this code", "role": "user"},
+                    {"content": "Sure, please share your code.", "role": "assistant"},
                 ]
             },
             "expected_quality": "medium",
-            "context": "Debug assistance request"
+            "context": "Debug assistance request",
         },
         {
             "conversation": {
                 "messages": [
-                    {
-                        "content": (
-                            "What are the best practices for writing "
-                            "clean Python code?"
-                        ),
-                        "role": "user"
-                    },
+                    {"content": ("What are the best practices for writing " "clean Python code?"), "role": "user"},
                     {
                         "content": (
                             "Here are key best practices for writing clean "
@@ -149,20 +122,20 @@ def create_sample_data() -> str:
                             "comments, 10) Refactor code regularly to improve "
                             "readability and maintainability."
                         ),
-                        "role": "assistant"
-                    }
+                        "role": "assistant",
+                    },
                 ]
             },
             "expected_quality": "high",
-            "context": "Best practices inquiry"
-        }
+            "context": "Best practices inquiry",
+        },
     ]
 
     # Create JSONL file
     filename = "sample_conversations.jsonl"
-    with open(filename, 'w') as f:
+    with open(filename, "w") as f:
         for conv in sample_conversations:
-            f.write(json.dumps(conv) + '\n')
+            f.write(json.dumps(conv) + "\n")
 
     print(f"Created sample data file: {filename}")
     return filename
@@ -181,10 +154,8 @@ def demonstrate_score_model_grader():
         model_config = AzureOpenAIModelConfiguration(
             azure_endpoint=os.environ.get("endpoint"),
             api_key=os.environ.get("key"),
-            azure_deployment=os.environ.get(
-                "deployment_name"
-            ),
-            api_version="2024-12-01-preview"
+            azure_deployment=os.environ.get("deployment_name"),
+            api_version="2024-12-01-preview",
         )
 
         print("✅ Model configuration loaded successfully")
@@ -203,7 +174,7 @@ def demonstrate_score_model_grader():
                         "helpfulness, completeness, accuracy, and "
                         "appropriateness. Return a score between 0.0 (very "
                         "poor) and 1.0 (excellent)."
-                    )
+                    ),
                 },
                 {
                     "role": "user",
@@ -212,13 +183,11 @@ def demonstrate_score_model_grader():
                         "Context: {{ item.context }}\n"
                         "Messages: {{ item.conversation }}\n\n"
                         "Provide a quality score from 0.0 to 1.0."
-                    )
-                }
+                    ),
+                },
             ],
             range=[0.0, 1.0],
-            sampling_params={
-                "temperature": 0.0
-            }
+            sampling_params={"temperature": 0.0},
         )
 
         print("✅ Conversation quality grader created successfully")
@@ -228,10 +197,8 @@ def demonstrate_score_model_grader():
 
         result = evaluate(
             data=data_file,
-            evaluators={
-                "conversation_quality": conversation_quality_grader
-            },
-            azure_ai_project=os.environ.get("AZURE_AI_PROJECT_ENDPOINT")
+            evaluators={"conversation_quality": conversation_quality_grader},
+            azure_ai_project=os.environ.get("AZURE_AI_PROJECT_ENDPOINT"),
         )
 
         # 4. Display results
@@ -240,28 +207,28 @@ def demonstrate_score_model_grader():
 
         # Show metrics
         print("\n=== Metrics Summary ===")
-        for metric_name, metric_value in result['metrics'].items():
+        for metric_name, metric_value in result["metrics"].items():
             print(f"{metric_name}: {metric_value:.3f}")
 
         # Show detailed results
         print("\n=== Sample Results ===")
-        df = pd.DataFrame(result['rows'])
+        df = pd.DataFrame(result["rows"])
 
         for i, row in df.head(3).iterrows():
             print(f"\nSample {i+1}:")
             print(f"  Context: {row.get('context', 'N/A')}")
-            
+
             # Show grader results
             for col in df.columns:
-                if col.startswith('outputs.'):
-                    grader_name = col.split('.')[1]
-                    if 'score' in col:
+                if col.startswith("outputs."):
+                    grader_name = col.split(".")[1]
+                    if "score" in col:
                         print(f"  {grader_name} Score: {row[col]:.3f}")
-                    elif 'passed' in col:
+                    elif "passed" in col:
                         print(f"  {grader_name} Passed: {row[col]}")
 
         print("\n✅ Evaluation completed successfully!")
-        
+
     except Exception as e:
         print(f"\n❌ Error during evaluation: {str(e)}")
 
@@ -273,16 +240,12 @@ def demonstrate_score_model_grader():
 
 if __name__ == "__main__":
     print("🚀 Starting Azure OpenAI Score Model Grader Demo\n")
-    
+
     # Check if environment variables are set
-    required_vars = [
-        "endpoint",
-        "key", 
-        "deployment_name"
-    ]
-    
+    required_vars = ["endpoint", "key", "deployment_name"]
+
     missing_vars = [var for var in required_vars if not os.environ.get(var)]
-    
+
     if missing_vars:
         print("⚠️  Missing environment variables:")
         for var in missing_vars:
@@ -290,5 +253,5 @@ if __name__ == "__main__":
     else:
         print("✅ All environment variables found")
         demonstrate_score_model_grader()
-    
+
     print("\n🎉 Demo completed!")

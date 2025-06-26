@@ -3,10 +3,7 @@
 # ---------------------------------------------------------
 from typing import Any, Dict, Union, List, Optional
 
-from azure.ai.evaluation._model_configurations import (
-    AzureOpenAIModelConfiguration,
-    OpenAIModelConfiguration
-)
+from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from openai.types.graders import ScoreModelGrader
 from azure.ai.evaluation._common._experimental import experimental
 
@@ -41,7 +38,7 @@ class AzureOpenAIScoreModelGrader(AzureOpenAIGrader):
     :type name: str
     :param range: The range of the score. Defaults to [0, 1].
     :type range: Optional[List[float]]
-    :param pass_threshold: Score threshold for pass/fail classification. 
+    :param pass_threshold: Score threshold for pass/fail classification.
         Defaults to midpoint of range.
     :type pass_threshold: Optional[float]
     :param sampling_params: The sampling parameters for the model.
@@ -55,16 +52,14 @@ class AzureOpenAIScoreModelGrader(AzureOpenAIGrader):
     def __init__(
         self,
         *,
-        model_config: Union[
-            AzureOpenAIModelConfiguration, OpenAIModelConfiguration
-        ],
+        model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
         input: List[Dict[str, str]],
         model: str,
         name: str,
         range: Optional[List[float]] = None,
         pass_threshold: Optional[float] = None,
         sampling_params: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ):
         # Validate range and pass_threshold
         if range is not None:
@@ -72,23 +67,18 @@ class AzureOpenAIScoreModelGrader(AzureOpenAIGrader):
                 raise ValueError("range must be a list of two numbers [min, max] where min < max")
         else:
             range = [0.0, 1.0]  # Default range
-            
+
         if pass_threshold is not None:
             if range and (pass_threshold < range[0] or pass_threshold > range[1]):
                 raise ValueError(f"pass_threshold {pass_threshold} must be within range {range}")
         else:
             pass_threshold = (range[0] + range[1]) / 2  # Default to midpoint
-            
+
         # Store pass_threshold as instance attribute
         self.pass_threshold = pass_threshold
 
         # Create OpenAI ScoreModelGrader instance
-        grader_kwargs = {
-            "input": input,
-            "model": model,
-            "name": name,
-            "type": "score_model"
-        }
+        grader_kwargs = {"input": input, "model": model, "name": name, "type": "score_model"}
 
         if range is not None:
             grader_kwargs["range"] = range
@@ -97,8 +87,4 @@ class AzureOpenAIScoreModelGrader(AzureOpenAIGrader):
 
         grader = ScoreModelGrader(**grader_kwargs)
 
-        super().__init__(
-            model_config=model_config,
-            grader_config=grader,
-            **kwargs
-        )
+        super().__init__(model_config=model_config, grader_config=grader, **kwargs)
