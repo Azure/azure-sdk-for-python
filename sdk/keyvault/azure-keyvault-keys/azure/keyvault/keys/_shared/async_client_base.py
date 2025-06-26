@@ -61,7 +61,7 @@ class AsyncKeyVaultClientBase(object):
                 authentication_policy=AsyncChallengeAuthPolicy(credential, verify_challenge_resource=verify_challenge),
                 sdk_moniker=SDK_MONIKER,
                 http_logging_policy=http_logging_policy,
-                **kwargs
+                **kwargs,
             )
             self._models = _models
         except ValueError as exc:
