@@ -45,6 +45,7 @@ from ._cosmos_responses import CosmosDict, CosmosList
 from ._routing.routing_range import Range
 from ._session_token_helpers import get_latest_session_token
 from .offer import Offer, ThroughputProperties
+from ._cosmos_responses import CosmosDict
 from .partition_key import (
     NonePartitionKeyValue,
     PartitionKey,
@@ -104,7 +105,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self.client_connection = client_connection
         self._is_system_key: Optional[bool] = None
         self._scripts: Optional[ScriptsProxy] = None
-        self._response_headers = properties
+        self._response_headers = self.client_connection.last_response_headers.copy()
         if properties:
             self.client_connection._set_container_properties_cache(self.container_link,
                                                                    _build_properties_cache(properties,
@@ -130,7 +131,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :return: Dict of response headers
         :rtype: dict[str, Any]
         """
-        return self._response_headers.copy()
+        return self._response_headers
 
     @property
     def is_system_key(self) -> bool:
@@ -179,7 +180,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         initial_headers: Optional[Dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Read the container properties.
 
         :param bool populate_partition_key_range_statistics: Enable returning partition key

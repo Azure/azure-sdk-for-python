@@ -85,6 +85,7 @@ class TestCosmosResponses(unittest.TestCase):
     def test_create_container_if_not_exists_headers(self):
         first_response = self.test_database.create_container_if_not_exists(id="responses_test" + str(uuid.uuid4()),
                                                         partition_key=PartitionKey(path="/company"))
+        print(first_response.get_response_headers())
         assert len(first_response.get_response_headers()) > 0
 
     def test_replace_container_headers(self):
@@ -93,6 +94,18 @@ class TestCosmosResponses(unittest.TestCase):
         second_response = self.test_database.replace_container(first_response.id,
                                                                partition_key=PartitionKey(path="/company"))
         assert len(second_response.get_response_headers()) > 0
+
+    def test_database_read_headers(self):
+        db = self.client.create_database(id="responses_test" + str(uuid.uuid4()))
+        first_response = db.read()
+        assert len(first_response.get_response_headers()) > 0
+
+    def test_container_read_headers(self):
+        container = self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),
+                                                             partition_key=PartitionKey(path="/company"))
+        first_response = container.read()
+        assert len(first_response.get_response_headers()) > 0
+
 
 if __name__ == '__main__':
     unittest.main()

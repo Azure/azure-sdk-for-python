@@ -47,6 +47,7 @@ from .._cosmos_responses import CosmosDict, CosmosList
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
 from ..offer import ThroughputProperties
+from .._cosmos_responses import CosmosDict, CosmosList
 from ..partition_key import (
     NonePartitionKeyValue,
     _return_undefined_or_empty_partition_key,
@@ -93,7 +94,7 @@ class ContainerProxy:
         self.container_link = "{}/colls/{}".format(database_link, self.id)
         self._is_system_key: Optional[bool] = None
         self._scripts: Optional[ScriptsProxy] = None
-        self._response_headers = properties
+        self._response_headers = self.client_connection.last_response_headers.copy()
         if properties:
             self.client_connection._set_container_properties_cache(self.container_link,
                                                                    _build_properties_cache(properties,
@@ -119,7 +120,7 @@ class ContainerProxy:
         :return: Dict of response headers
         :rtype: dict[str, Any]
         """
-        return self._response_headers.copy()
+        return self._response_headers
 
     @property
     async def is_system_key(self) -> bool:
@@ -176,7 +177,7 @@ class ContainerProxy:
         priority: Optional[Literal["High", "Low"]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Read the container properties.
 
         :keyword bool populate_partition_key_range_statistics: Enable returning partition key

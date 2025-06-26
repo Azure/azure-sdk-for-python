@@ -98,5 +98,17 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
                                                                partition_key=PartitionKey(path="/company"))
         assert len(second_response.get_response_headers()) > 0
 
+    async def test_database_read_headers(self):
+        db = await self.client.create_database(id="responses_test" + str(uuid.uuid4()))
+        first_response = await db.read()
+        assert len(first_response.get_response_headers()) > 0
+
+    async def test_container_read_headers(self):
+        container = await self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),
+                                                             partition_key=PartitionKey(path="/company"))
+        first_response = await container.read()
+        assert len(first_response.get_response_headers()) > 0
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -39,6 +39,7 @@ from ..exceptions import CosmosResourceNotFoundError
 from ._user import UserProxy
 from ..documents import IndexingMode
 from ..partition_key import PartitionKey
+from .._cosmos_responses import CosmosDict
 
 
 __all__ = ("DatabaseProxy",)
@@ -100,7 +101,7 @@ class DatabaseProxy(object):
         self.id = id
         self.database_link = "dbs/{}".format(self.id)
         self._properties = properties
-        self._response_headers = properties
+        self._response_headers = self.client_connection.last_response_headers.copy()
 
     def __repr__(self) -> str:
         return "<DatabaseProxy [{}]>".format(self.database_link)[:1024]
@@ -133,7 +134,7 @@ class DatabaseProxy(object):
         :return: Dict of response headers
         :rtype: dict[str, Any]
         """
-        return self._response_headers.copy()
+        return self._response_headers
 
     @distributed_trace_async
     async def read(
@@ -141,7 +142,7 @@ class DatabaseProxy(object):
         *,
         initial_headers: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Read the database properties.
 
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.

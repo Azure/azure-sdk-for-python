@@ -37,6 +37,7 @@ from .http_constants import StatusCodes as _StatusCodes
 from .exceptions import CosmosResourceNotFoundError
 from .user import UserProxy
 from .documents import IndexingMode
+from ._cosmos_responses import CosmosDict
 
 __all__ = ("DatabaseProxy",)
 
@@ -94,7 +95,7 @@ class DatabaseProxy(object):
         self.id = id
         self.database_link: str = "dbs/{}".format(self.id)
         self._properties: Optional[Dict[str, Any]] = properties
-        self._response_headers = properties
+        self._response_headers = self.client_connection.last_response_headers.copy()
 
     def __repr__(self) -> str:
         return "<DatabaseProxy [{}]>".format(self.database_link)[:1024]
@@ -127,7 +128,7 @@ class DatabaseProxy(object):
         :return: Dict of response headers
         :rtype: dict[str, Any]
         """
-        return self._response_headers.copy()
+        return self._response_headers
 
     @distributed_trace
     def read(  # pylint:disable=docstring-missing-param
@@ -136,7 +137,7 @@ class DatabaseProxy(object):
         *,
         initial_headers: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Read the database properties.
 
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
