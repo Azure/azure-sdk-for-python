@@ -742,7 +742,7 @@ class RedTeam:
 
         else:
             content_harm_risk = None
-            other_risk = None
+            other_risk = ""
             if risk_cat_value in ["hate_unfairness", "violence", "self_harm", "sexual"]:
                 content_harm_risk = risk_cat_value
             else:
@@ -757,7 +757,7 @@ class RedTeam:
                 if "tense" in strategy:
                     objectives_response = await self.generated_rai_client.get_attack_objectives(
                         risk_type=content_harm_risk,
-                        risk_category=risk_cat_value,
+                        risk_category=other_risk,
                         application_scenario=application_scenario or "",
                         strategy="tense",
                         scan_session_id=self.scan_session_id
@@ -765,7 +765,7 @@ class RedTeam:
                 else:
                     objectives_response = await self.generated_rai_client.get_attack_objectives(
                         risk_type=content_harm_risk,
-                        risk_category=risk_cat_value,
+                        risk_category=other_risk,
                         application_scenario=application_scenario or "",
                         strategy=None,
                         scan_session_id=self.scan_session_id
@@ -2696,7 +2696,7 @@ class RedTeam:
         application_scenario: Optional[str] = None,
         parallel_execution: bool = True,
         max_parallel_tasks: int = 5,
-        timeout: int = 120,
+        timeout: int = 3600,
         skip_evals: bool = False,
         **kwargs: Any,
     ) -> RedTeamResult:
