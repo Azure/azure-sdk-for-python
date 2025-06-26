@@ -370,6 +370,41 @@ with project_client:
 
 <!-- END SNIPPET -->
 
+### Create Agent with Deep Research tool
+
+To enable your Agent to do a detailed research of a topic, use the `DeepResearchTool` along with a connection to a Bing Grounding resource.
+This scenarios requires you to specify two model deployments. One is the generic chat model that does arbitration, and is
+specified as usual when you call the `create_agent` method. The other is the Deep Research model, which is specified
+when you define the `DeepResearchTool`.
+
+Here is an example:
+
+<!-- SNIPPET:sample_agents_deep_research.create_agent_with_deep_research_tool -->
+
+```python
+conn_id = os.environ["AZURE_BING_CONNECTION_ID"]
+
+# Initialize a Deep Research tool with Bing Connection ID and Deep Research model deployment name
+deep_research_tool = DeepResearchTool(
+    bing_grounding_connection_id=conn_id,
+    deep_research_model=os.environ["DEEP_RESEARCH_MODEL_DEPLOYMENT_NAME"],
+)
+
+# Create Agent with the Deep Research tool and process Agent run
+with project_client:
+
+    with project_client.agents as agents_client:
+
+        agent = agents_client.create_agent(
+            model=os.environ["MODEL_DEPLOYMENT_NAME"],
+            name="my-agent",
+            instructions="You are a helpful Agent that assists in researching scientific topics.",
+            tools=deep_research_tool.definitions,
+        )
+```
+
+<!-- END SNIPPET -->
+
 ### Create Agent with Azure AI Search
 
 Azure AI Search is an enterprise search system for high-performance applications. It integrates with Azure OpenAI Service and Azure Machine Learning, offering advanced search technologies like vector search and full-text search. Ideal for knowledge base insights, information discovery, and automation. Creating an Agent with Azure AI Search requires an existing Azure AI Search Index. For more information and setup guides, see [Azure AI Search Tool Guide](https://learn.microsoft.com/azure/ai-services/agents/how-to/tools/azure-ai-search?tabs=azurecli%2Cpython&pivots=overview-azure-ai-search).
@@ -382,16 +417,20 @@ Here is an example to integrate Azure AI Search:
 with AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
-  ) as project_client:
+) as project_client:
     conn_id = project_client.connections.get_default(ConnectionType.AZURE_AI_SEARCH).id
-    
+
     print(conn_id)
-    
+
     # Initialize agent AI search tool and add the search index connection id
     ai_search = AzureAISearchTool(
-        index_connection_id=conn_id, index_name="sample_index", query_type=AzureAISearchQueryType.SIMPLE, top_k=3, filter=""
+        index_connection_id=conn_id,
+        index_name="sample_index",
+        query_type=AzureAISearchQueryType.SIMPLE,
+        top_k=3,
+        filter="",
     )
-    
+
     # Create agent with AI search tool and process agent run
     agents_client = project_client.agents
 
