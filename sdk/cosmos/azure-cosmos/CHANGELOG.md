@@ -1,14 +1,21 @@
 ## Release History
 
-### 4.13.0b2 (Unreleased)
+### 4.13.0b3 (Unreleased)
 
 #### Features Added
 
 #### Breaking Changes
+* Adds cross region retries when no preferred locations are set. This is only a breaking change for customers using bounded staleness consistency. See [PR 39714](https://github.com/Azure/azure-sdk-for-python/pull/39714)
 
 #### Bugs Fixed
+* Fixed bug where replacing manual throughput using `ThroughputProperties` would not work. See [PR 41564](https://github.com/Azure/azure-sdk-for-python/pull/41564)
 
 #### Other Changes
+
+### 4.13.0b2 (2025-06-18)
+
+#### Bugs Fixed
+- Fixed issue where key error would occur when getting properties from a container using legacy hash v1 as they may not always contain version property in the partition key definition. See [PR 41639](https://github.com/Azure/azure-sdk-for-python/pull/41639)
 
 ### 4.13.0b1 (2025-06-05)
 

@@ -478,7 +478,7 @@ class OpenAICompletionsModel(LLMBase):
         time_start = time.time()
         full_response = None
 
-        if(isinstance(session, AIProjectClient)):
+        if isinstance(session, AIProjectClient):
             response_data = session.red_teams.submit_simulation(request_data, headers, params)
         else:
             response = await session.post(url=self.endpoint_url, headers=headers, json=request_data, params=params)

@@ -34,11 +34,8 @@ if TYPE_CHECKING:
 
 
 class ResourceManagementClient:
-    """ResourceManagementClient.
+    """Provides operations for working with deployments.
 
-    :ivar deployments: DeploymentsOperations operations
-    :vartype deployments:
-     azure.mgmt.resource.resources.v2016_02_01.aio.operations.DeploymentsOperations
     :ivar providers: ProvidersOperations operations
     :vartype providers:
      azure.mgmt.resource.resources.v2016_02_01.aio.operations.ProvidersOperations
@@ -50,6 +47,9 @@ class ResourceManagementClient:
      azure.mgmt.resource.resources.v2016_02_01.aio.operations.ResourcesOperations
     :ivar tags: TagsOperations operations
     :vartype tags: azure.mgmt.resource.resources.v2016_02_01.aio.operations.TagsOperations
+    :ivar deployments: DeploymentsOperations operations
+    :vartype deployments:
+     azure.mgmt.resource.resources.v2016_02_01.aio.operations.DeploymentsOperations
     :ivar deployment_operations: DeploymentOperationsOperations operations
     :vartype deployment_operations:
      azure.mgmt.resource.resources.v2016_02_01.aio.operations.DeploymentOperationsOperations
@@ -104,9 +104,6 @@ class ResourceManagementClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.deployments = DeploymentsOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2016-02-01"
-        )
         self.providers = ProvidersOperations(
             self._client, self._config, self._serialize, self._deserialize, "2016-02-01"
         )
@@ -117,6 +114,9 @@ class ResourceManagementClient:
             self._client, self._config, self._serialize, self._deserialize, "2016-02-01"
         )
         self.tags = TagsOperations(self._client, self._config, self._serialize, self._deserialize, "2016-02-01")
+        self.deployments = DeploymentsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2016-02-01"
+        )
         self.deployment_operations = DeploymentOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize, "2016-02-01"
         )

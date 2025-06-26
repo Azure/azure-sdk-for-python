@@ -4,17 +4,21 @@
 
 ### Features Added
 
+- Added broker support for Linux and WSL.
+
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
 
+- Python 3.8 is no longer supported. Please use Python version 3.9 or later.
+
 ## 1.3.0b1 (2024-11-05)
 
 ### Features Added
 
-- Added broker on macOS support.
+- Added broker support for MacOS.
 
 ## 1.2.0 (2024-10-08)
 

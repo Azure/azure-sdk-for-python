@@ -906,7 +906,12 @@ def build_red_teams_get_jail_break_dataset_with_type_request(  # pylint: disable
 
 
 def build_red_teams_get_attack_objectives_request(  # pylint: disable=name-too-long
-    *, risk_types: Optional[List[str]] = None, lang: Optional[str] = None, strategy: Optional[str] = None, **kwargs: Any
+    *,
+    risk_types: Optional[List[str]] = None,
+    risk_categories: Optional[List[str]] = None,
+    lang: Optional[str] = None,
+    strategy: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -921,6 +926,10 @@ def build_red_teams_get_attack_objectives_request(  # pylint: disable=name-too-l
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if risk_types is not None:
         _params["riskTypes"] = [_SERIALIZER.query("risk_types", q, "str") if q is not None else "" for q in risk_types]
+    if risk_categories is not None:
+        _params["riskCategory"] = [
+            _SERIALIZER.query("risk_categories", q, "str") if q is not None else "" for q in risk_categories
+        ]
     if lang is not None:
         _params["lang"] = _SERIALIZER.query("lang", lang, "str")
     if strategy is not None:
@@ -2103,7 +2112,7 @@ class EvaluationsOperations:
             deserialized = response.iter_bytes()
         elif type(response.json()) == list:
             deserialized = _deserialize(List[Dict[str, Any]], response.json())
-        else: 
+        else:
             deserialized = _deserialize(Dict[str, Any], response.json())
 
         if cls:
@@ -4383,6 +4392,7 @@ class RedTeamsOperations:
         self,
         *,
         risk_types: Optional[List[str]] = None,
+        risk_categories: Optional[List[str]] = None,
         lang: Optional[str] = None,
         strategy: Optional[str] = None,
         **kwargs: Any
@@ -4391,6 +4401,8 @@ class RedTeamsOperations:
 
         :keyword risk_types: Risk types for the attack objectives dataset. Default value is None.
         :paramtype risk_types: list[str]
+        :keyword risk_categories: Risk categories for the attack objectives dataset. Default value is None.
+        :paramtype risk_categories: list[str]
         :keyword lang: The language for the attack objectives dataset, defaults to 'en'. Default value
          is None.
         :paramtype lang: str
@@ -4415,6 +4427,7 @@ class RedTeamsOperations:
 
         _request = build_red_teams_get_attack_objectives_request(
             risk_types=risk_types,
+            risk_categories=risk_categories,
             lang=lang,
             strategy=strategy,
             api_version=self._config.api_version,

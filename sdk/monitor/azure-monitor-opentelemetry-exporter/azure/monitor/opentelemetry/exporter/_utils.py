@@ -130,7 +130,6 @@ def _getlocale():
 azure_monitor_context = {
     ContextTagKeys.AI_DEVICE_ID: platform.node(),
     ContextTagKeys.AI_DEVICE_LOCALE: _getlocale(),
-    ContextTagKeys.AI_DEVICE_OS_VERSION: platform.version(),
     ContextTagKeys.AI_DEVICE_TYPE: "Other",
     ContextTagKeys.AI_INTERNAL_SDK_VERSION: _get_sdk_version(),
 }

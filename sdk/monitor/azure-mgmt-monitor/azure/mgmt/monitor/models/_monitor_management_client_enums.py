@@ -10,6 +10,12 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
+
+    INTERNAL = "Internal"
+
+
 class AggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """the aggregation type of the metric."""
 
@@ -241,12 +247,39 @@ class Operator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INCLUDE = "Include"
 
 
+class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
+    logs UX. Default value is "user,system".
+    """
+
+    USER = "user"
+    SYSTEM = "system"
+    USER_SYSTEM = "user,system"
+
+
 class PredictiveAutoscalePolicyScaleMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """the predictive autoscale mode."""
 
     DISABLED = "Disabled"
     FORECAST_ONLY = "ForecastOnly"
     ENABLED = "Enabled"
+
+
+class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state."""
+
+    SUCCEEDED = "Succeeded"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    FAILED = "Failed"
+
+
+class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The private endpoint connection status."""
+
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    REJECTED = "Rejected"
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -256,6 +289,15 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DEPLOYING = "Deploying"
     CANCELED = "Canceled"
     FAILED = "Failed"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+
+
+class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or sets allow or disallow public network access to Azure Monitor Workspace."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 
 class QueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
