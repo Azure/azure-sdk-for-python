@@ -266,7 +266,7 @@ def init_local_tool_arm(tsp_config_path: str, repo_path: str, commit_id: str) ->
     if venv_path is None:
         venv_path = os.path.join(repo_path, ".venv")
         if not venv_path:
-            os.mkdirs(venv_path)
+            os.mkdir(venv_path)
 
     # install dependencies
     try:
