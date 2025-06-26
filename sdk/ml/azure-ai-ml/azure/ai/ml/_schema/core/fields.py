@@ -55,8 +55,6 @@ def _resolve_field_instance(cls_or_instance):
     
     Returns a field instance from either a field class or field instance.
     """
-    from marshmallow import Field
-    
     if isinstance(cls_or_instance, Field):
         # Already a field instance
         return cls_or_instance
