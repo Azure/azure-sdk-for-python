@@ -476,16 +476,6 @@ class RedTeam:
                 with open(os.path.join(tmpdir, artifact_name), "w", encoding=DefaultOpenEncoding.WRITE) as f:
                     if _skip_evals:
                         f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
-                    elif redteam_result.scan_result:
-                        redteam_result.scan_result["redteaming_scorecard"] = redteam_result.scan_result.get(
-                            "scorecard", None
-                        )
-                        redteam_result.scan_result["redteaming_parameters"] = redteam_result.scan_result.get(
-                            "parameters", None
-                        )
-                        redteam_result.scan_result["redteaming_data"] = redteam_result.scan_result.get(
-                            "attack_details", None
-                        )
 
                         json.dump(redteam_result.scan_result, f)
 
