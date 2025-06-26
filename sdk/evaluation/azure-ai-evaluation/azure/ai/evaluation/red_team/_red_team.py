@@ -292,6 +292,7 @@ class RedTeam:
         self.failed_tasks = 0
         self.start_time = None
         self.scan_id = None
+        self.scan_session_id = None
         self.scan_output_dir = None
 
         self.generated_rai_client = GeneratedRAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager.credential)  # type: ignore
@@ -759,6 +760,7 @@ class RedTeam:
                         risk_category=other_risk,
                         application_scenario=application_scenario or "",
                         strategy="tense",
+                        scan_session_id=self.scan_session_id
                     )
                 else:
                     objectives_response = await self.generated_rai_client.get_attack_objectives(
@@ -766,6 +768,7 @@ class RedTeam:
                         risk_category=other_risk,
                         application_scenario=application_scenario or "",
                         strategy=None,
+                        scan_session_id=self.scan_session_id
                     )
                 if isinstance(objectives_response, list):
                     self.logger.debug(f"API returned {len(objectives_response)} objectives")
@@ -775,7 +778,7 @@ class RedTeam:
                 # Handle jailbreak strategy - need to apply jailbreak prefixes to messages
                 if strategy == "jailbreak":
                     self.logger.debug("Applying jailbreak prefixes to objectives")
-                    jailbreak_prefixes = await self.generated_rai_client.get_jailbreak_prefixes()
+                    jailbreak_prefixes = await self.generated_rai_client.get_jailbreak_prefixes(scan_session_id=self.scan_session_id)
                     for objective in objectives_response:
                         if "messages" in objective and len(objective["messages"]) > 0:
                             message = objective["messages"][0]
@@ -2350,6 +2353,7 @@ class RedTeam:
                             project_scope=self.azure_ai_project,
                             credential=self.credential,
                             annotation_task=annotation_task,
+                            scan_session_id=self.scan_session_id,
                         )
                     except (
                         httpx.ConnectTimeout,
@@ -2736,6 +2740,8 @@ class RedTeam:
             else f"scan_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         )
         self.scan_id = self.scan_id.replace(" ", "_")
+
+        self.scan_session_id = str(uuid.uuid4())  # Unique session ID for this scan
 
         # Create output directory for this scan
         # If DEBUG environment variable is set, use a regular folder name; otherwise, use a hidden folder
