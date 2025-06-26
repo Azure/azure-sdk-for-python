@@ -2750,6 +2750,11 @@ class RedTeam:
         self.scan_output_dir = os.path.join(self.output_dir or ".", f"{folder_prefix}{self.scan_id}")
         os.makedirs(self.scan_output_dir, exist_ok=True)
 
+        if not is_debug:
+            gitignore_path = os.path.join(self.scan_output_dir, ".gitignore")
+            with open(gitignore_path, "w", encoding="utf-8") as f:
+                f.write("*\n")
+
         # Re-initialize logger with the scan output directory
         self.logger = setup_logger(output_dir=self.scan_output_dir)
 
