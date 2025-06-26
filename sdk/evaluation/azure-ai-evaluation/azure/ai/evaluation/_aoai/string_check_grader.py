@@ -39,7 +39,7 @@ class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
 
     """
 
-    id = "aoai://string_check"
+    id = "azureai://built-in/evaluators/azure-openai/string_check_grader"
 
     def __init__(
         self,

@@ -36,7 +36,7 @@ class AzureOpenAIGrader:
 
     """
 
-    id = "aoai://general"
+    id = "azureai://built-in/evaluators/azure-openai/custom_grader"
 
     def __init__(
         self,
