@@ -82,7 +82,8 @@ def main():
             pre_download_disabled=False,
         )
 
-        uv_pytest(target_path=pkg, additional_args=["--cov", "--cov-report=xml", "--cov-report=html"])
+        # todo, come up with a good pattern for passing all the additional args after -- to pytest
+        result = uv_pytest(target_path=pkg, additional_args=["--cov", "--cov-report=xml", "--cov-report=html"])
 
 if __name__ == "__main__":
     main()
