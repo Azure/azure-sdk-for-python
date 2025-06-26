@@ -24,8 +24,7 @@ from .entities import (
     Parallel,
     Pipeline,
     Scope,
-    Starlite,
-)
+    Starlite)
 from .entities.spark import InternalSparkComponent
 
 _registered = False
@@ -42,13 +41,11 @@ def _enable_internal_components():
         component_factory.register_type(
             _type=_type,
             create_instance_func=lambda: InternalComponent.__new__(InternalComponent),
-            create_schema_func=create_schema_func,
-        )
+            create_schema_func=create_schema_func)
     component_factory.register_type(
         _type=NodeType.SPARK,
         create_instance_func=lambda: InternalSparkComponent.__new__(InternalSparkComponent),
-        create_schema_func=InternalSparkComponent._create_schema_for_validation,
-    )
+        create_schema_func=InternalSparkComponent._create_schema_for_validation)
 
 
 def _register_node(_type, node_cls, schema_cls):
@@ -56,8 +53,7 @@ def _register_node(_type, node_cls, schema_cls):
         _type=_type,
         create_instance_func=lambda: node_cls.__new__(node_cls),
         load_from_rest_object_func=node_cls._from_rest_object,
-        nested_schema=NestedField(schema_cls, unknown=INCLUDE),
-    )
+        nested_schema=NestedField(schema_cls))
 
 
 def enable_internal_components_in_pipeline(*, force=False) -> NoReturn:

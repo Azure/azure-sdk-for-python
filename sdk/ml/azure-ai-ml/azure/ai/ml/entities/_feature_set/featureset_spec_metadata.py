@@ -35,8 +35,7 @@ class FeaturesetSpecMetadata(object):
         index_columns: Optional[List[DataColumn]] = None,
         source_lookback: Optional[DelayMetadata] = None,
         temporal_join_lookback: Optional[DelayMetadata] = None,
-        **_kwargs: Any,
-    ):
+        **_kwargs: Any):
         if source.type == "featureset" and index_columns:
             msg = f"You cannot provide index_columns for {source.type} feature source."
             raise ValidationException(
@@ -44,8 +43,7 @@ class FeaturesetSpecMetadata(object):
                 no_personal_data_message=msg,
                 error_type=ValidationErrorType.INVALID_VALUE,
                 target=ErrorTarget.FEATURE_SET,
-                error_category=ErrorCategory.USER_ERROR,
-            )
+                error_category=ErrorCategory.USER_ERROR)
         if not index_columns and source.type != "featureset":
             msg = f"You need to provide index_columns for {source.type} feature source."
             raise ValidationException(
@@ -53,8 +51,7 @@ class FeaturesetSpecMetadata(object):
                 no_personal_data_message=msg,
                 error_type=ValidationErrorType.INVALID_VALUE,
                 target=ErrorTarget.FEATURE_SET,
-                error_category=ErrorCategory.USER_ERROR,
-            )
+                error_category=ErrorCategory.USER_ERROR)
         self.source = source
         self.feature_transformation_code = feature_transformation_code
         self.features = features
@@ -66,8 +63,7 @@ class FeaturesetSpecMetadata(object):
     def load(
         cls,
         yaml_path: Union[PathLike, str],
-        **kwargs: Any,
-    ) -> "FeaturesetSpecMetadata":
+        **kwargs: Any) -> "FeaturesetSpecMetadata":
         """Construct an FeaturesetSpecMetadata object from yaml file.
 
         :param yaml_path: Path to a local file as the source.
@@ -84,18 +80,17 @@ class FeaturesetSpecMetadata(object):
         cls,
         yaml_data: Optional[Dict],
         yaml_path: Optional[Union[PathLike, str]],
-        **kwargs: Any,
-    ) -> "FeaturesetSpecMetadata":
+        **kwargs: Any) -> "FeaturesetSpecMetadata":
         yaml_data = yaml_data or {}
         context = {
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
         }
         res: FeaturesetSpecMetadata = load_from_dict(
-            FeaturesetSpecMetadataSchema, yaml_data, context, "", unknown=INCLUDE, **kwargs
+            FeaturesetSpecMetadataSchema, yaml_data, context, "", **kwargs
         )
 
         return res
 
     def _to_dict(self) -> Dict:
-        res: dict = FeaturesetSpecPropertiesSchema(context={BASE_PATH_CONTEXT_KEY: "./"}, unknown=INCLUDE).dump(self)
+        res: dict = FeaturesetSpecPropertiesSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res

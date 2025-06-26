@@ -20,8 +20,7 @@ from azure.ai.ml._schema.core.fields import (
     RegistryStr,
     StringTransformedEnum,
     TypeSensitiveUnionField,
-    UnionField,
-)
+    UnionField)
 from azure.ai.ml._schema.pipeline.automl_node import AutoMLNodeSchema
 from azure.ai.ml._schema.pipeline.component_job import (
     BaseNodeSchema,
@@ -33,16 +32,14 @@ from azure.ai.ml._schema.pipeline.component_job import (
     ParallelSchema,
     SparkSchema,
     SweepSchema,
-    _resolve_inputs_outputs,
-)
+    _resolve_inputs_outputs)
 from azure.ai.ml._schema.pipeline.condition_node import ConditionNodeSchema
 from azure.ai.ml._schema.pipeline.control_flow_job import DoWhileSchema, ParallelForSchema
 from azure.ai.ml._schema.pipeline.pipeline_command_job import PipelineCommandJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_datatransfer_job import (
     PipelineDataTransferCopyJobSchema,
     PipelineDataTransferExportJobSchema,
-    PipelineDataTransferImportJobSchema,
-)
+    PipelineDataTransferImportJobSchema)
 from azure.ai.ml._schema.pipeline.pipeline_import_job import PipelineImportJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_parallel_job import PipelineParallelJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_spark_job import PipelineSparkJobSchema
@@ -53,8 +50,7 @@ from azure.ai.ml.constants._component import (
     ComponentSource,
     ControlFlowType,
     DataTransferTaskType,
-    NodeType,
-)
+    NodeType)
 
 
 class NodeNameStr(PipelineNodeNameStr):
@@ -65,23 +61,23 @@ class NodeNameStr(PipelineNodeNameStr):
 def PipelineJobsField():
     pipeline_enable_job_type = {
         NodeType.COMMAND: [
-            NestedField(CommandSchema, unknown=INCLUDE),
+            NestedField(CommandSchema),
             NestedField(PipelineCommandJobSchema),
         ],
         NodeType.IMPORT: [
-            NestedField(ImportSchema, unknown=INCLUDE),
+            NestedField(ImportSchema),
             NestedField(PipelineImportJobSchema),
         ],
-        NodeType.SWEEP: [NestedField(SweepSchema, unknown=INCLUDE)],
+        NodeType.SWEEP: [NestedField(SweepSchema)],
         NodeType.PARALLEL: [
             # ParallelSchema support parallel pipeline yml with "component"
-            NestedField(ParallelSchema, unknown=INCLUDE),
-            NestedField(PipelineParallelJobSchema, unknown=INCLUDE),
+            NestedField(ParallelSchema),
+            NestedField(PipelineParallelJobSchema),
         ],
-        NodeType.PIPELINE: [NestedField("PipelineSchema", unknown=INCLUDE)],
-        NodeType.AUTOML: AutoMLNodeSchema(unknown=INCLUDE),
+        NodeType.PIPELINE: [NestedField("PipelineSchema")],
+        NodeType.AUTOML: AutoMLNodeSchema(),
         NodeType.SPARK: [
-            NestedField(SparkSchema, unknown=INCLUDE),
+            NestedField(SparkSchema),
             NestedField(PipelineSparkJobSchema),
         ],
     }
@@ -89,9 +85,9 @@ def PipelineJobsField():
     # Note: the private node types only available when private preview flag opened before init of pipeline job
     # schema class.
     if is_private_preview_enabled():
-        pipeline_enable_job_type[ControlFlowType.DO_WHILE] = [NestedField(DoWhileSchema, unknown=INCLUDE)]
-        pipeline_enable_job_type[ControlFlowType.IF_ELSE] = [NestedField(ConditionNodeSchema, unknown=INCLUDE)]
-        pipeline_enable_job_type[ControlFlowType.PARALLEL_FOR] = [NestedField(ParallelForSchema, unknown=INCLUDE)]
+        pipeline_enable_job_type[ControlFlowType.DO_WHILE] = [NestedField(DoWhileSchema)]
+        pipeline_enable_job_type[ControlFlowType.IF_ELSE] = [NestedField(ConditionNodeSchema)]
+        pipeline_enable_job_type[ControlFlowType.PARALLEL_FOR] = [NestedField(ParallelForSchema)]
 
     # Todo: Put data_transfer logic to the last to avoid error message conflict, open a item to track:
     #  https://msdata.visualstudio.com/Vienna/_workitems/edit/2244262/
@@ -99,27 +95,24 @@ def PipelineJobsField():
         TypeSensitiveUnionField(
             {
                 DataTransferTaskType.COPY_DATA: [
-                    NestedField(DataTransferCopySchema, unknown=INCLUDE),
+                    NestedField(DataTransferCopySchema),
                     NestedField(PipelineDataTransferCopyJobSchema),
                 ],
                 DataTransferTaskType.IMPORT_DATA: [
-                    NestedField(DataTransferImportSchema, unknown=INCLUDE),
+                    NestedField(DataTransferImportSchema),
                     NestedField(PipelineDataTransferImportJobSchema),
                 ],
                 DataTransferTaskType.EXPORT_DATA: [
-                    NestedField(DataTransferExportSchema, unknown=INCLUDE),
+                    NestedField(DataTransferExportSchema),
                     NestedField(PipelineDataTransferExportJobSchema),
                 ],
             },
-            type_field_name="task",
-            unknown=INCLUDE,
-        )
+            type_field_name="task")
     ]
 
     pipeline_job_field = fields.Dict(
         keys=NodeNameStr(),
-        values=TypeSensitiveUnionField(pipeline_enable_job_type),
-    )
+        values=TypeSensitiveUnionField(pipeline_enable_job_type))
     return pipeline_job_field
 
 
@@ -143,8 +136,7 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
             # convert AutoML job dict to instance
             if job_instance.get("type") == NodeType.AUTOML:
                 job_instance = AutoMLJob._create_instance_from_schema_dict(
-                    loaded_data=job_instance,
-                )
+                    loaded_data=job_instance)
             elif job_instance.get("type") in CONTROL_FLOW_TYPES:
                 # Set source to yaml job for control flow node.
                 job_instance["_source"] = ComponentSource.YAML_JOB
@@ -171,8 +163,7 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
             # set source as YAML
             job_instance = job_instance._to_node(
                 context=context,
-                pipeline_job_dict=data,
-            )
+                pipeline_job_dict=data)
             if job_instance.type == NodeType.DATA_TRANSFER and job_instance.task != DataTransferTaskType.COPY_DATA:
                 job_instance._source = ComponentSource.BUILTIN
             else:
@@ -193,11 +184,10 @@ class PipelineComponentSchema(ComponentSchema):
         keys=fields.Str(),
         values=UnionField(
             [
-                NestedField(PrimitiveOutputSchema, unknown=INCLUDE),
+                NestedField(PrimitiveOutputSchema),
                 NestedField(OutputPortSchema),
             ]
-        ),
-    )
+        ))
 
     @post_load
     def make(self, data, **kwargs):  # pylint: disable=unused-argument
@@ -232,8 +222,7 @@ class _AnonymousPipelineComponentSchema(AnonymousAssetSchema, PipelineComponentS
 
         return PipelineComponent(
             base_path=self.context[BASE_PATH_CONTEXT_KEY],
-            **data,
-        )
+            **data)
 
 
 class PipelineComponentFileRefField(FileRefField):
@@ -259,7 +248,7 @@ class PipelineComponentFileRefField(FileRefField):
         component_schema_context = deepcopy(self.context)
         component_schema_context[BASE_PATH_CONTEXT_KEY] = source_path.parent
         component = _AnonymousPipelineComponentSchema(context=component_schema_context).load(
-            component_dict, unknown=INCLUDE
+            component_dict
         )
         component._source_path = source_path
         component._source = ComponentSource.YAML_COMPONENT
@@ -280,8 +269,7 @@ class PipelineSchema(BaseNodeSchema):
             # component file reference
             PipelineComponentFileRefField(),
         ],
-        required=True,
-    )
+        required=True)
     type = StringTransformedEnum(allowed_values=[NodeType.PIPELINE])
 
     @post_load

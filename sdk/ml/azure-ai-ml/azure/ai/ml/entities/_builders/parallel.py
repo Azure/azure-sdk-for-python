@@ -20,8 +20,7 @@ from azure.ai.ml.entities._credentials import (
     AmlTokenConfiguration,
     ManagedIdentityConfiguration,
     UserIdentityConfiguration,
-    _BaseJobIdentityConfiguration,
-)
+    _BaseJobIdentityConfiguration)
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.parallel.run_function import RunFunction
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput
@@ -127,8 +126,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
         identity: Optional[
             Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration, Dict]
         ] = None,
-        **kwargs: Any,
-    ) -> None:
+        **kwargs: Any) -> None:
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
         kwargs.pop("type", None)
@@ -143,8 +141,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
                     inputs=inputs,
                     outputs=outputs,
                     compute=compute,
-                    **kwargs,
-                )
+                    **kwargs)
         else:
             BaseNode.__init__(
                 self,
@@ -153,8 +150,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
                 inputs=inputs,
                 outputs=outputs,
                 compute=compute,
-                **kwargs,
-            )
+                **kwargs)
         # init mark for _AttrDict
         self._init = True
 
@@ -264,8 +260,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
 
     @property
     def identity(
-        self,
-    ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration, Dict]]:
+        self) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration, Dict]]:
         """The identity that the job will use while running on compute.
 
         :return: The identity that the job will use while running on compute.
@@ -277,8 +272,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
     @identity.setter
     def identity(
         self,
-        value: Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration, None],
-    ) -> None:
+        value: Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration, None]) -> None:
         """Sets the identity that the job will use while running on compute.
 
         :param value: The identity that the job will use while running on compute.
@@ -288,9 +282,9 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
         if isinstance(value, dict):
             identity_schema = UnionField(
                 [
-                    NestedField(ManagedIdentitySchema, unknown=INCLUDE),
-                    NestedField(AMLTokenIdentitySchema, unknown=INCLUDE),
-                    NestedField(UserIdentitySchema, unknown=INCLUDE),
+                    NestedField(ManagedIdentitySchema),
+                    NestedField(AMLTokenIdentitySchema),
+                    NestedField(UserIdentitySchema),
                 ]
             )
             value = identity_schema._deserialize(value=value, attr=None, data=None)
@@ -342,8 +336,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
         docker_args: Optional[str] = None,
         shm_size: Optional[str] = None,
         # pylint: disable=unused-argument
-        **kwargs: Any,
-    ) -> None:
+        **kwargs: Any) -> None:
         """Set the resources for the parallel job.
 
         :keyword instance_type: The instance type or a list of instance types used as supported by the compute target.
@@ -410,8 +403,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
             mini_batch_error_threshold=self.mini_batch_error_threshold,
             environment_variables=self.environment_variables,
             inputs=self._job_inputs,
-            outputs=self._job_outputs,
-        )
+            outputs=self._job_outputs)
 
     def _parallel_attr_to_dict(self, attr: str, base_type: Type) -> dict:
         # Convert parallel attribute to dict

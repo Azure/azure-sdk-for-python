@@ -22,16 +22,14 @@ from azure.ai.ml.entities._credentials import (
     AmlTokenConfiguration,
     ManagedIdentityConfiguration,
     UserIdentityConfiguration,
-    _BaseJobIdentityConfiguration,
-)
+    _BaseJobIdentityConfiguration)
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
     from_rest_data_outputs,
     from_rest_inputs_to_dataset_literal,
     to_rest_data_outputs,
     to_rest_dataset_literal_inputs,
-    validate_inputs_for_args,
-)
+    validate_inputs_for_args)
 from azure.ai.ml.entities._job.parameterized_spark import ParameterizedSpark
 from azure.ai.ml.entities._util import load_from_dict
 
@@ -113,8 +111,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             Union[Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
         resources: Optional[Union[Dict, SparkResourceConfiguration]] = None,
-        **kwargs: Any,
-    ) -> None:
+        **kwargs: Any) -> None:
         kwargs[TYPE] = JobType.SPARK
 
         super().__init__(**kwargs)
@@ -158,8 +155,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
 
     @property
     def identity(
-        self,
-    ) -> Optional[Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
+        self) -> Optional[Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
         """The identity that the Spark job will use while running on compute.
 
         :return: The identity that the Spark job will use while running on compute.
@@ -173,8 +169,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         self,
         value: Optional[
             Union[Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
-        ],
-    ) -> None:
+        ]) -> None:
         """Sets the identity that the Spark job will use while running on compute.
 
         :param value: The identity that the Spark job will use while running on compute.
@@ -184,9 +179,9 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         if isinstance(value, dict):
             identify_schema = UnionField(
                 [
-                    NestedField(ManagedIdentitySchema, unknown=INCLUDE),
-                    NestedField(AMLTokenIdentitySchema, unknown=INCLUDE),
-                    NestedField(UserIdentitySchema, unknown=INCLUDE),
+                    NestedField(ManagedIdentitySchema),
+                    NestedField(AMLTokenIdentitySchema),
+                    NestedField(UserIdentitySchema),
                 ]
             )
             value = identify_schema._deserialize(value=value, attr=None, data=None)
@@ -250,8 +245,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             compute_id=self.compute,
             resources=(
                 self.resources._to_rest_object() if self.resources and not isinstance(self.resources, Dict) else None
-            ),
-        )
+            ))
         result = JobBase(properties=properties)
         result.name = self.name
         return result
@@ -299,8 +293,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             dynamic_allocation_max_executors=rest_spark_conf.get(SparkConfKey.DYNAMIC_ALLOCATION_MAX_EXECUTORS, None),
             resources=SparkResourceConfiguration._from_rest_object(rest_spark_job.resources),
             inputs=from_rest_inputs_to_dataset_literal(rest_spark_job.inputs),
-            outputs=from_rest_data_outputs(rest_spark_job.outputs),
-        )
+            outputs=from_rest_data_outputs(rest_spark_job.outputs))
         return spark_job
 
     def _to_component(self, context: Optional[Dict] = None, **kwargs: Any) -> "SparkComponent":
@@ -341,8 +334,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             environment=self.environment,
             inputs=self._to_inputs(inputs=self.inputs, pipeline_job_dict=pipeline_job_dict),
             outputs=self._to_outputs(outputs=self.outputs, pipeline_job_dict=pipeline_job_dict),
-            args=self.args,
-        )
+            args=self.args)
 
     def _to_node(self, context: Optional[Dict] = None, **kwargs: Any) -> "Spark":
         """Translate a spark job to a pipeline node.
@@ -377,8 +369,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             outputs=self.outputs,  # type: ignore[arg-type]
             compute=self.compute,
             resources=self.resources,
-            properties=self.properties_sparkJob,
-        )
+            properties=self.properties_sparkJob)
 
     def _validate(self) -> None:
         # TODO: make spark job schema validatable?

@@ -21,29 +21,26 @@ from azure.ai.ml.constants._component import ComponentSource, NodeType
 
 class ParallelComponentSchema(ComponentSchema):
     type = StringTransformedEnum(allowed_values=[NodeType.PARALLEL], required=True)
-    resources = NestedField(ComponentResourceSchema, unknown=INCLUDE)
+    resources = NestedField(ComponentResourceSchema)
     logging_level = DumpableEnumField(
         allowed_values=[LoggingLevel.DEBUG, LoggingLevel.INFO, LoggingLevel.WARN],
         dump_default=LoggingLevel.INFO,
         metadata={
             "description": "A string of the logging level name, which is defined in 'logging'. \
             Possible values are 'WARNING', 'INFO', and 'DEBUG'."
-        },
-    )
-    task = NestedField(ComponentParallelTaskSchema, unknown=INCLUDE)
+        })
+    task = NestedField(ComponentParallelTaskSchema)
     mini_batch_size = fields.Str(
-        metadata={"description": "The The batch size of current job."},
-    )
+        metadata={"description": "The The batch size of current job."})
     partition_keys = fields.List(
         fields.Str(), metadata={"description": "The keys used to partition input data into mini-batches"}
     )
 
     input_data = fields.Str()
-    retry_settings = NestedField(RetrySettingsSchema, unknown=INCLUDE)
+    retry_settings = NestedField(RetrySettingsSchema)
     max_concurrency_per_instance = fields.Integer(
         dump_default=1,
-        metadata={"description": "The max parallellism that each compute instance has."},
-    )
+        metadata={"description": "The max parallellism that each compute instance has."})
     error_threshold = fields.Integer(
         dump_default=-1,
         metadata={
@@ -51,8 +48,7 @@ class ParallelComponentSchema(ComponentSchema):
             If the error_threshold is reached, the job terminates. \
             For a list of files as inputs, one item means one file reference. \
             This setting doesn't apply to command parallelization."
-        },
-    )
+        })
     mini_batch_error_threshold = fields.Integer(
         dump_default=-1,
         metadata={
@@ -61,8 +57,7 @@ class ParallelComponentSchema(ComponentSchema):
             For a list of files as inputs, one item means one file reference. \
             This setting can be used by either command or python function parallelization. \
             Only one error_threshold setting can be used in one job."
-        },
-    )
+        })
 
 
 class RestParallelComponentSchema(ParallelComponentSchema):
@@ -86,8 +81,7 @@ class AnonymousParallelComponentSchema(AnonymousAssetSchema, ParallelComponentSc
         return ParallelComponent(
             base_path=self.context[BASE_PATH_CONTEXT_KEY],
             _source=kwargs.pop("_source", ComponentSource.YAML_JOB),
-            **data,
-        )
+            **data)
 
 
 class ParallelComponentFileRefField(FileRefField):
@@ -101,7 +95,7 @@ class ParallelComponentFileRefField(FileRefField):
         component_schema_context = deepcopy(self.context)
         component_schema_context[BASE_PATH_CONTEXT_KEY] = source_path.parent
         component = AnonymousParallelComponentSchema(context=component_schema_context).load(
-            component_dict, unknown=INCLUDE
+            component_dict
         )
         component._source_path = source_path
         component._source = ComponentSource.YAML_COMPONENT

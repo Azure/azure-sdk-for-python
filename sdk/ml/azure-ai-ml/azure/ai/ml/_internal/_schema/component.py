@@ -16,8 +16,7 @@ from ...constants._common import (
     LABELLED_RESOURCE_NAME,
     SOURCE_PATH_CONTEXT_KEY,
     AzureMLResourceType,
-    DefaultOpenEncoding,
-)
+    DefaultOpenEncoding)
 from ...constants._component import NodeType as PublicNodeType
 from .._utils import yaml_safe_load_with_base_resolver
 from .environment import InternalEnvironmentSchema
@@ -27,8 +26,7 @@ from .input_output import (
     InternalOutputPortSchema,
     InternalParameterSchema,
     InternalPrimitiveOutputSchema,
-    InternalSparkParameterSchema,
-)
+    InternalSparkParameterSchema)
 
 
 class NodeType:
@@ -84,25 +82,22 @@ class InternalComponentSchema(ComponentSchema):
                 NestedField(InternalEnumParameterSchema),
                 NestedField(InternalInputPortSchema),
             ]
-        ),
-    )
+        ))
     # support primitive output for all internal components for now
     outputs = fields.Dict(
         keys=fields.Str(),
         values=UnionField(
             [
-                NestedField(InternalPrimitiveOutputSchema, unknown=EXCLUDE),
-                NestedField(InternalOutputPortSchema, unknown=EXCLUDE),
+                NestedField(InternalPrimitiveOutputSchema),
+                NestedField(InternalOutputPortSchema),
             ]
-        ),
-    )
+        ))
 
     # type field is required for registration
     type = StringTransformedEnum(
         allowed_values=NodeType.all_values(),
         casing_transform=lambda x: parse_name_label(x)[0],
-        pass_original=True,
-    )
+        pass_original=True)
 
     # need to resolve as it can be a local field
     code = CodeField()
@@ -185,8 +180,7 @@ class InternalSparkComponentSchema(InternalComponentSchema):
     type = StringTransformedEnum(
         allowed_values=PublicNodeType.SPARK,
         casing_transform=lambda x: parse_name_label(x)[0].lower(),
-        pass_original=True,
-    )
+        pass_original=True)
 
     # override inputs:
     # https://componentsdk.azurewebsites.net/components/spark_component.html#differences-with-other-component-types
@@ -197,34 +191,29 @@ class InternalSparkComponentSchema(InternalComponentSchema):
                 NestedField(InternalSparkParameterSchema),
                 NestedField(InternalInputPortSchema),
             ]
-        ),
-    )
+        ))
 
     environment = EnvironmentField(
         extra_fields=[NestedField(InternalEnvironmentSchema)],
-        allow_none=True,
-    )
+        allow_none=True)
 
     jars = UnionField(
         [
             fields.List(fields.Str()),
             fields.Str(),
-        ],
-    )
+        ])
     py_files = UnionField(
         [
             fields.List(fields.Str()),
             fields.Str(),
         ],
         data_key="pyFiles",
-        attribute="py_files",
-    )
+        attribute="py_files")
 
     entry = UnionField(
         [NestedField(SparkEntryFileSchema), NestedField(SparkEntryClassSchema)],
         required=True,
-        metadata={"description": "Entry."},
-    )
+        metadata={"description": "Entry."})
 
     files = fields.List(fields.Str(required=True))
     archives = fields.List(fields.Str(required=True))

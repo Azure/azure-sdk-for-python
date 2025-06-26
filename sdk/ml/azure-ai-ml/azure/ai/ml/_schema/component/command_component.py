@@ -12,8 +12,7 @@ from azure.ai.ml._schema.assets.asset import AnonymousAssetSchema
 from azure.ai.ml._schema.component.component import ComponentSchema
 from azure.ai.ml._schema.component.input_output import (
     OutputPortSchema,
-    PrimitiveOutputSchema,
-)
+    PrimitiveOutputSchema)
 from azure.ai.ml._schema.component.resource import ComponentResourceSchema
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 from azure.ai.ml._schema.core.fields import (
@@ -21,14 +20,12 @@ from azure.ai.ml._schema.core.fields import (
     FileRefField,
     NestedField,
     StringTransformedEnum,
-    UnionField,
-)
+    UnionField)
 from azure.ai.ml._schema.job.distribution import (
     MPIDistributionSchema,
     PyTorchDistributionSchema,
     TensorFlowDistributionSchema,
-    RayDistributionSchema,
-)
+    RayDistributionSchema)
 from azure.ai.ml._schema.job.parameterized_command import ParameterizedCommandSchema
 from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AzureDevopsArtifactsType
@@ -50,26 +47,24 @@ class CommandComponentSchema(ComponentSchema, ParameterizedCommandSchema):
         exclude = ["environment_variables"]  # component doesn't have environment variables
 
     type = StringTransformedEnum(allowed_values=[NodeType.COMMAND])
-    resources = NestedField(ComponentResourceSchema, unknown=INCLUDE)
+    resources = NestedField(ComponentResourceSchema)
     distribution = UnionField(
         [
-            NestedField(MPIDistributionSchema, unknown=INCLUDE),
-            NestedField(TensorFlowDistributionSchema, unknown=INCLUDE),
-            NestedField(PyTorchDistributionSchema, unknown=INCLUDE),
-            ExperimentalField(NestedField(RayDistributionSchema, unknown=INCLUDE)),
+            NestedField(MPIDistributionSchema),
+            NestedField(TensorFlowDistributionSchema),
+            NestedField(PyTorchDistributionSchema),
+            ExperimentalField(NestedField(RayDistributionSchema)),
         ],
-        metadata={"description": "Provides the configuration for a distributed run."},
-    )
+        metadata={"description": "Provides the configuration for a distributed run."})
     # primitive output is only supported for command component & pipeline component
     outputs = fields.Dict(
         keys=fields.Str(),
         values=UnionField(
             [
                 NestedField(OutputPortSchema),
-                NestedField(PrimitiveOutputSchema, unknown=INCLUDE),
+                NestedField(PrimitiveOutputSchema),
             ]
-        ),
-    )
+        ))
     properties = fields.Dict(keys=fields.Str(), values=fields.Raw())
 
     # Note: AzureDevopsArtifactsSchema only available when private preview flag opened before init of command component
@@ -115,8 +110,7 @@ class AnonymousCommandComponentSchema(AnonymousAssetSchema, CommandComponentSche
         return CommandComponent(
             base_path=self.context[BASE_PATH_CONTEXT_KEY],
             _source=ComponentSource.YAML_JOB,
-            **data,
-        )
+            **data)
 
 
 class ComponentFileRefField(FileRefField):
@@ -130,7 +124,7 @@ class ComponentFileRefField(FileRefField):
         component_schema_context = deepcopy(self.context)
         component_schema_context[BASE_PATH_CONTEXT_KEY] = source_path.parent
         component = AnonymousCommandComponentSchema(context=component_schema_context).load(
-            component_dict, unknown=INCLUDE
+            component_dict
         )
         component._source_path = source_path
         component._source = ComponentSource.YAML_COMPONENT

@@ -441,11 +441,12 @@ class RefField(Field):
 
 
 class NestedField(Nested):
-    """anticipates the default coming in next marshmallow version, unknown=True."""
+    """Nested field compatible with marshmallow 4.x - unknown parameter handled at schema level."""
 
     def __init__(self, *args, **kwargs):
-        if kwargs.get("unknown") is None:
-            kwargs["unknown"] = RAISE
+        # In marshmallow 4.x, 'unknown' parameter is not accepted by field constructors
+        # Remove it from kwargs to avoid TypeError
+        kwargs.pop("unknown", None)
         super().__init__(*args, **kwargs)
 
 

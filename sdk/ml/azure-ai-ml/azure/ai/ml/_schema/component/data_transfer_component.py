@@ -20,8 +20,7 @@ from azure.ai.ml.constants._component import (
     NodeType,
     DataTransferTaskType,
     DataCopyMode,
-    ExternalDataType,
-)
+    ExternalDataType)
 
 
 class DataTransferComponentSchemaMixin(ComponentSchema):
@@ -35,8 +34,7 @@ class DataTransferCopyComponentSchema(DataTransferComponentSchemaMixin):
     )
     inputs = fields.Dict(
         keys=fields.Str(),
-        values=NestedField(InputPortSchema),
-    )
+        values=NestedField(InputPortSchema))
 
     @validates("outputs")
     def outputs_key(self, value):
@@ -75,8 +73,7 @@ class DataTransferImportComponentSchema(DataTransferComponentSchemaMixin):
     source = NestedField(SinkSourceSchema, required=True)
     outputs = fields.Dict(
         keys=fields.Str(),
-        values=NestedField(SinkOutputsSchema),
-    )
+        values=NestedField(SinkOutputsSchema))
 
     @validates("inputs")
     def inputs_key(self, value):
@@ -95,8 +92,7 @@ class DataTransferExportComponentSchema(DataTransferComponentSchemaMixin):
     task = StringTransformedEnum(allowed_values=[DataTransferTaskType.EXPORT_DATA], required=True)
     inputs = fields.Dict(
         keys=fields.Str(),
-        values=NestedField(SourceInputsSchema),
-    )
+        values=NestedField(SourceInputsSchema))
     sink = NestedField(SinkSourceSchema(), required=True)
 
     @validates("inputs")
@@ -153,8 +149,7 @@ class AnonymousDataTransferCopyComponentSchema(AnonymousAssetSchema, DataTransfe
         return DataTransferCopyComponent(
             base_path=self.context[BASE_PATH_CONTEXT_KEY],
             _source=kwargs.pop("_source", ComponentSource.YAML_JOB),
-            **data,
-        )
+            **data)
 
 
 # pylint: disable-next=name-too-long
@@ -176,8 +171,7 @@ class AnonymousDataTransferImportComponentSchema(AnonymousAssetSchema, DataTrans
         return DataTransferImportComponent(
             base_path=self.context[BASE_PATH_CONTEXT_KEY],
             _source=kwargs.pop("_source", ComponentSource.YAML_JOB),
-            **data,
-        )
+            **data)
 
 
 # pylint: disable-next=name-too-long
@@ -199,8 +193,7 @@ class AnonymousDataTransferExportComponentSchema(AnonymousAssetSchema, DataTrans
         return DataTransferExportComponent(
             base_path=self.context[BASE_PATH_CONTEXT_KEY],
             _source=kwargs.pop("_source", ComponentSource.YAML_JOB),
-            **data,
-        )
+            **data)
 
 
 class DataTransferCopyComponentFileRefField(FileRefField):
@@ -214,7 +207,7 @@ class DataTransferCopyComponentFileRefField(FileRefField):
         component_schema_context = deepcopy(self.context)
         component_schema_context[BASE_PATH_CONTEXT_KEY] = source_path.parent
         component = AnonymousDataTransferCopyComponentSchema(context=component_schema_context).load(
-            component_dict, unknown=INCLUDE
+            component_dict
         )
         component._source_path = source_path
         component._source = ComponentSource.YAML_COMPONENT
@@ -232,7 +225,7 @@ class DataTransferImportComponentFileRefField(FileRefField):
         component_schema_context = deepcopy(self.context)
         component_schema_context[BASE_PATH_CONTEXT_KEY] = source_path.parent
         component = AnonymousDataTransferImportComponentSchema(context=component_schema_context).load(
-            component_dict, unknown=INCLUDE
+            component_dict
         )
         component._source_path = source_path
         component._source = ComponentSource.YAML_COMPONENT
@@ -250,7 +243,7 @@ class DataTransferExportComponentFileRefField(FileRefField):
         component_schema_context = deepcopy(self.context)
         component_schema_context[BASE_PATH_CONTEXT_KEY] = source_path.parent
         component = AnonymousDataTransferExportComponentSchema(context=component_schema_context).load(
-            component_dict, unknown=INCLUDE
+            component_dict
         )
         component._source_path = source_path
         component._source = ComponentSource.YAML_COMPONENT

@@ -57,8 +57,7 @@ class AnonymousSparkComponentSchema(AnonymousAssetSchema, SparkComponentSchema):
         return SparkComponent(
             base_path=self.context[BASE_PATH_CONTEXT_KEY],
             _source=kwargs.pop("_source", ComponentSource.YAML_JOB),
-            **data,
-        )
+            **data)
 
 
 class SparkComponentFileRefField(FileRefField):
@@ -72,7 +71,7 @@ class SparkComponentFileRefField(FileRefField):
         component_schema_context = deepcopy(self.context)
         component_schema_context[BASE_PATH_CONTEXT_KEY] = source_path.parent
         component = AnonymousSparkComponentSchema(context=component_schema_context).load(
-            component_dict, unknown=INCLUDE
+            component_dict
         )
         component._source_path = source_path
         component._source = ComponentSource.YAML_COMPONENT
