@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2023-01-01",
+  "commit": "fa1c574f05a6e43791c10752c321cbdf8ad2ec78",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/storageactions/StorageAction.Management",
+  "emitterVersion": "0.45.3"
+}
