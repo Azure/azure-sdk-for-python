@@ -4,9 +4,15 @@
 
 ## 1.1.0b3 (Unreleased)
 
+### Features Added
+
+- Added support for Deep Research tool. For more information, see https://aka.ms/agents-deep-research.
+
 ### Sample updates
+
 - The file search samples were updated to demonstrate retrieving text associated with citations.
 - Added samples for file search citation with streaming.
+- Added three samples showing usage of Deep Research tool (without and without streaming).
 
 ## 1.1.0b2 (2025-06-09)
 
@@ -17,6 +23,7 @@
 - Fixed a tracing related bug that caused process_thread_run span to not appear when streaming is used without event handler.
 
 ### Sample updates
+
 - Changed all samples to use `AIProjectClient` which is recommended to specify endpoint and credential.
 - Added `sample_agents_stream_iteration_with_functions.py`
 
