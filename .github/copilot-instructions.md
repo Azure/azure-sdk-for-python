@@ -89,7 +89,7 @@ IF missing dependencies:
 
 ### STEP 2: SDK GENERATION
 ```
-ACTION: Use azure-sdk-python-mcp sdk generation server tools (init, init_local)
+ACTION: Use azure-sdk-python-mcp sdk generation server tools (init, init_local, init_local_arm)
 TIMING: ALWAYS inform user before starting: "This SDK generation step will take approximately 5-6 minutes to complete."
 IF local path provided:
     IF local path contains ".Management":
