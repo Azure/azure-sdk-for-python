@@ -8,8 +8,7 @@
 `.inference.get_embeddings_client()` and `.inference.get_image_embeddings_client()`.
 For guidance on obtaining an authenticated `azure-ai-inference` client for your AI Foundry Project,
 refer to the updated samples in the `samples\inference` directory. For example,
-[sample_chat_completions_with_azure_ai_inference_client.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/inference/sample_chat_completions_with_azure_ai_inference_client.py). Alternatively, us the `.inference.get_azure_openai_client()` method
-to perform chat completions with an Azure OpenAI client.
+[sample_chat_completions_with_azure_ai_inference_client.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/inference/sample_chat_completions_with_azure_ai_inference_client.py). Alternatively, use the `.inference.get_azure_openai_client()` method to perform chat completions with an Azure OpenAI client.
 * Method argument name changes:
   * In method `.indexes.create_or_update()` argument `body` was renamed `index`.
   * In method `.datasets.create_or_update()` argument `body` was renamed `dataset_version`.
