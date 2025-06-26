@@ -54,10 +54,10 @@ class _AsyncInstrumentedItemPaged(AsyncItemPaged, _SpanLogger):
     def __init__(
         self,
         async_iter: AsyncItemPaged,
-        server_address: str,
-        thread_id: str,
-        start_span_function: Callable[[str, str], AbstractSpan],
+        start_span_function: Callable[[Optional[str], Optional[str], Optional[str]], AbstractSpan],
         item_instrumentation_function: Callable[[AbstractSpan, Any], None],
+        server_address: Optional[str] = None,
+        thread_id: Optional[str] = None,
         run_id: Optional[str] = None,
     ) -> None:
         super().__init__()
@@ -84,7 +84,9 @@ class _AsyncInstrumentedItemPaged(AsyncItemPaged, _SpanLogger):
     def __aiter__(self) -> AsyncIterator[Any]:
         async def _gen() -> AsyncIterator[Any]:
             async for val in self._iter:
-                span = self._start_span_function(self._server_address, self._thread_id, self._run_id)
+                span: Optional[AbstractSpan] = self._start_span_function(
+                    self._server_address, self._thread_id, self._run_id
+                )
                 if span is not None:
                     self.log_to_span_safe(val, self._item_instrumentation_function, span)
                     # We cast None to TracebackType, because traceback is
@@ -104,10 +106,10 @@ class _InstrumentedItemPaged(ItemPaged, _SpanLogger):
     def __init__(
         self,
         iter_val: ItemPaged,
-        server_address: str,
-        thread_id: str,
-        start_span_function: Callable[[str, str], AbstractSpan],
+        start_span_function: Callable[[Optional[str], Optional[str], Optional[str]], AbstractSpan],
         item_instrumentation_function: Callable[[AbstractSpan, Any], None],
+        server_address: Optional[str] = None,
+        thread_id: Optional[str] = None,
         run_id: Optional[str] = None,
     ) -> None:
         super().__init__()
@@ -134,7 +136,9 @@ class _InstrumentedItemPaged(ItemPaged, _SpanLogger):
     def __iter__(self) -> Iterator[Any]:
         def _gen() -> Iterator[Any]:
             for val in self._iter:
-                span = self._start_span_function(self._server_address, self._thread_id, self._run_id)
+                span: Optional[AbstractSpan] = self._start_span_function(
+                    self._server_address, self._thread_id, self._run_id
+                )
                 if span is not None:
                     self.log_to_span_safe(val, self._item_instrumentation_function, span)
                     # We cast None to TracebackType, because traceback is

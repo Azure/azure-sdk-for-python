@@ -1326,11 +1326,12 @@ class _AIAgentsInstrumentorPreview:
 
         return _InstrumentedItemPaged(
             function(*args, **kwargs),
-            server_address=server_address,
-            thread_id=thread_id,
             start_span_function=self.start_trace_list_messages,
             item_instrumentation_function=self.add_thread_message_event,
-            run_id=None)
+            server_address=server_address,
+            thread_id=thread_id,
+            run_id=None,
+        )
 
     def trace_list_messages_async(self, function, *args, **kwargs):
         # Note that this method is not async, but it operates on AsyncIterable.
@@ -1339,13 +1340,16 @@ class _AIAgentsInstrumentorPreview:
 
         return _AsyncInstrumentedItemPaged(
             function(*args, **kwargs),
-            server_address=server_address,
-            thread_id=thread_id,
             start_span_function=self.start_trace_list_messages,
             item_instrumentation_function=self.add_thread_message_event,
-            run_id=None)
+            server_address=server_address,
+            thread_id=thread_id,
+            run_id=None,
+        )
 
-    def start_trace_list_messages(self, server_address: Optional[str] = None, thread_id: Optional[str] = None, run_id: Optional[str] = None):
+    def start_trace_list_messages(
+        self, server_address: Optional[str] = None, thread_id: Optional[str] = None, run_id: Optional[str] = None
+    ):
         _ = run_id  # Unused parameter, but kept for compatibility.
         return self.start_list_messages_span(server_address=server_address, thread_id=thread_id)
 
@@ -1356,11 +1360,12 @@ class _AIAgentsInstrumentorPreview:
 
         return _InstrumentedItemPaged(
             function(*args, **kwargs),
-            server_address=server_address,
-            thread_id=thread_id,
             start_span_function=self.start_list_run_steps_span,
             item_instrumentation_function=self.add_run_step_event,
-            run_id=run_id)
+            server_address=server_address,
+            thread_id=thread_id,
+            run_id=run_id,
+        )
 
     def trace_list_run_steps_async(self, function, *args, **kwargs):
         # Note that this method is not async, but it operates on AsyncIterable.
@@ -1370,14 +1375,16 @@ class _AIAgentsInstrumentorPreview:
 
         return _AsyncInstrumentedItemPaged(
             function(*args, **kwargs),
+            start_span_function=self.start_list_run_steps_span,
+            item_instrumentation_function=self.add_run_step_event,
             server_address=server_address,
             thread_id=thread_id,
             run_id=run_id,
-            start_span_function=self.start_list_run_steps_span,
-            item_instrumentation_function=self.add_run_step_event,
         )
 
-    def start_trace_list_run_steps(self, server_address: Optional[str] = None, thread_id: Optional[str] = None, run_id: Optional[str] = None):
+    def start_trace_list_run_steps(
+        self, server_address: Optional[str] = None, thread_id: Optional[str] = None, run_id: Optional[str] = None
+    ):
         return self.start_list_run_steps_span(server_address=server_address, thread_id=thread_id, run_id=run_id)
 
     def handle_run_stream_exit(self, _function, *args, **kwargs):
