@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,42 +9,45 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, List, Mapping, Optional, TYPE_CHECKING, overload
+from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from azure.core.exceptions import ODataV4Format
-
-from .. import _model_base
-from .._model_base import rest_field
+from .._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AcknowledgeResult(_model_base.Model):
-    """The result of the Acknowledge operation.
+class AcsCallEndedByProperties(_Model):
+    """Schema of calling event ended by properties.
 
-
-    :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
-     FailedLockToken includes the lock token along with the related error information (namely, the
-     error code and description). Required.
-    :vartype failed_lock_tokens: list[~azure.eventgrid.models.FailedLockToken]
-    :ivar succeeded_lock_tokens: Array of lock tokens for the successfully acknowledged cloud
-     events. Required.
-    :vartype succeeded_lock_tokens: list[str]
+    :ivar communication_identifier: The communication identifier of the call ended by. Required.
+    :vartype communication_identifier: ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar kind: The type of call ended by. Required. Known values are: "Participant" and
+     "MicrosoftInternal".
+    :vartype kind: str or ~azure.eventgrid.models.AcsCallEndedByKind
+    :ivar name: The name of the call ended by. Required.
+    :vartype name: str
     """
 
-    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
-    """Array of FailedLockToken for failed cloud events. Each FailedLockToken includes the lock token
-     along with the related error information (namely, the error code and description). Required."""
-    succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
-    """Array of lock tokens for the successfully acknowledged cloud events. Required."""
+    communication_identifier: "_models.CommunicationIdentifierModel" = rest_field(
+        name="communicationIdentifier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The communication identifier of the call ended by. Required."""
+    kind: Union[str, "_models.AcsCallEndedByKind"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of call ended by. Required. Known values are: \"Participant\" and
+     \"MicrosoftInternal\"."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the call ended by. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        failed_lock_tokens: List["_models.FailedLockToken"],
-        succeeded_lock_tokens: List[str],
+        communication_identifier: "_models.CommunicationIdentifierModel",
+        kind: Union[str, "_models.AcsCallEndedByKind"],
+        name: str,
     ) -> None: ...
 
     @overload
@@ -57,99 +61,1186 @@ class AcknowledgeResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerProperties(_model_base.Model):
-    """Properties of the Event Broker operation.
+class AcsCallingEventProperties(_Model):
+    """Schema of common properties of all calling events.
 
-
-    :ivar lock_token: The token of the lock on the event. Required.
-    :vartype lock_token: str
-    :ivar delivery_count: The attempt count for delivering the event. Required.
-    :vartype delivery_count: int
+    :ivar started_by: The call participant who initiated the call. Required.
+    :vartype started_by: ~azure.eventgrid.models.AcsCallParticipantProperties
+    :ivar server_call_id: The call id of the server. Required.
+    :vartype server_call_id: str
+    :ivar group: The group metadata.
+    :vartype group: ~azure.eventgrid.models.AcsCallGroupProperties
+    :ivar room: The room metadata.
+    :vartype room: ~azure.eventgrid.models.AcsCallRoomProperties
+    :ivar is_two_party: Is two-party in calling event.
+    :vartype is_two_party: bool
+    :ivar correlation_id: The correlationId of calling event. Required.
+    :vartype correlation_id: str
+    :ivar is_rooms_call: Is the calling event a room call.
+    :vartype is_rooms_call: bool
     """
 
-    lock_token: str = rest_field(name="lockToken")
-    """The token of the lock on the event. Required."""
-    delivery_count: int = rest_field(name="deliveryCount")
-    """The attempt count for delivering the event. Required."""
+    started_by: "_models.AcsCallParticipantProperties" = rest_field(
+        name="startedBy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The call participant who initiated the call. Required."""
+    server_call_id: str = rest_field(name="serverCallId", visibility=["read", "create", "update", "delete", "query"])
+    """The call id of the server. Required."""
+    group: Optional["_models.AcsCallGroupProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The group metadata."""
+    room: Optional["_models.AcsCallRoomProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The room metadata."""
+    is_two_party: Optional[bool] = rest_field(
+        name="isTwoParty", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Is two-party in calling event."""
+    correlation_id: str = rest_field(name="correlationId", visibility=["read", "create", "update", "delete", "query"])
+    """The correlationId of calling event. Required."""
+    is_rooms_call: Optional[bool] = rest_field(
+        name="isRoomsCall", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Is the calling event a room call."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        started_by: "_models.AcsCallParticipantProperties",
+        server_call_id: str,
+        correlation_id: str,
+        group: Optional["_models.AcsCallGroupProperties"] = None,
+        room: Optional["_models.AcsCallRoomProperties"] = None,
+        is_two_party: Optional[bool] = None,
+        is_rooms_call: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
-class CloudEvent(_model_base.Model):
-    """Properties of an event published to an Azure Messaging EventGrid Namespace topic using the
-    CloudEvent 1.0 Schema.
+class AcsCallEndedEventData(AcsCallingEventProperties):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Communication.CallEnded event.
+
+    :ivar started_by: The call participant who initiated the call. Required.
+    :vartype started_by: ~azure.eventgrid.models.AcsCallParticipantProperties
+    :ivar server_call_id: The call id of the server. Required.
+    :vartype server_call_id: str
+    :ivar group: The group metadata.
+    :vartype group: ~azure.eventgrid.models.AcsCallGroupProperties
+    :ivar room: The room metadata.
+    :vartype room: ~azure.eventgrid.models.AcsCallRoomProperties
+    :ivar is_two_party: Is two-party in calling event.
+    :vartype is_two_party: bool
+    :ivar correlation_id: The correlationId of calling event. Required.
+    :vartype correlation_id: str
+    :ivar is_rooms_call: Is the calling event a room call.
+    :vartype is_rooms_call: bool
+    :ivar ended_by: The communication identifier of the user who was disconnected.
+    :vartype ended_by: ~azure.eventgrid.models.AcsCallEndedByProperties
+    :ivar reason: The reason for ending the call.
+    :vartype reason: ~azure.eventgrid.models.AcsCallEndReasonProperties
+    :ivar call_duration_in_seconds: Duration of the call in seconds.
+    :vartype call_duration_in_seconds: float
+    """
+
+    ended_by: Optional["_models.AcsCallEndedByProperties"] = rest_field(
+        name="endedBy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The communication identifier of the user who was disconnected."""
+    reason: Optional["_models.AcsCallEndReasonProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The reason for ending the call."""
+    call_duration_in_seconds: Optional[float] = rest_field(
+        name="callDurationInSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Duration of the call in seconds."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        started_by: "_models.AcsCallParticipantProperties",
+        server_call_id: str,
+        correlation_id: str,
+        group: Optional["_models.AcsCallGroupProperties"] = None,
+        room: Optional["_models.AcsCallRoomProperties"] = None,
+        is_two_party: Optional[bool] = None,
+        is_rooms_call: Optional[bool] = None,
+        ended_by: Optional["_models.AcsCallEndedByProperties"] = None,
+        reason: Optional["_models.AcsCallEndReasonProperties"] = None,
+        call_duration_in_seconds: Optional[float] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
-    :ivar id: An identifier for the event. The combination of id and source must be unique for each
-     distinct event. Required.
+class AcsCallEndReasonProperties(_Model):
+    """Schema of calling event reason properties.
+
+    :ivar code: Reason code for ending the call.
+    :vartype code: int
+    :ivar sub_code: Reason subcode for ending the call.
+    :vartype sub_code: int
+    :ivar phrase: Reason for the ending the call.
+    :vartype phrase: str
+    """
+
+    code: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Reason code for ending the call."""
+    sub_code: Optional[int] = rest_field(name="subCode", visibility=["read", "create", "update", "delete", "query"])
+    """Reason subcode for ending the call."""
+    phrase: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Reason for the ending the call."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Optional[int] = None,
+        sub_code: Optional[int] = None,
+        phrase: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsCallGroupProperties(_Model):
+    """Schema of calling event group properties.
+
+    :ivar id: Group Id.
     :vartype id: str
-    :ivar source: Identifies the context in which an event happened. The combination of id and
-     source must be unique for each distinct event. Required.
-    :vartype source: str
-    :ivar data: Event data specific to the event type.
-    :vartype data: any
-    :ivar data_base64: Event data specific to the event type, encoded as a base64 string.
-    :vartype data_base64: bytes
-    :ivar type: Type of event related to the originating occurrence. Required.
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Group Id."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsCallParticipantEventData(AcsCallingEventProperties):
+    """Schema of common properties of all participant events.
+
+    :ivar started_by: The call participant who initiated the call. Required.
+    :vartype started_by: ~azure.eventgrid.models.AcsCallParticipantProperties
+    :ivar server_call_id: The call id of the server. Required.
+    :vartype server_call_id: str
+    :ivar group: The group metadata.
+    :vartype group: ~azure.eventgrid.models.AcsCallGroupProperties
+    :ivar room: The room metadata.
+    :vartype room: ~azure.eventgrid.models.AcsCallRoomProperties
+    :ivar is_two_party: Is two-party in calling event.
+    :vartype is_two_party: bool
+    :ivar correlation_id: The correlationId of calling event. Required.
+    :vartype correlation_id: str
+    :ivar is_rooms_call: Is the calling event a room call.
+    :vartype is_rooms_call: bool
+    :ivar user: The user of the call participant.
+    :vartype user: ~azure.eventgrid.models.AcsCallParticipantProperties
+    :ivar display_name: The display name of the participant.
+    :vartype display_name: str
+    :ivar participant_id: The id of the participant.
+    :vartype participant_id: str
+    :ivar user_agent: The user agent of the participant.
+    :vartype user_agent: str
+    """
+
+    user: Optional["_models.AcsCallParticipantProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The user of the call participant."""
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The display name of the participant."""
+    participant_id: Optional[str] = rest_field(
+        name="participantId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The id of the participant."""
+    user_agent: Optional[str] = rest_field(name="userAgent", visibility=["read", "create", "update", "delete", "query"])
+    """The user agent of the participant."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        started_by: "_models.AcsCallParticipantProperties",
+        server_call_id: str,
+        correlation_id: str,
+        group: Optional["_models.AcsCallGroupProperties"] = None,
+        room: Optional["_models.AcsCallRoomProperties"] = None,
+        is_two_party: Optional[bool] = None,
+        is_rooms_call: Optional[bool] = None,
+        user: Optional["_models.AcsCallParticipantProperties"] = None,
+        display_name: Optional[str] = None,
+        participant_id: Optional[str] = None,
+        user_agent: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsCallParticipantAddedEventData(AcsCallParticipantEventData):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.CallParticipantAdded event.
+
+    :ivar started_by: The call participant who initiated the call. Required.
+    :vartype started_by: ~azure.eventgrid.models.AcsCallParticipantProperties
+    :ivar server_call_id: The call id of the server. Required.
+    :vartype server_call_id: str
+    :ivar group: The group metadata.
+    :vartype group: ~azure.eventgrid.models.AcsCallGroupProperties
+    :ivar room: The room metadata.
+    :vartype room: ~azure.eventgrid.models.AcsCallRoomProperties
+    :ivar is_two_party: Is two-party in calling event.
+    :vartype is_two_party: bool
+    :ivar correlation_id: The correlationId of calling event. Required.
+    :vartype correlation_id: str
+    :ivar is_rooms_call: Is the calling event a room call.
+    :vartype is_rooms_call: bool
+    :ivar user: The user of the call participant.
+    :vartype user: ~azure.eventgrid.models.AcsCallParticipantProperties
+    :ivar display_name: The display name of the participant.
+    :vartype display_name: str
+    :ivar participant_id: The id of the participant.
+    :vartype participant_id: str
+    :ivar user_agent: The user agent of the participant.
+    :vartype user_agent: str
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        started_by: "_models.AcsCallParticipantProperties",
+        server_call_id: str,
+        correlation_id: str,
+        group: Optional["_models.AcsCallGroupProperties"] = None,
+        room: Optional["_models.AcsCallRoomProperties"] = None,
+        is_two_party: Optional[bool] = None,
+        is_rooms_call: Optional[bool] = None,
+        user: Optional["_models.AcsCallParticipantProperties"] = None,
+        display_name: Optional[str] = None,
+        participant_id: Optional[str] = None,
+        user_agent: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsCallParticipantProperties(_Model):
+    """Schema of common properties of all participant event user.
+
+    :ivar communication_identifier: The communication identifier of the participant user.
+    :vartype communication_identifier: ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar role: The role of the participant. Known values are: "Attendee", "Presenter",
+     "Organizer", "Consumer", and "Collaborator".
+    :vartype role: str or ~azure.eventgrid.models.AcsCallParticipantKind
+    """
+
+    communication_identifier: Optional["_models.CommunicationIdentifierModel"] = rest_field(
+        name="communicationIdentifier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The communication identifier of the participant user."""
+    role: Optional[Union[str, "_models.AcsCallParticipantKind"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The role of the participant. Known values are: \"Attendee\", \"Presenter\", \"Organizer\",
+     \"Consumer\", and \"Collaborator\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        communication_identifier: Optional["_models.CommunicationIdentifierModel"] = None,
+        role: Optional[Union[str, "_models.AcsCallParticipantKind"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsCallParticipantRemovedEventData(AcsCallParticipantEventData):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.CallParticipantRemoved event.
+
+    :ivar started_by: The call participant who initiated the call. Required.
+    :vartype started_by: ~azure.eventgrid.models.AcsCallParticipantProperties
+    :ivar server_call_id: The call id of the server. Required.
+    :vartype server_call_id: str
+    :ivar group: The group metadata.
+    :vartype group: ~azure.eventgrid.models.AcsCallGroupProperties
+    :ivar room: The room metadata.
+    :vartype room: ~azure.eventgrid.models.AcsCallRoomProperties
+    :ivar is_two_party: Is two-party in calling event.
+    :vartype is_two_party: bool
+    :ivar correlation_id: The correlationId of calling event. Required.
+    :vartype correlation_id: str
+    :ivar is_rooms_call: Is the calling event a room call.
+    :vartype is_rooms_call: bool
+    :ivar user: The user of the call participant.
+    :vartype user: ~azure.eventgrid.models.AcsCallParticipantProperties
+    :ivar display_name: The display name of the participant.
+    :vartype display_name: str
+    :ivar participant_id: The id of the participant.
+    :vartype participant_id: str
+    :ivar user_agent: The user agent of the participant.
+    :vartype user_agent: str
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        started_by: "_models.AcsCallParticipantProperties",
+        server_call_id: str,
+        correlation_id: str,
+        group: Optional["_models.AcsCallGroupProperties"] = None,
+        room: Optional["_models.AcsCallRoomProperties"] = None,
+        is_two_party: Optional[bool] = None,
+        is_rooms_call: Optional[bool] = None,
+        user: Optional["_models.AcsCallParticipantProperties"] = None,
+        display_name: Optional[str] = None,
+        participant_id: Optional[str] = None,
+        user_agent: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsCallRoomProperties(_Model):
+    """Schema of calling event room properties.
+
+    :ivar id: Room Id.
+    :vartype id: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Room Id."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsCallStartedEventData(AcsCallingEventProperties):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Communication.CallStarted
+    event.
+
+    :ivar started_by: The call participant who initiated the call. Required.
+    :vartype started_by: ~azure.eventgrid.models.AcsCallParticipantProperties
+    :ivar server_call_id: The call id of the server. Required.
+    :vartype server_call_id: str
+    :ivar group: The group metadata.
+    :vartype group: ~azure.eventgrid.models.AcsCallGroupProperties
+    :ivar room: The room metadata.
+    :vartype room: ~azure.eventgrid.models.AcsCallRoomProperties
+    :ivar is_two_party: Is two-party in calling event.
+    :vartype is_two_party: bool
+    :ivar correlation_id: The correlationId of calling event. Required.
+    :vartype correlation_id: str
+    :ivar is_rooms_call: Is the calling event a room call.
+    :vartype is_rooms_call: bool
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        started_by: "_models.AcsCallParticipantProperties",
+        server_call_id: str,
+        correlation_id: str,
+        group: Optional["_models.AcsCallGroupProperties"] = None,
+        room: Optional["_models.AcsCallRoomProperties"] = None,
+        is_two_party: Optional[bool] = None,
+        is_rooms_call: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsChatEventInThreadBaseProperties(_Model):
+    """Schema of common properties of all thread-level chat events.
+
+    :ivar transaction_id: The transaction id will be used as co-relation vector.
+    :vartype transaction_id: str
+    :ivar thread_id: The chat thread id. Required.
+    :vartype thread_id: str
+    """
+
+    transaction_id: Optional[str] = rest_field(
+        name="transactionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The transaction id will be used as co-relation vector."""
+    thread_id: str = rest_field(name="threadId", visibility=["read", "create", "update", "delete", "query"])
+    """The chat thread id. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        thread_id: str,
+        transaction_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsChatMessageEventInThreadBaseProperties(AcsChatEventInThreadBaseProperties):  # pylint: disable=name-too-long
+    """Schema of common properties of all thread-level chat message events.
+
+    :ivar transaction_id: The transaction id will be used as co-relation vector.
+    :vartype transaction_id: str
+    :ivar thread_id: The chat thread id. Required.
+    :vartype thread_id: str
+    :ivar message_id: The chat message id. Required.
+    :vartype message_id: str
+    :ivar sender_communication_identifier: The communication identifier of the sender. Required.
+    :vartype sender_communication_identifier: ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar sender_display_name: The display name of the sender.
+    :vartype sender_display_name: str
+    :ivar compose_time: The original compose time of the message. Required.
+    :vartype compose_time: ~datetime.datetime
+    :ivar type: The type of the message. Required.
     :vartype type: str
-    :ivar time: The time (in UTC) the event was generated, in RFC3339 format.
+    :ivar version: The version of the message. Required.
+    :vartype version: int
+    """
+
+    message_id: str = rest_field(name="messageId", visibility=["read", "create", "update", "delete", "query"])
+    """The chat message id. Required."""
+    sender_communication_identifier: "_models.CommunicationIdentifierModel" = rest_field(
+        name="senderCommunicationIdentifier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The communication identifier of the sender. Required."""
+    sender_display_name: Optional[str] = rest_field(
+        name="senderDisplayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The display name of the sender."""
+    compose_time: datetime.datetime = rest_field(
+        name="composeTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The original compose time of the message. Required."""
+    type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The type of the message. Required."""
+    version: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The version of the message. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        thread_id: str,
+        message_id: str,
+        sender_communication_identifier: "_models.CommunicationIdentifierModel",
+        compose_time: datetime.datetime,
+        type: str,
+        version: int,
+        transaction_id: Optional[str] = None,
+        sender_display_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsChatAzureBotCommandReceivedInThreadEventData(
+    AcsChatMessageEventInThreadBaseProperties
+):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.ChatAzureBotCommandReceivedInThread event.
+
+    :ivar transaction_id: The transaction id will be used as co-relation vector.
+    :vartype transaction_id: str
+    :ivar thread_id: The chat thread id. Required.
+    :vartype thread_id: str
+    :ivar message_id: The chat message id. Required.
+    :vartype message_id: str
+    :ivar sender_communication_identifier: The communication identifier of the sender. Required.
+    :vartype sender_communication_identifier: ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar sender_display_name: The display name of the sender.
+    :vartype sender_display_name: str
+    :ivar compose_time: The original compose time of the message. Required.
+    :vartype compose_time: ~datetime.datetime
+    :ivar type: The type of the message. Required.
+    :vartype type: str
+    :ivar version: The version of the message. Required.
+    :vartype version: int
+    :ivar message_body: The body of the chat message. Required.
+    :vartype message_body: str
+    :ivar metadata: The chat message metadata.
+    :vartype metadata: dict[str, str]
+    """
+
+    message_body: str = rest_field(name="messageBody", visibility=["read", "create", "update", "delete", "query"])
+    """The body of the chat message. Required."""
+    metadata: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The chat message metadata."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        thread_id: str,
+        message_id: str,
+        sender_communication_identifier: "_models.CommunicationIdentifierModel",
+        compose_time: datetime.datetime,
+        type: str,
+        version: int,
+        message_body: str,
+        transaction_id: Optional[str] = None,
+        sender_display_name: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsChatEventBaseProperties(_Model):
+    """Schema of common properties of all chat events.
+
+    :ivar recipient_communication_identifier: The communication identifier of the target user.
+     Required.
+    :vartype recipient_communication_identifier:
+     ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar transaction_id: The transaction id will be used as co-relation vector.
+    :vartype transaction_id: str
+    :ivar thread_id: The chat thread id. Required.
+    :vartype thread_id: str
+    """
+
+    recipient_communication_identifier: "_models.CommunicationIdentifierModel" = rest_field(
+        name="recipientCommunicationIdentifier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The communication identifier of the target user. Required."""
+    transaction_id: Optional[str] = rest_field(
+        name="transactionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The transaction id will be used as co-relation vector."""
+    thread_id: str = rest_field(name="threadId", visibility=["read", "create", "update", "delete", "query"])
+    """The chat thread id. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        recipient_communication_identifier: "_models.CommunicationIdentifierModel",
+        thread_id: str,
+        transaction_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsChatMessageEventBaseProperties(AcsChatEventBaseProperties):
+    """Schema of common properties of all chat message events.
+
+    :ivar recipient_communication_identifier: The communication identifier of the target user.
+     Required.
+    :vartype recipient_communication_identifier:
+     ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar transaction_id: The transaction id will be used as co-relation vector.
+    :vartype transaction_id: str
+    :ivar thread_id: The chat thread id. Required.
+    :vartype thread_id: str
+    :ivar message_id: The chat message id. Required.
+    :vartype message_id: str
+    :ivar sender_communication_identifier: The communication identifier of the sender. Required.
+    :vartype sender_communication_identifier: ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar sender_display_name: The display name of the sender.
+    :vartype sender_display_name: str
+    :ivar compose_time: The original compose time of the message. Required.
+    :vartype compose_time: ~datetime.datetime
+    :ivar type: The type of the message. Required.
+    :vartype type: str
+    :ivar version: The version of the message. Required.
+    :vartype version: int
+    """
+
+    message_id: str = rest_field(name="messageId", visibility=["read", "create", "update", "delete", "query"])
+    """The chat message id. Required."""
+    sender_communication_identifier: "_models.CommunicationIdentifierModel" = rest_field(
+        name="senderCommunicationIdentifier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The communication identifier of the sender. Required."""
+    sender_display_name: Optional[str] = rest_field(
+        name="senderDisplayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The display name of the sender."""
+    compose_time: datetime.datetime = rest_field(
+        name="composeTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The original compose time of the message. Required."""
+    type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The type of the message. Required."""
+    version: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The version of the message. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        recipient_communication_identifier: "_models.CommunicationIdentifierModel",
+        thread_id: str,
+        message_id: str,
+        sender_communication_identifier: "_models.CommunicationIdentifierModel",
+        compose_time: datetime.datetime,
+        type: str,
+        version: int,
+        transaction_id: Optional[str] = None,
+        sender_display_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsChatMessageDeletedEventData(AcsChatMessageEventBaseProperties):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.ChatMessageDeleted event.
+
+    :ivar recipient_communication_identifier: The communication identifier of the target user.
+     Required.
+    :vartype recipient_communication_identifier:
+     ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar transaction_id: The transaction id will be used as co-relation vector.
+    :vartype transaction_id: str
+    :ivar thread_id: The chat thread id. Required.
+    :vartype thread_id: str
+    :ivar message_id: The chat message id. Required.
+    :vartype message_id: str
+    :ivar sender_communication_identifier: The communication identifier of the sender. Required.
+    :vartype sender_communication_identifier: ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar sender_display_name: The display name of the sender.
+    :vartype sender_display_name: str
+    :ivar compose_time: The original compose time of the message. Required.
+    :vartype compose_time: ~datetime.datetime
+    :ivar type: The type of the message. Required.
+    :vartype type: str
+    :ivar version: The version of the message. Required.
+    :vartype version: int
+    :ivar delete_time: The time at which the message was deleted. Required.
+    :vartype delete_time: ~datetime.datetime
+    """
+
+    delete_time: datetime.datetime = rest_field(
+        name="deleteTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the message was deleted. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        recipient_communication_identifier: "_models.CommunicationIdentifierModel",
+        thread_id: str,
+        message_id: str,
+        sender_communication_identifier: "_models.CommunicationIdentifierModel",
+        compose_time: datetime.datetime,
+        type: str,
+        version: int,
+        delete_time: datetime.datetime,
+        transaction_id: Optional[str] = None,
+        sender_display_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsChatMessageDeletedInThreadEventData(AcsChatMessageEventInThreadBaseProperties):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.ChatMessageDeletedInThread event.
+
+    :ivar transaction_id: The transaction id will be used as co-relation vector.
+    :vartype transaction_id: str
+    :ivar thread_id: The chat thread id. Required.
+    :vartype thread_id: str
+    :ivar message_id: The chat message id. Required.
+    :vartype message_id: str
+    :ivar sender_communication_identifier: The communication identifier of the sender. Required.
+    :vartype sender_communication_identifier: ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar sender_display_name: The display name of the sender.
+    :vartype sender_display_name: str
+    :ivar compose_time: The original compose time of the message. Required.
+    :vartype compose_time: ~datetime.datetime
+    :ivar type: The type of the message. Required.
+    :vartype type: str
+    :ivar version: The version of the message. Required.
+    :vartype version: int
+    :ivar delete_time: The time at which the message was deleted. Required.
+    :vartype delete_time: ~datetime.datetime
+    """
+
+    delete_time: datetime.datetime = rest_field(
+        name="deleteTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the message was deleted. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        thread_id: str,
+        message_id: str,
+        sender_communication_identifier: "_models.CommunicationIdentifierModel",
+        compose_time: datetime.datetime,
+        type: str,
+        version: int,
+        delete_time: datetime.datetime,
+        transaction_id: Optional[str] = None,
+        sender_display_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsChatMessageEditedEventData(AcsChatMessageEventBaseProperties):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.ChatMessageEdited event.
+
+    :ivar recipient_communication_identifier: The communication identifier of the target user.
+     Required.
+    :vartype recipient_communication_identifier:
+     ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar transaction_id: The transaction id will be used as co-relation vector.
+    :vartype transaction_id: str
+    :ivar thread_id: The chat thread id. Required.
+    :vartype thread_id: str
+    :ivar message_id: The chat message id. Required.
+    :vartype message_id: str
+    :ivar sender_communication_identifier: The communication identifier of the sender. Required.
+    :vartype sender_communication_identifier: ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar sender_display_name: The display name of the sender.
+    :vartype sender_display_name: str
+    :ivar compose_time: The original compose time of the message. Required.
+    :vartype compose_time: ~datetime.datetime
+    :ivar type: The type of the message. Required.
+    :vartype type: str
+    :ivar version: The version of the message. Required.
+    :vartype version: int
+    :ivar message_body: The body of the chat message. Required.
+    :vartype message_body: str
+    :ivar metadata: The chat message metadata.
+    :vartype metadata: dict[str, str]
+    :ivar edit_time: The time at which the message was edited. Required.
+    :vartype edit_time: ~datetime.datetime
+    """
+
+    message_body: str = rest_field(name="messageBody", visibility=["read", "create", "update", "delete", "query"])
+    """The body of the chat message. Required."""
+    metadata: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The chat message metadata."""
+    edit_time: datetime.datetime = rest_field(
+        name="editTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the message was edited. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        recipient_communication_identifier: "_models.CommunicationIdentifierModel",
+        thread_id: str,
+        message_id: str,
+        sender_communication_identifier: "_models.CommunicationIdentifierModel",
+        compose_time: datetime.datetime,
+        type: str,
+        version: int,
+        message_body: str,
+        edit_time: datetime.datetime,
+        transaction_id: Optional[str] = None,
+        sender_display_name: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsChatMessageEditedInThreadEventData(AcsChatMessageEventInThreadBaseProperties):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.ChatMessageEditedInThread event.
+
+    :ivar transaction_id: The transaction id will be used as co-relation vector.
+    :vartype transaction_id: str
+    :ivar thread_id: The chat thread id. Required.
+    :vartype thread_id: str
+    :ivar message_id: The chat message id. Required.
+    :vartype message_id: str
+    :ivar sender_communication_identifier: The communication identifier of the sender. Required.
+    :vartype sender_communication_identifier: ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar sender_display_name: The display name of the sender.
+    :vartype sender_display_name: str
+    :ivar compose_time: The original compose time of the message. Required.
+    :vartype compose_time: ~datetime.datetime
+    :ivar type: The type of the message. Required.
+    :vartype type: str
+    :ivar version: The version of the message. Required.
+    :vartype version: int
+    :ivar message_body: The body of the chat message. Required.
+    :vartype message_body: str
+    :ivar metadata: The chat message metadata.
+    :vartype metadata: dict[str, str]
+    :ivar edit_time: The time at which the message was edited. Required.
+    :vartype edit_time: ~datetime.datetime
+    """
+
+    message_body: str = rest_field(name="messageBody", visibility=["read", "create", "update", "delete", "query"])
+    """The body of the chat message. Required."""
+    metadata: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The chat message metadata."""
+    edit_time: datetime.datetime = rest_field(
+        name="editTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the message was edited. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        thread_id: str,
+        message_id: str,
+        sender_communication_identifier: "_models.CommunicationIdentifierModel",
+        compose_time: datetime.datetime,
+        type: str,
+        version: int,
+        message_body: str,
+        edit_time: datetime.datetime,
+        transaction_id: Optional[str] = None,
+        sender_display_name: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsChatMessageReceivedEventData(AcsChatMessageEventBaseProperties):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.ChatMessageReceived event.
+
+    :ivar recipient_communication_identifier: The communication identifier of the target user.
+     Required.
+    :vartype recipient_communication_identifier:
+     ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar transaction_id: The transaction id will be used as co-relation vector.
+    :vartype transaction_id: str
+    :ivar thread_id: The chat thread id. Required.
+    :vartype thread_id: str
+    :ivar message_id: The chat message id. Required.
+    :vartype message_id: str
+    :ivar sender_communication_identifier: The communication identifier of the sender. Required.
+    :vartype sender_communication_identifier: ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar sender_display_name: The display name of the sender.
+    :vartype sender_display_name: str
+    :ivar compose_time: The original compose time of the message. Required.
+    :vartype compose_time: ~datetime.datetime
+    :ivar type: The type of the message. Required.
+    :vartype type: str
+    :ivar version: The version of the message. Required.
+    :vartype version: int
+    :ivar message_body: The body of the chat message. Required.
+    :vartype message_body: str
+    :ivar metadata: The chat message metadata.
+    :vartype metadata: dict[str, str]
+    """
+
+    message_body: str = rest_field(name="messageBody", visibility=["read", "create", "update", "delete", "query"])
+    """The body of the chat message. Required."""
+    metadata: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The chat message metadata."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        recipient_communication_identifier: "_models.CommunicationIdentifierModel",
+        thread_id: str,
+        message_id: str,
+        sender_communication_identifier: "_models.CommunicationIdentifierModel",
+        compose_time: datetime.datetime,
+        type: str,
+        version: int,
+        message_body: str,
+        transaction_id: Optional[str] = None,
+        sender_display_name: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsChatMessageReceivedInThreadEventData(AcsChatMessageEventInThreadBaseProperties):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.ChatMessageReceivedInThread event.
+
+    :ivar transaction_id: The transaction id will be used as co-relation vector.
+    :vartype transaction_id: str
+    :ivar thread_id: The chat thread id. Required.
+    :vartype thread_id: str
+    :ivar message_id: The chat message id. Required.
+    :vartype message_id: str
+    :ivar sender_communication_identifier: The communication identifier of the sender. Required.
+    :vartype sender_communication_identifier: ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar sender_display_name: The display name of the sender.
+    :vartype sender_display_name: str
+    :ivar compose_time: The original compose time of the message. Required.
+    :vartype compose_time: ~datetime.datetime
+    :ivar type: The type of the message. Required.
+    :vartype type: str
+    :ivar version: The version of the message. Required.
+    :vartype version: int
+    :ivar message_body: The body of the chat message. Required.
+    :vartype message_body: str
+    :ivar metadata: The chat message metadata.
+    :vartype metadata: dict[str, str]
+    """
+
+    message_body: str = rest_field(name="messageBody", visibility=["read", "create", "update", "delete", "query"])
+    """The body of the chat message. Required."""
+    metadata: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The chat message metadata."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        thread_id: str,
+        message_id: str,
+        sender_communication_identifier: "_models.CommunicationIdentifierModel",
+        compose_time: datetime.datetime,
+        type: str,
+        version: int,
+        message_body: str,
+        transaction_id: Optional[str] = None,
+        sender_display_name: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsChatParticipantAddedToThreadEventData(AcsChatEventInThreadBaseProperties):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.ChatThreadParticipantAdded event.
+
+    :ivar transaction_id: The transaction id will be used as co-relation vector.
+    :vartype transaction_id: str
+    :ivar thread_id: The chat thread id. Required.
+    :vartype thread_id: str
+    :ivar time: The time at which the user was added to the thread. Required.
     :vartype time: ~datetime.datetime
-    :ivar specversion: The version of the CloudEvents specification which the event uses. Required.
-    :vartype specversion: str
-    :ivar dataschema: Identifies the schema that data adheres to.
-    :vartype dataschema: str
-    :ivar datacontenttype: Content type of data value.
-    :vartype datacontenttype: str
-    :ivar subject: This describes the subject of the event in the context of the event producer
-     (identified by source).
-    :vartype subject: str
+    :ivar added_by_communication_identifier: The communication identifier of the user who added the
+     user. Required.
+    :vartype added_by_communication_identifier:
+     ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar participant_added: The details of the user who was added. Required.
+    :vartype participant_added: ~azure.eventgrid.models.AcsChatThreadParticipantProperties
+    :ivar version: The version of the thread.
+    :vartype version: int
     """
 
-    id: str = rest_field()
-    """An identifier for the event. The combination of id and source must be unique for each distinct
-     event. Required."""
-    source: str = rest_field()
-    """Identifies the context in which an event happened. The combination of id and source must be
-     unique for each distinct event. Required."""
-    data: Optional[Any] = rest_field()
-    """Event data specific to the event type."""
-    data_base64: Optional[bytes] = rest_field(format="base64")
-    """Event data specific to the event type, encoded as a base64 string."""
-    type: str = rest_field()
-    """Type of event related to the originating occurrence. Required."""
-    time: Optional[datetime.datetime] = rest_field(format="rfc3339")
-    """The time (in UTC) the event was generated, in RFC3339 format."""
-    specversion: str = rest_field()
-    """The version of the CloudEvents specification which the event uses. Required."""
-    dataschema: Optional[str] = rest_field()
-    """Identifies the schema that data adheres to."""
-    datacontenttype: Optional[str] = rest_field()
-    """Content type of data value."""
-    subject: Optional[str] = rest_field()
-    """This describes the subject of the event in the context of the event producer (identified by
-     source)."""
-
-
-class FailedLockToken(_model_base.Model):
-    """Failed LockToken information.
-
-
-    :ivar lock_token: The lock token of an entry in the request. Required.
-    :vartype lock_token: str
-    :ivar error: Error information of the failed operation result for the lock token in the
-     request. Required.
-    :vartype error: ~azure.core.ODataV4Format
-    """
-
-    lock_token: str = rest_field(name="lockToken")
-    """The lock token of an entry in the request. Required."""
-    error: ODataV4Format = rest_field()
-    """Error information of the failed operation result for the lock token in the request. Required."""
+    time: datetime.datetime = rest_field(visibility=["read", "create", "update", "delete", "query"], format="rfc3339")
+    """The time at which the user was added to the thread. Required."""
+    added_by_communication_identifier: "_models.CommunicationIdentifierModel" = rest_field(
+        name="addedByCommunicationIdentifier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The communication identifier of the user who added the user. Required."""
+    participant_added: "_models.AcsChatThreadParticipantProperties" = rest_field(
+        name="participantAdded", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The details of the user who was added. Required."""
+    version: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The version of the thread."""
 
     @overload
     def __init__(
         self,
         *,
-        lock_token: str,
-        error: ODataV4Format,
+        thread_id: str,
+        time: datetime.datetime,
+        added_by_communication_identifier: "_models.CommunicationIdentifierModel",
+        participant_added: "_models.AcsChatThreadParticipantProperties",
+        transaction_id: Optional[str] = None,
+        version: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -163,63 +1254,39 @@ class FailedLockToken(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PublishResult(_model_base.Model):
-    """The result of the Publish operation."""
+class AcsChatThreadEventBaseProperties(AcsChatEventBaseProperties):
+    """Schema of common properties of all chat thread events.
 
-
-class ReceiveDetails(_model_base.Model):
-    """Receive operation details per Cloud Event.
-
-
-    :ivar broker_properties: The Event Broker details. Required.
-    :vartype broker_properties: ~azure.eventgrid.models._models.BrokerProperties
-    :ivar event: Cloud Event details. Required.
-    :vartype event: ~azure.eventgrid.models._models.CloudEvent
-    """
-
-    broker_properties: "_models._models.BrokerProperties" = rest_field(name="brokerProperties")
-    """The Event Broker details. Required."""
-    event: "_models._models.CloudEvent" = rest_field()
-    """Cloud Event details. Required."""
-
-
-class ReceiveResult(_model_base.Model):
-    """Details of the Receive operation response.
-
-
-    :ivar details: Array of receive responses, one per cloud event. Required.
-    :vartype details: list[~azure.eventgrid.models._models.ReceiveDetails]
-    """
-
-    details: List["_models._models.ReceiveDetails"] = rest_field(name="value")
-    """Array of receive responses, one per cloud event. Required."""
-
-
-class RejectResult(_model_base.Model):
-    """The result of the Reject operation.
-
-
-    :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
-     FailedLockToken includes the lock token along with the related error information (namely, the
-     error code and description). Required.
-    :vartype failed_lock_tokens: list[~azure.eventgrid.models.FailedLockToken]
-    :ivar succeeded_lock_tokens: Array of lock tokens for the successfully rejected cloud events.
+    :ivar recipient_communication_identifier: The communication identifier of the target user.
      Required.
-    :vartype succeeded_lock_tokens: list[str]
+    :vartype recipient_communication_identifier:
+     ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar transaction_id: The transaction id will be used as co-relation vector.
+    :vartype transaction_id: str
+    :ivar thread_id: The chat thread id. Required.
+    :vartype thread_id: str
+    :ivar create_time: The original creation time of the thread. Required.
+    :vartype create_time: ~datetime.datetime
+    :ivar version: The version of the thread.
+    :vartype version: int
     """
 
-    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
-    """Array of FailedLockToken for failed cloud events. Each FailedLockToken includes the lock token
-     along with the related error information (namely, the error code and description). Required."""
-    succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
-    """Array of lock tokens for the successfully rejected cloud events. Required."""
+    create_time: datetime.datetime = rest_field(
+        name="createTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The original creation time of the thread. Required."""
+    version: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The version of the thread."""
 
     @overload
     def __init__(
         self,
         *,
-        failed_lock_tokens: List["_models.FailedLockToken"],
-        succeeded_lock_tokens: List[str],
+        recipient_communication_identifier: "_models.CommunicationIdentifierModel",
+        thread_id: str,
+        create_time: datetime.datetime,
+        transaction_id: Optional[str] = None,
+        version: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -233,31 +1300,57 @@ class RejectResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ReleaseResult(_model_base.Model):
-    """The result of the Release operation.
+class AcsChatParticipantAddedToThreadWithUserEventData(
+    AcsChatThreadEventBaseProperties
+):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.ChatParticipantAddedToThreadWithUser event.
 
-
-    :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
-     FailedLockToken includes the lock token along with the related error information (namely, the
-     error code and description). Required.
-    :vartype failed_lock_tokens: list[~azure.eventgrid.models.FailedLockToken]
-    :ivar succeeded_lock_tokens: Array of lock tokens for the successfully released cloud events.
+    :ivar recipient_communication_identifier: The communication identifier of the target user.
      Required.
-    :vartype succeeded_lock_tokens: list[str]
+    :vartype recipient_communication_identifier:
+     ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar transaction_id: The transaction id will be used as co-relation vector.
+    :vartype transaction_id: str
+    :ivar thread_id: The chat thread id. Required.
+    :vartype thread_id: str
+    :ivar create_time: The original creation time of the thread. Required.
+    :vartype create_time: ~datetime.datetime
+    :ivar version: The version of the thread.
+    :vartype version: int
+    :ivar time: The time at which the user was added to the thread. Required.
+    :vartype time: ~datetime.datetime
+    :ivar added_by_communication_identifier: The communication identifier of the user who added the
+     user. Required.
+    :vartype added_by_communication_identifier:
+     ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar participant_added: The details of the user who was added. Required.
+    :vartype participant_added: ~azure.eventgrid.models.AcsChatThreadParticipantProperties
     """
 
-    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
-    """Array of FailedLockToken for failed cloud events. Each FailedLockToken includes the lock token
-     along with the related error information (namely, the error code and description). Required."""
-    succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
-    """Array of lock tokens for the successfully released cloud events. Required."""
+    time: datetime.datetime = rest_field(visibility=["read", "create", "update", "delete", "query"], format="rfc3339")
+    """The time at which the user was added to the thread. Required."""
+    added_by_communication_identifier: "_models.CommunicationIdentifierModel" = rest_field(
+        name="addedByCommunicationIdentifier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The communication identifier of the user who added the user. Required."""
+    participant_added: "_models.AcsChatThreadParticipantProperties" = rest_field(
+        name="participantAdded", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The details of the user who was added. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        failed_lock_tokens: List["_models.FailedLockToken"],
-        succeeded_lock_tokens: List[str],
+        recipient_communication_identifier: "_models.CommunicationIdentifierModel",
+        thread_id: str,
+        create_time: datetime.datetime,
+        time: datetime.datetime,
+        added_by_communication_identifier: "_models.CommunicationIdentifierModel",
+        participant_added: "_models.AcsChatThreadParticipantProperties",
+        transaction_id: Optional[str] = None,
+        version: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -271,30 +1364,13685 @@ class ReleaseResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RenewLocksResult(_model_base.Model):
-    """The result of the RenewLock operation.
+class AcsChatParticipantRemovedFromThreadEventData(AcsChatEventInThreadBaseProperties):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.ChatThreadParticipantRemoved event.
 
-
-    :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
-     FailedLockToken includes the lock token along with the related error information (namely, the
-     error code and description). Required.
-    :vartype failed_lock_tokens: list[~azure.eventgrid.models.FailedLockToken]
-    :ivar succeeded_lock_tokens: Array of lock tokens for the successfully renewed locks. Required.
-    :vartype succeeded_lock_tokens: list[str]
+    :ivar transaction_id: The transaction id will be used as co-relation vector.
+    :vartype transaction_id: str
+    :ivar thread_id: The chat thread id. Required.
+    :vartype thread_id: str
+    :ivar time: The time at which the user was removed to the thread. Required.
+    :vartype time: ~datetime.datetime
+    :ivar removed_by_communication_identifier: The communication identifier of the user who removed
+     the user. Required.
+    :vartype removed_by_communication_identifier:
+     ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar participant_removed: The details of the user who was removed. Required.
+    :vartype participant_removed: ~azure.eventgrid.models.AcsChatThreadParticipantProperties
+    :ivar version: The version of the thread.
+    :vartype version: int
     """
 
-    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
-    """Array of FailedLockToken for failed cloud events. Each FailedLockToken includes the lock token
-     along with the related error information (namely, the error code and description). Required."""
-    succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
-    """Array of lock tokens for the successfully renewed locks. Required."""
+    time: datetime.datetime = rest_field(visibility=["read", "create", "update", "delete", "query"], format="rfc3339")
+    """The time at which the user was removed to the thread. Required."""
+    removed_by_communication_identifier: "_models.CommunicationIdentifierModel" = rest_field(
+        name="removedByCommunicationIdentifier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The communication identifier of the user who removed the user. Required."""
+    participant_removed: "_models.AcsChatThreadParticipantProperties" = rest_field(
+        name="participantRemoved", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The details of the user who was removed. Required."""
+    version: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The version of the thread."""
 
     @overload
     def __init__(
         self,
         *,
-        failed_lock_tokens: List["_models.FailedLockToken"],
-        succeeded_lock_tokens: List[str],
+        thread_id: str,
+        time: datetime.datetime,
+        removed_by_communication_identifier: "_models.CommunicationIdentifierModel",
+        participant_removed: "_models.AcsChatThreadParticipantProperties",
+        transaction_id: Optional[str] = None,
+        version: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsChatParticipantRemovedFromThreadWithUserEventData(
+    AcsChatThreadEventBaseProperties
+):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.ChatParticipantRemovedFromThreadWithUser event.
+
+    :ivar recipient_communication_identifier: The communication identifier of the target user.
+     Required.
+    :vartype recipient_communication_identifier:
+     ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar transaction_id: The transaction id will be used as co-relation vector.
+    :vartype transaction_id: str
+    :ivar thread_id: The chat thread id. Required.
+    :vartype thread_id: str
+    :ivar create_time: The original creation time of the thread. Required.
+    :vartype create_time: ~datetime.datetime
+    :ivar version: The version of the thread.
+    :vartype version: int
+    :ivar time: The time at which the user was removed to the thread. Required.
+    :vartype time: ~datetime.datetime
+    :ivar removed_by_communication_identifier: The communication identifier of the user who removed
+     the user. Required.
+    :vartype removed_by_communication_identifier:
+     ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar participant_removed: The details of the user who was removed. Required.
+    :vartype participant_removed: ~azure.eventgrid.models.AcsChatThreadParticipantProperties
+    """
+
+    time: datetime.datetime = rest_field(visibility=["read", "create", "update", "delete", "query"], format="rfc3339")
+    """The time at which the user was removed to the thread. Required."""
+    removed_by_communication_identifier: "_models.CommunicationIdentifierModel" = rest_field(
+        name="removedByCommunicationIdentifier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The communication identifier of the user who removed the user. Required."""
+    participant_removed: "_models.AcsChatThreadParticipantProperties" = rest_field(
+        name="participantRemoved", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The details of the user who was removed. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        recipient_communication_identifier: "_models.CommunicationIdentifierModel",
+        thread_id: str,
+        create_time: datetime.datetime,
+        time: datetime.datetime,
+        removed_by_communication_identifier: "_models.CommunicationIdentifierModel",
+        participant_removed: "_models.AcsChatThreadParticipantProperties",
+        transaction_id: Optional[str] = None,
+        version: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsChatThreadEventInThreadBaseProperties(AcsChatEventInThreadBaseProperties):
+    """Schema of common properties of all chat thread events.
+
+    :ivar transaction_id: The transaction id will be used as co-relation vector.
+    :vartype transaction_id: str
+    :ivar thread_id: The chat thread id. Required.
+    :vartype thread_id: str
+    :ivar create_time: The original creation time of the thread. Required.
+    :vartype create_time: ~datetime.datetime
+    :ivar version: The version of the thread.
+    :vartype version: int
+    """
+
+    create_time: datetime.datetime = rest_field(
+        name="createTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The original creation time of the thread. Required."""
+    version: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The version of the thread."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        thread_id: str,
+        create_time: datetime.datetime,
+        transaction_id: Optional[str] = None,
+        version: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsChatThreadCreatedEventData(AcsChatThreadEventInThreadBaseProperties):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.ChatThreadCreated event.
+
+    :ivar transaction_id: The transaction id will be used as co-relation vector.
+    :vartype transaction_id: str
+    :ivar thread_id: The chat thread id. Required.
+    :vartype thread_id: str
+    :ivar create_time: The original creation time of the thread. Required.
+    :vartype create_time: ~datetime.datetime
+    :ivar version: The version of the thread.
+    :vartype version: int
+    :ivar created_by_communication_identifier: The communication identifier of the user who created
+     the thread. Required.
+    :vartype created_by_communication_identifier:
+     ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar properties: The thread properties. Required.
+    :vartype properties: dict[str, any]
+    :ivar metadata: The thread metadata.
+    :vartype metadata: dict[str, str]
+    :ivar participants: The list of properties of participants who are part of the thread.
+     Required.
+    :vartype participants: list[~azure.eventgrid.models.AcsChatThreadParticipantProperties]
+    """
+
+    created_by_communication_identifier: "_models.CommunicationIdentifierModel" = rest_field(
+        name="createdByCommunicationIdentifier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The communication identifier of the user who created the thread. Required."""
+    properties: Dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The thread properties. Required."""
+    metadata: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The thread metadata."""
+    participants: List["_models.AcsChatThreadParticipantProperties"] = rest_field(visibility=["read"])
+    """The list of properties of participants who are part of the thread. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        thread_id: str,
+        create_time: datetime.datetime,
+        created_by_communication_identifier: "_models.CommunicationIdentifierModel",
+        properties: Dict[str, Any],
+        transaction_id: Optional[str] = None,
+        version: Optional[int] = None,
+        metadata: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsChatThreadCreatedWithUserEventData(AcsChatThreadEventBaseProperties):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.ChatThreadCreatedWithUser event.
+
+    :ivar recipient_communication_identifier: The communication identifier of the target user.
+     Required.
+    :vartype recipient_communication_identifier:
+     ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar transaction_id: The transaction id will be used as co-relation vector.
+    :vartype transaction_id: str
+    :ivar thread_id: The chat thread id. Required.
+    :vartype thread_id: str
+    :ivar create_time: The original creation time of the thread. Required.
+    :vartype create_time: ~datetime.datetime
+    :ivar version: The version of the thread.
+    :vartype version: int
+    :ivar created_by_communication_identifier: The communication identifier of the user who created
+     the thread. Required.
+    :vartype created_by_communication_identifier:
+     ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar properties: The thread properties. Required.
+    :vartype properties: dict[str, any]
+    :ivar metadata: The thread metadata.
+    :vartype metadata: dict[str, str]
+    :ivar participants: The list of properties of participants who are part of the thread.
+     Required.
+    :vartype participants: list[~azure.eventgrid.models.AcsChatThreadParticipantProperties]
+    """
+
+    created_by_communication_identifier: "_models.CommunicationIdentifierModel" = rest_field(
+        name="createdByCommunicationIdentifier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The communication identifier of the user who created the thread. Required."""
+    properties: Dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The thread properties. Required."""
+    metadata: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The thread metadata."""
+    participants: List["_models.AcsChatThreadParticipantProperties"] = rest_field(visibility=["read"])
+    """The list of properties of participants who are part of the thread. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        recipient_communication_identifier: "_models.CommunicationIdentifierModel",
+        thread_id: str,
+        create_time: datetime.datetime,
+        created_by_communication_identifier: "_models.CommunicationIdentifierModel",
+        properties: Dict[str, Any],
+        transaction_id: Optional[str] = None,
+        version: Optional[int] = None,
+        metadata: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsChatThreadDeletedEventData(AcsChatThreadEventInThreadBaseProperties):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.ChatThreadDeleted event.
+
+    :ivar transaction_id: The transaction id will be used as co-relation vector.
+    :vartype transaction_id: str
+    :ivar thread_id: The chat thread id. Required.
+    :vartype thread_id: str
+    :ivar create_time: The original creation time of the thread. Required.
+    :vartype create_time: ~datetime.datetime
+    :ivar version: The version of the thread.
+    :vartype version: int
+    :ivar deleted_by_communication_identifier: The communication identifier of the user who deleted
+     the thread. Required.
+    :vartype deleted_by_communication_identifier:
+     ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar delete_time: The deletion time of the thread. Required.
+    :vartype delete_time: ~datetime.datetime
+    """
+
+    deleted_by_communication_identifier: "_models.CommunicationIdentifierModel" = rest_field(
+        name="deletedByCommunicationIdentifier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The communication identifier of the user who deleted the thread. Required."""
+    delete_time: datetime.datetime = rest_field(
+        name="deleteTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The deletion time of the thread. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        thread_id: str,
+        create_time: datetime.datetime,
+        deleted_by_communication_identifier: "_models.CommunicationIdentifierModel",
+        delete_time: datetime.datetime,
+        transaction_id: Optional[str] = None,
+        version: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsChatThreadParticipantProperties(_Model):
+    """Schema of the chat thread participant.
+
+    :ivar display_name: The name of the user.
+    :vartype display_name: str
+    :ivar participant_communication_identifier: The communication identifier of the user. Required.
+    :vartype participant_communication_identifier:
+     ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar metadata: The metadata of the user.
+    :vartype metadata: dict[str, str]
+    """
+
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the user."""
+    participant_communication_identifier: "_models.CommunicationIdentifierModel" = rest_field(
+        name="participantCommunicationIdentifier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The communication identifier of the user. Required."""
+    metadata: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The metadata of the user."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        participant_communication_identifier: "_models.CommunicationIdentifierModel",
+        display_name: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsChatThreadPropertiesUpdatedEventData(AcsChatThreadEventInThreadBaseProperties):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.ChatThreadPropertiesUpdated event.
+
+    :ivar transaction_id: The transaction id will be used as co-relation vector.
+    :vartype transaction_id: str
+    :ivar thread_id: The chat thread id. Required.
+    :vartype thread_id: str
+    :ivar create_time: The original creation time of the thread. Required.
+    :vartype create_time: ~datetime.datetime
+    :ivar version: The version of the thread.
+    :vartype version: int
+    :ivar edited_by_communication_identifier: The communication identifier of the user who updated
+     the thread properties. Required.
+    :vartype edited_by_communication_identifier:
+     ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar edit_time: The time at which the properties of the thread were updated. Required.
+    :vartype edit_time: ~datetime.datetime
+    :ivar properties: The updated thread properties. Required.
+    :vartype properties: dict[str, any]
+    :ivar metadata: The thread metadata. Required.
+    :vartype metadata: dict[str, str]
+    """
+
+    edited_by_communication_identifier: "_models.CommunicationIdentifierModel" = rest_field(
+        name="editedByCommunicationIdentifier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The communication identifier of the user who updated the thread properties. Required."""
+    edit_time: datetime.datetime = rest_field(
+        name="editTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the properties of the thread were updated. Required."""
+    properties: Dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The updated thread properties. Required."""
+    metadata: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The thread metadata. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        thread_id: str,
+        create_time: datetime.datetime,
+        edited_by_communication_identifier: "_models.CommunicationIdentifierModel",
+        edit_time: datetime.datetime,
+        properties: Dict[str, Any],
+        metadata: Dict[str, str],
+        transaction_id: Optional[str] = None,
+        version: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsChatThreadPropertiesUpdatedPerUserEventData(AcsChatThreadEventBaseProperties):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.ChatThreadPropertiesUpdatedPerUser event.
+
+    :ivar recipient_communication_identifier: The communication identifier of the target user.
+     Required.
+    :vartype recipient_communication_identifier:
+     ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar transaction_id: The transaction id will be used as co-relation vector.
+    :vartype transaction_id: str
+    :ivar thread_id: The chat thread id. Required.
+    :vartype thread_id: str
+    :ivar create_time: The original creation time of the thread. Required.
+    :vartype create_time: ~datetime.datetime
+    :ivar version: The version of the thread.
+    :vartype version: int
+    :ivar edited_by_communication_identifier: The communication identifier of the user who updated
+     the thread properties. Required.
+    :vartype edited_by_communication_identifier:
+     ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar edit_time: The time at which the properties of the thread were updated. Required.
+    :vartype edit_time: ~datetime.datetime
+    :ivar metadata: The thread metadata.
+    :vartype metadata: dict[str, str]
+    :ivar properties: The updated thread properties. Required.
+    :vartype properties: dict[str, any]
+    """
+
+    edited_by_communication_identifier: "_models.CommunicationIdentifierModel" = rest_field(
+        name="editedByCommunicationIdentifier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The communication identifier of the user who updated the thread properties. Required."""
+    edit_time: datetime.datetime = rest_field(
+        name="editTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the properties of the thread were updated. Required."""
+    metadata: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The thread metadata."""
+    properties: Dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The updated thread properties. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        recipient_communication_identifier: "_models.CommunicationIdentifierModel",
+        thread_id: str,
+        create_time: datetime.datetime,
+        edited_by_communication_identifier: "_models.CommunicationIdentifierModel",
+        edit_time: datetime.datetime,
+        properties: Dict[str, Any],
+        transaction_id: Optional[str] = None,
+        version: Optional[int] = None,
+        metadata: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsChatThreadWithUserDeletedEventData(AcsChatThreadEventBaseProperties):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.ChatThreadWithUserDeleted event.
+
+    :ivar recipient_communication_identifier: The communication identifier of the target user.
+     Required.
+    :vartype recipient_communication_identifier:
+     ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar transaction_id: The transaction id will be used as co-relation vector.
+    :vartype transaction_id: str
+    :ivar thread_id: The chat thread id. Required.
+    :vartype thread_id: str
+    :ivar create_time: The original creation time of the thread. Required.
+    :vartype create_time: ~datetime.datetime
+    :ivar version: The version of the thread.
+    :vartype version: int
+    :ivar deleted_by_communication_identifier: The communication identifier of the user who deleted
+     the thread. Required.
+    :vartype deleted_by_communication_identifier:
+     ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar delete_time: The deletion time of the thread. Required.
+    :vartype delete_time: ~datetime.datetime
+    """
+
+    deleted_by_communication_identifier: "_models.CommunicationIdentifierModel" = rest_field(
+        name="deletedByCommunicationIdentifier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The communication identifier of the user who deleted the thread. Required."""
+    delete_time: datetime.datetime = rest_field(
+        name="deleteTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The deletion time of the thread. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        recipient_communication_identifier: "_models.CommunicationIdentifierModel",
+        thread_id: str,
+        create_time: datetime.datetime,
+        deleted_by_communication_identifier: "_models.CommunicationIdentifierModel",
+        delete_time: datetime.datetime,
+        transaction_id: Optional[str] = None,
+        version: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsChatTypingIndicatorReceivedInThreadEventData(
+    AcsChatMessageEventInThreadBaseProperties
+):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.ChatTypingIndicatorReceivedInThread event.
+
+    :ivar transaction_id: The transaction id will be used as co-relation vector.
+    :vartype transaction_id: str
+    :ivar thread_id: The chat thread id. Required.
+    :vartype thread_id: str
+    :ivar message_id: The chat message id. Required.
+    :vartype message_id: str
+    :ivar sender_communication_identifier: The communication identifier of the sender. Required.
+    :vartype sender_communication_identifier: ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar sender_display_name: The display name of the sender.
+    :vartype sender_display_name: str
+    :ivar compose_time: The original compose time of the message. Required.
+    :vartype compose_time: ~datetime.datetime
+    :ivar type: The type of the message. Required.
+    :vartype type: str
+    :ivar version: The version of the message. Required.
+    :vartype version: int
+    :ivar message_body: The body of the chat message. Required.
+    :vartype message_body: str
+    :ivar metadata: The chat message metadata.
+    :vartype metadata: dict[str, str]
+    """
+
+    message_body: str = rest_field(name="messageBody", visibility=["read", "create", "update", "delete", "query"])
+    """The body of the chat message. Required."""
+    metadata: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The chat message metadata."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        thread_id: str,
+        message_id: str,
+        sender_communication_identifier: "_models.CommunicationIdentifierModel",
+        compose_time: datetime.datetime,
+        type: str,
+        version: int,
+        message_body: str,
+        transaction_id: Optional[str] = None,
+        sender_display_name: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsEmailDeliveryReportReceivedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.EmailDeliveryReportReceived event.
+
+    :ivar sender: The Sender Email Address. Required.
+    :vartype sender: str
+    :ivar recipient: The recipient Email Address. Required.
+    :vartype recipient: str
+    :ivar internet_message_id: The Internet Message Id of the email that has been sent. Required.
+    :vartype internet_message_id: str
+    :ivar message_id: The Id of the email that has been sent.
+    :vartype message_id: str
+    :ivar status: The status of the email. Any value other than Delivered is considered failed.
+     Required. Known values are: "Bounced", "Delivered", "Failed", "FilteredSpam", "Quarantined",
+     and "Suppressed".
+    :vartype status: str or ~azure.eventgrid.models.AcsEmailDeliveryReportStatus
+    :ivar delivery_status_details: Detailed information about the status if any. Required.
+    :vartype delivery_status_details: ~azure.eventgrid.models.AcsEmailDeliveryReportStatusDetails
+    :ivar delivery_attempt_timestamp: The time at which the email delivery report received
+     timestamp. Required.
+    :vartype delivery_attempt_timestamp: ~datetime.datetime
+    """
+
+    sender: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Sender Email Address. Required."""
+    recipient: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The recipient Email Address. Required."""
+    internet_message_id: str = rest_field(
+        name="internetMessageId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Internet Message Id of the email that has been sent. Required."""
+    message_id: Optional[str] = rest_field(name="messageId", visibility=["read", "create", "update", "delete", "query"])
+    """The Id of the email that has been sent."""
+    status: Union[str, "_models.AcsEmailDeliveryReportStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status of the email. Any value other than Delivered is considered failed. Required. Known
+     values are: \"Bounced\", \"Delivered\", \"Failed\", \"FilteredSpam\", \"Quarantined\", and
+     \"Suppressed\"."""
+    delivery_status_details: "_models.AcsEmailDeliveryReportStatusDetails" = rest_field(
+        name="deliveryStatusDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Detailed information about the status if any. Required."""
+    delivery_attempt_timestamp: datetime.datetime = rest_field(
+        name="deliveryAttemptTimestamp", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the email delivery report received timestamp. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        sender: str,
+        recipient: str,
+        internet_message_id: str,
+        status: Union[str, "_models.AcsEmailDeliveryReportStatus"],
+        delivery_status_details: "_models.AcsEmailDeliveryReportStatusDetails",
+        delivery_attempt_timestamp: datetime.datetime,
+        message_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsEmailDeliveryReportStatusDetails(_Model):
+    """Detailed information about the status if any.
+
+    :ivar status_message: Detailed status message.
+    :vartype status_message: str
+    :ivar recipient_mail_server_host_name: Recipient mail server host name.
+    :vartype recipient_mail_server_host_name: str
+    """
+
+    status_message: Optional[str] = rest_field(
+        name="statusMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Detailed status message."""
+    recipient_mail_server_host_name: Optional[str] = rest_field(
+        name="recipientMailServerHostName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Recipient mail server host name."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status_message: Optional[str] = None,
+        recipient_mail_server_host_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsEmailEngagementTrackingReportReceivedEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.EmailEngagementTrackingReportReceived event.
+
+    :ivar sender: The Sender Email Address.
+    :vartype sender: str
+    :ivar recipient: The Recipient Email Address.
+    :vartype recipient: str
+    :ivar message_id: The Id of the email that has been sent.
+    :vartype message_id: str
+    :ivar user_action_timestamp: The time at which the user interacted with the email. Required.
+    :vartype user_action_timestamp: ~datetime.datetime
+    :ivar engagement_context: The context of the type of engagement user had with email.
+    :vartype engagement_context: str
+    :ivar user_agent: The user agent interacting with the email.
+    :vartype user_agent: str
+    :ivar engagement: The type of engagement user have with email. Required. Known values are:
+     "view" and "click".
+    :vartype engagement: str or ~azure.eventgrid.models.AcsUserEngagement
+    """
+
+    sender: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Sender Email Address."""
+    recipient: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Recipient Email Address."""
+    message_id: Optional[str] = rest_field(name="messageId", visibility=["read", "create", "update", "delete", "query"])
+    """The Id of the email that has been sent."""
+    user_action_timestamp: datetime.datetime = rest_field(
+        name="userActionTimestamp", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the user interacted with the email. Required."""
+    engagement_context: Optional[str] = rest_field(
+        name="engagementContext", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The context of the type of engagement user had with email."""
+    user_agent: Optional[str] = rest_field(name="userAgent", visibility=["read", "create", "update", "delete", "query"])
+    """The user agent interacting with the email."""
+    engagement: Union[str, "_models.AcsUserEngagement"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of engagement user have with email. Required. Known values are: \"view\" and
+     \"click\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        user_action_timestamp: datetime.datetime,
+        engagement: Union[str, "_models.AcsUserEngagement"],
+        sender: Optional[str] = None,
+        recipient: Optional[str] = None,
+        message_id: Optional[str] = None,
+        engagement_context: Optional[str] = None,
+        user_agent: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsIncomingCallCustomContext(_Model):
+    """Custom Context of Incoming Call.
+
+    :ivar sip_headers: Sip Headers for incoming call. Required.
+    :vartype sip_headers: dict[str, str]
+    :ivar voip_headers: Voip Headers for incoming call. Required.
+    :vartype voip_headers: dict[str, str]
+    """
+
+    sip_headers: Dict[str, str] = rest_field(
+        name="sipHeaders", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Sip Headers for incoming call. Required."""
+    voip_headers: Dict[str, str] = rest_field(
+        name="voipHeaders", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Voip Headers for incoming call. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        sip_headers: Dict[str, str],
+        voip_headers: Dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsIncomingCallEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.IncomingCall
+    event.
+
+    :ivar to_communication_identifier: The communication identifier of the target user. Required.
+    :vartype to_communication_identifier: ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar from_communication_identifier: The communication identifier of the user who initiated the
+     call. Required.
+    :vartype from_communication_identifier: ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar server_call_id: The Id of the server call.
+    :vartype server_call_id: str
+    :ivar caller_display_name: Display name of caller.
+    :vartype caller_display_name: str
+    :ivar custom_context: Custom Context of Incoming Call. Required.
+    :vartype custom_context: ~azure.eventgrid.models.AcsIncomingCallCustomContext
+    :ivar incoming_call_context: Signed incoming call context.
+    :vartype incoming_call_context: str
+    :ivar on_behalf_of_callee: The communication identifier of the user on behalf of whom the call
+     is made.
+    :vartype on_behalf_of_callee: ~azure.eventgrid.models.CommunicationIdentifierModel
+    :ivar correlation_id: CorrelationId (CallId).
+    :vartype correlation_id: str
+    """
+
+    to_communication_identifier: "_models.CommunicationIdentifierModel" = rest_field(
+        name="toCommunicationIdentifier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The communication identifier of the target user. Required."""
+    from_communication_identifier: "_models.CommunicationIdentifierModel" = rest_field(
+        name="fromCommunicationIdentifier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The communication identifier of the user who initiated the call. Required."""
+    server_call_id: Optional[str] = rest_field(
+        name="serverCallId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Id of the server call."""
+    caller_display_name: Optional[str] = rest_field(
+        name="callerDisplayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Display name of caller."""
+    custom_context: "_models.AcsIncomingCallCustomContext" = rest_field(
+        name="customContext", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Custom Context of Incoming Call. Required."""
+    incoming_call_context: Optional[str] = rest_field(
+        name="incomingCallContext", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Signed incoming call context."""
+    on_behalf_of_callee: Optional["_models.CommunicationIdentifierModel"] = rest_field(
+        name="onBehalfOfCallee", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The communication identifier of the user on behalf of whom the call is made."""
+    correlation_id: Optional[str] = rest_field(
+        name="correlationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """CorrelationId (CallId)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        to_communication_identifier: "_models.CommunicationIdentifierModel",
+        from_communication_identifier: "_models.CommunicationIdentifierModel",
+        custom_context: "_models.AcsIncomingCallCustomContext",
+        server_call_id: Optional[str] = None,
+        caller_display_name: Optional[str] = None,
+        incoming_call_context: Optional[str] = None,
+        on_behalf_of_callee: Optional["_models.CommunicationIdentifierModel"] = None,
+        correlation_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsMessageButtonContent(_Model):
+    """Message Button Content.
+
+    :ivar text: The Text of the button.
+    :vartype text: str
+    :ivar payload: The Payload of the button which was clicked by the user, setup by the business.
+    :vartype payload: str
+    """
+
+    text: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Text of the button."""
+    payload: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Payload of the button which was clicked by the user, setup by the business."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text: Optional[str] = None,
+        payload: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsMessageChannelEventError(_Model):
+    """Message Channel Event Error.
+
+    :ivar channel_code: The channel error code.
+    :vartype channel_code: str
+    :ivar channel_message: The channel error message.
+    :vartype channel_message: str
+    """
+
+    channel_code: Optional[str] = rest_field(
+        name="channelCode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The channel error code."""
+    channel_message: Optional[str] = rest_field(
+        name="channelMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The channel error message."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        channel_code: Optional[str] = None,
+        channel_message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsMessageContext(_Model):
+    """Message Context.
+
+    :ivar from_property: The WhatsApp ID for the customer who replied to an inbound message.
+    :vartype from_property: str
+    :ivar message_id: The message ID for the sent message for an inbound reply.
+    :vartype message_id: str
+    """
+
+    from_property: Optional[str] = rest_field(name="from", visibility=["read", "create", "update", "delete", "query"])
+    """The WhatsApp ID for the customer who replied to an inbound message."""
+    message_id: Optional[str] = rest_field(name="messageId", visibility=["read", "create", "update", "delete", "query"])
+    """The message ID for the sent message for an inbound reply."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        from_property: Optional[str] = None,
+        message_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsMessageEventData(_Model):
+    """Schema of common properties of all chat thread events.
+
+    :ivar from_property: The message sender. Required.
+    :vartype from_property: str
+    :ivar to: The message recipient. Required.
+    :vartype to: str
+    :ivar received_time_stamp: The time message was received. Required.
+    :vartype received_time_stamp: ~datetime.datetime
+    :ivar error: The channel event error.
+    :vartype error: ~azure.eventgrid.models.AcsMessageChannelEventError
+    """
+
+    from_property: str = rest_field(name="from", visibility=["read", "create", "update", "delete", "query"])
+    """The message sender. Required."""
+    to: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The message recipient. Required."""
+    received_time_stamp: datetime.datetime = rest_field(
+        name="receivedTimeStamp", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time message was received. Required."""
+    error: Optional["_models.AcsMessageChannelEventError"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The channel event error."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        from_property: str,
+        to: str,
+        received_time_stamp: datetime.datetime,
+        error: Optional["_models.AcsMessageChannelEventError"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsMessageDeliveryStatusUpdatedEventData(AcsMessageEventData):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.AdvancedMessageDeliveryStatusUpdated event.
+
+    :ivar from_property: The message sender. Required.
+    :vartype from_property: str
+    :ivar to: The message recipient. Required.
+    :vartype to: str
+    :ivar received_time_stamp: The time message was received. Required.
+    :vartype received_time_stamp: ~datetime.datetime
+    :ivar error: The channel event error.
+    :vartype error: ~azure.eventgrid.models.AcsMessageChannelEventError
+    :ivar message_id: The message id.
+    :vartype message_id: str
+    :ivar status: The updated message status. Required. Known values are: "read", "delivered",
+     "failed", "sent", "warning", and "unknown".
+    :vartype status: str or ~azure.eventgrid.models.AcsMessageDeliveryStatus
+    :ivar channel_kind: The updated message channel type. Required. "whatsapp"
+    :vartype channel_kind: str or ~azure.eventgrid.models.AcsMessageChannelKind
+    """
+
+    message_id: Optional[str] = rest_field(name="messageId", visibility=["read", "create", "update", "delete", "query"])
+    """The message id."""
+    status: Union[str, "_models.AcsMessageDeliveryStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The updated message status. Required. Known values are: \"read\", \"delivered\", \"failed\",
+     \"sent\", \"warning\", and \"unknown\"."""
+    channel_kind: Union[str, "_models.AcsMessageChannelKind"] = rest_field(
+        name="channelKind", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The updated message channel type. Required. \"whatsapp\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        from_property: str,
+        to: str,
+        received_time_stamp: datetime.datetime,
+        status: Union[str, "_models.AcsMessageDeliveryStatus"],
+        channel_kind: Union[str, "_models.AcsMessageChannelKind"],
+        error: Optional["_models.AcsMessageChannelEventError"] = None,
+        message_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsMessageInteractiveButtonReplyContent(_Model):
+    """Message Interactive button reply content for a user to business message.
+
+    :ivar button_id: The ID of the button.
+    :vartype button_id: str
+    :ivar title: The title of the button.
+    :vartype title: str
+    """
+
+    button_id: Optional[str] = rest_field(name="buttonId", visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the button."""
+    title: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The title of the button."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        button_id: Optional[str] = None,
+        title: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsMessageInteractiveContent(_Model):
+    """Message Interactive Content.
+
+    :ivar reply_kind: The Message interactive reply type. Required. Known values are:
+     "buttonReply", "listReply", and "unknown".
+    :vartype reply_kind: str or ~azure.eventgrid.models.AcsInteractiveReplyKind
+    :ivar button_reply: The Message Sent when a customer clicks a button.
+    :vartype button_reply: ~azure.eventgrid.models.AcsMessageInteractiveButtonReplyContent
+    :ivar list_reply: The Message Sent when a customer selects an item from a list.
+    :vartype list_reply: ~azure.eventgrid.models.AcsMessageInteractiveListReplyContent
+    """
+
+    reply_kind: Union[str, "_models.AcsInteractiveReplyKind"] = rest_field(
+        name="replyKind", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Message interactive reply type. Required. Known values are: \"buttonReply\", \"listReply\",
+     and \"unknown\"."""
+    button_reply: Optional["_models.AcsMessageInteractiveButtonReplyContent"] = rest_field(
+        name="buttonReply", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Message Sent when a customer clicks a button."""
+    list_reply: Optional["_models.AcsMessageInteractiveListReplyContent"] = rest_field(
+        name="listReply", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Message Sent when a customer selects an item from a list."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        reply_kind: Union[str, "_models.AcsInteractiveReplyKind"],
+        button_reply: Optional["_models.AcsMessageInteractiveButtonReplyContent"] = None,
+        list_reply: Optional["_models.AcsMessageInteractiveListReplyContent"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsMessageInteractiveListReplyContent(_Model):
+    """Message Interactive list reply content for a user to business message.
+
+    :ivar list_item_id: The ID of the selected list item.
+    :vartype list_item_id: str
+    :ivar title: The title of the selected list item.
+    :vartype title: str
+    :ivar description: The description of the selected row.
+    :vartype description: str
+    """
+
+    list_item_id: Optional[str] = rest_field(
+        name="listItemId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ID of the selected list item."""
+    title: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The title of the selected list item."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The description of the selected row."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        list_item_id: Optional[str] = None,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsMessageMediaContent(_Model):
+    """Message Media Content.
+
+    :ivar mime_type: Required. The MIME type of the file this media represents. Required.
+    :vartype mime_type: str
+    :ivar media_id: Required. The media identifier. Required.
+    :vartype media_id: str
+    :ivar file_name: Optional. The filename of the underlying media file as specified when
+     uploaded.
+    :vartype file_name: str
+    :ivar caption: Optional. The caption for the media object, if supported and provided.
+    :vartype caption: str
+    :ivar animated: Optional. Set to true if the sticker is animated; false otherwise.
+    :vartype animated: bool
+    """
+
+    mime_type: str = rest_field(name="mimeType", visibility=["read", "create", "update", "delete", "query"])
+    """Required. The MIME type of the file this media represents. Required."""
+    media_id: str = rest_field(name="mediaId", visibility=["read", "create", "update", "delete", "query"])
+    """Required. The media identifier. Required."""
+    file_name: Optional[str] = rest_field(name="fileName", visibility=["read", "create", "update", "delete", "query"])
+    """Optional. The filename of the underlying media file as specified when uploaded."""
+    caption: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional. The caption for the media object, if supported and provided."""
+    animated: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional. Set to true if the sticker is animated; false otherwise."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        mime_type: str,
+        media_id: str,
+        file_name: Optional[str] = None,
+        caption: Optional[str] = None,
+        animated: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsMessageReactionContent(_Model):
+    """Message Reaction Content.
+
+    :ivar message_id: Required. WhatsApp message ID of the message that the emoji is applied to.
+     Required.
+    :vartype message_id: str
+    :ivar emoji: Optional. Unicode escape sequence of the emoji.
+    :vartype emoji: str
+    """
+
+    message_id: str = rest_field(name="messageId", visibility=["read", "create", "update", "delete", "query"])
+    """Required. WhatsApp message ID of the message that the emoji is applied to. Required."""
+    emoji: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional. Unicode escape sequence of the emoji."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        message_id: str,
+        emoji: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsMessageReceivedEventData(AcsMessageEventData):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.AdvancedMessageReceived event.
+
+    :ivar from_property: The message sender. Required.
+    :vartype from_property: str
+    :ivar to: The message recipient. Required.
+    :vartype to: str
+    :ivar received_time_stamp: The time message was received. Required.
+    :vartype received_time_stamp: ~datetime.datetime
+    :ivar error: The channel event error.
+    :vartype error: ~azure.eventgrid.models.AcsMessageChannelEventError
+    :ivar content: Optional. The message content.
+    :vartype content: str
+    :ivar message_id: Optional. Message ID. Format is Guid as string.
+    :vartype message_id: str
+    :ivar channel_kind: Required. The message channel type. Required. "whatsapp"
+    :vartype channel_kind: str or ~azure.eventgrid.models.AcsMessageChannelKind
+    :ivar message_type: Required. Whatsapp message type. Required.
+    :vartype message_type: str
+    :ivar media_content: Optional. The received message media content.
+    :vartype media_content: ~azure.eventgrid.models.AcsMessageMediaContent
+    :ivar reaction: Optional. The received message reaction content.
+    :vartype reaction: ~azure.eventgrid.models.AcsMessageReactionContent
+    :ivar context: Optional. The received message context.
+    :vartype context: ~azure.eventgrid.models.AcsMessageContext
+    :ivar button: Optional. The received message button content.
+    :vartype button: ~azure.eventgrid.models.AcsMessageButtonContent
+    :ivar interactive_content: Optional. The received message interactive content.
+    :vartype interactive_content: ~azure.eventgrid.models.AcsMessageInteractiveContent
+    """
+
+    content: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional. The message content."""
+    message_id: Optional[str] = rest_field(name="messageId", visibility=["read", "create", "update", "delete", "query"])
+    """Optional. Message ID. Format is Guid as string."""
+    channel_kind: Union[str, "_models.AcsMessageChannelKind"] = rest_field(
+        name="channelKind", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required. The message channel type. Required. \"whatsapp\""""
+    message_type: str = rest_field(name="messageType", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Whatsapp message type. Required."""
+    media_content: Optional["_models.AcsMessageMediaContent"] = rest_field(
+        name="mediaContent", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. The received message media content."""
+    reaction: Optional["_models.AcsMessageReactionContent"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. The received message reaction content."""
+    context: Optional["_models.AcsMessageContext"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. The received message context."""
+    button: Optional["_models.AcsMessageButtonContent"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. The received message button content."""
+    interactive_content: Optional["_models.AcsMessageInteractiveContent"] = rest_field(
+        name="interactiveContent", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. The received message interactive content."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        from_property: str,
+        to: str,
+        received_time_stamp: datetime.datetime,
+        channel_kind: Union[str, "_models.AcsMessageChannelKind"],
+        message_type: str,
+        error: Optional["_models.AcsMessageChannelEventError"] = None,
+        content: Optional[str] = None,
+        message_id: Optional[str] = None,
+        media_content: Optional["_models.AcsMessageMediaContent"] = None,
+        reaction: Optional["_models.AcsMessageReactionContent"] = None,
+        context: Optional["_models.AcsMessageContext"] = None,
+        button: Optional["_models.AcsMessageButtonContent"] = None,
+        interactive_content: Optional["_models.AcsMessageInteractiveContent"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRecordingChunkInfoProperties(_Model):
+    """Schema for all properties of  Recording Chunk Information.
+
+    :ivar document_id: The documentId of the recording chunk.
+    :vartype document_id: str
+    :ivar index: The index of the recording chunk.
+    :vartype index: int
+    :ivar end_reason: The reason for ending the recording chunk.
+    :vartype end_reason: str
+    :ivar metadata_location: The location of the metadata for this chunk.
+    :vartype metadata_location: str
+    :ivar content_location: The location of the content for this chunk.
+    :vartype content_location: str
+    :ivar delete_location: The location to delete all chunk storage.
+    :vartype delete_location: str
+    """
+
+    document_id: Optional[str] = rest_field(
+        name="documentId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The documentId of the recording chunk."""
+    index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The index of the recording chunk."""
+    end_reason: Optional[str] = rest_field(name="endReason", visibility=["read", "create", "update", "delete", "query"])
+    """The reason for ending the recording chunk."""
+    metadata_location: Optional[str] = rest_field(
+        name="metadataLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The location of the metadata for this chunk."""
+    content_location: Optional[str] = rest_field(
+        name="contentLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The location of the content for this chunk."""
+    delete_location: Optional[str] = rest_field(
+        name="deleteLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The location to delete all chunk storage."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        document_id: Optional[str] = None,
+        index: Optional[int] = None,
+        end_reason: Optional[str] = None,
+        metadata_location: Optional[str] = None,
+        content_location: Optional[str] = None,
+        delete_location: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRecordingFileStatusUpdatedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.RecordingFileStatusUpdated event.
+
+    :ivar recording_storage_info: The details of recording storage information. Required.
+    :vartype recording_storage_info: ~azure.eventgrid.models.AcsRecordingStorageInfoProperties
+    :ivar recording_start_time: The time at which the recording started. Required.
+    :vartype recording_start_time: ~datetime.datetime
+    :ivar recording_duration_ms: The recording duration in milliseconds.
+    :vartype recording_duration_ms: int
+    :ivar recording_content_type: The recording content type- AudioVideo, or Audio. Required. Known
+     values are: "AudioVideo" and "Audio".
+    :vartype recording_content_type: str or ~azure.eventgrid.models.AcsRecordingContentType
+    :ivar recording_channel_type: The recording  channel type - Mixed, Unmixed. Required. Known
+     values are: "Mixed" and "Unmixed".
+    :vartype recording_channel_type: str or ~azure.eventgrid.models.AcsRecordingChannelType
+    :ivar recording_format_type: The recording format type - Mp4, Mp3, Wav. Required. Known values
+     are: "Wav", "Mp3", and "Mp4".
+    :vartype recording_format_type: str or ~azure.eventgrid.models.AcsRecordingFormatType
+    :ivar session_end_reason: The reason for ending recording session.
+    :vartype session_end_reason: str
+    """
+
+    recording_storage_info: "_models.AcsRecordingStorageInfoProperties" = rest_field(
+        name="recordingStorageInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The details of recording storage information. Required."""
+    recording_start_time: datetime.datetime = rest_field(
+        name="recordingStartTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the recording started. Required."""
+    recording_duration_ms: Optional[int] = rest_field(
+        name="recordingDurationMs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The recording duration in milliseconds."""
+    recording_content_type: Union[str, "_models.AcsRecordingContentType"] = rest_field(
+        name="recordingContentType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The recording content type- AudioVideo, or Audio. Required. Known values are: \"AudioVideo\"
+     and \"Audio\"."""
+    recording_channel_type: Union[str, "_models.AcsRecordingChannelType"] = rest_field(
+        name="recordingChannelType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The recording  channel type - Mixed, Unmixed. Required. Known values are: \"Mixed\" and
+     \"Unmixed\"."""
+    recording_format_type: Union[str, "_models.AcsRecordingFormatType"] = rest_field(
+        name="recordingFormatType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The recording format type - Mp4, Mp3, Wav. Required. Known values are: \"Wav\", \"Mp3\", and
+     \"Mp4\"."""
+    session_end_reason: Optional[str] = rest_field(
+        name="sessionEndReason", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The reason for ending recording session."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        recording_storage_info: "_models.AcsRecordingStorageInfoProperties",
+        recording_start_time: datetime.datetime,
+        recording_content_type: Union[str, "_models.AcsRecordingContentType"],
+        recording_channel_type: Union[str, "_models.AcsRecordingChannelType"],
+        recording_format_type: Union[str, "_models.AcsRecordingFormatType"],
+        recording_duration_ms: Optional[int] = None,
+        session_end_reason: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRecordingStorageInfoProperties(_Model):
+    """Schema for all properties of Recording Storage Information.
+
+    :ivar recording_chunks: List of details of recording chunks information. Required.
+    :vartype recording_chunks: list[~azure.eventgrid.models.AcsRecordingChunkInfoProperties]
+    """
+
+    recording_chunks: List["_models.AcsRecordingChunkInfoProperties"] = rest_field(
+        name="recordingChunks", visibility=["read"]
+    )
+    """List of details of recording chunks information. Required."""
+
+
+class AcsRouterChannelConfiguration(_Model):
+    """Router Channel Configuration.
+
+    :ivar channel_id: Channel ID for Router Job.
+    :vartype channel_id: str
+    :ivar capacity_cost_per_job: Capacity Cost Per Job for Router Job.
+    :vartype capacity_cost_per_job: int
+    :ivar max_number_of_jobs: Max Number of Jobs for Router Job.
+    :vartype max_number_of_jobs: int
+    """
+
+    channel_id: Optional[str] = rest_field(name="channelId", visibility=["read", "create", "update", "delete", "query"])
+    """Channel ID for Router Job."""
+    capacity_cost_per_job: Optional[int] = rest_field(
+        name="capacityCostPerJob", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Capacity Cost Per Job for Router Job."""
+    max_number_of_jobs: Optional[int] = rest_field(
+        name="maxNumberOfJobs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Max Number of Jobs for Router Job."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        channel_id: Optional[str] = None,
+        capacity_cost_per_job: Optional[int] = None,
+        max_number_of_jobs: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterCommunicationError(_Model):
+    """Router Communication Error.
+
+    :ivar code: Router Communication Error Code.
+    :vartype code: str
+    :ivar message: Router Communication Error Message.
+    :vartype message: str
+    :ivar target: Router Communication Error Target.
+    :vartype target: str
+    :ivar innererror: Router Communication Inner Error. Required.
+    :vartype innererror: ~azure.eventgrid.models.AcsRouterCommunicationError
+    :ivar details: List of Router Communication Errors. Required.
+    :vartype details: list[~azure.eventgrid.models.AcsRouterCommunicationError]
+    """
+
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Router Communication Error Code."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Router Communication Error Message."""
+    target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Router Communication Error Target."""
+    innererror: "_models.AcsRouterCommunicationError" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Communication Inner Error. Required."""
+    details: List["_models.AcsRouterCommunicationError"] = rest_field(visibility=["read"])
+    """List of Router Communication Errors. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        innererror: "_models.AcsRouterCommunicationError",
+        code: Optional[str] = None,
+        message: Optional[str] = None,
+        target: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterEventData(_Model):
+    """Schema of common properties of all Router events.
+
+    :ivar job_id: Router Event Job ID. Required.
+    :vartype job_id: str
+    :ivar channel_reference: Router Event Channel Reference.
+    :vartype channel_reference: str
+    :ivar channel_id: Router Event Channel ID.
+    :vartype channel_id: str
+    """
+
+    job_id: str = rest_field(name="jobId", visibility=["read", "create", "update", "delete", "query"])
+    """Router Event Job ID. Required."""
+    channel_reference: Optional[str] = rest_field(
+        name="channelReference", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Event Channel Reference."""
+    channel_id: Optional[str] = rest_field(name="channelId", visibility=["read", "create", "update", "delete", "query"])
+    """Router Event Channel ID."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_id: str,
+        channel_reference: Optional[str] = None,
+        channel_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterJobEventData(AcsRouterEventData):
+    """Schema of common properties of all Router Job events.
+
+    :ivar job_id: Router Event Job ID. Required.
+    :vartype job_id: str
+    :ivar channel_reference: Router Event Channel Reference.
+    :vartype channel_reference: str
+    :ivar channel_id: Router Event Channel ID.
+    :vartype channel_id: str
+    :ivar queue_id: Router Job events Queue Id.
+    :vartype queue_id: str
+    :ivar labels: Router Job events Labels. Required.
+    :vartype labels: dict[str, str]
+    :ivar tags: Router Jobs events Tags. Required.
+    :vartype tags: dict[str, str]
+    """
+
+    queue_id: Optional[str] = rest_field(name="queueId", visibility=["read", "create", "update", "delete", "query"])
+    """Router Job events Queue Id."""
+    labels: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Router Job events Labels. Required."""
+    tags: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Router Jobs events Tags. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_id: str,
+        labels: Dict[str, str],
+        tags: Dict[str, str],
+        channel_reference: Optional[str] = None,
+        channel_id: Optional[str] = None,
+        queue_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterJobCancelledEventData(AcsRouterJobEventData):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.RouterJobCancelled event.
+
+    :ivar job_id: Router Event Job ID. Required.
+    :vartype job_id: str
+    :ivar channel_reference: Router Event Channel Reference.
+    :vartype channel_reference: str
+    :ivar channel_id: Router Event Channel ID.
+    :vartype channel_id: str
+    :ivar queue_id: Router Job events Queue Id.
+    :vartype queue_id: str
+    :ivar labels: Router Job events Labels. Required.
+    :vartype labels: dict[str, str]
+    :ivar tags: Router Jobs events Tags. Required.
+    :vartype tags: dict[str, str]
+    :ivar note: Router Job Note.
+    :vartype note: str
+    :ivar disposition_code: Router Job Disposition Code.
+    :vartype disposition_code: str
+    """
+
+    note: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Router Job Note."""
+    disposition_code: Optional[str] = rest_field(
+        name="dispositionCode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Job Disposition Code."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_id: str,
+        labels: Dict[str, str],
+        tags: Dict[str, str],
+        channel_reference: Optional[str] = None,
+        channel_id: Optional[str] = None,
+        queue_id: Optional[str] = None,
+        note: Optional[str] = None,
+        disposition_code: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterJobClassificationFailedEventData(AcsRouterJobEventData):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.RouterJobClassificationFailed event.
+
+    :ivar job_id: Router Event Job ID. Required.
+    :vartype job_id: str
+    :ivar channel_reference: Router Event Channel Reference.
+    :vartype channel_reference: str
+    :ivar channel_id: Router Event Channel ID.
+    :vartype channel_id: str
+    :ivar queue_id: Router Job events Queue Id.
+    :vartype queue_id: str
+    :ivar labels: Router Job events Labels. Required.
+    :vartype labels: dict[str, str]
+    :ivar tags: Router Jobs events Tags. Required.
+    :vartype tags: dict[str, str]
+    :ivar classification_policy_id: Router Job Classification Policy Id.
+    :vartype classification_policy_id: str
+    :ivar errors: Router Job Classification Failed Errors. Required.
+    :vartype errors: list[~azure.eventgrid.models.AcsRouterCommunicationError]
+    """
+
+    classification_policy_id: Optional[str] = rest_field(
+        name="classificationPolicyId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Job Classification Policy Id."""
+    errors: List["_models.AcsRouterCommunicationError"] = rest_field(visibility=["read"])
+    """Router Job Classification Failed Errors. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_id: str,
+        labels: Dict[str, str],
+        tags: Dict[str, str],
+        channel_reference: Optional[str] = None,
+        channel_id: Optional[str] = None,
+        queue_id: Optional[str] = None,
+        classification_policy_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterJobClassifiedEventData(AcsRouterJobEventData):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.RouterJobClassified event.
+
+    :ivar job_id: Router Event Job ID. Required.
+    :vartype job_id: str
+    :ivar channel_reference: Router Event Channel Reference.
+    :vartype channel_reference: str
+    :ivar channel_id: Router Event Channel ID.
+    :vartype channel_id: str
+    :ivar queue_id: Router Job events Queue Id.
+    :vartype queue_id: str
+    :ivar labels: Router Job events Labels. Required.
+    :vartype labels: dict[str, str]
+    :ivar tags: Router Jobs events Tags. Required.
+    :vartype tags: dict[str, str]
+    :ivar queue_details: Router Job Queue Info. Required.
+    :vartype queue_details: ~azure.eventgrid.models.AcsRouterQueueDetails
+    :ivar classification_policy_id: Router Job Classification Policy Id.
+    :vartype classification_policy_id: str
+    :ivar priority: Router Job Priority.
+    :vartype priority: int
+    :ivar attached_worker_selectors: Router Job Attached Worker Selector. Required.
+    :vartype attached_worker_selectors: list[~azure.eventgrid.models.AcsRouterWorkerSelector]
+    """
+
+    queue_details: "_models.AcsRouterQueueDetails" = rest_field(
+        name="queueDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Job Queue Info. Required."""
+    classification_policy_id: Optional[str] = rest_field(
+        name="classificationPolicyId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Job Classification Policy Id."""
+    priority: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Router Job Priority."""
+    attached_worker_selectors: List["_models.AcsRouterWorkerSelector"] = rest_field(
+        name="attachedWorkerSelectors", visibility=["read"]
+    )
+    """Router Job Attached Worker Selector. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_id: str,
+        labels: Dict[str, str],
+        tags: Dict[str, str],
+        queue_details: "_models.AcsRouterQueueDetails",
+        channel_reference: Optional[str] = None,
+        channel_id: Optional[str] = None,
+        queue_id: Optional[str] = None,
+        classification_policy_id: Optional[str] = None,
+        priority: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterJobClosedEventData(AcsRouterJobEventData):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Communication.RouterJobClosed
+    event.
+
+    :ivar job_id: Router Event Job ID. Required.
+    :vartype job_id: str
+    :ivar channel_reference: Router Event Channel Reference.
+    :vartype channel_reference: str
+    :ivar channel_id: Router Event Channel ID.
+    :vartype channel_id: str
+    :ivar queue_id: Router Job events Queue Id.
+    :vartype queue_id: str
+    :ivar labels: Router Job events Labels. Required.
+    :vartype labels: dict[str, str]
+    :ivar tags: Router Jobs events Tags. Required.
+    :vartype tags: dict[str, str]
+    :ivar assignment_id: Router Job Closed Assignment Id.
+    :vartype assignment_id: str
+    :ivar worker_id: Router Job Closed Worker Id.
+    :vartype worker_id: str
+    :ivar disposition_code: Router Job Closed Disposition Code.
+    :vartype disposition_code: str
+    """
+
+    assignment_id: Optional[str] = rest_field(
+        name="assignmentId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Job Closed Assignment Id."""
+    worker_id: Optional[str] = rest_field(name="workerId", visibility=["read", "create", "update", "delete", "query"])
+    """Router Job Closed Worker Id."""
+    disposition_code: Optional[str] = rest_field(
+        name="dispositionCode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Job Closed Disposition Code."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_id: str,
+        labels: Dict[str, str],
+        tags: Dict[str, str],
+        channel_reference: Optional[str] = None,
+        channel_id: Optional[str] = None,
+        queue_id: Optional[str] = None,
+        assignment_id: Optional[str] = None,
+        worker_id: Optional[str] = None,
+        disposition_code: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterJobCompletedEventData(AcsRouterJobEventData):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.RouterJobCompleted event.
+
+    :ivar job_id: Router Event Job ID. Required.
+    :vartype job_id: str
+    :ivar channel_reference: Router Event Channel Reference.
+    :vartype channel_reference: str
+    :ivar channel_id: Router Event Channel ID.
+    :vartype channel_id: str
+    :ivar queue_id: Router Job events Queue Id.
+    :vartype queue_id: str
+    :ivar labels: Router Job events Labels. Required.
+    :vartype labels: dict[str, str]
+    :ivar tags: Router Jobs events Tags. Required.
+    :vartype tags: dict[str, str]
+    :ivar assignment_id: Router Job Completed Assignment Id.
+    :vartype assignment_id: str
+    :ivar worker_id: Router Job Completed Worker Id.
+    :vartype worker_id: str
+    """
+
+    assignment_id: Optional[str] = rest_field(
+        name="assignmentId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Job Completed Assignment Id."""
+    worker_id: Optional[str] = rest_field(name="workerId", visibility=["read", "create", "update", "delete", "query"])
+    """Router Job Completed Worker Id."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_id: str,
+        labels: Dict[str, str],
+        tags: Dict[str, str],
+        channel_reference: Optional[str] = None,
+        channel_id: Optional[str] = None,
+        queue_id: Optional[str] = None,
+        assignment_id: Optional[str] = None,
+        worker_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterJobDeletedEventData(AcsRouterJobEventData):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Communication.RouterJobDeleted
+    event.
+
+    :ivar job_id: Router Event Job ID. Required.
+    :vartype job_id: str
+    :ivar channel_reference: Router Event Channel Reference.
+    :vartype channel_reference: str
+    :ivar channel_id: Router Event Channel ID.
+    :vartype channel_id: str
+    :ivar queue_id: Router Job events Queue Id.
+    :vartype queue_id: str
+    :ivar labels: Router Job events Labels. Required.
+    :vartype labels: dict[str, str]
+    :ivar tags: Router Jobs events Tags. Required.
+    :vartype tags: dict[str, str]
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_id: str,
+        labels: Dict[str, str],
+        tags: Dict[str, str],
+        channel_reference: Optional[str] = None,
+        channel_id: Optional[str] = None,
+        queue_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterJobExceptionTriggeredEventData(AcsRouterJobEventData):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.RouterJobExceptionTriggered event.
+
+    :ivar job_id: Router Event Job ID. Required.
+    :vartype job_id: str
+    :ivar channel_reference: Router Event Channel Reference.
+    :vartype channel_reference: str
+    :ivar channel_id: Router Event Channel ID.
+    :vartype channel_id: str
+    :ivar queue_id: Router Job events Queue Id.
+    :vartype queue_id: str
+    :ivar labels: Router Job events Labels. Required.
+    :vartype labels: dict[str, str]
+    :ivar tags: Router Jobs events Tags. Required.
+    :vartype tags: dict[str, str]
+    :ivar rule_key: Router Job Exception Triggered Rule Key.
+    :vartype rule_key: str
+    :ivar exception_rule_id: Router Job Exception Triggered Rule Id.
+    :vartype exception_rule_id: str
+    """
+
+    rule_key: Optional[str] = rest_field(name="ruleKey", visibility=["read", "create", "update", "delete", "query"])
+    """Router Job Exception Triggered Rule Key."""
+    exception_rule_id: Optional[str] = rest_field(
+        name="exceptionRuleId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Job Exception Triggered Rule Id."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_id: str,
+        labels: Dict[str, str],
+        tags: Dict[str, str],
+        channel_reference: Optional[str] = None,
+        channel_id: Optional[str] = None,
+        queue_id: Optional[str] = None,
+        rule_key: Optional[str] = None,
+        exception_rule_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterJobQueuedEventData(AcsRouterJobEventData):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Communication.RouterJobQueued
+    event.
+
+    :ivar job_id: Router Event Job ID. Required.
+    :vartype job_id: str
+    :ivar channel_reference: Router Event Channel Reference.
+    :vartype channel_reference: str
+    :ivar channel_id: Router Event Channel ID.
+    :vartype channel_id: str
+    :ivar queue_id: Router Job events Queue Id.
+    :vartype queue_id: str
+    :ivar labels: Router Job events Labels. Required.
+    :vartype labels: dict[str, str]
+    :ivar tags: Router Jobs events Tags. Required.
+    :vartype tags: dict[str, str]
+    :ivar priority: Router Job Priority. Required.
+    :vartype priority: int
+    :ivar attached_worker_selectors: Router Job Queued Attached Worker Selector. Required.
+    :vartype attached_worker_selectors: list[~azure.eventgrid.models.AcsRouterWorkerSelector]
+    :ivar requested_worker_selectors: Router Job Queued Requested Worker Selector. Required.
+    :vartype requested_worker_selectors: list[~azure.eventgrid.models.AcsRouterWorkerSelector]
+    """
+
+    priority: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Router Job Priority. Required."""
+    attached_worker_selectors: List["_models.AcsRouterWorkerSelector"] = rest_field(
+        name="attachedWorkerSelectors", visibility=["read"]
+    )
+    """Router Job Queued Attached Worker Selector. Required."""
+    requested_worker_selectors: List["_models.AcsRouterWorkerSelector"] = rest_field(
+        name="requestedWorkerSelectors", visibility=["read"]
+    )
+    """Router Job Queued Requested Worker Selector. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_id: str,
+        labels: Dict[str, str],
+        tags: Dict[str, str],
+        priority: int,
+        channel_reference: Optional[str] = None,
+        channel_id: Optional[str] = None,
+        queue_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterJobReceivedEventData(AcsRouterJobEventData):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.RouterJobReceived event.
+
+    :ivar job_id: Router Event Job ID. Required.
+    :vartype job_id: str
+    :ivar channel_reference: Router Event Channel Reference.
+    :vartype channel_reference: str
+    :ivar channel_id: Router Event Channel ID.
+    :vartype channel_id: str
+    :ivar queue_id: Router Job events Queue Id.
+    :vartype queue_id: str
+    :ivar labels: Router Job events Labels. Required.
+    :vartype labels: dict[str, str]
+    :ivar tags: Router Jobs events Tags. Required.
+    :vartype tags: dict[str, str]
+    :ivar job_status: Router Job Received Job Status. Required. Known values are:
+     "PendingClassification", "Queued", "Assigned", "Completed", "Closed", "Cancelled",
+     "ClassificationFailed", "Created", "PendingSchedule", "Scheduled", "ScheduleFailed", and
+     "WaitingForActivation".
+    :vartype job_status: str or ~azure.eventgrid.models.AcsRouterJobStatus
+    :ivar classification_policy_id: Router Job Classification Policy Id.
+    :vartype classification_policy_id: str
+    :ivar priority: Router Job Priority.
+    :vartype priority: int
+    :ivar requested_worker_selectors: Router Job Received Requested Worker Selectors. Required.
+    :vartype requested_worker_selectors: list[~azure.eventgrid.models.AcsRouterWorkerSelector]
+    :ivar scheduled_on: Router Job Received Scheduled Time in UTC. Required.
+    :vartype scheduled_on: ~datetime.datetime
+    :ivar unavailable_for_matching: Unavailable For Matching for Router Job Received. Required.
+    :vartype unavailable_for_matching: bool
+    """
+
+    job_status: Union[str, "_models.AcsRouterJobStatus"] = rest_field(
+        name="jobStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Job Received Job Status. Required. Known values are: \"PendingClassification\",
+     \"Queued\", \"Assigned\", \"Completed\", \"Closed\", \"Cancelled\", \"ClassificationFailed\",
+     \"Created\", \"PendingSchedule\", \"Scheduled\", \"ScheduleFailed\", and
+     \"WaitingForActivation\"."""
+    classification_policy_id: Optional[str] = rest_field(
+        name="classificationPolicyId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Job Classification Policy Id."""
+    priority: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Router Job Priority."""
+    requested_worker_selectors: List["_models.AcsRouterWorkerSelector"] = rest_field(
+        name="requestedWorkerSelectors", visibility=["read"]
+    )
+    """Router Job Received Requested Worker Selectors. Required."""
+    scheduled_on: datetime.datetime = rest_field(
+        name="scheduledOn", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Router Job Received Scheduled Time in UTC. Required."""
+    unavailable_for_matching: bool = rest_field(
+        name="unavailableForMatching", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Unavailable For Matching for Router Job Received. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_id: str,
+        labels: Dict[str, str],
+        tags: Dict[str, str],
+        job_status: Union[str, "_models.AcsRouterJobStatus"],
+        scheduled_on: datetime.datetime,
+        unavailable_for_matching: bool,
+        channel_reference: Optional[str] = None,
+        channel_id: Optional[str] = None,
+        queue_id: Optional[str] = None,
+        classification_policy_id: Optional[str] = None,
+        priority: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterJobSchedulingFailedEventData(AcsRouterJobEventData):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.RouterJobSchedulingFailed event.
+
+    :ivar job_id: Router Event Job ID. Required.
+    :vartype job_id: str
+    :ivar channel_reference: Router Event Channel Reference.
+    :vartype channel_reference: str
+    :ivar channel_id: Router Event Channel ID.
+    :vartype channel_id: str
+    :ivar queue_id: Router Job events Queue Id.
+    :vartype queue_id: str
+    :ivar labels: Router Job events Labels. Required.
+    :vartype labels: dict[str, str]
+    :ivar tags: Router Jobs events Tags. Required.
+    :vartype tags: dict[str, str]
+    :ivar priority: Router Job Priority. Required.
+    :vartype priority: int
+    :ivar expired_attached_worker_selectors: Router Job Scheduling Failed Attached Worker Selector
+     Expired. Required.
+    :vartype expired_attached_worker_selectors:
+     list[~azure.eventgrid.models.AcsRouterWorkerSelector]
+    :ivar expired_requested_worker_selectors: Router Job Scheduling Failed Requested Worker
+     Selector Expired. Required.
+    :vartype expired_requested_worker_selectors:
+     list[~azure.eventgrid.models.AcsRouterWorkerSelector]
+    :ivar scheduled_on: Router Job Scheduling Failed Scheduled Time in UTC. Required.
+    :vartype scheduled_on: ~datetime.datetime
+    :ivar failure_reason: Router Job Scheduling Failed Reason.
+    :vartype failure_reason: str
+    """
+
+    priority: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Router Job Priority. Required."""
+    expired_attached_worker_selectors: List["_models.AcsRouterWorkerSelector"] = rest_field(
+        name="expiredAttachedWorkerSelectors", visibility=["read"]
+    )
+    """Router Job Scheduling Failed Attached Worker Selector Expired. Required."""
+    expired_requested_worker_selectors: List["_models.AcsRouterWorkerSelector"] = rest_field(
+        name="expiredRequestedWorkerSelectors", visibility=["read"]
+    )
+    """Router Job Scheduling Failed Requested Worker Selector Expired. Required."""
+    scheduled_on: datetime.datetime = rest_field(
+        name="scheduledOn", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Router Job Scheduling Failed Scheduled Time in UTC. Required."""
+    failure_reason: Optional[str] = rest_field(
+        name="failureReason", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Job Scheduling Failed Reason."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_id: str,
+        labels: Dict[str, str],
+        tags: Dict[str, str],
+        priority: int,
+        scheduled_on: datetime.datetime,
+        channel_reference: Optional[str] = None,
+        channel_id: Optional[str] = None,
+        queue_id: Optional[str] = None,
+        failure_reason: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterJobUnassignedEventData(AcsRouterJobEventData):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.RouterJobUnassigned event.
+
+    :ivar job_id: Router Event Job ID. Required.
+    :vartype job_id: str
+    :ivar channel_reference: Router Event Channel Reference.
+    :vartype channel_reference: str
+    :ivar channel_id: Router Event Channel ID.
+    :vartype channel_id: str
+    :ivar queue_id: Router Job events Queue Id.
+    :vartype queue_id: str
+    :ivar labels: Router Job events Labels. Required.
+    :vartype labels: dict[str, str]
+    :ivar tags: Router Jobs events Tags. Required.
+    :vartype tags: dict[str, str]
+    :ivar assignment_id: Router Job Unassigned Assignment Id.
+    :vartype assignment_id: str
+    :ivar worker_id: Router Job Unassigned Worker Id.
+    :vartype worker_id: str
+    """
+
+    assignment_id: Optional[str] = rest_field(
+        name="assignmentId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Job Unassigned Assignment Id."""
+    worker_id: Optional[str] = rest_field(name="workerId", visibility=["read", "create", "update", "delete", "query"])
+    """Router Job Unassigned Worker Id."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_id: str,
+        labels: Dict[str, str],
+        tags: Dict[str, str],
+        channel_reference: Optional[str] = None,
+        channel_id: Optional[str] = None,
+        queue_id: Optional[str] = None,
+        assignment_id: Optional[str] = None,
+        worker_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterJobWaitingForActivationEventData(AcsRouterJobEventData):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.RouterJobWaitingForActivation event.
+
+    :ivar job_id: Router Event Job ID. Required.
+    :vartype job_id: str
+    :ivar channel_reference: Router Event Channel Reference.
+    :vartype channel_reference: str
+    :ivar channel_id: Router Event Channel ID.
+    :vartype channel_id: str
+    :ivar queue_id: Router Job events Queue Id.
+    :vartype queue_id: str
+    :ivar labels: Router Job events Labels. Required.
+    :vartype labels: dict[str, str]
+    :ivar tags: Router Jobs events Tags. Required.
+    :vartype tags: dict[str, str]
+    :ivar priority: Router Job Waiting For Activation Priority. Required.
+    :vartype priority: int
+    :ivar expired_attached_worker_selectors: Router Job Waiting For Activation Worker Selector
+     Expired. Required.
+    :vartype expired_attached_worker_selectors:
+     list[~azure.eventgrid.models.AcsRouterWorkerSelector]
+    :ivar expired_requested_worker_selectors: Router Job Waiting For Activation Requested Worker
+     Selector Expired. Required.
+    :vartype expired_requested_worker_selectors:
+     list[~azure.eventgrid.models.AcsRouterWorkerSelector]
+    :ivar scheduled_on: Router Job Waiting For Activation Scheduled Time in UTC. Required.
+    :vartype scheduled_on: ~datetime.datetime
+    :ivar unavailable_for_matching: Router Job Waiting For Activation Unavailable For Matching.
+     Required.
+    :vartype unavailable_for_matching: bool
+    """
+
+    priority: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Router Job Waiting For Activation Priority. Required."""
+    expired_attached_worker_selectors: List["_models.AcsRouterWorkerSelector"] = rest_field(
+        name="expiredAttachedWorkerSelectors", visibility=["read"]
+    )
+    """Router Job Waiting For Activation Worker Selector Expired. Required."""
+    expired_requested_worker_selectors: List["_models.AcsRouterWorkerSelector"] = rest_field(
+        name="expiredRequestedWorkerSelectors", visibility=["read"]
+    )
+    """Router Job Waiting For Activation Requested Worker Selector Expired. Required."""
+    scheduled_on: datetime.datetime = rest_field(
+        name="scheduledOn", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Router Job Waiting For Activation Scheduled Time in UTC. Required."""
+    unavailable_for_matching: bool = rest_field(
+        name="unavailableForMatching", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Job Waiting For Activation Unavailable For Matching. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_id: str,
+        labels: Dict[str, str],
+        tags: Dict[str, str],
+        priority: int,
+        scheduled_on: datetime.datetime,
+        unavailable_for_matching: bool,
+        channel_reference: Optional[str] = None,
+        channel_id: Optional[str] = None,
+        queue_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterJobWorkerSelectorsExpiredEventData(AcsRouterJobEventData):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.RouterJobWorkerSelectorsExpired event.
+
+    :ivar job_id: Router Event Job ID. Required.
+    :vartype job_id: str
+    :ivar channel_reference: Router Event Channel Reference.
+    :vartype channel_reference: str
+    :ivar channel_id: Router Event Channel ID.
+    :vartype channel_id: str
+    :ivar queue_id: Router Job events Queue Id.
+    :vartype queue_id: str
+    :ivar labels: Router Job events Labels. Required.
+    :vartype labels: dict[str, str]
+    :ivar tags: Router Jobs events Tags. Required.
+    :vartype tags: dict[str, str]
+    :ivar expired_requested_worker_selectors: Router Job Worker Selectors Expired Requested Worker
+     Selectors. Required.
+    :vartype expired_requested_worker_selectors:
+     list[~azure.eventgrid.models.AcsRouterWorkerSelector]
+    :ivar expired_attached_worker_selectors: Router Job Worker Selectors Expired Attached Worker
+     Selectors. Required.
+    :vartype expired_attached_worker_selectors:
+     list[~azure.eventgrid.models.AcsRouterWorkerSelector]
+    """
+
+    expired_requested_worker_selectors: List["_models.AcsRouterWorkerSelector"] = rest_field(
+        name="expiredRequestedWorkerSelectors", visibility=["read"]
+    )
+    """Router Job Worker Selectors Expired Requested Worker Selectors. Required."""
+    expired_attached_worker_selectors: List["_models.AcsRouterWorkerSelector"] = rest_field(
+        name="expiredAttachedWorkerSelectors", visibility=["read"]
+    )
+    """Router Job Worker Selectors Expired Attached Worker Selectors. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_id: str,
+        labels: Dict[str, str],
+        tags: Dict[str, str],
+        channel_reference: Optional[str] = None,
+        channel_id: Optional[str] = None,
+        queue_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterQueueDetails(_Model):
+    """Router Queue Details.
+
+    :ivar id: Router Queue Id.
+    :vartype id: str
+    :ivar name: Router Queue Name.
+    :vartype name: str
+    :ivar labels: Router Queue Labels. Required.
+    :vartype labels: dict[str, str]
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Router Queue Id."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Router Queue Name."""
+    labels: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Router Queue Labels. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        labels: Dict[str, str],
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterWorkerEventData(AcsRouterEventData):
+    """Schema of common properties of all Router Worker events.
+
+    :ivar job_id: Router Event Job ID. Required.
+    :vartype job_id: str
+    :ivar channel_reference: Router Event Channel Reference.
+    :vartype channel_reference: str
+    :ivar channel_id: Router Event Channel ID.
+    :vartype channel_id: str
+    :ivar worker_id: Router Worker events Worker Id.
+    :vartype worker_id: str
+    """
+
+    worker_id: Optional[str] = rest_field(name="workerId", visibility=["read", "create", "update", "delete", "query"])
+    """Router Worker events Worker Id."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_id: str,
+        channel_reference: Optional[str] = None,
+        channel_id: Optional[str] = None,
+        worker_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterWorkerDeletedEventData(AcsRouterWorkerEventData):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.RouterWorkerDeleted event.
+
+    :ivar job_id: Router Event Job ID. Required.
+    :vartype job_id: str
+    :ivar channel_reference: Router Event Channel Reference.
+    :vartype channel_reference: str
+    :ivar channel_id: Router Event Channel ID.
+    :vartype channel_id: str
+    :ivar worker_id: Router Worker events Worker Id.
+    :vartype worker_id: str
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_id: str,
+        channel_reference: Optional[str] = None,
+        channel_id: Optional[str] = None,
+        worker_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterWorkerDeregisteredEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.RouterWorkerDeregistered event.
+
+    :ivar worker_id: Router Worker Deregistered Worker Id.
+    :vartype worker_id: str
+    """
+
+    worker_id: Optional[str] = rest_field(name="workerId", visibility=["read", "create", "update", "delete", "query"])
+    """Router Worker Deregistered Worker Id."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        worker_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterWorkerOfferAcceptedEventData(AcsRouterWorkerEventData):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.RouterWorkerOfferAccepted event.
+
+    :ivar job_id: Router Event Job ID. Required.
+    :vartype job_id: str
+    :ivar channel_reference: Router Event Channel Reference.
+    :vartype channel_reference: str
+    :ivar channel_id: Router Event Channel ID.
+    :vartype channel_id: str
+    :ivar worker_id: Router Worker events Worker Id.
+    :vartype worker_id: str
+    :ivar queue_id: Router Worker Offer Accepted Queue Id.
+    :vartype queue_id: str
+    :ivar offer_id: Router Worker Offer Accepted Offer Id.
+    :vartype offer_id: str
+    :ivar assignment_id: Router Worker Offer Accepted Assignment Id.
+    :vartype assignment_id: str
+    :ivar job_priority: Router Worker Offer Accepted Job Priority.
+    :vartype job_priority: int
+    :ivar worker_labels: Router Worker Offer Accepted Worker Labels. Required.
+    :vartype worker_labels: dict[str, str]
+    :ivar worker_tags: Router Worker Offer Accepted Worker Tags. Required.
+    :vartype worker_tags: dict[str, str]
+    :ivar job_labels: Router Worker Offer Accepted Job Labels. Required.
+    :vartype job_labels: dict[str, str]
+    :ivar job_tags: Router Worker Offer Accepted Job Tags. Required.
+    :vartype job_tags: dict[str, str]
+    """
+
+    queue_id: Optional[str] = rest_field(name="queueId", visibility=["read", "create", "update", "delete", "query"])
+    """Router Worker Offer Accepted Queue Id."""
+    offer_id: Optional[str] = rest_field(name="offerId", visibility=["read", "create", "update", "delete", "query"])
+    """Router Worker Offer Accepted Offer Id."""
+    assignment_id: Optional[str] = rest_field(
+        name="assignmentId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Worker Offer Accepted Assignment Id."""
+    job_priority: Optional[int] = rest_field(
+        name="jobPriority", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Worker Offer Accepted Job Priority."""
+    worker_labels: Dict[str, str] = rest_field(
+        name="workerLabels", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Worker Offer Accepted Worker Labels. Required."""
+    worker_tags: Dict[str, str] = rest_field(
+        name="workerTags", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Worker Offer Accepted Worker Tags. Required."""
+    job_labels: Dict[str, str] = rest_field(
+        name="jobLabels", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Worker Offer Accepted Job Labels. Required."""
+    job_tags: Dict[str, str] = rest_field(name="jobTags", visibility=["read", "create", "update", "delete", "query"])
+    """Router Worker Offer Accepted Job Tags. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_id: str,
+        worker_labels: Dict[str, str],
+        worker_tags: Dict[str, str],
+        job_labels: Dict[str, str],
+        job_tags: Dict[str, str],
+        channel_reference: Optional[str] = None,
+        channel_id: Optional[str] = None,
+        worker_id: Optional[str] = None,
+        queue_id: Optional[str] = None,
+        offer_id: Optional[str] = None,
+        assignment_id: Optional[str] = None,
+        job_priority: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterWorkerOfferDeclinedEventData(AcsRouterWorkerEventData):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.RouterWorkerOfferDeclined event.
+
+    :ivar job_id: Router Event Job ID. Required.
+    :vartype job_id: str
+    :ivar channel_reference: Router Event Channel Reference.
+    :vartype channel_reference: str
+    :ivar channel_id: Router Event Channel ID.
+    :vartype channel_id: str
+    :ivar worker_id: Router Worker events Worker Id.
+    :vartype worker_id: str
+    :ivar queue_id: Router Worker Offer Declined Queue Id.
+    :vartype queue_id: str
+    :ivar offer_id: Router Worker Offer Declined Offer Id.
+    :vartype offer_id: str
+    """
+
+    queue_id: Optional[str] = rest_field(name="queueId", visibility=["read", "create", "update", "delete", "query"])
+    """Router Worker Offer Declined Queue Id."""
+    offer_id: Optional[str] = rest_field(name="offerId", visibility=["read", "create", "update", "delete", "query"])
+    """Router Worker Offer Declined Offer Id."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_id: str,
+        channel_reference: Optional[str] = None,
+        channel_id: Optional[str] = None,
+        worker_id: Optional[str] = None,
+        queue_id: Optional[str] = None,
+        offer_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterWorkerOfferExpiredEventData(AcsRouterWorkerEventData):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.RouterWorkerOfferExpired event.
+
+    :ivar job_id: Router Event Job ID. Required.
+    :vartype job_id: str
+    :ivar channel_reference: Router Event Channel Reference.
+    :vartype channel_reference: str
+    :ivar channel_id: Router Event Channel ID.
+    :vartype channel_id: str
+    :ivar worker_id: Router Worker events Worker Id.
+    :vartype worker_id: str
+    :ivar queue_id: Router Worker Offer Expired Queue Id.
+    :vartype queue_id: str
+    :ivar offer_id: Router Worker Offer Expired Offer Id.
+    :vartype offer_id: str
+    """
+
+    queue_id: Optional[str] = rest_field(name="queueId", visibility=["read", "create", "update", "delete", "query"])
+    """Router Worker Offer Expired Queue Id."""
+    offer_id: Optional[str] = rest_field(name="offerId", visibility=["read", "create", "update", "delete", "query"])
+    """Router Worker Offer Expired Offer Id."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_id: str,
+        channel_reference: Optional[str] = None,
+        channel_id: Optional[str] = None,
+        worker_id: Optional[str] = None,
+        queue_id: Optional[str] = None,
+        offer_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterWorkerOfferIssuedEventData(AcsRouterWorkerEventData):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.RouterWorkerOfferIssued event.
+
+    :ivar job_id: Router Event Job ID. Required.
+    :vartype job_id: str
+    :ivar channel_reference: Router Event Channel Reference.
+    :vartype channel_reference: str
+    :ivar channel_id: Router Event Channel ID.
+    :vartype channel_id: str
+    :ivar worker_id: Router Worker events Worker Id.
+    :vartype worker_id: str
+    :ivar queue_id: Router Worker Offer Issued Queue Id.
+    :vartype queue_id: str
+    :ivar offer_id: Router Worker Offer Issued Offer Id.
+    :vartype offer_id: str
+    :ivar job_priority: Router Worker Offer Issued Job Priority.
+    :vartype job_priority: int
+    :ivar worker_labels: Router Worker Offer Issued Worker Labels. Required.
+    :vartype worker_labels: dict[str, str]
+    :ivar offered_on: Router Worker Offer Issued Time in UTC. Required.
+    :vartype offered_on: ~datetime.datetime
+    :ivar expires_on: Router Worker Offer Issued Expiration Time in UTC. Required.
+    :vartype expires_on: ~datetime.datetime
+    :ivar worker_tags: Router Worker Offer Issued Worker Tags. Required.
+    :vartype worker_tags: dict[str, str]
+    :ivar job_labels: Router Worker Offer Issued Job Labels. Required.
+    :vartype job_labels: dict[str, str]
+    :ivar job_tags: Router Worker Offer Issued Job Tags. Required.
+    :vartype job_tags: dict[str, str]
+    """
+
+    queue_id: Optional[str] = rest_field(name="queueId", visibility=["read", "create", "update", "delete", "query"])
+    """Router Worker Offer Issued Queue Id."""
+    offer_id: Optional[str] = rest_field(name="offerId", visibility=["read", "create", "update", "delete", "query"])
+    """Router Worker Offer Issued Offer Id."""
+    job_priority: Optional[int] = rest_field(
+        name="jobPriority", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Worker Offer Issued Job Priority."""
+    worker_labels: Dict[str, str] = rest_field(
+        name="workerLabels", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Worker Offer Issued Worker Labels. Required."""
+    offered_on: datetime.datetime = rest_field(
+        name="offeredOn", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Router Worker Offer Issued Time in UTC. Required."""
+    expires_on: datetime.datetime = rest_field(
+        name="expiresOn", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Router Worker Offer Issued Expiration Time in UTC. Required."""
+    worker_tags: Dict[str, str] = rest_field(
+        name="workerTags", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Worker Offer Issued Worker Tags. Required."""
+    job_labels: Dict[str, str] = rest_field(
+        name="jobLabels", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Worker Offer Issued Job Labels. Required."""
+    job_tags: Dict[str, str] = rest_field(name="jobTags", visibility=["read", "create", "update", "delete", "query"])
+    """Router Worker Offer Issued Job Tags. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_id: str,
+        worker_labels: Dict[str, str],
+        offered_on: datetime.datetime,
+        expires_on: datetime.datetime,
+        worker_tags: Dict[str, str],
+        job_labels: Dict[str, str],
+        job_tags: Dict[str, str],
+        channel_reference: Optional[str] = None,
+        channel_id: Optional[str] = None,
+        worker_id: Optional[str] = None,
+        queue_id: Optional[str] = None,
+        offer_id: Optional[str] = None,
+        job_priority: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterWorkerOfferRevokedEventData(AcsRouterWorkerEventData):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.RouterWorkerOfferRevoked event.
+
+    :ivar job_id: Router Event Job ID. Required.
+    :vartype job_id: str
+    :ivar channel_reference: Router Event Channel Reference.
+    :vartype channel_reference: str
+    :ivar channel_id: Router Event Channel ID.
+    :vartype channel_id: str
+    :ivar worker_id: Router Worker events Worker Id.
+    :vartype worker_id: str
+    :ivar queue_id: Router Worker Offer Revoked Queue Id.
+    :vartype queue_id: str
+    :ivar offer_id: Router Worker Offer Revoked Offer Id.
+    :vartype offer_id: str
+    """
+
+    queue_id: Optional[str] = rest_field(name="queueId", visibility=["read", "create", "update", "delete", "query"])
+    """Router Worker Offer Revoked Queue Id."""
+    offer_id: Optional[str] = rest_field(name="offerId", visibility=["read", "create", "update", "delete", "query"])
+    """Router Worker Offer Revoked Offer Id."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_id: str,
+        channel_reference: Optional[str] = None,
+        channel_id: Optional[str] = None,
+        worker_id: Optional[str] = None,
+        queue_id: Optional[str] = None,
+        offer_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterWorkerRegisteredEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.RouterWorkerRegistered event.
+
+    :ivar worker_id: Router Worker Registered Worker Id.
+    :vartype worker_id: str
+    :ivar queue_assignments: Router Worker Registered Queue Info. Required.
+    :vartype queue_assignments: list[~azure.eventgrid.models.AcsRouterQueueDetails]
+    :ivar channel_configurations: Router Worker Registered Channel Configuration. Required.
+    :vartype channel_configurations: list[~azure.eventgrid.models.AcsRouterChannelConfiguration]
+    :ivar total_capacity: Router Worker Register Total Capacity.
+    :vartype total_capacity: int
+    :ivar labels: Router Worker Registered Labels. Required.
+    :vartype labels: dict[str, str]
+    :ivar tags: Router Worker Registered Tags. Required.
+    :vartype tags: dict[str, str]
+    """
+
+    worker_id: Optional[str] = rest_field(name="workerId", visibility=["read", "create", "update", "delete", "query"])
+    """Router Worker Registered Worker Id."""
+    queue_assignments: List["_models.AcsRouterQueueDetails"] = rest_field(name="queueAssignments", visibility=["read"])
+    """Router Worker Registered Queue Info. Required."""
+    channel_configurations: List["_models.AcsRouterChannelConfiguration"] = rest_field(
+        name="channelConfigurations", visibility=["read"]
+    )
+    """Router Worker Registered Channel Configuration. Required."""
+    total_capacity: Optional[int] = rest_field(
+        name="totalCapacity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Worker Register Total Capacity."""
+    labels: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Router Worker Registered Labels. Required."""
+    tags: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Router Worker Registered Tags. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        labels: Dict[str, str],
+        tags: Dict[str, str],
+        worker_id: Optional[str] = None,
+        total_capacity: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterWorkerSelector(_Model):
+    """Router Job Worker Selector.
+
+    :ivar key: Router Job Worker Selector Key.
+    :vartype key: str
+    :ivar label_operator: Router Job Worker Selector Label Operator. Required. Known values are:
+     "Equal", "NotEqual", "Greater", "Less", "GreaterThanOrEqual", and "LessThanOrEqual".
+    :vartype label_operator: str or ~azure.eventgrid.models.AcsRouterLabelOperator
+    :ivar label_value: Router Job Worker Selector Value. Required.
+    :vartype label_value: any
+    :ivar ttl_seconds: Router Job Worker Selector Time to Live in Seconds. Required.
+    :vartype ttl_seconds: float
+    :ivar state: Router Job Worker Selector State. Required. Known values are: "active" and
+     "expired".
+    :vartype state: str or ~azure.eventgrid.models.AcsRouterWorkerSelectorState
+    :ivar expiration_time: Router Job Worker Selector Expiration Time. Required.
+    :vartype expiration_time: ~datetime.datetime
+    """
+
+    key: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Router Job Worker Selector Key."""
+    label_operator: Union[str, "_models.AcsRouterLabelOperator"] = rest_field(
+        name="labelOperator", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Job Worker Selector Label Operator. Required. Known values are: \"Equal\", \"NotEqual\",
+     \"Greater\", \"Less\", \"GreaterThanOrEqual\", and \"LessThanOrEqual\"."""
+    label_value: Any = rest_field(name="labelValue", visibility=["read", "create", "update", "delete", "query"])
+    """Router Job Worker Selector Value. Required."""
+    ttl_seconds: float = rest_field(name="ttlSeconds", visibility=["read", "create", "update", "delete", "query"])
+    """Router Job Worker Selector Time to Live in Seconds. Required."""
+    state: Union[str, "_models.AcsRouterWorkerSelectorState"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Job Worker Selector State. Required. Known values are: \"active\" and \"expired\"."""
+    expiration_time: datetime.datetime = rest_field(
+        name="expirationTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Router Job Worker Selector Expiration Time. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        label_operator: Union[str, "_models.AcsRouterLabelOperator"],
+        label_value: Any,
+        ttl_seconds: float,
+        state: Union[str, "_models.AcsRouterWorkerSelectorState"],
+        expiration_time: datetime.datetime,
+        key: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsRouterWorkerUpdatedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.RouterWorkerUpdated event.
+
+    :ivar worker_id: Router Worker Updated Worker Id.
+    :vartype worker_id: str
+    :ivar queue_assignments: Router Worker Updated Queue Info. Required.
+    :vartype queue_assignments: list[~azure.eventgrid.models.AcsRouterQueueDetails]
+    :ivar channel_configurations: Router Worker Updated Channel Configuration. Required.
+    :vartype channel_configurations: list[~azure.eventgrid.models.AcsRouterChannelConfiguration]
+    :ivar total_capacity: Router Worker Updated Total Capacity.
+    :vartype total_capacity: int
+    :ivar labels: Router Worker Updated Labels. Required.
+    :vartype labels: dict[str, str]
+    :ivar tags: Router Worker Updated Tags. Required.
+    :vartype tags: dict[str, str]
+    :ivar updated_worker_properties: Router Worker Properties Updated. Required.
+    :vartype updated_worker_properties: list[str or
+     ~azure.eventgrid.models.AcsRouterUpdatedWorkerProperty]
+    """
+
+    worker_id: Optional[str] = rest_field(name="workerId", visibility=["read", "create", "update", "delete", "query"])
+    """Router Worker Updated Worker Id."""
+    queue_assignments: List["_models.AcsRouterQueueDetails"] = rest_field(name="queueAssignments", visibility=["read"])
+    """Router Worker Updated Queue Info. Required."""
+    channel_configurations: List["_models.AcsRouterChannelConfiguration"] = rest_field(
+        name="channelConfigurations", visibility=["read"]
+    )
+    """Router Worker Updated Channel Configuration. Required."""
+    total_capacity: Optional[int] = rest_field(
+        name="totalCapacity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Router Worker Updated Total Capacity."""
+    labels: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Router Worker Updated Labels. Required."""
+    tags: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Router Worker Updated Tags. Required."""
+    updated_worker_properties: List[Union[str, "_models.AcsRouterUpdatedWorkerProperty"]] = rest_field(
+        name="updatedWorkerProperties", visibility=["read"]
+    )
+    """Router Worker Properties Updated. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        labels: Dict[str, str],
+        tags: Dict[str, str],
+        worker_id: Optional[str] = None,
+        total_capacity: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsSmsDeliveryAttemptProperties(_Model):
+    """Schema for details of a delivery attempt.
+
+    :ivar timestamp: TimeStamp when delivery was attempted. Required.
+    :vartype timestamp: ~datetime.datetime
+    :ivar segments_succeeded: Number of segments that were successfully delivered. Required.
+    :vartype segments_succeeded: int
+    :ivar segments_failed: Number of segments whose delivery failed. Required.
+    :vartype segments_failed: int
+    """
+
+    timestamp: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """TimeStamp when delivery was attempted. Required."""
+    segments_succeeded: int = rest_field(
+        name="segmentsSucceeded", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of segments that were successfully delivered. Required."""
+    segments_failed: int = rest_field(name="segmentsFailed", visibility=["read", "create", "update", "delete", "query"])
+    """Number of segments whose delivery failed. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        timestamp: datetime.datetime,
+        segments_succeeded: int,
+        segments_failed: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsSmsEventBaseProperties(_Model):
+    """Schema of common properties of all SMS events.
+
+    :ivar message_id: The identity of the SMS message. Required.
+    :vartype message_id: str
+    :ivar from_property: The identity of SMS message sender. Required.
+    :vartype from_property: str
+    :ivar to: The identity of SMS message receiver. Required.
+    :vartype to: str
+    """
+
+    message_id: str = rest_field(name="messageId", visibility=["read", "create", "update", "delete", "query"])
+    """The identity of the SMS message. Required."""
+    from_property: str = rest_field(name="from", visibility=["read", "create", "update", "delete", "query"])
+    """The identity of SMS message sender. Required."""
+    to: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The identity of SMS message receiver. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        message_id: str,
+        from_property: str,
+        to: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsSmsDeliveryReportReceivedEventData(AcsSmsEventBaseProperties):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Communication.SMSDeliveryReportReceived event.
+
+    :ivar message_id: The identity of the SMS message. Required.
+    :vartype message_id: str
+    :ivar from_property: The identity of SMS message sender. Required.
+    :vartype from_property: str
+    :ivar to: The identity of SMS message receiver. Required.
+    :vartype to: str
+    :ivar delivery_status: Status of Delivery. Required.
+    :vartype delivery_status: str
+    :ivar delivery_status_details: Details about Delivery Status. Required.
+    :vartype delivery_status_details: str
+    :ivar delivery_attempts: List of details of delivery attempts made. Required.
+    :vartype delivery_attempts: list[~azure.eventgrid.models.AcsSmsDeliveryAttemptProperties]
+    :ivar received_timestamp: The time at which the SMS delivery report was received. Required.
+    :vartype received_timestamp: ~datetime.datetime
+    :ivar tag: Customer Content.
+    :vartype tag: str
+    """
+
+    delivery_status: str = rest_field(name="deliveryStatus", visibility=["read", "create", "update", "delete", "query"])
+    """Status of Delivery. Required."""
+    delivery_status_details: str = rest_field(
+        name="deliveryStatusDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details about Delivery Status. Required."""
+    delivery_attempts: List["_models.AcsSmsDeliveryAttemptProperties"] = rest_field(
+        name="deliveryAttempts", visibility=["read"]
+    )
+    """List of details of delivery attempts made. Required."""
+    received_timestamp: datetime.datetime = rest_field(
+        name="receivedTimestamp", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the SMS delivery report was received. Required."""
+    tag: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Customer Content."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        message_id: str,
+        from_property: str,
+        to: str,
+        delivery_status: str,
+        delivery_status_details: str,
+        received_timestamp: datetime.datetime,
+        tag: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsSmsReceivedEventData(AcsSmsEventBaseProperties):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Communication.SMSReceived
+    event.
+
+    :ivar message_id: The identity of the SMS message. Required.
+    :vartype message_id: str
+    :ivar from_property: The identity of SMS message sender. Required.
+    :vartype from_property: str
+    :ivar to: The identity of SMS message receiver. Required.
+    :vartype to: str
+    :ivar message: The SMS content. Required.
+    :vartype message: str
+    :ivar received_timestamp: The time at which the SMS was received. Required.
+    :vartype received_timestamp: ~datetime.datetime
+    :ivar segment_count: Number of segments in the message. Required.
+    :vartype segment_count: int
+    """
+
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The SMS content. Required."""
+    received_timestamp: datetime.datetime = rest_field(
+        name="receivedTimestamp", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the SMS was received. Required."""
+    segment_count: int = rest_field(name="segmentCount", visibility=["read", "create", "update", "delete", "query"])
+    """Number of segments in the message. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        message_id: str,
+        from_property: str,
+        to: str,
+        message: str,
+        received_timestamp: datetime.datetime,
+        segment_count: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcsUserDisconnectedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for an
+    Microsoft.Communication.UserDisconnected event.
+
+    :ivar user_communication_identifier: The communication identifier of the user who was
+     disconnected. Required.
+    :vartype user_communication_identifier: ~azure.eventgrid.models.CommunicationIdentifierModel
+    """
+
+    user_communication_identifier: "_models.CommunicationIdentifierModel" = rest_field(
+        name="userCommunicationIdentifier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The communication identifier of the user who was disconnected. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        user_communication_identifier: "_models.CommunicationIdentifierModel",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiCenterApiDefinitionAddedEventData(_Model):
+    """Schema of the data property of an EventGridEvent for a Microsoft.ApiCenter.ApiDefinitionAdded
+    event.
+
+    :ivar title: API definition title. Required.
+    :vartype title: str
+    :ivar description: API definition description.
+    :vartype description: str
+    :ivar specification: API definition specification.
+    :vartype specification: ~azure.eventgrid.models.ApiCenterApiSpecification
+    """
+
+    title: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """API definition title. Required."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """API definition description."""
+    specification: Optional["_models.ApiCenterApiSpecification"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """API definition specification."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        title: str,
+        description: Optional[str] = None,
+        specification: Optional["_models.ApiCenterApiSpecification"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiCenterApiDefinitionUpdatedEventData(_Model):
+    """Schema of the data property of an EventGridEvent for a Microsoft.ApiCenter.ApiDefinitionUpdated
+    event.
+
+    :ivar title: API definition title. Required.
+    :vartype title: str
+    :ivar description: API definition description.
+    :vartype description: str
+    :ivar specification: API definition specification.
+    :vartype specification: ~azure.eventgrid.models.ApiCenterApiSpecification
+    """
+
+    title: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """API definition title. Required."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """API definition description."""
+    specification: Optional["_models.ApiCenterApiSpecification"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """API definition specification."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        title: str,
+        description: Optional[str] = None,
+        specification: Optional["_models.ApiCenterApiSpecification"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiCenterApiSpecification(_Model):
+    """API specification details.
+
+    :ivar name: Specification name. Required.
+    :vartype name: str
+    :ivar version: Specification version.
+    :vartype version: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Specification name. Required."""
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Specification version."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        version: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementApiCreatedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.ApiManagement.APICreated
+    event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementApiDeletedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.ApiManagement.APIDeleted
+    event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementApiReleaseCreatedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ApiManagement.APIReleaseCreated event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementApiReleaseDeletedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ApiManagement.APIReleaseDeleted event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementApiReleaseUpdatedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ApiManagement.APIReleaseUpdated event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementApiUpdatedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.ApiManagement.APIUpdated
+    event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementCircuitBreakerClosedEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ApiManagement.CircuitBreaker.Closed event.
+
+    :ivar backend_name: Name of the backend for which the circuit has closed. Required.
+    :vartype backend_name: str
+    :ivar circuit_breaker: Information related to the circuit breaker configured on the backend.
+     Required.
+    :vartype circuit_breaker: ~azure.eventgrid.models.ApiManagementCircuitBreakerProperties
+    """
+
+    backend_name: str = rest_field(name="backendName", visibility=["read", "create", "update", "delete", "query"])
+    """Name of the backend for which the circuit has closed. Required."""
+    circuit_breaker: "_models.ApiManagementCircuitBreakerProperties" = rest_field(
+        name="circuitBreaker", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Information related to the circuit breaker configured on the backend. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        backend_name: str,
+        circuit_breaker: "_models.ApiManagementCircuitBreakerProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementCircuitBreakerOpenedEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ApiManagement.CircuitBreaker.Opened event.
+
+    :ivar backend_name: Name of the backend for which the circuit has opened. Required.
+    :vartype backend_name: str
+    :ivar circuit_breaker: Information related to the circuit breaker configured on the backend.
+     Required.
+    :vartype circuit_breaker: ~azure.eventgrid.models.ApiManagementCircuitBreakerProperties
+    """
+
+    backend_name: str = rest_field(name="backendName", visibility=["read", "create", "update", "delete", "query"])
+    """Name of the backend for which the circuit has opened. Required."""
+    circuit_breaker: "_models.ApiManagementCircuitBreakerProperties" = rest_field(
+        name="circuitBreaker", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Information related to the circuit breaker configured on the backend. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        backend_name: str,
+        circuit_breaker: "_models.ApiManagementCircuitBreakerProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementCircuitBreakerProperties(_Model):
+    """Information related to the circuit breaker configured on the backend.
+
+    :ivar rules: Overview of all configured rules and respective details. Required.
+    :vartype rules: dict[str, dict[str, any]]
+    """
+
+    rules: Dict[str, Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Overview of all configured rules and respective details. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rules: Dict[str, Dict[str, Any]],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementExpiredGatewayTokenProperties(_Model):  # pylint: disable=name-too-long
+    """Information related to a gateway token that has expired for a self-hosted gateway deployment.
+
+    :ivar expires_on: Timestamp when the gateway token has expired. Required.
+    :vartype expires_on: ~datetime.datetime
+    """
+
+    expires_on: datetime.datetime = rest_field(
+        name="expiresOn", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Timestamp when the gateway token has expired. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        expires_on: datetime.datetime,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementGatewayApiAddedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.ApiManagement.GatewayAPIAdded
+    event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/gateways/<GatewayName>/apis/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/gateways/<GatewayName>/apis/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementGatewayApiRemovedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ApiManagement.GatewayAPIRemoved event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/gateways/<GatewayName>/apis/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/gateways/<GatewayName>/apis/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementGatewayCertificateAuthorityCreatedEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ApiManagement.GatewayCertificateAuthorityCreated event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/gateways/<GatewayName>/certificateAuthorities/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/gateways/<GatewayName>/certificateAuthorities/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementGatewayCertificateAuthorityDeletedEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ApiManagement.GatewayCertificateAuthorityDeleted event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/gateways/<GatewayName>/certificateAuthorities/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/gateways/<GatewayName>/certificateAuthorities/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementGatewayCertificateAuthorityUpdatedEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ApiManagement.GatewayCertificateAuthorityUpdated event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/gateways/<GatewayName>/certificateAuthorities/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/gateways/<GatewayName>/certificateAuthorities/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementGatewayCreatedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.ApiManagement.GatewayCreated
+    event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/gateways/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/gateways/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementGatewayDeletedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.ApiManagement.GatewayDeleted
+    event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/gateways/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/gateways/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementGatewayHostnameConfigurationCreatedEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ApiManagement.GatewayHostnameConfigurationCreated event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/gateways/<GatewayName>/hostnameConfigurations/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/gateways/<GatewayName>/hostnameConfigurations/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementGatewayHostnameConfigurationDeletedEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ApiManagement.GatewayHostnameConfigurationDeleted event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/gateways/<GatewayName>/hostnameConfigurations/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/gateways/<GatewayName>/hostnameConfigurations/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementGatewayHostnameConfigurationUpdatedEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ApiManagement.GatewayHostnameConfigurationUpdated event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/gateways/<GatewayName>/hostnameConfigurations/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/gateways/<GatewayName>/hostnameConfigurations/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementGatewayProperties(_Model):
+    """Information related to a given self-hosted gateway deployment.
+
+    :ivar gateway_id: Id of Gateway that is used to deploy the gateway to get the configuration
+     for. This is the ARM resource ID referenced in the Azure API Management instance. Uses the
+     format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/gateway/<GatewayName>``.
+     Required.
+    :vartype gateway_id: str
+    :ivar instance_id: Unique instance ID of the deployed gateway. Required.
+    :vartype instance_id: str
+    """
+
+    gateway_id: str = rest_field(name="gatewayId", visibility=["read", "create", "update", "delete", "query"])
+    """Id of Gateway that is used to deploy the gateway to get the configuration for. This is the ARM
+     resource ID referenced in the Azure API Management instance. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/gateway/<GatewayName>``.
+     Required."""
+    instance_id: str = rest_field(name="instanceId", visibility=["read", "create", "update", "delete", "query"])
+    """Unique instance ID of the deployed gateway. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        gateway_id: str,
+        instance_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementGatewayTokenExpiredEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ApiManagement.GatewayTokenExpired event.
+
+    :ivar gateway: Information related to a given self-hosted gateway deployment. Required.
+    :vartype gateway: ~azure.eventgrid.models.ApiManagementGatewayProperties
+    :ivar token: Information related to a an expired gateway token for a self-hosted gateway
+     deployment. Required.
+    :vartype token: ~azure.eventgrid.models.ApiManagementExpiredGatewayTokenProperties
+    """
+
+    gateway: "_models.ApiManagementGatewayProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Information related to a given self-hosted gateway deployment. Required."""
+    token: "_models.ApiManagementExpiredGatewayTokenProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Information related to a an expired gateway token for a self-hosted gateway deployment.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        gateway: "_models.ApiManagementGatewayProperties",
+        token: "_models.ApiManagementExpiredGatewayTokenProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementGatewayTokenNearExpiryEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ApiManagement.GatewayTokenNearExpiry event.
+
+    :ivar gateway: Information related to a given self-hosted gateway deployment. Required.
+    :vartype gateway: ~azure.eventgrid.models.ApiManagementGatewayProperties
+    :ivar token: Information related to a an expired gateway token for a self-hosted gateway
+     deployment. Required.
+    :vartype token: ~azure.eventgrid.models.ApiManagementNearExpiryGatewayTokenProperties
+    """
+
+    gateway: "_models.ApiManagementGatewayProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Information related to a given self-hosted gateway deployment. Required."""
+    token: "_models.ApiManagementNearExpiryGatewayTokenProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Information related to a an expired gateway token for a self-hosted gateway deployment.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        gateway: "_models.ApiManagementGatewayProperties",
+        token: "_models.ApiManagementNearExpiryGatewayTokenProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementGatewayUpdatedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.ApiManagement.GatewayUpdated
+    event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/gateways/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/gateways/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementNearExpiryGatewayTokenProperties(_Model):  # pylint: disable=name-too-long
+    """Information related to a gateway token that is near expiry for a self-hosted gateway
+    deployment.
+
+    :ivar expires_on: Timestamp when the gateway token will expire. Required.
+    :vartype expires_on: ~datetime.datetime
+    """
+
+    expires_on: datetime.datetime = rest_field(
+        name="expiresOn", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Timestamp when the gateway token will expire. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        expires_on: datetime.datetime,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementProductCreatedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.ApiManagement.ProductCreated
+    event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementProductDeletedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.ApiManagement.ProductDeleted
+    event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementProductUpdatedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.ApiManagement.ProductUpdated
+    event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementSubscriptionCreatedEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ApiManagement.SubscriptionCreated event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementSubscriptionDeletedEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ApiManagement.SubscriptionDeleted event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementSubscriptionUpdatedEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ApiManagement.SubscriptionUpdated event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementUserCreatedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.ApiManagement.UserCreated
+    event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementUserDeletedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.ApiManagement.UserDeleted
+    event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiManagementUserUpdatedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.ApiManagement.UserUpdated
+    event.
+
+    :ivar resource_uri: The fully qualified ID of the resource that the compliance state change is
+     for, including the resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``.
+    :vartype resource_uri: str
+    """
+
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified ID of the resource that the compliance state change is for, including the
+     resource name and resource type. Uses the format,
+     ``/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroup>/Microsoft.ApiManagement/service/<ServiceName>/<ResourceType>/<ResourceName>``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AppConfigurationKeyValueDeletedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.AppConfiguration.KeyValueDeleted event.
+
+    :ivar key: The key used to identify the key-value that was deleted. Required.
+    :vartype key: str
+    :ivar label: The label, if any, used to identify the key-value that was deleted. Required.
+    :vartype label: str
+    :ivar etag: The etag representing the key-value that was deleted. Required.
+    :vartype etag: str
+    :ivar sync_token: The sync token representing the server state after the event. Required.
+    :vartype sync_token: str
+    """
+
+    key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The key used to identify the key-value that was deleted. Required."""
+    label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The label, if any, used to identify the key-value that was deleted. Required."""
+    etag: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The etag representing the key-value that was deleted. Required."""
+    sync_token: str = rest_field(name="syncToken", visibility=["read", "create", "update", "delete", "query"])
+    """The sync token representing the server state after the event. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key: str,
+        label: str,
+        etag: str,
+        sync_token: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AppConfigurationKeyValueModifiedEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.AppConfiguration.KeyValueModified event.
+
+    :ivar key: The key used to identify the key-value that was modified. Required.
+    :vartype key: str
+    :ivar label: The label, if any, used to identify the key-value that was modified. Required.
+    :vartype label: str
+    :ivar etag: The etag representing the new state of the key-value. Required.
+    :vartype etag: str
+    :ivar sync_token: The sync token representing the server state after the event. Required.
+    :vartype sync_token: str
+    """
+
+    key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The key used to identify the key-value that was modified. Required."""
+    label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The label, if any, used to identify the key-value that was modified. Required."""
+    etag: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The etag representing the new state of the key-value. Required."""
+    sync_token: str = rest_field(name="syncToken", visibility=["read", "create", "update", "delete", "query"])
+    """The sync token representing the server state after the event. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key: str,
+        label: str,
+        etag: str,
+        sync_token: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AppConfigurationSnapshotEventData(_Model):
+    """Schema of common properties of snapshot events.
+
+    :ivar name: The name of the snapshot. Required.
+    :vartype name: str
+    :ivar etag: The etag representing the new state of the snapshot. Required.
+    :vartype etag: str
+    :ivar sync_token: The sync token representing the server state after the event. Required.
+    :vartype sync_token: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the snapshot. Required."""
+    etag: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The etag representing the new state of the snapshot. Required."""
+    sync_token: str = rest_field(name="syncToken", visibility=["read", "create", "update", "delete", "query"])
+    """The sync token representing the server state after the event. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        etag: str,
+        sync_token: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AppConfigurationSnapshotCreatedEventData(AppConfigurationSnapshotEventData):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.AppConfiguration.SnapshotCreated event.
+
+    :ivar name: The name of the snapshot. Required.
+    :vartype name: str
+    :ivar etag: The etag representing the new state of the snapshot. Required.
+    :vartype etag: str
+    :ivar sync_token: The sync token representing the server state after the event. Required.
+    :vartype sync_token: str
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        etag: str,
+        sync_token: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AppConfigurationSnapshotModifiedEventData(AppConfigurationSnapshotEventData):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.AppConfiguration.SnapshotModified event.
+
+    :ivar name: The name of the snapshot. Required.
+    :vartype name: str
+    :ivar etag: The etag representing the new state of the snapshot. Required.
+    :vartype etag: str
+    :ivar sync_token: The sync token representing the server state after the event. Required.
+    :vartype sync_token: str
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        etag: str,
+        sync_token: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AppEventTypeDetail(_Model):
+    """Detail of action on the app.
+
+    :ivar action: Type of action of the operation. Known values are: "Restarted", "Stopped",
+     "ChangedAppSettings", "Started", "Completed", and "Failed".
+    :vartype action: str or ~azure.eventgrid.models.AppAction
+    """
+
+    action: Optional[Union[str, "_models.AppAction"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of action of the operation. Known values are: \"Restarted\", \"Stopped\",
+     \"ChangedAppSettings\", \"Started\", \"Completed\", and \"Failed\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        action: Optional[Union[str, "_models.AppAction"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AppServicePlanEventTypeDetail(_Model):
+    """Detail of action on the app service plan.
+
+    :ivar stamp_kind: Kind of environment where app service plan is. Known values are: "Public",
+     "AseV1", and "AseV2".
+    :vartype stamp_kind: str or ~azure.eventgrid.models.StampKind
+    :ivar action: Type of action on the app service plan. "Updated"
+    :vartype action: str or ~azure.eventgrid.models.AppServicePlanAction
+    :ivar status: Asynchronous operation status of the operation on the app service plan. Known
+     values are: "Started", "Completed", and "Failed".
+    :vartype status: str or ~azure.eventgrid.models.AsyncStatus
+    """
+
+    stamp_kind: Optional[Union[str, "_models.StampKind"]] = rest_field(
+        name="stampKind", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Kind of environment where app service plan is. Known values are: \"Public\", \"AseV1\", and
+     \"AseV2\"."""
+    action: Optional[Union[str, "_models.AppServicePlanAction"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of action on the app service plan. \"Updated\""""
+    status: Optional[Union[str, "_models.AsyncStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Asynchronous operation status of the operation on the app service plan. Known values are:
+     \"Started\", \"Completed\", and \"Failed\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        stamp_kind: Optional[Union[str, "_models.StampKind"]] = None,
+        action: Optional[Union[str, "_models.AppServicePlanAction"]] = None,
+        status: Optional[Union[str, "_models.AsyncStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AvsClusterEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for Microsoft.AVS/clusters events.
+
+    :ivar operation_id: Id of the operation that caused this event. Required.
+    :vartype operation_id: str
+    :ivar added_host_names: Hosts added to the cluster in this event, if any.
+    :vartype added_host_names: list[str]
+    :ivar removed_host_names: Hosts removed from the cluster in this event, if any.
+    :vartype removed_host_names: list[str]
+    :ivar in_maintenance_host_names: Hosts in Maintenance mode in the cluster, if any.
+    :vartype in_maintenance_host_names: list[str]
+    """
+
+    operation_id: str = rest_field(name="operationId", visibility=["read", "create", "update", "delete", "query"])
+    """Id of the operation that caused this event. Required."""
+    added_host_names: Optional[List[str]] = rest_field(name="addedHostNames", visibility=["read"])
+    """Hosts added to the cluster in this event, if any."""
+    removed_host_names: Optional[List[str]] = rest_field(name="removedHostNames", visibility=["read"])
+    """Hosts removed from the cluster in this event, if any."""
+    in_maintenance_host_names: Optional[List[str]] = rest_field(name="inMaintenanceHostNames", visibility=["read"])
+    """Hosts in Maintenance mode in the cluster, if any."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operation_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AvsClusterCreatedEventData(AvsClusterEventData):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AVS.ClusterCreated event.
+
+    :ivar operation_id: Id of the operation that caused this event. Required.
+    :vartype operation_id: str
+    :ivar added_host_names: Hosts added to the cluster in this event, if any.
+    :vartype added_host_names: list[str]
+    :ivar removed_host_names: Hosts removed from the cluster in this event, if any.
+    :vartype removed_host_names: list[str]
+    :ivar in_maintenance_host_names: Hosts in Maintenance mode in the cluster, if any.
+    :vartype in_maintenance_host_names: list[str]
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operation_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AvsClusterDeletedEventData(AvsClusterEventData):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AVS.ClusterDeleted event.
+
+    :ivar operation_id: Id of the operation that caused this event. Required.
+    :vartype operation_id: str
+    :ivar added_host_names: Hosts added to the cluster in this event, if any.
+    :vartype added_host_names: list[str]
+    :ivar removed_host_names: Hosts removed from the cluster in this event, if any.
+    :vartype removed_host_names: list[str]
+    :ivar in_maintenance_host_names: Hosts in Maintenance mode in the cluster, if any.
+    :vartype in_maintenance_host_names: list[str]
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operation_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AvsClusterFailedEventData(AvsClusterEventData):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AVS.ClusterFailed event.
+
+    :ivar operation_id: Id of the operation that caused this event. Required.
+    :vartype operation_id: str
+    :ivar added_host_names: Hosts added to the cluster in this event, if any.
+    :vartype added_host_names: list[str]
+    :ivar removed_host_names: Hosts removed from the cluster in this event, if any.
+    :vartype removed_host_names: list[str]
+    :ivar in_maintenance_host_names: Hosts in Maintenance mode in the cluster, if any.
+    :vartype in_maintenance_host_names: list[str]
+    :ivar failure_message: Failure reason of an event.
+    :vartype failure_message: str
+    """
+
+    failure_message: Optional[str] = rest_field(
+        name="failureMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Failure reason of an event."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operation_id: str,
+        failure_message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AvsClusterUpdatedEventData(AvsClusterEventData):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AVS.ClusterUpdated event.
+
+    :ivar operation_id: Id of the operation that caused this event. Required.
+    :vartype operation_id: str
+    :ivar added_host_names: Hosts added to the cluster in this event, if any.
+    :vartype added_host_names: list[str]
+    :ivar removed_host_names: Hosts removed from the cluster in this event, if any.
+    :vartype removed_host_names: list[str]
+    :ivar in_maintenance_host_names: Hosts in Maintenance mode in the cluster, if any.
+    :vartype in_maintenance_host_names: list[str]
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operation_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AvsClusterUpdatingEventData(AvsClusterEventData):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AVS.ClusterUpdating event.
+
+    :ivar operation_id: Id of the operation that caused this event. Required.
+    :vartype operation_id: str
+    :ivar added_host_names: Hosts added to the cluster in this event, if any.
+    :vartype added_host_names: list[str]
+    :ivar removed_host_names: Hosts removed from the cluster in this event, if any.
+    :vartype removed_host_names: list[str]
+    :ivar in_maintenance_host_names: Hosts in Maintenance mode in the cluster, if any.
+    :vartype in_maintenance_host_names: list[str]
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operation_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AvsPrivateCloudEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for Microsoft.AVS/privateClouds events.
+
+    :ivar operation_id: Id of the operation that caused this event. Required.
+    :vartype operation_id: str
+    """
+
+    operation_id: str = rest_field(name="operationId", visibility=["read", "create", "update", "delete", "query"])
+    """Id of the operation that caused this event. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operation_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AvsPrivateCloudFailedEventData(AvsPrivateCloudEventData):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AVS.PrivateCloudFailed event.
+
+    :ivar operation_id: Id of the operation that caused this event. Required.
+    :vartype operation_id: str
+    :ivar failure_message: Failure reason of an event.
+    :vartype failure_message: str
+    """
+
+    failure_message: Optional[str] = rest_field(
+        name="failureMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Failure reason of an event."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operation_id: str,
+        failure_message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AvsPrivateCloudUpdatedEventData(AvsPrivateCloudEventData):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AVS.PrivateCloudUpdated event.
+
+    :ivar operation_id: Id of the operation that caused this event. Required.
+    :vartype operation_id: str
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operation_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AvsPrivateCloudUpdatingEventData(AvsPrivateCloudEventData):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AVS.PrivateCloudUpdating
+    event.
+
+    :ivar operation_id: Id of the operation that caused this event. Required.
+    :vartype operation_id: str
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operation_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AvsScriptExecutionEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for Microsoft.AVS/scriptExecutions events.
+
+    :ivar operation_id: Id of the operation that caused this event. Required.
+    :vartype operation_id: str
+    :ivar cmdlet_id: Cmdlet referenced in the execution that caused this event. Required.
+    :vartype cmdlet_id: str
+    :ivar output: Stdout outputs from the execution, if any.
+    :vartype output: list[str]
+    """
+
+    operation_id: str = rest_field(name="operationId", visibility=["read", "create", "update", "delete", "query"])
+    """Id of the operation that caused this event. Required."""
+    cmdlet_id: str = rest_field(name="cmdletId", visibility=["read", "create", "update", "delete", "query"])
+    """Cmdlet referenced in the execution that caused this event. Required."""
+    output: Optional[List[str]] = rest_field(visibility=["read"])
+    """Stdout outputs from the execution, if any."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operation_id: str,
+        cmdlet_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AvsScriptExecutionCancelledEventData(AvsScriptExecutionEventData):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AVS.ScriptExecutionCancelled
+    event.
+
+    :ivar operation_id: Id of the operation that caused this event. Required.
+    :vartype operation_id: str
+    :ivar cmdlet_id: Cmdlet referenced in the execution that caused this event. Required.
+    :vartype cmdlet_id: str
+    :ivar output: Stdout outputs from the execution, if any.
+    :vartype output: list[str]
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operation_id: str,
+        cmdlet_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AvsScriptExecutionFailedEventData(AvsScriptExecutionEventData):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AVS.ScriptExecutionFailed
+    event.
+
+    :ivar operation_id: Id of the operation that caused this event. Required.
+    :vartype operation_id: str
+    :ivar cmdlet_id: Cmdlet referenced in the execution that caused this event. Required.
+    :vartype cmdlet_id: str
+    :ivar output: Stdout outputs from the execution, if any.
+    :vartype output: list[str]
+    :ivar failure_message: Failure reason of an event.
+    :vartype failure_message: str
+    """
+
+    failure_message: Optional[str] = rest_field(
+        name="failureMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Failure reason of an event."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operation_id: str,
+        cmdlet_id: str,
+        failure_message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AvsScriptExecutionFinishedEventData(AvsScriptExecutionEventData):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AVS.ScriptExecutionFinished
+    event.
+
+    :ivar operation_id: Id of the operation that caused this event. Required.
+    :vartype operation_id: str
+    :ivar cmdlet_id: Cmdlet referenced in the execution that caused this event. Required.
+    :vartype cmdlet_id: str
+    :ivar output: Stdout outputs from the execution, if any.
+    :vartype output: list[str]
+    :ivar named_outputs: Named outputs of completed execution, if any. Required.
+    :vartype named_outputs: dict[str, str]
+    """
+
+    named_outputs: Dict[str, str] = rest_field(
+        name="namedOutputs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Named outputs of completed execution, if any. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operation_id: str,
+        cmdlet_id: str,
+        named_outputs: Dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AvsScriptExecutionStartedEventData(AvsScriptExecutionEventData):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AVS.ScriptExecutionStarted
+    event.
+
+    :ivar operation_id: Id of the operation that caused this event. Required.
+    :vartype operation_id: str
+    :ivar cmdlet_id: Cmdlet referenced in the execution that caused this event. Required.
+    :vartype cmdlet_id: str
+    :ivar output: Stdout outputs from the execution, if any.
+    :vartype output: list[str]
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operation_id: str,
+        cmdlet_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CommunicationIdentifierModel(_Model):
+    """Identifies a participant in Azure Communication services. A participant is, for example, a
+    phone number or an Azure communication user. This model must be interpreted as a union: Apart
+    from rawId, at most one further property may be set.
+
+    :ivar kind: The identifier kind. Only required in responses. Known values are: "unknown",
+     "communicationUser", "phoneNumber", "microsoftTeamsUser", and "microsoftTeamsApp".
+    :vartype kind: str or ~azure.eventgrid.models.CommunicationIdentifierModelKind
+    :ivar raw_id: Raw Id of the identifier. Optional in requests, required in responses. Required.
+    :vartype raw_id: str
+    :ivar communication_user: The communication user. Required.
+    :vartype communication_user: ~azure.eventgrid.models.CommunicationUserIdentifierModel
+    :ivar phone_number: The phone number.
+    :vartype phone_number: ~azure.eventgrid.models.PhoneNumberIdentifierModel
+    :ivar microsoft_teams_user: The Microsoft Teams user.
+    :vartype microsoft_teams_user: ~azure.eventgrid.models.MicrosoftTeamsUserIdentifierModel
+    :ivar microsoft_teams_app: The Microsoft Teams application.
+    :vartype microsoft_teams_app: ~azure.eventgrid.models.MicrosoftTeamsAppIdentifierModel
+    """
+
+    kind: Optional[Union[str, "_models.CommunicationIdentifierModelKind"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The identifier kind. Only required in responses. Known values are: \"unknown\",
+     \"communicationUser\", \"phoneNumber\", \"microsoftTeamsUser\", and \"microsoftTeamsApp\"."""
+    raw_id: str = rest_field(name="rawId", visibility=["read", "create", "update", "delete", "query"])
+    """Raw Id of the identifier. Optional in requests, required in responses. Required."""
+    communication_user: "_models.CommunicationUserIdentifierModel" = rest_field(
+        name="communicationUser", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The communication user. Required."""
+    phone_number: Optional["_models.PhoneNumberIdentifierModel"] = rest_field(
+        name="phoneNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The phone number."""
+    microsoft_teams_user: Optional["_models.MicrosoftTeamsUserIdentifierModel"] = rest_field(
+        name="microsoftTeamsUser", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Microsoft Teams user."""
+    microsoft_teams_app: Optional["_models.MicrosoftTeamsAppIdentifierModel"] = rest_field(
+        name="microsoftTeamsApp", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Microsoft Teams application."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        raw_id: str,
+        communication_user: "_models.CommunicationUserIdentifierModel",
+        kind: Optional[Union[str, "_models.CommunicationIdentifierModelKind"]] = None,
+        phone_number: Optional["_models.PhoneNumberIdentifierModel"] = None,
+        microsoft_teams_user: Optional["_models.MicrosoftTeamsUserIdentifierModel"] = None,
+        microsoft_teams_app: Optional["_models.MicrosoftTeamsAppIdentifierModel"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CommunicationUserIdentifierModel(_Model):
+    """A user that got created with an Azure Communication Services resource.
+
+    :ivar id: The Id of the communication user. Required.
+    :vartype id: str
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Id of the communication user. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerRegistryArtifactEventData(_Model):
+    """The content of the event request message.
+
+    :ivar id: The event ID. Required.
+    :vartype id: str
+    :ivar timestamp: The time at which the event occurred. Required.
+    :vartype timestamp: ~datetime.datetime
+    :ivar action: The action that encompasses the provided event. Required.
+    :vartype action: str
+    :ivar location: The location of the event. Required.
+    :vartype location: str
+    :ivar target: The target of the event. Required.
+    :vartype target: ~azure.eventgrid.models.ContainerRegistryArtifactEventTarget
+    :ivar connected_registry: The connected registry information if the event is generated by a
+     connected registry.
+    :vartype connected_registry: ~azure.eventgrid.models.ContainerRegistryEventConnectedRegistry
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The event ID. Required."""
+    timestamp: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the event occurred. Required."""
+    action: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The action that encompasses the provided event. Required."""
+    location: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The location of the event. Required."""
+    target: "_models.ContainerRegistryArtifactEventTarget" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target of the event. Required."""
+    connected_registry: Optional["_models.ContainerRegistryEventConnectedRegistry"] = rest_field(
+        name="connectedRegistry", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The connected registry information if the event is generated by a connected registry."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        timestamp: datetime.datetime,
+        action: str,
+        location: str,
+        target: "_models.ContainerRegistryArtifactEventTarget",
+        connected_registry: Optional["_models.ContainerRegistryEventConnectedRegistry"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerRegistryArtifactEventTarget(_Model):
+    """The target of the event.
+
+    :ivar media_type: The MIME type of the artifact. Required.
+    :vartype media_type: str
+    :ivar size: The size in bytes of the artifact.
+    :vartype size: int
+    :ivar digest: The digest of the artifact.
+    :vartype digest: str
+    :ivar repository: The repository name of the artifact. Required.
+    :vartype repository: str
+    :ivar tag: The tag of the artifact.
+    :vartype tag: str
+    :ivar name: The name of the artifact.
+    :vartype name: str
+    :ivar version: The version of the artifact.
+    :vartype version: str
+    """
+
+    media_type: str = rest_field(name="mediaType", visibility=["read", "create", "update", "delete", "query"])
+    """The MIME type of the artifact. Required."""
+    size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The size in bytes of the artifact."""
+    digest: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The digest of the artifact."""
+    repository: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The repository name of the artifact. Required."""
+    tag: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The tag of the artifact."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the artifact."""
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The version of the artifact."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        media_type: str,
+        repository: str,
+        size: Optional[int] = None,
+        digest: Optional[str] = None,
+        tag: Optional[str] = None,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerRegistryChartDeletedEventData(ContainerRegistryArtifactEventData):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.ContainerRegistry.ChartDeleted
+    event.
+
+    :ivar id: The event ID. Required.
+    :vartype id: str
+    :ivar timestamp: The time at which the event occurred. Required.
+    :vartype timestamp: ~datetime.datetime
+    :ivar action: The action that encompasses the provided event. Required.
+    :vartype action: str
+    :ivar location: The location of the event. Required.
+    :vartype location: str
+    :ivar target: The target of the event. Required.
+    :vartype target: ~azure.eventgrid.models.ContainerRegistryArtifactEventTarget
+    :ivar connected_registry: The connected registry information if the event is generated by a
+     connected registry.
+    :vartype connected_registry: ~azure.eventgrid.models.ContainerRegistryEventConnectedRegistry
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        timestamp: datetime.datetime,
+        action: str,
+        location: str,
+        target: "_models.ContainerRegistryArtifactEventTarget",
+        connected_registry: Optional["_models.ContainerRegistryEventConnectedRegistry"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerRegistryChartPushedEventData(ContainerRegistryArtifactEventData):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.ContainerRegistry.ChartPushed
+    event.
+
+    :ivar id: The event ID. Required.
+    :vartype id: str
+    :ivar timestamp: The time at which the event occurred. Required.
+    :vartype timestamp: ~datetime.datetime
+    :ivar action: The action that encompasses the provided event. Required.
+    :vartype action: str
+    :ivar location: The location of the event. Required.
+    :vartype location: str
+    :ivar target: The target of the event. Required.
+    :vartype target: ~azure.eventgrid.models.ContainerRegistryArtifactEventTarget
+    :ivar connected_registry: The connected registry information if the event is generated by a
+     connected registry.
+    :vartype connected_registry: ~azure.eventgrid.models.ContainerRegistryEventConnectedRegistry
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        timestamp: datetime.datetime,
+        action: str,
+        location: str,
+        target: "_models.ContainerRegistryArtifactEventTarget",
+        connected_registry: Optional["_models.ContainerRegistryEventConnectedRegistry"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerRegistryEventActor(_Model):
+    """The agent that initiated the event. For most situations, this could be from the authorization
+    context of the request.
+
+    :ivar name: The subject or username associated with the request context that generated the
+     event.
+    :vartype name: str
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The subject or username associated with the request context that generated the event."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerRegistryEventConnectedRegistry(_Model):
+    """The connected registry information if the event is generated by a connected registry.
+
+    :ivar name: The name of the connected registry that generated this event. Required.
+    :vartype name: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the connected registry that generated this event. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerRegistryEventData(_Model):
+    """The content of the event request message.
+
+    :ivar id: The event ID. Required.
+    :vartype id: str
+    :ivar timestamp: The time at which the event occurred. Required.
+    :vartype timestamp: ~datetime.datetime
+    :ivar action: The action that encompasses the provided event. Required.
+    :vartype action: str
+    :ivar location: The location of the event. Required.
+    :vartype location: str
+    :ivar target: The target of the event. Required.
+    :vartype target: ~azure.eventgrid.models.ContainerRegistryEventTarget
+    :ivar request: The request that generated the event.
+    :vartype request: ~azure.eventgrid.models.ContainerRegistryEventRequest
+    :ivar actor: The agent that initiated the event. For most situations, this could be from the
+     authorization context of the request.
+    :vartype actor: ~azure.eventgrid.models.ContainerRegistryEventActor
+    :ivar source: The registry node that generated the event. Put differently, while the actor
+     initiates the event, the source generates it.
+    :vartype source: ~azure.eventgrid.models.ContainerRegistryEventSource
+    :ivar connected_registry: The connected registry information if the event is generated by a
+     connected registry.
+    :vartype connected_registry: ~azure.eventgrid.models.ContainerRegistryEventConnectedRegistry
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The event ID. Required."""
+    timestamp: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the event occurred. Required."""
+    action: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The action that encompasses the provided event. Required."""
+    location: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The location of the event. Required."""
+    target: "_models.ContainerRegistryEventTarget" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target of the event. Required."""
+    request: Optional["_models.ContainerRegistryEventRequest"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The request that generated the event."""
+    actor: Optional["_models.ContainerRegistryEventActor"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The agent that initiated the event. For most situations, this could be from the authorization
+     context of the request."""
+    source: Optional["_models.ContainerRegistryEventSource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The registry node that generated the event. Put differently, while the actor initiates the
+     event, the source generates it."""
+    connected_registry: Optional["_models.ContainerRegistryEventConnectedRegistry"] = rest_field(
+        name="connectedRegistry", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The connected registry information if the event is generated by a connected registry."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        timestamp: datetime.datetime,
+        action: str,
+        location: str,
+        target: "_models.ContainerRegistryEventTarget",
+        request: Optional["_models.ContainerRegistryEventRequest"] = None,
+        actor: Optional["_models.ContainerRegistryEventActor"] = None,
+        source: Optional["_models.ContainerRegistryEventSource"] = None,
+        connected_registry: Optional["_models.ContainerRegistryEventConnectedRegistry"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerRegistryEventRequest(_Model):
+    """The request that generated the event.
+
+    :ivar id: The ID of the request that initiated the event. Required.
+    :vartype id: str
+    :ivar addr: The IP or hostname and possibly port of the client connection that initiated the
+     event. This is the RemoteAddr from the standard http request.
+    :vartype addr: str
+    :ivar host: The externally accessible hostname of the registry instance, as specified by the
+     http host header on incoming requests. Required.
+    :vartype host: str
+    :ivar method: The request method that generated the event. Required.
+    :vartype method: str
+    :ivar useragent: The user agent header of the request.
+    :vartype useragent: str
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the request that initiated the event. Required."""
+    addr: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The IP or hostname and possibly port of the client connection that initiated the event. This is
+     the RemoteAddr from the standard http request."""
+    host: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The externally accessible hostname of the registry instance, as specified by the http host
+     header on incoming requests. Required."""
+    method: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The request method that generated the event. Required."""
+    useragent: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The user agent header of the request."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        host: str,
+        method: str,
+        addr: Optional[str] = None,
+        useragent: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerRegistryEventSource(_Model):
+    """The registry node that generated the event. Put differently, while the actor initiates the
+    event, the source generates it.
+
+    :ivar addr: The IP or hostname and the port of the registry node that generated the event.
+     Generally, this will be resolved by os.Hostname() along with the running port.
+    :vartype addr: str
+    :ivar instance_id: The running instance of an application. Changes after each restart.
+    :vartype instance_id: str
+    """
+
+    addr: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The IP or hostname and the port of the registry node that generated the event. Generally, this
+     will be resolved by os.Hostname() along with the running port."""
+    instance_id: Optional[str] = rest_field(
+        name="instanceID", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The running instance of an application. Changes after each restart."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        addr: Optional[str] = None,
+        instance_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerRegistryEventTarget(_Model):
+    """The target of the event.
+
+    :ivar media_type: The MIME type of the referenced object. Required.
+    :vartype media_type: str
+    :ivar size: The number of bytes of the content. Same as Length field.
+    :vartype size: int
+    :ivar digest: The digest of the content, as defined by the Registry V2 HTTP API Specification.
+    :vartype digest: str
+    :ivar length: The number of bytes of the content. Same as Size field.
+    :vartype length: int
+    :ivar repository: The repository name. Required.
+    :vartype repository: str
+    :ivar url: The direct URL to the content.
+    :vartype url: str
+    :ivar tag: The tag name.
+    :vartype tag: str
+    """
+
+    media_type: str = rest_field(name="mediaType", visibility=["read", "create", "update", "delete", "query"])
+    """The MIME type of the referenced object. Required."""
+    size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of bytes of the content. Same as Length field."""
+    digest: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The digest of the content, as defined by the Registry V2 HTTP API Specification."""
+    length: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of bytes of the content. Same as Size field."""
+    repository: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The repository name. Required."""
+    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The direct URL to the content."""
+    tag: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The tag name."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        media_type: str,
+        repository: str,
+        size: Optional[int] = None,
+        digest: Optional[str] = None,
+        length: Optional[int] = None,
+        url: Optional[str] = None,
+        tag: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerRegistryImageDeletedEventData(ContainerRegistryEventData):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.ContainerRegistry.ImageDeleted
+    event.
+
+    :ivar id: The event ID. Required.
+    :vartype id: str
+    :ivar timestamp: The time at which the event occurred. Required.
+    :vartype timestamp: ~datetime.datetime
+    :ivar action: The action that encompasses the provided event. Required.
+    :vartype action: str
+    :ivar location: The location of the event. Required.
+    :vartype location: str
+    :ivar target: The target of the event. Required.
+    :vartype target: ~azure.eventgrid.models.ContainerRegistryEventTarget
+    :ivar request: The request that generated the event.
+    :vartype request: ~azure.eventgrid.models.ContainerRegistryEventRequest
+    :ivar actor: The agent that initiated the event. For most situations, this could be from the
+     authorization context of the request.
+    :vartype actor: ~azure.eventgrid.models.ContainerRegistryEventActor
+    :ivar source: The registry node that generated the event. Put differently, while the actor
+     initiates the event, the source generates it.
+    :vartype source: ~azure.eventgrid.models.ContainerRegistryEventSource
+    :ivar connected_registry: The connected registry information if the event is generated by a
+     connected registry.
+    :vartype connected_registry: ~azure.eventgrid.models.ContainerRegistryEventConnectedRegistry
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        timestamp: datetime.datetime,
+        action: str,
+        location: str,
+        target: "_models.ContainerRegistryEventTarget",
+        request: Optional["_models.ContainerRegistryEventRequest"] = None,
+        actor: Optional["_models.ContainerRegistryEventActor"] = None,
+        source: Optional["_models.ContainerRegistryEventSource"] = None,
+        connected_registry: Optional["_models.ContainerRegistryEventConnectedRegistry"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerRegistryImagePushedEventData(ContainerRegistryEventData):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.ContainerRegistry.ImagePushed
+    event.
+
+    :ivar id: The event ID. Required.
+    :vartype id: str
+    :ivar timestamp: The time at which the event occurred. Required.
+    :vartype timestamp: ~datetime.datetime
+    :ivar action: The action that encompasses the provided event. Required.
+    :vartype action: str
+    :ivar location: The location of the event. Required.
+    :vartype location: str
+    :ivar target: The target of the event. Required.
+    :vartype target: ~azure.eventgrid.models.ContainerRegistryEventTarget
+    :ivar request: The request that generated the event.
+    :vartype request: ~azure.eventgrid.models.ContainerRegistryEventRequest
+    :ivar actor: The agent that initiated the event. For most situations, this could be from the
+     authorization context of the request.
+    :vartype actor: ~azure.eventgrid.models.ContainerRegistryEventActor
+    :ivar source: The registry node that generated the event. Put differently, while the actor
+     initiates the event, the source generates it.
+    :vartype source: ~azure.eventgrid.models.ContainerRegistryEventSource
+    :ivar connected_registry: The connected registry information if the event is generated by a
+     connected registry.
+    :vartype connected_registry: ~azure.eventgrid.models.ContainerRegistryEventConnectedRegistry
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        timestamp: datetime.datetime,
+        action: str,
+        location: str,
+        target: "_models.ContainerRegistryEventTarget",
+        request: Optional["_models.ContainerRegistryEventRequest"] = None,
+        actor: Optional["_models.ContainerRegistryEventActor"] = None,
+        source: Optional["_models.ContainerRegistryEventSource"] = None,
+        connected_registry: Optional["_models.ContainerRegistryEventConnectedRegistry"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerServiceClusterSupportEventData(_Model):
+    """Schema of common properties of cluster support events.
+
+    :ivar kubernetes_version: The Kubernetes version of the ManagedCluster resource. Required.
+    :vartype kubernetes_version: str
+    """
+
+    kubernetes_version: str = rest_field(
+        name="kubernetesVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Kubernetes version of the ManagedCluster resource. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kubernetes_version: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerServiceClusterSupportEndedEventData(
+    ContainerServiceClusterSupportEventData
+):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ContainerService.ClusterSupportEnded event.
+
+    :ivar kubernetes_version: The Kubernetes version of the ManagedCluster resource. Required.
+    :vartype kubernetes_version: str
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kubernetes_version: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerServiceClusterSupportEndingEventData(
+    ContainerServiceClusterSupportEventData
+):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ContainerService.ClusterSupportEnding event.
+
+    :ivar kubernetes_version: The Kubernetes version of the ManagedCluster resource. Required.
+    :vartype kubernetes_version: str
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kubernetes_version: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerServiceNewKubernetesVersionAvailableEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ContainerService.NewKubernetesVersionAvailable event.
+
+    :ivar latest_supported_kubernetes_version: The highest PATCH Kubernetes version for the highest
+     MINOR version supported by ManagedCluster resource. Required.
+    :vartype latest_supported_kubernetes_version: str
+    :ivar latest_stable_kubernetes_version: The highest PATCH Kubernetes version for the MINOR
+     version considered stable for the ManagedCluster resource. Required.
+    :vartype latest_stable_kubernetes_version: str
+    :ivar lowest_minor_kubernetes_version: The highest PATCH Kubernetes version for the lowest
+     applicable MINOR version available for the ManagedCluster resource. Required.
+    :vartype lowest_minor_kubernetes_version: str
+    :ivar latest_preview_kubernetes_version: The highest PATCH Kubernetes version considered
+     preview for the ManagedCluster resource. There might not be any version in preview at the time
+     of publishing the event.
+    :vartype latest_preview_kubernetes_version: str
+    """
+
+    latest_supported_kubernetes_version: str = rest_field(
+        name="latestSupportedKubernetesVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The highest PATCH Kubernetes version for the highest MINOR version supported by ManagedCluster
+     resource. Required."""
+    latest_stable_kubernetes_version: str = rest_field(
+        name="latestStableKubernetesVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The highest PATCH Kubernetes version for the MINOR version considered stable for the
+     ManagedCluster resource. Required."""
+    lowest_minor_kubernetes_version: str = rest_field(
+        name="lowestMinorKubernetesVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The highest PATCH Kubernetes version for the lowest applicable MINOR version available for the
+     ManagedCluster resource. Required."""
+    latest_preview_kubernetes_version: Optional[str] = rest_field(
+        name="latestPreviewKubernetesVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The highest PATCH Kubernetes version considered preview for the ManagedCluster resource. There
+     might not be any version in preview at the time of publishing the event."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        latest_supported_kubernetes_version: str,
+        latest_stable_kubernetes_version: str,
+        lowest_minor_kubernetes_version: str,
+        latest_preview_kubernetes_version: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerServiceNodePoolRollingEventData(_Model):
+    """Schema of common properties of node pool rolling events.
+
+    :ivar node_pool_name: The name of the node pool in the ManagedCluster resource. Required.
+    :vartype node_pool_name: str
+    """
+
+    node_pool_name: str = rest_field(name="nodePoolName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the node pool in the ManagedCluster resource. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        node_pool_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerServiceNodePoolRollingFailedEventData(
+    ContainerServiceNodePoolRollingEventData
+):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ContainerService.NodePoolRollingFailed event.
+
+    :ivar node_pool_name: The name of the node pool in the ManagedCluster resource. Required.
+    :vartype node_pool_name: str
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        node_pool_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerServiceNodePoolRollingStartedEventData(
+    ContainerServiceNodePoolRollingEventData
+):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ContainerService.NodePoolRollingStarted event.
+
+    :ivar node_pool_name: The name of the node pool in the ManagedCluster resource. Required.
+    :vartype node_pool_name: str
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        node_pool_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerServiceNodePoolRollingSucceededEventData(
+    ContainerServiceNodePoolRollingEventData
+):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ContainerService.NodePoolRollingSucceeded event.
+
+    :ivar node_pool_name: The name of the node pool in the ManagedCluster resource. Required.
+    :vartype node_pool_name: str
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        node_pool_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DataBoxCopyCompletedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.DataBox.CopyCompleted event.
+
+    :ivar serial_number: Serial Number of the device associated with the event. The list is comma
+     separated if more than one serial number is associated. Required.
+    :vartype serial_number: str
+    :ivar stage_name: Name of the current Stage. Required. Known values are: "CopyStarted",
+     "CopyCompleted", and "OrderCompleted".
+    :vartype stage_name: str or ~azure.eventgrid.models.DataBoxStageName
+    :ivar stage_time: The time at which the stage happened. Required.
+    :vartype stage_time: ~datetime.datetime
+    """
+
+    serial_number: str = rest_field(name="serialNumber", visibility=["read", "create", "update", "delete", "query"])
+    """Serial Number of the device associated with the event. The list is comma separated if more than
+     one serial number is associated. Required."""
+    stage_name: Union[str, "_models.DataBoxStageName"] = rest_field(
+        name="stageName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the current Stage. Required. Known values are: \"CopyStarted\", \"CopyCompleted\", and
+     \"OrderCompleted\"."""
+    stage_time: datetime.datetime = rest_field(
+        name="stageTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the stage happened. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        serial_number: str,
+        stage_name: Union[str, "_models.DataBoxStageName"],
+        stage_time: datetime.datetime,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DataBoxCopyStartedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.DataBox.CopyStarted event.
+
+    :ivar serial_number: Serial Number of the device associated with the event. The list is comma
+     separated if more than one serial number is associated. Required.
+    :vartype serial_number: str
+    :ivar stage_name: Name of the current Stage. Required. Known values are: "CopyStarted",
+     "CopyCompleted", and "OrderCompleted".
+    :vartype stage_name: str or ~azure.eventgrid.models.DataBoxStageName
+    :ivar stage_time: The time at which the stage happened. Required.
+    :vartype stage_time: ~datetime.datetime
+    """
+
+    serial_number: str = rest_field(name="serialNumber", visibility=["read", "create", "update", "delete", "query"])
+    """Serial Number of the device associated with the event. The list is comma separated if more than
+     one serial number is associated. Required."""
+    stage_name: Union[str, "_models.DataBoxStageName"] = rest_field(
+        name="stageName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the current Stage. Required. Known values are: \"CopyStarted\", \"CopyCompleted\", and
+     \"OrderCompleted\"."""
+    stage_time: datetime.datetime = rest_field(
+        name="stageTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the stage happened. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        serial_number: str,
+        stage_name: Union[str, "_models.DataBoxStageName"],
+        stage_time: datetime.datetime,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DataBoxOrderCompletedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.DataBox.OrderCompleted event.
+
+    :ivar serial_number: Serial Number of the device associated with the event. The list is comma
+     separated if more than one serial number is associated. Required.
+    :vartype serial_number: str
+    :ivar stage_name: Name of the current Stage. Required. Known values are: "CopyStarted",
+     "CopyCompleted", and "OrderCompleted".
+    :vartype stage_name: str or ~azure.eventgrid.models.DataBoxStageName
+    :ivar stage_time: The time at which the stage happened. Required.
+    :vartype stage_time: ~datetime.datetime
+    """
+
+    serial_number: str = rest_field(name="serialNumber", visibility=["read", "create", "update", "delete", "query"])
+    """Serial Number of the device associated with the event. The list is comma separated if more than
+     one serial number is associated. Required."""
+    stage_name: Union[str, "_models.DataBoxStageName"] = rest_field(
+        name="stageName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the current Stage. Required. Known values are: \"CopyStarted\", \"CopyCompleted\", and
+     \"OrderCompleted\"."""
+    stage_time: datetime.datetime = rest_field(
+        name="stageTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the stage happened. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        serial_number: str,
+        stage_name: Union[str, "_models.DataBoxStageName"],
+        stage_time: datetime.datetime,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DeviceConnectionStateEventInfo(_Model):
+    """Information about the device connection state event.
+
+    :ivar sequence_number: Sequence number is string representation of a hexadecimal number. string
+     compare can be used to identify the larger number because both in ASCII and HEX numbers come
+     after alphabets. If you are converting the string to hex, then the number is a 256 bit number.
+     Required.
+    :vartype sequence_number: str
+    """
+
+    sequence_number: str = rest_field(name="sequenceNumber", visibility=["read", "create", "update", "delete", "query"])
+    """Sequence number is string representation of a hexadecimal number. string compare can be used to
+     identify the larger number because both in ASCII and HEX numbers come after alphabets. If you
+     are converting the string to hex, then the number is a 256 bit number. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        sequence_number: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DeviceConnectionStateEventProperties(_Model):
+    """Schema of the Data property of an EventGridEvent for a device connection state event
+    (DeviceConnected, DeviceDisconnected).
+
+    :ivar device_id: The unique identifier of the device. This case-sensitive string can be up to
+     128 characters long, and supports ASCII 7-bit alphanumeric characters plus the following
+     special characters: - : . + % _ &#35; * ? ! ( ) , = ``@`` ; $ '. Required.
+    :vartype device_id: str
+    :ivar module_id: The unique identifier of the module. This case-sensitive string can be up to
+     128 characters long, and supports ASCII 7-bit alphanumeric characters plus the following
+     special characters: - : . + % _ &#35; * ? ! ( ) , = ``@`` ; $ '.
+    :vartype module_id: str
+    :ivar hub_name: Name of the IoT Hub where the device was created or deleted. Required.
+    :vartype hub_name: str
+    :ivar device_connection_state_event_info: Information about the device connection state event.
+     Required.
+    :vartype device_connection_state_event_info:
+     ~azure.eventgrid.models.DeviceConnectionStateEventInfo
+    """
+
+    device_id: str = rest_field(name="deviceId", visibility=["read", "create", "update", "delete", "query"])
+    """The unique identifier of the device. This case-sensitive string can be up to 128 characters
+     long, and supports ASCII 7-bit alphanumeric characters plus the following special characters: -
+     : . + % _ &#35; * ? ! ( ) , = ``@`` ; $ '. Required."""
+    module_id: Optional[str] = rest_field(name="moduleId", visibility=["read", "create", "update", "delete", "query"])
+    """The unique identifier of the module. This case-sensitive string can be up to 128 characters
+     long, and supports ASCII 7-bit alphanumeric characters plus the following special characters: -
+     : . + % _ &#35; * ? ! ( ) , = ``@`` ; $ '."""
+    hub_name: str = rest_field(name="hubName", visibility=["read", "create", "update", "delete", "query"])
+    """Name of the IoT Hub where the device was created or deleted. Required."""
+    device_connection_state_event_info: "_models.DeviceConnectionStateEventInfo" = rest_field(
+        name="deviceConnectionStateEventInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Information about the device connection state event. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        device_id: str,
+        hub_name: str,
+        device_connection_state_event_info: "_models.DeviceConnectionStateEventInfo",
+        module_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DeviceLifeCycleEventProperties(_Model):
+    """Schema of the Data property of an EventGridEvent for a device life cycle event (DeviceCreated,
+    DeviceDeleted).
+
+    :ivar device_id: The unique identifier of the device. This case-sensitive string can be up to
+     128 characters long, and supports ASCII 7-bit alphanumeric characters plus the following
+     special characters: - : . + % _ &#35; * ? ! ( ) , = ``@`` ; $ '. Required.
+    :vartype device_id: str
+    :ivar hub_name: Name of the IoT Hub where the device was created or deleted. Required.
+    :vartype hub_name: str
+    :ivar twin: Information about the device twin, which is the cloud representation of application
+     device metadata. Required.
+    :vartype twin: ~azure.eventgrid.models.DeviceTwinInfo
+    """
+
+    device_id: str = rest_field(name="deviceId", visibility=["read", "create", "update", "delete", "query"])
+    """The unique identifier of the device. This case-sensitive string can be up to 128 characters
+     long, and supports ASCII 7-bit alphanumeric characters plus the following special characters: -
+     : . + % _ &#35; * ? ! ( ) , = ``@`` ; $ '. Required."""
+    hub_name: str = rest_field(name="hubName", visibility=["read", "create", "update", "delete", "query"])
+    """Name of the IoT Hub where the device was created or deleted. Required."""
+    twin: "_models.DeviceTwinInfo" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Information about the device twin, which is the cloud representation of application device
+     metadata. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        device_id: str,
+        hub_name: str,
+        twin: "_models.DeviceTwinInfo",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DeviceTelemetryEventProperties(_Model):
+    """Schema of the Data property of an EventGridEvent for a device telemetry event
+    (DeviceTelemetry).
+
+    :ivar body: The content of the message from the device. Required.
+    :vartype body: dict[str, any]
+    :ivar properties: Application properties are user-defined strings that can be added to the
+     message. These fields are optional. Required.
+    :vartype properties: dict[str, str]
+    :ivar system_properties: System properties help identify contents and source of the messages.
+     Required.
+    :vartype system_properties: dict[str, str]
+    """
+
+    body: Dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The content of the message from the device. Required."""
+    properties: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Application properties are user-defined strings that can be added to the message. These fields
+     are optional. Required."""
+    system_properties: Dict[str, str] = rest_field(
+        name="systemProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """System properties help identify contents and source of the messages. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        body: Dict[str, Any],
+        properties: Dict[str, str],
+        system_properties: Dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DeviceTwinInfo(_Model):
+    """Information about the device twin, which is the cloud representation of application device
+    metadata.
+
+    :ivar authentication_type: Authentication type used for this device: either SAS, SelfSigned, or
+     CertificateAuthority. Required.
+    :vartype authentication_type: str
+    :ivar cloud_to_device_message_count: Count of cloud to device messages sent to this device.
+     Required.
+    :vartype cloud_to_device_message_count: float
+    :ivar connection_state: Whether the device is connected or disconnected. Required.
+    :vartype connection_state: str
+    :ivar device_id: The unique identifier of the device twin. Required.
+    :vartype device_id: str
+    :ivar etag: A piece of information that describes the content of the device twin. Each etag is
+     guaranteed to be unique per device twin. Required.
+    :vartype etag: str
+    :ivar last_activity_time: The ISO8601 timestamp of the last activity. Required.
+    :vartype last_activity_time: str
+    :ivar properties: Properties JSON element. Required.
+    :vartype properties: ~azure.eventgrid.models.DeviceTwinInfoProperties
+    :ivar status: Whether the device twin is enabled or disabled. Required.
+    :vartype status: str
+    :ivar status_update_time: The ISO8601 timestamp of the last device twin status update.
+     Required.
+    :vartype status_update_time: str
+    :ivar version: An integer that is incremented by one each time the device twin is updated.
+     Required.
+    :vartype version: float
+    :ivar x509_thumbprint: The thumbprint is a unique value for the x509 certificate, commonly used
+     to find a particular certificate in a certificate store. The thumbprint is dynamically
+     generated using the SHA1 algorithm, and does not physically exist in the certificate. Required.
+    :vartype x509_thumbprint: ~azure.eventgrid.models.DeviceTwinInfoX509Thumbprint
+    """
+
+    authentication_type: str = rest_field(
+        name="authenticationType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Authentication type used for this device: either SAS, SelfSigned, or CertificateAuthority.
+     Required."""
+    cloud_to_device_message_count: float = rest_field(
+        name="cloudToDeviceMessageCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Count of cloud to device messages sent to this device. Required."""
+    connection_state: str = rest_field(
+        name="connectionState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the device is connected or disconnected. Required."""
+    device_id: str = rest_field(name="deviceId", visibility=["read", "create", "update", "delete", "query"])
+    """The unique identifier of the device twin. Required."""
+    etag: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A piece of information that describes the content of the device twin. Each etag is guaranteed
+     to be unique per device twin. Required."""
+    last_activity_time: str = rest_field(
+        name="lastActivityTime", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ISO8601 timestamp of the last activity. Required."""
+    properties: "_models.DeviceTwinInfoProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties JSON element. Required."""
+    status: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether the device twin is enabled or disabled. Required."""
+    status_update_time: str = rest_field(
+        name="statusUpdateTime", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ISO8601 timestamp of the last device twin status update. Required."""
+    version: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An integer that is incremented by one each time the device twin is updated. Required."""
+    x509_thumbprint: "_models.DeviceTwinInfoX509Thumbprint" = rest_field(
+        name="x509Thumbprint", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The thumbprint is a unique value for the x509 certificate, commonly used to find a particular
+     certificate in a certificate store. The thumbprint is dynamically generated using the SHA1
+     algorithm, and does not physically exist in the certificate. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        authentication_type: str,
+        cloud_to_device_message_count: float,
+        connection_state: str,
+        device_id: str,
+        etag: str,
+        last_activity_time: str,
+        properties: "_models.DeviceTwinInfoProperties",
+        status: str,
+        status_update_time: str,
+        version: float,
+        x509_thumbprint: "_models.DeviceTwinInfoX509Thumbprint",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DeviceTwinInfoProperties(_Model):
+    """Properties JSON element.
+
+    :ivar desired: A portion of the properties that can be written only by the application
+     back-end, and read by the device. Required.
+    :vartype desired: ~azure.eventgrid.models.DeviceTwinProperties
+    :ivar reported: A portion of the properties that can be written only by the device, and read by
+     the application back-end. Required.
+    :vartype reported: ~azure.eventgrid.models.DeviceTwinProperties
+    """
+
+    desired: "_models.DeviceTwinProperties" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A portion of the properties that can be written only by the application back-end, and read by
+     the device. Required."""
+    reported: "_models.DeviceTwinProperties" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A portion of the properties that can be written only by the device, and read by the application
+     back-end. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        desired: "_models.DeviceTwinProperties",
+        reported: "_models.DeviceTwinProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DeviceTwinInfoX509Thumbprint(_Model):
+    """The thumbprint is a unique value for the x509 certificate, commonly used to find a particular
+    certificate in a certificate store. The thumbprint is dynamically generated using the SHA1
+    algorithm, and does not physically exist in the certificate.
+
+    :ivar primary_thumbprint: Primary thumbprint for the x509 certificate. Required.
+    :vartype primary_thumbprint: str
+    :ivar secondary_thumbprint: Secondary thumbprint for the x509 certificate. Required.
+    :vartype secondary_thumbprint: str
+    """
+
+    primary_thumbprint: str = rest_field(
+        name="primaryThumbprint", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Primary thumbprint for the x509 certificate. Required."""
+    secondary_thumbprint: str = rest_field(
+        name="secondaryThumbprint", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Secondary thumbprint for the x509 certificate. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        primary_thumbprint: str,
+        secondary_thumbprint: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DeviceTwinMetadata(_Model):
+    """Metadata information for the properties JSON document.
+
+    :ivar last_updated: The ISO8601 timestamp of the last time the properties were updated.
+     Required.
+    :vartype last_updated: str
+    """
+
+    last_updated: str = rest_field(name="lastUpdated", visibility=["read", "create", "update", "delete", "query"])
+    """The ISO8601 timestamp of the last time the properties were updated. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        last_updated: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DeviceTwinProperties(_Model):
+    """A portion of the properties that can be written only by the application back-end, and read by
+    the device.
+
+    :ivar metadata: Metadata information for the properties JSON document. Required.
+    :vartype metadata: ~azure.eventgrid.models.DeviceTwinMetadata
+    :ivar version: Version of device twin properties. Required.
+    :vartype version: float
+    """
+
+    metadata: "_models.DeviceTwinMetadata" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Metadata information for the properties JSON document. Required."""
+    version: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Version of device twin properties. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        metadata: "_models.DeviceTwinMetadata",
+        version: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EdgeSolutionVersionPublishedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Edge.SolutionVersionPublished
+    event.
+
+    :ivar external_validation_id: A GUID to uniquely track External Solution Validation. Required.
+    :vartype external_validation_id: str
+    :ivar target_id: ARM ID of the Target resource. Required.
+    :vartype target_id: str
+    :ivar solution_template_id: ARM ID of the Solution Template resource. Required.
+    :vartype solution_template_id: str
+    :ivar solution_template_version_id: ARM ID of the Solution Template Version resource. Required.
+    :vartype solution_template_version_id: str
+    :ivar solution_version_id: ARM ID of the Solution Version resource. Required.
+    :vartype solution_version_id: str
+    :ivar api_version: API Version supported for the resources. Required.
+    :vartype api_version: str
+    :ivar callback_url: Direct URL to callback for updating validation status. Required.
+    :vartype callback_url: str
+    """
+
+    external_validation_id: str = rest_field(
+        name="externalValidationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A GUID to uniquely track External Solution Validation. Required."""
+    target_id: str = rest_field(name="targetId", visibility=["read", "create", "update", "delete", "query"])
+    """ARM ID of the Target resource. Required."""
+    solution_template_id: str = rest_field(
+        name="solutionTemplateId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM ID of the Solution Template resource. Required."""
+    solution_template_version_id: str = rest_field(
+        name="solutionTemplateVersionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM ID of the Solution Template Version resource. Required."""
+    solution_version_id: str = rest_field(
+        name="solutionVersionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM ID of the Solution Version resource. Required."""
+    api_version: str = rest_field(name="apiVersion", visibility=["read", "create", "update", "delete", "query"])
+    """API Version supported for the resources. Required."""
+    callback_url: str = rest_field(name="callbackUrl", visibility=["read", "create", "update", "delete", "query"])
+    """Direct URL to callback for updating validation status. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        external_validation_id: str,
+        target_id: str,
+        solution_template_id: str,
+        solution_template_version_id: str,
+        solution_version_id: str,
+        api_version: str,
+        callback_url: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EventGridMQTTClientEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for MQTT Client state changes.
+
+    :ivar client_authentication_name: Unique identifier for the MQTT client that the client
+     presents to the service
+     for authentication. This case-sensitive string can be up to 128 characters
+     long, and supports UTF-8 characters. Required.
+    :vartype client_authentication_name: str
+    :ivar client_name: Name of the client resource in the Event Grid namespace.
+    :vartype client_name: str
+    :ivar namespace_name: Name of the Event Grid namespace where the MQTT client was created or
+     updated. Required.
+    :vartype namespace_name: str
+    """
+
+    client_authentication_name: str = rest_field(
+        name="clientAuthenticationName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Unique identifier for the MQTT client that the client presents to the service
+     for authentication. This case-sensitive string can be up to 128 characters
+     long, and supports UTF-8 characters. Required."""
+    client_name: Optional[str] = rest_field(
+        name="clientName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the client resource in the Event Grid namespace."""
+    namespace_name: str = rest_field(name="namespaceName", visibility=["read", "create", "update", "delete", "query"])
+    """Name of the Event Grid namespace where the MQTT client was created or updated. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        client_authentication_name: str,
+        namespace_name: str,
+        client_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EventGridMQTTClientCreatedOrUpdatedEventData(EventGridMQTTClientEventData):  # pylint: disable=name-too-long
+    """Event data for Microsoft.EventGrid.MQTTClientCreatedOrUpdated event.
+
+    :ivar client_authentication_name: Unique identifier for the MQTT client that the client
+     presents to the service
+     for authentication. This case-sensitive string can be up to 128 characters
+     long, and supports UTF-8 characters. Required.
+    :vartype client_authentication_name: str
+    :ivar client_name: Name of the client resource in the Event Grid namespace.
+    :vartype client_name: str
+    :ivar namespace_name: Name of the Event Grid namespace where the MQTT client was created or
+     updated. Required.
+    :vartype namespace_name: str
+    :ivar state: Configured state of the client. The value could be Enabled or Disabled. Required.
+     Known values are: "Enabled" and "Disabled".
+    :vartype state: str or ~azure.eventgrid.models.EventGridMQTTClientState
+    :ivar created_on: Time the client resource is created based on the provider's UTC time.
+     Required.
+    :vartype created_on: ~datetime.datetime
+    :ivar updated_on: Time the client resource is last updated based on the provider's UTC time. If
+     the client resource was never updated, this value is identical to the value of
+     the 'createdOn' property. Required.
+    :vartype updated_on: ~datetime.datetime
+    :ivar attributes: The key-value attributes that are assigned to the client resource. Required.
+    :vartype attributes: dict[str, str]
+    """
+
+    state: Union[str, "_models.EventGridMQTTClientState"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configured state of the client. The value could be Enabled or Disabled. Required. Known values
+     are: \"Enabled\" and \"Disabled\"."""
+    created_on: datetime.datetime = rest_field(
+        name="createdOn", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Time the client resource is created based on the provider's UTC time. Required."""
+    updated_on: datetime.datetime = rest_field(
+        name="updatedOn", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Time the client resource is last updated based on the provider's UTC time. If
+     the client resource was never updated, this value is identical to the value of
+     the 'createdOn' property. Required."""
+    attributes: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The key-value attributes that are assigned to the client resource. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        client_authentication_name: str,
+        namespace_name: str,
+        state: Union[str, "_models.EventGridMQTTClientState"],
+        created_on: datetime.datetime,
+        updated_on: datetime.datetime,
+        attributes: Dict[str, str],
+        client_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EventGridMQTTClientDeletedEventData(EventGridMQTTClientEventData):
+    """Event data for Microsoft.EventGrid.MQTTClientDeleted event.
+
+    :ivar client_authentication_name: Unique identifier for the MQTT client that the client
+     presents to the service
+     for authentication. This case-sensitive string can be up to 128 characters
+     long, and supports UTF-8 characters. Required.
+    :vartype client_authentication_name: str
+    :ivar client_name: Name of the client resource in the Event Grid namespace.
+    :vartype client_name: str
+    :ivar namespace_name: Name of the Event Grid namespace where the MQTT client was created or
+     updated. Required.
+    :vartype namespace_name: str
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        client_authentication_name: str,
+        namespace_name: str,
+        client_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EventGridMQTTClientSessionConnectedEventData(EventGridMQTTClientEventData):  # pylint: disable=name-too-long
+    """Event data for Microsoft.EventGrid.MQTTClientSessionConnected event.
+
+    :ivar client_authentication_name: Unique identifier for the MQTT client that the client
+     presents to the service
+     for authentication. This case-sensitive string can be up to 128 characters
+     long, and supports UTF-8 characters. Required.
+    :vartype client_authentication_name: str
+    :ivar client_name: Name of the client resource in the Event Grid namespace.
+    :vartype client_name: str
+    :ivar namespace_name: Name of the Event Grid namespace where the MQTT client was created or
+     updated. Required.
+    :vartype namespace_name: str
+    :ivar client_session_name: Unique identifier for the MQTT client's session. This case-sensitive
+     string can
+     be up to 128 characters long, and supports UTF-8 characters. Required.
+    :vartype client_session_name: str
+    :ivar sequence_number: A number that helps indicate order of MQTT client session connected or
+     disconnected events. Latest event will have a sequence number that is higher
+     than the previous event. Required.
+    :vartype sequence_number: int
+    """
+
+    client_session_name: str = rest_field(
+        name="clientSessionName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Unique identifier for the MQTT client's session. This case-sensitive string can
+     be up to 128 characters long, and supports UTF-8 characters. Required."""
+    sequence_number: int = rest_field(name="sequenceNumber", visibility=["read", "create", "update", "delete", "query"])
+    """A number that helps indicate order of MQTT client session connected or
+     disconnected events. Latest event will have a sequence number that is higher
+     than the previous event. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        client_authentication_name: str,
+        namespace_name: str,
+        client_session_name: str,
+        sequence_number: int,
+        client_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EventGridMQTTClientSessionDisconnectedEventData(EventGridMQTTClientEventData):  # pylint: disable=name-too-long
+    """Event data for Microsoft.EventGrid.MQTTClientSessionDisconnected event.
+
+    :ivar client_authentication_name: Unique identifier for the MQTT client that the client
+     presents to the service
+     for authentication. This case-sensitive string can be up to 128 characters
+     long, and supports UTF-8 characters. Required.
+    :vartype client_authentication_name: str
+    :ivar client_name: Name of the client resource in the Event Grid namespace.
+    :vartype client_name: str
+    :ivar namespace_name: Name of the Event Grid namespace where the MQTT client was created or
+     updated. Required.
+    :vartype namespace_name: str
+    :ivar client_session_name: Unique identifier for the MQTT client's session. This case-sensitive
+     string can
+     be up to 128 characters long, and supports UTF-8 characters. Required.
+    :vartype client_session_name: str
+    :ivar sequence_number: A number that helps indicate order of MQTT client session connected or
+     disconnected events. Latest event will have a sequence number that is higher
+     than the previous event. Required.
+    :vartype sequence_number: int
+    :ivar disconnection_reason: Reason for the disconnection of the MQTT client's session. The
+     value could be
+     one of the values in the disconnection reasons table. Required. Known values are:
+     "ClientAuthenticationError", "ClientAuthorizationError", "ClientError",
+     "ClientInitiatedDisconnect", "ConnectionLost", "IpForbidden", "QuotaExceeded", "ServerError",
+     "ServerInitiatedDisconnect", "SessionOverflow", and "SessionTakenOver".
+    :vartype disconnection_reason: str or
+     ~azure.eventgrid.models.EventGridMQTTClientDisconnectionReason
+    """
+
+    client_session_name: str = rest_field(
+        name="clientSessionName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Unique identifier for the MQTT client's session. This case-sensitive string can
+     be up to 128 characters long, and supports UTF-8 characters. Required."""
+    sequence_number: int = rest_field(name="sequenceNumber", visibility=["read", "create", "update", "delete", "query"])
+    """A number that helps indicate order of MQTT client session connected or
+     disconnected events. Latest event will have a sequence number that is higher
+     than the previous event. Required."""
+    disconnection_reason: Union[str, "_models.EventGridMQTTClientDisconnectionReason"] = rest_field(
+        name="disconnectionReason", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reason for the disconnection of the MQTT client's session. The value could be
+     one of the values in the disconnection reasons table. Required. Known values are:
+     \"ClientAuthenticationError\", \"ClientAuthorizationError\", \"ClientError\",
+     \"ClientInitiatedDisconnect\", \"ConnectionLost\", \"IpForbidden\", \"QuotaExceeded\",
+     \"ServerError\", \"ServerInitiatedDisconnect\", \"SessionOverflow\", and \"SessionTakenOver\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        client_authentication_name: str,
+        namespace_name: str,
+        client_session_name: str,
+        sequence_number: int,
+        disconnection_reason: Union[str, "_models.EventGridMQTTClientDisconnectionReason"],
+        client_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EventHubCaptureFileCreatedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.EventHub.CaptureFileCreated
+    event.
+
+    :ivar file_url: The path to the capture file. Required.
+    :vartype file_url: str
+    :ivar file_type: The file type of the capture file. Required.
+    :vartype file_type: str
+    :ivar partition_id: The shard ID. Required.
+    :vartype partition_id: str
+    :ivar size_in_bytes: The file size. Required.
+    :vartype size_in_bytes: int
+    :ivar event_count: The number of events in the file. Required.
+    :vartype event_count: int
+    :ivar first_sequence_number: The smallest sequence number from the queue. Required.
+    :vartype first_sequence_number: int
+    :ivar last_sequence_number: The last sequence number from the queue. Required.
+    :vartype last_sequence_number: int
+    :ivar first_enqueue_time: The first time from the queue. Required.
+    :vartype first_enqueue_time: ~datetime.datetime
+    :ivar last_enqueue_time: The last time from the queue. Required.
+    :vartype last_enqueue_time: ~datetime.datetime
+    """
+
+    file_url: str = rest_field(name="fileUrl", visibility=["read", "create", "update", "delete", "query"])
+    """The path to the capture file. Required."""
+    file_type: str = rest_field(name="fileType", visibility=["read", "create", "update", "delete", "query"])
+    """The file type of the capture file. Required."""
+    partition_id: str = rest_field(name="partitionId", visibility=["read", "create", "update", "delete", "query"])
+    """The shard ID. Required."""
+    size_in_bytes: int = rest_field(name="sizeInBytes", visibility=["read", "create", "update", "delete", "query"])
+    """The file size. Required."""
+    event_count: int = rest_field(name="eventCount", visibility=["read", "create", "update", "delete", "query"])
+    """The number of events in the file. Required."""
+    first_sequence_number: int = rest_field(
+        name="firstSequenceNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The smallest sequence number from the queue. Required."""
+    last_sequence_number: int = rest_field(
+        name="lastSequenceNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The last sequence number from the queue. Required."""
+    first_enqueue_time: datetime.datetime = rest_field(
+        name="firstEnqueueTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The first time from the queue. Required."""
+    last_enqueue_time: datetime.datetime = rest_field(
+        name="lastEnqueueTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The last time from the queue. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        file_url: str,
+        file_type: str,
+        partition_id: str,
+        size_in_bytes: int,
+        event_count: int,
+        first_sequence_number: int,
+        last_sequence_number: int,
+        first_enqueue_time: datetime.datetime,
+        last_enqueue_time: datetime.datetime,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class HealthcareDicomImageCreatedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.HealthcareApis.DicomImageCreated event.
+
+    :ivar partition_name: Data partition name. Required.
+    :vartype partition_name: str
+    :ivar image_study_instance_uid: Unique identifier for the Study. Required.
+    :vartype image_study_instance_uid: str
+    :ivar image_series_instance_uid: Unique identifier for the Series. Required.
+    :vartype image_series_instance_uid: str
+    :ivar image_sop_instance_uid: Unique identifier for the DICOM Image. Required.
+    :vartype image_sop_instance_uid: str
+    :ivar service_host_name: Domain name of the DICOM account for this image. Required.
+    :vartype service_host_name: str
+    :ivar sequence_number: Sequence number of the DICOM Service within Azure Health Data Services.
+     It is unique for every image creation and deletion within the service. Required.
+    :vartype sequence_number: int
+    """
+
+    partition_name: str = rest_field(name="partitionName", visibility=["read", "create", "update", "delete", "query"])
+    """Data partition name. Required."""
+    image_study_instance_uid: str = rest_field(
+        name="imageStudyInstanceUid", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Unique identifier for the Study. Required."""
+    image_series_instance_uid: str = rest_field(
+        name="imageSeriesInstanceUid", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Unique identifier for the Series. Required."""
+    image_sop_instance_uid: str = rest_field(
+        name="imageSopInstanceUid", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Unique identifier for the DICOM Image. Required."""
+    service_host_name: str = rest_field(
+        name="serviceHostName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Domain name of the DICOM account for this image. Required."""
+    sequence_number: int = rest_field(name="sequenceNumber", visibility=["read", "create", "update", "delete", "query"])
+    """Sequence number of the DICOM Service within Azure Health Data Services. It is unique for every
+     image creation and deletion within the service. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        partition_name: str,
+        image_study_instance_uid: str,
+        image_series_instance_uid: str,
+        image_sop_instance_uid: str,
+        service_host_name: str,
+        sequence_number: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class HealthcareDicomImageDeletedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.HealthcareApis.DicomImageDeleted event.
+
+    :ivar partition_name: Data partition name. Required.
+    :vartype partition_name: str
+    :ivar image_study_instance_uid: Unique identifier for the Study. Required.
+    :vartype image_study_instance_uid: str
+    :ivar image_series_instance_uid: Unique identifier for the Series. Required.
+    :vartype image_series_instance_uid: str
+    :ivar image_sop_instance_uid: Unique identifier for the DICOM Image. Required.
+    :vartype image_sop_instance_uid: str
+    :ivar service_host_name: Host name of the DICOM account for this image. Required.
+    :vartype service_host_name: str
+    :ivar sequence_number: Sequence number of the DICOM Service within Azure Health Data Services.
+     It is unique for every image creation and deletion within the service. Required.
+    :vartype sequence_number: int
+    """
+
+    partition_name: str = rest_field(name="partitionName", visibility=["read", "create", "update", "delete", "query"])
+    """Data partition name. Required."""
+    image_study_instance_uid: str = rest_field(
+        name="imageStudyInstanceUid", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Unique identifier for the Study. Required."""
+    image_series_instance_uid: str = rest_field(
+        name="imageSeriesInstanceUid", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Unique identifier for the Series. Required."""
+    image_sop_instance_uid: str = rest_field(
+        name="imageSopInstanceUid", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Unique identifier for the DICOM Image. Required."""
+    service_host_name: str = rest_field(
+        name="serviceHostName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Host name of the DICOM account for this image. Required."""
+    sequence_number: int = rest_field(name="sequenceNumber", visibility=["read", "create", "update", "delete", "query"])
+    """Sequence number of the DICOM Service within Azure Health Data Services. It is unique for every
+     image creation and deletion within the service. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        partition_name: str,
+        image_study_instance_uid: str,
+        image_series_instance_uid: str,
+        image_sop_instance_uid: str,
+        service_host_name: str,
+        sequence_number: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class HealthcareDicomImageUpdatedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.HealthcareApis.DicomImageUpdated event.
+
+    :ivar partition_name: Data partition name. Required.
+    :vartype partition_name: str
+    :ivar image_study_instance_uid: Unique identifier for the Study. Required.
+    :vartype image_study_instance_uid: str
+    :ivar image_series_instance_uid: Unique identifier for the Series. Required.
+    :vartype image_series_instance_uid: str
+    :ivar image_sop_instance_uid: Unique identifier for the DICOM Image. Required.
+    :vartype image_sop_instance_uid: str
+    :ivar service_host_name: Domain name of the DICOM account for this image. Required.
+    :vartype service_host_name: str
+    :ivar sequence_number: Sequence number of the DICOM Service within Azure Health Data Services.
+     It is unique for every image creation, updation and deletion within the service. Required.
+    :vartype sequence_number: int
+    """
+
+    partition_name: str = rest_field(name="partitionName", visibility=["read", "create", "update", "delete", "query"])
+    """Data partition name. Required."""
+    image_study_instance_uid: str = rest_field(
+        name="imageStudyInstanceUid", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Unique identifier for the Study. Required."""
+    image_series_instance_uid: str = rest_field(
+        name="imageSeriesInstanceUid", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Unique identifier for the Series. Required."""
+    image_sop_instance_uid: str = rest_field(
+        name="imageSopInstanceUid", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Unique identifier for the DICOM Image. Required."""
+    service_host_name: str = rest_field(
+        name="serviceHostName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Domain name of the DICOM account for this image. Required."""
+    sequence_number: int = rest_field(name="sequenceNumber", visibility=["read", "create", "update", "delete", "query"])
+    """Sequence number of the DICOM Service within Azure Health Data Services. It is unique for every
+     image creation, updation and deletion within the service. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        partition_name: str,
+        image_study_instance_uid: str,
+        image_series_instance_uid: str,
+        image_sop_instance_uid: str,
+        service_host_name: str,
+        sequence_number: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class HealthcareFhirResourceCreatedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.HealthcareApis.FhirResourceCreated event.
+
+    :ivar fhir_resource_type: Type of HL7 FHIR resource. Required. Known values are: "Account",
+     "ActivityDefinition", "AdverseEvent", "AllergyIntolerance", "Appointment",
+     "AppointmentResponse", "AuditEvent", "Basic", "Binary", "BiologicallyDerivedProduct",
+     "BodySite", "BodyStructure", "Bundle", "CapabilityStatement", "CarePlan", "CareTeam",
+     "CatalogEntry", "ChargeItem", "ChargeItemDefinition", "Claim", "ClaimResponse",
+     "ClinicalImpression", "CodeSystem", "Communication", "CommunicationRequest",
+     "CompartmentDefinition", "Composition", "ConceptMap", "Condition", "Consent", "Contract",
+     "Coverage", "CoverageEligibilityRequest", "CoverageEligibilityResponse", "DataElement",
+     "DetectedIssue", "Device", "DeviceComponent", "DeviceDefinition", "DeviceMetric",
+     "DeviceRequest", "DeviceUseStatement", "DiagnosticReport", "DocumentManifest",
+     "DocumentReference", "DomainResource", "EffectEvidenceSynthesis", "EligibilityRequest",
+     "EligibilityResponse", "Encounter", "Endpoint", "EnrollmentRequest", "EnrollmentResponse",
+     "EpisodeOfCare", "EventDefinition", "Evidence", "EvidenceVariable", "ExampleScenario",
+     "ExpansionProfile", "ExplanationOfBenefit", "FamilyMemberHistory", "Flag", "Goal",
+     "GraphDefinition", "Group", "GuidanceResponse", "HealthcareService", "ImagingManifest",
+     "ImagingStudy", "Immunization", "ImmunizationEvaluation", "ImmunizationRecommendation",
+     "ImplementationGuide", "InsurancePlan", "Invoice", "Library", "Linkage", "List", "Location",
+     "Measure", "MeasureReport", "Media", "Medication", "MedicationAdministration",
+     "MedicationDispense", "MedicationKnowledge", "MedicationRequest", "MedicationStatement",
+     "MedicinalProduct", "MedicinalProductAuthorization", "MedicinalProductContraindication",
+     "MedicinalProductIndication", "MedicinalProductIngredient", "MedicinalProductInteraction",
+     "MedicinalProductManufactured", "MedicinalProductPackaged", "MedicinalProductPharmaceutical",
+     "MedicinalProductUndesirableEffect", "MessageDefinition", "MessageHeader", "MolecularSequence",
+     "NamingSystem", "NutritionOrder", "Observation", "ObservationDefinition",
+     "OperationDefinition", "OperationOutcome", "Organization", "OrganizationAffiliation",
+     "Parameters", "Patient", "PaymentNotice", "PaymentReconciliation", "Person", "PlanDefinition",
+     "Practitioner", "PractitionerRole", "Procedure", "ProcedureRequest", "ProcessRequest",
+     "ProcessResponse", "Provenance", "Questionnaire", "QuestionnaireResponse", "ReferralRequest",
+     "RelatedPerson", "RequestGroup", "ResearchDefinition", "ResearchElementDefinition",
+     "ResearchStudy", "ResearchSubject", "Resource", "RiskAssessment", "RiskEvidenceSynthesis",
+     "Schedule", "SearchParameter", "Sequence", "ServiceDefinition", "ServiceRequest", "Slot",
+     "Specimen", "SpecimenDefinition", "StructureDefinition", "StructureMap", "Subscription",
+     "Substance", "SubstanceNucleicAcid", "SubstancePolymer", "SubstanceProtein",
+     "SubstanceReferenceInformation", "SubstanceSourceMaterial", "SubstanceSpecification",
+     "SupplyDelivery", "SupplyRequest", "Task", "TerminologyCapabilities", "TestReport",
+     "TestScript", "ValueSet", "VerificationResult", and "VisionPrescription".
+    :vartype fhir_resource_type: str or ~azure.eventgrid.models.HealthcareFhirResourceType
+    :ivar fhir_service_host_name: Domain name of FHIR account for this resource. Required.
+    :vartype fhir_service_host_name: str
+    :ivar fhir_resource_id: Id of HL7 FHIR resource. Required.
+    :vartype fhir_resource_id: str
+    :ivar fhir_resource_version_id: VersionId of HL7 FHIR resource. It changes when the resource is
+     created, updated, or deleted(soft-deletion). Required.
+    :vartype fhir_resource_version_id: int
+    """
+
+    fhir_resource_type: Union[str, "_models.HealthcareFhirResourceType"] = rest_field(
+        name="FhirResourceType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of HL7 FHIR resource. Required. Known values are: \"Account\", \"ActivityDefinition\",
+     \"AdverseEvent\", \"AllergyIntolerance\", \"Appointment\", \"AppointmentResponse\",
+     \"AuditEvent\", \"Basic\", \"Binary\", \"BiologicallyDerivedProduct\", \"BodySite\",
+     \"BodyStructure\", \"Bundle\", \"CapabilityStatement\", \"CarePlan\", \"CareTeam\",
+     \"CatalogEntry\", \"ChargeItem\", \"ChargeItemDefinition\", \"Claim\", \"ClaimResponse\",
+     \"ClinicalImpression\", \"CodeSystem\", \"Communication\", \"CommunicationRequest\",
+     \"CompartmentDefinition\", \"Composition\", \"ConceptMap\", \"Condition\", \"Consent\",
+     \"Contract\", \"Coverage\", \"CoverageEligibilityRequest\", \"CoverageEligibilityResponse\",
+     \"DataElement\", \"DetectedIssue\", \"Device\", \"DeviceComponent\", \"DeviceDefinition\",
+     \"DeviceMetric\", \"DeviceRequest\", \"DeviceUseStatement\", \"DiagnosticReport\",
+     \"DocumentManifest\", \"DocumentReference\", \"DomainResource\", \"EffectEvidenceSynthesis\",
+     \"EligibilityRequest\", \"EligibilityResponse\", \"Encounter\", \"Endpoint\",
+     \"EnrollmentRequest\", \"EnrollmentResponse\", \"EpisodeOfCare\", \"EventDefinition\",
+     \"Evidence\", \"EvidenceVariable\", \"ExampleScenario\", \"ExpansionProfile\",
+     \"ExplanationOfBenefit\", \"FamilyMemberHistory\", \"Flag\", \"Goal\", \"GraphDefinition\",
+     \"Group\", \"GuidanceResponse\", \"HealthcareService\", \"ImagingManifest\", \"ImagingStudy\",
+     \"Immunization\", \"ImmunizationEvaluation\", \"ImmunizationRecommendation\",
+     \"ImplementationGuide\", \"InsurancePlan\", \"Invoice\", \"Library\", \"Linkage\", \"List\",
+     \"Location\", \"Measure\", \"MeasureReport\", \"Media\", \"Medication\",
+     \"MedicationAdministration\", \"MedicationDispense\", \"MedicationKnowledge\",
+     \"MedicationRequest\", \"MedicationStatement\", \"MedicinalProduct\",
+     \"MedicinalProductAuthorization\", \"MedicinalProductContraindication\",
+     \"MedicinalProductIndication\", \"MedicinalProductIngredient\",
+     \"MedicinalProductInteraction\", \"MedicinalProductManufactured\",
+     \"MedicinalProductPackaged\", \"MedicinalProductPharmaceutical\",
+     \"MedicinalProductUndesirableEffect\", \"MessageDefinition\", \"MessageHeader\",
+     \"MolecularSequence\", \"NamingSystem\", \"NutritionOrder\", \"Observation\",
+     \"ObservationDefinition\", \"OperationDefinition\", \"OperationOutcome\", \"Organization\",
+     \"OrganizationAffiliation\", \"Parameters\", \"Patient\", \"PaymentNotice\",
+     \"PaymentReconciliation\", \"Person\", \"PlanDefinition\", \"Practitioner\",
+     \"PractitionerRole\", \"Procedure\", \"ProcedureRequest\", \"ProcessRequest\",
+     \"ProcessResponse\", \"Provenance\", \"Questionnaire\", \"QuestionnaireResponse\",
+     \"ReferralRequest\", \"RelatedPerson\", \"RequestGroup\", \"ResearchDefinition\",
+     \"ResearchElementDefinition\", \"ResearchStudy\", \"ResearchSubject\", \"Resource\",
+     \"RiskAssessment\", \"RiskEvidenceSynthesis\", \"Schedule\", \"SearchParameter\", \"Sequence\",
+     \"ServiceDefinition\", \"ServiceRequest\", \"Slot\", \"Specimen\", \"SpecimenDefinition\",
+     \"StructureDefinition\", \"StructureMap\", \"Subscription\", \"Substance\",
+     \"SubstanceNucleicAcid\", \"SubstancePolymer\", \"SubstanceProtein\",
+     \"SubstanceReferenceInformation\", \"SubstanceSourceMaterial\", \"SubstanceSpecification\",
+     \"SupplyDelivery\", \"SupplyRequest\", \"Task\", \"TerminologyCapabilities\", \"TestReport\",
+     \"TestScript\", \"ValueSet\", \"VerificationResult\", and \"VisionPrescription\"."""
+    fhir_service_host_name: str = rest_field(
+        name="FhirServiceHostName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Domain name of FHIR account for this resource. Required."""
+    fhir_resource_id: str = rest_field(
+        name="FhirResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Id of HL7 FHIR resource. Required."""
+    fhir_resource_version_id: int = rest_field(
+        name="FhirResourceVersionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """VersionId of HL7 FHIR resource. It changes when the resource is created, updated, or
+     deleted(soft-deletion). Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        fhir_resource_type: Union[str, "_models.HealthcareFhirResourceType"],
+        fhir_service_host_name: str,
+        fhir_resource_id: str,
+        fhir_resource_version_id: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class HealthcareFhirResourceDeletedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.HealthcareApis.FhirResourceDeleted event.
+
+    :ivar fhir_resource_type: Type of HL7 FHIR resource. Required. Known values are: "Account",
+     "ActivityDefinition", "AdverseEvent", "AllergyIntolerance", "Appointment",
+     "AppointmentResponse", "AuditEvent", "Basic", "Binary", "BiologicallyDerivedProduct",
+     "BodySite", "BodyStructure", "Bundle", "CapabilityStatement", "CarePlan", "CareTeam",
+     "CatalogEntry", "ChargeItem", "ChargeItemDefinition", "Claim", "ClaimResponse",
+     "ClinicalImpression", "CodeSystem", "Communication", "CommunicationRequest",
+     "CompartmentDefinition", "Composition", "ConceptMap", "Condition", "Consent", "Contract",
+     "Coverage", "CoverageEligibilityRequest", "CoverageEligibilityResponse", "DataElement",
+     "DetectedIssue", "Device", "DeviceComponent", "DeviceDefinition", "DeviceMetric",
+     "DeviceRequest", "DeviceUseStatement", "DiagnosticReport", "DocumentManifest",
+     "DocumentReference", "DomainResource", "EffectEvidenceSynthesis", "EligibilityRequest",
+     "EligibilityResponse", "Encounter", "Endpoint", "EnrollmentRequest", "EnrollmentResponse",
+     "EpisodeOfCare", "EventDefinition", "Evidence", "EvidenceVariable", "ExampleScenario",
+     "ExpansionProfile", "ExplanationOfBenefit", "FamilyMemberHistory", "Flag", "Goal",
+     "GraphDefinition", "Group", "GuidanceResponse", "HealthcareService", "ImagingManifest",
+     "ImagingStudy", "Immunization", "ImmunizationEvaluation", "ImmunizationRecommendation",
+     "ImplementationGuide", "InsurancePlan", "Invoice", "Library", "Linkage", "List", "Location",
+     "Measure", "MeasureReport", "Media", "Medication", "MedicationAdministration",
+     "MedicationDispense", "MedicationKnowledge", "MedicationRequest", "MedicationStatement",
+     "MedicinalProduct", "MedicinalProductAuthorization", "MedicinalProductContraindication",
+     "MedicinalProductIndication", "MedicinalProductIngredient", "MedicinalProductInteraction",
+     "MedicinalProductManufactured", "MedicinalProductPackaged", "MedicinalProductPharmaceutical",
+     "MedicinalProductUndesirableEffect", "MessageDefinition", "MessageHeader", "MolecularSequence",
+     "NamingSystem", "NutritionOrder", "Observation", "ObservationDefinition",
+     "OperationDefinition", "OperationOutcome", "Organization", "OrganizationAffiliation",
+     "Parameters", "Patient", "PaymentNotice", "PaymentReconciliation", "Person", "PlanDefinition",
+     "Practitioner", "PractitionerRole", "Procedure", "ProcedureRequest", "ProcessRequest",
+     "ProcessResponse", "Provenance", "Questionnaire", "QuestionnaireResponse", "ReferralRequest",
+     "RelatedPerson", "RequestGroup", "ResearchDefinition", "ResearchElementDefinition",
+     "ResearchStudy", "ResearchSubject", "Resource", "RiskAssessment", "RiskEvidenceSynthesis",
+     "Schedule", "SearchParameter", "Sequence", "ServiceDefinition", "ServiceRequest", "Slot",
+     "Specimen", "SpecimenDefinition", "StructureDefinition", "StructureMap", "Subscription",
+     "Substance", "SubstanceNucleicAcid", "SubstancePolymer", "SubstanceProtein",
+     "SubstanceReferenceInformation", "SubstanceSourceMaterial", "SubstanceSpecification",
+     "SupplyDelivery", "SupplyRequest", "Task", "TerminologyCapabilities", "TestReport",
+     "TestScript", "ValueSet", "VerificationResult", and "VisionPrescription".
+    :vartype fhir_resource_type: str or ~azure.eventgrid.models.HealthcareFhirResourceType
+    :ivar fhir_service_host_name: Domain name of FHIR account for this resource. Required.
+    :vartype fhir_service_host_name: str
+    :ivar fhir_resource_id: Id of HL7 FHIR resource. Required.
+    :vartype fhir_resource_id: str
+    :ivar fhir_resource_version_id: VersionId of HL7 FHIR resource. It changes when the resource is
+     created, updated, or deleted(soft-deletion). Required.
+    :vartype fhir_resource_version_id: int
+    """
+
+    fhir_resource_type: Union[str, "_models.HealthcareFhirResourceType"] = rest_field(
+        name="FhirResourceType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of HL7 FHIR resource. Required. Known values are: \"Account\", \"ActivityDefinition\",
+     \"AdverseEvent\", \"AllergyIntolerance\", \"Appointment\", \"AppointmentResponse\",
+     \"AuditEvent\", \"Basic\", \"Binary\", \"BiologicallyDerivedProduct\", \"BodySite\",
+     \"BodyStructure\", \"Bundle\", \"CapabilityStatement\", \"CarePlan\", \"CareTeam\",
+     \"CatalogEntry\", \"ChargeItem\", \"ChargeItemDefinition\", \"Claim\", \"ClaimResponse\",
+     \"ClinicalImpression\", \"CodeSystem\", \"Communication\", \"CommunicationRequest\",
+     \"CompartmentDefinition\", \"Composition\", \"ConceptMap\", \"Condition\", \"Consent\",
+     \"Contract\", \"Coverage\", \"CoverageEligibilityRequest\", \"CoverageEligibilityResponse\",
+     \"DataElement\", \"DetectedIssue\", \"Device\", \"DeviceComponent\", \"DeviceDefinition\",
+     \"DeviceMetric\", \"DeviceRequest\", \"DeviceUseStatement\", \"DiagnosticReport\",
+     \"DocumentManifest\", \"DocumentReference\", \"DomainResource\", \"EffectEvidenceSynthesis\",
+     \"EligibilityRequest\", \"EligibilityResponse\", \"Encounter\", \"Endpoint\",
+     \"EnrollmentRequest\", \"EnrollmentResponse\", \"EpisodeOfCare\", \"EventDefinition\",
+     \"Evidence\", \"EvidenceVariable\", \"ExampleScenario\", \"ExpansionProfile\",
+     \"ExplanationOfBenefit\", \"FamilyMemberHistory\", \"Flag\", \"Goal\", \"GraphDefinition\",
+     \"Group\", \"GuidanceResponse\", \"HealthcareService\", \"ImagingManifest\", \"ImagingStudy\",
+     \"Immunization\", \"ImmunizationEvaluation\", \"ImmunizationRecommendation\",
+     \"ImplementationGuide\", \"InsurancePlan\", \"Invoice\", \"Library\", \"Linkage\", \"List\",
+     \"Location\", \"Measure\", \"MeasureReport\", \"Media\", \"Medication\",
+     \"MedicationAdministration\", \"MedicationDispense\", \"MedicationKnowledge\",
+     \"MedicationRequest\", \"MedicationStatement\", \"MedicinalProduct\",
+     \"MedicinalProductAuthorization\", \"MedicinalProductContraindication\",
+     \"MedicinalProductIndication\", \"MedicinalProductIngredient\",
+     \"MedicinalProductInteraction\", \"MedicinalProductManufactured\",
+     \"MedicinalProductPackaged\", \"MedicinalProductPharmaceutical\",
+     \"MedicinalProductUndesirableEffect\", \"MessageDefinition\", \"MessageHeader\",
+     \"MolecularSequence\", \"NamingSystem\", \"NutritionOrder\", \"Observation\",
+     \"ObservationDefinition\", \"OperationDefinition\", \"OperationOutcome\", \"Organization\",
+     \"OrganizationAffiliation\", \"Parameters\", \"Patient\", \"PaymentNotice\",
+     \"PaymentReconciliation\", \"Person\", \"PlanDefinition\", \"Practitioner\",
+     \"PractitionerRole\", \"Procedure\", \"ProcedureRequest\", \"ProcessRequest\",
+     \"ProcessResponse\", \"Provenance\", \"Questionnaire\", \"QuestionnaireResponse\",
+     \"ReferralRequest\", \"RelatedPerson\", \"RequestGroup\", \"ResearchDefinition\",
+     \"ResearchElementDefinition\", \"ResearchStudy\", \"ResearchSubject\", \"Resource\",
+     \"RiskAssessment\", \"RiskEvidenceSynthesis\", \"Schedule\", \"SearchParameter\", \"Sequence\",
+     \"ServiceDefinition\", \"ServiceRequest\", \"Slot\", \"Specimen\", \"SpecimenDefinition\",
+     \"StructureDefinition\", \"StructureMap\", \"Subscription\", \"Substance\",
+     \"SubstanceNucleicAcid\", \"SubstancePolymer\", \"SubstanceProtein\",
+     \"SubstanceReferenceInformation\", \"SubstanceSourceMaterial\", \"SubstanceSpecification\",
+     \"SupplyDelivery\", \"SupplyRequest\", \"Task\", \"TerminologyCapabilities\", \"TestReport\",
+     \"TestScript\", \"ValueSet\", \"VerificationResult\", and \"VisionPrescription\"."""
+    fhir_service_host_name: str = rest_field(
+        name="FhirServiceHostName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Domain name of FHIR account for this resource. Required."""
+    fhir_resource_id: str = rest_field(
+        name="FhirResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Id of HL7 FHIR resource. Required."""
+    fhir_resource_version_id: int = rest_field(
+        name="FhirResourceVersionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """VersionId of HL7 FHIR resource. It changes when the resource is created, updated, or
+     deleted(soft-deletion). Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        fhir_resource_type: Union[str, "_models.HealthcareFhirResourceType"],
+        fhir_service_host_name: str,
+        fhir_resource_id: str,
+        fhir_resource_version_id: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class HealthcareFhirResourceUpdatedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.HealthcareApis.FhirResourceUpdated event.
+
+    :ivar fhir_resource_type: Type of HL7 FHIR resource. Required. Known values are: "Account",
+     "ActivityDefinition", "AdverseEvent", "AllergyIntolerance", "Appointment",
+     "AppointmentResponse", "AuditEvent", "Basic", "Binary", "BiologicallyDerivedProduct",
+     "BodySite", "BodyStructure", "Bundle", "CapabilityStatement", "CarePlan", "CareTeam",
+     "CatalogEntry", "ChargeItem", "ChargeItemDefinition", "Claim", "ClaimResponse",
+     "ClinicalImpression", "CodeSystem", "Communication", "CommunicationRequest",
+     "CompartmentDefinition", "Composition", "ConceptMap", "Condition", "Consent", "Contract",
+     "Coverage", "CoverageEligibilityRequest", "CoverageEligibilityResponse", "DataElement",
+     "DetectedIssue", "Device", "DeviceComponent", "DeviceDefinition", "DeviceMetric",
+     "DeviceRequest", "DeviceUseStatement", "DiagnosticReport", "DocumentManifest",
+     "DocumentReference", "DomainResource", "EffectEvidenceSynthesis", "EligibilityRequest",
+     "EligibilityResponse", "Encounter", "Endpoint", "EnrollmentRequest", "EnrollmentResponse",
+     "EpisodeOfCare", "EventDefinition", "Evidence", "EvidenceVariable", "ExampleScenario",
+     "ExpansionProfile", "ExplanationOfBenefit", "FamilyMemberHistory", "Flag", "Goal",
+     "GraphDefinition", "Group", "GuidanceResponse", "HealthcareService", "ImagingManifest",
+     "ImagingStudy", "Immunization", "ImmunizationEvaluation", "ImmunizationRecommendation",
+     "ImplementationGuide", "InsurancePlan", "Invoice", "Library", "Linkage", "List", "Location",
+     "Measure", "MeasureReport", "Media", "Medication", "MedicationAdministration",
+     "MedicationDispense", "MedicationKnowledge", "MedicationRequest", "MedicationStatement",
+     "MedicinalProduct", "MedicinalProductAuthorization", "MedicinalProductContraindication",
+     "MedicinalProductIndication", "MedicinalProductIngredient", "MedicinalProductInteraction",
+     "MedicinalProductManufactured", "MedicinalProductPackaged", "MedicinalProductPharmaceutical",
+     "MedicinalProductUndesirableEffect", "MessageDefinition", "MessageHeader", "MolecularSequence",
+     "NamingSystem", "NutritionOrder", "Observation", "ObservationDefinition",
+     "OperationDefinition", "OperationOutcome", "Organization", "OrganizationAffiliation",
+     "Parameters", "Patient", "PaymentNotice", "PaymentReconciliation", "Person", "PlanDefinition",
+     "Practitioner", "PractitionerRole", "Procedure", "ProcedureRequest", "ProcessRequest",
+     "ProcessResponse", "Provenance", "Questionnaire", "QuestionnaireResponse", "ReferralRequest",
+     "RelatedPerson", "RequestGroup", "ResearchDefinition", "ResearchElementDefinition",
+     "ResearchStudy", "ResearchSubject", "Resource", "RiskAssessment", "RiskEvidenceSynthesis",
+     "Schedule", "SearchParameter", "Sequence", "ServiceDefinition", "ServiceRequest", "Slot",
+     "Specimen", "SpecimenDefinition", "StructureDefinition", "StructureMap", "Subscription",
+     "Substance", "SubstanceNucleicAcid", "SubstancePolymer", "SubstanceProtein",
+     "SubstanceReferenceInformation", "SubstanceSourceMaterial", "SubstanceSpecification",
+     "SupplyDelivery", "SupplyRequest", "Task", "TerminologyCapabilities", "TestReport",
+     "TestScript", "ValueSet", "VerificationResult", and "VisionPrescription".
+    :vartype fhir_resource_type: str or ~azure.eventgrid.models.HealthcareFhirResourceType
+    :ivar fhir_service_host_name: Domain name of FHIR account for this resource. Required.
+    :vartype fhir_service_host_name: str
+    :ivar fhir_resource_id: Id of HL7 FHIR resource. Required.
+    :vartype fhir_resource_id: str
+    :ivar fhir_resource_version_id: VersionId of HL7 FHIR resource. It changes when the resource is
+     created, updated, or deleted(soft-deletion). Required.
+    :vartype fhir_resource_version_id: int
+    """
+
+    fhir_resource_type: Union[str, "_models.HealthcareFhirResourceType"] = rest_field(
+        name="FhirResourceType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of HL7 FHIR resource. Required. Known values are: \"Account\", \"ActivityDefinition\",
+     \"AdverseEvent\", \"AllergyIntolerance\", \"Appointment\", \"AppointmentResponse\",
+     \"AuditEvent\", \"Basic\", \"Binary\", \"BiologicallyDerivedProduct\", \"BodySite\",
+     \"BodyStructure\", \"Bundle\", \"CapabilityStatement\", \"CarePlan\", \"CareTeam\",
+     \"CatalogEntry\", \"ChargeItem\", \"ChargeItemDefinition\", \"Claim\", \"ClaimResponse\",
+     \"ClinicalImpression\", \"CodeSystem\", \"Communication\", \"CommunicationRequest\",
+     \"CompartmentDefinition\", \"Composition\", \"ConceptMap\", \"Condition\", \"Consent\",
+     \"Contract\", \"Coverage\", \"CoverageEligibilityRequest\", \"CoverageEligibilityResponse\",
+     \"DataElement\", \"DetectedIssue\", \"Device\", \"DeviceComponent\", \"DeviceDefinition\",
+     \"DeviceMetric\", \"DeviceRequest\", \"DeviceUseStatement\", \"DiagnosticReport\",
+     \"DocumentManifest\", \"DocumentReference\", \"DomainResource\", \"EffectEvidenceSynthesis\",
+     \"EligibilityRequest\", \"EligibilityResponse\", \"Encounter\", \"Endpoint\",
+     \"EnrollmentRequest\", \"EnrollmentResponse\", \"EpisodeOfCare\", \"EventDefinition\",
+     \"Evidence\", \"EvidenceVariable\", \"ExampleScenario\", \"ExpansionProfile\",
+     \"ExplanationOfBenefit\", \"FamilyMemberHistory\", \"Flag\", \"Goal\", \"GraphDefinition\",
+     \"Group\", \"GuidanceResponse\", \"HealthcareService\", \"ImagingManifest\", \"ImagingStudy\",
+     \"Immunization\", \"ImmunizationEvaluation\", \"ImmunizationRecommendation\",
+     \"ImplementationGuide\", \"InsurancePlan\", \"Invoice\", \"Library\", \"Linkage\", \"List\",
+     \"Location\", \"Measure\", \"MeasureReport\", \"Media\", \"Medication\",
+     \"MedicationAdministration\", \"MedicationDispense\", \"MedicationKnowledge\",
+     \"MedicationRequest\", \"MedicationStatement\", \"MedicinalProduct\",
+     \"MedicinalProductAuthorization\", \"MedicinalProductContraindication\",
+     \"MedicinalProductIndication\", \"MedicinalProductIngredient\",
+     \"MedicinalProductInteraction\", \"MedicinalProductManufactured\",
+     \"MedicinalProductPackaged\", \"MedicinalProductPharmaceutical\",
+     \"MedicinalProductUndesirableEffect\", \"MessageDefinition\", \"MessageHeader\",
+     \"MolecularSequence\", \"NamingSystem\", \"NutritionOrder\", \"Observation\",
+     \"ObservationDefinition\", \"OperationDefinition\", \"OperationOutcome\", \"Organization\",
+     \"OrganizationAffiliation\", \"Parameters\", \"Patient\", \"PaymentNotice\",
+     \"PaymentReconciliation\", \"Person\", \"PlanDefinition\", \"Practitioner\",
+     \"PractitionerRole\", \"Procedure\", \"ProcedureRequest\", \"ProcessRequest\",
+     \"ProcessResponse\", \"Provenance\", \"Questionnaire\", \"QuestionnaireResponse\",
+     \"ReferralRequest\", \"RelatedPerson\", \"RequestGroup\", \"ResearchDefinition\",
+     \"ResearchElementDefinition\", \"ResearchStudy\", \"ResearchSubject\", \"Resource\",
+     \"RiskAssessment\", \"RiskEvidenceSynthesis\", \"Schedule\", \"SearchParameter\", \"Sequence\",
+     \"ServiceDefinition\", \"ServiceRequest\", \"Slot\", \"Specimen\", \"SpecimenDefinition\",
+     \"StructureDefinition\", \"StructureMap\", \"Subscription\", \"Substance\",
+     \"SubstanceNucleicAcid\", \"SubstancePolymer\", \"SubstanceProtein\",
+     \"SubstanceReferenceInformation\", \"SubstanceSourceMaterial\", \"SubstanceSpecification\",
+     \"SupplyDelivery\", \"SupplyRequest\", \"Task\", \"TerminologyCapabilities\", \"TestReport\",
+     \"TestScript\", \"ValueSet\", \"VerificationResult\", and \"VisionPrescription\"."""
+    fhir_service_host_name: str = rest_field(
+        name="FhirServiceHostName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Domain name of FHIR account for this resource. Required."""
+    fhir_resource_id: str = rest_field(
+        name="FhirResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Id of HL7 FHIR resource. Required."""
+    fhir_resource_version_id: int = rest_field(
+        name="FhirResourceVersionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """VersionId of HL7 FHIR resource. It changes when the resource is created, updated, or
+     deleted(soft-deletion). Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        fhir_resource_type: Union[str, "_models.HealthcareFhirResourceType"],
+        fhir_service_host_name: str,
+        fhir_resource_id: str,
+        fhir_resource_version_id: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IotHubDeviceConnectedEventData(DeviceConnectionStateEventProperties):
+    """Event data for Microsoft.Devices.DeviceConnected event.
+
+    :ivar device_id: The unique identifier of the device. This case-sensitive string can be up to
+     128 characters long, and supports ASCII 7-bit alphanumeric characters plus the following
+     special characters: - : . + % _ &#35; * ? ! ( ) , = ``@`` ; $ '. Required.
+    :vartype device_id: str
+    :ivar module_id: The unique identifier of the module. This case-sensitive string can be up to
+     128 characters long, and supports ASCII 7-bit alphanumeric characters plus the following
+     special characters: - : . + % _ &#35; * ? ! ( ) , = ``@`` ; $ '.
+    :vartype module_id: str
+    :ivar hub_name: Name of the IoT Hub where the device was created or deleted. Required.
+    :vartype hub_name: str
+    :ivar device_connection_state_event_info: Information about the device connection state event.
+     Required.
+    :vartype device_connection_state_event_info:
+     ~azure.eventgrid.models.DeviceConnectionStateEventInfo
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        device_id: str,
+        hub_name: str,
+        device_connection_state_event_info: "_models.DeviceConnectionStateEventInfo",
+        module_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IotHubDeviceCreatedEventData(DeviceLifeCycleEventProperties):
+    """Event data for Microsoft.Devices.DeviceCreated event.
+
+    :ivar device_id: The unique identifier of the device. This case-sensitive string can be up to
+     128 characters long, and supports ASCII 7-bit alphanumeric characters plus the following
+     special characters: - : . + % _ &#35; * ? ! ( ) , = ``@`` ; $ '. Required.
+    :vartype device_id: str
+    :ivar hub_name: Name of the IoT Hub where the device was created or deleted. Required.
+    :vartype hub_name: str
+    :ivar twin: Information about the device twin, which is the cloud representation of application
+     device metadata. Required.
+    :vartype twin: ~azure.eventgrid.models.DeviceTwinInfo
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        device_id: str,
+        hub_name: str,
+        twin: "_models.DeviceTwinInfo",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IotHubDeviceDeletedEventData(DeviceLifeCycleEventProperties):
+    """Event data for Microsoft.Devices.DeviceDeleted event.
+
+    :ivar device_id: The unique identifier of the device. This case-sensitive string can be up to
+     128 characters long, and supports ASCII 7-bit alphanumeric characters plus the following
+     special characters: - : . + % _ &#35; * ? ! ( ) , = ``@`` ; $ '. Required.
+    :vartype device_id: str
+    :ivar hub_name: Name of the IoT Hub where the device was created or deleted. Required.
+    :vartype hub_name: str
+    :ivar twin: Information about the device twin, which is the cloud representation of application
+     device metadata. Required.
+    :vartype twin: ~azure.eventgrid.models.DeviceTwinInfo
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        device_id: str,
+        hub_name: str,
+        twin: "_models.DeviceTwinInfo",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IotHubDeviceDisconnectedEventData(DeviceConnectionStateEventProperties):
+    """Event data for Microsoft.Devices.DeviceDisconnected event.
+
+    :ivar device_id: The unique identifier of the device. This case-sensitive string can be up to
+     128 characters long, and supports ASCII 7-bit alphanumeric characters plus the following
+     special characters: - : . + % _ &#35; * ? ! ( ) , = ``@`` ; $ '. Required.
+    :vartype device_id: str
+    :ivar module_id: The unique identifier of the module. This case-sensitive string can be up to
+     128 characters long, and supports ASCII 7-bit alphanumeric characters plus the following
+     special characters: - : . + % _ &#35; * ? ! ( ) , = ``@`` ; $ '.
+    :vartype module_id: str
+    :ivar hub_name: Name of the IoT Hub where the device was created or deleted. Required.
+    :vartype hub_name: str
+    :ivar device_connection_state_event_info: Information about the device connection state event.
+     Required.
+    :vartype device_connection_state_event_info:
+     ~azure.eventgrid.models.DeviceConnectionStateEventInfo
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        device_id: str,
+        hub_name: str,
+        device_connection_state_event_info: "_models.DeviceConnectionStateEventInfo",
+        module_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IotHubDeviceTelemetryEventData(DeviceTelemetryEventProperties):
+    """Event data for Microsoft.Devices.DeviceTelemetry event.
+
+    :ivar body: The content of the message from the device. Required.
+    :vartype body: dict[str, any]
+    :ivar properties: Application properties are user-defined strings that can be added to the
+     message. These fields are optional. Required.
+    :vartype properties: dict[str, str]
+    :ivar system_properties: System properties help identify contents and source of the messages.
+     Required.
+    :vartype system_properties: dict[str, str]
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        body: Dict[str, Any],
+        properties: Dict[str, str],
+        system_properties: Dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KeyVaultAccessPolicyChangedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.KeyVault.VaultAccessPolicyChanged event.
+
+    :ivar id: The id of the object that triggered this event. Required.
+    :vartype id: str
+    :ivar vault_name: Key vault name of the object that triggered this event. Required.
+    :vartype vault_name: str
+    :ivar object_type: The type of the object that triggered this event. Required.
+    :vartype object_type: str
+    :ivar object_name: The name of the object that triggered this event. Required.
+    :vartype object_name: str
+    :ivar version: The version of the object that triggered this event. Required.
+    :vartype version: str
+    :ivar nbf: Not before date of the object that triggered this event. Required.
+    :vartype nbf: float
+    :ivar exp: The expiration date of the object that triggered this event. Required.
+    :vartype exp: float
+    """
+
+    id: str = rest_field(name="Id", visibility=["read", "create", "update", "delete", "query"])
+    """The id of the object that triggered this event. Required."""
+    vault_name: str = rest_field(name="VaultName", visibility=["read", "create", "update", "delete", "query"])
+    """Key vault name of the object that triggered this event. Required."""
+    object_type: str = rest_field(name="ObjectType", visibility=["read", "create", "update", "delete", "query"])
+    """The type of the object that triggered this event. Required."""
+    object_name: str = rest_field(name="ObjectName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the object that triggered this event. Required."""
+    version: str = rest_field(name="Version", visibility=["read", "create", "update", "delete", "query"])
+    """The version of the object that triggered this event. Required."""
+    nbf: float = rest_field(name="Nbf", visibility=["read", "create", "update", "delete", "query"])
+    """Not before date of the object that triggered this event. Required."""
+    exp: float = rest_field(name="Exp", visibility=["read", "create", "update", "delete", "query"])
+    """The expiration date of the object that triggered this event. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        vault_name: str,
+        object_type: str,
+        object_name: str,
+        version: str,
+        nbf: float,
+        exp: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KeyVaultCertificateExpiredEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.KeyVault.CertificateExpired
+    event.
+
+    :ivar id: The id of the object that triggered this event. Required.
+    :vartype id: str
+    :ivar vault_name: Key vault name of the object that triggered this event. Required.
+    :vartype vault_name: str
+    :ivar object_type: The type of the object that triggered this event. Required.
+    :vartype object_type: str
+    :ivar object_name: The name of the object that triggered this event. Required.
+    :vartype object_name: str
+    :ivar version: The version of the object that triggered this event. Required.
+    :vartype version: str
+    :ivar nbf: Not before date of the object that triggered this event. Required.
+    :vartype nbf: float
+    :ivar exp: The expiration date of the object that triggered this event. Required.
+    :vartype exp: float
+    """
+
+    id: str = rest_field(name="Id", visibility=["read", "create", "update", "delete", "query"])
+    """The id of the object that triggered this event. Required."""
+    vault_name: str = rest_field(name="VaultName", visibility=["read", "create", "update", "delete", "query"])
+    """Key vault name of the object that triggered this event. Required."""
+    object_type: str = rest_field(name="ObjectType", visibility=["read", "create", "update", "delete", "query"])
+    """The type of the object that triggered this event. Required."""
+    object_name: str = rest_field(name="ObjectName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the object that triggered this event. Required."""
+    version: str = rest_field(name="Version", visibility=["read", "create", "update", "delete", "query"])
+    """The version of the object that triggered this event. Required."""
+    nbf: float = rest_field(name="Nbf", visibility=["read", "create", "update", "delete", "query"])
+    """Not before date of the object that triggered this event. Required."""
+    exp: float = rest_field(name="Exp", visibility=["read", "create", "update", "delete", "query"])
+    """The expiration date of the object that triggered this event. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        vault_name: str,
+        object_type: str,
+        object_name: str,
+        version: str,
+        nbf: float,
+        exp: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KeyVaultCertificateNearExpiryEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.KeyVault.CertificateNearExpiry
+    event.
+
+    :ivar id: The id of the object that triggered this event. Required.
+    :vartype id: str
+    :ivar vault_name: Key vault name of the object that triggered this event. Required.
+    :vartype vault_name: str
+    :ivar object_type: The type of the object that triggered this event. Required.
+    :vartype object_type: str
+    :ivar object_name: The name of the object that triggered this event. Required.
+    :vartype object_name: str
+    :ivar version: The version of the object that triggered this event. Required.
+    :vartype version: str
+    :ivar nbf: Not before date of the object that triggered this event. Required.
+    :vartype nbf: float
+    :ivar exp: The expiration date of the object that triggered this event. Required.
+    :vartype exp: float
+    """
+
+    id: str = rest_field(name="Id", visibility=["read", "create", "update", "delete", "query"])
+    """The id of the object that triggered this event. Required."""
+    vault_name: str = rest_field(name="VaultName", visibility=["read", "create", "update", "delete", "query"])
+    """Key vault name of the object that triggered this event. Required."""
+    object_type: str = rest_field(name="ObjectType", visibility=["read", "create", "update", "delete", "query"])
+    """The type of the object that triggered this event. Required."""
+    object_name: str = rest_field(name="ObjectName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the object that triggered this event. Required."""
+    version: str = rest_field(name="Version", visibility=["read", "create", "update", "delete", "query"])
+    """The version of the object that triggered this event. Required."""
+    nbf: float = rest_field(name="Nbf", visibility=["read", "create", "update", "delete", "query"])
+    """Not before date of the object that triggered this event. Required."""
+    exp: float = rest_field(name="Exp", visibility=["read", "create", "update", "delete", "query"])
+    """The expiration date of the object that triggered this event. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        vault_name: str,
+        object_type: str,
+        object_name: str,
+        version: str,
+        nbf: float,
+        exp: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KeyVaultCertificateNewVersionCreatedEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.KeyVault.CertificateNewVersionCreated event.
+
+    :ivar id: The id of the object that triggered this event. Required.
+    :vartype id: str
+    :ivar vault_name: Key vault name of the object that triggered this event. Required.
+    :vartype vault_name: str
+    :ivar object_type: The type of the object that triggered this event. Required.
+    :vartype object_type: str
+    :ivar object_name: The name of the object that triggered this event. Required.
+    :vartype object_name: str
+    :ivar version: The version of the object that triggered this event. Required.
+    :vartype version: str
+    :ivar nbf: Not before date of the object that triggered this event. Required.
+    :vartype nbf: float
+    :ivar exp: The expiration date of the object that triggered this event. Required.
+    :vartype exp: float
+    """
+
+    id: str = rest_field(name="Id", visibility=["read", "create", "update", "delete", "query"])
+    """The id of the object that triggered this event. Required."""
+    vault_name: str = rest_field(name="VaultName", visibility=["read", "create", "update", "delete", "query"])
+    """Key vault name of the object that triggered this event. Required."""
+    object_type: str = rest_field(name="ObjectType", visibility=["read", "create", "update", "delete", "query"])
+    """The type of the object that triggered this event. Required."""
+    object_name: str = rest_field(name="ObjectName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the object that triggered this event. Required."""
+    version: str = rest_field(name="Version", visibility=["read", "create", "update", "delete", "query"])
+    """The version of the object that triggered this event. Required."""
+    nbf: float = rest_field(name="Nbf", visibility=["read", "create", "update", "delete", "query"])
+    """Not before date of the object that triggered this event. Required."""
+    exp: float = rest_field(name="Exp", visibility=["read", "create", "update", "delete", "query"])
+    """The expiration date of the object that triggered this event. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        vault_name: str,
+        object_type: str,
+        object_name: str,
+        version: str,
+        nbf: float,
+        exp: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KeyVaultKeyExpiredEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.KeyVault.KeyExpired event.
+
+    :ivar id: The id of the object that triggered this event. Required.
+    :vartype id: str
+    :ivar vault_name: Key vault name of the object that triggered this event. Required.
+    :vartype vault_name: str
+    :ivar object_type: The type of the object that triggered this event. Required.
+    :vartype object_type: str
+    :ivar object_name: The name of the object that triggered this event. Required.
+    :vartype object_name: str
+    :ivar version: The version of the object that triggered this event. Required.
+    :vartype version: str
+    :ivar nbf: Not before date of the object that triggered this event. Required.
+    :vartype nbf: float
+    :ivar exp: The expiration date of the object that triggered this event. Required.
+    :vartype exp: float
+    """
+
+    id: str = rest_field(name="Id", visibility=["read", "create", "update", "delete", "query"])
+    """The id of the object that triggered this event. Required."""
+    vault_name: str = rest_field(name="VaultName", visibility=["read", "create", "update", "delete", "query"])
+    """Key vault name of the object that triggered this event. Required."""
+    object_type: str = rest_field(name="ObjectType", visibility=["read", "create", "update", "delete", "query"])
+    """The type of the object that triggered this event. Required."""
+    object_name: str = rest_field(name="ObjectName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the object that triggered this event. Required."""
+    version: str = rest_field(name="Version", visibility=["read", "create", "update", "delete", "query"])
+    """The version of the object that triggered this event. Required."""
+    nbf: float = rest_field(name="Nbf", visibility=["read", "create", "update", "delete", "query"])
+    """Not before date of the object that triggered this event. Required."""
+    exp: float = rest_field(name="Exp", visibility=["read", "create", "update", "delete", "query"])
+    """The expiration date of the object that triggered this event. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        vault_name: str,
+        object_type: str,
+        object_name: str,
+        version: str,
+        nbf: float,
+        exp: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KeyVaultKeyNearExpiryEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.KeyVault.KeyNearExpiry event.
+
+    :ivar id: The id of the object that triggered this event. Required.
+    :vartype id: str
+    :ivar vault_name: Key vault name of the object that triggered this event. Required.
+    :vartype vault_name: str
+    :ivar object_type: The type of the object that triggered this event. Required.
+    :vartype object_type: str
+    :ivar object_name: The name of the object that triggered this event. Required.
+    :vartype object_name: str
+    :ivar version: The version of the object that triggered this event. Required.
+    :vartype version: str
+    :ivar nbf: Not before date of the object that triggered this event. Required.
+    :vartype nbf: float
+    :ivar exp: The expiration date of the object that triggered this event. Required.
+    :vartype exp: float
+    """
+
+    id: str = rest_field(name="Id", visibility=["read", "create", "update", "delete", "query"])
+    """The id of the object that triggered this event. Required."""
+    vault_name: str = rest_field(name="VaultName", visibility=["read", "create", "update", "delete", "query"])
+    """Key vault name of the object that triggered this event. Required."""
+    object_type: str = rest_field(name="ObjectType", visibility=["read", "create", "update", "delete", "query"])
+    """The type of the object that triggered this event. Required."""
+    object_name: str = rest_field(name="ObjectName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the object that triggered this event. Required."""
+    version: str = rest_field(name="Version", visibility=["read", "create", "update", "delete", "query"])
+    """The version of the object that triggered this event. Required."""
+    nbf: float = rest_field(name="Nbf", visibility=["read", "create", "update", "delete", "query"])
+    """Not before date of the object that triggered this event. Required."""
+    exp: float = rest_field(name="Exp", visibility=["read", "create", "update", "delete", "query"])
+    """The expiration date of the object that triggered this event. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        vault_name: str,
+        object_type: str,
+        object_name: str,
+        version: str,
+        nbf: float,
+        exp: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KeyVaultKeyNewVersionCreatedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.KeyVault.KeyNewVersionCreated
+    event.
+
+    :ivar id: The id of the object that triggered this event. Required.
+    :vartype id: str
+    :ivar vault_name: Key vault name of the object that triggered this event. Required.
+    :vartype vault_name: str
+    :ivar object_type: The type of the object that triggered this event. Required.
+    :vartype object_type: str
+    :ivar object_name: The name of the object that triggered this event. Required.
+    :vartype object_name: str
+    :ivar version: The version of the object that triggered this event. Required.
+    :vartype version: str
+    :ivar nbf: Not before date of the object that triggered this event. Required.
+    :vartype nbf: float
+    :ivar exp: The expiration date of the object that triggered this event. Required.
+    :vartype exp: float
+    """
+
+    id: str = rest_field(name="Id", visibility=["read", "create", "update", "delete", "query"])
+    """The id of the object that triggered this event. Required."""
+    vault_name: str = rest_field(name="VaultName", visibility=["read", "create", "update", "delete", "query"])
+    """Key vault name of the object that triggered this event. Required."""
+    object_type: str = rest_field(name="ObjectType", visibility=["read", "create", "update", "delete", "query"])
+    """The type of the object that triggered this event. Required."""
+    object_name: str = rest_field(name="ObjectName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the object that triggered this event. Required."""
+    version: str = rest_field(name="Version", visibility=["read", "create", "update", "delete", "query"])
+    """The version of the object that triggered this event. Required."""
+    nbf: float = rest_field(name="Nbf", visibility=["read", "create", "update", "delete", "query"])
+    """Not before date of the object that triggered this event. Required."""
+    exp: float = rest_field(name="Exp", visibility=["read", "create", "update", "delete", "query"])
+    """The expiration date of the object that triggered this event. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        vault_name: str,
+        object_type: str,
+        object_name: str,
+        version: str,
+        nbf: float,
+        exp: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KeyVaultSecretExpiredEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.KeyVault.SecretExpired event.
+
+    :ivar id: The id of the object that triggered this event. Required.
+    :vartype id: str
+    :ivar vault_name: Key vault name of the object that triggered this event. Required.
+    :vartype vault_name: str
+    :ivar object_type: The type of the object that triggered this event. Required.
+    :vartype object_type: str
+    :ivar object_name: The name of the object that triggered this event. Required.
+    :vartype object_name: str
+    :ivar version: The version of the object that triggered this event. Required.
+    :vartype version: str
+    :ivar nbf: Not before date of the object that triggered this event. Required.
+    :vartype nbf: float
+    :ivar exp: The expiration date of the object that triggered this event. Required.
+    :vartype exp: float
+    """
+
+    id: str = rest_field(name="Id", visibility=["read", "create", "update", "delete", "query"])
+    """The id of the object that triggered this event. Required."""
+    vault_name: str = rest_field(name="VaultName", visibility=["read", "create", "update", "delete", "query"])
+    """Key vault name of the object that triggered this event. Required."""
+    object_type: str = rest_field(name="ObjectType", visibility=["read", "create", "update", "delete", "query"])
+    """The type of the object that triggered this event. Required."""
+    object_name: str = rest_field(name="ObjectName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the object that triggered this event. Required."""
+    version: str = rest_field(name="Version", visibility=["read", "create", "update", "delete", "query"])
+    """The version of the object that triggered this event. Required."""
+    nbf: float = rest_field(name="Nbf", visibility=["read", "create", "update", "delete", "query"])
+    """Not before date of the object that triggered this event. Required."""
+    exp: float = rest_field(name="Exp", visibility=["read", "create", "update", "delete", "query"])
+    """The expiration date of the object that triggered this event. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        vault_name: str,
+        object_type: str,
+        object_name: str,
+        version: str,
+        nbf: float,
+        exp: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KeyVaultSecretNearExpiryEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.KeyVault.SecretNearExpiry
+    event.
+
+    :ivar id: The id of the object that triggered this event. Required.
+    :vartype id: str
+    :ivar vault_name: Key vault name of the object that triggered this event. Required.
+    :vartype vault_name: str
+    :ivar object_type: The type of the object that triggered this event. Required.
+    :vartype object_type: str
+    :ivar object_name: The name of the object that triggered this event. Required.
+    :vartype object_name: str
+    :ivar version: The version of the object that triggered this event. Required.
+    :vartype version: str
+    :ivar nbf: Not before date of the object that triggered this event. Required.
+    :vartype nbf: float
+    :ivar exp: The expiration date of the object that triggered this event. Required.
+    :vartype exp: float
+    """
+
+    id: str = rest_field(name="Id", visibility=["read", "create", "update", "delete", "query"])
+    """The id of the object that triggered this event. Required."""
+    vault_name: str = rest_field(name="VaultName", visibility=["read", "create", "update", "delete", "query"])
+    """Key vault name of the object that triggered this event. Required."""
+    object_type: str = rest_field(name="ObjectType", visibility=["read", "create", "update", "delete", "query"])
+    """The type of the object that triggered this event. Required."""
+    object_name: str = rest_field(name="ObjectName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the object that triggered this event. Required."""
+    version: str = rest_field(name="Version", visibility=["read", "create", "update", "delete", "query"])
+    """The version of the object that triggered this event. Required."""
+    nbf: float = rest_field(name="Nbf", visibility=["read", "create", "update", "delete", "query"])
+    """Not before date of the object that triggered this event. Required."""
+    exp: float = rest_field(name="Exp", visibility=["read", "create", "update", "delete", "query"])
+    """The expiration date of the object that triggered this event. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        vault_name: str,
+        object_type: str,
+        object_name: str,
+        version: str,
+        nbf: float,
+        exp: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KeyVaultSecretNewVersionCreatedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.KeyVault.SecretNewVersionCreated event.
+
+    :ivar id: The id of the object that triggered this event. Required.
+    :vartype id: str
+    :ivar vault_name: Key vault name of the object that triggered this event. Required.
+    :vartype vault_name: str
+    :ivar object_type: The type of the object that triggered this event. Required.
+    :vartype object_type: str
+    :ivar object_name: The name of the object that triggered this event. Required.
+    :vartype object_name: str
+    :ivar version: The version of the object that triggered this event. Required.
+    :vartype version: str
+    :ivar nbf: Not before date of the object that triggered this event. Required.
+    :vartype nbf: float
+    :ivar exp: The expiration date of the object that triggered this event. Required.
+    :vartype exp: float
+    """
+
+    id: str = rest_field(name="Id", visibility=["read", "create", "update", "delete", "query"])
+    """The id of the object that triggered this event. Required."""
+    vault_name: str = rest_field(name="VaultName", visibility=["read", "create", "update", "delete", "query"])
+    """Key vault name of the object that triggered this event. Required."""
+    object_type: str = rest_field(name="ObjectType", visibility=["read", "create", "update", "delete", "query"])
+    """The type of the object that triggered this event. Required."""
+    object_name: str = rest_field(name="ObjectName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the object that triggered this event. Required."""
+    version: str = rest_field(name="Version", visibility=["read", "create", "update", "delete", "query"])
+    """The version of the object that triggered this event. Required."""
+    nbf: float = rest_field(name="Nbf", visibility=["read", "create", "update", "delete", "query"])
+    """Not before date of the object that triggered this event. Required."""
+    exp: float = rest_field(name="Exp", visibility=["read", "create", "update", "delete", "query"])
+    """The expiration date of the object that triggered this event. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        vault_name: str,
+        object_type: str,
+        object_name: str,
+        version: str,
+        nbf: float,
+        exp: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MachineLearningServicesDatasetDriftDetectedEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.MachineLearningServices.DatasetDriftDetected event.
+
+    :ivar data_drift_id: The ID of the data drift monitor that triggered the event. Required.
+    :vartype data_drift_id: str
+    :ivar data_drift_name: The name of the data drift monitor that triggered the event. Required.
+    :vartype data_drift_name: str
+    :ivar run_id: The ID of the Run that detected data drift. Required.
+    :vartype run_id: str
+    :ivar base_dataset_id: The ID of the base Dataset used to detect drift. Required.
+    :vartype base_dataset_id: str
+    :ivar target_dataset_id: The ID of the target Dataset used to detect drift. Required.
+    :vartype target_dataset_id: str
+    :ivar drift_coefficient: The coefficient result that triggered the event. Required.
+    :vartype drift_coefficient: float
+    :ivar start_time: The start time of the target dataset time series that resulted in drift
+     detection. Required.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The end time of the target dataset time series that resulted in drift
+     detection. Required.
+    :vartype end_time: ~datetime.datetime
+    """
+
+    data_drift_id: str = rest_field(name="dataDriftId", visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the data drift monitor that triggered the event. Required."""
+    data_drift_name: str = rest_field(name="dataDriftName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the data drift monitor that triggered the event. Required."""
+    run_id: str = rest_field(name="runId", visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the Run that detected data drift. Required."""
+    base_dataset_id: str = rest_field(name="baseDatasetId", visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the base Dataset used to detect drift. Required."""
+    target_dataset_id: str = rest_field(
+        name="targetDatasetId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ID of the target Dataset used to detect drift. Required."""
+    drift_coefficient: float = rest_field(
+        name="driftCoefficient", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The coefficient result that triggered the event. Required."""
+    start_time: datetime.datetime = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The start time of the target dataset time series that resulted in drift detection. Required."""
+    end_time: datetime.datetime = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The end time of the target dataset time series that resulted in drift detection. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data_drift_id: str,
+        data_drift_name: str,
+        run_id: str,
+        base_dataset_id: str,
+        target_dataset_id: str,
+        drift_coefficient: float,
+        start_time: datetime.datetime,
+        end_time: datetime.datetime,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MachineLearningServicesModelDeployedEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.MachineLearningServices.ModelDeployed event.
+
+    :ivar service_name: The name of the deployed service. Required.
+    :vartype service_name: str
+    :ivar service_compute_type: The compute type (e.g. ACI, AKS) of the deployed service. Required.
+    :vartype service_compute_type: str
+    :ivar model_ids: A common separated list of model IDs. The IDs of the models deployed in the
+     service. Required.
+    :vartype model_ids: str
+    :ivar service_tags: The tags of the deployed service.
+    :vartype service_tags: dict[str, any]
+    :ivar service_properties: The properties of the deployed service.
+    :vartype service_properties: dict[str, any]
+    """
+
+    service_name: str = rest_field(name="serviceName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the deployed service. Required."""
+    service_compute_type: str = rest_field(
+        name="serviceComputeType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The compute type (e.g. ACI, AKS) of the deployed service. Required."""
+    model_ids: str = rest_field(name="modelIds", visibility=["read", "create", "update", "delete", "query"])
+    """A common separated list of model IDs. The IDs of the models deployed in the service. Required."""
+    service_tags: Optional[Dict[str, Any]] = rest_field(
+        name="serviceTags", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The tags of the deployed service."""
+    service_properties: Optional[Dict[str, Any]] = rest_field(
+        name="serviceProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The properties of the deployed service."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        service_name: str,
+        service_compute_type: str,
+        model_ids: str,
+        service_tags: Optional[Dict[str, Any]] = None,
+        service_properties: Optional[Dict[str, Any]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MachineLearningServicesModelRegisteredEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.MachineLearningServices.ModelRegistered event.
+
+    :ivar model_name: The name of the model that was registered. Required.
+    :vartype model_name: str
+    :ivar model_version: The version of the model that was registered. Required.
+    :vartype model_version: str
+    :ivar model_tags: The tags of the model that was registered.
+    :vartype model_tags: dict[str, any]
+    :ivar model_properties: The properties of the model that was registered.
+    :vartype model_properties: dict[str, any]
+    """
+
+    model_name: str = rest_field(name="modelName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the model that was registered. Required."""
+    model_version: str = rest_field(name="modelVersion", visibility=["read", "create", "update", "delete", "query"])
+    """The version of the model that was registered. Required."""
+    model_tags: Optional[Dict[str, Any]] = rest_field(
+        name="modelTags", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The tags of the model that was registered."""
+    model_properties: Optional[Dict[str, Any]] = rest_field(
+        name="modelProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The properties of the model that was registered."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model_name: str,
+        model_version: str,
+        model_tags: Optional[Dict[str, Any]] = None,
+        model_properties: Optional[Dict[str, Any]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MachineLearningServicesRunCompletedEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.MachineLearningServices.RunCompleted event.
+
+    :ivar experiment_id: The ID of the experiment that the run belongs to. Required.
+    :vartype experiment_id: str
+    :ivar experiment_name: The name of the experiment that the run belongs to. Required.
+    :vartype experiment_name: str
+    :ivar run_id: The ID of the Run that was completed. Required.
+    :vartype run_id: str
+    :ivar run_type: The Run Type of the completed Run. Required.
+    :vartype run_type: str
+    :ivar run_tags: The tags of the completed Run.
+    :vartype run_tags: dict[str, any]
+    :ivar run_properties: The properties of the completed Run.
+    :vartype run_properties: dict[str, any]
+    """
+
+    experiment_id: str = rest_field(name="experimentId", visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the experiment that the run belongs to. Required."""
+    experiment_name: str = rest_field(name="experimentName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the experiment that the run belongs to. Required."""
+    run_id: str = rest_field(name="runId", visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the Run that was completed. Required."""
+    run_type: str = rest_field(name="runType", visibility=["read", "create", "update", "delete", "query"])
+    """The Run Type of the completed Run. Required."""
+    run_tags: Optional[Dict[str, Any]] = rest_field(
+        name="runTags", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The tags of the completed Run."""
+    run_properties: Optional[Dict[str, Any]] = rest_field(
+        name="runProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The properties of the completed Run."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        experiment_id: str,
+        experiment_name: str,
+        run_id: str,
+        run_type: str,
+        run_tags: Optional[Dict[str, Any]] = None,
+        run_properties: Optional[Dict[str, Any]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MachineLearningServicesRunStatusChangedEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.MachineLearningServices.RunStatusChanged event.
+
+    :ivar experiment_id: The ID of the experiment that the Machine Learning Run belongs to.
+     Required.
+    :vartype experiment_id: str
+    :ivar experiment_name: The name of the experiment that the Machine Learning Run belongs to.
+     Required.
+    :vartype experiment_name: str
+    :ivar run_id: The ID of the Machine Learning Run. Required.
+    :vartype run_id: str
+    :ivar run_type: The Run Type of the Machine Learning Run. Required.
+    :vartype run_type: str
+    :ivar run_tags: The tags of the Machine Learning Run.
+    :vartype run_tags: dict[str, any]
+    :ivar run_properties: The properties of the Machine Learning Run.
+    :vartype run_properties: dict[str, any]
+    :ivar run_status: The status of the Machine Learning Run. Required.
+    :vartype run_status: str
+    """
+
+    experiment_id: str = rest_field(name="experimentId", visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the experiment that the Machine Learning Run belongs to. Required."""
+    experiment_name: str = rest_field(name="experimentName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the experiment that the Machine Learning Run belongs to. Required."""
+    run_id: str = rest_field(name="runId", visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the Machine Learning Run. Required."""
+    run_type: str = rest_field(name="runType", visibility=["read", "create", "update", "delete", "query"])
+    """The Run Type of the Machine Learning Run. Required."""
+    run_tags: Optional[Dict[str, Any]] = rest_field(
+        name="runTags", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The tags of the Machine Learning Run."""
+    run_properties: Optional[Dict[str, Any]] = rest_field(
+        name="runProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The properties of the Machine Learning Run."""
+    run_status: str = rest_field(name="runStatus", visibility=["read", "create", "update", "delete", "query"])
+    """The status of the Machine Learning Run. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        experiment_id: str,
+        experiment_name: str,
+        run_id: str,
+        run_type: str,
+        run_status: str,
+        run_tags: Optional[Dict[str, Any]] = None,
+        run_properties: Optional[Dict[str, Any]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MapsGeofenceEventProperties(_Model):
+    """Schema of the Data property of an EventGridEvent for a Geofence event (GeofenceEntered,
+    GeofenceExited, GeofenceResult).
+
+    :ivar expired_geofence_geometry_id: Lists of the geometry ID of the geofence which is expired
+     relative to the user time in the request. Required.
+    :vartype expired_geofence_geometry_id: list[str]
+    :ivar geometries: Lists the fence geometries that either fully contain the coordinate position
+     or have an overlap with the searchBuffer around the fence. Required.
+    :vartype geometries: list[~azure.eventgrid.models.MapsGeofenceGeometry]
+    :ivar invalid_period_geofence_geometry_id: Lists of the geometry ID of the geofence which is in
+     invalid period relative to the user time in the request. Required.
+    :vartype invalid_period_geofence_geometry_id: list[str]
+    :ivar is_event_published: True if at least one event is published to the Azure Maps event
+     subscriber, false if no event is published to the Azure Maps event subscriber. Required.
+    :vartype is_event_published: bool
+    """
+
+    expired_geofence_geometry_id: List[str] = rest_field(name="expiredGeofenceGeometryId", visibility=["read"])
+    """Lists of the geometry ID of the geofence which is expired relative to the user time in the
+     request. Required."""
+    geometries: List["_models.MapsGeofenceGeometry"] = rest_field(visibility=["read"])
+    """Lists the fence geometries that either fully contain the coordinate position or have an overlap
+     with the searchBuffer around the fence. Required."""
+    invalid_period_geofence_geometry_id: List[str] = rest_field(
+        name="invalidPeriodGeofenceGeometryId", visibility=["read"]
+    )
+    """Lists of the geometry ID of the geofence which is in invalid period relative to the user time
+     in the request. Required."""
+    is_event_published: bool = rest_field(
+        name="isEventPublished", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """True if at least one event is published to the Azure Maps event subscriber, false if no event
+     is published to the Azure Maps event subscriber. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        is_event_published: bool,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MapsGeofenceEnteredEventData(MapsGeofenceEventProperties):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Maps.GeofenceEntered event.
+
+    :ivar expired_geofence_geometry_id: Lists of the geometry ID of the geofence which is expired
+     relative to the user time in the request. Required.
+    :vartype expired_geofence_geometry_id: list[str]
+    :ivar geometries: Lists the fence geometries that either fully contain the coordinate position
+     or have an overlap with the searchBuffer around the fence. Required.
+    :vartype geometries: list[~azure.eventgrid.models.MapsGeofenceGeometry]
+    :ivar invalid_period_geofence_geometry_id: Lists of the geometry ID of the geofence which is in
+     invalid period relative to the user time in the request. Required.
+    :vartype invalid_period_geofence_geometry_id: list[str]
+    :ivar is_event_published: True if at least one event is published to the Azure Maps event
+     subscriber, false if no event is published to the Azure Maps event subscriber. Required.
+    :vartype is_event_published: bool
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        is_event_published: bool,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MapsGeofenceExitedEventData(MapsGeofenceEventProperties):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Maps.GeofenceExited event.
+
+    :ivar expired_geofence_geometry_id: Lists of the geometry ID of the geofence which is expired
+     relative to the user time in the request. Required.
+    :vartype expired_geofence_geometry_id: list[str]
+    :ivar geometries: Lists the fence geometries that either fully contain the coordinate position
+     or have an overlap with the searchBuffer around the fence. Required.
+    :vartype geometries: list[~azure.eventgrid.models.MapsGeofenceGeometry]
+    :ivar invalid_period_geofence_geometry_id: Lists of the geometry ID of the geofence which is in
+     invalid period relative to the user time in the request. Required.
+    :vartype invalid_period_geofence_geometry_id: list[str]
+    :ivar is_event_published: True if at least one event is published to the Azure Maps event
+     subscriber, false if no event is published to the Azure Maps event subscriber. Required.
+    :vartype is_event_published: bool
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        is_event_published: bool,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MapsGeofenceGeometry(_Model):
+    """The geofence geometry.
+
+    :ivar device_id: ID of the device. Required.
+    :vartype device_id: str
+    :ivar distance: Distance from the coordinate to the closest border of the geofence. Positive
+     means the coordinate is outside of the geofence. If the coordinate is outside of the geofence,
+     but more than the value of searchBuffer away from the closest geofence border, then the value
+     is 999. Negative means the coordinate is inside of the geofence. If the coordinate is inside
+     the polygon, but more than the value of searchBuffer away from the closest geofencing
+     border,then the value is -999. A value of 999 means that there is great confidence the
+     coordinate is well outside the geofence. A value of -999 means that there is great confidence
+     the coordinate is well within the geofence. Required.
+    :vartype distance: float
+    :ivar geometry_id: The unique ID for the geofence geometry. Required.
+    :vartype geometry_id: str
+    :ivar nearest_lat: Latitude of the nearest point of the geometry. Required.
+    :vartype nearest_lat: float
+    :ivar nearest_lon: Longitude of the nearest point of the geometry. Required.
+    :vartype nearest_lon: float
+    :ivar ud_id: The unique id returned from user upload service when uploading a geofence. Will
+     not be included in geofencing post API.
+    :vartype ud_id: str
+    """
+
+    device_id: str = rest_field(name="deviceId", visibility=["read", "create", "update", "delete", "query"])
+    """ID of the device. Required."""
+    distance: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Distance from the coordinate to the closest border of the geofence. Positive means the
+     coordinate is outside of the geofence. If the coordinate is outside of the geofence, but more
+     than the value of searchBuffer away from the closest geofence border, then the value is 999.
+     Negative means the coordinate is inside of the geofence. If the coordinate is inside the
+     polygon, but more than the value of searchBuffer away from the closest geofencing border,then
+     the value is -999. A value of 999 means that there is great confidence the coordinate is well
+     outside the geofence. A value of -999 means that there is great confidence the coordinate is
+     well within the geofence. Required."""
+    geometry_id: str = rest_field(name="geometryId", visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID for the geofence geometry. Required."""
+    nearest_lat: float = rest_field(name="nearestLat", visibility=["read", "create", "update", "delete", "query"])
+    """Latitude of the nearest point of the geometry. Required."""
+    nearest_lon: float = rest_field(name="nearestLon", visibility=["read", "create", "update", "delete", "query"])
+    """Longitude of the nearest point of the geometry. Required."""
+    ud_id: Optional[str] = rest_field(name="udId", visibility=["read", "create", "update", "delete", "query"])
+    """The unique id returned from user upload service when uploading a geofence. Will not be included
+     in geofencing post API."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        device_id: str,
+        distance: float,
+        geometry_id: str,
+        nearest_lat: float,
+        nearest_lon: float,
+        ud_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MapsGeofenceResultEventData(MapsGeofenceEventProperties):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Maps.GeofenceResult event.
+
+    :ivar expired_geofence_geometry_id: Lists of the geometry ID of the geofence which is expired
+     relative to the user time in the request. Required.
+    :vartype expired_geofence_geometry_id: list[str]
+    :ivar geometries: Lists the fence geometries that either fully contain the coordinate position
+     or have an overlap with the searchBuffer around the fence. Required.
+    :vartype geometries: list[~azure.eventgrid.models.MapsGeofenceGeometry]
+    :ivar invalid_period_geofence_geometry_id: Lists of the geometry ID of the geofence which is in
+     invalid period relative to the user time in the request. Required.
+    :vartype invalid_period_geofence_geometry_id: list[str]
+    :ivar is_event_published: True if at least one event is published to the Azure Maps event
+     subscriber, false if no event is published to the Azure Maps event subscriber. Required.
+    :vartype is_event_published: bool
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        is_event_published: bool,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MicrosoftTeamsAppIdentifierModel(_Model):
+    """A Microsoft Teams application.
+
+    :ivar app_id: The Id of the Microsoft Teams application. Required.
+    :vartype app_id: str
+    :ivar cloud: The cloud that the Microsoft Teams application belongs to. By default 'public' if
+     missing. Required. Known values are: "public", "dod", and "gcch".
+    :vartype cloud: str or ~azure.eventgrid.models.CommunicationCloudEnvironmentModel
+    """
+
+    app_id: str = rest_field(name="appId", visibility=["read", "create", "update", "delete", "query"])
+    """The Id of the Microsoft Teams application. Required."""
+    cloud: Union[str, "_models.CommunicationCloudEnvironmentModel"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The cloud that the Microsoft Teams application belongs to. By default 'public' if missing.
+     Required. Known values are: \"public\", \"dod\", and \"gcch\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        app_id: str,
+        cloud: Union[str, "_models.CommunicationCloudEnvironmentModel"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MicrosoftTeamsUserIdentifierModel(_Model):
+    """A Microsoft Teams user.
+
+    :ivar user_id: The Id of the Microsoft Teams user. If not anonymous, this is the AAD object Id
+     of the user. Required.
+    :vartype user_id: str
+    :ivar is_anonymous: True if the Microsoft Teams user is anonymous. By default false if missing.
+    :vartype is_anonymous: bool
+    :ivar cloud: The cloud that the Microsoft Teams user belongs to. By default 'public' if
+     missing. Required. Known values are: "public", "dod", and "gcch".
+    :vartype cloud: str or ~azure.eventgrid.models.CommunicationCloudEnvironmentModel
+    """
+
+    user_id: str = rest_field(name="userId", visibility=["read", "create", "update", "delete", "query"])
+    """The Id of the Microsoft Teams user. If not anonymous, this is the AAD object Id of the user.
+     Required."""
+    is_anonymous: Optional[bool] = rest_field(
+        name="isAnonymous", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """True if the Microsoft Teams user is anonymous. By default false if missing."""
+    cloud: Union[str, "_models.CommunicationCloudEnvironmentModel"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The cloud that the Microsoft Teams user belongs to. By default 'public' if missing. Required.
+     Known values are: \"public\", \"dod\", and \"gcch\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        user_id: str,
+        cloud: Union[str, "_models.CommunicationCloudEnvironmentModel"],
+        is_anonymous: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PhoneNumberIdentifierModel(_Model):
+    """A phone number.
+
+    :ivar value: The phone number in E.164 format. Required.
+    :vartype value: str
+    """
+
+    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The phone number in E.164 format. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PolicyInsightsPolicyStateChangedEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.PolicyInsights.PolicyStateChanged event.
+
+    :ivar timestamp: The time that the resource was scanned by Azure Policy in the Universal ISO
+     8601 DateTime format yyyy-MM-ddTHH:mm:ss.fffffffZ. Required.
+    :vartype timestamp: ~datetime.datetime
+    :ivar policy_assignment_id: The resource ID of the policy assignment. Required.
+    :vartype policy_assignment_id: str
+    :ivar policy_definition_id: The resource ID of the policy definition. Required.
+    :vartype policy_definition_id: str
+    :ivar policy_definition_reference_id: The reference ID for the policy definition inside the
+     initiative definition, if the policy assignment is for an initiative. May be empty. Required.
+    :vartype policy_definition_reference_id: str
+    :ivar compliance_state: The compliance state of the resource with respect to the policy
+     assignment. Required.
+    :vartype compliance_state: str
+    :ivar subscription_id: The subscription ID of the resource. Required.
+    :vartype subscription_id: str
+    :ivar compliance_reason_code: The compliance reason code. May be empty. Required.
+    :vartype compliance_reason_code: str
+    """
+
+    timestamp: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time that the resource was scanned by Azure Policy in the Universal ISO 8601 DateTime
+     format yyyy-MM-ddTHH:mm:ss.fffffffZ. Required."""
+    policy_assignment_id: str = rest_field(
+        name="policyAssignmentId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of the policy assignment. Required."""
+    policy_definition_id: str = rest_field(
+        name="policyDefinitionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of the policy definition. Required."""
+    policy_definition_reference_id: str = rest_field(
+        name="policyDefinitionReferenceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The reference ID for the policy definition inside the initiative definition, if the policy
+     assignment is for an initiative. May be empty. Required."""
+    compliance_state: str = rest_field(
+        name="complianceState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The compliance state of the resource with respect to the policy assignment. Required."""
+    subscription_id: str = rest_field(name="subscriptionId", visibility=["read", "create", "update", "delete", "query"])
+    """The subscription ID of the resource. Required."""
+    compliance_reason_code: str = rest_field(
+        name="complianceReasonCode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The compliance reason code. May be empty. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        timestamp: datetime.datetime,
+        policy_assignment_id: str,
+        policy_definition_id: str,
+        policy_definition_reference_id: str,
+        compliance_state: str,
+        subscription_id: str,
+        compliance_reason_code: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PolicyInsightsPolicyStateCreatedEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.PolicyInsights.PolicyStateCreated event.
+
+    :ivar timestamp: The time that the resource was scanned by Azure Policy in the Universal ISO
+     8601 DateTime format yyyy-MM-ddTHH:mm:ss.fffffffZ. Required.
+    :vartype timestamp: ~datetime.datetime
+    :ivar policy_assignment_id: The resource ID of the policy assignment. Required.
+    :vartype policy_assignment_id: str
+    :ivar policy_definition_id: The resource ID of the policy definition. Required.
+    :vartype policy_definition_id: str
+    :ivar policy_definition_reference_id: The reference ID for the policy definition inside the
+     initiative definition, if the policy assignment is for an initiative. May be empty. Required.
+    :vartype policy_definition_reference_id: str
+    :ivar compliance_state: The compliance state of the resource with respect to the policy
+     assignment. Required.
+    :vartype compliance_state: str
+    :ivar subscription_id: The subscription ID of the resource. Required.
+    :vartype subscription_id: str
+    :ivar compliance_reason_code: The compliance reason code. May be empty. Required.
+    :vartype compliance_reason_code: str
+    """
+
+    timestamp: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time that the resource was scanned by Azure Policy in the Universal ISO 8601 DateTime
+     format yyyy-MM-ddTHH:mm:ss.fffffffZ. Required."""
+    policy_assignment_id: str = rest_field(
+        name="policyAssignmentId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of the policy assignment. Required."""
+    policy_definition_id: str = rest_field(
+        name="policyDefinitionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of the policy definition. Required."""
+    policy_definition_reference_id: str = rest_field(
+        name="policyDefinitionReferenceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The reference ID for the policy definition inside the initiative definition, if the policy
+     assignment is for an initiative. May be empty. Required."""
+    compliance_state: str = rest_field(
+        name="complianceState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The compliance state of the resource with respect to the policy assignment. Required."""
+    subscription_id: str = rest_field(name="subscriptionId", visibility=["read", "create", "update", "delete", "query"])
+    """The subscription ID of the resource. Required."""
+    compliance_reason_code: str = rest_field(
+        name="complianceReasonCode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The compliance reason code. May be empty. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        timestamp: datetime.datetime,
+        policy_assignment_id: str,
+        policy_definition_id: str,
+        policy_definition_reference_id: str,
+        compliance_state: str,
+        subscription_id: str,
+        compliance_reason_code: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PolicyInsightsPolicyStateDeletedEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.PolicyInsights.PolicyStateDeleted event.
+
+    :ivar timestamp: The time that the resource was scanned by Azure Policy in the Universal ISO
+     8601 DateTime format yyyy-MM-ddTHH:mm:ss.fffffffZ. Required.
+    :vartype timestamp: ~datetime.datetime
+    :ivar policy_assignment_id: The resource ID of the policy assignment. Required.
+    :vartype policy_assignment_id: str
+    :ivar policy_definition_id: The resource ID of the policy definition. Required.
+    :vartype policy_definition_id: str
+    :ivar policy_definition_reference_id: The reference ID for the policy definition inside the
+     initiative definition, if the policy assignment is for an initiative. May be empty. Required.
+    :vartype policy_definition_reference_id: str
+    :ivar compliance_state: The compliance state of the resource with respect to the policy
+     assignment. Required.
+    :vartype compliance_state: str
+    :ivar subscription_id: The subscription ID of the resource. Required.
+    :vartype subscription_id: str
+    :ivar compliance_reason_code: The compliance reason code. May be empty. Required.
+    :vartype compliance_reason_code: str
+    """
+
+    timestamp: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time that the resource was scanned by Azure Policy in the Universal ISO 8601 DateTime
+     format yyyy-MM-ddTHH:mm:ss.fffffffZ. Required."""
+    policy_assignment_id: str = rest_field(
+        name="policyAssignmentId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of the policy assignment. Required."""
+    policy_definition_id: str = rest_field(
+        name="policyDefinitionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of the policy definition. Required."""
+    policy_definition_reference_id: str = rest_field(
+        name="policyDefinitionReferenceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The reference ID for the policy definition inside the initiative definition, if the policy
+     assignment is for an initiative. May be empty. Required."""
+    compliance_state: str = rest_field(
+        name="complianceState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The compliance state of the resource with respect to the policy assignment. Required."""
+    subscription_id: str = rest_field(name="subscriptionId", visibility=["read", "create", "update", "delete", "query"])
+    """The subscription ID of the resource. Required."""
+    compliance_reason_code: str = rest_field(
+        name="complianceReasonCode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The compliance reason code. May be empty. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        timestamp: datetime.datetime,
+        policy_assignment_id: str,
+        policy_definition_id: str,
+        policy_definition_reference_id: str,
+        compliance_state: str,
+        subscription_id: str,
+        compliance_reason_code: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RedisExportRDBCompletedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Cache.ExportRDBCompleted
+    event.
+
+    :ivar timestamp: The time at which the event occurred.
+    :vartype timestamp: ~datetime.datetime
+    :ivar name: The name of this event.
+    :vartype name: str
+    :ivar status: The status of this event. Failed or  succeeded.
+    :vartype status: str
+    """
+
+    timestamp: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the event occurred."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of this event."""
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The status of this event. Failed or  succeeded."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        timestamp: Optional[datetime.datetime] = None,
+        name: Optional[str] = None,
+        status: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RedisImportRDBCompletedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Cache.ImportRDBCompleted
+    event.
+
+    :ivar timestamp: The time at which the event occurred.
+    :vartype timestamp: ~datetime.datetime
+    :ivar name: The name of this event.
+    :vartype name: str
+    :ivar status: The status of this event. Failed or  succeeded.
+    :vartype status: str
+    """
+
+    timestamp: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the event occurred."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of this event."""
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The status of this event. Failed or  succeeded."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        timestamp: Optional[datetime.datetime] = None,
+        name: Optional[str] = None,
+        status: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RedisPatchingCompletedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Cache.PatchingCompleted event.
+
+    :ivar timestamp: The time at which the event occurred.
+    :vartype timestamp: ~datetime.datetime
+    :ivar name: The name of this event.
+    :vartype name: str
+    :ivar status: The status of this event. Failed or  succeeded.
+    :vartype status: str
+    """
+
+    timestamp: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the event occurred."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of this event."""
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The status of this event. Failed or  succeeded."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        timestamp: Optional[datetime.datetime] = None,
+        name: Optional[str] = None,
+        status: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RedisScalingCompletedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Cache.ScalingCompleted event.
+
+    :ivar timestamp: The time at which the event occurred.
+    :vartype timestamp: ~datetime.datetime
+    :ivar name: The name of this event.
+    :vartype name: str
+    :ivar status: The status of this event. Failed or  succeeded.
+    :vartype status: str
+    """
+
+    timestamp: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the event occurred."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of this event."""
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The status of this event. Failed or  succeeded."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        timestamp: Optional[datetime.datetime] = None,
+        name: Optional[str] = None,
+        status: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceActionCancelEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Resources.ResourceActionCancel
+    event. This is raised when a resource action operation is canceled.
+
+    :ivar tenant_id: The tenant ID of the resource.
+    :vartype tenant_id: str
+    :ivar subscription_id: The subscription ID of the resource.
+    :vartype subscription_id: str
+    :ivar resource_group: The resource group of the resource.
+    :vartype resource_group: str
+    :ivar resource_provider: The resource provider performing the operation.
+    :vartype resource_provider: str
+    :ivar resource_uri: The URI of the resource in the operation.
+    :vartype resource_uri: str
+    :ivar operation_name: The operation that was performed.
+    :vartype operation_name: str
+    :ivar status: The status of the operation.
+    :vartype status: str
+    :ivar authorization: The requested authorization for the operation. Required.
+    :vartype authorization: ~azure.eventgrid.models.ResourceAuthorization
+    :ivar claims: The properties of the claims. Required.
+    :vartype claims: dict[str, str]
+    :ivar correlation_id: An operation ID used for troubleshooting.
+    :vartype correlation_id: str
+    :ivar http_request: The details of the operation. Required.
+    :vartype http_request: ~azure.eventgrid.models.ResourceHttpRequest
+    """
+
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    """The tenant ID of the resource."""
+    subscription_id: Optional[str] = rest_field(
+        name="subscriptionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The subscription ID of the resource."""
+    resource_group: Optional[str] = rest_field(
+        name="resourceGroup", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource group of the resource."""
+    resource_provider: Optional[str] = rest_field(
+        name="resourceProvider", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource provider performing the operation."""
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The URI of the resource in the operation."""
+    operation_name: Optional[str] = rest_field(
+        name="operationName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The operation that was performed."""
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The status of the operation."""
+    authorization: "_models.ResourceAuthorization" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The requested authorization for the operation. Required."""
+    claims: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The properties of the claims. Required."""
+    correlation_id: Optional[str] = rest_field(
+        name="correlationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An operation ID used for troubleshooting."""
+    http_request: "_models.ResourceHttpRequest" = rest_field(
+        name="httpRequest", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The details of the operation. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        authorization: "_models.ResourceAuthorization",
+        claims: Dict[str, str],
+        http_request: "_models.ResourceHttpRequest",
+        tenant_id: Optional[str] = None,
+        subscription_id: Optional[str] = None,
+        resource_group: Optional[str] = None,
+        resource_provider: Optional[str] = None,
+        resource_uri: Optional[str] = None,
+        operation_name: Optional[str] = None,
+        status: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceActionFailureEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Resources.ResourceActionFailure event. This is raised when a resource action
+    operation fails.
+
+    :ivar tenant_id: The tenant ID of the resource.
+    :vartype tenant_id: str
+    :ivar subscription_id: The subscription ID of the resource.
+    :vartype subscription_id: str
+    :ivar resource_group: The resource group of the resource.
+    :vartype resource_group: str
+    :ivar resource_provider: The resource provider performing the operation.
+    :vartype resource_provider: str
+    :ivar resource_uri: The URI of the resource in the operation.
+    :vartype resource_uri: str
+    :ivar operation_name: The operation that was performed.
+    :vartype operation_name: str
+    :ivar status: The status of the operation.
+    :vartype status: str
+    :ivar authorization: The requested authorization for the operation. Required.
+    :vartype authorization: ~azure.eventgrid.models.ResourceAuthorization
+    :ivar claims: The properties of the claims. Required.
+    :vartype claims: dict[str, str]
+    :ivar correlation_id: An operation ID used for troubleshooting.
+    :vartype correlation_id: str
+    :ivar http_request: The details of the operation. Required.
+    :vartype http_request: ~azure.eventgrid.models.ResourceHttpRequest
+    """
+
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    """The tenant ID of the resource."""
+    subscription_id: Optional[str] = rest_field(
+        name="subscriptionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The subscription ID of the resource."""
+    resource_group: Optional[str] = rest_field(
+        name="resourceGroup", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource group of the resource."""
+    resource_provider: Optional[str] = rest_field(
+        name="resourceProvider", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource provider performing the operation."""
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The URI of the resource in the operation."""
+    operation_name: Optional[str] = rest_field(
+        name="operationName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The operation that was performed."""
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The status of the operation."""
+    authorization: "_models.ResourceAuthorization" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The requested authorization for the operation. Required."""
+    claims: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The properties of the claims. Required."""
+    correlation_id: Optional[str] = rest_field(
+        name="correlationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An operation ID used for troubleshooting."""
+    http_request: "_models.ResourceHttpRequest" = rest_field(
+        name="httpRequest", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The details of the operation. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        authorization: "_models.ResourceAuthorization",
+        claims: Dict[str, str],
+        http_request: "_models.ResourceHttpRequest",
+        tenant_id: Optional[str] = None,
+        subscription_id: Optional[str] = None,
+        resource_group: Optional[str] = None,
+        resource_provider: Optional[str] = None,
+        resource_uri: Optional[str] = None,
+        operation_name: Optional[str] = None,
+        status: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceActionSuccessEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Resources.ResourceActionSuccess event. This is raised when a resource action
+    operation succeeds.
+
+    :ivar tenant_id: The tenant ID of the resource.
+    :vartype tenant_id: str
+    :ivar subscription_id: The subscription ID of the resource.
+    :vartype subscription_id: str
+    :ivar resource_group: The resource group of the resource.
+    :vartype resource_group: str
+    :ivar resource_provider: The resource provider performing the operation.
+    :vartype resource_provider: str
+    :ivar resource_uri: The URI of the resource in the operation.
+    :vartype resource_uri: str
+    :ivar operation_name: The operation that was performed.
+    :vartype operation_name: str
+    :ivar status: The status of the operation.
+    :vartype status: str
+    :ivar authorization: The requested authorization for the operation. Required.
+    :vartype authorization: ~azure.eventgrid.models.ResourceAuthorization
+    :ivar claims: The properties of the claims. Required.
+    :vartype claims: dict[str, str]
+    :ivar correlation_id: An operation ID used for troubleshooting.
+    :vartype correlation_id: str
+    :ivar http_request: The details of the operation. Required.
+    :vartype http_request: ~azure.eventgrid.models.ResourceHttpRequest
+    """
+
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    """The tenant ID of the resource."""
+    subscription_id: Optional[str] = rest_field(
+        name="subscriptionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The subscription ID of the resource."""
+    resource_group: Optional[str] = rest_field(
+        name="resourceGroup", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource group of the resource."""
+    resource_provider: Optional[str] = rest_field(
+        name="resourceProvider", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource provider performing the operation."""
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The URI of the resource in the operation."""
+    operation_name: Optional[str] = rest_field(
+        name="operationName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The operation that was performed."""
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The status of the operation."""
+    authorization: "_models.ResourceAuthorization" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The requested authorization for the operation. Required."""
+    claims: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The properties of the claims. Required."""
+    correlation_id: Optional[str] = rest_field(
+        name="correlationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An operation ID used for troubleshooting."""
+    http_request: "_models.ResourceHttpRequest" = rest_field(
+        name="httpRequest", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The details of the operation. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        authorization: "_models.ResourceAuthorization",
+        claims: Dict[str, str],
+        http_request: "_models.ResourceHttpRequest",
+        tenant_id: Optional[str] = None,
+        subscription_id: Optional[str] = None,
+        resource_group: Optional[str] = None,
+        resource_provider: Optional[str] = None,
+        resource_uri: Optional[str] = None,
+        operation_name: Optional[str] = None,
+        status: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceAuthorization(_Model):
+    """The details of the authorization for the resource.
+
+    :ivar scope: The scope of the authorization.
+    :vartype scope: str
+    :ivar action: The action being requested.
+    :vartype action: str
+    :ivar evidence: The evidence for the authorization. Required.
+    :vartype evidence: dict[str, str]
+    """
+
+    scope: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The scope of the authorization."""
+    action: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The action being requested."""
+    evidence: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The evidence for the authorization. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        evidence: Dict[str, str],
+        scope: Optional[str] = None,
+        action: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceDeleteCancelEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Resources.ResourceDeleteCancel
+    event. This is raised when a resource delete operation is canceled.
+
+    :ivar tenant_id: The tenant ID of the resource.
+    :vartype tenant_id: str
+    :ivar subscription_id: The subscription ID of the resource.
+    :vartype subscription_id: str
+    :ivar resource_group: The resource group of the resource.
+    :vartype resource_group: str
+    :ivar resource_provider: The resource provider performing the operation.
+    :vartype resource_provider: str
+    :ivar resource_uri: The URI of the resource in the operation.
+    :vartype resource_uri: str
+    :ivar operation_name: The operation that was performed.
+    :vartype operation_name: str
+    :ivar status: The status of the operation.
+    :vartype status: str
+    :ivar authorization: The requested authorization for the operation. Required.
+    :vartype authorization: ~azure.eventgrid.models.ResourceAuthorization
+    :ivar claims: The properties of the claims. Required.
+    :vartype claims: dict[str, str]
+    :ivar correlation_id: An operation ID used for troubleshooting.
+    :vartype correlation_id: str
+    :ivar http_request: The details of the operation. Required.
+    :vartype http_request: ~azure.eventgrid.models.ResourceHttpRequest
+    """
+
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    """The tenant ID of the resource."""
+    subscription_id: Optional[str] = rest_field(
+        name="subscriptionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The subscription ID of the resource."""
+    resource_group: Optional[str] = rest_field(
+        name="resourceGroup", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource group of the resource."""
+    resource_provider: Optional[str] = rest_field(
+        name="resourceProvider", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource provider performing the operation."""
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The URI of the resource in the operation."""
+    operation_name: Optional[str] = rest_field(
+        name="operationName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The operation that was performed."""
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The status of the operation."""
+    authorization: "_models.ResourceAuthorization" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The requested authorization for the operation. Required."""
+    claims: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The properties of the claims. Required."""
+    correlation_id: Optional[str] = rest_field(
+        name="correlationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An operation ID used for troubleshooting."""
+    http_request: "_models.ResourceHttpRequest" = rest_field(
+        name="httpRequest", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The details of the operation. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        authorization: "_models.ResourceAuthorization",
+        claims: Dict[str, str],
+        http_request: "_models.ResourceHttpRequest",
+        tenant_id: Optional[str] = None,
+        subscription_id: Optional[str] = None,
+        resource_group: Optional[str] = None,
+        resource_provider: Optional[str] = None,
+        resource_uri: Optional[str] = None,
+        operation_name: Optional[str] = None,
+        status: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceDeleteFailureEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Resources.ResourceDeleteFailure event. This is raised when a resource delete
+    operation fails.
+
+    :ivar tenant_id: The tenant ID of the resource.
+    :vartype tenant_id: str
+    :ivar subscription_id: The subscription ID of the resource.
+    :vartype subscription_id: str
+    :ivar resource_group: The resource group of the resource.
+    :vartype resource_group: str
+    :ivar resource_provider: The resource provider performing the operation.
+    :vartype resource_provider: str
+    :ivar resource_uri: The URI of the resource in the operation.
+    :vartype resource_uri: str
+    :ivar operation_name: The operation that was performed.
+    :vartype operation_name: str
+    :ivar status: The status of the operation.
+    :vartype status: str
+    :ivar authorization: The requested authorization for the operation. Required.
+    :vartype authorization: ~azure.eventgrid.models.ResourceAuthorization
+    :ivar claims: The properties of the claims. Required.
+    :vartype claims: dict[str, str]
+    :ivar correlation_id: An operation ID used for troubleshooting.
+    :vartype correlation_id: str
+    :ivar http_request: The details of the operation. Required.
+    :vartype http_request: ~azure.eventgrid.models.ResourceHttpRequest
+    """
+
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    """The tenant ID of the resource."""
+    subscription_id: Optional[str] = rest_field(
+        name="subscriptionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The subscription ID of the resource."""
+    resource_group: Optional[str] = rest_field(
+        name="resourceGroup", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource group of the resource."""
+    resource_provider: Optional[str] = rest_field(
+        name="resourceProvider", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource provider performing the operation."""
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The URI of the resource in the operation."""
+    operation_name: Optional[str] = rest_field(
+        name="operationName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The operation that was performed."""
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The status of the operation."""
+    authorization: "_models.ResourceAuthorization" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The requested authorization for the operation. Required."""
+    claims: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The properties of the claims. Required."""
+    correlation_id: Optional[str] = rest_field(
+        name="correlationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An operation ID used for troubleshooting."""
+    http_request: "_models.ResourceHttpRequest" = rest_field(
+        name="httpRequest", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The details of the operation. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        authorization: "_models.ResourceAuthorization",
+        claims: Dict[str, str],
+        http_request: "_models.ResourceHttpRequest",
+        tenant_id: Optional[str] = None,
+        subscription_id: Optional[str] = None,
+        resource_group: Optional[str] = None,
+        resource_provider: Optional[str] = None,
+        resource_uri: Optional[str] = None,
+        operation_name: Optional[str] = None,
+        status: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceDeleteSuccessEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Resources.ResourceDeleteSuccess event. This is raised when a resource delete
+    operation succeeds.
+
+    :ivar tenant_id: The tenant ID of the resource.
+    :vartype tenant_id: str
+    :ivar subscription_id: The subscription ID of the resource.
+    :vartype subscription_id: str
+    :ivar resource_group: The resource group of the resource.
+    :vartype resource_group: str
+    :ivar resource_provider: The resource provider performing the operation.
+    :vartype resource_provider: str
+    :ivar resource_uri: The URI of the resource in the operation.
+    :vartype resource_uri: str
+    :ivar operation_name: The operation that was performed.
+    :vartype operation_name: str
+    :ivar status: The status of the operation.
+    :vartype status: str
+    :ivar authorization: The requested authorization for the operation. Required.
+    :vartype authorization: ~azure.eventgrid.models.ResourceAuthorization
+    :ivar claims: The properties of the claims. Required.
+    :vartype claims: dict[str, str]
+    :ivar correlation_id: An operation ID used for troubleshooting.
+    :vartype correlation_id: str
+    :ivar http_request: The details of the operation. Required.
+    :vartype http_request: ~azure.eventgrid.models.ResourceHttpRequest
+    """
+
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    """The tenant ID of the resource."""
+    subscription_id: Optional[str] = rest_field(
+        name="subscriptionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The subscription ID of the resource."""
+    resource_group: Optional[str] = rest_field(
+        name="resourceGroup", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource group of the resource."""
+    resource_provider: Optional[str] = rest_field(
+        name="resourceProvider", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource provider performing the operation."""
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The URI of the resource in the operation."""
+    operation_name: Optional[str] = rest_field(
+        name="operationName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The operation that was performed."""
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The status of the operation."""
+    authorization: "_models.ResourceAuthorization" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The requested authorization for the operation. Required."""
+    claims: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The properties of the claims. Required."""
+    correlation_id: Optional[str] = rest_field(
+        name="correlationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An operation ID used for troubleshooting."""
+    http_request: "_models.ResourceHttpRequest" = rest_field(
+        name="httpRequest", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The details of the operation. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        authorization: "_models.ResourceAuthorization",
+        claims: Dict[str, str],
+        http_request: "_models.ResourceHttpRequest",
+        tenant_id: Optional[str] = None,
+        subscription_id: Optional[str] = None,
+        resource_group: Optional[str] = None,
+        resource_provider: Optional[str] = None,
+        resource_uri: Optional[str] = None,
+        operation_name: Optional[str] = None,
+        status: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceHttpRequest(_Model):
+    """The details of the HTTP request.
+
+    :ivar client_request_id: The client request ID.
+    :vartype client_request_id: str
+    :ivar client_ip_address: The client IP address.
+    :vartype client_ip_address: str
+    :ivar method: The request method.
+    :vartype method: str
+    :ivar url: The url used in the request.
+    :vartype url: str
+    """
+
+    client_request_id: Optional[str] = rest_field(
+        name="clientRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The client request ID."""
+    client_ip_address: Optional[str] = rest_field(
+        name="clientIpAddress", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The client IP address."""
+    method: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The request method."""
+    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The url used in the request."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        client_request_id: Optional[str] = None,
+        client_ip_address: Optional[str] = None,
+        method: Optional[str] = None,
+        url: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceNotificationsResourceUpdatedEventData(_Model):  # pylint: disable=name-too-long
+    """Describes the schema of the common properties across all ARN system topic events.
+
+    :ivar resource_details: resourceInfo details for update event. Required.
+    :vartype resource_details: ~azure.eventgrid.models.ResourceNotificationsResourceUpdatedDetails
+    :ivar operational_details: details about operational info. Required.
+    :vartype operational_details: ~azure.eventgrid.models.ResourceNotificationsOperationalDetails
+    :ivar api_version: api version of the resource properties bag. Required.
+    :vartype api_version: str
+    """
+
+    resource_details: "_models.ResourceNotificationsResourceUpdatedDetails" = rest_field(
+        name="resourceDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """resourceInfo details for update event. Required."""
+    operational_details: "_models.ResourceNotificationsOperationalDetails" = rest_field(
+        name="operationalDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """details about operational info. Required."""
+    api_version: str = rest_field(name="apiVersion", visibility=["read", "create", "update", "delete", "query"])
+    """api version of the resource properties bag. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_details: "_models.ResourceNotificationsResourceUpdatedDetails",
+        operational_details: "_models.ResourceNotificationsOperationalDetails",
+        api_version: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceNotificationsContainerServiceEventResourcesScheduledEventData(
+    ResourceNotificationsResourceUpdatedEventData
+):  # pylint: disable=name-too-long
+    """Schema of the Data property of an event grid event for a
+    Microsoft.ResourceNotifications.ContainerServiceEventResources.ScheduledEventEmitted preview
+    event.Schema of the Data property of an event grid event for a
+    Microsoft.ResourceNotifications.ContainerServiceEventResources.ScheduledEventEmitted preview
+    event.
+
+    :ivar resource_details: resourceInfo details for update event. Required.
+    :vartype resource_details: ~azure.eventgrid.models.ResourceNotificationsResourceUpdatedDetails
+    :ivar operational_details: details about operational info. Required.
+    :vartype operational_details: ~azure.eventgrid.models.ResourceNotificationsOperationalDetails
+    :ivar api_version: api version of the resource properties bag. Required.
+    :vartype api_version: str
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_details: "_models.ResourceNotificationsResourceUpdatedDetails",
+        operational_details: "_models.ResourceNotificationsOperationalDetails",
+        api_version: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceNotificationsHealthResourcesAnnotatedEventData(
+    ResourceNotificationsResourceUpdatedEventData
+):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ResourceNotifications.HealthResources.ResourceAnnotated event.
+
+    :ivar resource_details: resourceInfo details for update event. Required.
+    :vartype resource_details: ~azure.eventgrid.models.ResourceNotificationsResourceUpdatedDetails
+    :ivar operational_details: details about operational info. Required.
+    :vartype operational_details: ~azure.eventgrid.models.ResourceNotificationsOperationalDetails
+    :ivar api_version: api version of the resource properties bag. Required.
+    :vartype api_version: str
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_details: "_models.ResourceNotificationsResourceUpdatedDetails",
+        operational_details: "_models.ResourceNotificationsOperationalDetails",
+        api_version: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceNotificationsHealthResourcesAvailabilityStatusChangedEventData(
+    ResourceNotificationsResourceUpdatedEventData
+):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ResourceNotifications.HealthResources.AvailabilityStatusChanged
+    event.
+
+    :ivar resource_details: resourceInfo details for update event. Required.
+    :vartype resource_details: ~azure.eventgrid.models.ResourceNotificationsResourceUpdatedDetails
+    :ivar operational_details: details about operational info. Required.
+    :vartype operational_details: ~azure.eventgrid.models.ResourceNotificationsOperationalDetails
+    :ivar api_version: api version of the resource properties bag. Required.
+    :vartype api_version: str
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_details: "_models.ResourceNotificationsResourceUpdatedDetails",
+        operational_details: "_models.ResourceNotificationsOperationalDetails",
+        api_version: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceNotificationsOperationalDetails(_Model):
+    """details of operational info.
+
+    :ivar resource_event_time: Date and Time when resource was updated. Required.
+    :vartype resource_event_time: ~datetime.datetime
+    """
+
+    resource_event_time: datetime.datetime = rest_field(
+        name="resourceEventTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Date and Time when resource was updated. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_event_time: datetime.datetime,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceNotificationsResourceDeletedDetails(_Model):  # pylint: disable=name-too-long
+    """Describes the schema of the properties under resource info which are common
+    across all ARN system topic delete events.
+
+    :ivar id: id of the resource for which the event is being emitted. Required.
+    :vartype id: str
+    :ivar name: name of the resource for which the event is being emitted. Required.
+    :vartype name: str
+    :ivar type: the type of the resource for which the event is being emitted. Required.
+    :vartype type: str
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """id of the resource for which the event is being emitted. Required."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """name of the resource for which the event is being emitted. Required."""
+    type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """the type of the resource for which the event is being emitted. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        name: str,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceNotificationsResourceDeletedEventData(_Model):  # pylint: disable=name-too-long
+    """Describes the schema of the common properties across all ARN system topic
+    delete events.
+
+    :ivar resource_details: resourceInfo details for delete event. Required.
+    :vartype resource_details: ~azure.eventgrid.models.ResourceNotificationsResourceDeletedDetails
+    :ivar operational_details: details about operational info. Required.
+    :vartype operational_details: ~azure.eventgrid.models.ResourceNotificationsOperationalDetails
+    """
+
+    resource_details: "_models.ResourceNotificationsResourceDeletedDetails" = rest_field(
+        name="resourceDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """resourceInfo details for delete event. Required."""
+    operational_details: "_models.ResourceNotificationsOperationalDetails" = rest_field(
+        name="operationalDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """details about operational info. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_details: "_models.ResourceNotificationsResourceDeletedDetails",
+        operational_details: "_models.ResourceNotificationsOperationalDetails",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceNotificationsResourceManagementCreatedOrUpdatedEventData(
+    ResourceNotificationsResourceUpdatedEventData
+):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ResourceNotifications.Resources.CreatedOrUpdated event.
+
+    :ivar resource_details: resourceInfo details for update event. Required.
+    :vartype resource_details: ~azure.eventgrid.models.ResourceNotificationsResourceUpdatedDetails
+    :ivar operational_details: details about operational info. Required.
+    :vartype operational_details: ~azure.eventgrid.models.ResourceNotificationsOperationalDetails
+    :ivar api_version: api version of the resource properties bag. Required.
+    :vartype api_version: str
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_details: "_models.ResourceNotificationsResourceUpdatedDetails",
+        operational_details: "_models.ResourceNotificationsOperationalDetails",
+        api_version: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceNotificationsResourceManagementDeletedEventData(
+    ResourceNotificationsResourceDeletedEventData
+):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ResourceNotifications.Resources.Deleted event.
+
+    :ivar resource_details: resourceInfo details for delete event. Required.
+    :vartype resource_details: ~azure.eventgrid.models.ResourceNotificationsResourceDeletedDetails
+    :ivar operational_details: details about operational info. Required.
+    :vartype operational_details: ~azure.eventgrid.models.ResourceNotificationsOperationalDetails
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_details: "_models.ResourceNotificationsResourceDeletedDetails",
+        operational_details: "_models.ResourceNotificationsOperationalDetails",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceNotificationsResourceUpdatedDetails(_Model):  # pylint: disable=name-too-long
+    """Describes the schema of the properties under resource info which are common
+    across all ARN system topic events.
+
+    :ivar id: id of the resource for which the event is being emitted. Required.
+    :vartype id: str
+    :ivar name: name of the resource for which the event is being emitted. Required.
+    :vartype name: str
+    :ivar type: the type of the resource for which the event is being emitted. Required.
+    :vartype type: str
+    :ivar location: the location of the resource for which the event is being emitted.
+    :vartype location: str
+    :ivar tags: the tags on the resource for which the event is being emitted.
+    :vartype tags: dict[str, str]
+    :ivar properties: properties in the payload of the resource for which the event is being
+     emitted.
+    :vartype properties: dict[str, any]
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """id of the resource for which the event is being emitted. Required."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """name of the resource for which the event is being emitted. Required."""
+    type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """the type of the resource for which the event is being emitted. Required."""
+    location: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """the location of the resource for which the event is being emitted."""
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """the tags on the resource for which the event is being emitted."""
+    properties: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """properties in the payload of the resource for which the event is being emitted."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        name: str,
+        type: str,
+        location: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional[Dict[str, Any]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceWriteCancelEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Resources.ResourceWriteCancel
+    event. This is raised when a resource create or update operation is canceled.
+
+    :ivar tenant_id: The tenant ID of the resource.
+    :vartype tenant_id: str
+    :ivar subscription_id: The subscription ID of the resource.
+    :vartype subscription_id: str
+    :ivar resource_group: The resource group of the resource.
+    :vartype resource_group: str
+    :ivar resource_provider: The resource provider performing the operation.
+    :vartype resource_provider: str
+    :ivar resource_uri: The URI of the resource in the operation.
+    :vartype resource_uri: str
+    :ivar operation_name: The operation that was performed.
+    :vartype operation_name: str
+    :ivar status: The status of the operation.
+    :vartype status: str
+    :ivar authorization: The requested authorization for the operation. Required.
+    :vartype authorization: ~azure.eventgrid.models.ResourceAuthorization
+    :ivar claims: The properties of the claims. Required.
+    :vartype claims: dict[str, str]
+    :ivar correlation_id: An operation ID used for troubleshooting.
+    :vartype correlation_id: str
+    :ivar http_request: The details of the operation. Required.
+    :vartype http_request: ~azure.eventgrid.models.ResourceHttpRequest
+    """
+
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    """The tenant ID of the resource."""
+    subscription_id: Optional[str] = rest_field(
+        name="subscriptionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The subscription ID of the resource."""
+    resource_group: Optional[str] = rest_field(
+        name="resourceGroup", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource group of the resource."""
+    resource_provider: Optional[str] = rest_field(
+        name="resourceProvider", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource provider performing the operation."""
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The URI of the resource in the operation."""
+    operation_name: Optional[str] = rest_field(
+        name="operationName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The operation that was performed."""
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The status of the operation."""
+    authorization: "_models.ResourceAuthorization" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The requested authorization for the operation. Required."""
+    claims: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The properties of the claims. Required."""
+    correlation_id: Optional[str] = rest_field(
+        name="correlationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An operation ID used for troubleshooting."""
+    http_request: "_models.ResourceHttpRequest" = rest_field(
+        name="httpRequest", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The details of the operation. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        authorization: "_models.ResourceAuthorization",
+        claims: Dict[str, str],
+        http_request: "_models.ResourceHttpRequest",
+        tenant_id: Optional[str] = None,
+        subscription_id: Optional[str] = None,
+        resource_group: Optional[str] = None,
+        resource_provider: Optional[str] = None,
+        resource_uri: Optional[str] = None,
+        operation_name: Optional[str] = None,
+        status: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceWriteFailureEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Resources.ResourceWriteFailure
+    event. This is raised when a resource create or update operation fails.
+
+    :ivar tenant_id: The tenant ID of the resource.
+    :vartype tenant_id: str
+    :ivar subscription_id: The subscription ID of the resource.
+    :vartype subscription_id: str
+    :ivar resource_group: The resource group of the resource.
+    :vartype resource_group: str
+    :ivar resource_provider: The resource provider performing the operation.
+    :vartype resource_provider: str
+    :ivar resource_uri: The URI of the resource in the operation.
+    :vartype resource_uri: str
+    :ivar operation_name: The operation that was performed.
+    :vartype operation_name: str
+    :ivar status: The status of the operation.
+    :vartype status: str
+    :ivar authorization: The requested authorization for the operation. Required.
+    :vartype authorization: ~azure.eventgrid.models.ResourceAuthorization
+    :ivar claims: The properties of the claims. Required.
+    :vartype claims: dict[str, str]
+    :ivar correlation_id: An operation ID used for troubleshooting.
+    :vartype correlation_id: str
+    :ivar http_request: The details of the operation. Required.
+    :vartype http_request: ~azure.eventgrid.models.ResourceHttpRequest
+    """
+
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    """The tenant ID of the resource."""
+    subscription_id: Optional[str] = rest_field(
+        name="subscriptionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The subscription ID of the resource."""
+    resource_group: Optional[str] = rest_field(
+        name="resourceGroup", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource group of the resource."""
+    resource_provider: Optional[str] = rest_field(
+        name="resourceProvider", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource provider performing the operation."""
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The URI of the resource in the operation."""
+    operation_name: Optional[str] = rest_field(
+        name="operationName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The operation that was performed."""
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The status of the operation."""
+    authorization: "_models.ResourceAuthorization" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The requested authorization for the operation. Required."""
+    claims: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The properties of the claims. Required."""
+    correlation_id: Optional[str] = rest_field(
+        name="correlationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An operation ID used for troubleshooting."""
+    http_request: "_models.ResourceHttpRequest" = rest_field(
+        name="httpRequest", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The details of the operation. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        authorization: "_models.ResourceAuthorization",
+        claims: Dict[str, str],
+        http_request: "_models.ResourceHttpRequest",
+        tenant_id: Optional[str] = None,
+        subscription_id: Optional[str] = None,
+        resource_group: Optional[str] = None,
+        resource_provider: Optional[str] = None,
+        resource_uri: Optional[str] = None,
+        operation_name: Optional[str] = None,
+        status: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceWriteSuccessEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Resources.ResourceWriteSuccess
+    event. This is raised when a resource create or update operation succeeds.
+
+    :ivar tenant_id: The tenant ID of the resource.
+    :vartype tenant_id: str
+    :ivar subscription_id: The subscription ID of the resource.
+    :vartype subscription_id: str
+    :ivar resource_group: The resource group of the resource.
+    :vartype resource_group: str
+    :ivar resource_provider: The resource provider performing the operation.
+    :vartype resource_provider: str
+    :ivar resource_uri: The URI of the resource in the operation.
+    :vartype resource_uri: str
+    :ivar operation_name: The operation that was performed.
+    :vartype operation_name: str
+    :ivar status: The status of the operation.
+    :vartype status: str
+    :ivar authorization: The requested authorization for the operation. Required.
+    :vartype authorization: ~azure.eventgrid.models.ResourceAuthorization
+    :ivar claims: The properties of the claims. Required.
+    :vartype claims: dict[str, str]
+    :ivar correlation_id: An operation ID used for troubleshooting.
+    :vartype correlation_id: str
+    :ivar http_request: The details of the operation. Required.
+    :vartype http_request: ~azure.eventgrid.models.ResourceHttpRequest
+    """
+
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    """The tenant ID of the resource."""
+    subscription_id: Optional[str] = rest_field(
+        name="subscriptionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The subscription ID of the resource."""
+    resource_group: Optional[str] = rest_field(
+        name="resourceGroup", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource group of the resource."""
+    resource_provider: Optional[str] = rest_field(
+        name="resourceProvider", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource provider performing the operation."""
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The URI of the resource in the operation."""
+    operation_name: Optional[str] = rest_field(
+        name="operationName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The operation that was performed."""
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The status of the operation."""
+    authorization: "_models.ResourceAuthorization" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The requested authorization for the operation. Required."""
+    claims: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The properties of the claims. Required."""
+    correlation_id: Optional[str] = rest_field(
+        name="correlationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An operation ID used for troubleshooting."""
+    http_request: "_models.ResourceHttpRequest" = rest_field(
+        name="httpRequest", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The details of the operation. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        authorization: "_models.ResourceAuthorization",
+        claims: Dict[str, str],
+        http_request: "_models.ResourceHttpRequest",
+        tenant_id: Optional[str] = None,
+        subscription_id: Optional[str] = None,
+        resource_group: Optional[str] = None,
+        resource_provider: Optional[str] = None,
+        resource_uri: Optional[str] = None,
+        operation_name: Optional[str] = None,
+        status: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ServiceBusActiveMessagesAvailablePeriodicNotificationsEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ServiceBus.ActiveMessagesAvailablePeriodicNotifications event.
+
+    :ivar namespace_name: The namespace name of the Microsoft.ServiceBus resource. Required.
+    :vartype namespace_name: str
+    :ivar request_uri: The endpoint of the Microsoft.ServiceBus resource. Required.
+    :vartype request_uri: str
+    :ivar entity_type: The entity type of the Microsoft.ServiceBus resource. Could be one of
+     'queue' or 'subscriber'. Required.
+    :vartype entity_type: str
+    :ivar queue_name: The name of the Microsoft.ServiceBus queue. If the entity type is of type
+     'subscriber', then this value will be null. Required.
+    :vartype queue_name: str
+    :ivar topic_name: The name of the Microsoft.ServiceBus topic. If the entity type is of type
+     'queue', then this value will be null. Required.
+    :vartype topic_name: str
+    :ivar subscription_name: The name of the Microsoft.ServiceBus topic's subscription. If the
+     entity type is of type 'queue', then this value will be null. Required.
+    :vartype subscription_name: str
+    """
+
+    namespace_name: str = rest_field(name="namespaceName", visibility=["read", "create", "update", "delete", "query"])
+    """The namespace name of the Microsoft.ServiceBus resource. Required."""
+    request_uri: str = rest_field(name="requestUri", visibility=["read", "create", "update", "delete", "query"])
+    """The endpoint of the Microsoft.ServiceBus resource. Required."""
+    entity_type: str = rest_field(name="entityType", visibility=["read", "create", "update", "delete", "query"])
+    """The entity type of the Microsoft.ServiceBus resource. Could be one of 'queue' or 'subscriber'.
+     Required."""
+    queue_name: str = rest_field(name="queueName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the Microsoft.ServiceBus queue. If the entity type is of type 'subscriber', then
+     this value will be null. Required."""
+    topic_name: str = rest_field(name="topicName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the Microsoft.ServiceBus topic. If the entity type is of type 'queue', then this
+     value will be null. Required."""
+    subscription_name: str = rest_field(
+        name="subscriptionName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the Microsoft.ServiceBus topic's subscription. If the entity type is of type
+     'queue', then this value will be null. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        namespace_name: str,
+        request_uri: str,
+        entity_type: str,
+        queue_name: str,
+        topic_name: str,
+        subscription_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ServiceBusActiveMessagesAvailableWithNoListenersEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ServiceBus.ActiveMessagesAvailableWithNoListeners event.
+
+    :ivar namespace_name: The namespace name of the Microsoft.ServiceBus resource. Required.
+    :vartype namespace_name: str
+    :ivar request_uri: The endpoint of the Microsoft.ServiceBus resource. Required.
+    :vartype request_uri: str
+    :ivar entity_type: The entity type of the Microsoft.ServiceBus resource. Could be one of
+     'queue' or 'subscriber'. Required.
+    :vartype entity_type: str
+    :ivar queue_name: The name of the Microsoft.ServiceBus queue. If the entity type is of type
+     'subscriber', then this value will be null. Required.
+    :vartype queue_name: str
+    :ivar topic_name: The name of the Microsoft.ServiceBus topic. If the entity type is of type
+     'queue', then this value will be null. Required.
+    :vartype topic_name: str
+    :ivar subscription_name: The name of the Microsoft.ServiceBus topic's subscription. If the
+     entity type is of type 'queue', then this value will be null. Required.
+    :vartype subscription_name: str
+    """
+
+    namespace_name: str = rest_field(name="namespaceName", visibility=["read", "create", "update", "delete", "query"])
+    """The namespace name of the Microsoft.ServiceBus resource. Required."""
+    request_uri: str = rest_field(name="requestUri", visibility=["read", "create", "update", "delete", "query"])
+    """The endpoint of the Microsoft.ServiceBus resource. Required."""
+    entity_type: str = rest_field(name="entityType", visibility=["read", "create", "update", "delete", "query"])
+    """The entity type of the Microsoft.ServiceBus resource. Could be one of 'queue' or 'subscriber'.
+     Required."""
+    queue_name: str = rest_field(name="queueName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the Microsoft.ServiceBus queue. If the entity type is of type 'subscriber', then
+     this value will be null. Required."""
+    topic_name: str = rest_field(name="topicName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the Microsoft.ServiceBus topic. If the entity type is of type 'queue', then this
+     value will be null. Required."""
+    subscription_name: str = rest_field(
+        name="subscriptionName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the Microsoft.ServiceBus topic's subscription. If the entity type is of type
+     'queue', then this value will be null. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        namespace_name: str,
+        request_uri: str,
+        entity_type: str,
+        queue_name: str,
+        topic_name: str,
+        subscription_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ServiceBusDeadletterMessagesAvailablePeriodicNotificationsEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ServiceBus.DeadletterMessagesAvailablePeriodicNotifications event.
+
+    :ivar namespace_name: The namespace name of the Microsoft.ServiceBus resource. Required.
+    :vartype namespace_name: str
+    :ivar request_uri: The endpoint of the Microsoft.ServiceBus resource. Required.
+    :vartype request_uri: str
+    :ivar entity_type: The entity type of the Microsoft.ServiceBus resource. Could be one of
+     'queue' or 'subscriber'. Required.
+    :vartype entity_type: str
+    :ivar queue_name: The name of the Microsoft.ServiceBus queue. If the entity type is of type
+     'subscriber', then this value will be null. Required.
+    :vartype queue_name: str
+    :ivar topic_name: The name of the Microsoft.ServiceBus topic. If the entity type is of type
+     'queue', then this value will be null. Required.
+    :vartype topic_name: str
+    :ivar subscription_name: The name of the Microsoft.ServiceBus topic's subscription. If the
+     entity type is of type 'queue', then this value will be null. Required.
+    :vartype subscription_name: str
+    """
+
+    namespace_name: str = rest_field(name="namespaceName", visibility=["read", "create", "update", "delete", "query"])
+    """The namespace name of the Microsoft.ServiceBus resource. Required."""
+    request_uri: str = rest_field(name="requestUri", visibility=["read", "create", "update", "delete", "query"])
+    """The endpoint of the Microsoft.ServiceBus resource. Required."""
+    entity_type: str = rest_field(name="entityType", visibility=["read", "create", "update", "delete", "query"])
+    """The entity type of the Microsoft.ServiceBus resource. Could be one of 'queue' or 'subscriber'.
+     Required."""
+    queue_name: str = rest_field(name="queueName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the Microsoft.ServiceBus queue. If the entity type is of type 'subscriber', then
+     this value will be null. Required."""
+    topic_name: str = rest_field(name="topicName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the Microsoft.ServiceBus topic. If the entity type is of type 'queue', then this
+     value will be null. Required."""
+    subscription_name: str = rest_field(
+        name="subscriptionName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the Microsoft.ServiceBus topic's subscription. If the entity type is of type
+     'queue', then this value will be null. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        namespace_name: str,
+        request_uri: str,
+        entity_type: str,
+        queue_name: str,
+        topic_name: str,
+        subscription_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ServiceBusDeadletterMessagesAvailableWithNoListenersEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners event.
+
+    :ivar namespace_name: The namespace name of the Microsoft.ServiceBus resource. Required.
+    :vartype namespace_name: str
+    :ivar request_uri: The endpoint of the Microsoft.ServiceBus resource. Required.
+    :vartype request_uri: str
+    :ivar entity_type: The entity type of the Microsoft.ServiceBus resource. Could be one of
+     'queue' or 'subscriber'. Required.
+    :vartype entity_type: str
+    :ivar queue_name: The name of the Microsoft.ServiceBus queue. If the entity type is of type
+     'subscriber', then this value will be null. Required.
+    :vartype queue_name: str
+    :ivar topic_name: The name of the Microsoft.ServiceBus topic. If the entity type is of type
+     'queue', then this value will be null. Required.
+    :vartype topic_name: str
+    :ivar subscription_name: The name of the Microsoft.ServiceBus topic's subscription. If the
+     entity type is of type 'queue', then this value will be null. Required.
+    :vartype subscription_name: str
+    """
+
+    namespace_name: str = rest_field(name="namespaceName", visibility=["read", "create", "update", "delete", "query"])
+    """The namespace name of the Microsoft.ServiceBus resource. Required."""
+    request_uri: str = rest_field(name="requestUri", visibility=["read", "create", "update", "delete", "query"])
+    """The endpoint of the Microsoft.ServiceBus resource. Required."""
+    entity_type: str = rest_field(name="entityType", visibility=["read", "create", "update", "delete", "query"])
+    """The entity type of the Microsoft.ServiceBus resource. Could be one of 'queue' or 'subscriber'.
+     Required."""
+    queue_name: str = rest_field(name="queueName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the Microsoft.ServiceBus queue. If the entity type is of type 'subscriber', then
+     this value will be null. Required."""
+    topic_name: str = rest_field(name="topicName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the Microsoft.ServiceBus topic. If the entity type is of type 'queue', then this
+     value will be null. Required."""
+    subscription_name: str = rest_field(
+        name="subscriptionName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the Microsoft.ServiceBus topic's subscription. If the entity type is of type
+     'queue', then this value will be null. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        namespace_name: str,
+        request_uri: str,
+        entity_type: str,
+        queue_name: str,
+        topic_name: str,
+        subscription_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SignalRServiceClientConnectionConnectedEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.SignalRService.ClientConnectionConnected event.
+
+    :ivar timestamp: The time at which the event occurred. Required.
+    :vartype timestamp: ~datetime.datetime
+    :ivar hub_name: The hub of connected client connection. Required.
+    :vartype hub_name: str
+    :ivar connection_id: The connection Id of connected client connection. Required.
+    :vartype connection_id: str
+    :ivar user_id: The user Id of connected client connection.
+    :vartype user_id: str
+    """
+
+    timestamp: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the event occurred. Required."""
+    hub_name: str = rest_field(name="hubName", visibility=["read", "create", "update", "delete", "query"])
+    """The hub of connected client connection. Required."""
+    connection_id: str = rest_field(name="connectionId", visibility=["read", "create", "update", "delete", "query"])
+    """The connection Id of connected client connection. Required."""
+    user_id: Optional[str] = rest_field(name="userId", visibility=["read", "create", "update", "delete", "query"])
+    """The user Id of connected client connection."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        timestamp: datetime.datetime,
+        hub_name: str,
+        connection_id: str,
+        user_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SignalRServiceClientConnectionDisconnectedEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.SignalRService.ClientConnectionDisconnected event.
+
+    :ivar timestamp: The time at which the event occurred. Required.
+    :vartype timestamp: ~datetime.datetime
+    :ivar hub_name: The hub of connected client connection. Required.
+    :vartype hub_name: str
+    :ivar connection_id: The connection Id of connected client connection. Required.
+    :vartype connection_id: str
+    :ivar user_id: The user Id of connected client connection.
+    :vartype user_id: str
+    :ivar error_message: The message of error that cause the client connection disconnected.
+    :vartype error_message: str
+    """
+
+    timestamp: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the event occurred. Required."""
+    hub_name: str = rest_field(name="hubName", visibility=["read", "create", "update", "delete", "query"])
+    """The hub of connected client connection. Required."""
+    connection_id: str = rest_field(name="connectionId", visibility=["read", "create", "update", "delete", "query"])
+    """The connection Id of connected client connection. Required."""
+    user_id: Optional[str] = rest_field(name="userId", visibility=["read", "create", "update", "delete", "query"])
+    """The user Id of connected client connection."""
+    error_message: Optional[str] = rest_field(
+        name="errorMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The message of error that cause the client connection disconnected."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        timestamp: datetime.datetime,
+        hub_name: str,
+        connection_id: str,
+        user_id: Optional[str] = None,
+        error_message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StorageAsyncOperationInitiatedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Storage.AsyncOperationInitiated event.
+
+    :ivar api: The name of the API/operation that triggered this event.
+    :vartype api: str
+    :ivar client_request_id: A request id provided by the client of the storage API operation that
+     triggered this event.
+    :vartype client_request_id: str
+    :ivar request_id: The request id generated by the storage service for the storage API operation
+     that triggered this event.
+    :vartype request_id: str
+    :ivar content_type: The content type of the blob. This is the same as what would be returned in
+     the Content-Type header from the blob.
+    :vartype content_type: str
+    :ivar content_length: The size of the blob in bytes. This is the same as what would be returned
+     in the Content-Length header from the blob.
+    :vartype content_length: int
+    :ivar blob_type: The type of blob.
+    :vartype blob_type: str
+    :ivar url: The path to the blob.
+    :vartype url: str
+    :ivar sequencer: An opaque string value representing the logical sequence of events for any
+     particular blob name. Users can use standard string comparison to understand the relative
+     sequence of two events on the same blob name.
+    :vartype sequencer: str
+    :ivar identity: The identity of the requester that triggered this event.
+    :vartype identity: str
+    :ivar storage_diagnostics: For service use only. Diagnostic data occasionally included by the
+     Azure Storage service. This property should be ignored by event consumers. Required.
+    :vartype storage_diagnostics: dict[str, any]
+    """
+
+    api: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the API/operation that triggered this event."""
+    client_request_id: Optional[str] = rest_field(
+        name="clientRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A request id provided by the client of the storage API operation that triggered this event."""
+    request_id: Optional[str] = rest_field(name="requestId", visibility=["read", "create", "update", "delete", "query"])
+    """The request id generated by the storage service for the storage API operation that triggered
+     this event."""
+    content_type: Optional[str] = rest_field(
+        name="contentType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The content type of the blob. This is the same as what would be returned in the Content-Type
+     header from the blob."""
+    content_length: Optional[int] = rest_field(
+        name="contentLength", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The size of the blob in bytes. This is the same as what would be returned in the Content-Length
+     header from the blob."""
+    blob_type: Optional[str] = rest_field(name="blobType", visibility=["read", "create", "update", "delete", "query"])
+    """The type of blob."""
+    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The path to the blob."""
+    sequencer: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An opaque string value representing the logical sequence of events for any particular blob
+     name. Users can use standard string comparison to understand the relative sequence of two
+     events on the same blob name."""
+    identity: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The identity of the requester that triggered this event."""
+    storage_diagnostics: Dict[str, Any] = rest_field(
+        name="storageDiagnostics", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """For service use only. Diagnostic data occasionally included by the Azure Storage service. This
+     property should be ignored by event consumers. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        storage_diagnostics: Dict[str, Any],
+        api: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        content_type: Optional[str] = None,
+        content_length: Optional[int] = None,
+        blob_type: Optional[str] = None,
+        url: Optional[str] = None,
+        sequencer: Optional[str] = None,
+        identity: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StorageBlobCreatedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Storage.BlobCreated event.
+
+    :ivar api: The name of the API/operation that triggered this event.
+    :vartype api: str
+    :ivar client_request_id: A request id provided by the client of the storage API operation that
+     triggered this event.
+    :vartype client_request_id: str
+    :ivar request_id: The request id generated by the storage service for the storage API operation
+     that triggered this event.
+    :vartype request_id: str
+    :ivar e_tag: The etag of the blob at the time this event was triggered.
+    :vartype e_tag: str
+    :ivar content_type: The content type of the blob. This is the same as what would be returned in
+     the Content-Type header from the blob.
+    :vartype content_type: str
+    :ivar content_length: The size of the blob in bytes. This is the same as what would be returned
+     in the Content-Length header from the blob.
+    :vartype content_length: int
+    :ivar content_offset: The offset of the blob in bytes.
+    :vartype content_offset: int
+    :ivar blob_type: The type of blob.
+    :vartype blob_type: str
+    :ivar access_tier: The current tier of the blob. Required. Known values are: "Hot", "Cool",
+     "Cold", "Archive", and "Default".
+    :vartype access_tier: str or ~azure.eventgrid.models.StorageBlobAccessTier
+    :ivar url: The path to the blob.
+    :vartype url: str
+    :ivar sequencer: An opaque string value representing the logical sequence of events for any
+     particular blob name. Users can use standard string comparison to understand the relative
+     sequence of two events on the same blob name.
+    :vartype sequencer: str
+    :ivar identity: The identity of the requester that triggered this event.
+    :vartype identity: str
+    :ivar storage_diagnostics: For service use only. Diagnostic data occasionally included by the
+     Azure Storage service. This property should be ignored by event consumers. Required.
+    :vartype storage_diagnostics: dict[str, any]
+    """
+
+    api: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the API/operation that triggered this event."""
+    client_request_id: Optional[str] = rest_field(
+        name="clientRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A request id provided by the client of the storage API operation that triggered this event."""
+    request_id: Optional[str] = rest_field(name="requestId", visibility=["read", "create", "update", "delete", "query"])
+    """The request id generated by the storage service for the storage API operation that triggered
+     this event."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read", "create", "update", "delete", "query"])
+    """The etag of the blob at the time this event was triggered."""
+    content_type: Optional[str] = rest_field(
+        name="contentType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The content type of the blob. This is the same as what would be returned in the Content-Type
+     header from the blob."""
+    content_length: Optional[int] = rest_field(
+        name="contentLength", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The size of the blob in bytes. This is the same as what would be returned in the Content-Length
+     header from the blob."""
+    content_offset: Optional[int] = rest_field(
+        name="contentOffset", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The offset of the blob in bytes."""
+    blob_type: Optional[str] = rest_field(name="blobType", visibility=["read", "create", "update", "delete", "query"])
+    """The type of blob."""
+    access_tier: Union[str, "_models.StorageBlobAccessTier"] = rest_field(
+        name="accessTier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The current tier of the blob. Required. Known values are: \"Hot\", \"Cool\", \"Cold\",
+     \"Archive\", and \"Default\"."""
+    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The path to the blob."""
+    sequencer: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An opaque string value representing the logical sequence of events for any particular blob
+     name. Users can use standard string comparison to understand the relative sequence of two
+     events on the same blob name."""
+    identity: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The identity of the requester that triggered this event."""
+    storage_diagnostics: Dict[str, Any] = rest_field(
+        name="storageDiagnostics", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """For service use only. Diagnostic data occasionally included by the Azure Storage service. This
+     property should be ignored by event consumers. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        access_tier: Union[str, "_models.StorageBlobAccessTier"],
+        storage_diagnostics: Dict[str, Any],
+        api: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        e_tag: Optional[str] = None,
+        content_type: Optional[str] = None,
+        content_length: Optional[int] = None,
+        content_offset: Optional[int] = None,
+        blob_type: Optional[str] = None,
+        url: Optional[str] = None,
+        sequencer: Optional[str] = None,
+        identity: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StorageBlobDeletedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Storage.BlobDeleted event.
+
+    :ivar api: The name of the API/operation that triggered this event.
+    :vartype api: str
+    :ivar client_request_id: A request id provided by the client of the storage API operation that
+     triggered this event.
+    :vartype client_request_id: str
+    :ivar request_id: The request id generated by the storage service for the storage API operation
+     that triggered this event.
+    :vartype request_id: str
+    :ivar content_type: The content type of the blob. This is the same as what would be returned in
+     the Content-Type header from the blob.
+    :vartype content_type: str
+    :ivar blob_type: The type of blob.
+    :vartype blob_type: str
+    :ivar url: The path to the blob.
+    :vartype url: str
+    :ivar sequencer: An opaque string value representing the logical sequence of events for any
+     particular blob name. Users can use standard string comparison to understand the relative
+     sequence of two events on the same blob name.
+    :vartype sequencer: str
+    :ivar identity: The identity of the requester that triggered this event.
+    :vartype identity: str
+    :ivar storage_diagnostics: For service use only. Diagnostic data occasionally included by the
+     Azure Storage service. This property should be ignored by event consumers. Required.
+    :vartype storage_diagnostics: dict[str, any]
+    """
+
+    api: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the API/operation that triggered this event."""
+    client_request_id: Optional[str] = rest_field(
+        name="clientRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A request id provided by the client of the storage API operation that triggered this event."""
+    request_id: Optional[str] = rest_field(name="requestId", visibility=["read", "create", "update", "delete", "query"])
+    """The request id generated by the storage service for the storage API operation that triggered
+     this event."""
+    content_type: Optional[str] = rest_field(
+        name="contentType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The content type of the blob. This is the same as what would be returned in the Content-Type
+     header from the blob."""
+    blob_type: Optional[str] = rest_field(name="blobType", visibility=["read", "create", "update", "delete", "query"])
+    """The type of blob."""
+    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The path to the blob."""
+    sequencer: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An opaque string value representing the logical sequence of events for any particular blob
+     name. Users can use standard string comparison to understand the relative sequence of two
+     events on the same blob name."""
+    identity: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The identity of the requester that triggered this event."""
+    storage_diagnostics: Dict[str, Any] = rest_field(
+        name="storageDiagnostics", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """For service use only. Diagnostic data occasionally included by the Azure Storage service. This
+     property should be ignored by event consumers. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        storage_diagnostics: Dict[str, Any],
+        api: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        content_type: Optional[str] = None,
+        blob_type: Optional[str] = None,
+        url: Optional[str] = None,
+        sequencer: Optional[str] = None,
+        identity: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StorageBlobInventoryPolicyCompletedEventData(_Model):  # pylint: disable=name-too-long
+    """Schema of the Data property of an EventGridEvent for an
+    Microsoft.Storage.BlobInventoryPolicyCompleted event.
+
+    :ivar schedule_date_time: The time at which inventory policy was scheduled. Required.
+    :vartype schedule_date_time: ~datetime.datetime
+    :ivar account_name: The account name for which inventory policy is registered.
+    :vartype account_name: str
+    :ivar rule_name: The rule name for inventory policy.
+    :vartype rule_name: str
+    :ivar policy_run_status: The status of inventory run, it can be
+     Succeeded/PartiallySucceeded/Failed.
+    :vartype policy_run_status: str
+    :ivar policy_run_status_message: The status message for inventory run.
+    :vartype policy_run_status_message: str
+    :ivar policy_run_id: The policy run id for inventory run.
+    :vartype policy_run_id: str
+    :ivar manifest_blob_url: The blob URL for manifest file for inventory run.
+    :vartype manifest_blob_url: str
+    """
+
+    schedule_date_time: datetime.datetime = rest_field(
+        name="scheduleDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which inventory policy was scheduled. Required."""
+    account_name: Optional[str] = rest_field(
+        name="accountName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The account name for which inventory policy is registered."""
+    rule_name: Optional[str] = rest_field(name="ruleName", visibility=["read", "create", "update", "delete", "query"])
+    """The rule name for inventory policy."""
+    policy_run_status: Optional[str] = rest_field(
+        name="policyRunStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status of inventory run, it can be Succeeded/PartiallySucceeded/Failed."""
+    policy_run_status_message: Optional[str] = rest_field(
+        name="policyRunStatusMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status message for inventory run."""
+    policy_run_id: Optional[str] = rest_field(
+        name="policyRunId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The policy run id for inventory run."""
+    manifest_blob_url: Optional[str] = rest_field(
+        name="manifestBlobUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The blob URL for manifest file for inventory run."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        schedule_date_time: datetime.datetime,
+        account_name: Optional[str] = None,
+        rule_name: Optional[str] = None,
+        policy_run_status: Optional[str] = None,
+        policy_run_status_message: Optional[str] = None,
+        policy_run_id: Optional[str] = None,
+        manifest_blob_url: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StorageBlobRenamedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Storage.BlobRenamed event.
+
+    :ivar api: The name of the API/operation that triggered this event.
+    :vartype api: str
+    :ivar client_request_id: A request id provided by the client of the storage API operation that
+     triggered this event.
+    :vartype client_request_id: str
+    :ivar request_id: The request id generated by the storage service for the storage API operation
+     that triggered this event.
+    :vartype request_id: str
+    :ivar source_url: The path to the blob that was renamed.
+    :vartype source_url: str
+    :ivar destination_url: The new path to the blob after the rename operation.
+    :vartype destination_url: str
+    :ivar sequencer: An opaque string value representing the logical sequence of events for any
+     particular blob name. Users can use standard string comparison to understand the relative
+     sequence of two events on the same blob name.
+    :vartype sequencer: str
+    :ivar identity: The identity of the requester that triggered this event.
+    :vartype identity: str
+    :ivar storage_diagnostics: For service use only. Diagnostic data occasionally included by the
+     Azure Storage service. This property should be ignored by event consumers. Required.
+    :vartype storage_diagnostics: dict[str, any]
+    """
+
+    api: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the API/operation that triggered this event."""
+    client_request_id: Optional[str] = rest_field(
+        name="clientRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A request id provided by the client of the storage API operation that triggered this event."""
+    request_id: Optional[str] = rest_field(name="requestId", visibility=["read", "create", "update", "delete", "query"])
+    """The request id generated by the storage service for the storage API operation that triggered
+     this event."""
+    source_url: Optional[str] = rest_field(name="sourceUrl", visibility=["read", "create", "update", "delete", "query"])
+    """The path to the blob that was renamed."""
+    destination_url: Optional[str] = rest_field(
+        name="destinationUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The new path to the blob after the rename operation."""
+    sequencer: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An opaque string value representing the logical sequence of events for any particular blob
+     name. Users can use standard string comparison to understand the relative sequence of two
+     events on the same blob name."""
+    identity: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The identity of the requester that triggered this event."""
+    storage_diagnostics: Dict[str, Any] = rest_field(
+        name="storageDiagnostics", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """For service use only. Diagnostic data occasionally included by the Azure Storage service. This
+     property should be ignored by event consumers. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        storage_diagnostics: Dict[str, Any],
+        api: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        source_url: Optional[str] = None,
+        destination_url: Optional[str] = None,
+        sequencer: Optional[str] = None,
+        identity: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StorageBlobTierChangedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Storage.BlobTierChanged event.
+
+    :ivar api: The name of the API/operation that triggered this event.
+    :vartype api: str
+    :ivar client_request_id: A request id provided by the client of the storage API operation that
+     triggered this event.
+    :vartype client_request_id: str
+    :ivar request_id: The request id generated by the storage service for the storage API operation
+     that triggered this event.
+    :vartype request_id: str
+    :ivar content_type: The content type of the blob. This is the same as what would be returned in
+     the Content-Type header from the blob.
+    :vartype content_type: str
+    :ivar content_length: The size of the blob in bytes. This is the same as what would be returned
+     in the Content-Length header from the blob.
+    :vartype content_length: int
+    :ivar blob_type: The type of blob.
+    :vartype blob_type: str
+    :ivar access_tier: The current tier of the blob. Required. Known values are: "Hot", "Cool",
+     "Cold", "Archive", and "Default".
+    :vartype access_tier: str or ~azure.eventgrid.models.StorageBlobAccessTier
+    :ivar previous_tier: The previous tier of the blob. Required. Known values are: "Hot", "Cool",
+     "Cold", "Archive", and "Default".
+    :vartype previous_tier: str or ~azure.eventgrid.models.StorageBlobAccessTier
+    :ivar url: The path to the blob.
+    :vartype url: str
+    :ivar sequencer: An opaque string value representing the logical sequence of events for any
+     particular blob name. Users can use standard string comparison to understand the relative
+     sequence of two events on the same blob name.
+    :vartype sequencer: str
+    :ivar identity: The identity of the requester that triggered this event.
+    :vartype identity: str
+    :ivar storage_diagnostics: For service use only. Diagnostic data occasionally included by the
+     Azure Storage service. This property should be ignored by event consumers. Required.
+    :vartype storage_diagnostics: dict[str, any]
+    """
+
+    api: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the API/operation that triggered this event."""
+    client_request_id: Optional[str] = rest_field(
+        name="clientRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A request id provided by the client of the storage API operation that triggered this event."""
+    request_id: Optional[str] = rest_field(name="requestId", visibility=["read", "create", "update", "delete", "query"])
+    """The request id generated by the storage service for the storage API operation that triggered
+     this event."""
+    content_type: Optional[str] = rest_field(
+        name="contentType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The content type of the blob. This is the same as what would be returned in the Content-Type
+     header from the blob."""
+    content_length: Optional[int] = rest_field(
+        name="contentLength", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The size of the blob in bytes. This is the same as what would be returned in the Content-Length
+     header from the blob."""
+    blob_type: Optional[str] = rest_field(name="blobType", visibility=["read", "create", "update", "delete", "query"])
+    """The type of blob."""
+    access_tier: Union[str, "_models.StorageBlobAccessTier"] = rest_field(
+        name="accessTier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The current tier of the blob. Required. Known values are: \"Hot\", \"Cool\", \"Cold\",
+     \"Archive\", and \"Default\"."""
+    previous_tier: Union[str, "_models.StorageBlobAccessTier"] = rest_field(
+        name="previousTier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The previous tier of the blob. Required. Known values are: \"Hot\", \"Cool\", \"Cold\",
+     \"Archive\", and \"Default\"."""
+    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The path to the blob."""
+    sequencer: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An opaque string value representing the logical sequence of events for any particular blob
+     name. Users can use standard string comparison to understand the relative sequence of two
+     events on the same blob name."""
+    identity: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The identity of the requester that triggered this event."""
+    storage_diagnostics: Dict[str, Any] = rest_field(
+        name="storageDiagnostics", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """For service use only. Diagnostic data occasionally included by the Azure Storage service. This
+     property should be ignored by event consumers. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        access_tier: Union[str, "_models.StorageBlobAccessTier"],
+        previous_tier: Union[str, "_models.StorageBlobAccessTier"],
+        storage_diagnostics: Dict[str, Any],
+        api: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        content_type: Optional[str] = None,
+        content_length: Optional[int] = None,
+        blob_type: Optional[str] = None,
+        url: Optional[str] = None,
+        sequencer: Optional[str] = None,
+        identity: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StorageDirectoryCreatedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Storage.DirectoryCreated
+    event.
+
+    :ivar api: The name of the API/operation that triggered this event.
+    :vartype api: str
+    :ivar client_request_id: A request id provided by the client of the storage API operation that
+     triggered this event.
+    :vartype client_request_id: str
+    :ivar request_id: The request id generated by the storage service for the storage API operation
+     that triggered this event.
+    :vartype request_id: str
+    :ivar e_tag: The etag of the directory at the time this event was triggered.
+    :vartype e_tag: str
+    :ivar url: The path to the directory.
+    :vartype url: str
+    :ivar sequencer: An opaque string value representing the logical sequence of events for any
+     particular directory name. Users can use standard string comparison to understand the relative
+     sequence of two events on the same directory name.
+    :vartype sequencer: str
+    :ivar identity: The identity of the requester that triggered this event.
+    :vartype identity: str
+    :ivar storage_diagnostics: For service use only. Diagnostic data occasionally included by the
+     Azure Storage service. This property should be ignored by event consumers. Required.
+    :vartype storage_diagnostics: dict[str, any]
+    """
+
+    api: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the API/operation that triggered this event."""
+    client_request_id: Optional[str] = rest_field(
+        name="clientRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A request id provided by the client of the storage API operation that triggered this event."""
+    request_id: Optional[str] = rest_field(name="requestId", visibility=["read", "create", "update", "delete", "query"])
+    """The request id generated by the storage service for the storage API operation that triggered
+     this event."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read", "create", "update", "delete", "query"])
+    """The etag of the directory at the time this event was triggered."""
+    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The path to the directory."""
+    sequencer: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An opaque string value representing the logical sequence of events for any particular directory
+     name. Users can use standard string comparison to understand the relative sequence of two
+     events on the same directory name."""
+    identity: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The identity of the requester that triggered this event."""
+    storage_diagnostics: Dict[str, Any] = rest_field(
+        name="storageDiagnostics", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """For service use only. Diagnostic data occasionally included by the Azure Storage service. This
+     property should be ignored by event consumers. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        storage_diagnostics: Dict[str, Any],
+        api: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        e_tag: Optional[str] = None,
+        url: Optional[str] = None,
+        sequencer: Optional[str] = None,
+        identity: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StorageDirectoryDeletedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Storage.DirectoryDeleted
+    event.
+
+    :ivar api: The name of the API/operation that triggered this event.
+    :vartype api: str
+    :ivar client_request_id: A request id provided by the client of the storage API operation that
+     triggered this event.
+    :vartype client_request_id: str
+    :ivar request_id: The request id generated by the storage service for the storage API operation
+     that triggered this event.
+    :vartype request_id: str
+    :ivar url: The path to the deleted directory.
+    :vartype url: str
+    :ivar recursive: Is this event for a recursive delete operation.
+    :vartype recursive: str
+    :ivar sequencer: An opaque string value representing the logical sequence of events for any
+     particular directory name. Users can use standard string comparison to understand the relative
+     sequence of two events on the same directory name.
+    :vartype sequencer: str
+    :ivar identity: The identity of the requester that triggered this event.
+    :vartype identity: str
+    :ivar storage_diagnostics: For service use only. Diagnostic data occasionally included by the
+     Azure Storage service. This property should be ignored by event consumers. Required.
+    :vartype storage_diagnostics: dict[str, any]
+    """
+
+    api: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the API/operation that triggered this event."""
+    client_request_id: Optional[str] = rest_field(
+        name="clientRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A request id provided by the client of the storage API operation that triggered this event."""
+    request_id: Optional[str] = rest_field(name="requestId", visibility=["read", "create", "update", "delete", "query"])
+    """The request id generated by the storage service for the storage API operation that triggered
+     this event."""
+    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The path to the deleted directory."""
+    recursive: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Is this event for a recursive delete operation."""
+    sequencer: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An opaque string value representing the logical sequence of events for any particular directory
+     name. Users can use standard string comparison to understand the relative sequence of two
+     events on the same directory name."""
+    identity: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The identity of the requester that triggered this event."""
+    storage_diagnostics: Dict[str, Any] = rest_field(
+        name="storageDiagnostics", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """For service use only. Diagnostic data occasionally included by the Azure Storage service. This
+     property should be ignored by event consumers. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        storage_diagnostics: Dict[str, Any],
+        api: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        url: Optional[str] = None,
+        recursive: Optional[str] = None,
+        sequencer: Optional[str] = None,
+        identity: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StorageDirectoryRenamedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Storage.DirectoryRenamed
+    event.
+
+    :ivar api: The name of the API/operation that triggered this event.
+    :vartype api: str
+    :ivar client_request_id: A request id provided by the client of the storage API operation that
+     triggered this event.
+    :vartype client_request_id: str
+    :ivar request_id: The request id generated by the storage service for the storage API operation
+     that triggered this event.
+    :vartype request_id: str
+    :ivar source_url: The path to the directory that was renamed.
+    :vartype source_url: str
+    :ivar destination_url: The new path to the directory after the rename operation.
+    :vartype destination_url: str
+    :ivar sequencer: An opaque string value representing the logical sequence of events for any
+     particular directory name. Users can use standard string comparison to understand the relative
+     sequence of two events on the same directory name.
+    :vartype sequencer: str
+    :ivar identity: The identity of the requester that triggered this event.
+    :vartype identity: str
+    :ivar storage_diagnostics: For service use only. Diagnostic data occasionally included by the
+     Azure Storage service. This property should be ignored by event consumers. Required.
+    :vartype storage_diagnostics: dict[str, any]
+    """
+
+    api: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the API/operation that triggered this event."""
+    client_request_id: Optional[str] = rest_field(
+        name="clientRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A request id provided by the client of the storage API operation that triggered this event."""
+    request_id: Optional[str] = rest_field(name="requestId", visibility=["read", "create", "update", "delete", "query"])
+    """The request id generated by the storage service for the storage API operation that triggered
+     this event."""
+    source_url: Optional[str] = rest_field(name="sourceUrl", visibility=["read", "create", "update", "delete", "query"])
+    """The path to the directory that was renamed."""
+    destination_url: Optional[str] = rest_field(
+        name="destinationUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The new path to the directory after the rename operation."""
+    sequencer: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An opaque string value representing the logical sequence of events for any particular directory
+     name. Users can use standard string comparison to understand the relative sequence of two
+     events on the same directory name."""
+    identity: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The identity of the requester that triggered this event."""
+    storage_diagnostics: Dict[str, Any] = rest_field(
+        name="storageDiagnostics", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """For service use only. Diagnostic data occasionally included by the Azure Storage service. This
+     property should be ignored by event consumers. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        storage_diagnostics: Dict[str, Any],
+        api: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        source_url: Optional[str] = None,
+        destination_url: Optional[str] = None,
+        sequencer: Optional[str] = None,
+        identity: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StorageLifecyclePolicyActionSummaryDetail(_Model):  # pylint: disable=name-too-long
+    """Execution statistics of a specific policy action in a Blob Management cycle.
+
+    :ivar total_objects_count: Total number of objects to be acted on by this action.
+    :vartype total_objects_count: int
+    :ivar success_count: Number of success operations of this action.
+    :vartype success_count: int
+    :ivar error_list: Error messages of this action if any.
+    :vartype error_list: str
+    """
+
+    total_objects_count: Optional[int] = rest_field(
+        name="totalObjectsCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Total number of objects to be acted on by this action."""
+    success_count: Optional[int] = rest_field(
+        name="successCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of success operations of this action."""
+    error_list: Optional[str] = rest_field(name="errorList", visibility=["read", "create", "update", "delete", "query"])
+    """Error messages of this action if any."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        total_objects_count: Optional[int] = None,
+        success_count: Optional[int] = None,
+        error_list: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StorageLifecyclePolicyCompletedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Storage.LifecyclePolicyCompleted event.
+
+    :ivar schedule_time: The time the policy task was scheduled.
+    :vartype schedule_time: str
+    :ivar policy_run_summary: Policy execution summary which shows the completion status of a LCM
+     run". Required.
+    :vartype policy_run_summary: ~azure.eventgrid.models.StorageLifecyclePolicyRunSummary
+    :ivar delete_summary: Execution statistics of a specific policy action in a Blob Management
+     cycle. Required.
+    :vartype delete_summary: ~azure.eventgrid.models.StorageLifecyclePolicyActionSummaryDetail
+    :ivar tier_to_cool_summary: Execution statistics of a specific policy action in a Blob
+     Management cycle. Required.
+    :vartype tier_to_cool_summary:
+     ~azure.eventgrid.models.StorageLifecyclePolicyActionSummaryDetail
+    :ivar tier_to_archive_summary: Execution statistics of a specific policy action in a Blob
+     Management cycle. Required.
+    :vartype tier_to_archive_summary:
+     ~azure.eventgrid.models.StorageLifecyclePolicyActionSummaryDetail
+    :ivar tier_to_cold_summary: Execution statistics of a specific policy action in a Blob
+     Management cycle. Required.
+    :vartype tier_to_cold_summary:
+     ~azure.eventgrid.models.StorageLifecyclePolicyActionSummaryDetail
+    """
+
+    schedule_time: Optional[str] = rest_field(
+        name="scheduleTime", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The time the policy task was scheduled."""
+    policy_run_summary: "_models.StorageLifecyclePolicyRunSummary" = rest_field(
+        name="policyRunSummary", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Policy execution summary which shows the completion status of a LCM run\". Required."""
+    delete_summary: "_models.StorageLifecyclePolicyActionSummaryDetail" = rest_field(
+        name="deleteSummary", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Execution statistics of a specific policy action in a Blob Management cycle. Required."""
+    tier_to_cool_summary: "_models.StorageLifecyclePolicyActionSummaryDetail" = rest_field(
+        name="tierToCoolSummary", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Execution statistics of a specific policy action in a Blob Management cycle. Required."""
+    tier_to_archive_summary: "_models.StorageLifecyclePolicyActionSummaryDetail" = rest_field(
+        name="tierToArchiveSummary", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Execution statistics of a specific policy action in a Blob Management cycle. Required."""
+    tier_to_cold_summary: "_models.StorageLifecyclePolicyActionSummaryDetail" = rest_field(
+        name="tierToColdSummary", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Execution statistics of a specific policy action in a Blob Management cycle. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        policy_run_summary: "_models.StorageLifecyclePolicyRunSummary",
+        delete_summary: "_models.StorageLifecyclePolicyActionSummaryDetail",
+        tier_to_cool_summary: "_models.StorageLifecyclePolicyActionSummaryDetail",
+        tier_to_archive_summary: "_models.StorageLifecyclePolicyActionSummaryDetail",
+        tier_to_cold_summary: "_models.StorageLifecyclePolicyActionSummaryDetail",
+        schedule_time: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StorageLifecyclePolicyRunSummary(_Model):
+    """Policy run status of an account in a Blob Management cycle.
+
+    :ivar completion_status: Policy status can be Completed/CompletedWithError/Incomplete.
+     Required. Known values are: "Completed", "CompletedWithError", and "Incomplete".
+    :vartype completion_status: str or ~azure.eventgrid.models.StorageLifecycleCompletionStatus
+    """
+
+    completion_status: Union[str, "_models.StorageLifecycleCompletionStatus"] = rest_field(
+        name="completionStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Policy status can be Completed/CompletedWithError/Incomplete. Required. Known values are:
+     \"Completed\", \"CompletedWithError\", and \"Incomplete\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        completion_status: Union[str, "_models.StorageLifecycleCompletionStatus"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StorageTaskAssignmentCompletedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for an
+    Microsoft.Storage.StorageTaskAssignmentCompleted event.
+
+    :ivar status: The status for a storage task. Required. Known values are: "Succeeded" and
+     "Failed".
+    :vartype status: str or ~azure.eventgrid.models.StorageTaskAssignmentCompletedStatus
+    :ivar completed_on: The time at which a storage task was completed. Required.
+    :vartype completed_on: ~datetime.datetime
+    :ivar task_execution_id: The execution id for a storage task.
+    :vartype task_execution_id: str
+    :ivar task_name: The task name for a storage task.
+    :vartype task_name: str
+    :ivar summary_report_blob_url: The summary report blob url for a storage task. Required.
+    :vartype summary_report_blob_url: str
+    """
+
+    status: Union[str, "_models.StorageTaskAssignmentCompletedStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status for a storage task. Required. Known values are: \"Succeeded\" and \"Failed\"."""
+    completed_on: datetime.datetime = rest_field(
+        name="completedOn", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which a storage task was completed. Required."""
+    task_execution_id: Optional[str] = rest_field(
+        name="taskExecutionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The execution id for a storage task."""
+    task_name: Optional[str] = rest_field(name="taskName", visibility=["read", "create", "update", "delete", "query"])
+    """The task name for a storage task."""
+    summary_report_blob_url: str = rest_field(
+        name="summaryReportBlobUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The summary report blob url for a storage task. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Union[str, "_models.StorageTaskAssignmentCompletedStatus"],
+        completed_on: datetime.datetime,
+        summary_report_blob_url: str,
+        task_execution_id: Optional[str] = None,
+        task_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StorageTaskAssignmentQueuedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for an
+    Microsoft.Storage.StorageTaskAssignmentQueued event.
+
+    :ivar queued_on: The time at which a storage task was queued. Required.
+    :vartype queued_on: ~datetime.datetime
+    :ivar task_execution_id: The execution id for a storage task.
+    :vartype task_execution_id: str
+    """
+
+    queued_on: datetime.datetime = rest_field(
+        name="queuedOn", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which a storage task was queued. Required."""
+    task_execution_id: Optional[str] = rest_field(
+        name="taskExecutionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The execution id for a storage task."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        queued_on: datetime.datetime,
+        task_execution_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StorageTaskCompletedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for an Microsoft.Storage.StorageTaskCompleted
+    event.
+
+    :ivar status: The status for a storage task. Required. Known values are: "Succeeded" and
+     "Failed".
+    :vartype status: str or ~azure.eventgrid.models.StorageTaskCompletedStatus
+    :ivar completed_date_time: The time at which a storage task was completed. Required.
+    :vartype completed_date_time: ~datetime.datetime
+    :ivar task_execution_id: The execution id for a storage task.
+    :vartype task_execution_id: str
+    :ivar task_name: The task name for a storage task.
+    :vartype task_name: str
+    :ivar summary_report_blob_url: The summary report blob url for a storage task. Required.
+    :vartype summary_report_blob_url: str
+    """
+
+    status: Union[str, "_models.StorageTaskCompletedStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status for a storage task. Required. Known values are: \"Succeeded\" and \"Failed\"."""
+    completed_date_time: datetime.datetime = rest_field(
+        name="completedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which a storage task was completed. Required."""
+    task_execution_id: Optional[str] = rest_field(
+        name="taskExecutionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The execution id for a storage task."""
+    task_name: Optional[str] = rest_field(name="taskName", visibility=["read", "create", "update", "delete", "query"])
+    """The task name for a storage task."""
+    summary_report_blob_url: str = rest_field(
+        name="summaryReportBlobUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The summary report blob url for a storage task. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Union[str, "_models.StorageTaskCompletedStatus"],
+        completed_date_time: datetime.datetime,
+        summary_report_blob_url: str,
+        task_execution_id: Optional[str] = None,
+        task_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StorageTaskQueuedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for an Microsoft.Storage.StorageTaskQueued
+    event.
+
+    :ivar queued_date_time: The time at which a storage task was queued. Required.
+    :vartype queued_date_time: ~datetime.datetime
+    :ivar task_execution_id: The execution id for a storage task.
+    :vartype task_execution_id: str
+    """
+
+    queued_date_time: datetime.datetime = rest_field(
+        name="queuedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which a storage task was queued. Required."""
+    task_execution_id: Optional[str] = rest_field(
+        name="taskExecutionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The execution id for a storage task."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        queued_date_time: datetime.datetime,
+        task_execution_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SubscriptionDeletedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.EventGrid.SubscriptionDeletedEvent event.
+
+    :ivar event_subscription_id: The Azure resource ID of the deleted event subscription. Required.
+    :vartype event_subscription_id: str
+    """
+
+    event_subscription_id: str = rest_field(
+        name="eventSubscriptionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure resource ID of the deleted event subscription. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_subscription_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SubscriptionValidationEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.EventGrid.SubscriptionValidationEvent event.
+
+    :ivar validation_code: The validation code sent by Azure Event Grid to validate an event
+     subscription.
+     To complete the validation handshake, the subscriber must either respond with this validation
+     code as part of the validation response,
+     or perform a GET request on the validationUrl (available starting version 2018-05-01-preview).
+     Required.
+    :vartype validation_code: str
+    :ivar validation_url: The validation URL sent by Azure Event Grid (available starting version
+     2018-05-01-preview).
+     To complete the validation handshake, the subscriber must either respond with the
+     validationCode as part of the validation response,
+     or perform a GET request on the validationUrl (available starting version 2018-05-01-preview).
+     Required.
+    :vartype validation_url: str
+    """
+
+    validation_code: str = rest_field(name="validationCode", visibility=["read", "create", "update", "delete", "query"])
+    """The validation code sent by Azure Event Grid to validate an event subscription.
+     To complete the validation handshake, the subscriber must either respond with this validation
+     code as part of the validation response,
+     or perform a GET request on the validationUrl (available starting version 2018-05-01-preview).
+     Required."""
+    validation_url: str = rest_field(name="validationUrl", visibility=["read", "create", "update", "delete", "query"])
+    """The validation URL sent by Azure Event Grid (available starting version 2018-05-01-preview).
+     To complete the validation handshake, the subscriber must either respond with the
+     validationCode as part of the validation response,
+     or perform a GET request on the validationUrl (available starting version 2018-05-01-preview).
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        validation_code: str,
+        validation_url: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SubscriptionValidationResponse(_Model):
+    """To complete an event subscription validation handshake, a subscriber can use
+    either the validationCode or the validationUrl received in a
+    SubscriptionValidationEvent. When the validationCode is used, the
+    SubscriptionValidationResponse can be used to build the response.
+
+    :ivar validation_response: The validation response sent by the subscriber to Azure Event Grid
+     to complete the validation of an event subscription. Required.
+    :vartype validation_response: str
+    """
+
+    validation_response: str = rest_field(
+        name="validationResponse", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The validation response sent by the subscriber to Azure Event Grid to complete the validation
+     of an event subscription. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        validation_response: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class WebAppServicePlanUpdatedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Web.AppServicePlanUpdated
+    event.
+
+    :ivar app_service_plan_event_type_detail: Detail of action on the app service plan.
+    :vartype app_service_plan_event_type_detail:
+     ~azure.eventgrid.models.AppServicePlanEventTypeDetail
+    :ivar sku: sku of app service plan.
+    :vartype sku: ~azure.eventgrid.models.WebAppServicePlanUpdatedEventDataSku
+    :ivar name: name of the app service plan that had this event.
+    :vartype name: str
+    :ivar client_request_id: The client request id generated by the app service for the app service
+     plan API operation that triggered this event.
+    :vartype client_request_id: str
+    :ivar correlation_request_id: The correlation request id generated by the app service for the
+     app service plan API operation that triggered this event.
+    :vartype correlation_request_id: str
+    :ivar request_id: The request id generated by the app service for the app service plan API
+     operation that triggered this event.
+    :vartype request_id: str
+    :ivar address: HTTP request URL of this operation.
+    :vartype address: str
+    :ivar verb: HTTP verb of this operation.
+    :vartype verb: str
+    """
+
+    app_service_plan_event_type_detail: Optional["_models.AppServicePlanEventTypeDetail"] = rest_field(
+        name="appServicePlanEventTypeDetail", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Detail of action on the app service plan."""
+    sku: Optional["_models.WebAppServicePlanUpdatedEventDataSku"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """sku of app service plan."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """name of the app service plan that had this event."""
+    client_request_id: Optional[str] = rest_field(
+        name="clientRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The client request id generated by the app service for the app service plan API operation that
+     triggered this event."""
+    correlation_request_id: Optional[str] = rest_field(
+        name="correlationRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The correlation request id generated by the app service for the app service plan API operation
+     that triggered this event."""
+    request_id: Optional[str] = rest_field(name="requestId", visibility=["read", "create", "update", "delete", "query"])
+    """The request id generated by the app service for the app service plan API operation that
+     triggered this event."""
+    address: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP request URL of this operation."""
+    verb: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP verb of this operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        app_service_plan_event_type_detail: Optional["_models.AppServicePlanEventTypeDetail"] = None,
+        sku: Optional["_models.WebAppServicePlanUpdatedEventDataSku"] = None,
+        name: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        correlation_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        address: Optional[str] = None,
+        verb: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class WebAppServicePlanUpdatedEventDataSku(_Model):
+    """sku of app service plan.
+
+    :ivar name: name of app service plan sku.
+    :vartype name: str
+    :ivar tier: tier of app service plan sku.
+    :vartype tier: str
+    :ivar size: size of app service plan sku.
+    :vartype size: str
+    :ivar family: family of app service plan sku.
+    :vartype family: str
+    :ivar capacity: capacity of app service plan sku.
+    :vartype capacity: str
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """name of app service plan sku."""
+    tier: Optional[str] = rest_field(name="Tier", visibility=["read", "create", "update", "delete", "query"])
+    """tier of app service plan sku."""
+    size: Optional[str] = rest_field(name="Size", visibility=["read", "create", "update", "delete", "query"])
+    """size of app service plan sku."""
+    family: Optional[str] = rest_field(name="Family", visibility=["read", "create", "update", "delete", "query"])
+    """family of app service plan sku."""
+    capacity: Optional[str] = rest_field(name="Capacity", visibility=["read", "create", "update", "delete", "query"])
+    """capacity of app service plan sku."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        tier: Optional[str] = None,
+        size: Optional[str] = None,
+        family: Optional[str] = None,
+        capacity: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class WebAppUpdatedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Web.AppUpdated event.
+
+    :ivar app_event_type_detail: Detail of action on the app.
+    :vartype app_event_type_detail: ~azure.eventgrid.models.AppEventTypeDetail
+    :ivar name: name of the web site that had this event.
+    :vartype name: str
+    :ivar client_request_id: The client request id generated by the app service for the site API
+     operation that triggered this event.
+    :vartype client_request_id: str
+    :ivar correlation_request_id: The correlation request id generated by the app service for the
+     site API operation that triggered this event.
+    :vartype correlation_request_id: str
+    :ivar request_id: The request id generated by the app service for the site API operation that
+     triggered this event.
+    :vartype request_id: str
+    :ivar address: HTTP request URL of this operation.
+    :vartype address: str
+    :ivar verb: HTTP verb of this operation.
+    :vartype verb: str
+    """
+
+    app_event_type_detail: Optional["_models.AppEventTypeDetail"] = rest_field(
+        name="appEventTypeDetail", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Detail of action on the app."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """name of the web site that had this event."""
+    client_request_id: Optional[str] = rest_field(
+        name="clientRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The client request id generated by the app service for the site API operation that triggered
+     this event."""
+    correlation_request_id: Optional[str] = rest_field(
+        name="correlationRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The correlation request id generated by the app service for the site API operation that
+     triggered this event."""
+    request_id: Optional[str] = rest_field(name="requestId", visibility=["read", "create", "update", "delete", "query"])
+    """The request id generated by the app service for the site API operation that triggered this
+     event."""
+    address: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP request URL of this operation."""
+    verb: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP verb of this operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        app_event_type_detail: Optional["_models.AppEventTypeDetail"] = None,
+        name: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        correlation_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        address: Optional[str] = None,
+        verb: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class WebBackupOperationCompletedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Web.BackupOperationCompleted
+    event.
+
+    :ivar app_event_type_detail: Detail of action on the app.
+    :vartype app_event_type_detail: ~azure.eventgrid.models.AppEventTypeDetail
+    :ivar name: name of the web site that had this event.
+    :vartype name: str
+    :ivar client_request_id: The client request id generated by the app service for the site API
+     operation that triggered this event.
+    :vartype client_request_id: str
+    :ivar correlation_request_id: The correlation request id generated by the app service for the
+     site API operation that triggered this event.
+    :vartype correlation_request_id: str
+    :ivar request_id: The request id generated by the app service for the site API operation that
+     triggered this event.
+    :vartype request_id: str
+    :ivar address: HTTP request URL of this operation.
+    :vartype address: str
+    :ivar verb: HTTP verb of this operation.
+    :vartype verb: str
+    """
+
+    app_event_type_detail: Optional["_models.AppEventTypeDetail"] = rest_field(
+        name="appEventTypeDetail", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Detail of action on the app."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """name of the web site that had this event."""
+    client_request_id: Optional[str] = rest_field(
+        name="clientRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The client request id generated by the app service for the site API operation that triggered
+     this event."""
+    correlation_request_id: Optional[str] = rest_field(
+        name="correlationRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The correlation request id generated by the app service for the site API operation that
+     triggered this event."""
+    request_id: Optional[str] = rest_field(name="requestId", visibility=["read", "create", "update", "delete", "query"])
+    """The request id generated by the app service for the site API operation that triggered this
+     event."""
+    address: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP request URL of this operation."""
+    verb: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP verb of this operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        app_event_type_detail: Optional["_models.AppEventTypeDetail"] = None,
+        name: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        correlation_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        address: Optional[str] = None,
+        verb: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class WebBackupOperationFailedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Web.BackupOperationFailed
+    event.
+
+    :ivar app_event_type_detail: Detail of action on the app.
+    :vartype app_event_type_detail: ~azure.eventgrid.models.AppEventTypeDetail
+    :ivar name: name of the web site that had this event.
+    :vartype name: str
+    :ivar client_request_id: The client request id generated by the app service for the site API
+     operation that triggered this event.
+    :vartype client_request_id: str
+    :ivar correlation_request_id: The correlation request id generated by the app service for the
+     site API operation that triggered this event.
+    :vartype correlation_request_id: str
+    :ivar request_id: The request id generated by the app service for the site API operation that
+     triggered this event.
+    :vartype request_id: str
+    :ivar address: HTTP request URL of this operation.
+    :vartype address: str
+    :ivar verb: HTTP verb of this operation.
+    :vartype verb: str
+    """
+
+    app_event_type_detail: Optional["_models.AppEventTypeDetail"] = rest_field(
+        name="appEventTypeDetail", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Detail of action on the app."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """name of the web site that had this event."""
+    client_request_id: Optional[str] = rest_field(
+        name="clientRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The client request id generated by the app service for the site API operation that triggered
+     this event."""
+    correlation_request_id: Optional[str] = rest_field(
+        name="correlationRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The correlation request id generated by the app service for the site API operation that
+     triggered this event."""
+    request_id: Optional[str] = rest_field(name="requestId", visibility=["read", "create", "update", "delete", "query"])
+    """The request id generated by the app service for the site API operation that triggered this
+     event."""
+    address: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP request URL of this operation."""
+    verb: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP verb of this operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        app_event_type_detail: Optional["_models.AppEventTypeDetail"] = None,
+        name: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        correlation_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        address: Optional[str] = None,
+        verb: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class WebBackupOperationStartedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Web.BackupOperationStarted
+    event.
+
+    :ivar app_event_type_detail: Detail of action on the app.
+    :vartype app_event_type_detail: ~azure.eventgrid.models.AppEventTypeDetail
+    :ivar name: name of the web site that had this event.
+    :vartype name: str
+    :ivar client_request_id: The client request id generated by the app service for the site API
+     operation that triggered this event.
+    :vartype client_request_id: str
+    :ivar correlation_request_id: The correlation request id generated by the app service for the
+     site API operation that triggered this event.
+    :vartype correlation_request_id: str
+    :ivar request_id: The request id generated by the app service for the site API operation that
+     triggered this event.
+    :vartype request_id: str
+    :ivar address: HTTP request URL of this operation.
+    :vartype address: str
+    :ivar verb: HTTP verb of this operation.
+    :vartype verb: str
+    """
+
+    app_event_type_detail: Optional["_models.AppEventTypeDetail"] = rest_field(
+        name="appEventTypeDetail", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Detail of action on the app."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """name of the web site that had this event."""
+    client_request_id: Optional[str] = rest_field(
+        name="clientRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The client request id generated by the app service for the site API operation that triggered
+     this event."""
+    correlation_request_id: Optional[str] = rest_field(
+        name="correlationRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The correlation request id generated by the app service for the site API operation that
+     triggered this event."""
+    request_id: Optional[str] = rest_field(name="requestId", visibility=["read", "create", "update", "delete", "query"])
+    """The request id generated by the app service for the site API operation that triggered this
+     event."""
+    address: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP request URL of this operation."""
+    verb: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP verb of this operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        app_event_type_detail: Optional["_models.AppEventTypeDetail"] = None,
+        name: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        correlation_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        address: Optional[str] = None,
+        verb: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class WebRestoreOperationCompletedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Web.RestoreOperationCompleted
+    event.
+
+    :ivar app_event_type_detail: Detail of action on the app.
+    :vartype app_event_type_detail: ~azure.eventgrid.models.AppEventTypeDetail
+    :ivar name: name of the web site that had this event.
+    :vartype name: str
+    :ivar client_request_id: The client request id generated by the app service for the site API
+     operation that triggered this event.
+    :vartype client_request_id: str
+    :ivar correlation_request_id: The correlation request id generated by the app service for the
+     site API operation that triggered this event.
+    :vartype correlation_request_id: str
+    :ivar request_id: The request id generated by the app service for the site API operation that
+     triggered this event.
+    :vartype request_id: str
+    :ivar address: HTTP request URL of this operation.
+    :vartype address: str
+    :ivar verb: HTTP verb of this operation.
+    :vartype verb: str
+    """
+
+    app_event_type_detail: Optional["_models.AppEventTypeDetail"] = rest_field(
+        name="appEventTypeDetail", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Detail of action on the app."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """name of the web site that had this event."""
+    client_request_id: Optional[str] = rest_field(
+        name="clientRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The client request id generated by the app service for the site API operation that triggered
+     this event."""
+    correlation_request_id: Optional[str] = rest_field(
+        name="correlationRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The correlation request id generated by the app service for the site API operation that
+     triggered this event."""
+    request_id: Optional[str] = rest_field(name="requestId", visibility=["read", "create", "update", "delete", "query"])
+    """The request id generated by the app service for the site API operation that triggered this
+     event."""
+    address: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP request URL of this operation."""
+    verb: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP verb of this operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        app_event_type_detail: Optional["_models.AppEventTypeDetail"] = None,
+        name: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        correlation_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        address: Optional[str] = None,
+        verb: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class WebRestoreOperationFailedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Web.RestoreOperationFailed
+    event.
+
+    :ivar app_event_type_detail: Detail of action on the app.
+    :vartype app_event_type_detail: ~azure.eventgrid.models.AppEventTypeDetail
+    :ivar name: name of the web site that had this event.
+    :vartype name: str
+    :ivar client_request_id: The client request id generated by the app service for the site API
+     operation that triggered this event.
+    :vartype client_request_id: str
+    :ivar correlation_request_id: The correlation request id generated by the app service for the
+     site API operation that triggered this event.
+    :vartype correlation_request_id: str
+    :ivar request_id: The request id generated by the app service for the site API operation that
+     triggered this event.
+    :vartype request_id: str
+    :ivar address: HTTP request URL of this operation.
+    :vartype address: str
+    :ivar verb: HTTP verb of this operation.
+    :vartype verb: str
+    """
+
+    app_event_type_detail: Optional["_models.AppEventTypeDetail"] = rest_field(
+        name="appEventTypeDetail", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Detail of action on the app."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """name of the web site that had this event."""
+    client_request_id: Optional[str] = rest_field(
+        name="clientRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The client request id generated by the app service for the site API operation that triggered
+     this event."""
+    correlation_request_id: Optional[str] = rest_field(
+        name="correlationRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The correlation request id generated by the app service for the site API operation that
+     triggered this event."""
+    request_id: Optional[str] = rest_field(name="requestId", visibility=["read", "create", "update", "delete", "query"])
+    """The request id generated by the app service for the site API operation that triggered this
+     event."""
+    address: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP request URL of this operation."""
+    verb: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP verb of this operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        app_event_type_detail: Optional["_models.AppEventTypeDetail"] = None,
+        name: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        correlation_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        address: Optional[str] = None,
+        verb: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class WebRestoreOperationStartedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Web.RestoreOperationStarted
+    event.
+
+    :ivar app_event_type_detail: Detail of action on the app.
+    :vartype app_event_type_detail: ~azure.eventgrid.models.AppEventTypeDetail
+    :ivar name: name of the web site that had this event.
+    :vartype name: str
+    :ivar client_request_id: The client request id generated by the app service for the site API
+     operation that triggered this event.
+    :vartype client_request_id: str
+    :ivar correlation_request_id: The correlation request id generated by the app service for the
+     site API operation that triggered this event.
+    :vartype correlation_request_id: str
+    :ivar request_id: The request id generated by the app service for the site API operation that
+     triggered this event.
+    :vartype request_id: str
+    :ivar address: HTTP request URL of this operation.
+    :vartype address: str
+    :ivar verb: HTTP verb of this operation.
+    :vartype verb: str
+    """
+
+    app_event_type_detail: Optional["_models.AppEventTypeDetail"] = rest_field(
+        name="appEventTypeDetail", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Detail of action on the app."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """name of the web site that had this event."""
+    client_request_id: Optional[str] = rest_field(
+        name="clientRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The client request id generated by the app service for the site API operation that triggered
+     this event."""
+    correlation_request_id: Optional[str] = rest_field(
+        name="correlationRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The correlation request id generated by the app service for the site API operation that
+     triggered this event."""
+    request_id: Optional[str] = rest_field(name="requestId", visibility=["read", "create", "update", "delete", "query"])
+    """The request id generated by the app service for the site API operation that triggered this
+     event."""
+    address: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP request URL of this operation."""
+    verb: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP verb of this operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        app_event_type_detail: Optional["_models.AppEventTypeDetail"] = None,
+        name: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        correlation_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        address: Optional[str] = None,
+        verb: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class WebSlotSwapCompletedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Web.SlotSwapCompleted event.
+
+    :ivar app_event_type_detail: Detail of action on the app.
+    :vartype app_event_type_detail: ~azure.eventgrid.models.AppEventTypeDetail
+    :ivar name: name of the web site that had this event.
+    :vartype name: str
+    :ivar client_request_id: The client request id generated by the app service for the site API
+     operation that triggered this event.
+    :vartype client_request_id: str
+    :ivar correlation_request_id: The correlation request id generated by the app service for the
+     site API operation that triggered this event.
+    :vartype correlation_request_id: str
+    :ivar request_id: The request id generated by the app service for the site API operation that
+     triggered this event.
+    :vartype request_id: str
+    :ivar address: HTTP request URL of this operation.
+    :vartype address: str
+    :ivar verb: HTTP verb of this operation.
+    :vartype verb: str
+    """
+
+    app_event_type_detail: Optional["_models.AppEventTypeDetail"] = rest_field(
+        name="appEventTypeDetail", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Detail of action on the app."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """name of the web site that had this event."""
+    client_request_id: Optional[str] = rest_field(
+        name="clientRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The client request id generated by the app service for the site API operation that triggered
+     this event."""
+    correlation_request_id: Optional[str] = rest_field(
+        name="correlationRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The correlation request id generated by the app service for the site API operation that
+     triggered this event."""
+    request_id: Optional[str] = rest_field(name="requestId", visibility=["read", "create", "update", "delete", "query"])
+    """The request id generated by the app service for the site API operation that triggered this
+     event."""
+    address: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP request URL of this operation."""
+    verb: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP verb of this operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        app_event_type_detail: Optional["_models.AppEventTypeDetail"] = None,
+        name: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        correlation_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        address: Optional[str] = None,
+        verb: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class WebSlotSwapFailedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Web.SlotSwapFailed event.
+
+    :ivar app_event_type_detail: Detail of action on the app.
+    :vartype app_event_type_detail: ~azure.eventgrid.models.AppEventTypeDetail
+    :ivar name: name of the web site that had this event.
+    :vartype name: str
+    :ivar client_request_id: The client request id generated by the app service for the site API
+     operation that triggered this event.
+    :vartype client_request_id: str
+    :ivar correlation_request_id: The correlation request id generated by the app service for the
+     site API operation that triggered this event.
+    :vartype correlation_request_id: str
+    :ivar request_id: The request id generated by the app service for the site API operation that
+     triggered this event.
+    :vartype request_id: str
+    :ivar address: HTTP request URL of this operation.
+    :vartype address: str
+    :ivar verb: HTTP verb of this operation.
+    :vartype verb: str
+    """
+
+    app_event_type_detail: Optional["_models.AppEventTypeDetail"] = rest_field(
+        name="appEventTypeDetail", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Detail of action on the app."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """name of the web site that had this event."""
+    client_request_id: Optional[str] = rest_field(
+        name="clientRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The client request id generated by the app service for the site API operation that triggered
+     this event."""
+    correlation_request_id: Optional[str] = rest_field(
+        name="correlationRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The correlation request id generated by the app service for the site API operation that
+     triggered this event."""
+    request_id: Optional[str] = rest_field(name="requestId", visibility=["read", "create", "update", "delete", "query"])
+    """The request id generated by the app service for the site API operation that triggered this
+     event."""
+    address: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP request URL of this operation."""
+    verb: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP verb of this operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        app_event_type_detail: Optional["_models.AppEventTypeDetail"] = None,
+        name: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        correlation_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        address: Optional[str] = None,
+        verb: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class WebSlotSwapStartedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Web.SlotSwapStarted event.
+
+    :ivar app_event_type_detail: Detail of action on the app.
+    :vartype app_event_type_detail: ~azure.eventgrid.models.AppEventTypeDetail
+    :ivar name: name of the web site that had this event.
+    :vartype name: str
+    :ivar client_request_id: The client request id generated by the app service for the site API
+     operation that triggered this event.
+    :vartype client_request_id: str
+    :ivar correlation_request_id: The correlation request id generated by the app service for the
+     site API operation that triggered this event.
+    :vartype correlation_request_id: str
+    :ivar request_id: The request id generated by the app service for the site API operation that
+     triggered this event.
+    :vartype request_id: str
+    :ivar address: HTTP request URL of this operation.
+    :vartype address: str
+    :ivar verb: HTTP verb of this operation.
+    :vartype verb: str
+    """
+
+    app_event_type_detail: Optional["_models.AppEventTypeDetail"] = rest_field(
+        name="appEventTypeDetail", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Detail of action on the app."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """name of the web site that had this event."""
+    client_request_id: Optional[str] = rest_field(
+        name="clientRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The client request id generated by the app service for the site API operation that triggered
+     this event."""
+    correlation_request_id: Optional[str] = rest_field(
+        name="correlationRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The correlation request id generated by the app service for the site API operation that
+     triggered this event."""
+    request_id: Optional[str] = rest_field(name="requestId", visibility=["read", "create", "update", "delete", "query"])
+    """The request id generated by the app service for the site API operation that triggered this
+     event."""
+    address: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP request URL of this operation."""
+    verb: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP verb of this operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        app_event_type_detail: Optional["_models.AppEventTypeDetail"] = None,
+        name: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        correlation_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        address: Optional[str] = None,
+        verb: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class WebSlotSwapWithPreviewCancelledEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.Web.SlotSwapWithPreviewCancelled event.
+
+    :ivar app_event_type_detail: Detail of action on the app.
+    :vartype app_event_type_detail: ~azure.eventgrid.models.AppEventTypeDetail
+    :ivar name: name of the web site that had this event.
+    :vartype name: str
+    :ivar client_request_id: The client request id generated by the app service for the site API
+     operation that triggered this event.
+    :vartype client_request_id: str
+    :ivar correlation_request_id: The correlation request id generated by the app service for the
+     site API operation that triggered this event.
+    :vartype correlation_request_id: str
+    :ivar request_id: The request id generated by the app service for the site API operation that
+     triggered this event.
+    :vartype request_id: str
+    :ivar address: HTTP request URL of this operation.
+    :vartype address: str
+    :ivar verb: HTTP verb of this operation.
+    :vartype verb: str
+    """
+
+    app_event_type_detail: Optional["_models.AppEventTypeDetail"] = rest_field(
+        name="appEventTypeDetail", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Detail of action on the app."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """name of the web site that had this event."""
+    client_request_id: Optional[str] = rest_field(
+        name="clientRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The client request id generated by the app service for the site API operation that triggered
+     this event."""
+    correlation_request_id: Optional[str] = rest_field(
+        name="correlationRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The correlation request id generated by the app service for the site API operation that
+     triggered this event."""
+    request_id: Optional[str] = rest_field(name="requestId", visibility=["read", "create", "update", "delete", "query"])
+    """The request id generated by the app service for the site API operation that triggered this
+     event."""
+    address: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP request URL of this operation."""
+    verb: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP verb of this operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        app_event_type_detail: Optional["_models.AppEventTypeDetail"] = None,
+        name: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        correlation_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        address: Optional[str] = None,
+        verb: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class WebSlotSwapWithPreviewStartedEventData(_Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Web.SlotSwapWithPreviewStarted
+    event.
+
+    :ivar app_event_type_detail: Detail of action on the app.
+    :vartype app_event_type_detail: ~azure.eventgrid.models.AppEventTypeDetail
+    :ivar name: name of the web site that had this event.
+    :vartype name: str
+    :ivar client_request_id: The client request id generated by the app service for the site API
+     operation that triggered this event.
+    :vartype client_request_id: str
+    :ivar correlation_request_id: The correlation request id generated by the app service for the
+     site API operation that triggered this event.
+    :vartype correlation_request_id: str
+    :ivar request_id: The request id generated by the app service for the site API operation that
+     triggered this event.
+    :vartype request_id: str
+    :ivar address: HTTP request URL of this operation.
+    :vartype address: str
+    :ivar verb: HTTP verb of this operation.
+    :vartype verb: str
+    """
+
+    app_event_type_detail: Optional["_models.AppEventTypeDetail"] = rest_field(
+        name="appEventTypeDetail", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Detail of action on the app."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """name of the web site that had this event."""
+    client_request_id: Optional[str] = rest_field(
+        name="clientRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The client request id generated by the app service for the site API operation that triggered
+     this event."""
+    correlation_request_id: Optional[str] = rest_field(
+        name="correlationRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The correlation request id generated by the app service for the site API operation that
+     triggered this event."""
+    request_id: Optional[str] = rest_field(name="requestId", visibility=["read", "create", "update", "delete", "query"])
+    """The request id generated by the app service for the site API operation that triggered this
+     event."""
+    address: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP request URL of this operation."""
+    verb: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """HTTP verb of this operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        app_event_type_detail: Optional["_models.AppEventTypeDetail"] = None,
+        name: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        correlation_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        address: Optional[str] = None,
+        verb: Optional[str] = None,
     ) -> None: ...
 
     @overload
