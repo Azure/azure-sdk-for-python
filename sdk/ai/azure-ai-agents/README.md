@@ -81,8 +81,62 @@ pip install azure-ai-agents
 
 ### Create and authenticate the client
 
-To construct a synchronous client:
+To use this SDK, start by creating an `AIProjectClient`. For more information on `azure-ai-projects`, refer to its [README](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/README.md).
 
+Here is an example of creating a synchronous `AIProjectClient`:
+
+```python
+import os
+from azure.ai.projects import AIProjectClient
+from azure.identity import DefaultAzureCredential
+
+project_client = AIProjectClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
+    credential=DefaultAzureCredential(),
+)
+```
+
+To construct an asynchronous client, install the `aiohttp` package:
+
+```bash
+pip install aiohttp
+```
+
+Then use the code below with `AIProjectClient` and `DefaultAzureCredential` in `aio` packages:
+
+```python
+import asyncio
+import os
+from azure.ai.projects.aio import AIProjectClient
+from azure.identity.aio import DefaultAzureCredential
+
+async def main() -> None:
+    project_client = AIProjectClient(
+       endpoint=os.environ["PROJECT_ENDPOINT"],
+       credential=DefaultAzureCredential(),
+    )
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+Once you have an `AIProjectClient`, you can obtain an `AgentsClient` like this:
+
+**Synchronous Client:**
+```python
+with project_client:
+    agents_client = project_client.agents
+```
+
+**Asynchronous Client:**
+```python
+async with project_client:
+    agents_client = project_client.agents
+```
+
+Alternatively, you can instantiate an AgentsClient directly as a standalone approach without using `azure-ai-projects`. However, this is not recommended, as it has limitations and lacks the integrated capabilities provided by using an `AIProjectClient`.   Here is is the example:
+
+**Synchronous Client:**
 ```python
 import os
 from azure.ai.agents import AgentsClient
@@ -90,28 +144,33 @@ from azure.identity import DefaultAzureCredential
 
 agents_client = AgentsClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential()
 )
+
+with agents_client:
+    # your code to consume the client
+    pass
+
 ```
 
-To construct an asynchronous client, Install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
-
-```bash
-pip install aiohttp
-```
-
-and update the code above to import `asyncio`, and import `AgentsClient` from the `azure.ai.agents.aio` namespace:
-
+**Asynchronous Client:**
 ```python
-import os
 import asyncio
+import os
 from azure.ai.agents.aio import AgentsClient
-from azure.core.credentials import AzureKeyCredential
+from azure.identity.aio import DefaultAzureCredential
 
-agent_client = AgentsClient(
-   endpoint=os.environ["PROJECT_ENDPOINT"],
-   credential=DefaultAzureCredential(),
-)
+async def main() -> None:
+    agents_client = AgentsClient(
+        endpoint=os.environ["PROJECT_ENDPOINT"],
+        credential=DefaultAzureCredential()
+    )
+    async with agents_client:
+        # your code to consume the client
+        pass
+
+if __name__ == "__main__":
+    asyncio.run(main())
 ```
 
 ## Examples
@@ -320,22 +379,20 @@ Here is an example to integrate Azure AI Search:
 <!-- SNIPPET:sample_agents_azure_ai_search.create_agent_with_azure_ai_search_tool -->
 
 ```python
-conn_id = os.environ["AI_AZURE_AI_CONNECTION_ID"]
-
-print(conn_id)
-
-# Initialize agent AI search tool and add the search index connection id
-ai_search = AzureAISearchTool(
-    index_connection_id=conn_id, index_name="sample_index", query_type=AzureAISearchQueryType.SIMPLE, top_k=3, filter=""
-)
-
-# Create agent with AI search tool and process agent run
-project_client = AIProjectClient(
+with AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
-)
-
-with project_client:
+  ) as project_client:
+    conn_id = project_client.connections.get_default(ConnectionType.AZURE_AI_SEARCH).id
+    
+    print(conn_id)
+    
+    # Initialize agent AI search tool and add the search index connection id
+    ai_search = AzureAISearchTool(
+        index_connection_id=conn_id, index_name="sample_index", query_type=AzureAISearchQueryType.SIMPLE, top_k=3, filter=""
+    )
+    
+    # Create agent with AI search tool and process agent run
     agents_client = project_client.agents
 
     agent = agents_client.create_agent(

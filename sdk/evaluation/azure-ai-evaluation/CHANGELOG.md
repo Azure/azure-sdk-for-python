@@ -1,5 +1,15 @@
 # Release History
 
+## 1.9.0 (Unreleased)
+
+### Features Added
+
+### Bugs Fixed
+
+- Significant improvements to IntentResolution evaluator. New version has less variance, is nearly 2x faster and consumes fewer tokens.
+
+- Fixed MeteorScoreEvaluator and other threshold-based evaluators returning incorrect binary results due to integer conversion of decimal scores. Previously, decimal scores like 0.9375 were incorrectly converted to integers (0) before threshold comparison, causing them to fail even when above the threshold. [#41415](https://github.com/Azure/azure-sdk-for-python/issues/41415)
+
 ## 1.8.0 (2025-05-29)
 
 ### Features Added

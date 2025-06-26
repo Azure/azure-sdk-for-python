@@ -23,7 +23,14 @@ import asyncio
 import os
 
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.agents.models import FileSearchTool, FilePurpose, MessageTextContent, ListSortOrder
+from azure.ai.agents.models import (
+    FilePurpose,
+    FileSearchTool,
+    ListSortOrder,
+    RunAdditionalFieldList,
+    RunStepFileSearchToolCall,
+    RunStepToolCallDetails,
+)
 from azure.identity.aio import DefaultAzureCredential
 
 asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/product_info_1.md"))
@@ -75,12 +82,30 @@ async def main():
 
         await agents_client.delete_agent(agent.id)
         print("Deleted agent")
+        
+        async for run_step in agents_client.run_steps.list(
+          thread_id=thread.id, run_id=run.id, include=[RunAdditionalFieldList.FILE_SEARCH_CONTENTS]):
+            if isinstance(run_step.step_details, RunStepToolCallDetails):
+                for tool_call in run_step.step_details.tool_calls:
+                    if isinstance(tool_call, RunStepFileSearchToolCall) and tool_call.file_search \
+                      and tool_call.file_search.results and tool_call.file_search.results[0].content \
+                      and tool_call.file_search.results[0].content[0].text:
+                        print("The search tool has found the next relevant content in "
+                              f"the file {tool_call.file_search.results[0].file_name}:")
+                        # Note: technically we may have several search results, however in our example
+                        # we only have one file, so we are taking the only result.
+                        print(tool_call.file_search.results[0].content[0].text)
+                        print("===============================================================")
 
+        file_name = os.path.split(asset_file_path)[-1]
         messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
         async for msg in messages:
-            last_part = msg.content[-1]
-            if isinstance(last_part, MessageTextContent):
-                print(f"{msg.role}: {last_part.text.value}")
+            if msg.text_messages:
+                last_text = msg.text_messages[-1].text.value
+                for annotation in msg.text_messages[-1].text.annotations:
+                    citation = file_name if annotation.file_citation.file_id == file.id else annotation.file_citation.file_id
+                    last_text = last_text.replace(annotation.text, f" [{citation}]")
+                print(f"{msg.role}: {last_text}")
 
 
 if __name__ == "__main__":

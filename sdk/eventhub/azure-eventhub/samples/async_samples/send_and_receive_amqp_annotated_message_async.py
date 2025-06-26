@@ -14,7 +14,7 @@ import asyncio
 from azure.eventhub import TransportType
 from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient
 from azure.eventhub.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType
-from azure.identity.aio import AzureCliCredential
+from azure.identity.aio import DefaultAzureCredential
 
 FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
 EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
@@ -91,7 +91,7 @@ async def main():
     producer = EventHubProducerClient(
         fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
         eventhub_name=EVENTHUB_NAME,
-        credential=AzureCliCredential(),
+        credential=DefaultAzureCredential(),
         transport_type=TransportType.AmqpOverWebsocket,
     )
     async with producer:
@@ -102,7 +102,7 @@ async def main():
     # Receive
     consumer = EventHubConsumerClient(
         fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
-        credential=AzureCliCredential(),
+        credential=DefaultAzureCredential(),
         consumer_group="$Default",
         eventhub_name=EVENTHUB_NAME,
         transport_type=TransportType.AmqpOverWebsocket,

@@ -612,7 +612,7 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
         query_type: AzureAISearchQueryType = AzureAISearchQueryType.SIMPLE,
         filter: str = "",
         top_k: int = 5,
-        index_asset_id: str = "",
+        index_asset_id: Optional[str] = None,
     ):
         """
         Initialize AzureAISearch with an index_connection_id and index_name, with optional params.
@@ -629,7 +629,7 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
         :param top_k: Number of documents to retrieve from search and present to the model.
         :type top_k: int
         :param index_asset_id: Index asset ID to be used by tool.
-        :type filter: str
+        :type filter: Optional[str]
         """
         self.index_list = [
             AISearchIndexResource(
@@ -1284,7 +1284,7 @@ class BaseToolSet:
         try:
             return ToolResources(**resources)
         except TypeError as e:
-            logger.error("Error creating ToolResources: %s", e)
+            logger.error("Error creating ToolResources: %s", e)  # pylint: disable=do-not-log-exceptions-if-not-debug
             raise ValueError("Invalid resources for ToolResources.") from e
 
     def get_definitions_and_resources(self) -> Dict[str, Any]:
@@ -1590,8 +1590,8 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
                 func_rt = await self.on_unhandled_event(
                     event_type, event_data_obj
                 )  # pylint: disable=assignment-from-none
-        except Exception as e:  # pylint: disable=broad-exception-caught
-            logger.error("Error in event handler for event '%s': %s", event_type, e)
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.error("Error in event handler for event '%s'", event_type)
         return event_type, event_data_obj, func_rt
 
     async def on_message_delta(
@@ -1717,8 +1717,8 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
                 func_rt = self.on_done()  # pylint: disable=assignment-from-none
             else:
                 func_rt = self.on_unhandled_event(event_type, event_data_obj)  # pylint: disable=assignment-from-none
-        except Exception as e:  # pylint: disable=broad-exception-caught
-            logger.error("Error in event handler for event '%s': %s", event_type, e)
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.debug("Error in event handler for event '%s'", event_type)
         return event_type, event_data_obj, func_rt
 
     def on_message_delta(
