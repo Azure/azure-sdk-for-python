@@ -93,7 +93,7 @@ class TestMassEvaluate:
         (
             # ("project_scope", "azure_cred", "data_file", "model_config"),
             # ("project_scope_onedp", "azure_cred_onedp", "data_file", "model_config_onedp"),
-        )
+        ),
     )
     def test_evaluate_singleton_inputs(self, request, proj_scope, cred, conv, m_config):
         project_scope = request.getfixturevalue(proj_scope)
@@ -240,14 +240,14 @@ class TestMassEvaluate:
         (
             ("project_scope", "azure_cred", "data_convo_file", "model_config"),
             # ("project_scope_onedp", "azure_cred_onedp", "data_convo_file", "model_config_onedp"),
-        )
+        ),
     )
     def test_evaluate_conversation(self, request, proj_scope, cred, conv, m_config):
         project_scope = request.getfixturevalue(proj_scope)
         azure_cred = request.getfixturevalue(cred)
         data_convo_file = request.getfixturevalue(conv)
         model_config = request.getfixturevalue(m_config)
-        
+
         evaluators = {
             "grounded": GroundednessEvaluator(model_config),
             "coherence": CoherenceEvaluator(model_config),
@@ -339,14 +339,14 @@ class TestMassEvaluate:
         (
             ("project_scope", "azure_cred"),
             ("project_scope_onedp", "azure_cred_onedp"),
-        )
+        ),
     )
     def test_evaluate_multimodal(
         self,
         multi_modal_input_type,
         multimodal_input_selector,
-        request, 
-        proj_scope, 
+        request,
+        proj_scope,
         cred,
         run_from_temp_dir,
     ):
@@ -435,7 +435,7 @@ class TestMassEvaluate:
         (
             ("project_scope", "azure_cred", "code_based_data_file"),
             ("project_scope_onedp", "azure_cred_onedp", "code_based_data_file"),
-        )
+        ),
     )
     def test_evaluate_code_based_inputs(self, request, proj_scope, cred, data_file):
         project_scope = request.getfixturevalue(proj_scope)
@@ -620,7 +620,7 @@ class TestMassEvaluate:
         (
             ("project_scope", "azure_cred", "chat_based_data_file"),
             ("project_scope_onedp", "azure_cred_onedp", "chat_based_data_file"),
-        )
+        ),
     )
     def test_evaluate_chat_inputs(self, request, proj_scope, cred, data_file):
         project_scope = request.getfixturevalue(proj_scope)

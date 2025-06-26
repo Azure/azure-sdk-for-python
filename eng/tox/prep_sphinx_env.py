@@ -12,11 +12,7 @@ import glob
 import logging
 import shutil
 import argparse
-from pkg_resources import Requirement
-import ast
 import os
-import textwrap
-import io
 from tox_helper_tasks import (
     unzip_sdist_to_directory,
     move_and_rename
@@ -55,6 +51,7 @@ def should_build_docs(package_name):
 def create_index_file(readme_location, package_rst):
     readme_ext = os.path.splitext(readme_location)[1]
 
+    output = ""
     if readme_ext == ".md":
         with open(readme_location, "r") as file:
             output = file.read()

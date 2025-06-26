@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2023-11-01",
+  "commit": "d98af308da690a9e62df88188b6563b0d588dafd",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/resources/Bicep.Management",
+  "emitterVersion": "0.45.3"
+}

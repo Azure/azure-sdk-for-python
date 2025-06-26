@@ -24,7 +24,6 @@ def data_file():
     return os.path.join(data_path, "evaluate_test_data.jsonl")
 
 
-
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
 class TestAoaiEvaluation:
     @pytest.mark.skipif(not is_live(), reason="AOAI recordings have bad recording scrubbing")
@@ -67,18 +66,11 @@ class TestAoaiEvaluation:
 
         # Define an string check grader config directly using the OAI SDK
         oai_string_check_grader = StringCheckGrader(
-            input="{{item.query}}",
-            name="contains hello",
-            operation="like",
-            reference="hello",
-            type="string_check"
+            input="{{item.query}}", name="contains hello", operation="like", reference="hello", type="string_check"
         )
         # Plug that into the general grader
-        general_grader = AzureOpenAIGrader(
-            model_config=model_config,
-            grader_config=oai_string_check_grader
-        )
-        
+        general_grader = AzureOpenAIGrader(model_config=model_config, grader_config=oai_string_check_grader)
+
         evaluators = {
             "f1_score": f1_eval,
             "similarity": sim_grader,
@@ -88,13 +80,8 @@ class TestAoaiEvaluation:
         }
 
         # run the evaluation
-        result = evaluate(
-            data=data_file,
-            evaluators=evaluators,
-            _use_run_submitter_client=True
-        )
+        result = evaluate(data=data_file, evaluators=evaluators, _use_run_submitter_client=True)
 
-        
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
         assert len(row_result_df.keys()) == 23
@@ -118,19 +105,18 @@ class TestAoaiEvaluation:
 
         assert len(metrics.keys()) == 11
         assert metrics["f1_score.f1_score"] >= 0
-        assert metrics['f1_score.f1_score'] >= 0
-        assert metrics['f1_score.f1_threshold'] >= 0
-        assert metrics['f1_score.binary_aggregate'] >= 0
-        assert metrics['f1_score.prompt_tokens'] == 0
-        assert metrics['f1_score.completion_tokens'] == 0
-        assert metrics['f1_score.total_tokens'] == 0
-        assert metrics['f1_score.duration'] >= 0
-        assert metrics['similarity.pass_rate'] == 1.0
-        assert metrics['string_check.pass_rate'] == 0.3333333333333333
-        assert metrics['label_model.pass_rate'] >= 0
-        assert metrics['general_grader.pass_rate'] == 0.0
-   
-   
+        assert metrics["f1_score.f1_score"] >= 0
+        assert metrics["f1_score.f1_threshold"] >= 0
+        assert metrics["f1_score.binary_aggregate"] >= 0
+        assert metrics["f1_score.prompt_tokens"] == 0
+        assert metrics["f1_score.completion_tokens"] == 0
+        assert metrics["f1_score.total_tokens"] == 0
+        assert metrics["f1_score.duration"] >= 0
+        assert metrics["similarity.pass_rate"] == 1.0
+        assert metrics["string_check.pass_rate"] == 0.3333333333333333
+        assert metrics["label_model.pass_rate"] >= 0
+        assert metrics["general_grader.pass_rate"] == 0.0
+
     @pytest.mark.skipif(not is_live(), reason="AOAI recordings have bad recording scrubbing")
     def test_evaluate_with_column_mapping_and_target(self, model_config, data_file):
         sim_grader = AzureOpenAITextSimilarityGrader(
@@ -152,7 +138,7 @@ class TestAoaiEvaluation:
 
         def target(query: str):
             return {"target_output": query}
-        
+
         evaluators = {
             "similarity": sim_grader,
             "string_check": string_grader,
@@ -161,11 +147,11 @@ class TestAoaiEvaluation:
         evaluation_config = {
             "similarity": {
                 "column_mapping": {
-                    "query": "${data.query}", # test basic mapping
+                    "query": "${data.query}",  # test basic mapping
                     "target_output": "${target.target_output}",
-                    },
+                },
             },
-            "string_check": { # test mapping across value names
+            "string_check": {  # test mapping across value names
                 "column_mapping": {"query": "${target.target_output}"},
             },
         }
@@ -177,7 +163,6 @@ class TestAoaiEvaluation:
             _use_run_submitter_client=True,
             target=target,
             evaluation_config=evaluation_config,
-
         )
 
         row_result_df = pd.DataFrame(result["rows"])
@@ -193,6 +178,5 @@ class TestAoaiEvaluation:
         assert len(row_result_df["outputs.string_check.sample"]) == 3
 
         assert len(metrics.keys()) == 2
-        assert metrics['similarity.pass_rate'] == 1.0
-        assert metrics['string_check.pass_rate'] == 0.3333333333333333
-   
+        assert metrics["similarity.pass_rate"] == 1.0
+        assert metrics["string_check.pass_rate"] == 0.3333333333333333
