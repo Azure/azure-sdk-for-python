@@ -914,7 +914,9 @@ class DeepResearchTool(Tool[DeepResearchToolDefinition]):
 
         self._deep_research_details = DeepResearchDetails(
             deep_research_model=deep_research_model,
-            deep_research_bing_grounding_connections=[DeepResearchBingGroundingConnection(connection_id=bing_grounding_connection_id)],
+            deep_research_bing_grounding_connections=[
+                DeepResearchBingGroundingConnection(connection_id=bing_grounding_connection_id)
+            ],
         )
 
     @property
