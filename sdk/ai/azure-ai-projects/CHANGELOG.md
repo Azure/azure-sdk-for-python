@@ -17,6 +17,7 @@ refer to the updated samples in the `samples\inference` directory. For example,
 ### Bugs Fixed
 
 * Fix to package function `enable_telemetry()` to correctly instrument `azure-ai-agents`.
+* Updated RedTeam target type visibility to allow for type being sent in the JSON for redteam run creation.
 
 ### Other
 
