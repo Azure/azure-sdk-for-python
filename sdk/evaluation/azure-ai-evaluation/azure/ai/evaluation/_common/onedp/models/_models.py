@@ -2223,7 +2223,7 @@ class RedTeam(_Model):
 
     :ivar id: Identifier of the red team. Required.
     :vartype id: str
-    :ivar display_name: Name of the red-team display name.
+    :ivar display_name: Display name of the red-team scan.
     :vartype display_name: str
     :ivar num_turns: Number of simulation rounds. Required.
     :vartype num_turns: int
@@ -2260,7 +2260,7 @@ class RedTeam(_Model):
     display_name: Optional[str] = rest_field(
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Name of the red-team display name."""
+    """Display name of the red-team scan."""
     num_turns: int = rest_field(name="numTurns", visibility=["read", "create", "update", "delete", "query"])
     """Number of simulation rounds. Required."""
     attack_strategies: List[Union[str, "_models.AttackStrategy"]] = rest_field(
@@ -2326,8 +2326,8 @@ class RedTeamUpload(_Model):
 
     :ivar id: Identifier of the red team. Required.
     :vartype id: str
-    :ivar scan_name: Name of the red-team scan.
-    :vartype scan_name: str
+    :ivar display_name: Display mame of the red-team scan.
+    :vartype display_name: str
     :ivar num_turns: Number of simulation rounds.
     :vartype num_turns: int
     :ivar attack_strategy: List of attack strategies or nested lists of attack strategies.
@@ -2357,8 +2357,10 @@ class RedTeamUpload(_Model):
 
     id: str = rest_field(visibility=["read"])
     """Identifier of the red team. Required."""
-    scan_name: Optional[str] = rest_field(name="scanName", visibility=["read", "create", "update", "delete", "query"])
-    """Name of the red-team scan."""
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Display mame of the red-team scan."""
     num_turns: Optional[int] = rest_field(name="numTurns", visibility=["read", "create", "update", "delete", "query"])
     """Number of simulation rounds."""
     attack_strategy: Optional[List[Union[str, "_models.AttackStrategy"]]] = rest_field(
@@ -2396,7 +2398,7 @@ class RedTeamUpload(_Model):
     def __init__(
         self,
         *,
-        scan_name: Optional[str] = None,
+        display_name: Optional[str] = None,
         num_turns: Optional[int] = None,
         attack_strategy: Optional[List[Union[str, "_models.AttackStrategy"]]] = None,
         simulation_only: Optional[bool] = None,
