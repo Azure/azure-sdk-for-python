@@ -17,6 +17,7 @@
 1. Get path to azure-sdk-for-python repo root, and path to tox.ini file
 2. Use `verify_setup` tool from azure-sdk-python-mcp server
 3. Ensure Python virtual environment is active
+4. Install required dependencies if missing using mcp tool `install_packages`
 
 **Virtual Environment Setup:**
 ```bash
@@ -41,7 +42,7 @@ source <env_name>/bin/activate
 IF TypeSpec project paths exist in context:
     USE local paths to generate SDK from tspconfig.yaml
 ELSE:
-    ASK user for tspconfig.yaml file path
+    ASK user for tspconfig.yaml file path or commit hash if existing package
 ```
 
 ### PHASE 2: PREREQUISITES CHECK
@@ -89,10 +90,12 @@ IF missing dependencies:
 
 ### STEP 2: SDK GENERATION
 ```
-ACTION: Use azure-sdk-python-mcp sdk generation server tools (init, init_local)
+ACTION: Use azure-sdk-python-mcp sdk generation server tools (init, init_local, update)
 TIMING: ALWAYS inform user before starting: "This SDK generation step will take approximately 5-6 minutes to complete."
 IF local path provided:
     USE local mcp tools with tspconfig.yaml path
+IF updating an existing package:
+    USE update tool with commit hash to update to specific version
 IF commands fail:
     ANALYZE error messages
     DIRECT user to fix TypeSpec errors in source repo
@@ -190,6 +193,9 @@ FINAL ACTIONS:
 2. PROMPT user with exact text:
    "Use the azure-rest-api-specs agent to handle the rest of the process and provide it the pull request."
 ```
+
+### STEP 8: RELEASE READINESS CHECK
+/check-package-readiness.prompt.md python language
 
 ---
 

@@ -249,6 +249,63 @@ def init_local_tool(tsp_config_path: str, repo_path:str) -> Dict[str, Any]:
             "stderr": "",
             "code": 1
         }
+    
+@mcp.tool("update")
+def update_tools(commit_hash: str, repo_path:str) -> Dict[str, Any]:
+    """Initializes and subsequently generates a typespec client library directory from a local azure-rest-api-specs repo.
+
+    This command is used to update a client library to a specific commit hash in the azure-rest-api-specs repository.
+
+    Args:
+        commit_hash: The commit hash to update to.
+        package_path: The path to the package directory (i.e. ./azure-sdk-for-python/sdk/eventgrid/azure-eventgrid).
+
+    Returns:
+        A dictionary containing the result of the command.    """
+    try:
+        
+        # Run the update command
+        return run_command(["update"], cwd=repo_path, is_typespec=True,
+                          typespec_args={"commit": commit_hash})
+                          
+    except RuntimeError as e:
+        return {
+            "success": False,
+            "message": str(e),
+            "stdout": "",
+            "stderr": "",
+            "code": 1
+        }
+    
+@mcp.tool("install_packages")
+def install_packages_tool() -> Dict[str, Any]:
+    """Installs the required packages for the MCP server.
+
+    This command installs the necessary Python packages for the MCP server to function correctly.
+    It uses uv to install the project dependencies defined in pyproject.toml.
+
+    :returns: A dictionary containing the result of the command.
+    """
+    try:
+        # Install project dependencies using uv
+        mcp_dir = os.path.dirname(__file__)
+        result = run_command(["uv", "sync"], cwd=mcp_dir)
+        
+        if not result["success"]:
+            # If uv sync fails, try installing in development mode
+            result = run_command(["uv", "pip", "install", "-e", "."], cwd=mcp_dir)
+        
+        return result
+        
+    except RuntimeError as e:
+        return {
+            "success": False,
+            "message": str(e),
+            "stdout": "",
+            "stderr": "",
+            "code": 1
+        }
+
 
 
 @mcp.tool("check_library_health")
