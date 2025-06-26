@@ -251,21 +251,21 @@ def init_local_tool(tsp_config_path: str, repo_path:str) -> Dict[str, Any]:
         }
     
 @mcp.tool("update")
-def update_tools(commit_hash: str, repo_path:str) -> Dict[str, Any]:
+def update_tool(commit_hash: str, package_path:str) -> Dict[str, Any]:
     """Initializes and subsequently generates a typespec client library directory from a local azure-rest-api-specs repo.
 
     This command is used to update a client library to a specific commit hash in the azure-rest-api-specs repository.
 
     Args:
         commit_hash: The commit hash to update to.
-        package_path: The path to the package directory (i.e. ./azure-sdk-for-python/sdk/eventgrid/azure-eventgrid).
+        package_path: The path to the directory of the tsp-location.yaml (i.e. ./azure-sdk-for-python/sdk/eventgrid/azure-eventgrid).
 
     Returns:
         A dictionary containing the result of the command.    """
     try:
         
         # Run the update command
-        return run_command(["update"], cwd=repo_path, is_typespec=True,
+        return run_command(["update"], cwd=package_path, is_typespec=True,
                           typespec_args={"commit": commit_hash})
                           
     except RuntimeError as e:
@@ -287,13 +287,22 @@ def install_packages_tool() -> Dict[str, Any]:
     :returns: A dictionary containing the result of the command.
     """
     try:
+        # Get the directory where the virtual environment is located
+        venv_path = os.environ.get('VIRTUAL_ENV')
+        if venv_path:
+            # Use the parent directory of the virtual environment
+            cwd = os.path.dirname(venv_path)
+            logger.info(f"Using virtual environment path for install: {cwd}")
+        else:
+            # Fallback to current working directory
+            cwd = os.getcwd()
+        
         # Install project dependencies using uv
-        mcp_dir = os.path.dirname(__file__)
-        result = run_command(["uv", "sync"], cwd=mcp_dir)
+        result = run_command(["uv", "sync"], cwd)
         
         if not result["success"]:
             # If uv sync fails, try installing in development mode
-            result = run_command(["uv", "pip", "install", "-e", "."], cwd=mcp_dir)
+            result = run_command(["uv", "pip", "install", "-e", "."], cwd)
         
         return result
         
