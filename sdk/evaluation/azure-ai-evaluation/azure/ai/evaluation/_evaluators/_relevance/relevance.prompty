@@ -10,7 +10,7 @@ model:
     presence_penalty: 0
     frequency_penalty: 0
     response_format:
-      type: text
+      type: json_object
 
 inputs:
   query:
