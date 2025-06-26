@@ -34,13 +34,18 @@ RESPONSE: {{response}}
 
 TASK
 ====
-Provide two outputs:
-1. **Explanation** – a brief explanation (10–40 words) justifying your score based on how well the response addresses the query.
-2. **Score** – an integer between 1 and 5, using the rubric below.
+Output a JSON object with:
+    1) a concise explanation of 15-60 justifying your score based on how well the response is relevant to the query.
+    2) an integer score from 1 (very poor) to 5 (excellent) using the rubric below.
 
-Format your output as:
-<S1>your explanation</S1>
-<S2>your Score</S2>
+The explanation should always precede the score and should clearly justify the score based on the rubric definitions.
+Response format exactly as follows:
+
+{
+  "explanation": "<15-60 words>",
+  "score": <1-5>
+}
+
 
 EVALUATION STEPS
 ================
@@ -62,17 +67,22 @@ Definition: The response is unrelated to the question. It provides off-topic inf
 QUERY: What is the team preparing for?
 RESPONSE: I went grocery shopping yesterday evening.
 
-Sample Output:
-<S1>The response is entirely off-topic and doesn't address the question.</S1>
-<S2>1</S2>
+EXPECTED Output:
+{
+    "explanation": "The response is entirely off-topic and doesn't address the question.",
+    "score": 1
+}
+
 
 **Example B**
 QUERY: When will the company's new product line launch?
 RESPONSE: International travel can be very rewarding and educational.
 
-Sample Output:
-<S1>The response has no connection to the product launch query.</S1>
-<S2>1</S2>
+Expected Output:
+{
+    "explanation": "The response is completely irrelevant to the product launch question.",
+    "score": 1
+}
 
 ### Score 2 - Vague or Superficial Response
 Definition: The response vaguely relates to the query but fails to offer meaningful or specific content.
@@ -81,72 +91,90 @@ Definition: The response vaguely relates to the query but fails to offer meaning
 QUERY: What is the event about?
 RESPONSE: It’s something important.
 
-Sample Output:
-<S1>The response is vague and offers no specific information.</S1>
-<S2>2</S2>
+EXPECTED Output:
+{
+    "explanation": "The response is vague and does not provide specific information about the event.",
+    "score": 2
+}
 
 **Example B**
 QUERY: What are the conference topics?
 RESPONSE: Topics that are relevant today.
 
-Sample Output:
-<S1>The response uses generic language without real content.</S1>
-<S2>2</S2>
+Expected Output:
+{
+    "explanation": "The response is too general and does not specify the actual topics of the conference.",
+    "score": 2
+}
 
 ### Score 3 - Incomplete Response
-Definition: The response addresses the question but omits essential details for full understanding.
+Definition: The response addresses the question but omits essential details for full understanding. The core topic is mentioned, but key elements are missing or insufficiently covered.
 
 **Example A**
-QUERY: What type of food does the new restaurant offer?
-RESPONSE: The restaurant offers Italian food like pasta.
+QUERY: What amenities does the new apartment complex provide?
+RESPONSE: The apartment complex has a gym.
 
-Sample Output:
-<S1>The response addresses the cuisine but lacks variety and completeness.</S1>
-<S2>3</S2>
+Expected Output:
+{
+    "explanation": "The response mentions one amenity but does not provide a fuller list or clarify whether other standard features (like parking or security) are included. It partially addresses the query but lacks completeness.",
+    "score": 3
+}
 
 **Example B**
-QUERY: What topics will the conference cover?
-RESPONSE: The conference will cover renewable energy and climate change.
+QUERY: What services does the premium membership include?
+RESPONSE: It includes priority customer support.
 
-Sample Output:
-<S1>The response mentions two topics but is not fully comprehensive.</S1>
-<S2>3</S2>
+Expected Output:
+{
+    "explanation": "The response identifies one service but omits other likely components of a premium membership (e.g., exclusive content or discounts). The information is relevant but incomplete.",
+    "score": 3
+}
+
+
 
 ### Score 4 - Complete Response
-Definition: The response fully addresses the question with accurate and sufficient information, covering all essential aspects.
+Definition: The response fully addresses the question with accurate and sufficient information, covering all essential aspects. Very minor omissions are acceptable as long as the core information is intact and the intent is clearly conveyed.
 
 **Example A**
-QUERY: What type of food does the new restaurant offer?
-RESPONSE: The new restaurant offers Italian cuisine, featuring dishes like pasta, pizza, and risotto.
+QUERY: What amenities does the new apartment complex provide?
+RESPONSE: The apartment complex provides a gym, swimming pool, and 24/7 security.
 
-Sample Output:
-<S1>The response clearly lists multiple representative dishes, fully addressing the query.</S1>
-<S2>4</S2>
+Expected Output:
+{
+    "explanation": "The response mentions multiple key amenities likely to be relevant to most users. While it may not list every feature, it clearly conveys the core offerings of the complex.",
+    "score": 4
+}
 
 **Example B**
-QUERY: What topics will the conference cover?
-RESPONSE: The conference will cover renewable energy, climate change, and sustainability practices.
+QUERY: What services does the premium membership include?
+RESPONSE: The premium membership includes priority customer support, exclusive content access, and early product releases.
 
-Sample Output:
-<S1>The response lists all key topics and satisfies the query completely.</S1>
-<S2>4</S2>
+Expected Output:
+{
+    "explanation": "The response outlines all major services expected from a premium membership. Even if a minor service is not mentioned, the core value is clearly and fully represented.",
+    "score": 4
+}
 
 
 ### Score 5 - Comprehensive Response with Insights
-Definition: The response fully and accurately answers the question and adds helpful elaboration or insight.
+Definition: The response not only fully and accurately answers the question, but also adds meaningful elaboration, interpretation, or context that enhances the user's understanding. This goes beyond just listing relevant details — it offers insight into why the information matters, how it's useful, or what impact it has.
 
 **Example A**
-QUERY: What type of food does the new restaurant offer?
-RESPONSE: The new restaurant offers Italian cuisine, featuring dishes like pasta, pizza, and risotto, aiming to provide customers with an authentic Italian dining experience.
+QUERY: What amenities does the new apartment complex provide?
+RESPONSE: The apartment complex provides a gym, swimming pool, and 24/7 security, designed to offer residents a comfortable and active lifestyle while ensuring their safety.
 
-Sample Output:
-<S1>The response is complete and adds insightful context about authenticity.</S1>
-<S2>5</S2>
+Expected Output:
+{
+    "explanation": "The response fully lists key amenities and additionally explains how these features contribute to resident experience, enhancing the usefulness of the information.",
+    "score": 5
+}
 
 **Example B**
-QUERY: What topics will the conference cover?
-RESPONSE: The conference will cover renewable energy, climate change, and sustainability practices, bringing together global experts to discuss these critical issues.
+QUERY: What services does the premium membership include?
+RESPONSE: The premium membership includes priority customer support, exclusive content access, and early product releases — tailored for users who want quicker resolutions and first access to new features.
 
-Sample Output:
-<S1>The response fully answers and includes helpful context about attendees and impact.</S1>
-<S2>5</S2>
+Expected Output:
+{
+    "explanation": "The response covers all essential services and adds valuable insight about the target user and benefits, enriching the response beyond basic listing.",
+    "score": 5
+}
