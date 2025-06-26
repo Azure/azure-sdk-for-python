@@ -317,7 +317,7 @@ class _AIAgentsInstrumentorPreview:
         if isinstance(end_timestamp, datetime):
             attrs[GEN_AI_RUN_STEP_END_TIMESTAMP] = end_timestamp.isoformat()
         elif end_timestamp:
-            # fallback in case int or string gets passed
+            # fallback in case string or int string gets passed
             attrs[GEN_AI_RUN_STEP_END_TIMESTAMP] = str(end_timestamp)
 
         if run_step_last_error:
