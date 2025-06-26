@@ -30,8 +30,8 @@ class IndirectAttackSimulator(AdversarialSimulator):
     """
     Initializes the XPIA (cross domain prompt injected attack) jailbreak adversarial simulator with a project scope.
 
-    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint 
-        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name.
     :type azure_ai_project: Union[str, AzureAIProject]
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
@@ -51,13 +51,13 @@ class IndirectAttackSimulator(AdversarialSimulator):
 
         if is_onedp_project(azure_ai_project):
             self.azure_ai_project = azure_ai_project
-            self.credential=cast(TokenCredential, credential)
+            self.credential = cast(TokenCredential, credential)
             self.token_manager = ManagedIdentityAPITokenManager(
                 token_scope=TokenScope.COGNITIVE_SERVICES_MANAGEMENT,
                 logger=logging.getLogger("AdversarialSimulator"),
-                credential=self.credential
+                credential=self.credential,
             )
-            self.rai_client  = AIProjectClient(endpoint=azure_ai_project, credential=credential)
+            self.rai_client = AIProjectClient(endpoint=azure_ai_project, credential=credential)
             self.adversarial_template_handler = AdversarialTemplateHandler(
                 azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
             )

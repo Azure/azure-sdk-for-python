@@ -4,9 +4,12 @@ Unit tests for red_team.utils.constants module.
 
 import pytest
 from azure.ai.evaluation.red_team._utils.constants import (
-    BASELINE_IDENTIFIER, DATA_EXT, RESULTS_EXT,
+    BASELINE_IDENTIFIER,
+    DATA_EXT,
+    RESULTS_EXT,
     ATTACK_STRATEGY_COMPLEXITY_MAP,
-    INTERNAL_TASK_TIMEOUT, TASK_STATUS
+    INTERNAL_TASK_TIMEOUT,
+    TASK_STATUS,
 )
 from azure.ai.evaluation.red_team._attack_strategy import AttackStrategy
 from azure.ai.evaluation.red_team._attack_objective_generator import RiskCategory
@@ -28,7 +31,7 @@ class TestBasicConstants:
 @pytest.mark.unittest
 class TestTaskStatusConstants:
     """Test task status constants are defined correctly."""
-    
+
     def test_task_status_constants(self):
         """Verify task status constants are defined correctly."""
         assert TASK_STATUS["PENDING"] == "pending"

@@ -1,5 +1,66 @@
 # Release History
 
+## 2.1.0b3 (2025-06-26)
+
+### Features Added
+
+  - Enum `DiskType` added member `PREMIUM_V2_LRS`
+  - Enum `DiskType` added member `PREMIUM_ZRS`
+  - Enum `DiskType` added member `STANDARD_SSD_ZRS`
+  - Model `ManagedClusterCodeVersionResult` added property `properties`
+  - Enum `SecurityType` added member `CONFIDENTIAL_VM`
+  - Added enum `CreatedByType`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `ErrorResponse`
+  - Added enum `FaultKind`
+  - Added model `FaultSimulation`
+  - Added model `FaultSimulationConstraints`
+  - Added model `FaultSimulationContent`
+  - Added model `FaultSimulationContentWrapper`
+  - Added model `FaultSimulationDetails`
+  - Added model `FaultSimulationIdContent`
+  - Added enum `FaultSimulationStatus`
+  - Added model `IPConfigurationPublicIPAddressConfiguration`
+  - Added model `ManagedClusterVersionDetails`
+  - Added model `NodeTypeFaultSimulation`
+  - Added enum `SecurityEncryptionType`
+  - Added enum `SfmcOperationStatus`
+  - Added model `TrackedResource`
+  - Added model `ZoneFaultSimulationContent`
+  - Operation group `ManagedClustersOperations` added method `begin_start_fault_simulation`
+  - Operation group `ManagedClustersOperations` added method `begin_stop_fault_simulation`
+  - Operation group `ManagedClustersOperations` added method `get_fault_simulation`
+  - Operation group `ManagedClustersOperations` added method `list_fault_simulation`
+  - Operation group `NodeTypesOperations` added method `begin_deallocate`
+  - Operation group `NodeTypesOperations` added method `begin_redeploy`
+  - Operation group `NodeTypesOperations` added method `begin_start`
+  - Operation group `NodeTypesOperations` added method `begin_start_fault_simulation`
+  - Operation group `NodeTypesOperations` added method `begin_stop_fault_simulation`
+  - Operation group `NodeTypesOperations` added method `get_fault_simulation`
+  - Operation group `NodeTypesOperations` added method `list_fault_simulation`
+
+### Breaking Changes
+
+  - Model `ManagedClusterCodeVersionResult` deleted or renamed its instance variable `cluster_code_version`
+  - Model `ManagedClusterCodeVersionResult` deleted or renamed its instance variable `support_expiry_utc`
+  - Model `ManagedClusterCodeVersionResult` deleted or renamed its instance variable `os_type`
+  - Model `ProxyResource` deleted or renamed its instance variable `location`
+  - Model `ProxyResource` deleted or renamed its instance variable `tags`
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Model `Resource` deleted or renamed its instance variable `etag`
+  - Deleted or renamed model `ApplicationResourceList`
+  - Deleted or renamed model `ApplicationTypeResourceList`
+  - Deleted or renamed model `ApplicationTypeVersionResourceList`
+  - Deleted or renamed model `ErrorModel`
+  - Deleted or renamed model `IpConfigurationPublicIPAddressConfiguration`
+  - Deleted or renamed model `ManagedProxyResource`
+  - Deleted or renamed model `ManagedVMSizesResult`
+  - Deleted or renamed model `NodeTypeListSkuResult`
+  - Deleted or renamed model `ServiceResourceList`
+  - Deleted or renamed model `UpgradeMode`
+
 ## 2.1.0b2 (2024-12-16)
 
 ### Features Added
