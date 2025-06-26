@@ -21,6 +21,65 @@ class TestStorageActionsMgmtStorageTasksOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
+    async def test_storage_tasks_preview_actions(self, resource_group):
+        response = await self.client.storage_tasks.preview_actions(
+            location="str",
+            parameters={
+                "properties": {
+                    "action": {"elseBlockExists": bool, "if": {"condition": "str"}},
+                    "blobs": [
+                        {
+                            "matchedBlock": "str",
+                            "metadata": [{"key": "str", "value": "str"}],
+                            "name": "str",
+                            "properties": [{"key": "str", "value": "str"}],
+                            "tags": [{"key": "str", "value": "str"}],
+                        }
+                    ],
+                    "container": {"metadata": [{"key": "str", "value": "str"}], "name": "str"},
+                }
+            },
+            api_version="2023-01-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_storage_tasks_list_by_subscription(self, resource_group):
+        response = self.client.storage_tasks.list_by_subscription(
+            api_version="2023-01-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_storage_tasks_list_by_resource_group(self, resource_group):
+        response = self.client.storage_tasks.list_by_resource_group(
+            resource_group_name=resource_group.name,
+            api_version="2023-01-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_storage_tasks_get(self, resource_group):
+        response = await self.client.storage_tasks.get(
+            resource_group_name=resource_group.name,
+            storage_task_name="str",
+            api_version="2023-01-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
     async def test_storage_tasks_begin_create(self, resource_group):
         response = await (
             await self.client.storage_tasks.begin_create(
@@ -41,8 +100,8 @@ class TestStorageActionsMgmtStorageTasksOperationsAsync(AzureMgmtRecordedTestCas
                                 "operations": [
                                     {
                                         "name": "str",
-                                        "onFailure": "break",
-                                        "onSuccess": "continue",
+                                        "onFailure": "str",
+                                        "onSuccess": "str",
                                         "parameters": {"str": "str"},
                                     }
                                 ],
@@ -51,8 +110,8 @@ class TestStorageActionsMgmtStorageTasksOperationsAsync(AzureMgmtRecordedTestCas
                                 "operations": [
                                     {
                                         "name": "str",
-                                        "onFailure": "break",
-                                        "onSuccess": "continue",
+                                        "onFailure": "str",
+                                        "onSuccess": "str",
                                         "parameters": {"str": "str"},
                                     }
                                 ]
@@ -86,32 +145,6 @@ class TestStorageActionsMgmtStorageTasksOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_storage_tasks_begin_delete(self, resource_group):
-        response = await (
-            await self.client.storage_tasks.begin_delete(
-                resource_group_name=resource_group.name,
-                storage_task_name="str",
-                api_version="2023-01-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_storage_tasks_get(self, resource_group):
-        response = await self.client.storage_tasks.get(
-            resource_group_name=resource_group.name,
-            storage_task_name="str",
-            api_version="2023-01-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
     async def test_storage_tasks_begin_update(self, resource_group):
         response = await (
             await self.client.storage_tasks.begin_update(
@@ -131,8 +164,8 @@ class TestStorageActionsMgmtStorageTasksOperationsAsync(AzureMgmtRecordedTestCas
                                 "operations": [
                                     {
                                         "name": "str",
-                                        "onFailure": "break",
-                                        "onSuccess": "continue",
+                                        "onFailure": "str",
+                                        "onSuccess": "str",
                                         "parameters": {"str": "str"},
                                     }
                                 ],
@@ -141,16 +174,16 @@ class TestStorageActionsMgmtStorageTasksOperationsAsync(AzureMgmtRecordedTestCas
                                 "operations": [
                                     {
                                         "name": "str",
-                                        "onFailure": "break",
-                                        "onSuccess": "continue",
+                                        "onFailure": "str",
+                                        "onSuccess": "str",
                                         "parameters": {"str": "str"},
                                     }
                                 ]
                             },
                         },
+                        "creationTimeInUtc": "2020-02-20 00:00:00",
                         "description": "str",
                         "enabled": bool,
-                        "creationTimeInUtc": "2020-02-20 00:00:00",
                         "provisioningState": "str",
                         "taskVersion": 0,
                     },
@@ -165,47 +198,14 @@ class TestStorageActionsMgmtStorageTasksOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_storage_tasks_list_by_subscription(self, resource_group):
-        response = self.client.storage_tasks.list_by_subscription(
-            api_version="2023-01-01",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_storage_tasks_list_by_resource_group(self, resource_group):
-        response = self.client.storage_tasks.list_by_resource_group(
-            resource_group_name=resource_group.name,
-            api_version="2023-01-01",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_storage_tasks_preview_actions(self, resource_group):
-        response = await self.client.storage_tasks.preview_actions(
-            location="str",
-            parameters={
-                "properties": {
-                    "action": {"elseBlockExists": bool, "if": {"condition": "str"}},
-                    "blobs": [
-                        {
-                            "matchedBlock": "str",
-                            "metadata": [{"key": "str", "value": "str"}],
-                            "name": "str",
-                            "properties": [{"key": "str", "value": "str"}],
-                            "tags": [{"key": "str", "value": "str"}],
-                        }
-                    ],
-                    "container": {"metadata": [{"key": "str", "value": "str"}], "name": "str"},
-                }
-            },
-            api_version="2023-01-01",
-        )
+    async def test_storage_tasks_begin_delete(self, resource_group):
+        response = await (
+            await self.client.storage_tasks.begin_delete(
+                resource_group_name=resource_group.name,
+                storage_task_name="str",
+                api_version="2023-01-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
