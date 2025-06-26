@@ -97,6 +97,12 @@ def add_sanitizers(test_proxy, mock_project_scope, mock_dataset_name, mock_vecto
             group_for_replace="1",
         )
 
+        add_general_regex_sanitizer(
+            regex=r"api/projects/([-\w\._\(\)]+)",
+            value=mock_project_scope["project_name"],
+            group_for_replace="1",
+        )
+
     azure_workspace_triad_sanitizer()
 
     add_general_regex_sanitizer(regex=r"/runs/([-\w\._\(\)]+)", value="Sanitized", group_for_replace="1")
