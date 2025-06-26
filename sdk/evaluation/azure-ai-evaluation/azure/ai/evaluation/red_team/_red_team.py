@@ -343,7 +343,7 @@ class RedTeam:
         if self._one_dp_project:
             response = self.generated_rai_client._evaluation_onedp_client.start_red_team_run(
                 red_team=RedTeamUpload(
-                    scan_name=run_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
+                    display_name=run_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
                 )
             )
 
@@ -562,7 +562,7 @@ class RedTeam:
                         name=eval_run.id,
                         red_team=RedTeamUpload(
                             id=eval_run.id,
-                            scan_name=eval_run.scan_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
+                            display_name=eval_run.scan_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
                             status="Completed",
                             outputs={
                                 "evaluationResultId": create_evaluation_result_response.id,
