@@ -40,6 +40,7 @@ class _Constants:
     DatabaseAccountEndpoint: Literal["databaseAccountEndpoint"] = "databaseAccountEndpoint"
     DefaultEndpointsRefreshTime: int = 5 * 60 * 1000 # milliseconds
     UnavailableEndpointDBATimeouts: int = 1 # seconds
+    EnablePerPartitionFailoverBehavior: Literal["enablePerPartitionFailoverBehavior"] = "enablePerPartitionFailoverBehavior" #pylint: disable=line-too-long
 
     # ServiceDocument Resource
     EnableMultipleWritableLocations: Literal["enableMultipleWriteLocations"] = "enableMultipleWriteLocations"
