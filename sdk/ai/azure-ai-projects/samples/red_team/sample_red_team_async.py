@@ -40,10 +40,12 @@ from azure.ai.projects.models import (
 async def sample_red_team_async() -> None:
     """Demonstrates how to perform Red Team operations using the AIProjectClient."""
 
-    endpoint = os.environ["PROJECT_ENDPOINT"] # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
-    model_endpoint = os.environ["MODEL_ENDPOINT"] # Sample : https://<account_name>.services.ai.azure.com
-    model_api_key= os.environ["MODEL_API_KEY"]
-    model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"] # Sample : gpt-4o-mini
+    endpoint = os.environ[
+        "PROJECT_ENDPOINT"
+    ]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
+    model_endpoint = os.environ["MODEL_ENDPOINT"]  # Sample : https://<account_name>.services.ai.azure.com
+    model_api_key = os.environ["MODEL_API_KEY"]
+    model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
     async with DefaultAzureCredential() as credential:
         async with AIProjectClient(
             endpoint=endpoint,
@@ -60,12 +62,18 @@ async def sample_red_team_async() -> None:
             red_team = RedTeam(
                 attack_strategies=[AttackStrategy.BASE64],
                 risk_categories=[RiskCategory.VIOLENCE],
-                display_name="redteamtest1", # Use a simpler name
+                display_name="redteamtest1",  # Use a simpler name
                 target=target_config,
             )
 
             # Create and run the Red Team scan
-            red_team_response = await project_client.red_teams.create(red_team=red_team, headers={"model-endpoint": model_endpoint, "api-key": model_api_key,})
+            red_team_response = await project_client.red_teams.create(
+                red_team=red_team,
+                headers={
+                    "model-endpoint": model_endpoint,
+                    "api-key": model_api_key,
+                },
+            )
             print(f"Red Team scan created with scan name: {red_team_response.name}")
 
             print("Getting Red Team scan details")
