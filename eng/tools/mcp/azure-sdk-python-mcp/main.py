@@ -14,7 +14,7 @@ from github import Github
 from mcp.server.fastmcp import FastMCP
 
 # Set default pip implementation for tox to use uv
-os.environ.setdefault('TOX_PIP_IMPL', 'uv pip')
+os.environ.setdefault("TOX_PIP_IMPL", "uv pip")
 
 # Create FastMCP instance
 mcp = FastMCP("azure-sdk-python-mcp")
@@ -224,10 +224,32 @@ def init_tool(tsp_config_url: str, repo_path: str) -> Dict[str, Any]:
 
 
 @mcp.tool("init_local")
-def init_local_tool(tsp_config_path: str, repo_path: str, commit_id: str) -> Dict[str, Any]:
+def init_local_tool(tsp_config_path: str, repo_path: str) -> Dict[str, Any]:
     """Initializes and subsequently generates a typespec client library directory from a local azure-rest-api-specs repo.
 
     This command is used to generate a client library from a local azure-rest-api-specs repository. No additional
+    commands are needed to generate the client library.
+
+    Args:
+        tsp_config_path: The path to the local tspconfig.yaml file.
+        repo_path: The path to the repository root (i.e. ./azure-sdk-for-python/).
+
+    Returns:
+        A dictionary containing the result of the command."""
+    try:
+
+        # Run the init command with local path using the combined function
+        return run_command(["init"], cwd=repo_path, is_typespec=True, typespec_args={"tsp-config": tsp_config_path})
+
+    except RuntimeError as e:
+        return {"success": False, "message": str(e), "stdout": "", "stderr": "", "code": 1}
+
+
+@mcp.tool("init_local_arm")
+def init_local_tool_arm(tsp_config_path: str, repo_path: str, commit_id: str) -> Dict[str, Any]:
+    """Initializes and subsequently generates a arm typespec client library directory from a local azure-rest-api-specs repo.
+
+    This command is used to generate a arm client library from a local azure-rest-api-specs repository. No additional
     commands are needed to generate the client library.
 
     Args:
@@ -240,7 +262,11 @@ def init_local_tool(tsp_config_path: str, repo_path: str, commit_id: str) -> Dic
     # Prepare arguments for the CLI command
     tsp_config_path = Path(tsp_config_path).resolve().as_posix()
     repo_path = Path(repo_path).resolve().as_posix()
-    venv_path = os.getenv("VIRTUAL_ENV", os.path.join(repo_path, ".venv"))
+    venv_path = os.getenv("VIRTUAL_ENV")
+    if venv_path is None:
+        venv_path = os.path.join(repo_path, ".venv")
+        if not venv_path:
+            os.mkdirs(venv_path)
 
     # install dependencies
     try:
@@ -251,6 +277,7 @@ def init_local_tool(tsp_config_path: str, repo_path: str, commit_id: str) -> Dic
             text=True,
             stdin=subprocess.DEVNULL,  # Explicitly close stdin
             cwd=repo_path,
+            check=True,
         )
         subprocess.run(
             [sys.executable, "-m", "pip", "install", "setuptools"],
@@ -258,6 +285,7 @@ def init_local_tool(tsp_config_path: str, repo_path: str, commit_id: str) -> Dic
             text=True,
             stdin=subprocess.DEVNULL,  # Explicitly close stdin
             cwd=repo_path,
+            check=True,
         )
         logger.info("Install dependencies for SDK generation")
 
@@ -276,17 +304,14 @@ def init_local_tool(tsp_config_path: str, repo_path: str, commit_id: str) -> Dic
         }
         generate_input_path = os.path.join(venv_path, "generate_input.json")
         generate_output_path = os.path.join(venv_path, "generate_output.json")
-        generate_tmp_path = os.path.join(venv_path, "tmp.json")
         with open(generate_input_path, "w") as f:
             json.dump(generate_input, f, indent=2)
-        with open(generate_tmp_path, "w") as f:
-            json.dump({}, f, indent=2)
 
         # generate SDK
-        log_path = os.path.join(venv_path, "log.txt")
+        log_path = os.path.join(venv_path, "sdk_generation_log.txt")
         try:
             result = subprocess.run(
-                [sys.executable, "-m", "packaging_tools.sdk_generator", generate_input_path, generate_tmp_path],
+                [sys.executable, "-m", "packaging_tools.sdk_generator", generate_input_path, generate_output_path],
                 capture_output=True,
                 text=True,
                 stdin=subprocess.DEVNULL,  # Explicitly close stdin
@@ -304,29 +329,14 @@ def init_local_tool(tsp_config_path: str, repo_path: str, commit_id: str) -> Dic
             }
         with open(log_path, "w") as log_file:
             log_file.write("generate log output:\n" + result.stdout + "\ns generate log stderr:\n" + result.stderr)
-        logger.info(f"generate sdk successfully!")
-        try:
-            result = subprocess.run(
-                [sys.executable, "-m", "packaging_tools.sdk_package", generate_tmp_path, generate_output_path],
-                capture_output=True,
-                text=True,
-                stdin=subprocess.DEVNULL,  # Explicitly close stdin
-                cwd=repo_path,
-                check=True,
-            )
-        except subprocess.CalledProcessError as e:
-            with open(log_path, "a") as log_file:
-                log_file.write("\npackage log output:\n" + e.output + "\npackage log stderr:\n" + e.stderr)
-            return {
-                "success": False,
-                "stdout": "",
-                "stderr": f"Failed to package SDK. Detailed log is saved to {log_path}",
-                "code": 1,
-            }
-        with open(log_path, "a") as log_file:
-            log_file.write("package log output:\n" + result.stdout + "\npackage log stderr:\n" + result.stderr)
-        logger.info(f"package sdk successfully! Detailed log is saved to {log_path}")
-        return {"success": True, "stdout": f"Succeed to generate sdk and detailed log is saved to {log_path}", "stderr": "", "code": 0}
+
+        logger.info(f"generate sdk successfully! Detailed log is saved to {log_path}")
+        return {
+            "success": True,
+            "stdout": f"Succeed to generate sdk and detailed log is saved to {log_path}",
+            "stderr": "",
+            "code": 0,
+        }
     except Exception as e:
         logger.error(f"Failed to generate sdk: {str(e)}")
         return {"success": False, "stdout": "", "stderr": str(e), "code": 1}
