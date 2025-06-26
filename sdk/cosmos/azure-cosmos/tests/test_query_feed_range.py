@@ -13,7 +13,7 @@ from typing import List, Mapping, Set
 
 CONFIG = test_config.TestConfig()
 HOST = CONFIG.host
-KEY = CONFIG.credential
+KEY = CONFIG.masterKey
 DATABASE_ID = CONFIG.TEST_DATABASE_ID
 TEST_NAME = "Query FeedRange "
 SINGLE_PARTITION_CONTAINER_ID = TEST_NAME + CONFIG.TEST_SINGLE_PARTITION_CONTAINER_ID

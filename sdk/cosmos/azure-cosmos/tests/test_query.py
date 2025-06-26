@@ -569,37 +569,39 @@ class TestQuery(unittest.TestCase):
         self.created_db.delete_container(created_collection.id)
 
     def test_query_positional_args(self):
-        container_id = "Multi Partition Test Container Query Positional Args " + str(uuid.uuid4())
-        partition_key = "pk"
+        container = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
         partition_key_value1 = "pk1"
         partition_key_value2 = "pk2"
-        container = self.created_db.create_container_if_not_exists(
-            id=container_id,
-            partition_key=PartitionKey(path='/' + partition_key, kind='Hash'),
-            offer_throughput=self.config.THROUGHPUT_FOR_5_PARTITIONS,
-        )
 
         num_items = 10
         new_items = []
         for pk_value in [partition_key_value1, partition_key_value2]:
             for i in range(num_items):
-                new_items.append({'pk': pk_value, 'id': f"{pk_value}_{i}", 'name': 'sample name'})
+                item = {
+                    self.config.TEST_CONTAINER_PARTITION_KEY: pk_value,
+                    'id': f"{pk_value}_{i}",
+                    'name': 'sample name'
+                }
+                new_items.append(item)
 
         for item in new_items:
             container.upsert_item(body=item)
 
         query = "SELECT * FROM root r WHERE r.name=@name"
         parameters = [{'name': '@name', 'value': 'sample name'}]
-        partition_key = partition_key_value2
+        partition_key_value = partition_key_value2
+        enable_cross_partition_query = True
         max_item_count = 3
+        enable_scan_in_query = True
+        populate_query_metrics = True
         pager = container.query_items(
             query,
             parameters,
-            partition_key,
-            True,
+            partition_key_value,
+            enable_cross_partition_query,
             max_item_count,
-            True,
-            True,
+            enable_scan_in_query,
+            populate_query_metrics,
         ).by_page()
 
         ids = []
@@ -607,10 +609,10 @@ class TestQuery(unittest.TestCase):
             items = list(page)
             num_items = len(items)
             for item in items:
-                assert item['pk'] == partition_key
+                assert item['pk'] == partition_key_value
                 ids.append(item['id'])
             assert num_items <= max_item_count
-        assert ids == [item['id'] for item in new_items if item['pk'] == partition_key]
+        assert ids == [item['id'] for item in new_items if item['pk'] == partition_key_value]
 
     def _MockExecuteFunctionSessionRetry(self, function, *args, **kwargs):
         if args:
