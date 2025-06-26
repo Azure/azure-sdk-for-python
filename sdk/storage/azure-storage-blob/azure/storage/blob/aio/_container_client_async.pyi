@@ -57,10 +57,7 @@ from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 
 class ContainerClient(  # type: ignore[misc]
-    AbstractAsyncContextManager,
-    AsyncStorageAccountHostsMixin,
-    StorageAccountHostsMixin,
-    StorageEncryptionMixin
+    AbstractAsyncContextManager, AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin
 ):
     account_name: str
     container_name: str

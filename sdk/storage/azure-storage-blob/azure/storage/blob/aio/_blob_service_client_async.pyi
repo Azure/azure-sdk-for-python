@@ -44,10 +44,7 @@ from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.models import UserDelegationKey
 
 class BlobServiceClient(  # type: ignore [misc]
-    AbstractAsyncContextManager,
-    AsyncStorageAccountHostsMixin,
-    StorageAccountHostsMixin,
-    StorageEncryptionMixin
+    AbstractAsyncContextManager, AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin
 ):
     def __init__(
         self,
