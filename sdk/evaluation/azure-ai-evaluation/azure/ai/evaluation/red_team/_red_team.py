@@ -500,6 +500,8 @@ class RedTeam:
                         continue
                     if file.endswith(".log") and not os.environ.get("DEBUG"):
                         continue
+                    if file.endswith(".gitignore"):
+                        continue
                     if file == artifact_name:
                         continue
 
