@@ -26,8 +26,8 @@ class RunSubmitterClient:
     def __init__(self, config: Optional[BatchEngineConfig] = None) -> None:
         self._config = config or BatchEngineConfig(LOGGER, use_async=True)
         self._thread_pool = ThreadPoolExecutorWithContext(
-            thread_name_prefix="evaluators_thread",
-            max_workers=self._config.max_concurrency)
+            thread_name_prefix="evaluators_thread", max_workers=self._config.max_concurrency
+        )
 
     def run(
         self,
@@ -67,7 +67,7 @@ class RunSubmitterClient:
                 created_on=kwargs.pop("created_on", None),
                 storage_creator=kwargs.pop("storage_creator", None),
                 **kwargs,
-            )
+            ),
         )
 
         return run_future
@@ -89,7 +89,7 @@ class RunSubmitterClient:
         # Go from a list of dictionaries (i.e. a row view of the data) to a dictionary of lists
         # (i.e. a column view of the data)
         _update("inputs", run.inputs)
-        _update("inputs", [{ LINE_NUMBER: i } for i in range(len(run.inputs)) ])
+        _update("inputs", [{LINE_NUMBER: i} for i in range(len(run.inputs))])
         _update("outputs", run.outputs)
 
         df = pd.DataFrame(data).reindex(columns=[k for k in data.keys()])

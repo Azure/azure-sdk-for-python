@@ -9,6 +9,7 @@ from azure.ai.evaluation._common._experimental import experimental
 @experimental
 class AttackStrategy(Enum):
     """Strategies for attacks."""
+
     EASY = "easy"
     MODERATE = "moderate"
     DIFFICULT = "difficult"
@@ -42,6 +43,6 @@ class AttackStrategy(Enum):
         for item in items:
             if not isinstance(item, cls):
                 raise ValueError("All items must be instances of AttackStrategy")
-        if len(items) > 2: 
+        if len(items) > 2:
             raise ValueError("Composed strategies must have at most 2 items")
         return items

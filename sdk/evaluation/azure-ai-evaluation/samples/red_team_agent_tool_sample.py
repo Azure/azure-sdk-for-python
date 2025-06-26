@@ -19,6 +19,7 @@ project_client = AIProjectClient.from_connection_string(
     credential=credential, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
 )
 
+
 def call_ollama(query: str) -> str:
     url = "http://localhost:11434/api/generate"
     payload = {"model": "<model>", "prompt": query, "stream": False}
@@ -29,7 +30,8 @@ def call_ollama(query: str) -> str:
     except Exception as e:
         print(f"Error occurred: {e}")
         return "error"
-    
+
+
 with project_client:
     user_functions = initialize_tool_provider(
         projects_connection_string=projects_connection_string,
@@ -105,7 +107,6 @@ with project_client:
     if run.status == "failed":
         print(f"Run failed: {run.last_error}")
 
-
     new_prompt_with_converter = project_client.agents.create_message(
         thread_id=thread.id,
         role="user",
@@ -130,41 +131,39 @@ with project_client:
         print(f"Run failed: {run.last_error}")
 
     messages = project_client.agents.list_messages(thread_id=thread.id)
-    
+
     # Print messages in reverse order (from earliest to latest)
     print("\n===== CONVERSATION MESSAGES =====")
-    for i in range(len(messages['data'])-1, -1, -1):
-        message = messages['data'][i]
-        role = message['role']
+    for i in range(len(messages["data"]) - 1, -1, -1):
+        message = messages["data"][i]
+        role = message["role"]
         print(f"\n[{role.upper()}] - ID: {message['id']}")
         print("-" * 50)
-        
+
         # Print message content
         try:
-            content = message['content'][0]['text']['value'] if message['content'] else "No content"
+            content = message["content"][0]["text"]["value"] if message["content"] else "No content"
             print(f"Content: {content}")
         except (KeyError, IndexError) as e:
             print(f"Error accessing message content: {e}")
-        
+
         # Print tool calls if they exist
-        if 'tool_calls' in message and message['tool_calls']:
+        if "tool_calls" in message and message["tool_calls"]:
             print("\nTool Calls:")
-            for tool_call in message['tool_calls']:
+            for tool_call in message["tool_calls"]:
                 try:
-                    function_name = tool_call['function']['name']
-                    arguments = tool_call['function']['arguments']
+                    function_name = tool_call["function"]["name"]
+                    arguments = tool_call["function"]["arguments"]
                     print(f"  Function: {function_name}")
                     print(f"  Arguments: {arguments}")
                 except (KeyError, IndexError) as e:
                     print(f"  Error parsing tool call: {e}")
                     print(f"  Raw tool call: {json.dumps(tool_call, indent=2)}")
-        
-        print("-" * 50)
-    
-    print("\n===== END OF CONVERSATION =====\n")
 
+        print("-" * 50)
+
+    print("\n===== END OF CONVERSATION =====\n")
 
     # Delete the agent when done
     project_client.agents.delete_agent(agent.id)
     print("Deleted agent")
-
