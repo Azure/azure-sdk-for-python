@@ -55,12 +55,12 @@ def _resolve_field_instance(cls_or_instance):
     
     Returns a field instance from either a field class or field instance.
     """
-    from marshmallow.base import FieldABC
+    from marshmallow import Field
     
-    if isinstance(cls_or_instance, FieldABC):
+    if isinstance(cls_or_instance, Field):
         # Already a field instance
         return cls_or_instance
-    elif isinstance(cls_or_instance, type) and issubclass(cls_or_instance, FieldABC):
+    elif isinstance(cls_or_instance, type) and issubclass(cls_or_instance, Field):
         # Field class, instantiate it
         return cls_or_instance()
     else:
@@ -463,13 +463,13 @@ class UnionField(fields.Field):
         super().__init__(**kwargs)
         try:
             # add the validation and make sure union_fields must be subclasses or instances of
-            # marshmallow.base.FieldABC
+            # marshmallow.Field
             self._union_fields = [_resolve_field_instance(cls_or_instance) for cls_or_instance in union_fields]
             # TODO: make serialization/de-serialization work in the same way as json schema when is_strict is True
             self.is_strict = is_strict  # S\When True, combine fields with oneOf instead of anyOf at schema generation
         except ValueError as error:
             raise ValueError(
-                'Elements of "union_fields" must be subclasses or instances of marshmallow.base.FieldABC.'
+                'Elements of "union_fields" must be subclasses or instances of marshmallow.Field.'
             ) from error
 
     @property
@@ -906,7 +906,7 @@ class ExperimentalField(fields.Field):
             self.required = experimental_field.required
         except ValueError as error:
             raise ValueError(
-                '"experimental_field" must be subclasses or instances of marshmallow.base.FieldABC.'
+                '"experimental_field" must be subclasses or instances of marshmallow.Field.'
             ) from error
 
     @property
