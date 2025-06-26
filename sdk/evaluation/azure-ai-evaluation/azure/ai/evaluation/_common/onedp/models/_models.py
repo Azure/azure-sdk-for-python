@@ -2255,7 +2255,7 @@ class RedTeam(_Model):
     :vartype system_data: ~azure.ai.projects.onedp.models.SystemData
     """
 
-    id: str = rest_field(visibility=["read"])
+    id: str = rest_field(visibility=["read", "create"])
     """Identifier of the red team. Required."""
     display_name: Optional[str] = rest_field(
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
@@ -2300,6 +2300,7 @@ class RedTeam(_Model):
     def __init__(
         self,
         *,
+        id: str,  # pylint: disable=redefined-builtin
         num_turns: int,
         attack_strategies: List[Union[str, "_models.AttackStrategy"]],
         simulation_only: bool,
@@ -2355,7 +2356,7 @@ class RedTeamUpload(_Model):
     :vartype system_data: ~azure.ai.projects.onedp.models.SystemData
     """
 
-    id: str = rest_field(visibility=["read"])
+    id: str = rest_field(visibility=["read", "create", "update"])
     """Identifier of the red team. Required."""
     display_name: Optional[str] = rest_field(
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
@@ -2385,9 +2386,9 @@ class RedTeamUpload(_Model):
     properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Red team's properties. Unlike tags, properties are add-only. Once added, a property cannot be
      removed."""
-    status: Optional[str] = rest_field(visibility=["read"])
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Status of the red-team. It is set by service and is read-only."""
-    outputs: Optional[Dict[str, str]] = rest_field(visibility=["read"])
+    outputs: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Read-only result outputs. Example: { 'evaluationResultId':
      'azureai://accounts/{AccountName}/projects/{myproject}/evaluationresults/{name}/versions/{version}'
      }."""
@@ -2398,6 +2399,7 @@ class RedTeamUpload(_Model):
     def __init__(
         self,
         *,
+        id: str,  # pylint: disable=redefined-builtin
         display_name: Optional[str] = None,
         num_turns: Optional[int] = None,
         attack_strategy: Optional[List[Union[str, "_models.AttackStrategy"]]] = None,
@@ -2406,6 +2408,8 @@ class RedTeamUpload(_Model):
         application_scenario: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, str]] = None,
+        status: Optional[str] = None,
+        outputs: Optional[Dict[str, str]] = None,
     ) -> None: ...
 
     @overload
