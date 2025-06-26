@@ -203,14 +203,27 @@ def _get_target_and_path_for_http_dependency(
                     target = parsed_url.hostname
             elif parsed_url.netloc:
                 target = parsed_url.netloc
-        elif gen_ai_attributes.GEN_AI_SYSTEM in attributes:
-         # If no fields are available to set target using standard rules, set Dependency Target to gen_ai.system if present
-            gen_ai_system = attributes.get(gen_ai_attributes.GEN_AI_SYSTEM)
-            if gen_ai_system:
-                target = gen_ai_system
         if not target:
             # Get target from peer.* attributes that are NOT peer.service
             target = _get_target_for_dependency_from_peer(attributes)
+    return (target, path)
+
+@no_type_check
+def _get_target_and_path_for_http_dependency_with_gen_ai(
+    attributes: Attributes,
+    url: Optional[str] = "",  # Usually populated by _get_url_for_http_dependency()
+) -> Tuple[Optional[str], str]:
+    target = ""
+    path = "/"
+    # set target using standard rules
+    target, path = _get_target_and_path_for_http_dependency(attributes, url)
+
+    # If no fields are available to set target using standard rules, set Dependency Target to gen_ai.system if present
+    if not target:
+        if attributes and gen_ai_attributes.GEN_AI_SYSTEM in attributes:
+            gen_ai_system = attributes.get(gen_ai_attributes.GEN_AI_SYSTEM)
+            if gen_ai_system:
+                target = gen_ai_system
     return (target, path)
 
 

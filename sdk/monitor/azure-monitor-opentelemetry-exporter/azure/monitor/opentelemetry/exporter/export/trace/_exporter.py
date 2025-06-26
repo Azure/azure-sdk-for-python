@@ -96,6 +96,8 @@ _STANDARD_AZURE_MONITOR_ATTRIBUTES = [
     _SAMPLE_RATE_KEY,
 ]
 
+_GEN_AI_ATTRIBUTE_PREFIXE = "GenAI | {}"
+
 
 class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
     """Azure Monitor Trace exporter for OpenTelemetry."""
@@ -333,7 +335,9 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         envelope.data = MonitorBase(base_data=data, base_type="RemoteDependencyData")
         target = trace_utils._get_target_for_dependency_from_peer(span.attributes)
         if span.kind is SpanKind.CLIENT:
-            if _AZURE_SDK_NAMESPACE_NAME in span.attributes:  # Azure specific resources
+            if gen_ai_attributes.GEN_AI_SYSTEM in span.attributes:  # GenAI
+                data.type = _GEN_AI_ATTRIBUTE_PREFIXE.format(span.attributes[gen_ai_attributes.GEN_AI_SYSTEM])
+            elif _AZURE_SDK_NAMESPACE_NAME in span.attributes:  # Azure specific resources
                 # Currently only eventhub and servicebus are supported
                 # https://github.com/Azure/azure-sdk-for-python/issues/9256
                 data.type = span.attributes[_AZURE_SDK_NAMESPACE_NAME]
@@ -348,7 +352,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 # data
                 if url:
                     data.data = url
-                target, path = trace_utils._get_target_and_path_for_http_dependency(
+                target, path = trace_utils._get_target_and_path_for_http_dependency_with_gen_ai(
                     span.attributes,
                     url,
                 )
@@ -406,8 +410,6 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     target,  # type: ignore
                     span.attributes,
                 )
-            elif gen_ai_attributes.GEN_AI_SYSTEM in span.attributes:  # GenAI
-                data.type = "GenAI | {}".format(span.attributes[gen_ai_attributes.GEN_AI_SYSTEM])
             else:
                 data.type = "N/A"
         elif span.kind is SpanKind.PRODUCER:  # Messaging
@@ -426,10 +428,10 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 )
         else:  # SpanKind.INTERNAL
             data.type = "InProc"
-            if _AZURE_SDK_NAMESPACE_NAME in span.attributes:
+            if gen_ai_attributes.GEN_AI_SYSTEM in span.attributes:  # GenAI
+                data.type = _GEN_AI_ATTRIBUTE_PREFIXE.format(span.attributes[gen_ai_attributes.GEN_AI_SYSTEM])
+            elif _AZURE_SDK_NAMESPACE_NAME in span.attributes:
                 data.type += " | {}".format(span.attributes[_AZURE_SDK_NAMESPACE_NAME])
-            elif gen_ai_attributes.GEN_AI_SYSTEM in span.attributes:  # GenAI
-                data.type = "GenAI | {}".format(span.attributes[gen_ai_attributes.GEN_AI_SYSTEM])
         # Apply truncation
         # See https://github.com/MohanGsk/ApplicationInsights-Home/tree/master/EndpointSpecs/Schemas/Bond
         if data.name:
