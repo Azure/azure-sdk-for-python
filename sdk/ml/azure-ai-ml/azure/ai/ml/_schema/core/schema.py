@@ -32,7 +32,13 @@ class PathAwareSchema(PatchedBaseSchema, metaclass=PatchedSchemaMeta):
         # set old base path, note it's an Path object and point to the same object with
         # self.context.get(BASE_PATH_CONTEXT_KEY)
         self.old_base_path = self.context.get(BASE_PATH_CONTEXT_KEY)
-        super().__init__(*args, **kwargs)
+        
+        # In marshmallow 4.x, filter out unsupported constructor parameters
+        # Valid parameters for Schema constructor: only, exclude, many, context, load_only, dump_only, partial
+        valid_schema_params = {'only', 'exclude', 'many', 'context', 'load_only', 'dump_only', 'partial'}
+        filtered_kwargs = {k: v for k, v in kwargs.items() if k in valid_schema_params}
+        
+        super().__init__(*args, **filtered_kwargs)
 
     @pre_load
     def add_param_overrides(self, data, **kwargs):
