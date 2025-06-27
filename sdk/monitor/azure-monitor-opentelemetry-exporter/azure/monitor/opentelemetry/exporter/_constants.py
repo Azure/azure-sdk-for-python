@@ -62,6 +62,10 @@ _EXCEPTION_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Exception"
 _MESSAGE_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Message"
 _REQUEST_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Request"
 _REMOTE_DEPENDENCY_ENVELOPE_NAME = "Microsoft.ApplicationInsights.RemoteDependency"
+_EVENT_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Event"
+_PAGE_VIEW_ENVELOPE_NAME = "Microsoft.ApplicationInsights.PageView"
+_PERFORMANCE_COUNTER_ENVELOPE_NAME = "Microsoft.ApplicationInsights.PerformanceCounter"
+_AVAILABILITY_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Availability"
 
 # Feature constants
 _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE = "APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE"
@@ -71,6 +75,31 @@ _MICROSOFT_CUSTOM_EVENT_NAME = "microsoft.custom_event.name"
 # Statsbeat
 ## Customer Facing Statsbeat
 _APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW = "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW"
+
+## Telemetry Types
+_AVAILABILITY = "AVAILABILITY"
+_CUSTOM_EVENT = "CUSTOM_EVENT"
+_CUSTOM_METRIC = "CUSTOM_METRIC"
+_DEPENDENCY = "DEPENDENCY"
+_EXCEPTION = "EXCEPTION"
+_PAGE_VIEW = "PAGE_VIEW"
+_PERFORMANCE_COUNTER = "PERFORMANCE_COUNTER"
+_REQUEST = "REQUEST"
+_TRACE = "TRACE"
+_UNKNOWN = "UNKNOWN"
+
+## Map from Azure Monitor envelope types to TelemetryType enum
+_TYPE_MAP = {
+                _EVENT_ENVELOPE_NAME: _CUSTOM_EVENT,
+                _METRIC_ENVELOPE_NAME: _CUSTOM_METRIC,
+                _REMOTE_DEPENDENCY_ENVELOPE_NAME: _DEPENDENCY,
+                _EXCEPTION_ENVELOPE_NAME: _EXCEPTION,
+                _PAGE_VIEW_ENVELOPE_NAME: _PAGE_VIEW,
+                _MESSAGE_ENVELOPE_NAME: _TRACE,
+                _REQUEST_ENVELOPE_NAME: _REQUEST,
+                _PERFORMANCE_COUNTER_ENVELOPE_NAME: _PERFORMANCE_COUNTER,
+                _AVAILABILITY_ENVELOPE_NAME: _AVAILABILITY,
+            }
 
 # (OpenTelemetry metric name, Statsbeat metric name)
 _ATTACH_METRIC_NAME = ("attach", "Attach")
