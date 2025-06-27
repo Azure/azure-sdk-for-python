@@ -39,6 +39,7 @@ class TestSaveEval:
             "RedTeamOutput",
             "AzureOpenAIGrader",
             "AzureOpenAILabelGrader",
+            "AzureOpenAIScoreModelGrader",
             "AzureOpenAIStringCheckGrader",
             "AzureOpenAITextSimilarityGrader",
         ],
