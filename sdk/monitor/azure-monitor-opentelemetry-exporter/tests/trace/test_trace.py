@@ -447,7 +447,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         }
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.target, "az.ai.inference")
-        self.assertEqual(envelope.data.base_data.name, " GET /")
+        self.assertEqual(envelope.data.base_data.name, "GET /")
 
         # url
         # spell-checker:ignore ddds
