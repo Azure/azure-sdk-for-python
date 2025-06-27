@@ -33,5 +33,5 @@ jobs:
 
       - name: Create GitHub issues for major updates
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }} 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python sdk/ml/azure-ai-ml/scripts/create_issue.py
