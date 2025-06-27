@@ -6,7 +6,7 @@ on:
   workflow_dispatch:         # Optional manual trigger
 
 permissions:
-  issues:        write  # to create the Issues using API
+  issues: write  # to create the Issues using API
 
 jobs:
   check-dependencies:
@@ -33,5 +33,5 @@ jobs:
 
       - name: Create GitHub issues for major updates
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }} 
         run: python sdk/ml/azure-ai-ml/scripts/create_issue.py
