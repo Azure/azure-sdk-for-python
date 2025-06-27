@@ -529,7 +529,7 @@ class AzureOpenAIModelConfiguration(TargetConfig, discriminator="AzureOpenAIMode
     :vartype model_deployment_name: str
     """
 
-    type: Literal["AzureOpenAIModel"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
+    type: Literal["AzureOpenAIModel"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Default value is \"AzureOpenAIModel\"."""
     model_deployment_name: str = rest_field(
         name="modelDeploymentName", visibility=["read", "create", "update", "delete", "query"]
