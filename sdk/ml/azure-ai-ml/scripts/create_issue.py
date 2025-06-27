@@ -29,9 +29,9 @@ def create_issue(title, body, labels):
 with open("updates.txt", "r") as f:
     for line in f:
         dep, version = line.strip().split()
-        title = f"Major version update available for {dep}"
-        body = f"A major version update is available for `{dep}`. Latest version: {version}."
-        labels = ["dependency", "major-update"]
+        title = f"Major version update available for {dep} in azure-ai-ml"
+        body = f"A major version update is available in azure-ai-ml for `{dep}`. Latest version: {version}."
+        labels = ["dependency", "major-update", "Machine Learning", "needs-team-attention"]
         if not issue_exists(title):
             create_issue(title, body, labels)
         else:
