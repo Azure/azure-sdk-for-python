@@ -175,21 +175,15 @@ class SKAgentConverter:
         :rtype: dict
         """
 
-        messages: List[ChatMessageContent] = (
-            await SKAgentConverter._get_messages_from_thread_with_agent(
-                thread=thread,
-                agent=agent,
-            )
+        messages: List[ChatMessageContent] = await SKAgentConverter._get_messages_from_thread_with_agent(
+            thread=thread,
+            agent=agent,
         )
 
-        turns = SKAgentConverter._extract_turns_from_messages(
-            messages, turn_index_to_stop=turn_index
-        )
+        turns = SKAgentConverter._extract_turns_from_messages(messages, turn_index_to_stop=turn_index)
 
         if turn_index >= len(turns):
-            raise ValueError(
-                f"Turn {turn_index} not found. Only {len(turns)} turns exist."
-            )
+            raise ValueError(f"Turn {turn_index} not found. Only {len(turns)} turns exist.")
 
         return turns[turn_index]
 
@@ -254,13 +248,9 @@ class SKAgentConverter:
         """
         Converts messages to schema for a specific turn.
         """
-        turns = SKAgentConverter._extract_turns_from_messages(
-            messages, turn_index_to_stop=turn_index
-        )
+        turns = SKAgentConverter._extract_turns_from_messages(messages, turn_index_to_stop=turn_index)
         if turn_index >= len(turns):
-            raise ValueError(
-                f"Turn {turn_index} not found. Only {len(turns)} turns exist."
-            )
+            raise ValueError(f"Turn {turn_index} not found. Only {len(turns)} turns exist.")
         return turns[turn_index]
 
     @staticmethod
@@ -289,9 +279,7 @@ class SKAgentConverter:
                 "content": [],  # will be filled in later
             }
             if "created" in message.metadata:
-                message_dict["createdAt"] = SKAgentConverter._convert_timestamp_to_iso(
-                    message.metadata["created"]
-                )
+                message_dict["createdAt"] = SKAgentConverter._convert_timestamp_to_iso(message.metadata["created"])
             if isinstance(item, TextContent):
                 item_text = item.to_dict()["text"]
                 if message.role == AuthorRole.SYSTEM:  # to match other converters
@@ -325,9 +313,7 @@ class SKAgentConverter:
                     }
                 )
             else:
-                raise Exception(
-                    f"Unexpected item type: {type(item)} in message: {message}"
-                )
+                raise Exception(f"Unexpected item type: {type(item)} in message: {message}")
 
             if message.role == AuthorRole.SYSTEM:
                 convert_message = SystemMessage(**message_dict)
@@ -386,9 +372,7 @@ class SKAgentConverter:
         :rtype: dict
         """
 
-        tool_definitions: List[ToolDefinition] = (
-            SKAgentConverter._extract_function_tool_definitions(agent)
-        )
+        tool_definitions: List[ToolDefinition] = SKAgentConverter._extract_function_tool_definitions(agent)
 
         if not thread:
             raise ValueError("Thread cannot be None")
@@ -432,9 +416,7 @@ class SKAgentConverter:
         all_eval_data: List[dict] = []
 
         for thread in threads:
-            thread_data = await self._prepare_single_thread_evaluation_data(
-                thread, agent
-            )
+            thread_data = await self._prepare_single_thread_evaluation_data(thread, agent)
             all_eval_data.extend(thread_data)
 
         if filename:
@@ -461,24 +443,19 @@ class SKAgentConverter:
         """
         thread_eval_data: List[dict] = []
 
-        tool_definitions: List[ToolDefinition] = (
-            self._extract_function_tool_definitions(agent)
-        )
+        tool_definitions: List[ToolDefinition] = self._extract_function_tool_definitions(agent)
 
         if not thread:
             raise ValueError("Thread cannot be None")
 
-        messages: List[ChatMessageContent] = (
-            await SKAgentConverter._get_messages_from_thread_with_agent(
-                thread=thread,
-                agent=agent,
-            )
+        messages: List[ChatMessageContent] = await SKAgentConverter._get_messages_from_thread_with_agent(
+            thread=thread,
+            agent=agent,
         )
 
         turns = SKAgentConverter._extract_turns_from_messages(messages)
 
         for query, response in turns:
-
             turn_eval_data = EvaluatorData(
                 query=query,
                 response=response,
@@ -500,9 +477,7 @@ class SKAgentConverter:
         :rtype: List[int]
         """
 
-        messages: List[ChatMessageContent] = (
-            await SKAgentConverter._get_messages_from_thread(thread)
-        )
+        messages: List[ChatMessageContent] = await SKAgentConverter._get_messages_from_thread(thread)
         if not messages:
             return []
 

@@ -186,7 +186,8 @@ class SKAssistantMessage(Message):
     """
 
     role: str = _AGENT
-    
+
+
 class SKAssistantMessage(Message):
     """Represents an assistant message in the context of a Semantic Kernel (SK) agent.
 
