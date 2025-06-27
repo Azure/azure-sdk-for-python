@@ -184,7 +184,11 @@ class AzureCliCredential(AsyncContextManager):
 
 async def _run_command(command_args: List[str], timeout: int) -> str:
     # Ensure executable exists in PATH first. This avoids a subprocess call that would fail anyway.
-    az_path = shutil.which(EXECUTABLE_NAME)
+    if sys.platform.startswith("win"):
+        # On Windows, the expected executable is az.cmd, so we check for that first, falling back to 'az' in case.
+        az_path = shutil.which(EXECUTABLE_NAME + ".cmd") or shutil.which(EXECUTABLE_NAME)
+    else:
+        az_path = shutil.which(EXECUTABLE_NAME)
     if not az_path:
         raise CredentialUnavailableError(message=CLI_NOT_FOUND)
 
