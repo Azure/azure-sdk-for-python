@@ -13,6 +13,7 @@
         "faiss",
         "Faiss",
         "LLMRAG",
-        "expirable"
+        "expirable",
+        "elts"
     ]
 }

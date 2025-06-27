@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 import base64
 from json import JSONEncoder
-from typing import Union, cast, Any
+from typing import Dict, List, Optional, Union, cast, Any
 from datetime import datetime, date, time, timedelta
 from datetime import timezone
 
@@ -129,3 +129,151 @@ class AzureJSONEncoder(JSONEncoder):
         except AttributeError:
             pass
         return super(AzureJSONEncoder, self).default(o)
+
+
+def is_generated_model(obj: Any) -> bool:
+    """Check if the object is a generated SDK model.
+
+    :param obj: The object to check.
+    :type obj: any
+    :return: True if the object is a generated SDK model, False otherwise.
+    :rtype: bool
+    """
+    return bool(getattr(obj, "_is_model", False) or hasattr(obj, "_attribute_map"))
+
+
+def _is_readonly(p: Any) -> bool:
+    """Check if an attribute is readonly.
+
+    :param any p: The property to check.
+    :return: True if the property is readonly, False otherwise.
+    :rtype: bool
+    """
+    try:
+        return p._visibility == ["read"]  # pylint: disable=protected-access
+    except AttributeError:
+        return False
+
+
+def _as_attribute_dict_value(v: Any, *, exclude_readonly: bool = False) -> Any:
+    if v is None or isinstance(v, _Null):
+        return None
+    if isinstance(v, (list, tuple, set)):
+        return type(v)(_as_attribute_dict_value(x, exclude_readonly=exclude_readonly) for x in v)
+    if isinstance(v, dict):
+        return {dk: _as_attribute_dict_value(dv, exclude_readonly=exclude_readonly) for dk, dv in v.items()}
+    return as_attribute_dict(v, exclude_readonly=exclude_readonly) if is_generated_model(v) else v
+
+
+def _get_flattened_attribute(obj: Any) -> Optional[str]:
+    """Get the name of the flattened attribute in a generated TypeSpec model if one exists.
+
+    :param any obj: The object to check.
+    :return: The name of the flattened attribute if it exists, otherwise None.
+    :rtype: Optional[str]
+    """
+    flattened_items = None
+    try:
+        flattened_items = getattr(obj, next(a for a in dir(obj) if "__flattened_items" in a), None)
+    except StopIteration:
+        return None
+
+    if flattened_items is None:
+        return None
+
+    for k, v in obj._attr_to_rest_field.items():  # pylint: disable=protected-access
+        try:
+            if set(v._class_type._attr_to_rest_field.keys()).intersection(  # pylint: disable=protected-access
+                set(flattened_items)
+            ):
+                return k
+        except AttributeError:
+            # if the attribute does not have _class_type, it is not a typespec generated model
+            continue
+    return None
+
+
+def attribute_list(obj: Any) -> List[str]:
+    """Get a list of attribute names for a generated SDK model.
+
+    :param obj: The object to get attributes from.
+    :type obj: any
+    :return: A list of attribute names.
+    :rtype: List[str]
+    """
+    if not is_generated_model(obj):
+        raise TypeError("Object is not a generated SDK model.")
+    if hasattr(obj, "_attribute_map"):
+        # msrest model
+        return list(obj._attribute_map.keys())  # pylint: disable=protected-access
+    flattened_attribute = _get_flattened_attribute(obj)
+    retval: List[str] = []
+    for attr_name, rest_field in obj._attr_to_rest_field.items():  # pylint: disable=protected-access
+        if flattened_attribute == attr_name:
+            retval.extend(attribute_list(rest_field._class_type))  # pylint: disable=protected-access
+        else:
+            retval.append(attr_name)
+    return retval
+
+
+def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, Any]:
+    """Convert an object to a dictionary of its attributes.
+
+    Made solely for backcompatibility with the legacy `.as_dict()` on msrest models.
+
+    .. deprecated::1.35.0
+        This function is added for backcompat purposes only.
+
+    :param any obj: The object to convert to a dictionary
+    :keyword bool exclude_readonly: Whether to exclude readonly properties
+    :return: A dictionary containing the object's attributes
+    :rtype: dict[str, any]
+    :raises TypeError: If the object is not a generated model instance
+    """
+    if not is_generated_model(obj):
+        raise TypeError("Object must be a generated model instance.")
+    if hasattr(obj, "_attribute_map"):
+        # msrest generated model
+        return obj.as_dict(keep_readonly=not exclude_readonly)
+    try:
+        # now we're a typespec generated model
+        result = {}
+        readonly_props = set()
+
+        # create a reverse mapping from rest field name to attribute name
+        rest_to_attr = {}
+        flattened_attribute = _get_flattened_attribute(obj)
+        for attr_name, rest_field in obj._attr_to_rest_field.items():  # pylint: disable=protected-access
+
+            if exclude_readonly and _is_readonly(rest_field):
+                # if we're excluding readonly properties, we need to track them
+                readonly_props.add(rest_field._rest_name)  # pylint: disable=protected-access
+            if flattened_attribute == attr_name:
+                for fk, fv in rest_field._class_type._attr_to_rest_field.items():  # pylint: disable=protected-access
+                    rest_to_attr[fv._rest_name] = fk  # pylint: disable=protected-access
+            else:
+                rest_to_attr[rest_field._rest_name] = attr_name  # pylint: disable=protected-access
+        for k, v in obj.items():
+            if exclude_readonly and k in readonly_props:  # pyright: ignore
+                continue
+            if k == flattened_attribute:
+                for fk, fv in v.items():
+                    result[rest_to_attr.get(fk, fk)] = _as_attribute_dict_value(fv, exclude_readonly=exclude_readonly)
+            else:
+                is_multipart_file_input = False
+                try:
+                    is_multipart_file_input = next(  # pylint: disable=protected-access
+                        rf
+                        for rf in obj._attr_to_rest_field.values()  # pylint: disable=protected-access
+                        if rf._rest_name == k  # pylint: disable=protected-access
+                    )._is_multipart_file_input
+                except StopIteration:
+                    pass
+
+                result[rest_to_attr.get(k, k)] = (
+                    v if is_multipart_file_input else _as_attribute_dict_value(v, exclude_readonly=exclude_readonly)
+                )
+        return result
+    except AttributeError as exc:
+        # not a typespec generated model
+        raise TypeError("Object must be a generated model instance.") from exc

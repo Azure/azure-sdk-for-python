@@ -23,6 +23,7 @@ This table shows the relationship between SDK versions and supported API version
 | SDK version | Supported API version of service |
 |-------------|----------------------------------|
 | 1.0.0     | 2024-04-01               |
+| 1.1.0     | 2024-10-01               |
 
 
 ### Authenticate the client
@@ -78,6 +79,9 @@ Once you've initialized a 'RadiologyInsightsClient', you can use it to analyse d
 * Follow-up Recommendation
 * Communication
 * Radiology Procedure
+* Guidance
+* Quality Measure
+* Scoring and Assessment
 
 Radiology Insights currently supports one document from one patient. Please take a look [here][inferences] for more detailed information about the inferences this service produces.
 
@@ -96,6 +100,10 @@ For an example how to create a client, a request and get the result see the exam
 * [Limited Order Discrepancy](#get-limited-order-discrepancy-information)
 * [Radiology Procedure](#get-radiology-procedure-information)
 * [Sex Mismatch](#get-sex-mismatch-information)
+* [Guidance](#get-guidance-information)
+* [Quality Measure](#get-quality-measure-inference-information)
+* [Scoring and Assessment](#get-scoring-and-assessment-inference-information)
+
 
 ### Running the samples
 
@@ -286,6 +294,82 @@ for patient_result in radiology_insights_result.patient_results:
             print(f"Sex Mismatch Inference found")
 ```
 <!-- SNIPPET:sample_sex_mismatch_inference_async.display_sex_mismatch-->
+
+### Get Guidance information
+<!-- SNIPPET:sample_guidance_inference_async.display_guidance-->
+```Python
+for patient_result in radiology_insights_result.patient_results:
+    for ri_inference in patient_result.inferences:
+        if ri_inference.kind == models.RadiologyInsightsInferenceType.GUIDANCE:
+            guidance = ri_inference
+            print(f"Guidance Inference found:")
+            if guidance.identifier and guidance.identifier.coding:
+                for code in guidance.identifier.coding:
+                    print(f"Identifier: {code.display}")
+            for info in guidance.missing_guidance_information:
+                print(f"Missing Guidance: {info}")
+            for info in guidance.present_guidance_information:
+                print(f"Present Guidance: {info.present_guidance_item}")
+                for value in info.present_guidance_values:
+                    print(f"Value: {value}")
+            print(f"Ranking: {guidance.ranking.value}")
+```
+<!-- SNIPPET:sample_guidance_inference_async.display_guidance-->
+
+
+### Get Quality Measure Inference information
+<!-- SNIPPET:sample_quality_measure_inference_async.display_quality_measure-->
+ ```Python
+    for patient_result in radiology_insights_result.patient_results:
+        counter = 0
+        for ri_inference in patient_result.inferences:
+            if ri_inference.kind == models.RadiologyInsightsInferenceType.QUALITY_MEASURE:
+                counter += 1
+                print(f"Quality Measure {counter} Inference found")
+
+                # Print Quality Measure Denominator
+                if ri_inference.quality_measure_denominator:
+                    print(f"Quality Measure Denominator: {ri_inference.quality_measure_denominator}")
+
+                # Print Compliance Type
+                if ri_inference.compliance_type:
+                    print(f"Compliance Type: {ri_inference.compliance_type}")
+
+                # Print Quality Criteria
+                if ri_inference.quality_criteria:
+                    for criteria in ri_inference.quality_criteria:
+                        print(f"Quality Criterium: {criteria}")
+```
+<!-- SNIPPET:sample_quality_measure_inference_async.display_quality_measure-->
+
+### Get Scoring and Assessment Inference information
+<!-- SNIPPET:sample_scoring_and_assessment_inference_async.display_scoring_and_assessment-->
+```Python
+    for patient_result in radiology_insights_result.patient_results:
+        counter = 0
+        for ri_inference in patient_result.inferences:
+            if ri_inference.kind == models.RadiologyInsightsInferenceType.SCORING_AND_ASSESSMENT:
+                counter += 1
+                print(f"Scoring and assessment {counter} Inference found")
+
+                # Print Category
+                if ri_inference.category:
+                    print(f"Category : {ri_inference.category}")
+
+                # Print Compliance Type
+                if ri_inference.category_description:
+                    print(f"Category Description: {ri_inference.category_description}")
+
+                # Print Quality Criteria
+                if ri_inference.single_value:
+                    print(f"Single Value: {ri_inference.single_value}")
+
+                # Print Range Value
+                if ri_inference.range_value:
+                    display_range_value(ri_inference.range_value)
+
+```
+<!-- SNIPPET:sample_scoring_and_assessment_inference_async.display_scoring_and_assessment-->
 
 For detailed conceptual information of this and other inferences please read more [here][inferences].
 

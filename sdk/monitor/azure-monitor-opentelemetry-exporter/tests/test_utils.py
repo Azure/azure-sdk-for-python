@@ -15,12 +15,10 @@ from unittest.mock import patch
 
 TEST_AI_DEVICE_ID = "TEST_AI_DEVICE_ID"
 TEST_AI_DEVICE_LOCALE = "TEST_AI_DEVICE_LOCALE"
-TEST_OS_VERSION = "TEST_OS_VERSION"
 TEST_SDK_VERSION_PREFIX = "TEST_AZURE_SDK_VERSION_PREFIX"
 TEST_AZURE_MONITOR_CONTEXT = {
     "ai.device.id": TEST_AI_DEVICE_ID,
     "ai.device.locale": TEST_AI_DEVICE_LOCALE,
-    "ai.device.osVersion": TEST_OS_VERSION,
     "ai.device.type": "Other",
     "ai.internal.sdkVersion": "{}py1.2.3:otel4.5.6:ext7.8.9".format(
         TEST_SDK_VERSION_PREFIX,
@@ -35,7 +33,6 @@ TEST_AKS_ARM_NAMESPACE_ID = "TEST_AKS_ARM_NAMESPACE_ID"
 
 class TestUtils(unittest.TestCase):
     def setUp(self):
-        os.environ.clear()
         self._valid_instrumentation_key = "1234abcd-5678-4efa-8abc-1234567890ab"
 
     def test_nanoseconds_to_duration(self):

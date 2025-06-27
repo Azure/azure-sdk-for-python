@@ -346,7 +346,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     return headers
 
 
-def GetResourceIdOrFullNameFromLink(resource_link: str) -> Optional[str]:
+def GetResourceIdOrFullNameFromLink(resource_link: str) -> str:
     """Gets resource id or full name from resource link.
 
     :param str resource_link:
@@ -379,7 +379,7 @@ def GetResourceIdOrFullNameFromLink(resource_link: str) -> Optional[str]:
         # request in form
         # /[resourceType]/[resourceId]/ .... /[resourceType]/[resourceId]/.
         return str(path_parts[-2])
-    return None
+    raise ValueError("Failed Parsing ResourceID from link: {0}".format(resource_link))
 
 
 def GenerateGuidId() -> str:
@@ -797,8 +797,8 @@ def _replace_throughput(
                 new_throughput_properties['content']['offerAutopilotSettings']['maxThroughput'] = max_throughput
                 if increment_percent:
                     new_throughput_properties['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy']['incrementPercent'] = increment_percent  # pylint: disable=line-too-long
-                if throughput.offer_throughput:
-                    new_throughput_properties["content"]["offerThroughput"] = throughput.offer_throughput
+            if throughput.offer_throughput:
+                new_throughput_properties["content"]["offerThroughput"] = throughput.offer_throughput
         except AttributeError as e:
             raise TypeError("offer_throughput must be int or an instance of ThroughputProperties") from e
 

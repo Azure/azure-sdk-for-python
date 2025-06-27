@@ -7,16 +7,18 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
 from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.settings import settings
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core.tools import get_arm_endpoints
 
 from .. import models as _models
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import MonitorManagementClientConfiguration
 from .operations import (
     ActionGroupsOperations,
@@ -24,6 +26,7 @@ from .operations import (
     ActivityLogsOperations,
     AlertRuleIncidentsOperations,
     AutoscaleSettingsOperations,
+    AzureMonitorWorkspacesOperations,
     BaselinesOperations,
     DiagnosticSettingsCategoryOperations,
     DiagnosticSettingsOperations,
@@ -36,6 +39,7 @@ from .operations import (
     MetricDefinitionsOperations,
     MetricNamespacesOperations,
     MetricsOperations,
+    MonitorOperationsOperations,
     Operations,
     PredictiveMetricOperations,
     PrivateEndpointConnectionsOperations,
@@ -125,26 +129,33 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
     :ivar subscription_diagnostic_settings: SubscriptionDiagnosticSettingsOperations operations
     :vartype subscription_diagnostic_settings:
      azure.mgmt.monitor.aio.operations.SubscriptionDiagnosticSettingsOperations
+    :ivar azure_monitor_workspaces: AzureMonitorWorkspacesOperations operations
+    :vartype azure_monitor_workspaces:
+     azure.mgmt.monitor.aio.operations.AzureMonitorWorkspacesOperations
+    :ivar monitor_operations: MonitorOperationsOperations operations
+    :vartype monitor_operations: azure.mgmt.monitor.aio.operations.MonitorOperationsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :param base_url: Service URL. Default value is None.
     :type base_url: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
     def __init__(
-        self,
-        credential: "AsyncTokenCredential",
-        subscription_id: str,
-        base_url: str = "https://management.azure.com",
-        **kwargs: Any
+        self, credential: "AsyncTokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
     ) -> None:
+        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _endpoints = get_arm_endpoints(_cloud)
+        if not base_url:
+            base_url = _endpoints["resource_manager"]
+        credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = MonitorManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, **kwargs
+            credential=credential, subscription_id=subscription_id, credential_scopes=credential_scopes, **kwargs
         )
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -163,7 +174,9 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(
+            base_url=cast(str, base_url), policies=_policies, **kwargs
+        )
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -238,6 +251,12 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
             self._client, self._config, self._serialize, self._deserialize
         )
         self.subscription_diagnostic_settings = SubscriptionDiagnosticSettingsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.azure_monitor_workspaces = AzureMonitorWorkspacesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.monitor_operations = MonitorOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

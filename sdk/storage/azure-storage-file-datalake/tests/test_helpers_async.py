@@ -3,12 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import asyncio
+from collections import deque
 from typing import Any, Dict, Optional
 from urllib.parse import urlparse
 
 from azure.core.pipeline.transport import AioHttpTransportResponse, AsyncHttpTransport
 from azure.core.rest import HttpRequest
 from aiohttp import ClientResponse
+from aiohttp.streams import StreamReader
+from aiohttp.client_proto import ResponseHandler
 
 
 class ProgressTracker:
@@ -65,6 +69,10 @@ class MockAioHttpClientResponse(ClientResponse):
         self._loop = None
         self.status = status
         self.reason = reason
+        self.content = StreamReader(ResponseHandler(asyncio.new_event_loop()), 65535)
+        self.content.total_bytes = len(body_bytes)
+        self.content._buffer = deque([body_bytes])
+        self.content._eof = True
 
 
 class MockStorageTransport(AsyncHttpTransport):

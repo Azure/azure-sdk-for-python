@@ -752,7 +752,7 @@ class TestCertificateClient(KeyVaultTestCase):
     @recorded_by_proxy_async
     async def test_preserve_certificate_order(self, client, **kwargs):
         """
-        Ensure that preserve_certificate_order works with create_certificate and that the property appears in
+        Ensure that preserve_order works with create_certificate and that the property appears in
         models returned by the service.
         """
         cert_name = self.get_resource_name("cert")
@@ -760,10 +760,10 @@ class TestCertificateClient(KeyVaultTestCase):
 
         # create certificate
         certificate = await client.create_certificate(
-            certificate_name=cert_name, policy=cert_policy, preserve_certificate_order=True
+            certificate_name=cert_name, policy=cert_policy, preserve_order=True
         )
 
-        assert certificate.properties.preserve_certificate_order is True
+        assert certificate.properties.preserve_order is True
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version", only_latest)

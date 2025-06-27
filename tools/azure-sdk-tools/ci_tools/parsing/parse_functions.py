@@ -14,12 +14,8 @@ except:
 
 from typing import Dict, List, Tuple, Any, Optional
 
-# Assumes the presence of setuptools
-from pkg_resources import parse_requirements, Requirement
-
 # this assumes the presence of "packaging"
-from packaging.specifiers import SpecifierSet
-import setuptools
+from packaging.requirements import Requirement
 from setuptools import Extension
 
 from ci_tools.variables import str_to_bool
@@ -52,7 +48,7 @@ class ParsedSetup:
         keywords: List[str],
         ext_package: str,
         ext_modules: List[Extension],
-        metapackage: bool
+        metapackage: bool,
     ):
         self.name: str = name
         self.version: str = version
@@ -109,7 +105,7 @@ class ParsedSetup:
             keywords,
             ext_package,
             ext_modules,
-            metapackage
+            metapackage,
         )
 
     def get_build_config(self) -> Optional[Dict[str, Any]]:
@@ -230,7 +226,9 @@ def read_setup_py_content(setup_filename: str) -> str:
 
 def parse_setup_py(
     setup_filename: str,
-) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], List[str], str, List[Extension], bool]:
+) -> Tuple[
+    str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], List[str], str, List[Extension], bool
+]:
     """
     Used to evaluate a setup.py (or a directory containing a setup.py) and return a tuple containing:
     (
@@ -305,15 +303,13 @@ def parse_setup_py(
     else:
         metapackage = True
 
-
-
     requires = kwargs.get("install_requires", [])
     package_data = kwargs.get("package_data", None)
     include_package_data = kwargs.get("include_package_data", None)
     classifiers = kwargs.get("classifiers", [])
     keywords = kwargs.get("keywords", [])
 
-    is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x).key in NEW_REQ_PACKAGES), requires))
+    is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x).name in NEW_REQ_PACKAGES), requires))
 
     ext_package = kwargs.get("ext_package", None)
     ext_modules = kwargs.get("ext_modules", [])
@@ -340,7 +336,9 @@ def parse_setup_py(
 
 def parse_pyproject(
     pyproject_filename: str,
-) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], List[str], str, List[Extension], bool]:
+) -> Tuple[
+    str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], List[str], str, List[Extension], bool
+]:
     """
     Used to evaluate a pyproject (or a directory containing a pyproject.toml) with a [project] configuration within.
     Returns a tuple containing:
@@ -365,12 +363,15 @@ def parse_pyproject(
 
     project_config = toml_dict.get("project", None)
 
+    assert project_config is not None, f"Unable to find [project] section in {pyproject_filename}. Please ensure it is present."
+
     # to pull a version from pyproject.toml, we need to get a dynamic version out. We can ask
     # setuptools to give us the metadata for a package, but that will involve _partially building_ the package
     # to create an egginfo folder. This is a very expensive operation goes against the entire point of
     # "give me the package metadata for this folder."
     # We can avoid this expensive operation if we parse the version out of the _version or version file directly.
     parsed_version = project_config.get("version", None)
+
     if not parsed_version:
         parsed_version_py = get_version_py(pyproject_filename)
 
@@ -383,13 +384,16 @@ def parse_pyproject(
                 else:
                     parsed_version = "0.0.0"
         else:
-            raise ValueError(f"Unable to find a version value directly set in \"{pyproject_filename}\", nor is it available in a \"version.py\" or \"_version.py.\"")
+            raise ValueError(
+                f'Unable to find a version value directly set in "{pyproject_filename}", nor is it available in a "version.py" or "_version.py."'
+            )
 
     name = project_config.get("name")
     version = parsed_version
     python_requires = project_config.get("requires-python")
     requires = project_config.get("dependencies")
-    is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x).key in NEW_REQ_PACKAGES), requires))
+    is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x).name in NEW_REQ_PACKAGES), requires))
+
     name_space = name.replace("-", ".")
     package_data = get_value_from_dict(toml_dict, "tool.setuptools.package-data", None)
     include_package_data = get_value_from_dict(toml_dict, "tool.setuptools.include-package-data", True)
@@ -426,10 +430,33 @@ def get_version_py(setup_path: str) -> Optional[str]:
     """
     Given the path to pyproject.toml or setup.py, attempts to find a (_)version.py file and return its location.
     """
+    # this list of directories will be excluded from the search for _version.py
+    # this is to avoid finding _version.py in the wrong place, such as in tests
+    # or in the venv directory or ANYWHERE ELSE that may mess with the parsing.
+    EXCLUDE = {
+        "venv",
+        "__pycache__",
+        "tests",
+        "test",
+        "generated_samples",
+        "generated_tests",
+        "samples",
+        "swagger",
+        "stress",
+        "docs",
+        "doc",
+        "local",
+        "scripts",
+        "images",
+        ".tox"
+    }
+
     file_path, _ = os.path.split(setup_path)
-    # Find path to _version.py recursively in azure folder of package
-    azure_root_path = os.path.join(file_path, "azure")
-    for root, _, files in os.walk(azure_root_path):
+
+    # Find path to _version.py recursively
+    for root, dirs, files in os.walk(file_path):
+        dirs[:] = [d for d in dirs if d not in EXCLUDE and not d.endswith(".egg-info")]
+
         if VERSION_PY in files:
             return os.path.join(root, VERSION_PY)
         elif OLD_VERSION_PY in files:
@@ -542,11 +569,11 @@ def get_install_requires(setup_path: str) -> List[str]:
 
 def parse_require(req: str) -> Requirement:
     """
-    Parses the incoming version specification and returns a tuple of the requirement name and specifier.
+    Parses a PEP 508 requirement string into a Requirement object.
 
-    "azure-core<2.0.0,>=1.11.0" -> [azure-core, <2.0.0,>=1.11.0]
+    Example: "azure-core<2.0.0,>=1.11.0"
     """
-    return Requirement.parse(req)
+    return Requirement(req)
 
 
 def get_name_from_specifier(version: str) -> str:

@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -10,11 +10,46 @@
 import datetime
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
+
+
+class AssociatedIdentity(_serialization.Model):
+    """Identity details to be used for an operation.
+
+    :ivar operation_identity_type: Identity type that should be used for an operation. Known values
+     are: "SystemAssigned" and "UserAssigned".
+    :vartype operation_identity_type: str or ~azure.mgmt.recoveryservices.models.IdentityType
+    :ivar user_assigned_identity: User assigned identity to be used for an operation if
+     operationIdentityType is UserAssigned.
+    :vartype user_assigned_identity: str
+    """
+
+    _attribute_map = {
+        "operation_identity_type": {"key": "operationIdentityType", "type": "str"},
+        "user_assigned_identity": {"key": "userAssignedIdentity", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        operation_identity_type: Optional[Union[str, "_models.IdentityType"]] = None,
+        user_assigned_identity: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword operation_identity_type: Identity type that should be used for an operation. Known
+         values are: "SystemAssigned" and "UserAssigned".
+        :paramtype operation_identity_type: str or ~azure.mgmt.recoveryservices.models.IdentityType
+        :keyword user_assigned_identity: User assigned identity to be used for an operation if
+         operationIdentityType is UserAssigned.
+        :paramtype user_assigned_identity: str
+        """
+        super().__init__(**kwargs)
+        self.operation_identity_type = operation_identity_type
+        self.user_assigned_identity = user_assigned_identity
 
 
 class AzureMonitorAlertSettings(_serialization.Model):
@@ -674,11 +709,11 @@ class Error(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.additional_info = None
-        self.code = None
-        self.details = None
-        self.message = None
-        self.target = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
+        self.code: Optional[str] = None
+        self.details: Optional[List["_models.Error"]] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -705,8 +740,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.info = None
-        self.type = None
+        self.info: Optional[JSON] = None
+        self.type: Optional[str] = None
 
 
 class ErrorDetail(_serialization.Model):
@@ -745,11 +780,11 @@ class ErrorDetail(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -791,7 +826,7 @@ class IdentityData(_serialization.Model):
     :vartype type: str or ~azure.mgmt.recoveryservices.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user-assigned identities associated with the
      resource. The user-assigned identity dictionary keys will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :vartype user_assigned_identities: dict[str, ~azure.mgmt.recoveryservices.models.UserIdentity]
     """
 
@@ -823,13 +858,13 @@ class IdentityData(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.recoveryservices.models.ResourceIdentityType
         :keyword user_assigned_identities: The list of user-assigned identities associated with the
          resource. The user-assigned identity dictionary keys will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.recoveryservices.models.UserIdentity]
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
@@ -1112,9 +1147,9 @@ class Resource(_serialization.Model):
         :paramtype etag: str
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.etag = etag
 
 
@@ -1269,7 +1304,7 @@ class PrivateEndpoint(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
 
 
 class PrivateEndpointConnection(_serialization.Model):
@@ -1315,9 +1350,9 @@ class PrivateEndpointConnection(_serialization.Model):
         :paramtype group_ids: list[str or ~azure.mgmt.recoveryservices.models.VaultSubResourceType]
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
-        self.private_endpoint = None
-        self.private_link_service_connection_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.private_endpoint: Optional["_models.PrivateEndpoint"] = None
+        self.private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None
         self.group_ids = group_ids
 
 
@@ -1327,7 +1362,7 @@ class PrivateEndpointConnectionVaultProperties(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Format of id
-     subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.[Service]/{resource}/{resourceName}/privateEndpointConnections/{connectionName}.  # pylint: disable=line-too-long
+     subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.[Service]/{resource}/{resourceName}/privateEndpointConnections/{connectionName}.
     :vartype id: str
     :ivar properties: Private Endpoint Connection Response Properties.
     :vartype properties: ~azure.mgmt.recoveryservices.models.PrivateEndpointConnection
@@ -1359,11 +1394,11 @@ class PrivateEndpointConnectionVaultProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.properties = None
-        self.name = None
-        self.type = None
-        self.location = None
+        self.id: Optional[str] = None
+        self.properties: Optional["_models.PrivateEndpointConnection"] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.location: Optional[str] = None
 
 
 class PrivateLinkResource(_serialization.Model):
@@ -1407,12 +1442,12 @@ class PrivateLinkResource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.group_id = None
-        self.required_members = None
-        self.required_zone_names = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.group_id: Optional[str] = None
+        self.required_members: Optional[List[str]] = None
+        self.required_zone_names: Optional[List[str]] = None
 
 
 class PrivateLinkResources(_serialization.Model):
@@ -1476,9 +1511,9 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.status = None
-        self.description = None
-        self.actions_required = None
+        self.status: Optional[Union[str, "_models.PrivateEndpointConnectionStatus"]] = None
+        self.description: Optional[str] = None
+        self.actions_required: Optional[str] = None
 
 
 class RawCertificateData(_serialization.Model):
@@ -1725,7 +1760,7 @@ class ResourceCertificateDetails(_serialization.Model):
         self.valid_to = valid_to
 
 
-class ResourceCertificateAndAadDetails(ResourceCertificateDetails):  # pylint: disable=too-many-instance-attributes
+class ResourceCertificateAndAadDetails(ResourceCertificateDetails):
     """Certificate details representing the Vault credentials for AAD.
 
     All required parameters must be populated in order to send to server.
@@ -1866,7 +1901,7 @@ class ResourceCertificateAndAadDetails(ResourceCertificateDetails):  # pylint: d
         self.aad_audience = aad_audience
 
 
-class ResourceCertificateAndAcsDetails(ResourceCertificateDetails):  # pylint: disable=too-many-instance-attributes
+class ResourceCertificateAndAcsDetails(ResourceCertificateDetails):
     """Certificate details representing the Vault credentials for ACS.
 
     All required parameters must be populated in order to send to server.
@@ -2020,6 +2055,8 @@ class SecuritySettings(_serialization.Model):
      "Enabled", and "Disabled".
     :vartype multi_user_authorization: str or
      ~azure.mgmt.recoveryservices.models.MultiUserAuthorization
+    :ivar source_scan_configuration: Source scan configuration of vault.
+    :vartype source_scan_configuration: ~azure.mgmt.recoveryservices.models.SourceScanConfiguration
     """
 
     _validation = {
@@ -2030,6 +2067,7 @@ class SecuritySettings(_serialization.Model):
         "immutability_settings": {"key": "immutabilitySettings", "type": "ImmutabilitySettings"},
         "soft_delete_settings": {"key": "softDeleteSettings", "type": "SoftDeleteSettings"},
         "multi_user_authorization": {"key": "multiUserAuthorization", "type": "str"},
+        "source_scan_configuration": {"key": "sourceScanConfiguration", "type": "SourceScanConfiguration"},
     }
 
     def __init__(
@@ -2037,6 +2075,7 @@ class SecuritySettings(_serialization.Model):
         *,
         immutability_settings: Optional["_models.ImmutabilitySettings"] = None,
         soft_delete_settings: Optional["_models.SoftDeleteSettings"] = None,
+        source_scan_configuration: Optional["_models.SourceScanConfiguration"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2044,11 +2083,15 @@ class SecuritySettings(_serialization.Model):
         :paramtype immutability_settings: ~azure.mgmt.recoveryservices.models.ImmutabilitySettings
         :keyword soft_delete_settings: Soft delete Settings of a vault.
         :paramtype soft_delete_settings: ~azure.mgmt.recoveryservices.models.SoftDeleteSettings
+        :keyword source_scan_configuration: Source scan configuration of vault.
+        :paramtype source_scan_configuration:
+         ~azure.mgmt.recoveryservices.models.SourceScanConfiguration
         """
         super().__init__(**kwargs)
         self.immutability_settings = immutability_settings
         self.soft_delete_settings = soft_delete_settings
-        self.multi_user_authorization = None
+        self.multi_user_authorization: Optional[Union[str, "_models.MultiUserAuthorization"]] = None
+        self.source_scan_configuration = source_scan_configuration
 
 
 class Sku(_serialization.Model):
@@ -2157,6 +2200,38 @@ class SoftDeleteSettings(_serialization.Model):
         self.soft_delete_state = soft_delete_state
         self.soft_delete_retention_period_in_days = soft_delete_retention_period_in_days
         self.enhanced_security_state = enhanced_security_state
+
+
+class SourceScanConfiguration(_serialization.Model):
+    """Source scan configuration of vault.
+
+    :ivar state: Known values are: "Invalid", "Enabled", and "Disabled".
+    :vartype state: str or ~azure.mgmt.recoveryservices.models.State
+    :ivar source_scan_identity: Identity details to be used for an operation.
+    :vartype source_scan_identity: ~azure.mgmt.recoveryservices.models.AssociatedIdentity
+    """
+
+    _attribute_map = {
+        "state": {"key": "state", "type": "str"},
+        "source_scan_identity": {"key": "sourceScanIdentity", "type": "AssociatedIdentity"},
+    }
+
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "_models.State"]] = None,
+        source_scan_identity: Optional["_models.AssociatedIdentity"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword state: Known values are: "Invalid", "Enabled", and "Disabled".
+        :paramtype state: str or ~azure.mgmt.recoveryservices.models.State
+        :keyword source_scan_identity: Identity details to be used for an operation.
+        :paramtype source_scan_identity: ~azure.mgmt.recoveryservices.models.AssociatedIdentity
+        """
+        super().__init__(**kwargs)
+        self.state = state
+        self.source_scan_identity = source_scan_identity
 
 
 class SystemData(_serialization.Model):
@@ -2331,15 +2406,15 @@ class UpgradeDetails(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.operation_id = None
-        self.start_time_utc = None
-        self.last_updated_time_utc = None
-        self.end_time_utc = None
-        self.status = None
-        self.message = None
-        self.trigger_type = None
-        self.upgraded_resource_id = None
-        self.previous_resource_id = None
+        self.operation_id: Optional[str] = None
+        self.start_time_utc: Optional[datetime.datetime] = None
+        self.last_updated_time_utc: Optional[datetime.datetime] = None
+        self.end_time_utc: Optional[datetime.datetime] = None
+        self.status: Optional[Union[str, "_models.VaultUpgradeState"]] = None
+        self.message: Optional[str] = None
+        self.trigger_type: Optional[Union[str, "_models.TriggerType"]] = None
+        self.upgraded_resource_id: Optional[str] = None
+        self.previous_resource_id: Optional[str] = None
 
 
 class UserIdentity(_serialization.Model):
@@ -2366,8 +2441,8 @@ class UserIdentity(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
 
 
 class Vault(TrackedResource):
@@ -2450,7 +2525,7 @@ class Vault(TrackedResource):
         self.identity = identity
         self.properties = properties
         self.sku = sku
-        self.system_data = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class VaultCertificateResponse(_serialization.Model):
@@ -2489,9 +2564,9 @@ class VaultCertificateResponse(_serialization.Model):
         :paramtype properties: ~azure.mgmt.recoveryservices.models.ResourceCertificateDetails
         """
         super().__init__(**kwargs)
-        self.name = None
-        self.type = None
-        self.id = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.id: Optional[str] = None
         self.properties = properties
 
 
@@ -2592,10 +2667,10 @@ class VaultList(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
-class VaultProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class VaultProperties(_serialization.Model):
     """Properties of the vault.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2724,22 +2799,22 @@ class VaultProperties(_serialization.Model):  # pylint: disable=too-many-instanc
         :paramtype resource_guard_operation_requests: list[str]
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.upgrade_details = upgrade_details
-        self.private_endpoint_connections = None
-        self.private_endpoint_state_for_backup = None
-        self.private_endpoint_state_for_site_recovery = None
+        self.private_endpoint_connections: Optional[List["_models.PrivateEndpointConnectionVaultProperties"]] = None
+        self.private_endpoint_state_for_backup: Optional[Union[str, "_models.VaultPrivateEndpointState"]] = None
+        self.private_endpoint_state_for_site_recovery: Optional[Union[str, "_models.VaultPrivateEndpointState"]] = None
         self.encryption = encryption
         self.move_details = move_details
-        self.move_state = None
-        self.backup_storage_version = None
+        self.move_state: Optional[Union[str, "_models.ResourceMoveState"]] = None
+        self.backup_storage_version: Optional[Union[str, "_models.BackupStorageVersion"]] = None
         self.public_network_access = public_network_access
         self.monitoring_settings = monitoring_settings
         self.restore_settings = restore_settings
         self.redundancy_settings = redundancy_settings
         self.security_settings = security_settings
-        self.secure_score = None
-        self.bcdr_security_level = None
+        self.secure_score: Optional[Union[str, "_models.SecureScoreLevel"]] = None
+        self.bcdr_security_level: Optional[Union[str, "_models.BCDRSecurityLevel"]] = None
         self.resource_guard_operation_requests = resource_guard_operation_requests
 
 
@@ -2822,11 +2897,11 @@ class VaultPropertiesMoveDetails(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.operation_id = None
-        self.start_time_utc = None
-        self.completion_time_utc = None
-        self.source_resource_id = None
-        self.target_resource_id = None
+        self.operation_id: Optional[str] = None
+        self.start_time_utc: Optional[datetime.datetime] = None
+        self.completion_time_utc: Optional[datetime.datetime] = None
+        self.source_resource_id: Optional[str] = None
+        self.target_resource_id: Optional[str] = None
 
 
 class VaultPropertiesRedundancySettings(_serialization.Model):

@@ -20,10 +20,10 @@ class TestAVSLocationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_check_quota_availability(self, resource_group):
+    def test_locations_check_quota_availability(self, resource_group):
         response = self.client.locations.check_quota_availability(
             location="str",
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         )
 
         # please add some check logic here by yourself
@@ -31,10 +31,10 @@ class TestAVSLocationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_check_trial_availability(self, resource_group):
+    def test_locations_check_trial_availability(self, resource_group):
         response = self.client.locations.check_trial_availability(
             location="str",
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         )
 
         # please add some check logic here by yourself

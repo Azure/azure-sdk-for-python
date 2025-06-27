@@ -15,6 +15,7 @@ _APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED = (
     "APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"
 )
 _APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN = "APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN"
+_APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED = "APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED"
 _APPLICATIONINSIGHTS_AUTHENTICATION_STRING = "APPLICATIONINSIGHTS_AUTHENTICATION_STRING"
 
 # RPs
@@ -136,7 +137,7 @@ _INSTRUMENTATIONS_LIST = [
     "requests",
     "sqlalchemy",
     "aio-pika",
-    "aiohttp-client",
+    "aiohttp_client",
     "aiopg",
     "asgi",
     "asyncpg",
@@ -149,7 +150,7 @@ _INSTRUMENTATIONS_LIST = [
     "grpc",
     "httpx",
     "jinja2",
-    "kafka-python",
+    "kafka",
     "pika",
     "pymemcache",
     "redis",
@@ -157,20 +158,27 @@ _INSTRUMENTATIONS_LIST = [
     "sklearn",
     "sqlite3",
     "starlette",
-    "system-metrics",
+    "system_metrics",
     "tornado",
     "urllib",
     "urllib3",
     _AZURE_SDK_OPENTELEMETRY_NAME,
-    # Instrumentations below this line have not been added to statsbeat report yet
     "cassandra",
     "tortoiseorm",
-    "aiohttp-server",
+    "aiohttp_server",
     "asyncio",
     "mysqlclient",
     "psycopg",
     "threading",
     "wsgi",
+    "aiokafka",
+    "asyncclick",
+    "click",
+    "pymssql",
+    "google_genai",
+    "openai_v2",
+    "vertexai",
+    # Instrumentations below this line have not been added to statsbeat report yet
 ]
 
 _INSTRUMENTATIONS_BIT_MAP = {_INSTRUMENTATIONS_LIST[i]: _BASE**i for i in range(len(_INSTRUMENTATIONS_LIST))}

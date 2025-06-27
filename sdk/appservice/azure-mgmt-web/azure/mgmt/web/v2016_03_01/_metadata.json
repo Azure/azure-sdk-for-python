@@ -5,13 +5,13 @@
         "name": "WebSiteManagementClient",
         "filename": "_web_site_management_client",
         "description": "WebSite Management Client.",
-        "host_value": "\"https://management.azure.com\"",
+        "host_value": null,
         "parameterized_host_template": null,
         "azure_arm": true,
         "has_public_lro_operations": false,
         "client_side_validation": false,
-        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"sdkcore\": {\"azure.mgmt.core\": [\"ARMPipelineClient\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMAutoResourceProviderRegistrationPolicy\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"local\": {\"._configuration\": [\"WebSiteManagementClientConfiguration\"], \".._serialization\": [\"Deserializer\", \"Serializer\"], \"._operations_mixin\": [\"WebSiteManagementClientOperationsMixin\"]}, \"stdlib\": {\"typing_extensions\": [\"Self\"]}}, \"typing\": {\"sdkcore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
-        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"sdkcore\": {\"azure.mgmt.core\": [\"AsyncARMPipelineClient\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"AsyncARMAutoResourceProviderRegistrationPolicy\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"local\": {\"._configuration\": [\"WebSiteManagementClientConfiguration\"], \"..._serialization\": [\"Deserializer\", \"Serializer\"], \"._operations_mixin\": [\"WebSiteManagementClientOperationsMixin\"]}, \"stdlib\": {\"typing_extensions\": [\"Self\"]}}, \"typing\": {\"sdkcore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"sdkcore\": {\"azure.mgmt.core\": [\"ARMPipelineClient\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMAutoResourceProviderRegistrationPolicy\"], \"azure.core.settings\": [\"settings\"], \"azure.mgmt.core.tools\": [\"get_arm_endpoints\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"stdlib\": {\"typing\": [\"Optional\", \"cast\"], \"typing_extensions\": [\"Self\"]}, \"local\": {\"._configuration\": [\"WebSiteManagementClientConfiguration\"], \"._utils.serialization\": [\"Deserializer\", \"Serializer\"], \"._operations_mixin\": [\"WebSiteManagementClientOperationsMixin\"]}}, \"typing\": {\"sdkcore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"sdkcore\": {\"azure.mgmt.core\": [\"AsyncARMPipelineClient\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"AsyncARMAutoResourceProviderRegistrationPolicy\"], \"azure.core.settings\": [\"settings\"], \"azure.mgmt.core.tools\": [\"get_arm_endpoints\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"stdlib\": {\"typing\": [\"Optional\", \"cast\"], \"typing_extensions\": [\"Self\"]}, \"local\": {\"._configuration\": [\"WebSiteManagementClientConfiguration\"], \".._utils.serialization\": [\"Deserializer\", \"Serializer\"], \"._operations_mixin\": [\"WebSiteManagementClientOperationsMixin\"]}}, \"typing\": {\"sdkcore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "global_parameters": {
         "sync": {
@@ -57,7 +57,7 @@
                     "method_location": "positional"
                 },
                 "base_url": {
-                    "signature": "base_url: str = \"https://management.azure.com\",",
+                    "signature": "base_url: Optional[str] = None,",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false,
@@ -80,7 +80,7 @@
                     "method_location": "positional"
                 },
                 "base_url": {
-                    "signature": "base_url: str = \"https://management.azure.com\",",
+                    "signature": "base_url: Optional[str] = None,",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false,
@@ -114,8 +114,8 @@
         "billing_meters": "BillingMetersOperations"
     },
     "operation_mixins": {
-        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Iterable\", \"Union\"]}}, \"regular\": {\"local\": {\".\": [[\"models\", \"_models\"]]}, \"stdlib\": {\"typing\": [\"IO\", \"Optional\", \"Union\"], \"io\": [\"IOBase\"]}, \"sdkcore\": {\"azure.core.paging\": [\"ItemPaged\"]}}}",
-        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"AsyncIterable\", \"Union\"]}}, \"regular\": {\"local\": {\"..\": [[\"models\", \"_models\"]]}, \"stdlib\": {\"typing\": [\"IO\", \"Optional\", \"Union\"], \"io\": [\"IOBase\"]}, \"sdkcore\": {\"azure.core.async_paging\": [\"AsyncItemPaged\"]}}}",
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Union\"]}, \"sdkcore\": {\"azure.core.paging\": [\"ItemPaged\"]}}, \"regular\": {\"stdlib\": {\"typing\": [\"IO\", \"Optional\", \"Union\"], \"io\": [\"IOBase\"]}, \"sdkcore\": {\"azure.core.paging\": [\"ItemPaged\"]}, \"local\": {\".\": [[\"models\", \"_models\"]]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Union\"]}, \"sdkcore\": {\"azure.core.async_paging\": [\"AsyncItemPaged\"]}}, \"regular\": {\"stdlib\": {\"typing\": [\"IO\", \"Optional\", \"Union\"], \"io\": [\"IOBase\"]}, \"sdkcore\": {\"azure.core.async_paging\": [\"AsyncItemPaged\"]}, \"local\": {\"..\": [[\"models\", \"_models\"]]}}}",
         "sync_mixin_typing_definitions": "",
         "async_mixin_typing_definitions": "",
         "operations": {
@@ -147,13 +147,13 @@
             },
             "list_source_controls" : {
                 "sync": {
-                    "signature": "def list_source_controls(\n    self,\n    **kwargs: Any\n) -\u003e Iterable[\"_models.SourceControl\"]:\n",
+                    "signature": "def list_source_controls(\n    self,\n    **kwargs: Any\n) -\u003e ItemPaged[\"_models.SourceControl\"]:\n",
                     "doc": "\"\"\"Gets the source controls available for Azure websites.\n\nGets the source controls available for Azure websites.\n\n:return: An iterator like instance of either SourceControl or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2016_03_01.models.SourceControl]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "**kwargs"
                 },
                 "async": {
                     "coroutine": false,
-                    "signature": "def list_source_controls(\n    self,\n    **kwargs: Any\n) -\u003e AsyncIterable[\"_models.SourceControl\"]:\n",
+                    "signature": "def list_source_controls(\n    self,\n    **kwargs: Any\n) -\u003e AsyncItemPaged[\"_models.SourceControl\"]:\n",
                     "doc": "\"\"\"Gets the source controls available for Azure websites.\n\nGets the source controls available for Azure websites.\n\n:return: An iterator like instance of either SourceControl or the result of cls(response)\n:rtype:\n ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2016_03_01.models.SourceControl]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "**kwargs"
                 }
@@ -212,39 +212,39 @@
             },
             "list_geo_regions" : {
                 "sync": {
-                    "signature": "def list_geo_regions(\n    self,\n    sku: Optional[Union[str, _models.SkuName]] = None,\n    linux_workers_enabled: Optional[bool] = None,\n    **kwargs: Any\n) -\u003e Iterable[\"_models.GeoRegion\"]:\n",
+                    "signature": "def list_geo_regions(\n    self,\n    sku: Optional[Union[str, _models.SkuName]] = None,\n    linux_workers_enabled: Optional[bool] = None,\n    **kwargs: Any\n) -\u003e ItemPaged[\"_models.GeoRegion\"]:\n",
                     "doc": "\"\"\"Get a list of available geographical regions.\n\nGet a list of available geographical regions.\n\n:param sku: Name of SKU used to filter the regions. Known values are: \"Free\", \"Shared\",\n \"Basic\", \"Standard\", \"Premium\", \"PremiumV2\", \"Dynamic\", and \"Isolated\". Default value is None.\n:type sku: str or ~azure.mgmt.web.v2016_03_01.models.SkuName\n:param linux_workers_enabled: Specify :code:`\u003ccode\u003etrue\u003c/code\u003e` if you want to filter to only\n regions that support Linux workers. Default value is None.\n:type linux_workers_enabled: bool\n:return: An iterator like instance of either GeoRegion or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2016_03_01.models.GeoRegion]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "sku, linux_workers_enabled, **kwargs"
                 },
                 "async": {
                     "coroutine": false,
-                    "signature": "def list_geo_regions(\n    self,\n    sku: Optional[Union[str, _models.SkuName]] = None,\n    linux_workers_enabled: Optional[bool] = None,\n    **kwargs: Any\n) -\u003e AsyncIterable[\"_models.GeoRegion\"]:\n",
+                    "signature": "def list_geo_regions(\n    self,\n    sku: Optional[Union[str, _models.SkuName]] = None,\n    linux_workers_enabled: Optional[bool] = None,\n    **kwargs: Any\n) -\u003e AsyncItemPaged[\"_models.GeoRegion\"]:\n",
                     "doc": "\"\"\"Get a list of available geographical regions.\n\nGet a list of available geographical regions.\n\n:param sku: Name of SKU used to filter the regions. Known values are: \"Free\", \"Shared\",\n \"Basic\", \"Standard\", \"Premium\", \"PremiumV2\", \"Dynamic\", and \"Isolated\". Default value is None.\n:type sku: str or ~azure.mgmt.web.v2016_03_01.models.SkuName\n:param linux_workers_enabled: Specify :code:`\u003ccode\u003etrue\u003c/code\u003e` if you want to filter to only\n regions that support Linux workers. Default value is None.\n:type linux_workers_enabled: bool\n:return: An iterator like instance of either GeoRegion or the result of cls(response)\n:rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2016_03_01.models.GeoRegion]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "sku, linux_workers_enabled, **kwargs"
                 }
             },
             "list_site_identifiers_assigned_to_host_name" : {
                 "sync": {
-                    "signature": "def list_site_identifiers_assigned_to_host_name(  # pylint: disable=name-too-long\n    self,\n    name_identifier: Union[_models.NameIdentifier, IO[bytes]],\n    **kwargs: Any\n) -\u003e Iterable[\"_models.Identifier\"]:\n",
+                    "signature": "def list_site_identifiers_assigned_to_host_name(  # pylint: disable=name-too-long\n    self,\n    name_identifier: Union[_models.NameIdentifier, IO[bytes]],\n    **kwargs: Any\n) -\u003e ItemPaged[\"_models.Identifier\"]:\n",
                     "doc": "\"\"\"List all apps that are assigned to a hostname.\n\nList all apps that are assigned to a hostname.\n\n:param name_identifier: Hostname information. Is either a NameIdentifier type or a IO[bytes]\n type. Required.\n:type name_identifier: ~azure.mgmt.web.v2016_03_01.models.NameIdentifier or IO[bytes]\n:return: An iterator like instance of either Identifier or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2016_03_01.models.Identifier]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "name_identifier, **kwargs"
                 },
                 "async": {
                     "coroutine": false,
-                    "signature": "def list_site_identifiers_assigned_to_host_name(  # pylint: disable=name-too-long\n    self,\n    name_identifier: Union[_models.NameIdentifier, IO[bytes]],\n    **kwargs: Any\n) -\u003e AsyncIterable[\"_models.Identifier\"]:\n",
+                    "signature": "def list_site_identifiers_assigned_to_host_name(  # pylint: disable=name-too-long\n    self,\n    name_identifier: Union[_models.NameIdentifier, IO[bytes]],\n    **kwargs: Any\n) -\u003e AsyncItemPaged[\"_models.Identifier\"]:\n",
                     "doc": "\"\"\"List all apps that are assigned to a hostname.\n\nList all apps that are assigned to a hostname.\n\n:param name_identifier: Hostname information. Is either a NameIdentifier type or a IO[bytes]\n type. Required.\n:type name_identifier: ~azure.mgmt.web.v2016_03_01.models.NameIdentifier or IO[bytes]\n:return: An iterator like instance of either Identifier or the result of cls(response)\n:rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2016_03_01.models.Identifier]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "name_identifier, **kwargs"
                 }
             },
             "list_premier_add_on_offers" : {
                 "sync": {
-                    "signature": "def list_premier_add_on_offers(\n    self,\n    **kwargs: Any\n) -\u003e Iterable[\"_models.PremierAddOnOffer\"]:\n",
+                    "signature": "def list_premier_add_on_offers(\n    self,\n    **kwargs: Any\n) -\u003e ItemPaged[\"_models.PremierAddOnOffer\"]:\n",
                     "doc": "\"\"\"List all premier add-on offers.\n\nList all premier add-on offers.\n\n:return: An iterator like instance of either PremierAddOnOffer or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2016_03_01.models.PremierAddOnOffer]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "**kwargs"
                 },
                 "async": {
                     "coroutine": false,
-                    "signature": "def list_premier_add_on_offers(\n    self,\n    **kwargs: Any\n) -\u003e AsyncIterable[\"_models.PremierAddOnOffer\"]:\n",
+                    "signature": "def list_premier_add_on_offers(\n    self,\n    **kwargs: Any\n) -\u003e AsyncItemPaged[\"_models.PremierAddOnOffer\"]:\n",
                     "doc": "\"\"\"List all premier add-on offers.\n\nList all premier add-on offers.\n\n:return: An iterator like instance of either PremierAddOnOffer or the result of cls(response)\n:rtype:\n ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2016_03_01.models.PremierAddOnOffer]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "**kwargs"
                 }
