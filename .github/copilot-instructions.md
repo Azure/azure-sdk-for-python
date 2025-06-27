@@ -82,7 +82,7 @@ curl -s "https://api.github.com/repos/Azure/azure-rest-api-specs/commits?path=<p
 
 ### STEP 1: ENVIRONMENT VERIFICATION
 ```
-ACTION: Run verify_setup mcp tool
+ACTION: Run verify_setup mcp tool, and install_packages tool
 IF missing dependencies:
     STOP and install missing dependencies
     THEN proceed to Step 2
@@ -95,6 +95,7 @@ TIMING: ALWAYS inform user before starting: "This SDK generation step will take 
 IF local path provided:
     USE local mcp tools with tspconfig.yaml path
 IF updating an existing package:
+    If tsp-location.yaml given, use it's commit hash to run update tool
     USE update tool with commit hash to update to specific version
 IF commands fail:
     ANALYZE error messages
