@@ -8,6 +8,10 @@
 
 - Added support for Deep Research tool. For more information, see https://aka.ms/agents-deep-research.
 
+### Bugs Fixed
+
+- Fixed a tracing related bug that caused an error when process was ending if messages or run steps were listed and the resulting list was not iterated completely.
+
 ### Sample updates
 
 - The file search samples were updated to demonstrate retrieving text associated with citations.
