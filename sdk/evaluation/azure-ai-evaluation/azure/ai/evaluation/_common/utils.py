@@ -604,7 +604,7 @@ def _get_agent_response(agent_response_msgs, include_tool_messages=False):
                 for content in msg.get("content", []):
                     # Todo: Verify if this is the correct way to handle tool calls
                     if content.get("type") == "tool_call":
-                        if "tool_call" in content:
+                        if "tool_call" in content and "function" in content.get("tool_call", {}):
                             tc = content.get("tool_call", {})
                             func_name = tc.get("function", {}).get("name", "")
                             args = tc.get("function", {}).get("arguments", {})

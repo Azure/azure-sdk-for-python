@@ -857,6 +857,20 @@ class TestUtils(unittest.TestCase):
         assert "Let me check that for you." in formatted
         assert "You have one order on file." in formatted
 
+    def test_reformat_agent_response_with_tool_calls_non_function(self):
+        response = [
+            {"role": "assistant", "content": [{"type": "text", "text": "Let me check that for you."}]},
+            {"role": "assistant", "content": [{"type": "tool_call", "tool_call_id": "tool_call_1", "name": "get_orders"}]},
+            {"role": "tool", "tool_call_id": "tool_call_1", "content": [{"type": "tool_result", "tool_result": "[{ \"order_id\": \"A1\" }]"}]},
+            {"role": "assistant", "content": [{"type": "text", "text": "You have one order on file."}]}
+        ]
+        formatted = reformat_agent_response(response, include_tool_messages=True)
+        assert "[TOOL_CALL] get_orders()" in formatted
+        assert "[TOOL_RESULT] [{ \"order_id\": \"A1\" }]" in formatted
+        assert "Let me check that for you." in formatted
+        assert "You have one order on file." in formatted
+
+
     def test_reformat_agent_response_without_tool_calls(self):
         response = [
             {"role": "assistant", "content": [{"type": "text", "text": "Let me check that for you."}]},
