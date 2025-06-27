@@ -68,11 +68,14 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold=_DEFAULT_TASK_ADHERENCE_SCORE, **kwargs):
+    def __init__(self, model_config, *, threshold=_DEFAULT_TASK_ADHERENCE_SCORE,
+                 **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
-        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY, **kwargs)
+        super().__init__(model_config=model_config, prompty_file=prompty_path,
+                         result_key=self._RESULT_KEY,
+                         **kwargs)
 
     @overload
     def __call__(
@@ -162,3 +165,4 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if logger:
             logger.warning("LLM output is not a dictionary, returning NaN for the score.")
         return {self._result_key: math.nan}
+
