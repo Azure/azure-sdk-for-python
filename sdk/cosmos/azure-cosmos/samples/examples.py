@@ -137,6 +137,20 @@ for queried_item in container.query_items(
     container.delete_item(queried_item, partition_key="Widget")
 # [END delete_items]
 
+# Query items with feed range is also supported. This example
+# gets all items within the feed range.
+# [START query_items_feed_range]
+import json
+
+for feed_range in container.read_feed_ranges():
+    for queried_item in container.query_items(
+        query='SELECT * FROM c',
+        enable_cross_partition_query=True,
+        feed_range=feed_range,
+    ):
+        print(json.dumps(queried_item, indent=True))
+# [END query_items_param]
+
 # Retrieve the properties of a database
 # [START get_database_properties]
 properties = database.read()

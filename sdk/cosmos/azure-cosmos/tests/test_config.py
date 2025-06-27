@@ -7,17 +7,21 @@ import time
 import unittest
 import uuid
 
+from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError, ClientAuthenticationError
+from azure.core.pipeline.policies import AsyncRetryPolicy, RetryPolicy
+from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
 from azure.cosmos._retry_utility import _has_database_account_header, _has_read_retryable_headers, _configure_timeout
+from azure.cosmos._routing.routing_range import Range
 from azure.cosmos.cosmos_client import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.http_constants import StatusCodes
-from azure.cosmos.partition_key import PartitionKey
+from azure.cosmos.partition_key import (PartitionKey, PartitionKeyKind, PartitionKeyVersion, _Undefined,
+                                        NonePartitionKeyValue)
 from azure.cosmos import (ContainerProxy, DatabaseProxy, documents, exceptions,
-                          http_constants, _retry_utility)
-from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError, ClientAuthenticationError
-from azure.core.pipeline.policies import AsyncRetryPolicy, RetryPolicy
+                          http_constants)
 from devtools_testutils.azure_recorded_testcase import get_credential
 from devtools_testutils.helpers import is_live
+from typing import Sequence, Type, Union
 
 try:
     import urllib3
@@ -525,3 +529,36 @@ class MockConnectionRetryPolicyAsync(AsyncRetryPolicy):
 
         self.update_context(response.context, retry_settings)
         return response
+
+def hash_partition_key_value(
+        pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]],
+        kind: str = PartitionKeyKind.HASH,
+        version: int = PartitionKeyVersion.V2,
+    ):
+    return PartitionKey.get_hashed_partition_key_string(
+        pk_value=pk_value,
+        kind=kind,
+        version=version,
+    )
+
+def create_range(range_min: str, range_max: str, is_min_inclusive: bool = True, is_max_inclusive: bool = False):
+    if range_max == range_min:
+        range_max += "FF"
+    return Range(
+        range_min=range_min,
+        range_max=range_max,
+        isMinInclusive=is_min_inclusive,
+        isMaxInclusive=is_max_inclusive,
+    )
+
+def create_feed_range_in_dict(feed_range):
+    return FeedRangeInternalEpk(feed_range).to_dict()
+
+def create_feed_range_between_pk_values(pk1, pk2):
+    range_min = hash_partition_key_value([pk1])
+    range_max = hash_partition_key_value([pk2])
+    if range_min > range_max:
+        range_min, range_max = range_max, range_min
+    range_max += "FF"
+    new_range = create_range(range_min, range_max)
+    return FeedRangeInternalEpk(new_range).to_dict()

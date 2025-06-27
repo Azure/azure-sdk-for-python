@@ -28,7 +28,7 @@ from typing import Optional, Dict, Any, List, Union
 from azure.core.pipeline.transport._base import HttpRequest
 
 from . import http_constants
-from .partition_key import _Empty, _Undefined
+from .partition_key import _Empty, _Undefined, PartitionKeyKind
 
 
 # pylint: disable=protected-access
@@ -88,7 +88,7 @@ class ContainerRecreateRetryPolicy:
         if self._headers and http_constants.HttpHeaders.PartitionKey in self._headers:
             current_partition_key = self._headers[http_constants.HttpHeaders.PartitionKey]
             partition_key_definition = container_cache["partitionKey"] if container_cache else None
-            if partition_key_definition and partition_key_definition["kind"] == "MultiHash":
+            if partition_key_definition and partition_key_definition["kind"] == PartitionKeyKind.MULTI_HASH:
                 # A null in the multihash partition key indicates a failure in extracting partition keys
                 # from the document definition
                 return 'null' in current_partition_key
@@ -110,7 +110,7 @@ class ContainerRecreateRetryPolicy:
             elif options and isinstance(options["partitionKey"], _Empty):
                 new_partition_key = []
             # else serialize using json dumps method which apart from regular values will serialize None into null
-            elif partition_key_definition and partition_key_definition["kind"] == "MultiHash":
+            elif partition_key_definition and partition_key_definition["kind"] == PartitionKeyKind.MULTI_HASH:
                 new_partition_key = json.dumps(options["partitionKey"], separators=(',', ':'))
             else:
                 new_partition_key = json.dumps([options["partitionKey"]])
@@ -131,7 +131,7 @@ class ContainerRecreateRetryPolicy:
             elif isinstance(options["partitionKey"], _Empty):
                 new_partition_key = []
             # else serialize using json dumps method which apart from regular values will serialize None into null
-            elif partition_key_definition and partition_key_definition["kind"] == "MultiHash":
+            elif partition_key_definition and partition_key_definition["kind"] == PartitionKeyKind.MULTI_HASH:
                 new_partition_key = json.dumps(options["partitionKey"], separators=(',', ':'))
             else:
                 new_partition_key = json.dumps([options["partitionKey"]])
