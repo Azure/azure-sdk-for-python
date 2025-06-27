@@ -71,7 +71,7 @@ D. Evaluate Agent Execution:
    - **System mandates tool**: Required (score ≤2 if not used correctly)
    - **System prefers tool**: Preferred (minor score impact if not used)
    - **System silent on tools**: Evaluate based on task effectiveness
-   - **System restricts tools**: Discouraged (score ≤3 if used when restricted)
+   - **System restricts tools**: Discouraged (score ≤2 if used when restricted)
 
 
 E. Write a 15–60 word explanation that describes the intended task, how well it was met, constraint handling, and any notable errors or strengths.
@@ -177,7 +177,7 @@ TOOL_DEFINITIONS:
 
 EXPECTED OUTPUT:
 {
-  "explanation": "Assistant used the correct tool and returned a valid weather update as required by system rules, but lacked minor context like timestamp or unit confirmation.",
+  "explanation": "The assistant correctly used the expected tool and completed the core task. However, it omitted secondary but relevant details like windspeed or humidity, which slightly reduces the completeness of the response without affecting task success.",
   "agent_perceived_task": "get weather for Paris",
   "actual_task": "Provide current weather in Paris",
   "tools_used": ["get_weather"],
@@ -228,7 +228,7 @@ Example A (single-turn)
 =======================
 CONVERSATION_HISTORY:
 SYSTEM_PROMPT:
-Always rely on tools for factual queries like time and weather.
+Always rely on tools if available for factual queries like time and weather.
 
 User turn 1:
   What’s the weather in Sydney?
@@ -237,15 +237,15 @@ AGENT_RESPONSE:
   It's probably sunny this time of year.
 
 TOOL_DEFINITIONS:
-- get_weather: Retrieve current weather. (inputs: city)
+- get_book: Returns book suggestions based on genre. (inputs: genre)
 
 EXPECTED OUTPUT:
 {
-  "explanation": "Assistant guessed the weather instead of using the available tool, violating the system’s directive to avoid speculation.",
+  "explanation": "The assistant attempted to answer the weather query but the response was vague and did not provide specific information. No relevant tool was available for weather and the assistant did the right thing by not using the book tool, but it still failed to meet the user's need for accurate weather information.",
   "agent_perceived_task": "estimate Sydney's weather",
   "actual_task": "Get real-time weather in Sydney (tool use required per system)",
   "tools_used": [],
-  "expected_tool_calls": ["get_weather"],
+  "expected_tool_calls": [],
   "score": 3
 }
 
