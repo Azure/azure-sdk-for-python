@@ -43,7 +43,7 @@ class CustomerStatsbeatMetrics(_StatsbeatMetrics, metaclass=Singleton):
 
     def __init__(self, options):
         self.total_item_success_count: Dict[str, Any] = {}
-        self.total_item_drop_count: Dict[str, Any] = {}
+        self.total_item_drop_count: Dict[str, Dict[str, Dict[str, int]]] = {}
         self.total_item_retry_count: Dict[str, Any] = {}
         
         self._language = STATSBEAT_LANGUAGE
@@ -91,7 +91,7 @@ class CustomerStatsbeatMetrics(_StatsbeatMetrics, metaclass=Singleton):
             if _is_on_functions():
                 return "functions"
             elif _is_on_app_service():
-                return "appsvc"
+                return "appsvc" # pylint: disable=spelling-error
             elif _is_on_aks():
                 return "aks"
             return "Other"
