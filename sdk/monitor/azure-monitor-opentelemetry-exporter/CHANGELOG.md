@@ -13,6 +13,16 @@
 
 ### Other Changes
 
+## 1.0.0b40 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.0.0b39 (2025-06-25)
 
 ### Bugs Fixed
@@ -67,6 +77,7 @@
 ## 1.0.0b36 (2025-04-07)
 
 ### Features Added
+
 - Added customer-facing statsbeat preview.
   ([#41669](https://github.com/Azure/azure-sdk-for-python/pull/41669))
 - Support `syntheticSource` from `user_agent.synthetic.type` semantic convention
