@@ -55,9 +55,6 @@ class GeneratedRAIClient:
             self._client = AIProjectClient(
                 endpoint=azure_ai_project, credential=token_manager, user_agent_policy=user_agent_policy
             ).red_teams
-            self._operations_client = AIProjectClient(
-                endpoint=azure_ai_project, credential=token_manager, user_agent_policy=user_agent_policy
-            ).evaluations
             self._evaluation_onedp_client = EvaluationServiceOneDPClient(
                 endpoint=azure_ai_project, credential=token_manager, user_agent_policy=user_agent_policy
             )
