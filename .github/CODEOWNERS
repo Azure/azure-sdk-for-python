@@ -239,7 +239,7 @@
 # AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Event Grid
 # PRLabel: %Event Grid
-/sdk/eventgrid/                                                      @Kishp01 @shankarsama @rajeshka
+/sdk/eventgrid/                                                      @shankarsama @rajeshka
 
 # PRLabel: %Image Analysis
 # ServiceLabel: %Image Analysis %Service Attention
