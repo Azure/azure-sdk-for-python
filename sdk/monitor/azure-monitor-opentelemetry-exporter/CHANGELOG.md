@@ -6,6 +6,8 @@
 
 - Detect synthetically created telemetry based on the user-agent header
   ([#41733](https://github.com/Azure/azure-sdk-for-python/pull/41733))
+- Added customer-facing statsbeat preview.
+  ([#41669](https://github.com/Azure/azure-sdk-for-python/pull/41669))
 
 ### Breaking Changes
 
@@ -78,8 +80,6 @@
 
 ### Features Added
 
-- Added customer-facing statsbeat preview.
-  ([#41669](https://github.com/Azure/azure-sdk-for-python/pull/41669))
 - Support `syntheticSource` from `user_agent.synthetic.type` semantic convention
   ([#40004](https://github.com/Azure/azure-sdk-for-python/pull/40004))
 - Support `server.address` attributes when converting Azure SDK messaging spans to envelopes
