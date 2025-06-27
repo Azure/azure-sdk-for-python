@@ -96,7 +96,7 @@ _STANDARD_AZURE_MONITOR_ATTRIBUTES = [
     _SAMPLE_RATE_KEY,
 ]
 
-_GEN_AI_ATTRIBUTE_PREFIXE = "GenAI | {}"
+_GEN_AI_ATTRIBUTE_PREFIX = "GenAI | {}"
 
 
 class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
@@ -413,7 +413,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             # gen_ai take precedence over other mappings (ex. HTTP) even if their attributes are also present on the span.
             # overrides any previously set type.
             if gen_ai_attributes.GEN_AI_SYSTEM in span.attributes:  # GenAI
-                data.type = _GEN_AI_ATTRIBUTE_PREFIXE.format(span.attributes[gen_ai_attributes.GEN_AI_SYSTEM])
+                data.type = _GEN_AI_ATTRIBUTE_PREFIX.format(span.attributes[gen_ai_attributes.GEN_AI_SYSTEM])
         elif span.kind is SpanKind.PRODUCER:  # Messaging
             # Currently only eventhub and servicebus are supported that produce PRODUCER spans
             if _AZURE_SDK_NAMESPACE_NAME in span.attributes:
@@ -431,7 +431,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         else:  # SpanKind.INTERNAL
             data.type = "InProc"
             if gen_ai_attributes.GEN_AI_SYSTEM in span.attributes:  # GenAI
-                data.type = _GEN_AI_ATTRIBUTE_PREFIXE.format(span.attributes[gen_ai_attributes.GEN_AI_SYSTEM])
+                data.type = _GEN_AI_ATTRIBUTE_PREFIX.format(span.attributes[gen_ai_attributes.GEN_AI_SYSTEM])
             elif _AZURE_SDK_NAMESPACE_NAME in span.attributes:
                 data.type += " | {}".format(span.attributes[_AZURE_SDK_NAMESPACE_NAME])
         # Apply truncation
