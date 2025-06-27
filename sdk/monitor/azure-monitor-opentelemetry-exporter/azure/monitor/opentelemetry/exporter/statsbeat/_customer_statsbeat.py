@@ -91,7 +91,8 @@ class CustomerStatsbeatMetrics(_StatsbeatMetrics, metaclass=Singleton):
             if _is_on_functions():
                 return "functions"
             elif _is_on_app_service():
-                return "appsvc" # pylint: disable=spelling-error
+                # cspell:disable-next-line
+                return "appsvc"
             elif _is_on_aks():
                 return "aks"
             return "Other"
