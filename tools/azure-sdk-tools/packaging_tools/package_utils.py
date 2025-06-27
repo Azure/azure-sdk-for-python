@@ -1,13 +1,14 @@
 import os
+import ast
 import time
-import importlib
+import shutil
 from typing import Optional, Tuple, Dict, Any, List
 from pathlib import Path
 import logging
 from subprocess import check_call, CalledProcessError, getoutput
 from .generate_utils import return_origin_path
 from packaging.version import Version
-
+from . import build_packaging
 from .change_log import main as change_log_main
 
 DEFAULT_DEST_FOLDER = "./dist"
@@ -28,7 +29,7 @@ def create_package(prefolder, name, dest_folder=DEFAULT_DEST_FOLDER):
 @return_origin_path
 def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
     os.chdir(package_folder)
-    cmd = "tox run -c ../../../eng/tox/tox.ini --root . -e breaking --  --changelog "
+    cmd = "python -m tox run -c ../../../eng/tox/tox.ini --root . -e breaking --  --changelog "
     if lastest_pypi_version:
         cmd += "--latest-pypi-version"
     try:
@@ -39,8 +40,11 @@ def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
         raise e
     _LOGGER.info(f"Breaking change detector output: {output}")
     result = [l for l in output.split("\n")]
-    begin = result.index("===== changelog start =====")
-    end = result.index("===== changelog end =====")
+    try:
+        begin = result.index("===== changelog start =====")
+        end = result.index("===== changelog end =====")
+    except ValueError:
+        raise Exception("\n".join(result))
     return "\n".join(result[begin + 1 : end]).strip()
 
 
@@ -78,6 +82,10 @@ def change_log_generate(
     # try new changelog tool
     if prefolder and not is_multiapi:
         try:
+            tox_cache_path = Path(prefolder, package_name, ".tox")
+            if tox_cache_path.exists():
+                _LOGGER.info(f"Remove {tox_cache_path} to avoid potential tox cache conflict")
+                shutil.rmtree(tox_cache_path)
             return change_log_new(str(Path(prefolder) / package_name), not (last_stable_release and tag_is_stable))
         except Exception as e:
             _LOGGER.warning(f"Failed to generate changelog with breaking_change_detector: {e}")
@@ -174,20 +182,47 @@ class CheckFile:
             self._next_version = self.calculate_next_version()
         return self._next_version
 
+    @property
+    def extract_client_title_from_init(self) -> str:
+        """
+        Extract the client title from a package's __init__.py file.
+
+        Args:
+            package_name (str): The package name (e.g., "azure-mgmt-compute")
+
+        Returns:
+            str: The client title if found, empty string otherwise
+        """
+        init_file = Path(self.whole_package_name) / self.whole_package_name.replace("-", "/") / "__init__.py"
+        try:
+            with open(init_file, "r") as f:
+                content = f.read()
+            tree = ast.parse(content)
+            # Look for __all__ assignment
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Assign):
+                    # Check if any target is __all__
+                    for target in node.targets:
+                        if isinstance(target, ast.Name) and target.id == "__all__" and isinstance(node.value, ast.List):
+                            # Extract the value
+                            for elt in node.value.elts:
+                                if isinstance(elt, ast.Constant) and elt.value.endswith("Client"):
+                                    return elt.value
+        except Exception as e:
+            _LOGGER.info(f"Failed to extract title from {init_file}: {e}")
+
+        return ""
+
     # Use the template to update readme and setup by packaging_tools
     @return_origin_path
     def check_file_with_packaging_tool(self):
-        module = importlib.import_module(self.whole_package_name.replace("-", "."))
-        title = ""
-        for item in getattr(module, "__all__", []):
-            if item.endswith("Client"):
-                title = item
-                break
-
-        if not title:
-            _LOGGER.info(f"Can not find the title in {self.whole_package_name}")
 
         os.chdir(Path(f"sdk/{self.sdk_folder}"))
+        title = self.extract_client_title_from_init
+
+        if not title:
+            _LOGGER.info(f"Can not find the title for {self.whole_package_name}")
+
         # add `title` and update `is_stable` in sdk_packaging.toml
         toml = Path(self.whole_package_name) / "sdk_packaging.toml"
         stable_config = f'is_stable = {"true" if self.tag_is_stable and self.next_version != "1.0.0b1" else "false"}\n'
@@ -211,7 +246,7 @@ class CheckFile:
         else:
             _LOGGER.info(f"{os.getcwd()}/{toml} does not exist")
 
-        check_call(f"python -m packaging_tools --build-conf {self.whole_package_name}", shell=True)
+        build_packaging(output_folder=".", packages=[self.whole_package_name], build_conf=True)
         _LOGGER.info("packaging_tools --build-conf successfully")
 
     def sdk_code_path(self) -> str:
@@ -338,14 +373,14 @@ class CheckFile:
         os.chdir(Path("sdk") / self.sdk_folder / self.whole_package_name)
         # Configure and ensure pyproject.toml exists with required settings
         toml_path = Path("pyproject.toml")
-        
+
         # Default configurations to enforce
         default_configs = {
             "breaking": "false",
             "pyright": "false",
             "mypy": "false",
         }
-        
+
         # Create new pyproject.toml if it doesn't exist
         if not toml_path.exists():
             with open(toml_path, "w") as file:
@@ -354,27 +389,27 @@ class CheckFile:
                     file.write(f"{key} = {value}\n")
                 _LOGGER.info("Created pyproject.toml with default configurations")
             return
-            
+
         # If file exists, ensure all required configurations are present
         def edit_toml(content: List[str]):
             # Track if we have the [tool.azure-sdk-build] section
             has_section = False
             config_exists = {key: False for key in default_configs}
-            
+
             # Check for existing configurations and section
             for i, line in enumerate(content):
                 if "[tool.azure-sdk-build]" in line:
                     has_section = True
-                
+
                 # Check for each configuration
                 for key in default_configs:
                     if f"{key} = " in line:
                         config_exists[key] = True
-            
+
             # Add section if it doesn't exist
             if not has_section:
                 content.append("\n[tool.azure-sdk-build]\n")
-                
+
             # Add missing configurations
             for key, value in default_configs.items():
                 if not config_exists[key]:

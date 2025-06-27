@@ -73,7 +73,13 @@ class AzureMLTokenManager(APITokenManager):
             return super().get_aad_credential()
 
     def get_token(
-            self, scopes = None, claims: Union[str, None] = None, tenant_id: Union[str, None] = None, enable_cae: bool = False, **kwargs: Any) -> AccessToken:
+        self,
+        scopes=None,
+        claims: Union[str, None] = None,
+        tenant_id: Union[str, None] = None,
+        enable_cae: bool = False,
+        **kwargs: Any
+    ) -> AccessToken:
         """Get the API token. If the token is not available or has expired, refresh the token.
 
         :return: API token

@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 import base64
 from json import JSONEncoder
-from typing import Dict, Optional, Union, cast, Any
+from typing import Dict, List, Optional, Union, cast, Any
 from datetime import datetime, date, time, timedelta
 from datetime import timezone
 
@@ -166,6 +166,12 @@ def _as_attribute_dict_value(v: Any, *, exclude_readonly: bool = False) -> Any:
 
 
 def _get_flattened_attribute(obj: Any) -> Optional[str]:
+    """Get the name of the flattened attribute in a generated TypeSpec model if one exists.
+
+    :param any obj: The object to check.
+    :return: The name of the flattened attribute if it exists, otherwise None.
+    :rtype: Optional[str]
+    """
     flattened_items = None
     try:
         flattened_items = getattr(obj, next(a for a in dir(obj) if "__flattened_items" in a), None)
@@ -185,6 +191,29 @@ def _get_flattened_attribute(obj: Any) -> Optional[str]:
             # if the attribute does not have _class_type, it is not a typespec generated model
             continue
     return None
+
+
+def attribute_list(obj: Any) -> List[str]:
+    """Get a list of attribute names for a generated SDK model.
+
+    :param obj: The object to get attributes from.
+    :type obj: any
+    :return: A list of attribute names.
+    :rtype: List[str]
+    """
+    if not is_generated_model(obj):
+        raise TypeError("Object is not a generated SDK model.")
+    if hasattr(obj, "_attribute_map"):
+        # msrest model
+        return list(obj._attribute_map.keys())  # pylint: disable=protected-access
+    flattened_attribute = _get_flattened_attribute(obj)
+    retval: List[str] = []
+    for attr_name, rest_field in obj._attr_to_rest_field.items():  # pylint: disable=protected-access
+        if flattened_attribute == attr_name:
+            retval.extend(attribute_list(rest_field._class_type))  # pylint: disable=protected-access
+        else:
+            retval.append(attr_name)
+    return retval
 
 
 def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, Any]:

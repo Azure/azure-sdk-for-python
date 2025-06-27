@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -11,6 +12,7 @@ from typing import Any, List, IO, Optional, Union, overload
 from datetime import datetime, timedelta, tzinfo
 import jwt
 from azure.core.credentials import AzureKeyCredential
+from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -29,6 +31,7 @@ from ._operations import (
     build_web_pub_sub_service_send_to_user_request,
     build_web_pub_sub_service_send_to_group_request,
 )
+from .._models import GroupMember
 
 
 class _UTC_TZ(tzinfo):
@@ -129,13 +132,15 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         #                 SocketIO Client Type: https://<service-name>.webpubsub.azure.com/clients/socketio/hubs/<hub>
         path = "/client/hubs/"
         if client_protocol.lower() == "mqtt":
-            path = "/clients/mqtt/hubs/" 
+            path = "/clients/mqtt/hubs/"
         elif client_protocol.lower() == "socketio":
             path = "/clients/socketio/hubs/"
         client_url = client_endpoint + path + hub
         jwt_headers = kwargs.pop("jwt_headers", {})
         if isinstance(self._config.credential, AzureKeyCredential):
-            token = get_token_by_key(endpoint, path, hub, self._config.credential.key, jwt_headers=jwt_headers, **kwargs)
+            token = get_token_by_key(
+                endpoint, path, hub, self._config.credential.key, jwt_headers=jwt_headers, **kwargs
+            )
         else:
             token = super().get_client_access_token(client_protocol=client_protocol, **kwargs).get("token")
         return {
@@ -145,6 +150,75 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         }
 
     get_client_access_token.metadata = {"url": "/api/hubs/{hub}/:generateToken"}  # type: ignore
+
+    @distributed_trace
+    def list_connections(
+        self,
+        *,
+        group: str,
+        top: Optional[int] = None,
+        continuation_token_parameter: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged[GroupMember]:
+        """List connections in a group.
+
+        List connections in a group.
+
+        :keyword group: Target group name, whose length should be greater than 0 and less than 1025.
+         Required.
+        :paramtype group: str
+        :keyword top: The maximum number of connections to return. If the value is not set, then all
+         the connections in a group are returned. Default value is None.
+        :paramtype top: int
+        :keyword continuation_token_parameter: A token that allows the client to retrieve the next page
+         of results. This parameter is provided by the service in the response of a previous request
+         when there are additional results to be fetched. Clients should include the continuationToken
+         in the next request to receive the subsequent page of data. If this parameter is omitted, the
+         server will return the first page of results. Default value is None.
+        :paramtype continuation_token_parameter: str
+        :return: An iterator like instance of GroupMember object
+        :rtype: ~azure.core.paging.ItemPaged[GroupMember]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                connections = client.list_connections(
+                    group="group_name",
+                    top=100
+                )
+
+                for member in connections:
+                    assert member.connection_id is not None
+
+        """
+        # Call the base implementation to get ItemPaged[dict]
+        paged_json = super().list_connections(
+            group=group,
+            top=top,
+            continuation_token_parameter=continuation_token_parameter,
+            **kwargs
+        )
+
+        # Wrap the iterator to convert each item to GroupMember
+        class GroupMemberPaged(ItemPaged):
+            def __iter__(self_inner):
+                for item in paged_json:
+                    yield GroupMember(
+                        connection_id=item.get("connectionId"),
+                        user_id=item.get("userId")
+                    )
+
+            def by_page(self_inner, continuation_token: Optional[str] = None):
+                for page in paged_json.by_page(continuation_token=continuation_token):
+                    yield [
+                        GroupMember(
+                            connection_id=item.get("connectionId"),
+                            user_id=item.get("userId")
+                        )
+                        for item in page
+                    ]
+        return GroupMemberPaged()
 
     @overload
     def send_to_all(  # pylint: disable=inconsistent-return-statements

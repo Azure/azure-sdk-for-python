@@ -122,6 +122,24 @@ tox -e pyright -c [path to tox.ini] --root .
 
 # Step 3d: Verifytypes
 tox -e verifytypes -c [path to tox.ini] --root .
+
+# Step 3e: Sphinx
+tox -e sphinx -c [path to tox.ini] --root .
+
+# Step 3f: Mindependency
+tox -e mindependency -c [path to tox.ini] --root .
+
+# Step 3g: Bandit
+tox -e bandit -c [path to tox.ini] --root .
+
+# Step 3h: Black
+tox -e black -c [path to tox.ini] --root .
+
+# Step 3i: Samples
+tox -e samples -c [path to tox.ini] --root .
+
+# Step 3j: Breaking
+tox -e breaking -c [path to tox.ini] --root .
 ```
 
 **REQUIREMENTS:**
