@@ -227,7 +227,7 @@ class ImageClassificationJob(AutoMLImageClassificationBase):
                 context={BASE_PATH_CONTEXT_KEY: "./", "inside_pipeline": True}
             ).dump(self)
         else:
-            schema_dict = ImageClassificationSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+            schema_dict = ImageClassificationSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
 
         return schema_dict
 

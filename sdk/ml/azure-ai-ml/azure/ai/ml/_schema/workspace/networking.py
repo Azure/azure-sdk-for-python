@@ -16,8 +16,7 @@ from azure.ai.ml.entities._workspace.networking import (
     FqdnDestination,
     ManagedNetwork,
     PrivateEndpointDestination,
-    ServiceTagDestination,
-)
+    ServiceTagDestination)
 
 
 class ManagedNetworkStatusSchema(metaclass=PatchedSchemaMeta):
@@ -38,8 +37,7 @@ class FqdnOutboundRuleSchema(metaclass=PatchedSchemaMeta):
         ],
         casing_transform=camel_to_snake,
         metadata={"description": "outbound rule category."},
-        dump_only=True,
-    )
+        dump_only=True)
     status = fields.Str(dump_only=True)
 
     @post_load
@@ -52,8 +50,7 @@ class FqdnOutboundRuleSchema(metaclass=PatchedSchemaMeta):
             name=name,
             destination=dest,
             category=_snake_to_camel(category),
-            status=status,
-        )
+            status=status)
 
 
 class ServiceTagDestinationSchema(metaclass=PatchedSchemaMeta):
@@ -76,8 +73,7 @@ class ServiceTagOutboundRuleSchema(metaclass=PatchedSchemaMeta):
         ],
         casing_transform=camel_to_snake,
         metadata={"description": "outbound rule category."},
-        dump_only=True,
-    )
+        dump_only=True)
     status = fields.Str(dump_only=True)
 
     @pre_dump
@@ -100,8 +96,7 @@ class ServiceTagOutboundRuleSchema(metaclass=PatchedSchemaMeta):
             port_ranges=dest["port_ranges"],
             address_prefixes=dest.get("address_prefixes", None),
             category=_snake_to_camel(category),
-            status=status,
-        )
+            status=status)
 
     def service_tag_dest2dict(self, service_tag, protocol, port_ranges, address_prefixes):
         service_tag_dest = {}
@@ -133,8 +128,7 @@ class PrivateEndpointOutboundRuleSchema(metaclass=PatchedSchemaMeta):
         ],
         casing_transform=camel_to_snake,
         metadata={"description": "outbound rule category."},
-        dump_only=True,
-    )
+        dump_only=True)
     status = fields.Str(dump_only=True)
 
     @pre_dump
@@ -156,8 +150,7 @@ class PrivateEndpointOutboundRuleSchema(metaclass=PatchedSchemaMeta):
             spark_enabled=dest["spark_enabled"],
             category=_snake_to_camel(category),
             status=status,
-            fqdns=fqdns,
-        )
+            fqdns=fqdns)
 
     def pe_dest2dict(self, service_resource_id, subresource_target, spark_enabled):
         pedest = {}
@@ -175,22 +168,19 @@ class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
             IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND,
         ],
         casing_transform=camel_to_snake,
-        metadata={"description": "isolation mode for the workspace managed network."},
-    )
+        metadata={"description": "isolation mode for the workspace managed network."})
     outbound_rules = fields.List(
         UnionField(
             [
-                NestedField(PrivateEndpointOutboundRuleSchema, allow_none=False, unknown=EXCLUDE),
-                NestedField(ServiceTagOutboundRuleSchema, allow_none=False, unknown=EXCLUDE),
+                NestedField(PrivateEndpointOutboundRuleSchema, allow_none=False),
+                NestedField(ServiceTagOutboundRuleSchema, allow_none=False),
                 NestedField(
-                    FqdnOutboundRuleSchema, allow_none=False, unknown=EXCLUDE
+                    FqdnOutboundRuleSchema, allow_none=False
                 ),  # this needs to be last since otherwise union field with match destination as a string
             ],
             allow_none=False,
-            is_strict=True,
-        ),
-        allow_none=True,
-    )
+            is_strict=True),
+        allow_none=True)
     firewall_sku = ExperimentalField(
         StringTransformedEnum(
             allowed_values=[
@@ -198,11 +188,10 @@ class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
                 FirewallSku.BASIC,
             ],
             casing_transform=camel_to_snake,
-            metadata={"description": "Firewall sku for FQDN rules in AllowOnlyApprovedOutbound mode"},
-        )
+            metadata={"description": "Firewall sku for FQDN rules in AllowOnlyApprovedOutbound mode"})
     )
     network_id = fields.Str(required=False, dump_only=True)
-    status = NestedField(ManagedNetworkStatusSchema, allow_none=False, unknown=EXCLUDE)
+    status = NestedField(ManagedNetworkStatusSchema, allow_none=False)
 
     @post_load
     def make(self, data, **kwargs):
@@ -215,10 +204,8 @@ class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
             return ManagedNetwork(
                 isolation_mode=_snake_to_camel(data["isolation_mode"]),
                 outbound_rules=outbound_rules,
-                firewall_sku=firewall_sku_value,
-            )
+                firewall_sku=firewall_sku_value)
         else:
             return ManagedNetwork(
                 isolation_mode=_snake_to_camel(data["isolation_mode"]),
-                firewall_sku=firewall_sku_value,
-            )
+                firewall_sku=firewall_sku_value)

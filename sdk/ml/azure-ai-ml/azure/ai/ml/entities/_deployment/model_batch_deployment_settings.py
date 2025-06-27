@@ -75,5 +75,5 @@ class ModelBatchDeploymentSettings:
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        res: dict = ModelBatchDeploymentSettingsSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = ModelBatchDeploymentSettingsSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res

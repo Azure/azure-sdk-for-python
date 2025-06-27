@@ -19,15 +19,13 @@ from ..._schema.job.distribution import (
     MPIDistributionSchema,
     PyTorchDistributionSchema,
     RayDistributionSchema,
-    TensorFlowDistributionSchema,
-)
+    TensorFlowDistributionSchema)
 from .distribution import (
     DistributionConfiguration,
     MpiDistribution,
     PyTorchDistribution,
     RayDistribution,
-    TensorFlowDistribution,
-)
+    TensorFlowDistribution)
 from .job_resource_configuration import JobResourceConfiguration
 from .queue_settings import QueueSettings
 
@@ -84,8 +82,7 @@ class ParameterizedCommand:
         ] = None,
         environment: Optional[Union[Environment, str]] = None,
         queue_settings: Optional[QueueSettings] = None,
-        **kwargs: Dict,
-    ) -> None:
+        **kwargs: Dict) -> None:
         super().__init__(**kwargs)
         self.command = command
         self.code = code
@@ -97,8 +94,7 @@ class ParameterizedCommand:
 
     @property
     def distribution(
-        self,
-    ) -> Optional[
+        self) -> Optional[
         Union[
             dict,
             MpiDistribution,
@@ -127,10 +123,10 @@ class ParameterizedCommand:
         if isinstance(value, dict):
             dist_schema = UnionField(
                 [
-                    NestedField(PyTorchDistributionSchema, unknown=INCLUDE),
-                    NestedField(TensorFlowDistributionSchema, unknown=INCLUDE),
-                    NestedField(MPIDistributionSchema, unknown=INCLUDE),
-                    ExperimentalField(NestedField(RayDistributionSchema, unknown=INCLUDE)),
+                    NestedField(PyTorchDistributionSchema),
+                    NestedField(TensorFlowDistributionSchema),
+                    NestedField(MPIDistributionSchema),
+                    ExperimentalField(NestedField(RayDistributionSchema)),
                 ]
             )
             value = dist_schema._deserialize(value=value, attr=None, data=None)
@@ -165,6 +161,5 @@ class ParameterizedCommand:
             environment=sweep_job.trial.environment_id,
             distribution=DistributionConfiguration._from_rest_object(sweep_job.trial.distribution),
             resources=JobResourceConfiguration._from_rest_object(sweep_job.trial.resources),
-            queue_settings=QueueSettings._from_rest_object(sweep_job.queue_settings),
-        )
+            queue_settings=QueueSettings._from_rest_object(sweep_job.queue_settings))
         return parameterized_command

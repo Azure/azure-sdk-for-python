@@ -163,8 +163,7 @@ class Distributed(Command):
 
     @property
     def distribution(
-        self,
-    ) -> Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]:
+        self) -> Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]:
         """The distribution config of component, e.g. distribution={'type': 'mpi'}.
 
         :return: The distribution config
@@ -175,10 +174,9 @@ class Distributed(Command):
     @distribution.setter
     def distribution(
         self,
-        value: Union[Dict, PyTorchDistribution, TensorFlowDistribution, MpiDistribution, RayDistribution],
-    ):
+        value: Union[Dict, PyTorchDistribution, TensorFlowDistribution, MpiDistribution, RayDistribution]):
         if isinstance(value, dict):
-            dist_schema = DistributionField(unknown=INCLUDE)
+            dist_schema = DistributionField()
             value = dist_schema._deserialize(value=value, attr=None, data=None)
         self._distribution = value
 

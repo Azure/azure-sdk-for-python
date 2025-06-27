@@ -150,7 +150,7 @@ class Data(Artifact):
         return Data(**load_from_dict(DataSchema, yaml_data, context, **kwargs))
 
     def _to_dict(self) -> Dict:
-        res: dict = DataSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = DataSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res
 
     def _to_container_rest_object(self) -> DataContainer:

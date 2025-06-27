@@ -235,7 +235,7 @@ class BatchDeployment(Deployment):
         return self._provisioning_state
 
     def _to_dict(self) -> Dict:
-        res: dict = BatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = BatchDeploymentSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res
 
     @classmethod

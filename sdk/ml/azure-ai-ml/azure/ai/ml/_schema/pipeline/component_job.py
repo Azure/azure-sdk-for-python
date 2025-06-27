@@ -19,8 +19,7 @@ from ..._schema.component import (
     DataTransferCopyComponentFileRefField,
     ImportComponentFileRefField,
     ParallelComponentFileRefField,
-    SparkComponentFileRefField,
-)
+    SparkComponentFileRefField)
 from ..._utils.utils import is_data_binding_expression
 from ...constants._common import AzureMLResourceType
 from ...constants._component import DataTransferTaskType, NodeType
@@ -38,8 +37,7 @@ from ..core.fields import (
     RegistryStr,
     StringTransformedEnum,
     TypeSensitiveUnionField,
-    UnionField,
-)
+    UnionField)
 from ..core.schema import PathAwareSchema
 from ..job import ParameterizedCommandSchema, ParameterizedParallelSchema, ParameterizedSparkSchema
 from ..job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
@@ -52,8 +50,7 @@ from ..job.services import (
     JupyterLabJobServiceSchema,
     SshJobServiceSchema,
     TensorBoardJobServiceSchema,
-    VsCodeJobServiceSchema,
-)
+    VsCodeJobServiceSchema)
 from ..pipeline.pipeline_job_io import OutputBindingStr
 from ..spark_resource_configuration import SparkResourceConfigurationForNodeSchema
 
@@ -69,8 +66,7 @@ class BaseNodeSchema(PathAwareSchema):
     inputs = InputsField(support_databinding=True)
     outputs = fields.Dict(
         keys=fields.Str(),
-        values=UnionField([OutputBindingStr, NestedField(OutputSchema)], allow_none=True),
-    )
+        values=UnionField([OutputBindingStr, NestedField(OutputSchema)], allow_none=True))
     properties = fields.Dict(keys=fields.Str(), values=fields.Str(allow_none=True))
     comment = fields.Str()
 
@@ -143,7 +139,7 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
         {
             NodeType.COMMAND: [
                 # inline component or component file reference starting with FILE prefix
-                NestedField(AnonymousCommandComponentSchema, unknown=INCLUDE),
+                NestedField(AnonymousCommandComponentSchema),
                 # component file reference
                 ComponentFileRefField(),
             ],
@@ -154,8 +150,7 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
         ],
-        required=True,
-    )
+        required=True)
     # code is directly linked to component.code, so no need to validate or dump it
     code = fields.Str(allow_none=True, load_only=True)
     type = StringTransformedEnum(allowed_values=[NodeType.COMMAND])
@@ -168,8 +163,7 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
             "description": "The command run and the parameters passed. \
             This string may contain place holders of inputs in {}. "
         },
-        load_only=True,
-    )
+        load_only=True)
     environment = EnvironmentField()
     services = fields.Dict(
         keys=fields.Str(),
@@ -183,9 +177,7 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
                 # To support types not set by users like Custom, Tracking, Studio.
                 NestedField(JobServiceSchema),
             ],
-            is_strict=True,
-        ),
-    )
+            is_strict=True))
     identity = UnionField(
         [
             NestedField(ManagedIdentitySchema),
@@ -224,7 +216,7 @@ class SweepSchema(BaseNodeSchema, ParameterizedSweepSchema):
         {
             NodeType.SWEEP: [
                 # inline component or component file reference starting with FILE prefix
-                NestedField(AnonymousCommandComponentSchema, unknown=INCLUDE),
+                NestedField(AnonymousCommandComponentSchema),
                 # component file reference
                 ComponentFileRefField(),
             ],
@@ -233,8 +225,7 @@ class SweepSchema(BaseNodeSchema, ParameterizedSweepSchema):
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
         ],
-        required=True,
-    )
+        required=True)
 
     @post_load
     def make(self, data, **kwargs) -> "Sweep":
@@ -260,12 +251,12 @@ class ParallelSchema(BaseNodeSchema, ParameterizedParallelSchema):
         {
             NodeType.PARALLEL: [
                 # inline component or component file reference starting with FILE prefix
-                NestedField(AnonymousParallelComponentSchema, unknown=INCLUDE),
+                NestedField(AnonymousParallelComponentSchema),
                 # component file reference
                 ParallelComponentFileRefField(),
             ],
             NodeType.FLOW_PARALLEL: [
-                NestedField(FlowComponentSchema, unknown=INCLUDE, dump_only=True),
+                NestedField(FlowComponentSchema, dump_only=True),
                 ComponentYamlRefField(),
             ],
         },
@@ -275,8 +266,7 @@ class ParallelSchema(BaseNodeSchema, ParameterizedParallelSchema):
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
         ],
-        required=True,
-    )
+        required=True)
     identity = UnionField(
         [
             NestedField(ManagedIdentitySchema),
@@ -310,7 +300,7 @@ class ImportSchema(BaseNodeSchema):
         {
             NodeType.IMPORT: [
                 # inline component or component file reference starting with FILE prefix
-                NestedField(AnonymousImportComponentSchema, unknown=INCLUDE),
+                NestedField(AnonymousImportComponentSchema),
                 # component file reference
                 ImportComponentFileRefField(),
             ],
@@ -321,8 +311,7 @@ class ImportSchema(BaseNodeSchema):
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
         ],
-        required=True,
-    )
+        required=True)
     type = StringTransformedEnum(allowed_values=[NodeType.IMPORT])
 
     @post_load
@@ -350,7 +339,7 @@ class SparkSchema(BaseNodeSchema, ParameterizedSparkSchema):
         {
             NodeType.SPARK: [
                 # inline component or component file reference starting with FILE prefix
-                NestedField(AnonymousSparkComponentSchema, unknown=INCLUDE),
+                NestedField(AnonymousSparkComponentSchema),
                 # component file reference
                 SparkComponentFileRefField(),
             ],
@@ -361,15 +350,13 @@ class SparkSchema(BaseNodeSchema, ParameterizedSparkSchema):
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
         ],
-        required=True,
-    )
+        required=True)
     type = StringTransformedEnum(allowed_values=[NodeType.SPARK])
     compute = ComputeField()
     resources = NestedField(SparkResourceConfigurationForNodeSchema)
     entry = UnionField(
         [NestedField(SparkEntryFileSchema), NestedField(SparkEntryClassSchema)],
-        metadata={"description": "Entry."},
-    )
+        metadata={"description": "Entry."})
     py_files = fields.List(fields.Str())
     jars = fields.List(fields.Str())
     files = fields.List(fields.Str())
@@ -415,7 +402,7 @@ class DataTransferCopySchema(BaseNodeSchema):
         {
             NodeType.DATA_TRANSFER: [
                 # inline component or component file reference starting with FILE prefix
-                NestedField(AnonymousDataTransferCopyComponentSchema, unknown=INCLUDE),
+                NestedField(AnonymousDataTransferCopyComponentSchema),
                 # component file reference
                 DataTransferCopyComponentFileRefField(),
             ],
@@ -426,8 +413,7 @@ class DataTransferCopySchema(BaseNodeSchema):
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
         ],
-        required=True,
-    )
+        required=True)
     task = StringTransformedEnum(allowed_values=[DataTransferTaskType.COPY_DATA], required=True)
     type = StringTransformedEnum(allowed_values=[NodeType.DATA_TRANSFER], required=True)
     compute = ComputeField()
@@ -461,8 +447,7 @@ class DataTransferImportSchema(BaseNodeSchema):
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
         ],
-        required=True,
-    )
+        required=True)
     task = StringTransformedEnum(allowed_values=[DataTransferTaskType.IMPORT_DATA], required=True)
     type = StringTransformedEnum(allowed_values=[NodeType.DATA_TRANSFER], required=True)
     compute = ComputeField()
@@ -512,8 +497,7 @@ class DataTransferExportSchema(BaseNodeSchema):
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
         ],
-        required=True,
-    )
+        required=True)
     task = StringTransformedEnum(allowed_values=[DataTransferTaskType.EXPORT_DATA])
     type = StringTransformedEnum(allowed_values=[NodeType.DATA_TRANSFER])
     compute = ComputeField()

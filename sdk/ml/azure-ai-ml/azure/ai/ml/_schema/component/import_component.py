@@ -23,8 +23,7 @@ class ImportComponentSchema(ComponentSchema):
     source = fields.Dict(
         keys=fields.Str(validate=validate.OneOf(["type", "connection", "query", "path"])),
         values=NestedField(ParameterSchema),
-        required=True,
-    )
+        required=True)
 
     output = NestedField(OutputPortSchema, required=True)
 
@@ -52,8 +51,7 @@ class AnonymousImportComponentSchema(AnonymousAssetSchema, ImportComponentSchema
         return ImportComponent(
             base_path=self.context[BASE_PATH_CONTEXT_KEY],
             _source=ComponentSource.YAML_JOB,
-            **data,
-        )
+            **data)
 
 
 class ImportComponentFileRefField(FileRefField):
@@ -66,9 +64,9 @@ class ImportComponentFileRefField(FileRefField):
         # Update base_path to parent path of component file.
         component_schema_context = deepcopy(self.context)
         component_schema_context[BASE_PATH_CONTEXT_KEY] = source_path.parent
-        component = AnonymousImportComponentSchema(context=component_schema_context).load(
-            component_dict, unknown=INCLUDE
-        )
+        component = AnonymousImportComponentSchema().load(
+            component_dict
+        , context=component_schema_context)
         component._source_path = source_path
         component._source = ComponentSource.YAML_COMPONENT
         return component

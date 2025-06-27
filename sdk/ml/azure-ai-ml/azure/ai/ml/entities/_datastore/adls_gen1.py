@@ -102,5 +102,5 @@ class AzureDataLakeGen1Datastore(Datastore):
 
     def _to_dict(self) -> Dict:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
-        res: dict = AzureDataLakeGen1Schema(context=context).dump(self)
+        res: dict = AzureDataLakeGen1Schema().dump(self, context=context)
         return res

@@ -123,7 +123,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         return res
 
     def _to_dict(self) -> Dict:
-        return dict(ModelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))
+        return dict(ModelSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"}))
 
     @classmethod
     def _from_rest_object(cls, model_rest_object: ModelVersion) -> "Model":

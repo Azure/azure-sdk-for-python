@@ -120,7 +120,7 @@ class Index(Artifact):
         return cast(Index, load_from_dict(IndexAssetSchema, data, context, **kwargs))
 
     def _to_dict(self) -> Dict:
-        return cast(dict, IndexAssetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))
+        return cast(dict, IndexAssetSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"}))
 
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
         """Updates an an artifact with the remote path of a local upload.

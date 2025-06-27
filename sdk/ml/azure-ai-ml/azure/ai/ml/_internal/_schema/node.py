@@ -22,13 +22,11 @@ class InternalBaseNodeSchema(BaseNodeSchema):
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
             # inline component or component file reference starting with FILE prefix
-            NestedField(InternalComponentSchema, unknown=INCLUDE),
+            NestedField(InternalComponentSchema),
         ],
-        required=True,
-    )
+        required=True)
     type = DumpableEnumField(
-        allowed_values=NodeType.all_values(),
-    )
+        allowed_values=NodeType.all_values())
 
     @post_load
     def make(self, data, **kwargs):  # pylint: disable=unused-argument
@@ -70,6 +68,5 @@ class HDInsightSchema(InternalBaseNodeSchema):
     number_executors = fields.Int()
     conf = UnionField(
         # dictionary or json string
-        union_fields=[fields.Dict(keys=fields.Str()), fields.Str()],
-    )
+        union_fields=[fields.Dict(keys=fields.Str()), fields.Str()])
     hdinsight_spark_job_name = fields.Str()

@@ -85,7 +85,7 @@ class Code(Artifact):
         return res
 
     def _to_dict(self) -> Dict:
-        res: dict = CodeAssetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = CodeAssetSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res
 
     @classmethod

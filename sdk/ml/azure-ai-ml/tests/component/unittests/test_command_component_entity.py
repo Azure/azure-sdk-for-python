@@ -12,8 +12,7 @@ import pytest
 from test_utilities.utils import (
     build_temp_folder,
     mock_artifact_download_to_temp_directory,
-    verify_entity_load_and_dump,
-)
+    verify_entity_load_and_dump)
 
 from azure.ai.ml import Input, MpiDistribution, Output, TensorFlowDistribution, command, load_component
 from azure.ai.ml._utils.utils import load_yaml
@@ -54,8 +53,7 @@ class TestCommandComponentEntity:
         command_component = verify_entity_load_and_dump(load_component, simple_component_validation, component_yaml)[0]
         component_yaml = "./tests/test_configs/components/basic_component_code_arm_id.yml"
         command_component = load_component(
-            source=component_yaml,
-        )
+            source=component_yaml)
         expected_code = (
             "/subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/"
             "test-rg-centraluseuap-v2-2021W10/providers/Microsoft.MachineLearningServices/"
@@ -91,8 +89,7 @@ class TestCommandComponentEntity:
             outputs={"component_out_path": {"type": "uri_folder"}},
             command="echo Hello World",
             code=code,
-            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
-        )
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33")
         component_dict = component._to_rest_object().as_dict()
         omits = [
             "properties.component_spec.$schema",
@@ -123,8 +120,7 @@ class TestCommandComponentEntity:
                     str(samples_dir / "additional_includes/assets/LICENSE"),
                     str(samples_dir / "additional_includes/library.zip"),
                     str(samples_dir / "additional_includes/library1"),
-                ],
-            )
+                ])
             component.additional_includes.append(
                 {
                     "type": "artifact",
@@ -173,8 +169,7 @@ class TestCommandComponentEntity:
             # TODO: reorganize code to minimize the code context
             code=".",
             command="""echo Hello World""",
-            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
-        )
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33")
         component_dict = component._to_rest_object().as_dict()
         inputs = component_dict["properties"]["component_spec"]["inputs"]
         outputs = component_dict["properties"]["component_spec"]["outputs"]
@@ -210,10 +205,8 @@ class TestCommandComponentEntity:
                 parameter_server_count=1,
                 worker_count=2,
                 # No affect because TensorFlow object does not allow extra fields
-                added_property=7,
-            ),
-            instance_count=2,
-        )
+                added_property=7),
+            instance_count=2)
         component_dict = component._to_rest_object().as_dict()
 
         yaml_path = "./tests/test_configs/components/helloworld_component_tensorflow.yml"
@@ -226,16 +219,14 @@ class TestCommandComponentEntity:
             "properties.component_spec.distribution.added_property",
             "properties.component_spec.resources.properties",
             "properties.component_spec._source",
-            "properties.properties.client_component_hash",
-        )
+            "properties.properties.client_component_hash")
         yaml_component_dict = pydash.omit(
             yaml_component_dict,
             "properties.component_spec.$schema",
             "properties.component_spec.distribution.added_property",
             "properties.component_spec.resources.properties",
             "properties.component_spec._source",
-            "properties.properties.client_component_hash",
-        )
+            "properties.properties.client_component_hash")
         assert component_dict == yaml_component_dict
 
     def test_command_component_code(self):
@@ -248,8 +239,7 @@ class TestCommandComponentEntity:
             outputs={"component_out_path": {"type": "path"}},
             command="echo Hello World",
             environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
-            code="./helloworld_components_with_env",
-        )
+            code="./helloworld_components_with_env")
 
         yaml_path = "./tests/test_configs/components/basic_component_code_local_path.yml"
         yaml_component = load_component(source=yaml_path)
@@ -282,8 +272,7 @@ class TestCommandComponentEntity:
 
     @pytest.mark.skipif(
         sys.version_info[1] == 11,
-        reason=f"This test is not compatible with Python 3.11, skip in CI.",
-    )
+        reason=f"This test is not compatible with Python 3.11, skip in CI.")
     def test_command_component_version_as_a_function(self):
         expected_rest_component = {
             "componentId": "fake_component",
@@ -350,8 +339,7 @@ class TestCommandComponentEntity:
                 "extracted_data": {"type": "path"}
             },
             # we're using a curated environment
-            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
-        )
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33")
         basic_component = load_component(source="./tests/test_configs/components/basic_component_code_local_path.yml")
         sweep_component = load_component(source="./tests/test_configs/components/helloworld_component_for_sweep.yml")
 
@@ -400,8 +388,7 @@ class TestCommandComponentEntity:
                 "uri_folder": Input(type="uri_folder", path="https://my-blob/path/to/data", mode="ro_mount"),
                 "uri_file": dict(type="uri_file", path="https://my-blob/path/to/data", mode="download"),
             },
-            outputs={"my_model": Output(type="mlflow_model", mode="rw_mount")},
-        )
+            outputs={"my_model": Output(type="mlflow_model", mode="rw_mount")})
 
         with patch("sys.stdout", new=StringIO()) as std_out:
             print(test_command)
@@ -425,8 +412,7 @@ class TestCommandComponentEntity:
         sweep_job1: Sweep = cmd_node1.sweep(
             primary_metric="AUC",  # primary_metric,
             goal="maximize",
-            sampling_algorithm="random",
-        )
+            sampling_algorithm="random")
         sweep_job1.set_limits(max_total_trials=10)  # max_total_trials
         with patch("sys.stdout", new=StringIO()) as std_out:
             print(sweep_job1)
@@ -446,8 +432,7 @@ class TestCommandComponentEntity:
         sweep_job1: Sweep = cmd_node1.sweep(
             primary_metric="AUC",  # primary_metric,
             goal="maximize",
-            sampling_algorithm="random",
-        )
+            sampling_algorithm="random")
         sweep_job1.early_termination = {
             "type": "bandit",
             "evaluation_interval": 100,
@@ -473,8 +458,7 @@ class TestCommandComponentEntity:
             yaml_path,
             params_override=[
                 {"inputs": {"component_in_number": {"description": "1", "type": "number"}}},
-            ],
-        )
+            ])
         validation_result = component._validate()
         assert validation_result.passed
 
@@ -538,8 +522,7 @@ class TestCommandComponentEntity:
             },
             command="echo Hello World",
             environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
-            code="./helloworld_components_with_env",
-        )
+            code="./helloworld_components_with_env")
         actual_component_dict2 = pydash.omit(
             component2._to_rest_object().as_dict()["properties"]["component_spec"], *omits
         )
@@ -570,8 +553,7 @@ class TestCommandComponentEntity:
         with build_temp_folder(
             source_base_dir="./tests/test_configs/components",
             relative_files_to_copy=["helloworld_component.yml"],
-            extra_files_to_create={"__pycache__/a.pyc": None},
-        ) as temp_dir:
+            extra_files_to_create={"__pycache__/a.pyc": None}) as temp_dir:
             # resolve and test for ignore_file's is_file_excluded
             component.code = temp_dir
             with component._build_code() as code:
@@ -605,8 +587,7 @@ class TestCommandComponentEntity:
         component_yaml = "./tests/test_configs/components/component_ipp.yml"
 
         command_component = load_component(
-            source=component_yaml,
-        )
+            source=component_yaml)
 
         expected_output_dict = {
             "model_output_not_ipp": {
@@ -679,101 +660,83 @@ class TestCommandComponentEntity:
                     (
                         "component_with_additional_includes/.amlignore",
                         "test_ignore/*\nlibrary1/ignore.py",
-                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
-                    ),
+                        AdditionalIncludesCheckFunc.SELF_IS_FILE),
                     (
                         "component_with_additional_includes/test_ignore/a.py",
                         None,
-                        AdditionalIncludesCheckFunc.NO_PARENT,
-                    ),
+                        AdditionalIncludesCheckFunc.NO_PARENT),
                     # will be saved to library1/ignore.py, should be ignored
                     ("additional_includes/library1/ignore.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
                     # will be saved to library1/test_ignore, should be kept
                     ("additional_includes/library1/test_ignore/a.py", None, AdditionalIncludesCheckFunc.SELF_IS_FILE),
                 ],
-                id="amlignore",
-            ),
+                id="amlignore"),
             pytest.param(
                 [
                     ("component_with_additional_includes/hello.py", None, AdditionalIncludesCheckFunc.SELF_IS_FILE),
                     (
                         "component_with_additional_includes/test_code/.amlignore",
                         "hello.py",
-                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
-                    ),
+                        AdditionalIncludesCheckFunc.SELF_IS_FILE),
                     (
                         "component_with_additional_includes/test_code/hello.py",
                         None,
-                        AdditionalIncludesCheckFunc.NOT_EXISTS,
-                    ),
+                        AdditionalIncludesCheckFunc.NOT_EXISTS),
                     # shall we keep the empty folder?
                     (
                         "component_with_additional_includes/test_code/a/hello.py",
                         None,
-                        AdditionalIncludesCheckFunc.NO_PARENT,
-                    ),
+                        AdditionalIncludesCheckFunc.NO_PARENT),
                 ],
-                id="amlignore_subfolder",
-            ),
+                id="amlignore_subfolder"),
             pytest.param(
                 [
                     (
                         "additional_includes/library1/.amlignore",
                         "test_ignore\nignore.py",
-                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
-                    ),
+                        AdditionalIncludesCheckFunc.SELF_IS_FILE),
                     # will be saved to library1/ignore.py, should be ignored
                     ("additional_includes/library1/ignore.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
                     # will be saved to library1/test_ignore, should be kept
                     ("additional_includes/library1/test_ignore/a.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
                 ],
-                id="amlignore_in_additional_includes_folder",
-            ),
+                id="amlignore_in_additional_includes_folder"),
             pytest.param(
                 [
                     (
                         "additional_includes/library1/test_ignore/.amlignore",
                         "ignore.py",
-                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
-                    ),
+                        AdditionalIncludesCheckFunc.SELF_IS_FILE),
                     # will be saved to library1/ignore.py, should be ignored
                     (
                         "additional_includes/library1/test_ignore/ignore.py",
                         None,
-                        AdditionalIncludesCheckFunc.NOT_EXISTS,
-                    ),
+                        AdditionalIncludesCheckFunc.NOT_EXISTS),
                 ],
-                id="amlignore_in_additional_includes_subfolder",
-            ),
+                id="amlignore_in_additional_includes_subfolder"),
             pytest.param(
                 [
                     (
                         "component_with_additional_includes/__pycache__/a.pyc",
                         None,
-                        AdditionalIncludesCheckFunc.NO_PARENT,
-                    ),
+                        AdditionalIncludesCheckFunc.NO_PARENT),
                     (
                         "component_with_additional_includes/test/__pycache__/a.pyc",
                         None,
-                        AdditionalIncludesCheckFunc.NO_PARENT,
-                    ),
+                        AdditionalIncludesCheckFunc.NO_PARENT),
                     ("additional_includes/library1/__pycache__/a.pyc", None, AdditionalIncludesCheckFunc.NO_PARENT),
                     (
                         "additional_includes/library1/test/__pycache__/a.pyc",
                         None,
-                        AdditionalIncludesCheckFunc.NO_PARENT,
-                    ),
+                        AdditionalIncludesCheckFunc.NO_PARENT),
                 ],
-                id="pycache",
-            ),
-        ],
-    )
+                id="pycache"),
+        ])
     def test_additional_includes_with_ignore_file(self, test_files) -> None:
         with build_temp_folder(
             source_base_dir="./tests/test_configs/components/",
             relative_dirs_to_copy=["component_with_additional_includes", "additional_includes"],
-            extra_files_to_create={file: content for file, content, _ in test_files},
-        ) as test_configs_dir:
+            extra_files_to_create={file: content for file, content, _ in test_files}) as test_configs_dir:
             yaml_path = (
                 Path(test_configs_dir)
                 / "component_with_additional_includes"
@@ -825,8 +788,7 @@ class TestCommandComponentEntity:
         [
             # ("code_only/component_spec.yml", False),
             ("code_and_additional_includes/component_spec.yml", True),
-        ],
-    )
+        ])
     def test_additional_includes_with_code_specified(self, yaml_path: str, has_additional_includes: bool) -> None:
         yaml_path = os.path.join("./tests/test_configs/components/component_with_additional_includes/", yaml_path)
         component = load_component(source=yaml_path)
@@ -883,8 +845,7 @@ class TestCommandComponentEntity:
                 RuntimeError,
                 match="There are conflict files in additional include"
                 ".*test_additional_include:version_1 in component-sdk-test-feed"
-                ".*test_additional_include:version_3 in component-sdk-test-feed",
-            ):
+                ".*test_additional_include:version_3 in component-sdk-test-feed"):
                 with component._build_code():
                     pass
 
@@ -894,20 +855,16 @@ class TestCommandComponentEntity:
             pytest.param(
                 "helloworld_invalid_additional_includes_root_directory.yml",
                 "Root directory is not supported for additional includes",
-                id="root_as_additional_includes",
-            ),
+                id="root_as_additional_includes"),
             pytest.param(
                 "helloworld_invalid_additional_includes_existing_file.yml",
                 "A file already exists for additional include",
-                id="file_already_exists",
-            ),
+                id="file_already_exists"),
             pytest.param(
                 "helloworld_invalid_additional_includes_zip_file_not_found.yml",
                 "Unable to find additional include ../additional_includes/assets/LICENSE.zip",
-                id="zip_file_not_found",
-            ),
-        ],
-    )
+                id="zip_file_not_found"),
+        ])
     def test_invalid_additional_includes(self, yaml_path: str, expected_error_msg_prefix: str) -> None:
         component = load_component(
             os.path.join("./tests/test_configs/components/component_with_additional_includes", yaml_path)
