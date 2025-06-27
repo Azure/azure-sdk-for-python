@@ -56,7 +56,7 @@ class TestAzureOpenAIScoreModelGrader:
         grader = AzureOpenAIScoreModelGrader(model_config=mock_aoai_model_config, **basic_score_grader_config)
 
         assert grader is not None
-        assert grader.id == "aoai://score_model"
+        assert grader.id == "azureai://built-in/evaluators/azure-openai/scorer_grader"
         assert grader._model_config == mock_aoai_model_config
         assert grader._grader_config.name == "Test Score Grader"
         assert grader._grader_config.model == "gpt-4o-mini"
