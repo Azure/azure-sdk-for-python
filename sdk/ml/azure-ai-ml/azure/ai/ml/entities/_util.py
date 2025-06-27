@@ -189,6 +189,8 @@ def load_from_dict(schema: Any, data: Dict, context: Dict, additional_message: s
     :rtype: Any
     """
     try:
+        # In marshmallow 4.x, only pass context to schema constructor,
+        # other parameters should be passed to load() method
         return schema(context=context).load(data, **kwargs)
     except ValidationError as e:
         pretty_error = json.dumps(e.normalized_messages(), indent=2)
