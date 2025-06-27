@@ -219,7 +219,7 @@ def _get_target_and_path_for_http_dependency_with_gen_ai(
     target, path = _get_target_and_path_for_http_dependency(attributes, url)
 
     # If no fields are available to set target using standard rules, set Dependency Target to gen_ai.system if present
-    if not target and attributes:
+    if not target and attributes and gen_ai_attributes.GEN_AI_SYSTEM in attributes:
         gen_ai_system = attributes[gen_ai_attributes.GEN_AI_SYSTEM]
         if gen_ai_system:
             target = gen_ai_system
