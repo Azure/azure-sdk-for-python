@@ -254,7 +254,7 @@ class AccountCapabilityHostsOperations:
         resource_group_name: str,
         account_name: str,
         capability_host_name: str,
-        body: Union[_models.CapabilityHost, IO[bytes]],
+        capability_host: Union[_models.CapabilityHost, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -275,10 +275,10 @@ class AccountCapabilityHostsOperations:
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(capability_host, (IOBase, bytes)):
+            _content = capability_host
         else:
-            _json = self._serialize.body(body, "CapabilityHost")
+            _json = self._serialize.body(capability_host, "CapabilityHost")
 
         _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -333,7 +333,7 @@ class AccountCapabilityHostsOperations:
         resource_group_name: str,
         account_name: str,
         capability_host_name: str,
-        body: _models.CapabilityHost,
+        capability_host: _models.CapabilityHost,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -350,8 +350,8 @@ class AccountCapabilityHostsOperations:
         :param capability_host_name: The name of the capability host associated with the Cognitive
          Services Resource. Required.
         :type capability_host_name: str
-        :param body: CapabilityHost definition. Required.
-        :type body: ~azure.mgmt.cognitiveservices.models.CapabilityHost
+        :param capability_host: CapabilityHost definition. Required.
+        :type capability_host: ~azure.mgmt.cognitiveservices.models.CapabilityHost
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -367,7 +367,7 @@ class AccountCapabilityHostsOperations:
         resource_group_name: str,
         account_name: str,
         capability_host_name: str,
-        body: IO[bytes],
+        capability_host: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -384,8 +384,8 @@ class AccountCapabilityHostsOperations:
         :param capability_host_name: The name of the capability host associated with the Cognitive
          Services Resource. Required.
         :type capability_host_name: str
-        :param body: CapabilityHost definition. Required.
-        :type body: IO[bytes]
+        :param capability_host: CapabilityHost definition. Required.
+        :type capability_host: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -401,7 +401,7 @@ class AccountCapabilityHostsOperations:
         resource_group_name: str,
         account_name: str,
         capability_host_name: str,
-        body: Union[_models.CapabilityHost, IO[bytes]],
+        capability_host: Union[_models.CapabilityHost, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CapabilityHost]:
         """Create or update account capabilityHost.
@@ -416,9 +416,9 @@ class AccountCapabilityHostsOperations:
         :param capability_host_name: The name of the capability host associated with the Cognitive
          Services Resource. Required.
         :type capability_host_name: str
-        :param body: CapabilityHost definition. Is either a CapabilityHost type or a IO[bytes] type.
-         Required.
-        :type body: ~azure.mgmt.cognitiveservices.models.CapabilityHost or IO[bytes]
+        :param capability_host: CapabilityHost definition. Is either a CapabilityHost type or a
+         IO[bytes] type. Required.
+        :type capability_host: ~azure.mgmt.cognitiveservices.models.CapabilityHost or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either CapabilityHost or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cognitiveservices.models.CapabilityHost]
@@ -438,7 +438,7 @@ class AccountCapabilityHostsOperations:
                 resource_group_name=resource_group_name,
                 account_name=account_name,
                 capability_host_name=capability_host_name,
-                body=body,
+                capability_host=capability_host,
                 api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
