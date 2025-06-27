@@ -22,6 +22,7 @@
 		"Likert"
     ],
     "ignorePaths": [
+        "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_common/onedp/models/_enums.py",
         "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_evaluators/_retrieval/retrieval.prompty",
 		"sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_evaluators/_intent_resolution/intent_resolution.prompty",
         "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/simulator/_data_sources/grounding.json",

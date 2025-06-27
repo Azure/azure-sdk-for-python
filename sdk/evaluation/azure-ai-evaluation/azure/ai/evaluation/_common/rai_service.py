@@ -259,7 +259,7 @@ async def submit_request(
 
 
 async def submit_request_onedp(
-    client: AIProjectClient, data: dict, metric: str, token: str, annotation_task: str, evaluator_name: str
+    client: AIProjectClient, data: dict, metric: str, token: str, annotation_task: str, evaluator_name: str, scan_session_id: Optional[str] = None
 ) -> str:
     """Submit request to Responsible AI service for evaluation and return operation ID
 
@@ -275,12 +275,16 @@ async def submit_request_onedp(
     :type annotation_task: str
     :param evaluator_name: The evaluator name.
     :type evaluator_name: str
+    :param scan_session_id: The scan session ID to use for the evaluation.
+    :type scan_session_id: Optional[str]
     :return: The operation ID.
     :rtype: str
     """
     normalized_user_text = get_formatted_template(data, annotation_task)
     payload = generate_payload(normalized_user_text, metric, annotation_task=annotation_task)
     headers = get_common_headers(token, evaluator_name)
+    if scan_session_id:
+        headers["client_request_id"] = scan_session_id
     response = client.evaluations.submit_annotation(payload, headers=headers)
     result = json.loads(response)
     operation_id = result["location"].split("/")[-1]
@@ -631,6 +635,7 @@ async def evaluate_with_rai_service(
     annotation_task: str = Tasks.CONTENT_HARM,
     metric_display_name=None,
     evaluator_name=None,
+    scan_session_id: Optional[str]=None
 ) -> Dict[str, Union[str, float]]:
     """Evaluate the content safety of the response using Responsible AI service
 
@@ -649,6 +654,8 @@ async def evaluate_with_rai_service(
     :type metric_display_name: str
     :param evaluator_name: The evaluator name to use.
     :type evaluator_name: str
+    :param scan_session_id: The scan session ID to use for the evaluation.
+    :type scan_session_id: Optional[str]
     :return: The parsed annotation result.
     :rtype: Dict[str, Union[str, float]]
     """
@@ -661,7 +668,7 @@ async def evaluate_with_rai_service(
         )
         token = await fetch_or_reuse_token(credential=credential, workspace=COG_SRV_WORKSPACE)
         await ensure_service_availability_onedp(client, token, annotation_task)
-        operation_id = await submit_request_onedp(client, data, metric_name, token, annotation_task, evaluator_name)
+        operation_id = await submit_request_onedp(client, data, metric_name, token, annotation_task, evaluator_name, scan_session_id)
         annotation_response = cast(List[Dict], await fetch_result_onedp(client, operation_id, token))
         result = parse_response(annotation_response, metric_name, metric_display_name)
         return result

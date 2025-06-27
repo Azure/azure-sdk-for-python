@@ -582,18 +582,18 @@ class RAISvcOperations:
     def get_attack_objectives(
         self,
         *,
+        risk_category: str,
         risk_types: Optional[List[str]] = None,
-        risk_categories: Optional[List[str]] = None,
         lang: Optional[str] = None,
         strategy: Optional[str] = None,
         **kwargs: Any
     ) -> List[_models.AttackObjective]:
         """Get the attack objectives.
 
+        :keyword risk_category: Risk category for the attack objectives. Required.
+        :paramtype risk_category: str
         :keyword risk_types: Risk types for the attack objectives dataset. Default value is None.
         :paramtype risk_types: list[str]
-        :keyword risk_categories: Risk categories for the attack objectives dataset. Default value is None.
-        :paramtype risk_categories: list[str]
         :keyword lang: The language for the attack objectives dataset, defaults to 'en'. Default value
          is None.
         :paramtype lang: str
@@ -615,10 +615,10 @@ class RAISvcOperations:
         _params = kwargs.pop("params", {}) or {}
 
         cls: ClsType[List[_models.AttackObjective]] = kwargs.pop("cls", None)
-
+        
         _request = build_rai_svc_get_attack_objectives_request(
+            risk_categories=[risk_category],
             risk_types=risk_types,
-            risk_categories=risk_categories,
             lang=lang,
             strategy=strategy,
             api_version=self._config.api_version,
