@@ -18,7 +18,7 @@ class TestAgentsAsync(TestBase):
     # cls & pytest tests\test_agents_async.py::TestAgentsAsync::test_agents -s
     @servicePreparer()
     @recorded_by_proxy_async
-    async def test_agents(self, **kwargs):
+    async def test_agents_async(self, **kwargs):
 
         endpoint = kwargs.pop("azure_ai_projects_tests_project_endpoint")
         print("\n=====> Endpoint:", endpoint)

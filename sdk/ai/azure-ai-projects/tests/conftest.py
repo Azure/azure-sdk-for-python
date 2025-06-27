@@ -32,6 +32,7 @@ class SanitizedValues:
     ACCOUNT_NAME = "sanitized-account-name"
     PROJECT_NAME = "sanitized-project-name"
     COMPONENT_NAME = "sanitized-component-name"
+    AGENTS_API_VERSION = "sanitized-api-version"
 
 
 @pytest.fixture(scope="session")
@@ -42,6 +43,7 @@ def sanitized_values():
         "project_name": f"{SanitizedValues.PROJECT_NAME}",
         "account_name": f"{SanitizedValues.ACCOUNT_NAME}",
         "component_name": f"{SanitizedValues.COMPONENT_NAME}",
+        "agents_api_version": f"{SanitizedValues.AGENTS_API_VERSION}",
     }
 
 
@@ -81,6 +83,15 @@ def add_sanitizers(test_proxy, sanitized_values):
 
         add_general_regex_sanitizer(
             regex=r"/components/([-\w\._\(\)]+)", value=sanitized_values["component_name"], group_for_replace="1"
+        )
+
+        # azure-ai-projects package takes dependency on azure-ai-agents package, but does not specify exactly what
+        # version. When you do the local test recordings, you may have one version of azure-ai-agents installed.
+        # When the tests run in CI pipeline, it will use latest stable version, which may or may not match the
+        # local version you installed. We have tests that return an Agents client, then makes a call. So we want to
+        # remove the api-version from the recordings.
+        add_general_regex_sanitizer(
+            regex=r"/assistants.*?api-version=(.*)", value=sanitized_values["agents_api_version"], group_for_replace="1"
         )
 
     sanitize_url_paths()
