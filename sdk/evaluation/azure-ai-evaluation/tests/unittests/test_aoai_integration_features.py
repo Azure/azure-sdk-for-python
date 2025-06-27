@@ -7,7 +7,7 @@ import pytest
 
 from azure.ai.evaluation._evaluate._evaluate_aoai import (
     _split_evaluators_and_grader_configs,
-    _convert_remote_eval_params_to_grader
+    _convert_remote_eval_params_to_grader,
 )
 
 from azure.ai.evaluation import F1ScoreEvaluator
@@ -23,29 +23,34 @@ from azure.ai.evaluation import AzureOpenAIModelConfiguration
 @pytest.fixture
 def mock_aoai_model_config():
     return AzureOpenAIModelConfiguration(
-            azure_deployment="...",
-            azure_endpoint="...",
-            api_key="...",
-            api_version="...",
-        )
+        azure_deployment="...",
+        azure_endpoint="...",
+        api_key="...",
+        api_version="...",
+    )
 
 
 @pytest.fixture
 def mock_grader_config():
     return {}
 
+
 def _get_file(name):
     """Get the file from the unittest data folder."""
     import os, pathlib
+
     data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
     return os.path.join(data_path, name)
+
 
 @pytest.fixture
 def questions_file():
     return _get_file("questions.jsonl")
 
+
 def simple_eval_function():
     return "123"
+
 
 @pytest.mark.unittest
 class TestAoaiIntegrationFeatures:
@@ -63,7 +68,7 @@ class TestAoaiIntegrationFeatures:
         # needs an ID
         init_params["model_config"] = mock_aoai_model_config
         init_params["grader_config"] = mock_grader_config
-        
+
         with pytest.raises(Exception) as excinfo:
             _convert_remote_eval_params_to_grader("invalid id", init_params=init_params)
         assert "not recognized as an AOAI grader ID" in str(excinfo.value)
@@ -120,25 +125,15 @@ class TestAoaiIntegrationFeatures:
         bad_grader_config = {}
 
         # Test with fully valid inputs
-        AzureOpenAIGrader(
-            model_config=mock_aoai_model_config,
-            grader_config=mock_grader_config
-        )
+        AzureOpenAIGrader(model_config=mock_aoai_model_config, grader_config=mock_grader_config)
 
-        # missing api_key in model config should throw an error 
+        # missing api_key in model config should throw an error
         with pytest.raises(Exception) as excinfo:
-            AzureOpenAIGrader(
-                model_config=bad_model_config,
-                grader_config=mock_grader_config
-            )
+            AzureOpenAIGrader(model_config=bad_model_config, grader_config=mock_grader_config)
         assert "Requires an api_key in the supplied model_config." in str(excinfo.value)
 
         # Test that validation bypass works to simplify other tests
-        AzureOpenAIGrader(
-            model_config=bad_model_config,
-            grader_config=bad_grader_config,
-            validate=False
-        )
+        AzureOpenAIGrader(model_config=bad_model_config, grader_config=bad_grader_config, validate=False)
 
         # TODO add checks for bad grader config... maybe.
         # Need to decide if we really want grader validation at base grader level.
@@ -152,11 +147,7 @@ class TestAoaiIntegrationFeatures:
         built_in_eval = F1ScoreEvaluator()
         custom_eval = lambda x: x
         aoai_grader = AzureOpenAIGrader(model_config=mock_aoai_model_config, grader_config=mock_grader_config)
-        evaluators = {
-            "f1_score": built_in_eval,
-            "custom_eval": custom_eval,
-            "aoai_grader": aoai_grader
-        }
+        evaluators = {"f1_score": built_in_eval, "custom_eval": custom_eval, "aoai_grader": aoai_grader}
 
         just_evaluators, aoai_graders = _split_evaluators_and_grader_configs(evaluators)
 

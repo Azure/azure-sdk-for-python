@@ -328,7 +328,7 @@ def find_package_dependency(glob_string, repo_root_dir, dependent_service):
             parsed = ParsedSetup.from_path(pkg_root)
 
             # Get a list of package names from install requires
-            required_pkgs = [parse_require(r).key for r in parsed.requires]
+            required_pkgs = [parse_require(r).name for r in parsed.requires]
             required_pkgs = [p for p in required_pkgs if p.startswith("azure")]
 
             for req_pkg in required_pkgs:

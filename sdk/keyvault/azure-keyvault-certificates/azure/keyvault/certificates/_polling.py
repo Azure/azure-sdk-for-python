@@ -2,15 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import logging
 from typing import Any, Callable, cast, Optional, Union
 
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.polling import PollingMethod
 from azure.keyvault.certificates._models import KeyVaultCertificate, CertificateOperation
-
-logger = logging.getLogger(__name__)
 
 
 class CreateCertificatePoller(PollingMethod):
@@ -32,21 +29,17 @@ class CreateCertificatePoller(PollingMethod):
         self._pending_certificate_op = initial_response
 
     def run(self) -> None:
-        try:
-            while not self.finished():
-                self._update_status()
-                if not self.finished():
-                    # We should always ask the client's transport to sleep, instead of sleeping directly
-                    transport: HttpTransport = cast(HttpTransport, self._pipeline_response.context.transport)
-                    transport.sleep(self._polling_interval)
-            operation = self._pending_certificate_op
-            if operation and operation.status and operation.status.lower() == "completed":
-                self._resource = self._get_certificate_command()
-            else:
-                self._resource = self._pending_certificate_op
-        except Exception as e:
-            logger.warning(str(e))
-            raise
+        while not self.finished():
+            self._update_status()
+            if not self.finished():
+                # We should always ask the client's transport to sleep, instead of sleeping directly
+                transport: HttpTransport = cast(HttpTransport, self._pipeline_response.context.transport)
+                transport.sleep(self._polling_interval)
+        operation = self._pending_certificate_op
+        if operation and operation.status and operation.status.lower() == "completed":
+            self._resource = self._get_certificate_command()
+        else:
+            self._resource = self._pending_certificate_op
 
     def finished(self) -> bool:
         operation = self._pending_certificate_op

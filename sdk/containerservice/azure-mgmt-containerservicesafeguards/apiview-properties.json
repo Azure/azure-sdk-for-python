@@ -1,0 +1,31 @@
+{
+    "CrossLanguagePackageId": "Microsoft.ContainerService",
+    "CrossLanguageDefinitionId": {
+        "azure.mgmt.containerservicesafeguards.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
+        "azure.mgmt.containerservicesafeguards.models.ExtensionResource": "Azure.ResourceManager.CommonTypes.ExtensionResource",
+        "azure.mgmt.containerservicesafeguards.models.DeploymentSafeguard": "Microsoft.ContainerService.DeploymentSafeguard",
+        "azure.mgmt.containerservicesafeguards.models.DeploymentSafeguardsProperties": "Microsoft.ContainerService.DeploymentSafeguardsProperties",
+        "azure.mgmt.containerservicesafeguards.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
+        "azure.mgmt.containerservicesafeguards.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
+        "azure.mgmt.containerservicesafeguards.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
+        "azure.mgmt.containerservicesafeguards.models.Operation": "Azure.ResourceManager.CommonTypes.Operation",
+        "azure.mgmt.containerservicesafeguards.models.OperationDisplay": "Azure.ResourceManager.CommonTypes.OperationDisplay",
+        "azure.mgmt.containerservicesafeguards.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
+        "azure.mgmt.containerservicesafeguards.models.Origin": "Azure.ResourceManager.CommonTypes.Origin",
+        "azure.mgmt.containerservicesafeguards.models.ActionType": "Azure.ResourceManager.CommonTypes.ActionType",
+        "azure.mgmt.containerservicesafeguards.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
+        "azure.mgmt.containerservicesafeguards.models.ProvisioningState": "Microsoft.ContainerService.ProvisioningState",
+        "azure.mgmt.containerservicesafeguards.models.DeploymentSafeguardsLevel": "Microsoft.ContainerService.DeploymentSafeguardsLevel",
+        "azure.mgmt.containerservicesafeguards.models.PodSecurityStandardsLevel": "Microsoft.ContainerService.PodSecurityStandardsLevel",
+        "azure.mgmt.containerservicesafeguards.operations.Operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.mgmt.containerservicesafeguards.aio.operations.Operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.mgmt.containerservicesafeguards.operations.DeploymentSafeguardsOperations.get": "Microsoft.ContainerService.DeploymentSafeguards.get",
+        "azure.mgmt.containerservicesafeguards.aio.operations.DeploymentSafeguardsOperations.get": "Microsoft.ContainerService.DeploymentSafeguards.get",
+        "azure.mgmt.containerservicesafeguards.operations.DeploymentSafeguardsOperations.begin_create": "Microsoft.ContainerService.DeploymentSafeguards.create",
+        "azure.mgmt.containerservicesafeguards.aio.operations.DeploymentSafeguardsOperations.begin_create": "Microsoft.ContainerService.DeploymentSafeguards.create",
+        "azure.mgmt.containerservicesafeguards.operations.DeploymentSafeguardsOperations.begin_delete": "Microsoft.ContainerService.DeploymentSafeguards.delete",
+        "azure.mgmt.containerservicesafeguards.aio.operations.DeploymentSafeguardsOperations.begin_delete": "Microsoft.ContainerService.DeploymentSafeguards.delete",
+        "azure.mgmt.containerservicesafeguards.operations.DeploymentSafeguardsOperations.list": "Microsoft.ContainerService.DeploymentSafeguards.list",
+        "azure.mgmt.containerservicesafeguards.aio.operations.DeploymentSafeguardsOperations.list": "Microsoft.ContainerService.DeploymentSafeguards.list"
+    }
+}

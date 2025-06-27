@@ -46,17 +46,17 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :caption: Initialize and call a RetrievalEvaluator.
 
     .. admonition:: Example using Azure AI Project URL:
-        
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
             :start-after: [START retrieval_evaluator]
             :end-before: [END retrieval_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call RetrievalEvaluator using Azure AI Project URL in the following format 
+            :caption: Initialize and call RetrievalEvaluator using Azure AI Project URL in the following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     .. admonition:: Example with Threshold:
-    
+
         .. literalinclude:: ../samples/evaluation_samples_threshold.py
             :start-after: [START threshold_retrieval_evaluator]
             :end-before: [END threshold_retrieval_evaluator]
@@ -78,7 +78,7 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold: float=3):  # pylint: disable=super-init-not-called
+    def __init__(self, model_config, *, threshold: float = 3):  # pylint: disable=super-init-not-called
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self._threshold = threshold

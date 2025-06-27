@@ -10,6 +10,11 @@
                 "azure-sdk-python-mcp",
                 "azure-sdk-python-mcp"
             ],
+        },
+        "azure-sdk-mcp": {
+            "type": "stdio",
+            "command": "pwsh",        
+            "args": ["${workspaceFolder}/eng/common/mcp/azure-sdk-mcp.ps1", "-Run"]
         }
     }
 }

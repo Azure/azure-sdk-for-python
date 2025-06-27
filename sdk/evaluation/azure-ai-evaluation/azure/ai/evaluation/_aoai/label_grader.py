@@ -9,6 +9,7 @@ from azure.ai.evaluation._common._experimental import experimental
 
 from .aoai_grader import AzureOpenAIGrader
 
+
 @experimental
 class AzureOpenAILabelGrader(AzureOpenAIGrader):
     """
@@ -47,7 +48,7 @@ class AzureOpenAILabelGrader(AzureOpenAIGrader):
     def __init__(
         self,
         *,
-        model_config : Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+        model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
         input: List[Dict[str, str]],
         labels: List[str],
         model: str,

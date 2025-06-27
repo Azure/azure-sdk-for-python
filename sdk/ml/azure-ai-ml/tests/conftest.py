@@ -131,6 +131,10 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     # masks signature in SAS uri
     add_general_regex_sanitizer(value="000000000000000000000000000000000000", regex=_query_param_regex("sig"))
 
+    add_general_regex_sanitizer(
+        value="00000000000000000000000000000000", regex=r"/LocalUpload/([a-f0-9]{36}[a-f0-9]+)/?", group_for_replace="1"
+    )
+
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3430: $..id
     #  - AZSDK3436: $..resourceGroup

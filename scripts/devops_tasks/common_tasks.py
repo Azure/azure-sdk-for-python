@@ -228,9 +228,9 @@ def find_packages_missing_on_pypi(path: str) -> Iterable[str]:
     logging.info("Package requirement: {}".format(pkg_spec_dict))
     # find if version is available on pypi
     missing_packages = [
-        f"{pkg.key}{pkg.specifier}"
+        f"{pkg.name}{pkg.specifier}"
         for pkg in pkg_spec_dict
-        if not is_required_version_on_pypi(pkg.key, str(pkg.specifier))
+        if not is_required_version_on_pypi(pkg.name, str(pkg.specifier))
     ]
     if missing_packages:
         logging.error("Packages not found on PyPI: {}".format(missing_packages))

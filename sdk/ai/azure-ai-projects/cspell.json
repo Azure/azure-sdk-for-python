@@ -12,6 +12,7 @@
         "getconnectionwithcredentials",
         "quantitive",
         "balapvbyostoragecanary",
+        "fspath",
     ],
     "ignorePaths": [
     ]

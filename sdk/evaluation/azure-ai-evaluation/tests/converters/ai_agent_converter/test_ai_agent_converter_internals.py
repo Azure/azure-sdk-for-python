@@ -10,6 +10,7 @@ from azure.ai.evaluation._converters._models import (
     ToolCall,
     break_tool_call_into_messages,
 )
+
 # Breaking changes introduced in newer version of the agents SDK
 # Models have been moved, so try a few different locations
 try:
@@ -265,16 +266,26 @@ class TestAIAgentConverter(unittest.TestCase):
         tool_definitions = AIAgentConverter._extract_function_tool_definitions(thread_run)
         self.assertTrue(len(tool_definitions) == 2)
         self.assertTrue(tool_definitions[0].name == "fetch_weather")
-        self.assertTrue(tool_definitions[0].description == "Fetches the weather information for the specified location.")
+        self.assertTrue(
+            tool_definitions[0].description == "Fetches the weather information for the specified location."
+        )
         self.assertTrue(tool_definitions[0].parameters["properties"]["location"]["type"] == "string")
-        self.assertTrue(tool_definitions[0].parameters["properties"]["location"]["description"] == "The location to fetch weather for.")
+        self.assertTrue(
+            tool_definitions[0].parameters["properties"]["location"]["description"]
+            == "The location to fetch weather for."
+        )
         self.assertTrue(tool_definitions[1].type == "code_interpreter")
         self.assertTrue(tool_definitions[1].name == "code_interpreter")
-        self.assertTrue(tool_definitions[1].description == "Use code interpreter to read and interpret information from datasets, "
-    + "generate code, and create graphs and charts using your data. Supports "
-    + "up to 20 files.")
+        self.assertTrue(
+            tool_definitions[1].description
+            == "Use code interpreter to read and interpret information from datasets, "
+            + "generate code, and create graphs and charts using your data. Supports "
+            + "up to 20 files."
+        )
         self.assertTrue(tool_definitions[1].parameters["properties"]["input"]["type"] == "string")
-        self.assertTrue(tool_definitions[1].parameters["properties"]["input"]["description"] == "Generated code to be executed.")
+        self.assertTrue(
+            tool_definitions[1].parameters["properties"]["input"]["description"] == "Generated code to be executed."
+        )
 
 
 if __name__ == "__main__":

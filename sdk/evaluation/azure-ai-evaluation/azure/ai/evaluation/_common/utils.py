@@ -97,7 +97,7 @@ def _is_openai_model_config(val: object) -> TypeGuard[OpenAIModelConfiguration]:
 
 
 def parse_model_config_type(
-        model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+    model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
 ) -> None:
     if _is_aoi_model_config(model_config):
         model_config["type"] = AZURE_OPENAI_TYPE
@@ -106,9 +106,9 @@ def parse_model_config_type(
 
 
 def construct_prompty_model_config(
-        model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
-        default_api_version: str,
-        user_agent: str,
+    model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+    default_api_version: str,
+    user_agent: str,
 ) -> dict:
     parse_model_config_type(model_config)
 
@@ -232,7 +232,7 @@ def _validate_typed_dict(o: object, t: Type[T_TypedDict]) -> T_TypedDict:
         k
         for k in annotations
         if (is_total and get_origin(annotations[k]) is not NotRequired)
-           or (not is_total and get_origin(annotations[k]) is Required)
+        or (not is_total and get_origin(annotations[k]) is Required)
     }
 
     missing_keys = required_keys - o.keys()
@@ -426,11 +426,11 @@ def validate_conversation(conversation):
             except ImportError as ex:
                 raise MissingRequiredPackage(
                     message="Please install 'azure-ai-inference' package to use SystemMessage, "
-                            "UserMessage or AssistantMessage."
+                    "UserMessage or AssistantMessage."
                 ) from ex
 
             if isinstance(message, ChatRequestMessage) and not isinstance(
-                    message, (UserMessage, AssistantMessage, SystemMessage)
+                message, (UserMessage, AssistantMessage, SystemMessage)
             ):
                 raise_exception(
                     f"Messages must be a strongly typed class of ChatRequestMessage. Message number: {num}",
@@ -441,7 +441,7 @@ def validate_conversation(conversation):
             if isinstance(message, UserMessage):
                 user_message_count += 1
             if isinstance(message.content, list) and any(
-                    isinstance(item, ImageContentItem) for item in message.content
+                isinstance(item, ImageContentItem) for item in message.content
             ):
                 image_found = True
             continue
@@ -489,8 +489,8 @@ def validate_conversation(conversation):
 def _extract_text_from_content(content):
     text = []
     for msg in content:
-        if 'text' in msg:
-            text.append(msg['text'])
+        if "text" in msg:
+            text.append(msg["text"])
     return text
 
 
@@ -501,7 +501,7 @@ def _get_conversation_history(query, include_system_messages=False):
     cur_agent_response = []
     system_message = None
     for msg in query:
-        if not 'role' in msg:
+        if not "role" in msg:
             continue
         if include_system_messages and msg['role'] == 'system' and 'content' in msg:
             system_message = msg.get('content', '')
@@ -509,7 +509,7 @@ def _get_conversation_history(query, include_system_messages=False):
             if cur_agent_response != []:
                 all_agent_responses.append(cur_agent_response)
                 cur_agent_response = []
-            text_in_msg = _extract_text_from_content(msg['content'])
+            text_in_msg = _extract_text_from_content(msg["content"])
             if text_in_msg:
                 cur_user_query.append(text_in_msg)
 
@@ -517,7 +517,7 @@ def _get_conversation_history(query, include_system_messages=False):
             if cur_user_query != []:
                 all_user_queries.append(cur_user_query)
                 cur_user_query = []
-            text_in_msg = _extract_text_from_content(msg['content'])
+            text_in_msg = _extract_text_from_content(msg["content"])
             if text_in_msg:
                 cur_agent_response.append(text_in_msg)
     if cur_user_query != []:
@@ -681,7 +681,7 @@ def upload(path: str, container_client: ContainerClient, logger=None):
     local_paths = []
 
     if os.path.isdir(path):
-        for (root, _, filenames) in os.walk(path):
+        for root, _, filenames in os.walk(path):
             upload_path = ""
             if root != path:
                 rel_path = os.path.relpath(root, path)

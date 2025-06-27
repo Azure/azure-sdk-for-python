@@ -205,7 +205,7 @@ def get_packages_to_score() -> dict[str, dict[str, Any]]:
         for pkg_path in package_paths:
             package_path = pathlib.Path(pkg_path)
             package_name = package_path.name
-            if skip_package(package_name) or not (package_path / "setup.py").exists():
+            if skip_package(package_name) or not ((package_path / "setup.py").exists() or (package_path / "pyproject.toml").exists()):
                 continue
             package_path = str(package_path)
             package_info = ParsedSetup.from_path(package_path)

@@ -12,3 +12,4 @@ azure-data-tables
 opentelemetry-sdk~=1.26
 opentelemetry-instrumentation-requests>=0.50b0
 ../../identity/azure-identity
+packaging # for version parsing in test_basic_transport_async.py

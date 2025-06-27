@@ -46,13 +46,13 @@ class MeteorScoreEvaluator(EvaluatorBase):
             :caption: Initialize and call a MeteorScoreEvaluator with alpha of 0.8.
 
     .. admonition:: Example using Azure AI Project URL:
-        
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
             :start-after: [START meteor_score_evaluator]
             :end-before: [END meteor_score_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call MeteorScoreEvaluator using Azure AI Project URL in the following format 
+            :caption: Initialize and call MeteorScoreEvaluator using Azure AI Project URL in the following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     .. admonition:: Example with Threshold:
@@ -77,7 +77,6 @@ class MeteorScoreEvaluator(EvaluatorBase):
         self._threshold = threshold
         self._higher_is_better = True
         super().__init__(threshold=threshold, _higher_is_better=self._higher_is_better)
-        
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, float]:
