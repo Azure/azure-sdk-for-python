@@ -220,7 +220,7 @@ def _get_target_and_path_for_http_dependency_with_gen_ai(
 
     # If no fields are available to set target using standard rules, set Dependency Target to gen_ai.system if present
     if not target and attributes:
-        gen_ai_system = span.attributes[gen_ai_attributes.GEN_AI_SYSTEM]
+        gen_ai_system = attributes[gen_ai_attributes.GEN_AI_SYSTEM]
         if gen_ai_system:
             target = gen_ai_system
     return (target, path)
