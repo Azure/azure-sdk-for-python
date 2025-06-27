@@ -317,7 +317,7 @@ class _AIAgentsInstrumentorPreview:
         if isinstance(end_timestamp, datetime):
             attrs[GEN_AI_RUN_STEP_END_TIMESTAMP] = end_timestamp.isoformat()
         elif end_timestamp:
-            # fallback in case int or string gets passed
+            # fallback in case string or int string gets passed
             attrs[GEN_AI_RUN_STEP_END_TIMESTAMP] = str(end_timestamp)
 
         if run_step_last_error:
@@ -1324,27 +1324,48 @@ class _AIAgentsInstrumentorPreview:
         server_address = self.get_server_address_from_arg(args[0])
         thread_id = kwargs.get("thread_id")
 
-        span = self.start_list_messages_span(server_address=server_address, thread_id=thread_id)
-
-        return _InstrumentedItemPaged(function(*args, **kwargs), self.add_thread_message_event, span)
+        return _InstrumentedItemPaged(
+            function(*args, **kwargs),
+            start_span_function=self.start_trace_list_messages,
+            item_instrumentation_function=self.add_thread_message_event,
+            server_address=server_address,
+            thread_id=thread_id,
+            run_id=None,
+        )
 
     def trace_list_messages_async(self, function, *args, **kwargs):
         # Note that this method is not async, but it operates on AsyncIterable.
         server_address = self.get_server_address_from_arg(args[0])
         thread_id = kwargs.get("thread_id")
 
-        span = self.start_list_messages_span(server_address=server_address, thread_id=thread_id)
+        return _AsyncInstrumentedItemPaged(
+            function(*args, **kwargs),
+            start_span_function=self.start_trace_list_messages,
+            item_instrumentation_function=self.add_thread_message_event,
+            server_address=server_address,
+            thread_id=thread_id,
+            run_id=None,
+        )
 
-        return _AsyncInstrumentedItemPaged(function(*args, **kwargs), self.add_thread_message_event, span)
+    def start_trace_list_messages(
+        self, server_address: Optional[str] = None, thread_id: Optional[str] = None, run_id: Optional[str] = None
+    ):
+        _ = run_id  # Unused parameter, but kept for compatibility.
+        return self.start_list_messages_span(server_address=server_address, thread_id=thread_id)
 
     def trace_list_run_steps(self, function, *args, **kwargs):
         server_address = self.get_server_address_from_arg(args[0])
         run_id = kwargs.get("run_id")
         thread_id = kwargs.get("thread_id")
 
-        span = self.start_list_run_steps_span(server_address=server_address, run_id=run_id, thread_id=thread_id)
-
-        return _InstrumentedItemPaged(function(*args, **kwargs), self.add_run_step_event, span)
+        return _InstrumentedItemPaged(
+            function(*args, **kwargs),
+            start_span_function=self.start_list_run_steps_span,
+            item_instrumentation_function=self.add_run_step_event,
+            server_address=server_address,
+            thread_id=thread_id,
+            run_id=run_id,
+        )
 
     def trace_list_run_steps_async(self, function, *args, **kwargs):
         # Note that this method is not async, but it operates on AsyncIterable.
@@ -1352,9 +1373,19 @@ class _AIAgentsInstrumentorPreview:
         run_id = kwargs.get("run_id")
         thread_id = kwargs.get("thread_id")
 
-        span = self.start_list_run_steps_span(server_address=server_address, run_id=run_id, thread_id=thread_id)
+        return _AsyncInstrumentedItemPaged(
+            function(*args, **kwargs),
+            start_span_function=self.start_list_run_steps_span,
+            item_instrumentation_function=self.add_run_step_event,
+            server_address=server_address,
+            thread_id=thread_id,
+            run_id=run_id,
+        )
 
-        return _AsyncInstrumentedItemPaged(function(*args, **kwargs), self.add_run_step_event, span)
+    def start_trace_list_run_steps(
+        self, server_address: Optional[str] = None, thread_id: Optional[str] = None, run_id: Optional[str] = None
+    ):
+        return self.start_list_run_steps_span(server_address=server_address, thread_id=thread_id, run_id=run_id)
 
     def handle_run_stream_exit(self, _function, *args, **kwargs):
         agent_run_stream = args[0]
@@ -2058,6 +2089,7 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         if self.inner_handler:
             return self.inner_handler.on_unhandled_event(event_type, event_data)  # type: ignore
         return super().on_unhandled_event(event_type, event_data)  # type: ignore
+
     # pylint: enable=R1710
 
     def __exit__(self, exc_type, exc_val, exc_tb):
