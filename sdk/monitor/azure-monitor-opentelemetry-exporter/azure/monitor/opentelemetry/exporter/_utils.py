@@ -9,7 +9,7 @@ import platform
 import threading
 import time
 import warnings
-from typing import Callable, Dict, Any, Optional
+from typing import Callable, Dict, Any, Optional, List
 
 from opentelemetry.semconv.resource import ResourceAttributes
 from opentelemetry.sdk.resources import Resource
@@ -28,7 +28,10 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY,
     _WEBSITE_SITE_NAME,
 )
-
+from azure.monitor.opentelemetry.exporter._constants import ( 
+    _TYPE_MAP,
+    _UNKNOWN
+)
 
 opentelemetry_version = ""
 
@@ -380,3 +383,10 @@ class Singleton(type):
         if not cls._instance:
             cls._instance = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instance
+
+def _get_telemetry_type(item: TelemetryItem):
+        if hasattr(item, "data") and item.data is not None:
+            base_type = getattr(item.data, "base_type", None)
+            if base_type:
+                return _TYPE_MAP.get(base_type, _UNKNOWN)
+        return _UNKNOWN

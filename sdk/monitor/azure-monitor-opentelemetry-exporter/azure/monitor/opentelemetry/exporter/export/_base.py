@@ -53,18 +53,14 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     is_statsbeat_enabled,
     set_statsbeat_initial_success,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat._utils import _update_requests_map
-
-
-# Import moved to function level to avoid circular imports
-def get_customer_statsbeat_metrics():
-    # Get the CustomerStatsbeatMetrics class
-    from azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat import CustomerStatsbeatMetrics
-    return CustomerStatsbeatMetrics
+from azure.monitor.opentelemetry.exporter.statsbeat._utils import _update_requests_map 
+from azure.monitor.opentelemetry.exporter._utils import _get_telemetry_type
 
 from azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat_types import (
-    TelemetryType, DropCode, RetryCode
+    DropCode, RetryCode
 )
+
+from azure.monitor.opentelemetry.exporter._constants import _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
 
 logger = logging.getLogger(__name__)
 
@@ -176,20 +172,10 @@ class BaseExporter:
         # Initialize customer statsbeat if enabled
         self._customer_statsbeat_metrics = None
         if self._should_collect_customer_statsbeat():
-            try:
-                statsbeat_options = type('StatsbeatOptions', (), {
-                    'instrumentation_key': self._instrumentation_key,
-                    'endpoint_url': self._endpoint,
-                    'network_collection_interval': kwargs.get('statsbeat_interval', 900000)
-                })
-                # Use the get_customer_statsbeat_metrics function to avoid circular imports
-                CustomerStatsbeatMetricsClass = get_customer_statsbeat_metrics()
-                self._customer_statsbeat_metrics = CustomerStatsbeatMetricsClass(statsbeat_options)
-                # Connect storage with customer statsbeat if storage exists
-                if self.storage:
-                    self.storage._customer_statsbeat_metrics = self._customer_statsbeat_metrics
-            except Exception as ex:
-                logger.warning("Failed to initialize customer statsbeat: %s", ex)
+            
+            from azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat import collect_customer_statsbeat
+            # Collect customer statsbeat metrics
+            collect_customer_statsbeat(self)
 
     def _transmit_from_storage(self) -> None:
         if not self.storage:
@@ -236,52 +222,7 @@ class BaseExporter:
             start_time = time.time()
             try:
                 track_response = self.client.track(envelopes)
-                if track_response.errors:  # 206
-                    reach_ingestion = True
-                    resend_envelopes = []
-                    for error in track_response.errors:
-                        if _is_retryable_code(error.status_code):
-                            resend_envelopes.append(envelopes[error.index])  # type: ignore
-                        else:
-                            if not self._is_stats_exporter():
-                                logger.error(
-                                    "Data drop %s: %s %s.",
-                                    error.status_code,
-                                    error.message,
-                                    envelopes[error.index] if error.index is not None else "",
-                                )
-                            # Track dropped items in customer statsbeat
-                            if self._customer_statsbeat_metrics and error.index is not None:
-                                try:
-                                    telemetry_type = self._get_telemetry_type(envelopes[error.index])
-                                    self._customer_statsbeat_metrics.count_dropped_items(
-                                        1,
-                                        DropCode.NON_RETRYABLE_STATUS_CODE,
-                                        telemetry_type
-                                    )
-                                except Exception as track_ex:
-                                    logger.warning("Failed to track dropped items in customer statsbeat: %s", track_ex)
-                        
-                    if self.storage and resend_envelopes:
-                        # Track retried items in customer statsbeat
-                        if self._customer_statsbeat_metrics and resend_envelopes:
-                            try:
-                                for envelope in resend_envelopes:
-                                    telemetry_type = self._get_telemetry_type(envelope)
-                                    self._customer_statsbeat_metrics.count_retry_items(
-                                        1,
-                                        RetryCode.RETRYABLE_STATUS_CODE,
-                                        telemetry_type=telemetry_type
-                                    )
-                            except Exception as track_ex:
-                                logger.warning("Failed to track retried items in customer statsbeat: %s", track_ex)
-                        
-                        envelopes_to_store = [x.as_dict() for x in resend_envelopes]
-                        self.storage.put(envelopes_to_store, customer_statsbeat_metrics=self._customer_statsbeat_metrics, lease_period=0)
-                        self._consecutive_redirects = 0
-                    # Mark as not retryable because we already write to storage here
-                    result = ExportResult.FAILED_NOT_RETRYABLE
-                else:  # 200
+                if not track_response.errors:  # 200
                     self._consecutive_redirects = 0
                     if not self._is_stats_exporter():
                         logger.info(
@@ -294,18 +235,55 @@ class BaseExporter:
                     
                     # Track successful items in customer statsbeat
                     if self._customer_statsbeat_metrics:
-                        try:
-                            for envelope in envelopes:
-                                telemetry_type = self._get_telemetry_type(envelope)
-                                self._customer_statsbeat_metrics.count_successful_items(
-                                    1,
-                                    telemetry_type
-                                )
-                        except Exception as track_ex:
-                            logger.warning("Failed to track successful items in customer statsbeat: %s", track_ex)
-                
+                        for envelope in envelopes:
+                            telemetry_type = _get_telemetry_type(envelope)
+                            self._customer_statsbeat_metrics.count_successful_items(
+                                1,
+                                telemetry_type
+                            )
+                else:  #206
                     reach_ingestion = True
                     result = ExportResult.SUCCESS
+                    reach_ingestion = True
+                    resend_envelopes = []
+                    for error in track_response.errors:
+                        if _is_retryable_code(error.status_code):
+                            resend_envelopes.append(envelopes[error.index])  # type: ignore
+                            if self.storage and resend_envelopes:
+                                # Track retried items in customer statsbeat
+                                if self._customer_statsbeat_metrics:
+                                    for envelope in resend_envelopes:
+                                        telemetry_type = _get_telemetry_type(envelope)
+                                        self._customer_statsbeat_metrics.count_retry_items(
+                                            1,
+                                            RetryCode.RETRYABLE_STATUS_CODE,
+                                            error.status_code,
+                                            telemetry_type
+                                        )
+                        else:
+                            if not self._is_stats_exporter():
+                                # Track dropped items in customer statsbeat
+                                if self._customer_statsbeat_metrics and error.index is not None:
+                                    telemetry_type = _get_telemetry_type(envelopes[error.index])
+                                    self._customer_statsbeat_metrics.count_dropped_items(
+                                        1,
+                                        DropCode.NON_RETRYABLE_STATUS_CODE,
+                                        error.status_code,
+                                        telemetry_type
+                                    )
+                                logger.error(
+                                    "Data drop %s: %s %s.",
+                                    error.status_code,
+                                    error.message,
+                                    envelopes[error.index] if error.index is not None else "",
+                                )
+
+                        envelopes_to_store = [x.as_dict() for x in resend_envelopes]
+                        self.storage.put(envelopes_to_store, 0)
+                        self._consecutive_redirects = 0
+                    # Mark as not retryable because we already write to storage here
+                    result = ExportResult.FAILED_NOT_RETRYABLE
+                    
             except HttpResponseError as response_error:
                 # HttpResponseError is raised when a response is received
                 if _reached_ingestion_code(response_error.status_code):
@@ -448,14 +426,8 @@ class BaseExporter:
         return self.__class__.__name__ == "_StatsBeatExporter"
     
     def _should_collect_customer_statsbeat(self):
-        """Check if customer statsbeat collection is enabled.
-        
-        Returns:
-            bool: True if customer statsbeat collection is enabled, False otherwise
-        """
-        # Check environment variable
         env_value = os.environ.get("APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW", "")
-        is_enabled = env_value.lower() in ("true", "1", "yes")
+        is_enabled = env_value.lower() in ("true")
         # Don't collect customer statsbeat for stats exporter itself or for instrumentation collection
         return (
             is_enabled
@@ -463,37 +435,7 @@ class BaseExporter:
             and not self._instrumentation_collection
         )
 
-    def _get_telemetry_type(self, envelope: TelemetryItem) -> TelemetryType:
-        """Extract telemetry type from envelope.
-        
-        Args:
-            envelope: The telemetry envelope
-        
-        Returns:
-            TelemetryType enum value or TelemetryType.UNKNOWN if type couldn't be determined
-        """
-        try:
-            if hasattr(envelope, "data") and envelope.data is not None:
-                base_type = getattr(envelope.data, "base_type", None)
-                if base_type:
-                    # Map from Azure Monitor envelope types to TelemetryType enum
-                    type_map = {
-                        "EventData": TelemetryType.CUSTOM_EVENT,
-                        "MetricData": TelemetryType.CUSTOM_METRIC,
-                        "RemoteDependencyData": TelemetryType.DEPENDENCY,
-                        "ExceptionData": TelemetryType.EXCEPTION,
-                        "PageViewData": TelemetryType.PAGE_VIEW,
-                        "MessageData": TelemetryType.TRACE,
-                        "RequestData": TelemetryType.REQUEST,
-                        "PerformanceCounterData": TelemetryType.PERFORMANCE_COUNTER,
-                        "AvailabilityData": TelemetryType.AVAILABILITY
-                    }
-                    return type_map.get(base_type, TelemetryType.UNKNOWN)
-        except (AttributeError, KeyError):
-            pass
-        return TelemetryType.UNKNOWN
-
-
+    
 def _is_invalid_code(response_code: Optional[int]) -> bool:
     """Determine if response is a invalid response.
 
