@@ -7,9 +7,8 @@ import logging
 import os
 import random
 import subprocess
-import time
-from azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat_types import DropCode
-from azure.monitor.opentelemetry.exporter._utils import PeriodicTask, _get_telemetry_type
+
+from azure.monitor.opentelemetry.exporter._utils import PeriodicTask
 
 logger = logging.getLogger(__name__)
 
@@ -112,8 +111,6 @@ class LocalFileStorage:
         else:
             logger.error("Could not set secure permissions on storage folder, local storage is disabled.")
 
-        self._customer_statsbeat_metrics = None
-
     def close(self):
         if self._enabled:
             self._maintenance_task.cancel()
@@ -185,29 +182,9 @@ class LocalFileStorage:
         return None
 
     def put(self, data, lease_period=None):
-        # Create path if it doesn't exist
-        metrics = self._customer_statsbeat_metrics
-        if not self._enabled:  ## TODO: Will add suppport for CLIENT_STORAGE_DISABLED, once these changes are approved.
-            if metrics:
-                for item in data:
-                    telemetry_type = _get_telemetry_type(item)
-                    metrics.count_dropped_items(
-                        1, 
-                        DropCode.CLIENT_READONLY,
-                        telemetry_type,
-                    )
+        if not self._enabled:
             return None
-        # Check storage capacity
         if not self._check_storage_size():
-            # If storage is full and metrics are available, track dropped items
-            if metrics:
-                for item in data:
-                    telemetry_type = _get_telemetry_type(item)
-                    metrics.count_dropped_items(
-                        1,
-                        DropCode.CLIENT_PERSISTENCE_CAPACITY,
-                        telemetry_type
-                    )
             return None
         blob = LocalFileBlob(
             os.path.join(
@@ -220,22 +197,7 @@ class LocalFileStorage:
         )
         if lease_period is None:
             lease_period = self._lease_period
-
-        # blob.put should return None if an exception is thrown within it
-        result = blob.put(data, lease_period=lease_period)
-        
-        # Track storage failures if put failed
-        if result is None and metrics:
-            for item in data:
-                telemetry_type = _get_telemetry_type(item)
-                metrics.count_dropped_items(
-                    1,
-                    DropCode.CLIENT_EXCEPTION,
-                    telemetry_type,
-                    "Failed to write to storage"
-                )
-        
-        return result
+        return blob.put(data, lease_period=lease_period)
 
     def _check_and_set_folder_permissions(self):
         """
