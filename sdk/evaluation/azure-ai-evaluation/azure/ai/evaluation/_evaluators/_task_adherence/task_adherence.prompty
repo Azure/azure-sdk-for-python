@@ -137,7 +137,7 @@ User turn 2:
   Historical fiction.
 
 AGENT_RESPONSE:
-  You might enjoy *The Book Thief* by Markus Zusak — a powerful story set during World War II.
+  You might enjoy *The Book Thief* by Markus — a powerful story set during World War II.
 
 TOOL_DEFINITIONS:
 - get_book: Returns book suggestions based on genre. (inputs: genre)
