@@ -335,9 +335,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         envelope.data = MonitorBase(base_data=data, base_type="RemoteDependencyData")
         target = trace_utils._get_target_for_dependency_from_peer(span.attributes)
         if span.kind is SpanKind.CLIENT:
-            if gen_ai_attributes.GEN_AI_SYSTEM in span.attributes:  # GenAI
-                data.type = _GEN_AI_ATTRIBUTE_PREFIXE.format(span.attributes[gen_ai_attributes.GEN_AI_SYSTEM])
-            elif _AZURE_SDK_NAMESPACE_NAME in span.attributes:  # Azure specific resources
+            if _AZURE_SDK_NAMESPACE_NAME in span.attributes:  # Azure specific resources
                 # Currently only eventhub and servicebus are supported
                 # https://github.com/Azure/azure-sdk-for-python/issues/9256
                 data.type = span.attributes[_AZURE_SDK_NAMESPACE_NAME]
@@ -412,6 +410,10 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 )
             else:
                 data.type = "N/A"
+            # gen_ai take precedence over other mappings (ex. HTTP) even if their attributes are also present on the span.
+            # overrides any previously set type.
+            if gen_ai_attributes.GEN_AI_SYSTEM in span.attributes:  # GenAI
+                data.type = _GEN_AI_ATTRIBUTE_PREFIXE.format(span.attributes[gen_ai_attributes.GEN_AI_SYSTEM])
         elif span.kind is SpanKind.PRODUCER:  # Messaging
             # Currently only eventhub and servicebus are supported that produce PRODUCER spans
             if _AZURE_SDK_NAMESPACE_NAME in span.attributes:
