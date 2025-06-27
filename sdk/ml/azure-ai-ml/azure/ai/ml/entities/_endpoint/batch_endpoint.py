@@ -110,7 +110,7 @@ class BatchEndpoint(Endpoint):
         **kwargs: Any,
     ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
-        return BatchEndpointSchema(context=context).dump(self)  # type: ignore
+        return BatchEndpointSchema().dump(self, context=context)  # type: ignore
 
     @classmethod
     def _load(
@@ -130,5 +130,5 @@ class BatchEndpoint(Endpoint):
         return res
 
     def _to_dict(self) -> Dict:
-        res: dict = BatchEndpointSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = BatchEndpointSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res

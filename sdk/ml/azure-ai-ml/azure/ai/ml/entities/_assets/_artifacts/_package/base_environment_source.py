@@ -42,7 +42,7 @@ class BaseEnvironment:
         return BaseEnvironment(type=rest_obj.base_environment_source_type, resource_id=rest_obj.resource_id)
 
     def _to_dict(self) -> Dict:
-        return dict(BaseEnvironmentSourceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))
+        return dict(BaseEnvironmentSourceSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"}))
 
     def _to_rest_object(self) -> RestBaseEnvironmentId:
         return RestBaseEnvironmentId(base_environment_source_type=self.type, resource_id=self.resource_id)

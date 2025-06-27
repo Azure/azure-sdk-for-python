@@ -84,4 +84,4 @@ class WorkspaceAssetReference(Asset):
         return resource_management
 
     def _to_dict(self) -> Dict:
-        return dict(WorkspaceAssetReferenceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))
+        return dict(WorkspaceAssetReferenceSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"}))

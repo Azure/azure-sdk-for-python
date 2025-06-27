@@ -174,7 +174,7 @@ class ImportJob(Job, JobIOMixin):
         self.output = output
 
     def _to_dict(self) -> Dict:
-        res: dict = ImportJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = ImportJobSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res
 
     def _to_rest_object(self) -> JobBaseData:

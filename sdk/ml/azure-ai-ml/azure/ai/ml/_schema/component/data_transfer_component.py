@@ -206,9 +206,9 @@ class DataTransferCopyComponentFileRefField(FileRefField):
         # Update base_path to parent path of component file.
         component_schema_context = deepcopy(self.context)
         component_schema_context[BASE_PATH_CONTEXT_KEY] = source_path.parent
-        component = AnonymousDataTransferCopyComponentSchema(context=component_schema_context).load(
+        component = AnonymousDataTransferCopyComponentSchema().load(
             component_dict
-        )
+        , context=component_schema_context)
         component._source_path = source_path
         component._source = ComponentSource.YAML_COMPONENT
         return component
@@ -224,9 +224,9 @@ class DataTransferImportComponentFileRefField(FileRefField):
         # Update base_path to parent path of component file.
         component_schema_context = deepcopy(self.context)
         component_schema_context[BASE_PATH_CONTEXT_KEY] = source_path.parent
-        component = AnonymousDataTransferImportComponentSchema(context=component_schema_context).load(
+        component = AnonymousDataTransferImportComponentSchema().load(
             component_dict
-        )
+        , context=component_schema_context)
         component._source_path = source_path
         component._source = ComponentSource.YAML_COMPONENT
         return component
@@ -242,9 +242,9 @@ class DataTransferExportComponentFileRefField(FileRefField):
         # Update base_path to parent path of component file.
         component_schema_context = deepcopy(self.context)
         component_schema_context[BASE_PATH_CONTEXT_KEY] = source_path.parent
-        component = AnonymousDataTransferExportComponentSchema(context=component_schema_context).load(
+        component = AnonymousDataTransferExportComponentSchema().load(
             component_dict
-        )
+        , context=component_schema_context)
         component._source_path = source_path
         component._source = ComponentSource.YAML_COMPONENT
         return component

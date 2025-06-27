@@ -166,7 +166,7 @@ class FeatureSet(Artifact):
         return feature_set
 
     def _to_dict(self) -> Dict:
-        return dict(FeatureSetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))
+        return dict(FeatureSetSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"}))
 
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
         # if datastore_arm_id is null, capture the full_storage_path

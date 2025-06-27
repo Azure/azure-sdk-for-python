@@ -82,7 +82,7 @@ class MLTableMetadata:
         return res
 
     def _to_dict(self) -> Dict:
-        res: dict = MLTableMetadataSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = MLTableMetadataSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res
 
     def referenced_uris(self) -> List[Optional[str]]:

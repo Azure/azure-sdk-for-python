@@ -418,7 +418,7 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
         **kwargs: Any,
     ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
-        res: dict = KubernetesOnlineEndpointSchema(context=context).dump(self)
+        res: dict = KubernetesOnlineEndpointSchema().dump(self, context=context)
         return res
 
     def _to_rest_online_endpoint(self, location: str) -> OnlineEndpointData:
@@ -446,7 +446,7 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
             self.compute = other.compute or self.compute
 
     def _to_dict(self) -> Dict:
-        res: dict = KubernetesOnlineEndpointSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = KubernetesOnlineEndpointSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res
 
 
@@ -544,11 +544,11 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
         **kwargs: Any,
     ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
-        res: dict = ManagedOnlineEndpointSchema(context=context).dump(self)
+        res: dict = ManagedOnlineEndpointSchema().dump(self, context=context)
         return res
 
     def _to_dict(self) -> Dict:
-        res: dict = ManagedOnlineEndpointSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = ManagedOnlineEndpointSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res
 
 

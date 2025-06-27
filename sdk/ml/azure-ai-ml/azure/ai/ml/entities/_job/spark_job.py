@@ -188,7 +188,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         self._identity = value
 
     def _to_dict(self) -> Dict:
-        res: dict = SparkJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = SparkJobSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res
 
     def filter_conf_fields(self) -> Dict[str, str]:

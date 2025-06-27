@@ -142,5 +142,5 @@ class FeatureStoreEntity(Asset):
         return FeatureStoreEntity(**loaded_schema)
 
     def _to_dict(self) -> Dict:
-        res: dict = FeatureStoreEntitySchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = FeatureStoreEntitySchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res

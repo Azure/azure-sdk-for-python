@@ -74,7 +74,7 @@ class KubernetesCompute(Compute):
         )
 
     def _to_dict(self) -> Dict:
-        res: dict = KubernetesComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = KubernetesComputeSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res
 
     @classmethod

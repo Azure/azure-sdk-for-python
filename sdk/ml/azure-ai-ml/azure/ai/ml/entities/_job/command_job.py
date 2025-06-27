@@ -130,7 +130,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         return self._parameters
 
     def _to_dict(self) -> Dict:
-        res: dict = CommandJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = CommandJobSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res
 
     def _to_rest_object(self) -> JobBase:
