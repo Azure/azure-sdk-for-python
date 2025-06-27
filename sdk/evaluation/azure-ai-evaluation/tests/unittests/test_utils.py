@@ -307,7 +307,7 @@ class TestUtils(unittest.TestCase):
             {"role": "assistant", "content": [{"type": "text", "text": "It's sunny today."}]},
             {"role": "user", "content": [{"type": "text", "text": "Will it rain tomorrow?"}]},
         ]
-        
+
         result = _get_conversation_history(query)
         expected = {
             "user_queries": [[["What is the weather?"]], [["Will it rain tomorrow?"]]],

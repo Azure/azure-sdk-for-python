@@ -503,9 +503,9 @@ def _get_conversation_history(query, include_system_messages=False):
     for msg in query:
         if not "role" in msg:
             continue
-        if include_system_messages and msg['role'] == 'system' and 'content' in msg:
-            system_message = msg.get('content', '')
-        if msg['role'] == 'user' and 'content' in msg:
+        if include_system_messages and msg["role"] == "system" and "content" in msg:
+            system_message = msg.get("content", '')
+        if msg["role"] == "user" and "content" in msg:
             if cur_agent_response != []:
                 all_agent_responses.append(cur_agent_response)
                 cur_agent_response = []
@@ -513,7 +513,7 @@ def _get_conversation_history(query, include_system_messages=False):
             if text_in_msg:
                 cur_user_query.append(text_in_msg)
 
-        if msg['role'] == 'assistant' and 'content' in msg:
+        if msg["role"] == "assistant" and "content" in msg:
             if cur_user_query != []:
                 all_user_queries.append(cur_user_query)
                 cur_user_query = []
@@ -534,28 +534,29 @@ def _get_conversation_history(query, include_system_messages=False):
             blame=ErrorBlame.USER_ERROR,
         )
     result = {
-        'user_queries': all_user_queries,
-        'agent_responses': all_agent_responses
+        "user_queries": all_user_queries,
+        "agent_responses": all_agent_responses
     }
     if include_system_messages:
-        result['system_message'] = system_message
+        result["system_message"] = system_message
     return result
 
 
 def _pretty_format_conversation_history(conversation_history):
     """Formats the conversation history for better readability."""
     formatted_history = ""
-    if 'system_message' in conversation_history and conversation_history['system_message'] is not None:
+    if "system_message" in conversation_history and conversation_history["system_message"] is not None:
         formatted_history += "SYSTEM_PROMPT:\n"
-        formatted_history += "  " + conversation_history['system_message'] + "\n\n"
+        formatted_history += "  " + conversation_history["system_message"] + "\n\n"
     for i, (user_query, agent_response) in enumerate(
-            zip(conversation_history['user_queries'], conversation_history['agent_responses'] + [None])):
-        formatted_history += f"User turn {i + 1}:\n"
+        zip(conversation_history["user_queries"], conversation_history["agent_responses"] + [None])
+    ):
+        formatted_history += f"User turn {i+1}:\n"
         for msg in user_query:
             formatted_history += "  " + "\n  ".join(msg)
         formatted_history += "\n\n"
         if agent_response:
-            formatted_history += f"Agent turn {i + 1}:\n"
+            formatted_history += f"Agent turn {i+1}:\n"
             for msg in agent_response:
                 formatted_history += "  " + "\n  ".join(msg)
             formatted_history += "\n\n"
@@ -596,7 +597,7 @@ def _get_agent_response(agent_response_msgs, include_tool_messages=False):
 
     # Second pass: parse assistant messages and tool calls
     for msg in agent_response_msgs:
-        if 'role' in msg and msg.get("role") == "assistant" and "content" in msg:
+        if "role" in msg and msg.get("role") == "assistant" and "content" in msg:
             text = _extract_text_from_content(msg["content"])
             if text:
                 agent_response_text.extend(text)
@@ -631,7 +632,8 @@ def reformat_agent_response(response, logger=None, include_tool_messages=False):
             # If no message could be extracted, likely the format changed, fallback to the original response in that case
             if logger:
                 logger.warning(
-                    f"Empty agent response extracted, likely due to input schema change. Falling back to using the original response: {response}")
+                    f"Empty agent response extracted, likely due to input schema change. Falling back to using the original response: {response}"
+                )
             return response
         return "\n".join(agent_response)
     except:
