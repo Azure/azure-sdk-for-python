@@ -35,7 +35,7 @@ RESPONSE: {{response}}
 TASK
 ====
 Output a JSON object with:
-    1) a concise explanation of 15-60 justifying your score based on how well the response is relevant to the query.
+    1) a concise explanation of 15-60 words justifying your score based on how well the response is relevant to the query.
     2) an integer score from 1 (very poor) to 5 (excellent) using the rubric below.
 
 The explanation should always precede the score and should clearly justify the score based on the rubric definitions.
