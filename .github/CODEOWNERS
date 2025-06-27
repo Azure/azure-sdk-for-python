@@ -236,7 +236,7 @@
 # ServiceLabel: %Durable Task Scheduler %Service Attention
 /sdk/durabletask/                                                    @berndverst @kaibocai @torosent @RyanLettieri @philliphoff @cgillum
 
-# AzureSdkOwners: @kashifkhan
+# AzureSdkOwners: @shankarsama @rajeshka
 # ServiceLabel: %Event Grid
 # PRLabel: %Event Grid
 /sdk/eventgrid/                                                      @shankarsama @rajeshka
