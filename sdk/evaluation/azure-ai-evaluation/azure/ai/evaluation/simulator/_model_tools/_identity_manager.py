@@ -78,7 +78,13 @@ class APITokenManager(ABC):
 
     @abstractmethod
     def get_token(
-            self, scopes: Union[str, None] = None, claims: Union[str, None] = None, tenant_id: Union[str, None] = None, enable_cae: bool = False, **kwargs: Any) -> AccessToken:
+        self,
+        scopes: Union[str, None] = None,
+        claims: Union[str, None] = None,
+        tenant_id: Union[str, None] = None,
+        enable_cae: bool = False,
+        **kwargs: Any,
+    ) -> AccessToken:
         """Async method to get the API token. Subclasses should implement this method.
 
         :return: API token

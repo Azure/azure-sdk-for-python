@@ -10,6 +10,7 @@ from azure.ai.evaluation._common._experimental import experimental
 
 from .aoai_grader import AzureOpenAIGrader
 
+
 @experimental
 class AzureOpenAITextSimilarityGrader(AzureOpenAIGrader):
     """
@@ -57,7 +58,7 @@ class AzureOpenAITextSimilarityGrader(AzureOpenAIGrader):
     def __init__(
         self,
         *,
-        model_config : Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+        model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
         evaluation_metric: Literal[
             "fuzzy_match",
             "bleu",
