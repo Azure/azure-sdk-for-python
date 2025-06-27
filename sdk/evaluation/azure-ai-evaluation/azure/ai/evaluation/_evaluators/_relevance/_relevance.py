@@ -81,11 +81,11 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
 
     @override
     def __init__(
-            self,
-            model_config,
-            *,
-            threshold=3,
-            **kwargs
+        self,
+        model_config,
+        *,
+        threshold=3,
+        **kwargs
     ):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
@@ -102,10 +102,10 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
 
     @overload
     def __call__(
-            self,
-            *,
-            query: str,
-            response: str,
+        self,
+        *,
+        query: str,
+        response: str,
     ) -> Dict[str, Union[str, float]]:
         """Evaluate groundedness for given input of query, response, context
 
@@ -119,9 +119,9 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
 
     @overload
     def __call__(
-            self,
-            *,
-            conversation: Conversation,
+        self,
+        *,
+        conversation: Conversation,
     ) -> Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]:
         """Evaluate relevance for a conversation
 
@@ -135,9 +135,9 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
 
     @override
     def __call__(  # pylint: disable=docstring-missing-param
-            self,
-            *args,
-            **kwargs,
+        self,
+        *args,
+        **kwargs,
     ):
         """Evaluate relevance. Accepts either a query and response for a single evaluation,
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
