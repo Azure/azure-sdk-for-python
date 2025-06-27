@@ -10,6 +10,7 @@ from azure.ai.evaluation._common._experimental import experimental
 
 from .aoai_grader import AzureOpenAIGrader
 
+
 @experimental
 class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
     """
@@ -43,7 +44,7 @@ class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
     def __init__(
         self,
         *,
-        model_config : Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+        model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
         input: str,
         name: str,
         operation: Literal[

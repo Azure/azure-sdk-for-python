@@ -21,7 +21,7 @@ from azure.ai.evaluation._constants import (
     PF_DISABLE_TRACING,
 )
 
-from ..._user_agent import USER_AGENT
+from ..._user_agent import UserAgentSingleton
 from .._utils import set_event_loop_policy
 from .batch_clients import BatchClient
 from ._run_submitter_client import RunSubmitterClient
@@ -50,7 +50,7 @@ class EvalRunContext:
         self._original_cwd = os.getcwd()
 
         if isinstance(self.client, CodeClient):
-            ClientUserAgentUtil.append_user_agent(USER_AGENT)
+            ClientUserAgentUtil.append_user_agent(UserAgentSingleton().value)
             inject_openai_api()
 
         if isinstance(self.client, ProxyClient):

@@ -51,7 +51,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         pending_upload_response: PendingUploadResponse = await self.pending_upload(
             name=name,
             version=input_version,
-            body=PendingUploadRequest(
+            pending_upload_request=PendingUploadRequest(
                 pending_upload_type=PendingUploadType.BLOB_REFERENCE,
                 connection_name=connection_name,
             ),
@@ -133,7 +133,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                     dataset_version = await self.create_or_update(
                         name=name,
                         version=output_version,
-                        body=FileDatasetVersion(
+                        dataset_version=FileDatasetVersion(
                             # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobclient?view=azure-python#azure-storage-blob-blobclient-url
                             # Per above doc the ".url" contains SAS token... should this be stripped away?
                             data_uri=data_uri,
@@ -217,7 +217,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             dataset_version = await self.create_or_update(
                 name=name,
                 version=output_version,
-                body=FolderDatasetVersion(data_uri=data_uri),
+                dataset_version=FolderDatasetVersion(data_uri=data_uri),
             )
 
         return dataset_version

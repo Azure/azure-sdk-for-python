@@ -5,8 +5,10 @@
 #### Features Added
 
 #### Breaking Changes
+* Adds cross region retries when no preferred locations are set. This is only a breaking change for customers using bounded staleness consistency. See [PR 39714](https://github.com/Azure/azure-sdk-for-python/pull/39714)
 
 #### Bugs Fixed
+* Fixed bug where replacing manual throughput using `ThroughputProperties` would not work. See [PR 41564](https://github.com/Azure/azure-sdk-for-python/pull/41564)
 
 #### Other Changes
 
