@@ -11,6 +11,7 @@ from .interactive import InteractiveCredential
 from .utils import (
     get_default_authority,
     normalize_authority,
+    process_credential_exclusions,
     resolve_tenant,
     validate_scope,
     validate_subscription,
@@ -48,6 +49,7 @@ __all__ = [
     "get_default_authority",
     "InteractiveCredential",
     "normalize_authority",
+    "process_credential_exclusions",
     "resolve_tenant",
     "validate_scope",
     "validate_subscription",
