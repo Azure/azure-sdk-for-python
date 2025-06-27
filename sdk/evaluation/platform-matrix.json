@@ -44,7 +44,7 @@
           "PythonVersion": "3.10",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "InjectedPackages": "semantic-kernel,pytest-asyncio",
+          "InjectedPackages": "semantic-kernel",
           "UnsupportedToxEnvironments": "sdist,depends,latestdependency,mindependency,whl_no_aio"
         }
       }
