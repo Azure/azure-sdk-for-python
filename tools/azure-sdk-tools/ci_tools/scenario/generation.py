@@ -112,7 +112,11 @@ def create_package_and_install(
                     )
 
                     pip_cmd = get_pip_command(python_exe)
-                    download_command = pip_cmd + [
+
+                    download_command = [
+                        sys.executable,
+                        "-m",
+                        "pip", # uv pip doesn't have a download command, so we use the system pip
                         "download",
                         "-d",
                         tmp_dl_folder,

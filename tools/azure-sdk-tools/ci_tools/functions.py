@@ -943,5 +943,26 @@ def get_pip_command(python_exe: Optional[str] = None) -> List[str]:
 
     if pip_impl == 'uv':
         return ["uv", "pip"]
+    # using environment uv and not depending on global uv install
+    elif os.environ.get('IN_UV', None) == '1':
+        return [python_exe if python_exe else sys.executable, "-m", "uv", "pip"]
     else:
         return [python_exe if python_exe else sys.executable, "-m", "pip"]
+
+def is_error_code_5_allowed(target_pkg: str, pkg_name: str):
+    """
+    Determine if error code 5 (no pytests run) is allowed for the given package.
+    """
+    if (
+        all(
+            map(
+                lambda x: any([pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS]),
+                [target_pkg],
+            )
+        )
+        or pkg_name in MANAGEMENT_PACKAGE_IDENTIFIERS
+        or pkg_name in NO_TESTS_ALLOWED
+    ):
+        return True
+    else:
+        return False
