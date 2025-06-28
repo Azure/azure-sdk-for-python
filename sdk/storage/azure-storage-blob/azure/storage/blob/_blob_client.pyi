@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: skip-file
 
+from contextlib import AbstractContextManager
 from datetime import datetime
 from types import TracebackType
 from typing import (
@@ -52,7 +53,7 @@ from ._models import (
 from ._quick_query_helper import BlobQueryReader
 from ._shared.base_client import StorageAccountHostsMixin
 
-class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
+class BlobClient(AbstractContextManager, StorageAccountHostsMixin, StorageEncryptionMixin):
     def __init__(
         self,
         account_url: str,
@@ -76,7 +77,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         use_byte_buffer: Optional[bool] = None,
         **kwargs: Any
     ) -> None: ...
-    def __enter__(self) -> Self: ...
+    def __enter__(self) -> "BlobClient": ...
     def __exit__(
         self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
     ) -> None: ...
@@ -102,7 +103,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         min_large_block_upload_threshold: int = 4 * 1024 * 1024 + 1,
         use_byte_buffer: Optional[bool] = None,
         **kwargs: Any
-    ) -> Self: ...
+    ) -> "BlobClient": ...
     @classmethod
     def from_connection_string(
         cls,
@@ -126,7 +127,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         min_large_block_upload_threshold: int = 4 * 1024 * 1024 + 1,
         use_byte_buffer: Optional[bool] = None,
         **kwargs: Any
-    ) -> Self: ...
+    ) -> "BlobClient": ...
     @distributed_trace
     def get_account_information(self, **kwargs: Any) -> Dict[str, str]: ...
     @distributed_trace
