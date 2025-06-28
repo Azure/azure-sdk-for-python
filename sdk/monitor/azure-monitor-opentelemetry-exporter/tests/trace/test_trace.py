@@ -449,6 +449,8 @@ class TestAzureTraceExporter(unittest.TestCase):
         span._attributes = {
             "http.request.method": "GET",
             "server.address": "www.example.com",
+            "server.port": 80,
+            "url.scheme": "http",
             "gen_ai.system": "az.ai.inference"
         }
         envelope = exporter._span_to_envelope(span)
@@ -776,7 +778,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.result_code, "0")
 
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
-        self.assertEqual(envelope.data.base_data.type, "GenAI | az.ai.inference")
+        self.assertEqual(envelope.data.base_data.type, "N/A")
         self.assertEqual(len(envelope.data.base_data.properties), 1)
         
     def test_span_to_envelope_client_internal_gen_ai_type(self):
