@@ -11,7 +11,6 @@ from opentelemetry.semconv.attributes import (
     user_agent_attributes,
 )
 from opentelemetry.semconv.trace import DbSystemValues, SpanAttributes
-from opentelemetry.semconv._incubating.attributes import gen_ai_attributes
 from opentelemetry.util.types import Attributes
 
 
