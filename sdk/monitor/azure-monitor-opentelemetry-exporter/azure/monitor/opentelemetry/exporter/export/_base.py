@@ -53,14 +53,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     is_statsbeat_enabled,
     set_statsbeat_initial_success,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat._utils import _update_requests_map 
-from azure.monitor.opentelemetry.exporter._utils import _get_telemetry_type
-
-from azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat_types import (
-    DropCode, RetryCode
-)
-
-from azure.monitor.opentelemetry.exporter._constants import _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
+from azure.monitor.opentelemetry.exporter.statsbeat._utils import _update_requests_map
 
 logger = logging.getLogger(__name__)
 
@@ -169,14 +162,6 @@ class BaseExporter:
 
             collect_statsbeat_metrics(self)
 
-        # Initialize customer statsbeat if enabled
-        self._customer_statsbeat_metrics = None
-        if self._should_collect_customer_statsbeat():
-            
-            from azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat import collect_customer_statsbeat
-            # Collect customer statsbeat metrics
-            collect_customer_statsbeat(self)
-
     def _transmit_from_storage(self) -> None:
         if not self.storage:
             return
@@ -232,58 +217,28 @@ class BaseExporter:
                         )
                     if self._should_collect_stats():
                         _update_requests_map(_REQ_SUCCESS_NAME[1], 1)
-                    
-                    # Track successful items in customer statsbeat
-                    if self._customer_statsbeat_metrics:
-                        for envelope in envelopes:
-                            telemetry_type = _get_telemetry_type(envelope)
-                            self._customer_statsbeat_metrics.count_successful_items(
-                                1,
-                                telemetry_type
-                            )
-                else:  #206
                     reach_ingestion = True
                     result = ExportResult.SUCCESS
+                else:  # 206
                     reach_ingestion = True
                     resend_envelopes = []
                     for error in track_response.errors:
                         if _is_retryable_code(error.status_code):
                             resend_envelopes.append(envelopes[error.index])  # type: ignore
-                            if self.storage and resend_envelopes:
-                                # Track retried items in customer statsbeat
-                                if self._customer_statsbeat_metrics:
-                                    for envelope in resend_envelopes:
-                                        telemetry_type = _get_telemetry_type(envelope)
-                                        self._customer_statsbeat_metrics.count_retry_items(
-                                            1,
-                                            RetryCode.RETRYABLE_STATUS_CODE,
-                                            error.status_code,
-                                            telemetry_type
-                                        )
                         else:
                             if not self._is_stats_exporter():
-                                # Track dropped items in customer statsbeat
-                                if self._customer_statsbeat_metrics and error.index is not None:
-                                    telemetry_type = _get_telemetry_type(envelopes[error.index])
-                                    self._customer_statsbeat_metrics.count_dropped_items(
-                                        1,
-                                        DropCode.NON_RETRYABLE_STATUS_CODE,
-                                        error.status_code,
-                                        telemetry_type
-                                    )
                                 logger.error(
                                     "Data drop %s: %s %s.",
                                     error.status_code,
                                     error.message,
                                     envelopes[error.index] if error.index is not None else "",
                                 )
-
+                    if self.storage and resend_envelopes:
                         envelopes_to_store = [x.as_dict() for x in resend_envelopes]
                         self.storage.put(envelopes_to_store, 0)
                         self._consecutive_redirects = 0
                     # Mark as not retryable because we already write to storage here
                     result = ExportResult.FAILED_NOT_RETRYABLE
-                    
             except HttpResponseError as response_error:
                 # HttpResponseError is raised when a response is received
                 if _reached_ingestion_code(response_error.status_code):
@@ -424,18 +379,8 @@ class BaseExporter:
 
     def _is_stats_exporter(self):
         return self.__class__.__name__ == "_StatsBeatExporter"
-    
-    def _should_collect_customer_statsbeat(self):
-        env_value = os.environ.get("APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW", "")
-        is_enabled = env_value.lower() in ("true")
-        # Don't collect customer statsbeat for stats exporter itself or for instrumentation collection
-        return (
-            is_enabled
-            and not self._is_stats_exporter()
-            and not self._instrumentation_collection
-        )
 
-    
+
 def _is_invalid_code(response_code: Optional[int]) -> bool:
     """Determine if response is a invalid response.
 
