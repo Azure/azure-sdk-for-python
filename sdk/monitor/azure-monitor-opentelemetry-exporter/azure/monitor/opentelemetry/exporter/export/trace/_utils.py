@@ -208,23 +208,6 @@ def _get_target_and_path_for_http_dependency(
             target = _get_target_for_dependency_from_peer(attributes)
     return (target, path)
 
-@no_type_check
-def _get_target_and_path_for_http_dependency_with_gen_ai(
-    attributes: Attributes,
-    url: Optional[str] = "",  # Usually populated by _get_url_for_http_dependency()
-) -> Tuple[Optional[str], str]:
-    target = ""
-    path = "/"
-    # set target using standard rules
-    target, path = _get_target_and_path_for_http_dependency(attributes, url)
-
-    # If no fields are available to set target using standard rules, set Dependency Target to gen_ai.system if present
-    if not target and attributes and gen_ai_attributes.GEN_AI_SYSTEM in attributes:
-        gen_ai_system = attributes[gen_ai_attributes.GEN_AI_SYSTEM]
-        if gen_ai_system:
-            target = gen_ai_system
-    return (target, path)
-
 
 @no_type_check
 def _get_target_for_db_dependency(

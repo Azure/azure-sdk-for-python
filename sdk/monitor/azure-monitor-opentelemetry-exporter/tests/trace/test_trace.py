@@ -438,7 +438,6 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.target, "www.example.com")
 
-        # Set target with gen_ai if no fields are available to set target using standard rules
         span._attributes = {
             "http.request.method": "GET",
             "gen_ai.system": "az.ai.inference"
@@ -446,6 +445,14 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.target, "az.ai.inference")
         self.assertEqual(envelope.data.base_data.name, "GET /")
+
+        span._attributes = {
+            "http.request.method": "GET",
+            "server.address": "www.example.com",
+            "gen_ai.system": "az.ai.inference"
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.target, "www.example.com")
 
         # url
         # spell-checker:ignore ddds
