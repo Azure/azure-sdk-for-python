@@ -114,10 +114,12 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :paramtype name: str
         :keyword description: A detailed description explaining the agent's intended purpose, capabilities,
          or use case. This helps document the agent's functionality for future reference.
+        The maximum length is 512 characters.
         :paramtype description: str
         :keyword instructions: System-level instructions that define the agent's behavior, personality,
          and how it should respond to user interactions. These instructions guide the agent's responses
          throughout conversations.
+        The maximum length is 256,000 characters.
         :paramtype instructions: str
         :keyword tools: A list of tool definitions that specify the capabilities available to the agent,
          such as code interpretation, file search, or custom functions. Each tool extends what the agent
@@ -182,10 +184,12 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :paramtype name: str
         :keyword description: A detailed description explaining the agent's intended purpose, capabilities,
          or use case. This helps document the agent's functionality for future reference.
+        The maximum length is 512 characters.
         :paramtype description: str
         :keyword instructions: System-level instructions that define the agent's behavior, personality,
          and how it should respond to user interactions. These instructions guide the agent's responses
          throughout conversations.
+        The maximum length is 256,000 characters.
         :paramtype instructions: str
         :keyword toolset: A pre-configured collection of tools and their associated resources that provides
          both tool definitions and resources in a single object. This is a convenient alternative
