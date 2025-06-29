@@ -37,6 +37,7 @@ To report an issue with the client library, or request additional features, plea
     - [Azure Function Call](#create-agent-with-azure-function-call)
     - [OpenAPI](#create-agent-with-openapi)
     - [Fabric data](#create-an-agent-with-fabric)
+    - [Deep Research](#create-agent-with-deep-research)
   - [Create thread](#create-thread) with
     - [Tool resource](#create-thread-with-tool-resource)
   - [Create message](#create-message) with:
@@ -370,7 +371,7 @@ with project_client:
 
 <!-- END SNIPPET -->
 
-### Create Agent with Deep Research tool
+### Create Agent with Deep Research
 
 To enable your Agent to do a detailed research of a topic, use the `DeepResearchTool` along with a connection to a Bing Grounding resource.
 This scenarios requires you to specify two model deployments. One is the generic chat model that does arbitration, and is
@@ -395,6 +396,9 @@ with project_client:
 
     with project_client.agents as agents_client:
 
+        # Create a new agent that has the Deep Research tool attached.
+        # NOTE: To add Deep Research to an existing agent, fetch it with `get_agent(agent_id)` and then,
+        # update the agent with the Deep Research tool.
         agent = agents_client.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"],
             name="my-agent",
@@ -404,6 +408,9 @@ with project_client:
 ```
 
 <!-- END SNIPPET -->
+
+> **Limitation**: The Deep Research tool is currently recommended **only** in non-streaming scenarios.
+> Using it with streaming can work, but it may occasionally time-out and is therefore not yet recommended.
 
 ### Create Agent with Azure AI Search
 
