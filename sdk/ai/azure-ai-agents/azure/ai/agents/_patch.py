@@ -44,6 +44,14 @@ logger = logging.getLogger(__name__)
 
 
 class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
+    """AgentsClient provides a high-level, user-friendly interface for managing and interacting with AI agents in Azure AI Agents service.
+
+    :param endpoint: Project endpoint in the form of:
+     https://<aiservices-id>.services.ai.azure.com/api/projects/<project-name>. Required.
+    :type endpoint: str
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials.TokenCredential
+    """
 
     def __init__(self, endpoint: str, credential: TokenCredential, **kwargs: Any) -> None:
         if not endpoint:
@@ -95,44 +103,50 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
     ) -> _models.Agent:
         """Creates a new agent.
 
-        :keyword model: The ID of the model to use. Required.
+        :keyword model: The deployment name or ID of the Azure AI model that the agent will use for
+         generating responses. This must be a valid model deployment available in your Azure AI project.
         :paramtype model: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+        :keyword content_type: The MIME type of the request body. Use "application/json" for JSON payloads.
         :paramtype content_type: str
-        :keyword name: The name of the new agent. Default value is None.
+        :keyword name: A human-readable name for the agent that helps identify its purpose or role.
+         If not provided, the agent will be created without a specific name.
         :paramtype name: str
-        :keyword description: The description of the new agent. Default value is None.
+        :keyword description: A detailed description explaining the agent's intended purpose, capabilities,
+         or use case. This helps document the agent's functionality for future reference.
+        The maximum length is 512 characters.
         :paramtype description: str
-        :keyword instructions: The system instructions for the new agent to use. Default value is None.
+        :keyword instructions: System-level instructions that define the agent's behavior, personality,
+         and how it should respond to user interactions. These instructions guide the agent's responses
+         throughout conversations.
+        The maximum length is 256,000 characters.
         :paramtype instructions: str
-        :keyword tools: The collection of tools to enable for the new agent. Default value is None.
+        :keyword tools: A list of tool definitions that specify the capabilities available to the agent,
+         such as code interpretation, file search, or custom functions. Each tool extends what the agent
+         can accomplish.
         :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
-        :keyword tool_resources: A set of resources that are used by the agent's tools. The resources
-         are specific to the type of tool. For example, the ``code_interpreter``
-         tool requires a list of file IDs, while the ``file_search`` tool requires a list of vector
-         store IDs. Default value is None.
+        :keyword tool_resources: Resources required by the agent's tools, such as file IDs for code
+         interpreter tools or vector store IDs for file search tools. The specific resources needed
+         depend on which tools are enabled for the agent.
         :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
-        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
-         will make the output more random,
-         while lower values like 0.2 will make it more focused and deterministic. Default value is
-         None.
+        :keyword temperature: Controls the randomness of the agent's responses. Values range from 0 to 2,
+         where higher values (e.g., 0.8) produce more creative and varied responses, while lower values
+         (e.g., 0.2) produce more focused and deterministic responses.
         :paramtype temperature: float
-        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
-         model considers the results of the tokens with top_p probability mass.
-         So 0.1 means only the tokens comprising the top 10% probability mass are considered.
-
-         We generally recommend altering this or temperature but not both. Default value is None.
+        :keyword top_p: An alternative sampling method to temperature called nucleus sampling. This parameter
+         controls diversity by considering only the tokens that comprise the top_p probability mass.
+         For example, 0.1 means only tokens in the top 10% probability are considered. Avoid using
+         both temperature and top_p simultaneously.
         :paramtype top_p: float
-        :keyword response_format: The response format of the tool calls used by this agent. Is one of
-         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
-         or ~azure.ai.agents.models.AgentsApiResponseFormat
-        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-         for storing additional information about that object in a structured format. Keys may be up to
-         64 characters in length and values may be up to 512 characters in length. Default value is
-         None.
+        :keyword response_format: Specifies the format for the responses, particularly for tool calls.
+         Can be a string, response format mode, or structured response format object that defines how
+         the agent should structure its outputs.
+        :type response_format: str or
+                               ~azure.ai.agents.models.AgentsApiResponseFormatMode or
+                               ~azure.ai.agents.models.AgentsApiResponseFormat or
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType
+        :keyword metadata: Custom key-value pairs for storing additional information about the agent.
+         Useful for categorization, tracking, or storing application-specific data. Limited to 16 pairs,
+         with keys up to 64 characters and values up to 512 characters each.
         :paramtype metadata: dict[str, str]
         :return: Agent. The Agent is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.Agent
@@ -158,40 +172,46 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
     ) -> _models.Agent:
         """Creates a new agent.
 
-        :keyword model: The ID of the model to use. Required.
+        :keyword model: The deployment name or ID of the Azure AI model that the agent will use for
+         generating responses. This must be a valid model deployment available in your Azure AI project.
         :paramtype model: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+        :keyword content_type: The MIME type of the request body. Use "application/json" for JSON payloads.
         :paramtype content_type: str
-        :keyword name: The name of the new agent. Default value is None.
+        :keyword name: A human-readable name for the agent that helps identify its purpose or role.
+         If not provided, the agent will be created without a specific name.
         :paramtype name: str
-        :keyword description: The description of the new agent. Default value is None.
+        :keyword description: A detailed description explaining the agent's intended purpose, capabilities,
+         or use case. This helps document the agent's functionality for future reference.
+        The maximum length is 512 characters.
         :paramtype description: str
-        :keyword instructions: The system instructions for the new agent to use. Default value is None.
+        :keyword instructions: System-level instructions that define the agent's behavior, personality,
+         and how it should respond to user interactions. These instructions guide the agent's responses
+         throughout conversations.
+        The maximum length is 256,000 characters.
         :paramtype instructions: str
-        :keyword toolset: The Collection of tools and resources (alternative to `tools` and `tool_resources`
-         and adds automatic execution logic for functions). Default value is None.
+        :keyword toolset: A pre-configured collection of tools and their associated resources that provides
+         both tool definitions and resources in a single object. This is a convenient alternative
+         to manually specifying tools and tool_resources separately.
         :paramtype toolset: ~azure.ai.agents.models.ToolSet
-        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
-         will make the output more random,
-         while lower values like 0.2 will make it more focused and deterministic. Default value is
-         None.
+        :keyword temperature: Controls the randomness of the agent's responses. Values range from 0 to 2,
+         where higher values (e.g., 0.8) produce more creative and varied responses, while lower values
+         (e.g., 0.2) produce more focused and deterministic responses.
         :paramtype temperature: float
-        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
-         model considers the results of the tokens with top_p probability mass.
-         So 0.1 means only the tokens comprising the top 10% probability mass are considered.
-
-         We generally recommend altering this or temperature but not both. Default value is None.
+        :keyword top_p: An alternative sampling method to temperature called nucleus sampling. This parameter
+         controls diversity by considering only the tokens that comprise the top_p probability mass.
+         For example, 0.1 means only tokens in the top 10% probability are considered. Avoid using
+         both temperature and top_p simultaneously.
         :paramtype top_p: float
-        :keyword response_format: The response format of the tool calls used by this agent. Is one of
-         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
-         or ~azure.ai.agents.models.AgentsApiResponseFormat
-        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-         for storing additional information about that object in a structured format. Keys may be up to
-         64 characters in length and values may be up to 512 characters in length. Default value is
-         None.
+        :keyword response_format: Specifies the format for the responses, particularly for tool calls.
+         Can be a string, response format mode, or structured response format object that defines how
+         the agent should structure its outputs.
+        :type response_format: str or
+                               ~azure.ai.agents.models.AgentsApiResponseFormatMode or
+                               ~azure.ai.agents.models.AgentsApiResponseFormat or
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType
+        :keyword metadata: Custom key-value pairs for storing additional information about the agent.
+         Useful for categorization, tracking, or storing application-specific data. Limited to 16 pairs,
+         with keys up to 64 characters and values up to 512 characters each.
         :paramtype metadata: dict[str, str]
         :return: Agent. The Agent is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.Agent
@@ -200,12 +220,12 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
 
     @overload
     def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
-        """Creates a new agent.
+        """Creates a new agent using a pre-constructed JSON body.
 
-        :param body: Required.
+        :param body: A complete JSON object containing all agent configuration parameters including
+         model, name, description, instructions, tools, and other settings.
         :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+        :keyword content_type: The MIME type of the request body. Must be "application/json" for JSON payloads.
         :paramtype content_type: str
         :return: Agent. The Agent is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.Agent
@@ -214,12 +234,13 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
 
     @overload
     def create_agent(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
-        """Creates a new agent.
+        """Creates a new agent using a binary data stream.
 
-        :param body: Required.
+        :param body: A binary stream containing the agent configuration data in JSON format.
+         Useful when working with file uploads or streaming data sources.
         :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+        :keyword content_type: The MIME type of the request body. Should be "application/json" even for
+         binary streams containing JSON data.
         :paramtype content_type: str
         :return: Agent. The Agent is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.Agent
@@ -248,36 +269,43 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         """
         Creates a new agent with various configurations, delegating to the generated operations.
 
-        :param body: JSON or IO[bytes]. Required if `model` is not provided.
+        :param body: A complete agent configuration as JSON or binary stream. Required if `model` is not provided.
         :type body:  Union[JSON, IO[bytes]]
-        :keyword model: The ID of the model to use. Required if `body` is not provided.
+        :keyword model: The deployment name or ID of the Azure AI model that the agent will use.
+         Required if `body` is not provided.
         :paramtype model: str
-        :keyword name: The name of the new agent.
+        :keyword name: A human-readable name for the agent that helps identify its purpose or role.
         :paramtype name: Optional[str]
-        :keyword description: A description for the new agent.
+        :keyword description: A detailed description explaining the agent's intended purpose and capabilities.
         :paramtype description: Optional[str]
-        :keyword instructions: System instructions for the agent.
+        :keyword instructions: System-level instructions that define the agent's behavior and personality.
         :paramtype instructions: Optional[str]
-        :keyword tools: List of tools definitions for the agent.
+        :keyword tools: A list of tool definitions that specify the capabilities available to the agent.
         :paramtype tools: Optional[List[_models.ToolDefinition]]
-        :keyword tool_resources: Resources used by the agent's tools.
+        :keyword tool_resources: Resources required by the agent's tools, such as file IDs or vector store IDs.
         :paramtype tool_resources: Optional[_models.ToolResources]
-        :keyword toolset: Collection of tools and resources (alternative to `tools` and `tool_resources`
-         and adds automatic execution logic for functions).
+        :keyword toolset: A pre-configured collection of tools and their associated resources that provides
+         both tool definitions and resources in a single object. This is a convenient alternative
+         to manually specifying tools and tool_resources separately.
         :paramtype toolset: Optional[_models.ToolSet]
-        :keyword temperature: Sampling temperature for generating agent responses.
+        :keyword temperature: Controls response randomness (0-2). Higher values produce more creative responses.
         :paramtype temperature: Optional[float]
-        :keyword top_p: Nucleus sampling parameter.
+        :keyword top_p: Nucleus sampling parameter controlling response diversity by probability mass.
         :paramtype top_p: Optional[float]
-        :keyword response_format: Response format for tool calls.
-        :paramtype response_format: Optional["_types.AgentsResponseFormatOption"]
-        :keyword metadata: Key/value pairs for storing additional information.
+        :keyword response_format: Specifies the format for the responses, particularly for tool calls.
+         Can be a string, response format mode, or structured response format object that defines how
+         the agent should structure its outputs.
+        :type response_format: str or
+                               ~azure.ai.agents.models.AgentsApiResponseFormatMode or
+                               ~azure.ai.agents.models.AgentsApiResponseFormat or
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType
+        :keyword metadata: Custom key-value pairs for storing additional information about the agent.
         :paramtype metadata: Optional[Dict[str, str]]
-        :keyword content_type: Content type of the body.
+        :keyword content_type: The MIME type of the request body when using body parameter.
         :paramtype content_type: str
-        :return: An Agent object.
+        :return: A newly created agent object with the specified configuration.
         :rtype: _models.Agent
-        :raises: HttpResponseError for HTTP errors.
+        :raises: HttpResponseError for HTTP errors during agent creation.
         """
 
         self._validate_tools_and_tool_resources(tools, tool_resources)
@@ -361,11 +389,13 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
 
          We generally recommend altering this or temperature but not both. Default value is None.
         :paramtype top_p: float
-        :keyword response_format: The response format of the tool calls used by this agent. Is one of
-         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
-         or ~azure.ai.agents.models.AgentsApiResponseFormat
+        :keyword response_format: Specifies the format for the responses, particularly for tool calls.
+         Can be a string, response format mode, or structured response format object that defines how
+         the agent should structure its outputs.
+        :type response_format: str or
+                               ~azure.ai.agents.models.AgentsApiResponseFormatMode or
+                               ~azure.ai.agents.models.AgentsApiResponseFormat or
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -410,8 +440,9 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :keyword instructions: The modified system instructions for the new agent to use. Default value
          is None.
         :paramtype instructions: str
-        :keyword toolset: The Collection of tools and resources (alternative to `tools` and `tool_resources`
-         and adds automatic execution logic for functions). Default value is None.
+        :keyword toolset: A pre-configured collection of tools and their associated resources that provides
+         both tool definitions and resources in a single object. This is a convenient alternative
+         to manually specifying tools and tool_resources separately.
         :paramtype toolset: ~azure.ai.agents.models.ToolSet
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output more random,
@@ -424,11 +455,13 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
 
          We generally recommend altering this or temperature but not both. Default value is None.
         :paramtype top_p: float
-        :keyword response_format: The response format of the tool calls used by this agent. Is one of
-         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
-         or ~azure.ai.agents.models.AgentsApiResponseFormat
+        :keyword response_format: Specifies the format for the responses, particularly for tool calls.
+         Can be a string, response format mode, or structured response format object that defines how
+         the agent should structure its outputs.
+        :type response_format: str or
+                               ~azure.ai.agents.models.AgentsApiResponseFormatMode or
+                               ~azure.ai.agents.models.AgentsApiResponseFormat or
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -518,8 +551,9 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
          the ``code_interpreter`` tool requires a list of file IDs, while the ``file_search`` tool
          requires a list of vector store IDs. Default value is None.
         :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
-        :keyword toolset: The Collection of tools and resources (alternative to `tools` and `tool_resources`
-         and adds automatic execution logic for functions). Default value is None.
+        :keyword toolset: A pre-configured collection of tools and their associated resources that provides
+         both tool definitions and resources in a single object. This is a convenient alternative
+         to manually specifying tools and tool_resources separately.
         :paramtype toolset: ~azure.ai.agents.models.ToolSet
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output more random,
@@ -532,11 +566,13 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
 
          We generally recommend altering this or temperature but not both. Default value is None.
         :paramtype top_p: float
-        :keyword response_format: The response format of the tool calls used by this agent. Is one of
-         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
-         or ~azure.ai.agents.models.AgentsApiResponseFormat
+        :keyword response_format: Specifies the format for the responses, particularly for tool calls.
+         Can be a string, response format mode, or structured response format object that defines how
+         the agent should structure its outputs.
+        :type response_format: str or
+                               ~azure.ai.agents.models.AgentsApiResponseFormatMode or
+                               ~azure.ai.agents.models.AgentsApiResponseFormat or
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -693,7 +729,9 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :type tool_choice: str or
                           ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
                           ~azure.ai.agents.models.AgentsNamedToolChoice
-        :keyword response_format: Specifies the format the model must output.
+        :keyword response_format: Specifies the format for the responses, particularly for tool calls.
+         Can be a string, response format mode, or structured response format object that defines how
+         the agent should structure its outputs.
         :type response_format: str or
                                ~azure.ai.agents.models.AgentsApiResponseFormatMode or
                                ~azure.ai.agents.models.AgentsApiResponseFormat or
@@ -795,7 +833,9 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :type tool_choice: str or
                           ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
                           ~azure.ai.agents.models.AgentsNamedToolChoice
-        :keyword response_format: Specifies the format the model must output.
+        :keyword response_format: Specifies the format for the responses, particularly for tool calls.
+         Can be a string, response format mode, or structured response format object that defines how
+         the agent should structure its outputs.
         :type response_format: str or
                                ~azure.ai.agents.models.AgentsApiResponseFormatMode or
                                ~azure.ai.agents.models.AgentsApiResponseFormat or
@@ -895,8 +935,13 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :type truncation_strategy: ~azure.ai.agents.models.TruncationObject, optional
         :keyword tool_choice: Controls which tool (if any) the model is allowed to call.
         :type tool_choice: str or ~azure.ai.agents.models.AgentsToolChoiceOption, optional
-        :keyword response_format: Specifies the required format for the model’s output.
-        :type response_format: str or ~azure.ai.agents.models.AgentsResponseFormatOption, optional
+        :keyword response_format: Specifies the format for the responses, particularly for tool calls.
+         Can be a string, response format mode, or structured response format object that defines how
+         the agent should structure its outputs.
+        :type response_format: str or
+                               ~azure.ai.agents.models.AgentsApiResponseFormatMode or
+                               ~azure.ai.agents.models.AgentsApiResponseFormat or
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType
         :keyword parallel_tool_calls: If True, allows tool calls to be executed in parallel.
         :type parallel_tool_calls: bool, optional
         :keyword metadata: Optional metadata (up to 16 key/value pairs) to attach to the run.
