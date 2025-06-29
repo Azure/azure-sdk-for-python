@@ -66,7 +66,7 @@ Need Help?
 ==========
 
 Be sure to check out the Microsoft Azure `Developer Forums on Stack Overflow <http://go.microsoft.com/fwlink/?LinkId=234489>`__
-if you have trouble with the provided code. Most questions are tagged `azure and python <https://stackoverflow.com/questions/tagged/azure+python>`__.
+if you have trouble with the provided code. Most questions are tagged `azure-python <https://stackoverflow.com/questions/tagged/azure+python>`__.
 
 
 Contribute Code or Provide Feedback

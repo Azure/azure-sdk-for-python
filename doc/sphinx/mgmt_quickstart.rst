@@ -258,7 +258,7 @@ For more code samples that demonstrate how to use our SDK to interact with Azure
 Need help?
 ----------
 - File an issue via `Github Issues <https://github.com/Azure/azure-sdk-for-python/issues>`__
-- Check `previous questions <https://stackoverflow.com/questions/tagged/azure+python>`__ or ask new ones on StackOverflow using azure and python tags.
+- Check `previous questions <https://stackoverflow.com/questions/tagged/azure+python>`__ or ask new ones on StackOverflow using the `azure-python` tag.
 
 Contributing
 ------------
