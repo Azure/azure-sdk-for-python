@@ -37,12 +37,11 @@ from typing import Optional
 
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.agents.aio import AgentsClient
-from azure.ai.agents.models import DeepResearchTool, MessageRole
+from azure.ai.agents.models import DeepResearchTool, MessageRole, ThreadMessage
 from azure.identity.aio import DefaultAzureCredential
 
 
 async def fetch_and_print_new_agent_response(
-    *,
     thread_id: str,
     agents_client: AgentsClient,
     last_message_id: Optional[str] = None,
@@ -63,6 +62,33 @@ async def fetch_and_print_new_agent_response(
         print(f"URL Citation: [{ann.url_citation.title}]({ann.url_citation.url})")
 
     return response.id
+
+
+def create_research_summary(
+        message : ThreadMessage,
+        filepath: str = "research_summary.md"
+) -> None:
+    if not message:
+        print("No message content provided, cannot create research summary.")
+        return
+
+    with open(filepath, "w", encoding="utf-8") as fp:
+        # Write text summary
+        text_summary = "\n\n".join([t.text.value.strip() for t in message.text_messages])
+        fp.write(text_summary)
+
+        # Write unique URL citations, if present
+        if message.url_citation_annotations:
+            fp.write("\n\n## References\n")
+            seen_urls = set()
+            for ann in message.url_citation_annotations:
+                url = ann.url_citation.url
+                title = ann.url_citation.title or url
+                if url not in seen_urls:
+                    fp.write(f"- [{title}]({url})\n")
+                    seen_urls.add(url)
+
+    print(f"Research summary written to '{filepath}'.")
 
 
 async def main() -> None:
@@ -132,17 +158,7 @@ async def main() -> None:
             thread_id=thread.id, role=MessageRole.AGENT
         )
         if final_message:
-            with open("research_summary.md", "w", encoding="utf-8") as fp:
-                # Write the research summary to a markdown file
-                fp.write("\n".join(t.text.value for t in final_message.text_messages))
-
-                # Write the URL citations if available
-                if final_message.url_citation_annotations:
-                    fp.write("\n\n## References\n")
-                    for ann in final_message.url_citation_annotations:
-                        url = ann.url_citation.url
-                        title = ann.url_citation.title or url
-                        fp.write(f"- [{title}]({url})\n")
+            create_research_summary(final_message)
 
         # Clean-up and delete the agent once the run is finished.
         # NOTE: Comment out this line if you plan to reuse the agent later.
