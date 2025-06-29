@@ -102,10 +102,7 @@ async def main() -> None:
             thread_id=thread.id,
             role="user",
             content=(
-                "What is the latest research on quantum computing? "
-                "Please summarize your findings in a 5-point bullet list, "
-                "each one a few sentences long, and provide citations for the sources you used. "
-                "Conclude with a short summary of the findings."
+                "Research the current state of studies on orca intelligence and orca language, including what is currently known about orcas' cognitive capabilities and communication systems."
             ),
         )
         print(f"Created message, ID: {message.id}")

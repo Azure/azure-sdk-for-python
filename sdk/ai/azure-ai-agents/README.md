@@ -396,6 +396,9 @@ with project_client:
 
     with project_client.agents as agents_client:
 
+        # Create a new agent that has the Deep Research tool attached.
+        # NOTE: To add Deep Research to an existing agent, fetch it with `get_agent(agent_id)` and then,
+        # update the agent with the Deep Research tool.
         agent = agents_client.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"],
             name="my-agent",
