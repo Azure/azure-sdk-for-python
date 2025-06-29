@@ -4,8 +4,7 @@ description: Evaluates Tool Call Accuracy for tool used by agent
 model:
   api: chat
   parameters:
-    temperature: 0
-    max_tokens: 3000
+    max_completion_tokens: 3000
     top_p: 1.0
     presence_penalty: 0
     frequency_penalty: 0
@@ -40,17 +39,18 @@ user:
   4. Potential Value: Is the information this tool call might provide likely to be useful in advancing the conversation or addressing the user expressed or implied needs?
   5. Context Appropriateness: Does the tool call make sense at this point in the conversation, given what has been discussed so far?
 
+
 # Ratings
 ## [Tool Call Accuracy: 1] (Irrelevant)
 **Definition:**
-Tool calls were not relevant to the user's query, resulting in an irrelevant or unhelpful final output.
+Tool calls were not relevant to the user's query, resulting in anirrelevant or unhelpful final output.
 This level is a 'fail'.
 
 **Example:**
  The user's query is asking for most popular hotels in New York, but the agent calls a tool that does search in local files on a machine. This tool is not relevant to the user query, so this case is a Level 1 'fail'.
 
 
-## [Tool Call Accuracy: 2] (Partially Relevant - No output)
+## [Tool Call Accuracy: 2] (Partially Relevant - No correct output)
 **Definition:**
 Tool calls were somewhat related to the user's query, but the agent was not able to reach a final output that addresses the user query due to one or more of the following:
 •	Tools returned errors, and no retrials for the tool call were successful.
@@ -70,7 +70,7 @@ This level is a 'fail'.
 
 ## [Tool Call Accuracy: 3] (Slightly Correct - Reached Output)
 **Definition:**
-Tool calls were relevant and led to a correct output. However, multiple excessive, unnecessary tool calls were made.
+Tool calls were relevant, correct and grounded parameters were passed so that led to a correct output. However, multiple excessive, unnecessary tool calls were made.
 This level is a 'pass'.
 
 **Example:**
@@ -83,7 +83,7 @@ This level is a 'pass'.
 ## [Tool Call Accuracy: 4] (Mostly Correct - Reached output)
 **Definition:**
 Tool calls were fully relevant and efficient:
-•	Correct tools were called with the correct parameters, whether they are extracted from the conversation history or the current user query.
+•	Correct tools were called with the correct and grounded parameters, whether they are extracted from the conversation history or the current user query.
 •	A tool returned an error, but the agent retried calling the tool and successfully got an output.
 This level is a 'pass'.
 
@@ -94,7 +94,7 @@ This level is a 'pass'.
 ## [Tool Call Accuracy: 5] (Optimal Solution - Reached output)
 **Definition:**
 Tool calls were fully relevant and efficient:
-•	Correct tools were called with the correct parameters, whether they are extracted from the conversation history or the current user query.
+•	Correct tools were called with the correct and grounded parameters, whether they are extracted from the conversation history or the current user query.
 •	No unnecessary or excessive tool calls were made.
 •	No errors occurred in any of the tools.
 •	The agent was able to reach the final output that addresses the user's query without facing any issues.
@@ -110,7 +110,8 @@ This level is a 'pass'.
 
 # IMPORTANT NOTES
 - There is a clear distinction between 'pass' levels and 'fail' levels. The distinction is that the tools are called correctly in order to reach the required output. If the agent was not able to reach the final output that addresses the user query, it cannot be either of the 'pass' levels, and vice versa. It is crucial that you ensure you are rating the agent's response with the correct level based on the tool calls made to address the user's query.
-- You are NOT concerned with the correctness of the result of the tool. As long as the tool did not return an error, then the tool output is correct and accurate. Do not look into the correctness of the tool's result.
+- "Correct output" means correct tool with the correct, grounded parameters. You are NOT concerned with the correctness of the result of the tool. As long as the parameters passed were correct and the tool did not return an error, then the tool output is correct and accurate.
+- Ensure that every single parameter that is passed to the tools is correct and grounded from the user query or the conversation history. If the agent passes incorrect parameters or completely makes them up, then this is a fail, even if somehow the agent reaches a correct result.
 
 # Data
 CONVERSATION : {{query}}
@@ -123,7 +124,7 @@ TOOL DEFINITION: {{tool_definition}}
 Your output should consist only of a JSON object, as provided in the examples, that has the following keys:
   - chain_of_thought: a string that explains your thought process to decide on the tool call accuracy level. Start this string with 'Let's think step by step:', and think deeply and precisely about which level should be chosen based on the agent's tool calls and how they were able to address the user's query.
   - tool_calls_success_level: a integer value between 1 and 5 that represents the level of tool call success, based on the level definitions mentioned before. You need to be very precise when deciding on this level. Ensure you are correctly following the rating system based on the description of each level.
-  - tool_calls_success_result: 'pass' or 'fail' based on the evaluation level of the tool call accuracy. Levels 1 and 2 are a 'fail', levels 3, 4 and 5 are a 'pass'.
+  - tool_calls_sucess_result: 'pass' or 'fail' based on the evaluation level of the tool call accuracy. Levels 1 and 2 are a 'fail', levels 3, 4 and 5 are a 'pass'.
   - additional_details: a dictionary that contains the following keys:
         - tool_calls_made_by_agent: total number of tool calls made by the agent
         - correct_tool_calls_made_by_agent: total number of correct tool calls made by the agent
