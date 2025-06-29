@@ -7,12 +7,9 @@
 """
 DESCRIPTION:
     This sample demonstrates how to use Agent operations with the Deep Research tool from
-    the Azure Agents service using a synchronous client. This sample uses a blocking call
-    `agents_client.runs.create_and_process` to process the Agent run. However, since research
-    results may take a few minutes to complete, it's recommended to use one of the two
-    streaming samples so you can see the progress of the Agent run in real-time:
-    - /agents_streaming/sample_agents_stream_iteration_with_deep_research_tool.py
-    - /agents_streaming/sample_agents_stream_eventhandler_with_deep_research_tool.py
+    the Azure Agents service through the synchronous Python client. Deep Research issues
+    external Bing Search queries and invokes an LLM, so each run can take several minutes
+    to complete.
 
     For more information see the Deep Research Tool document: https://aka.ms/agents-deep-research
 
@@ -34,10 +31,35 @@ USAGE:
        /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace-name}/connections/{connection-name}
 """
 
-import os
+import os, time
+from typing import Optional
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
+from azure.ai.agents import AgentsClient
 from azure.ai.agents.models import DeepResearchTool, MessageRole
+
+
+def fetch_and_print_new_agent_response(
+    *,
+    thread_id: str,
+    agents_client: AgentsClient,
+    last_message_id: Optional[str] = None,
+) -> Optional[str]:
+    response = agents_client.messages.get_last_message_by_role(
+        thread_id=thread_id,
+        role=MessageRole.AGENT,
+    )
+    if not response or response.id == last_message_id:
+        return last_message_id  # No new content
+
+    print("\nAgent response:")
+    print("\n".join(t.text.value for t in response.text_messages))
+
+    for ann in response.url_citation_annotations:
+        print(f"URL Citation: [{ann.url_citation.title}]({ann.url_citation.url})")
+
+    return response.id
+
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
@@ -58,6 +80,9 @@ with project_client:
 
     with project_client.agents as agents_client:
 
+        # Create a new agent that has the Deep Research tool attached.
+        # NOTE: To add Deep Research to an existing agent, fetch it with `get_agent(agent_id)` and then,
+        # update the agent with the Deep Research tool.
         agent = agents_client.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"],
             name="my-agent",
@@ -85,22 +110,44 @@ with project_client:
         )
         print(f"Created message, ID: {message.id}")
 
-        # Create and process Agent run in thread with tools
         print(f"Start processing the message... this may take a few minutes to finish. Be patient!")
-        run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
-        print(f"Run finished with status: {run.status}")
+        # Poll the run as long as run status is queued or in progress
+        run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
+        last_message_id = None
+        while run.status in ("queued", "in_progress", "requires_action"):
+            time.sleep(1)
+            run = agents_client.runs.get(thread_id=thread.id, run_id=run.id)
+
+            last_message_id = fetch_and_print_new_agent_response(
+                thread_id=thread.id,
+                agents_client=agents_client,
+                last_message_id=last_message_id,
+            )
+            print(f"Run status: {run.status}")
+
+        print(f"Run finished with status: {run.status}, ID: {run.id}")
 
         if run.status == "failed":
             print(f"Run failed: {run.last_error}")
 
-        # Delete the Agent when done
+        # Fetch the final message from the agent in the thread and create a research summary
+        final_message = agents_client.messages.get_last_message_by_role(
+            thread_id=thread.id, role=MessageRole.AGENT
+        )
+        if final_message:
+            with open("research_summary_3.md", "w", encoding="utf-8") as fp:
+                # Write the research summary to a markdown file
+                fp.write("\n".join(t.text.value for t in final_message.text_messages))
+
+                # Write the URL citations if available
+                if final_message.url_citation_annotations:
+                    fp.write("## References\n")
+                    for ann in final_message.url_citation_annotations:
+                        url = ann.url_citation.url
+                        title = ann.url_citation.title or url
+                        fp.write(f"- [{title}]({url})\n")
+
+        # Clean-up and delete the agent once the run is finished.
+        # NOTE: Comment out this line if you plan to reuse the agent later.
         agents_client.delete_agent(agent.id)
         print("Deleted agent")
-
-        # Fetch the last message from the agent in the thread
-        response_message = agents_client.messages.get_last_message_by_role(thread_id=thread.id, role=MessageRole.AGENT)
-        if response_message:
-            for text_message in response_message.text_messages:
-                print(f"Agent response: {text_message.text.value}")
-            for annotation in response_message.url_citation_annotations:
-                print(f"URL Citation: [{annotation.url_citation.title}]({annotation.url_citation.url})")
