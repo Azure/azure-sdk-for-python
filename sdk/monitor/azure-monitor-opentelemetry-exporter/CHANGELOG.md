@@ -6,6 +6,18 @@
 
 - Detect synthetically created telemetry based on the user-agent header
   ([#41733](https://github.com/Azure/azure-sdk-for-python/pull/41733))
+- Added customer-facing statsbeat preview.
+  ([#41669](https://github.com/Azure/azure-sdk-for-python/pull/41669))
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b40 (Unreleased)
+
+### Features Added
 
 ### Breaking Changes
 
