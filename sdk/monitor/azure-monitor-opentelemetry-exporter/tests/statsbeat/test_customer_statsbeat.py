@@ -82,7 +82,7 @@ class TestCustomerStatsbeat(unittest.TestCase):
                         self.endpoint_url = "https://eastus-8.in.applicationinsights.azure.com/"
                         self.network_collection_interval = 900
                 metrics = CustomerStatsbeatMetrics(StatsbeatOptions())
-                metrics.total_item_success_count.clear()
+                metrics._counters.total_item_success_count.clear()
 
                 # Create and configure exporter
                 exporter = AzureMonitorTraceExporter(connection_string=connection_string)
@@ -159,7 +159,7 @@ class TestCustomerStatsbeat(unittest.TestCase):
 
                 # Log counts
                 logger.info(f"Generated dependencies - Total: {total_dependencies}, Expected Successful: {successful_dependencies}")
-                actual_count = metrics.total_item_success_count.get(_DEPENDENCY, 0)
+                actual_count = metrics._counters.total_item_success_count.get(_DEPENDENCY, 0)
                 logger.info(f"Actual successful dependencies counted: {actual_count}")
 
                 # Verify dependency count
