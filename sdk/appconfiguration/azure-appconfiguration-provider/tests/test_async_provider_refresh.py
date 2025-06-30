@@ -55,7 +55,7 @@ try:
                 await client.refresh()
                 assert client["refresh_message"] == "updated value"
                 assert has_feature_flag(client, "Alpha", True)
-                assert mock_callback.call_count == 1
+                assert mock_callback.call_count == 2
 
                 setting.value = "original value"
                 feature_flag.enabled = False
@@ -68,7 +68,7 @@ try:
                 await client.refresh()
                 assert client["refresh_message"] == "original value"
                 assert has_feature_flag(client, "Alpha", False)
-                assert mock_callback.call_count == 2
+                assert mock_callback.call_count == 4
 
                 setting.value = "updated value 2"
                 feature_flag.enabled = True
@@ -79,14 +79,14 @@ try:
                 await client.refresh()
                 assert client["refresh_message"] == "original value"
                 assert has_feature_flag(client, "Alpha", False)
-                assert mock_callback.call_count == 2
+                assert mock_callback.call_count == 4
 
                 setting.value = "original value"
                 await appconfig_client.set_configuration_setting(setting)
 
                 await client.refresh()
                 assert client["refresh_message"] == "original value"
-                assert mock_callback.call_count == 2
+                assert mock_callback.call_count == 4
 
         # method: refresh
         @app_config_decorator_async

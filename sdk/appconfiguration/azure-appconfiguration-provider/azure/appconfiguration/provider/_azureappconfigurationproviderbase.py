@@ -271,7 +271,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
 
         refresh_on: List[Tuple[str, str]] = kwargs.pop("refresh_on", None) or []
         self._refresh_on: Mapping[Tuple[str, str], Optional[str]] = {_build_sentinel(s): None for s in refresh_on}
-        self._refresh_timer: _RefreshTimer = _RefreshTimer(refresh_interval=kwargs.pop("secret_refresh_interval", 60))
+        self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._keyvault_credential = kwargs.pop("keyvault_credential", None)
         self._secret_resolver = kwargs.pop("secret_resolver", None)
         self._keyvault_client_configs = kwargs.pop("keyvault_client_configs", {})

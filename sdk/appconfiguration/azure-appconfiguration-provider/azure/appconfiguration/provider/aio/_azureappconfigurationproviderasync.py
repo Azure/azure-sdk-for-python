@@ -338,86 +338,156 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             "on_refresh_error", None
         )
 
-    async def refresh(self, **kwargs) -> None:  # pylint: disable=too-many-statements
-        if not self._refresh_on and not self._feature_flag_refresh_enabled:
+    async def _common_refresh(
+        self,
+        refresh_operation: Callable,
+        error_log_message: str,
+        timer,  # Type is _RefreshTimer but avoiding import
+        refresh_condition: bool,
+        **kwargs,
+    ) -> None:
+        if not refresh_condition:
             logger.debug("Refresh called but no refresh enabled.")
             return
-        if not self._refresh_timer.needs_refresh():
-            logger.debug("Refresh called but refresh interval not elapsed.")
-            return
-        if not self._refresh_lock.acquire(blocking=False):  # pylint: disable= consider-using-with
-            logger.debug("Refresh called but refresh already in progress.")
-            return
+
         success = False
-        need_refresh = False
         error_message = """
                         Failed to refresh configuration settings from Azure App Configuration.
                         """
         exception: Exception = RuntimeError(error_message)
         is_failover_request = False
-        try:
-            await self._replica_client_manager.refresh_clients()
-            self._replica_client_manager.find_active_clients()
-            replica_count = self._replica_client_manager.get_client_count() - 1
+        await self._replica_client_manager.refresh_clients()
+        self._replica_client_manager.find_active_clients()
+        replica_count = self._replica_client_manager.get_client_count() - 1
 
-            while client := self._replica_client_manager.get_next_active_client():
-                headers = update_correlation_context_header(
-                    kwargs.pop("headers", {}),
-                    "Watch",
-                    replica_count,
-                    self._feature_flag_enabled,
-                    self._feature_filter_usage,
-                    self._uses_key_vault,
-                    self._uses_load_balancing,
-                    is_failover_request,
-                    self._uses_ai_configuration,
-                    self._uses_aicc_configuration,
-                )
+        while client := self._replica_client_manager.get_next_active_client():
+            headers = update_correlation_context_header(
+                kwargs.pop("headers", {}),
+                "Watch",
+                replica_count,
+                self._feature_flag_enabled,
+                self._feature_filter_usage,
+                self._uses_key_vault,
+                self._uses_load_balancing,
+                is_failover_request,
+                self._uses_ai_configuration,
+                self._uses_aicc_configuration,
+            )
 
-                try:
-                    if self._refresh_on:
-                        need_refresh, self._refresh_on, configuration_settings = (
-                            await client.refresh_configuration_settings(
-                                self._selects, self._refresh_on, headers=headers, **kwargs
-                            )
-                        )
-                        configuration_settings_processed = await self._process_configurations(configuration_settings)
-                        if need_refresh:
-                            self._dict = configuration_settings_processed
-                    if self._feature_flag_refresh_enabled:
-                        need_ff_refresh, refresh_on_feature_flags, feature_flags, filters_used = (
-                            await client.refresh_feature_flags(
-                                self._refresh_on_feature_flags,
-                                self._feature_flag_selectors,
-                                headers,
-                                self._origin_endpoint,
-                                **kwargs,
-                            )
-                        )
-                        if refresh_on_feature_flags:
-                            self._refresh_on_feature_flags = refresh_on_feature_flags
-                        self._feature_filter_usage = filters_used
-
-                        if need_refresh or need_ff_refresh:
-                            self._dict[FEATURE_MANAGEMENT_KEY] = {}
-                            self._dict[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags
-                    # Even if we don't need to refresh, we should reset the timer
-                    self._refresh_timer.reset()
-                    success = True
+            try:
+                # Execute the specific refresh operation
+                success = await refresh_operation(client, headers, **kwargs)
+                if success:
                     break
-                except AzureError as e:
-                    exception = e
-                    logger.warning("Failed to refresh configurations from endpoint %s", client.endpoint)
-                    self._replica_client_manager.backoff(client)
-                    is_failover_request = True
-            if not success:
-                self._refresh_timer.backoff()
-                if self._on_refresh_error:
-                    await self._on_refresh_error(exception)
-                    return
-                raise exception
-            if self._on_refresh_success:
-                await self._on_refresh_success()
+            except AzureError as e:
+                exception = e
+                logger.warning(error_log_message, client.endpoint)
+                self._replica_client_manager.backoff(client)
+                is_failover_request = True
+
+        if not success:
+            timer.backoff()
+            if self._on_refresh_error:
+                self._on_refresh_error(exception)
+                return
+            raise exception
+
+        if self._on_refresh_success:
+            await self._on_refresh_success()
+
+    async def _refresh_configuration_settings(self, force: bool = False, **kwargs: Any) -> None:
+
+        async def refresh_operation(client, headers, **inner_kwargs):
+            configuration_settings: Optional[List[ConfigurationSetting]] = None
+            need_refresh = False
+            if not force:
+                need_refresh, self._refresh_on, configuration_settings = await client.refresh_configuration_settings(
+                    self._selects, self._refresh_on, headers=headers, **inner_kwargs
+                )
+            else:
+                # Force a refresh to make sure secrets are up to date
+                configuration_settings = await client.load_configuration_settings(
+                    self._selects, self._refresh_on, headers=headers, **inner_kwargs
+                )
+                need_refresh = True
+            configuration_settings_processed: Dict[str, Any] = {}
+            if configuration_settings is not None:
+                configuration_settings_processed = await self._process_configurations(configuration_settings)
+
+            if need_refresh:
+                feature_flags = []
+                uses_feature_flags = False
+                if self._dict.get(FEATURE_MANAGEMENT_KEY, {}).get(FEATURE_FLAG_KEY):
+                    uses_feature_flags = True
+                    feature_flags = self._dict[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY]
+                self._dict = configuration_settings_processed
+                if uses_feature_flags:
+                    # If feature flags were already loaded, we need to keep them
+                    self._dict[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags
+
+            # Even if we don't need to refresh, we should reset the timer
+            self._refresh_timer.reset()
+            if self._secret_refresh_timer:
+                self._secret_refresh_timer.reset()
+
+            return True
+
+        await self._common_refresh(
+            refresh_operation=refresh_operation,
+            error_log_message="Failed to refresh configurations from endpoint %s",
+            timer=self._refresh_timer,
+            refresh_condition=bool(self._refresh_on),
+            **kwargs,
+        )
+
+    async def _refresh_feature_flags(self, **kwargs) -> None:  # pylint: disable=too-many-statements
+        """Refresh feature flags from Azure App Configuration."""
+
+        async def refresh_operation(client, headers, **inner_kwargs):
+            need_ff_refresh, refresh_on_feature_flags, feature_flags, filters_used = await client.refresh_feature_flags(
+                self._refresh_on_feature_flags,
+                self._feature_flag_selectors,
+                headers,
+                self._origin_endpoint or "",
+                **inner_kwargs,
+            )
+
+            if refresh_on_feature_flags:
+                self._refresh_on_feature_flags = refresh_on_feature_flags
+            self._feature_filter_usage = filters_used
+
+            if need_ff_refresh:
+                self._dict[FEATURE_MANAGEMENT_KEY] = {}
+                self._dict[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags
+
+            # Even if we don't need to refresh, we should reset the timer
+            self._feature_flag_refresh_timer.reset()
+            return True
+
+        await self._common_refresh(
+            refresh_operation=refresh_operation,
+            error_log_message="Failed to refresh feature flags from endpoint %s",
+            timer=self._feature_flag_refresh_timer,
+            refresh_condition=self._feature_flag_refresh_enabled,
+            **kwargs,
+        )
+
+    async def refresh(self, **kwargs) -> None:  # pylint: disable=too-many-statements
+        if not self._refresh_on and not self._feature_flag_refresh_enabled:
+            logger.debug("Refresh called but no refresh enabled.")
+            return
+        if not self._refresh_lock.acquire(blocking=False):  # pylint: disable= consider-using-with
+            logger.debug("Refresh called but refresh already in progress.")
+            return
+        try:
+            if (self._secret_refresh_timer and self._secret_refresh_timer.needs_refresh()) or (
+                self._refresh_timer and self._refresh_timer.needs_refresh()
+            ):
+                await self._refresh_configuration_settings(**kwargs)
+            if self._feature_flag_refresh_enabled and (
+                self._feature_flag_refresh_timer and self._feature_flag_refresh_timer.needs_refresh()
+            ):
+                await self._refresh_feature_flags(**kwargs)
         finally:
             self._refresh_lock.release()
 
