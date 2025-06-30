@@ -4,7 +4,6 @@
 
 ### Features Added
 
-  - Client `StorageActionsMgmtClient` added method `send_request`
   - Added enum `OnFailure`
   - Added enum `OnSuccess`
   - Added model `StorageTaskUpdateProperties`
