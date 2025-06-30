@@ -12,7 +12,7 @@ import re
 from setuptools import setup, find_packages
 
 
-PACKAGE_NAME = "azure-ai-contentunderstanding"
+PACKAGE_NAME = "contentunderstanding"
 PACKAGE_PPRINT_NAME = "Azure AI Content Understanding"
 
 # a-b-c => a/b/c

@@ -7,26 +7,92 @@
 # --------------------------------------------------------------------------
 
 from contentunderstanding import ContentUnderstandingClient
+from azure.identity import DefaultAzureCredential
+import re
+from urllib.parse import urlparse
+import os
+from dotenv import load_dotenv
 
 """
 # PREREQUISITES
-    pip install azure-ai-contentunderstanding
+    pip install azure-ai-contentunderstanding python-dotenv
+    
+    # Option 1: Set environment variable
+    export CONTENT_UNDERSTANDING_ENDPOINT="https://your-resource-name.services.ai.azure.com/"
+    
+    # Option 2: Use .env file (recommended)
+    # Copy env.sample to .env and update with your endpoint
+    cp env.sample .env
+    # Edit .env file with your actual endpoint
+    
 # USAGE
     python content_analyzers_analyze_binary.py
 """
 
+# Load environment variables from .env file
+load_dotenv()
+
+
+def extract_operation_id(operation_location: str) -> str:
+    """Extract just the GUID from the Operation-Location URL."""
+    # Method 1: Using regex to find GUID pattern
+    guid_pattern = r'[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+    match = re.search(guid_pattern, operation_location, re.IGNORECASE)
+    if match:
+        return match.group(0)
+    
+    # Method 2: Extract from URL path (fallback)
+    parsed_url = urlparse(operation_location)
+    path_parts = parsed_url.path.split('/')
+    for part in path_parts:
+        if re.match(guid_pattern, part, re.IGNORECASE):
+            return part
+    
+    # If no GUID found, return the full URL
+    return operation_location
+
 
 def main():
+    # Get endpoint from environment variable
+    my_endpoint = os.getenv("CONTENT_UNDERSTANDING_ENDPOINT")
+    if not my_endpoint:
+        raise ValueError(
+            "CONTENT_UNDERSTANDING_ENDPOINT environment variable is not set. "
+            "Please set it or create a .env file with your endpoint."
+        )
+    
     client = ContentUnderstandingClient(
-        endpoint="ENDPOINT",
-        credential="CREDENTIAL",
+        endpoint=my_endpoint,
+        credential=DefaultAzureCredential(),
     )
 
-    response = client.content_analyzers.begin_analyze_binary(
-        analyzer_id="myAnalyzer",
-        input="RXhhbXBsZSBGaWxl",
-    ).result()
-    print(response)
+    with open("sample_invoice.pdf", "rb") as f:
+        file_bytes = f.read()
+
+    poller = client.content_analyzers.begin_analyze_binary(
+        analyzer_id="prebuilt-documentAnalyzer",
+        input=file_bytes,
+        content_type="application/pdf",
+    )
+    
+    # Get the full Operation-Location URL
+    operation_location = poller._polling_method._initial_response.http_response.headers["Operation-Location"]
+    
+    # Extract just the GUID
+    operation_id = extract_operation_id(operation_location)
+    
+    print(f"Full Operation-Location: {operation_location}")
+    print(f"Extracted Operation ID: {operation_id}")
+    
+    response = poller.result()
+    
+    print("Analysis completed successfully!")
+    print(f"Number of contents: {len(response.contents)}")
+    
+    # Print the markdown content of the first document
+    if response.contents:
+        print("\nMarkdown content:")
+        print(response.contents[0].markdown)
 
 
 # x-ms-original-file: 2025-05-01-preview/ContentAnalyzers_AnalyzeBinary.json

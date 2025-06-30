@@ -7,26 +7,69 @@
 # --------------------------------------------------------------------------
 
 from contentunderstanding import ContentUnderstandingClient
+from azure.identity import DefaultAzureCredential
+import json
+import os
+from dotenv import load_dotenv
 
 """
 # PREREQUISITES
-    pip install azure-ai-contentunderstanding
+    pip install azure-ai-contentunderstanding python-dotenv
+    
+    # Option 1: Set environment variable
+    export CONTENT_UNDERSTANDING_ENDPOINT="https://your-resource-name.services.ai.azure.com/"
+    
+    # Option 2: Use .env file (recommended)
+    # Copy env.sample to .env and update with your endpoint
+    cp env.sample .env
+    # Edit .env file with your actual endpoint
+    
 # USAGE
     python content_classifiers_classify_binary.py
 """
 
+# Load environment variables from .env file
+load_dotenv()
+
 
 def main():
+    # Get endpoint from environment variable
+    my_endpoint = os.getenv("CONTENT_UNDERSTANDING_ENDPOINT")
+    if not my_endpoint:
+        raise ValueError(
+            "CONTENT_UNDERSTANDING_ENDPOINT environment variable is not set. "
+            "Please set it or create a .env file with your endpoint."
+        )
+    
     client = ContentUnderstandingClient(
-        endpoint="ENDPOINT",
-        credential="CREDENTIAL",
+        endpoint=my_endpoint,
+        credential=DefaultAzureCredential(),
     )
 
-    response = client.content_classifiers.begin_classify_binary(
-        classifier_id="myClassifier",
-        input="RXhhbXBsZSBGaWxl",
-    ).result()
-    print(response)
+    # Use the classifier we created earlier
+    classifier_id = "myClassifier-from-sdk"
+    
+    # Read the PDF file for classification
+    with open("sample_invoice.pdf", "rb") as f:
+        file_bytes = f.read()
+    
+    print(f"Starting binary classification with classifier: {classifier_id}")
+    print(f"File: sample_invoice.pdf ({len(file_bytes)} bytes)")
+    print("=" * 60)
+    
+    try:
+        response = client.content_classifiers.begin_classify_binary(
+            classifier_id=classifier_id,
+            input=file_bytes,
+            content_type="application/pdf",
+        ).result()
+        
+        print("✅ Binary classification completed successfully!")
+        print("Classification result:")
+        print(json.dumps(response.as_dict(), indent=2))
+        
+    except Exception as e:
+        print(f"❌ Error during binary classification: {e}")
 
 
 # x-ms-original-file: 2025-05-01-preview/ContentClassifiers_ClassifyBinary.json

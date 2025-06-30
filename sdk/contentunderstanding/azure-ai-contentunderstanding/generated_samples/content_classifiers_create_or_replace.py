@@ -7,31 +7,74 @@
 # --------------------------------------------------------------------------
 
 from contentunderstanding import ContentUnderstandingClient
+from azure.identity import DefaultAzureCredential
+import json
+import os
+from dotenv import load_dotenv
 
 """
 # PREREQUISITES
-    pip install azure-ai-contentunderstanding
+    pip install azure-ai-contentunderstanding python-dotenv
+    
+    # Option 1: Set environment variable
+    export CONTENT_UNDERSTANDING_ENDPOINT="https://your-resource-name.services.ai.azure.com/"
+    
+    # Option 2: Use .env file (recommended)
+    # Copy env.sample to .env and update with your endpoint
+    cp env.sample .env
+    # Edit .env file with your actual endpoint
+    
 # USAGE
     python content_classifiers_create_or_replace.py
 """
 
+# Load environment variables from .env file
+load_dotenv()
+
 
 def main():
+    # Get endpoint from environment variable
+    my_endpoint = os.getenv("CONTENT_UNDERSTANDING_ENDPOINT")
+    if not my_endpoint:
+        raise ValueError(
+            "CONTENT_UNDERSTANDING_ENDPOINT environment variable is not set. "
+            "Please set it or create a .env file with your endpoint."
+        )
+    
     client = ContentUnderstandingClient(
-        endpoint="ENDPOINT",
-        credential="CREDENTIAL",
+        endpoint=my_endpoint,
+        credential=DefaultAzureCredential(),
     )
 
-    response = client.content_classifiers.begin_create_or_replace(
-        classifier_id="myClassifier",
-        resource={
-            "categories": {"invoice": {"analyzerId": "myInvoice"}, "receipt": {"description": "Sales receipts"}},
-            "description": "My classifier",
-            "splitMode": "auto",
-            "tags": {"createdBy": "John"},
+    # Use a unique classifier ID
+    classifier_id = "myClassifier-from-sdk"
+    
+    # Define the classifier configuration
+    classifier_resource = {
+        "categories": {
+            "invoice": {"description": ""},
+            "receipt": {"description": "Sales receipts"}
         },
-    ).result()
-    print(response)
+        "description": "My classifier for invoices and receipts",
+        "splitMode": "auto",
+        "tags": {"createdBy": "John"},
+    }
+    
+    print(f"Creating/updating classifier: {classifier_id}")
+    print("=" * 60)
+    
+    try:
+        response = client.content_classifiers.begin_create_or_replace(
+            classifier_id=classifier_id,
+            resource=classifier_resource,
+        ).result()
+        
+        print("✅ Classifier created/updated successfully!")
+        print("Classifier details:")
+        print(json.dumps(response.as_dict(), indent=2))
+        
+    except Exception as e:
+        print(f"❌ Error creating/updating classifier: {e}")
 
 
 # x-ms-original-file: 2025-05-01-preview/ContentClassifiers_CreateOrReplace.json

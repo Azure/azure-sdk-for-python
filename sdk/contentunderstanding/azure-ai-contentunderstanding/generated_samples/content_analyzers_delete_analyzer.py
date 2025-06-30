@@ -7,24 +7,60 @@
 # --------------------------------------------------------------------------
 
 from contentunderstanding import ContentUnderstandingClient
+from azure.identity import DefaultAzureCredential
+import os
+from dotenv import load_dotenv
 
 """
 # PREREQUISITES
-    pip install azure-ai-contentunderstanding
+    pip install azure-ai-contentunderstanding python-dotenv
+    
+    # Option 1: Set environment variable
+    export CONTENT_UNDERSTANDING_ENDPOINT="https://your-resource-name.services.ai.azure.com/"
+    
+    # Option 2: Use .env file (recommended)
+    # Copy env.sample to .env and update with your endpoint
+    cp env.sample .env
+    # Edit .env file with your actual endpoint
+    
 # USAGE
     python content_analyzers_delete_analyzer.py
 """
 
+# Load environment variables from .env file
+load_dotenv()
+
 
 def main():
+    # Get endpoint from environment variable
+    my_endpoint = os.getenv("CONTENT_UNDERSTANDING_ENDPOINT")
+    if not my_endpoint:
+        raise ValueError(
+            "CONTENT_UNDERSTANDING_ENDPOINT environment variable is not set. "
+            "Please set it or create a .env file with your endpoint."
+        )
+    
     client = ContentUnderstandingClient(
-        endpoint="ENDPOINT",
-        credential="CREDENTIAL",
+        endpoint=my_endpoint,
+        credential=DefaultAzureCredential(),
     )
 
-    client.content_analyzers.delete(
-        analyzer_id="myAnalyzer",
-    )
+    # Use the analyzer we created earlier
+    analyzer_id = "myAnalyzer-from-sdk"
+    
+    print(f"Deleting analyzer: {analyzer_id}")
+    print("=" * 60)
+    
+    try:
+        client.content_analyzers.delete(
+            analyzer_id=analyzer_id,
+        )
+        
+        print("✅ Analyzer deleted successfully!")
+        print(f"Analyzer '{analyzer_id}' has been removed.")
+        
+    except Exception as e:
+        print(f"❌ Error deleting analyzer: {e}")
 
 
 # x-ms-original-file: 2025-05-01-preview/ContentAnalyzers_DeleteAnalyzer.json

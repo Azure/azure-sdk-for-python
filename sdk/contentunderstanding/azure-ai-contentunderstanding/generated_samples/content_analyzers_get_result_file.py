@@ -7,26 +7,68 @@
 # --------------------------------------------------------------------------
 
 from contentunderstanding import ContentUnderstandingClient
+from azure.identity import DefaultAzureCredential
+import json
+import os
+from dotenv import load_dotenv
 
 """
 # PREREQUISITES
-    pip install azure-ai-contentunderstanding
+    pip install azure-ai-contentunderstanding python-dotenv
+    
+    # Option 1: Set environment variable
+    export CONTENT_UNDERSTANDING_ENDPOINT="https://your-resource-name.services.ai.azure.com/"
+    
+    # Option 2: Use .env file (recommended)
+    # Copy env.sample to .env and update with your endpoint
+    cp env.sample .env
+    # Edit .env file with your actual endpoint
+    
 # USAGE
     python content_analyzers_get_result_file.py
 """
 
+# Load environment variables from .env file
+load_dotenv()
+
 
 def main():
+    # Get endpoint from environment variable
+    my_endpoint = os.getenv("CONTENT_UNDERSTANDING_ENDPOINT")
+    if not my_endpoint:
+        raise ValueError(
+            "CONTENT_UNDERSTANDING_ENDPOINT environment variable is not set. "
+            "Please set it or create a .env file with your endpoint."
+        )
+    
     client = ContentUnderstandingClient(
-        endpoint="ENDPOINT",
-        credential="CREDENTIAL",
+        endpoint=my_endpoint,
+        credential=DefaultAzureCredential(),
     )
 
-    response = client.content_analyzers.get_result_file(
-        operation_id="3b31320d-8bab-4f88-b19c-2322a7f11034",
-        path="figure-1.1",
-    )
-    print(response)
+    # Example operation ID (you would get this from a previous analysis operation)
+    operation_id = "00000000-0000-0000-0000-000000000000"
+
+    
+    # Example file path within the result (this would be available in the analysis result)
+    file_path = "figure-1.1"
+    
+    print(f"Retrieving result file for operation: {operation_id}")
+    print(f"File path: {file_path}")
+    print("=" * 60)
+    
+    try:
+        response = client.content_analyzers.get_result_file(
+            operation_id=operation_id,
+            path=file_path,
+        )
+        
+        print("✅ Result file retrieved successfully!")
+        print("File details:")
+        print(json.dumps(response.as_dict(), indent=2))
+        
+    except Exception as e:
+        print(f"❌ Error retrieving result file: {e}")
 
 
 # x-ms-original-file: 2025-05-01-preview/ContentAnalyzers_GetResultFile.json

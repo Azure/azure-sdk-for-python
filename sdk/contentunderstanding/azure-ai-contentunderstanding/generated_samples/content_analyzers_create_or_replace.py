@@ -7,43 +7,87 @@
 # --------------------------------------------------------------------------
 
 from contentunderstanding import ContentUnderstandingClient
+from azure.identity import DefaultAzureCredential
+import json
+import os
+from dotenv import load_dotenv
 
 """
 # PREREQUISITES
-    pip install azure-ai-contentunderstanding
+    pip install azure-ai-contentunderstanding python-dotenv
+    
+    # Option 1: Set environment variable
+    export CONTENT_UNDERSTANDING_ENDPOINT="https://your-resource-name.services.ai.azure.com/"
+    
+    # Option 2: Use .env file (recommended)
+    # Copy env.sample to .env and update with your endpoint
+    cp env.sample .env
+    # Edit .env file with your actual endpoint
+    
 # USAGE
     python content_analyzers_create_or_replace.py
 """
 
+# Load environment variables from .env file
+load_dotenv()
+
 
 def main():
+    # Get endpoint from environment variable
+    my_endpoint = os.getenv("CONTENT_UNDERSTANDING_ENDPOINT")
+    if not my_endpoint:
+        raise ValueError(
+            "CONTENT_UNDERSTANDING_ENDPOINT environment variable is not set. "
+            "Please set it or create a .env file with your endpoint."
+        )
+    
     client = ContentUnderstandingClient(
-        endpoint="ENDPOINT",
-        credential="CREDENTIAL",
+        endpoint=my_endpoint,
+        credential=DefaultAzureCredential(),
     )
 
-    response = client.content_analyzers.begin_create_or_replace(
-        analyzer_id="myAnalyzer",
-        resource={
-            "baseAnalyzerId": "prebuilt-documentAnalyzer",
-            "config": {"enableFormula": False, "returnDetails": True},
-            "description": "My analyzer",
-            "fieldSchema": {
-                "definitions": {},
-                "description": "My form",
-                "fields": {"Company": {"description": "Name of company.", "type": "string"}},
-                "name": "MyForm",
-            },
-            "tags": {"createdBy": "John"},
-            "trainingData": {
-                "containerUrl": "https://myStorageAccount.blob.core.windows.net/myContainer?mySasToken",
-                "fileListPath": "trainingData/fileList.jsonl",
-                "kind": "blob",
-                "prefix": "trainingData",
-            },
+    # Use a unique analyzer ID
+    analyzer_id = "myAnalyzer-from-sdk"
+    
+    # Define the analyzer configuration
+    analyzer_resource = {
+        "description": "My analyzer",
+        "baseAnalyzerId": "prebuilt-documentAnalyzer",
+        "config": {
+            "returnDetails": True,
+            "enableOcr": True,
+            "enableLayout": True,
+            "enableFormula": False,
+            "disableContentFiltering": False,
+            "tableFormat": "html"
         },
-    ).result()
-    print(response)
+        "fieldSchema": {
+            "name": "MyForm",
+            "description": "My form",
+            "fields": {
+                "Company": {
+                    "type": "string",
+                    "description": "Name of company."
+                }
+            }
+        }
+    }
+    
+    print(f"Creating/updating analyzer: {analyzer_id}")
+    print("=" * 60)
+    
+    try:
+        response = client.content_analyzers.create_or_replace(
+            analyzer_id=analyzer_id,
+            resource=analyzer_resource,
+        )
+        
+        print("✅ Analyzer created/updated successfully!")
+        print("Analyzer details:")
+        print(json.dumps(response.as_dict(), indent=2))
+        
+    except Exception as e:
+        print(f"❌ Error creating/updating analyzer: {e}")
 
 
 # x-ms-original-file: 2025-05-01-preview/ContentAnalyzers_CreateOrReplace.json
