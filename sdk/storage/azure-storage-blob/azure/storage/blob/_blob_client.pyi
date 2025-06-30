@@ -22,7 +22,6 @@ from typing import (
     Tuple,
     Union,
 )
-from typing_extensions import Self
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential

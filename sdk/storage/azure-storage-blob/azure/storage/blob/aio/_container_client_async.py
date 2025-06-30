@@ -7,13 +7,13 @@
 
 import functools
 import warnings
+from contextlib import AbstractAsyncContextManager
 from datetime import datetime
 from typing import (
     Any, AnyStr, AsyncIterable, AsyncIterator, cast, Dict, List, IO, Iterable, Optional, overload, Union,
     TYPE_CHECKING
 )
 from urllib.parse import unquote, urlparse
-from typing_extensions import Self
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
@@ -62,7 +62,12 @@ if TYPE_CHECKING:
     )
 
 
-class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):  # type: ignore [misc]  # pylint: disable=too-many-public-methods
+class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public-methods
+    AbstractAsyncContextManager,
+    AsyncStorageAccountHostsMixin,
+    StorageAccountHostsMixin,
+    StorageEncryptionMixin
+):
     """A client to interact with a specific container, although that container
     may not yet exist.
 
@@ -143,7 +148,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         self._client = self._build_generated_client()
         self._configure_encryption(kwargs)
 
-    async def __aenter__(self) -> Self:
+    async def __aenter__(self) -> "ContainerClient":
         await self._client.__aenter__()
         return self
 
@@ -177,7 +182,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         cls, container_url: str,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
-    ) -> Self:
+    ) -> "ContainerClient":
         """Create ContainerClient from a container url.
 
         :param str container_url:
@@ -230,7 +235,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         container_name: str,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
-    ) -> Self:
+    ) -> "ContainerClient":
         """Create ContainerClient from a Connection String.
 
         :param str conn_str:
