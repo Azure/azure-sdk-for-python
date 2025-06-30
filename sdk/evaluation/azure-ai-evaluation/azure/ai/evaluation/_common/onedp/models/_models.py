@@ -2327,7 +2327,7 @@ class RedTeamUpload(_Model):
 
     :ivar id: Identifier of the red team. Required.
     :vartype id: str
-    :ivar display_name: Display mame of the red-team scan.
+    :ivar display_name: Display name of the red-team scan.
     :vartype display_name: str
     :ivar num_turns: Number of simulation rounds.
     :vartype num_turns: int
@@ -2361,7 +2361,7 @@ class RedTeamUpload(_Model):
     display_name: Optional[str] = rest_field(
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Display mame of the red-team scan."""
+    """Display name of the red-team scan."""
     num_turns: Optional[int] = rest_field(name="numTurns", visibility=["read", "create", "update", "delete", "query"])
     """Number of simulation rounds."""
     attack_strategy: Optional[List[Union[str, "_models.AttackStrategy"]]] = rest_field(
