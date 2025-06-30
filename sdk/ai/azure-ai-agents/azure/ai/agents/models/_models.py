@@ -1802,18 +1802,20 @@ class MCPToolResource(_Model):
     :vartype server_label: str
     :ivar headers: The headers for the MCP server updates. Required.
     :vartype headers: dict[str, str]
-    :ivar require_approval: Does MCP server require approval. Default value is "never".
-    :vartype require_approval: str
+    :ivar require_approval: Does MCP server require approval. Is one of the following types:
+     Literal["never"], Literal["always"], str
+    :vartype require_approval: str or str or str
     """
 
     server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The label for the MCP server. Required."""
     headers: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The headers for the MCP server updates. Required."""
-    require_approval: Optional[Literal["never"]] = rest_field(
+    require_approval: Optional[Union[Literal["never"], Literal["always"], str]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Does MCP server require approval. Default value is \"never\"."""
+    """Does MCP server require approval. Is one of the following types: Literal[\"never\"],
+     Literal[\"always\"], str"""
 
     @overload
     def __init__(
@@ -1821,7 +1823,7 @@ class MCPToolResource(_Model):
         *,
         server_label: str,
         headers: Dict[str, str],
-        require_approval: Optional[Literal["never"]] = None,
+        require_approval: Optional[Union[Literal["never"], Literal["always"], str]] = None,
     ) -> None: ...
 
     @overload
