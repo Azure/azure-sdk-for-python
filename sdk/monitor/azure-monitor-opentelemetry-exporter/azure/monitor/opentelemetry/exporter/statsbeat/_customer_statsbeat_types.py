@@ -31,4 +31,3 @@ class CustomerStatsbeatProperties:
         self.language = language
         self.version = version
         self.compute_type = compute_type
-
