@@ -615,7 +615,7 @@ class RAISvcOperations:
         _params = kwargs.pop("params", {}) or {}
 
         cls: ClsType[List[_models.AttackObjective]] = kwargs.pop("cls", None)
-        
+
         _request = build_rai_svc_get_attack_objectives_request(
             risk_categories=[risk_category],
             risk_types=risk_types,

@@ -554,7 +554,8 @@ class RedTeam:
                         name=eval_run.id,
                         red_team=RedTeamUpload(
                             id=eval_run.id,
-                            display_name=eval_run.display_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
+                            display_name=eval_run.display_name
+                            or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
                             status="Completed",
                             outputs={
                                 "evaluationResultId": create_evaluation_result_response.id,
@@ -752,7 +753,7 @@ class RedTeam:
                         risk_category=other_risk,
                         application_scenario=application_scenario or "",
                         strategy="tense",
-                        scan_session_id=self.scan_session_id
+                        scan_session_id=self.scan_session_id,
                     )
                 else:
                     objectives_response = await self.generated_rai_client.get_attack_objectives(
@@ -760,7 +761,7 @@ class RedTeam:
                         risk_category=other_risk,
                         application_scenario=application_scenario or "",
                         strategy=None,
-                        scan_session_id=self.scan_session_id
+                        scan_session_id=self.scan_session_id,
                     )
                 if isinstance(objectives_response, list):
                     self.logger.debug(f"API returned {len(objectives_response)} objectives")
@@ -770,7 +771,9 @@ class RedTeam:
                 # Handle jailbreak strategy - need to apply jailbreak prefixes to messages
                 if strategy == "jailbreak":
                     self.logger.debug("Applying jailbreak prefixes to objectives")
-                    jailbreak_prefixes = await self.generated_rai_client.get_jailbreak_prefixes(scan_session_id=self.scan_session_id)
+                    jailbreak_prefixes = await self.generated_rai_client.get_jailbreak_prefixes(
+                        scan_session_id=self.scan_session_id
+                    )
                     for objective in objectives_response:
                         if "messages" in objective and len(objective["messages"]) > 0:
                             message = objective["messages"][0]

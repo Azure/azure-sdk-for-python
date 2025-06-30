@@ -259,7 +259,13 @@ async def submit_request(
 
 
 async def submit_request_onedp(
-    client: AIProjectClient, data: dict, metric: str, token: str, annotation_task: str, evaluator_name: str, scan_session_id: Optional[str] = None
+    client: AIProjectClient,
+    data: dict,
+    metric: str,
+    token: str,
+    annotation_task: str,
+    evaluator_name: str,
+    scan_session_id: Optional[str] = None,
 ) -> str:
     """Submit request to Responsible AI service for evaluation and return operation ID
 
@@ -635,7 +641,7 @@ async def evaluate_with_rai_service(
     annotation_task: str = Tasks.CONTENT_HARM,
     metric_display_name=None,
     evaluator_name=None,
-    scan_session_id: Optional[str]=None
+    scan_session_id: Optional[str] = None,
 ) -> Dict[str, Union[str, float]]:
     """Evaluate the content safety of the response using Responsible AI service
 
@@ -668,7 +674,9 @@ async def evaluate_with_rai_service(
         )
         token = await fetch_or_reuse_token(credential=credential, workspace=COG_SRV_WORKSPACE)
         await ensure_service_availability_onedp(client, token, annotation_task)
-        operation_id = await submit_request_onedp(client, data, metric_name, token, annotation_task, evaluator_name, scan_session_id)
+        operation_id = await submit_request_onedp(
+            client, data, metric_name, token, annotation_task, evaluator_name, scan_session_id
+        )
         annotation_response = cast(List[Dict], await fetch_result_onedp(client, operation_id, token))
         result = parse_response(annotation_response, metric_name, metric_display_name)
         return result
