@@ -136,7 +136,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any,
-    ) -> Self: ...
+    ) -> "ContainerClient": ...
     @distributed_trace
     def delete_container(
         self,
