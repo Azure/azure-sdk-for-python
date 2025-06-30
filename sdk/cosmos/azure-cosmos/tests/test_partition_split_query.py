@@ -41,7 +41,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
     throughput = 400
     TEST_DATABASE_ID = configs.TEST_DATABASE_ID
     TEST_CONTAINER_ID = "Single-partition-container-without-throughput"
-    MAX_TIME = 60 * 7  # 7 minutes for the test to complete, should be enough for partition split to complete
+    MAX_TIME = 60 * 10  # 10 minutes for the test to complete, should be enough for partition split to complete
 
     @classmethod
     def setUpClass(cls):
@@ -78,7 +78,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
         print("initial check succeeded, now reading offer until replacing is done")
         offer = self.container.get_throughput()
         while True:
-            if time.time() - start_time > self.MAX_TIME:  # timeout test at 7 minutes
+            if time.time() - start_time > self.MAX_TIME:  # timeout test at 10 minutes
                 self.skipTest("Partition split didn't complete in time")
             if offer.properties['content'].get('isOfferReplacePending', False):
                 time.sleep(30)  # wait for the offer to be replaced, check every 30 seconds
