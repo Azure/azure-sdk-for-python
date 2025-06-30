@@ -215,7 +215,6 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_result": score_result,
                 f"{self._result_key}_threshold": self.threshold,
                 f"{self._result_key}_reason": reason,
-                'applicable': True,
                 'per_tool_call_details': llm_output.get('additional_details', {}),
                 self._EXCESS_TOOL_CALLS_KEY: llm_output.get(self._EXCESS_TOOL_CALLS_KEY, {}),
                 self._MISSING_TOOL_CALLS_KEY: llm_output.get(self._MISSING_TOOL_CALLS_KEY, {}),
@@ -250,7 +249,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     
     def _not_applicable_result(self, error_message):
         """Return a result indicating that the tool call is not applicable for evaluation.
-
+pr
         :param eval_input: The input to the evaluator.
         :type eval_input: Dict
         :return: A dictionary containing the result of the evaluation.
@@ -262,7 +261,6 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             f"{self._result_key}_result": 'pass',
             f"{self._result_key}_threshold": self.threshold,
             f"{self._result_key}_reason": error_message,
-            "applicable": False,
             "per_tool_call_details": {},
             self._EXCESS_TOOL_CALLS_KEY: {},
             self._MISSING_TOOL_CALLS_KEY: {},
@@ -280,7 +278,6 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         tool_results_map = {}
         if isinstance(response, list):
             for message in response:                
-                print(message)
                 # Extract tool calls from assistant messages
                 if message.get("role") == "assistant" and isinstance(message.get("content"), list):
                     for content_item in message.get("content"):
