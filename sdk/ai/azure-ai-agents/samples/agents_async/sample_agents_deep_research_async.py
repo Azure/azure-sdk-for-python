@@ -137,7 +137,7 @@ async def main() -> None:
         # Poll the run as long as run status is queued or in progress
         run = await agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
         last_message_id: Optional[str] = None
-        while run.status in ("queued", "in_progress", "requires_action"):
+        while run.status in ("queued", "in_progress"):
             await asyncio.sleep(1)
             run = await agents_client.runs.get(thread_id=thread.id, run_id=run.id)
 

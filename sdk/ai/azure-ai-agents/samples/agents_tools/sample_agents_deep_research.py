@@ -137,7 +137,7 @@ with project_client:
         # Poll the run as long as run status is queued or in progress
         run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
         last_message_id = None
-        while run.status in ("queued", "in_progress", "requires_action"):
+        while run.status in ("queued", "in_progress"):
             time.sleep(1)
             run = agents_client.runs.get(thread_id=thread.id, run_id=run.id)
 
