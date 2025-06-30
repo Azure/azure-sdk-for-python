@@ -35,6 +35,8 @@ source <env_name>/bin/activate
 
 ## TYPESPEC SDK GENERATION - COMPLETE WORKFLOW
 
+**NOTE:** The following steps are not strictly sequential. Depending on your package's current status (e.g., as shown by the `/check-package-readiness` prompt), you may be able to skip certain steps or perform them in a different order. Review your package's readiness status and only complete the steps that are required for your specific situation.
+
 ### PHASE 1: CONTEXT ASSESSMENT
 
 **ACTION:** Determine TypeSpec project location
@@ -71,7 +73,7 @@ curl -s "https://api.github.com/repos/Azure/azure-rest-api-specs/commits?path=<p
 
 ---
 
-## EXECUTION SEQUENCE - 7 MANDATORY STEPS
+## EXECUTION SEQUENCE - 7 STEPS (APPLY ONLY AS NEEDED)
 
 **ESTIMATED TOTAL TIME: 10-15 minutes**
 - SDK Generation: 5-6 minutes
@@ -81,6 +83,7 @@ curl -s "https://api.github.com/repos/Azure/azure-rest-api-specs/commits?path=<p
 **ALWAYS inform users of time expectations before starting any long-running operations.**
 
 ### STEP 1: ENVIRONMENT VERIFICATION
+**Check your package readiness status before proceeding with this step.**
 ```
 ACTION: Run verify_setup mcp tool, and install_packages tool
 IF missing dependencies:
@@ -89,6 +92,7 @@ IF missing dependencies:
 ```
 
 ### STEP 2: SDK GENERATION
+**Check your package readiness status before proceeding with this step.**
 ```
 ACTION: Use azure-sdk-python-mcp sdk generation server tools (init, init_local, update)
 TIMING: ALWAYS inform user before starting: "This SDK generation step will take approximately 5-6 minutes to complete."
@@ -103,6 +107,7 @@ IF commands fail:
 ```
 
 ### STEP 3: STATIC VALIDATION (SEQUENTIAL)
+**Check your package readiness status before proceeding with this step.**
 ```
 TIMING: Inform user: "Static validation will take approximately 3-5 minutes for each step."
 FOR EACH validation step:
@@ -249,6 +254,57 @@ tox -e pylint --c <path_to_tox.ini> --root .
 - Use Python 3.9 compatible environment
 - Follow official fixing guidelines
 - Use tox mcp tool for running MyPy
+
+---
+
+## CODEBASE ARCHITECTURE & PATTERNS
+
+### PACKAGE STRUCTURE
+
+**SDK Organization:**
+- `/sdk/{service}/{package-name}/` - Each Azure service lives in its own directory
+- `setup.py` - Standard Python packaging with version extraction from `_version.py`
+- `tsp-location.yaml` - Links to TypeSpec definitions in azure-rest-api-specs (for TypeSpec-generated SDKs)
+- `azure/{namespace}/{module}/` - Actual Python code follows azure.namespace.module pattern
+- `tests/` - Tests with recording infrastructure using test proxy
+- `samples/` - Working code examples for documentation
+
+**Core Dependencies:**
+- `azure-core` - Shared client infrastructure, HTTP pipeline, authentication, error handling
+- `azure-identity` - Authentication providers (DefaultAzureCredential, etc.)
+- Generated models inherit from `azure.core._serialization.Model`
+
+### CODE GENERATION PATTERNS
+
+**TypeSpec-Generated Packages:**
+- Use `tsp-location.yaml` to specify Azure REST API specs commit hash
+- Generated files in `azure/{namespace}/{service}/models/` and `azure/{namespace}/{service}/operations/`
+- Client classes follow pattern: `{Service}Client` with credential and endpoint parameters
+- All HTTP operations are auto-generated with proper typing and documentation
+
+**Manual/Hybrid Packages:**
+- Client libraries may extend generated code with higher-level convenience methods
+- Follow Azure SDK Design Guidelines for method signatures and error handling
+
+### TESTING INFRASTRUCTURE
+
+**Test Proxy System:**
+- Tests inherit from `AzureRecordedTestCase` in `devtools_testutils`
+- Use `@recorded_by_proxy` decorator for functional tests that make HTTP calls
+- Environment variables loaded via `EnvironmentVariableLoader` with fake values for recordings
+- Recordings stored in separate `azure-sdk-assets` repository, referenced by `assets.json`
+
+**Validation Pipeline:**
+- Tox environments: pylint, mypy, pyright, verifytypes, sphinx, samples, bandit, black
+- Each must pass for release - failing mypy/pylint/sphinx/tests-ci blocks release
+- Use `eng/tox/tox.ini` with `--root .` flag for all validation commands
+
+### NAMESPACE MANAGEMENT
+
+**Python Packaging:**
+- Namespace packages allow `azure.service.feature` imports across separate PyPI packages
+- `find_packages(exclude=["azure", "azure.service"])` prevents namespace package conflicts
+- `_version.py` pattern for version management: `VERSION = "1.0.0"`
 
 ---
 
