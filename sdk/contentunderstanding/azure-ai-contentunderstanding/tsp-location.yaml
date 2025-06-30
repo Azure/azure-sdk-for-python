@@ -1,0 +1,4 @@
+directory: specification/ai/ContentUnderstanding
+commit: d40c845c4593055abb012fe48352404eb3ab4230
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 
