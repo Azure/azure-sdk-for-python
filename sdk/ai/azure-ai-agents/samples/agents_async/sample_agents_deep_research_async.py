@@ -7,20 +7,20 @@
 """
 DESCRIPTION:
     This sample demonstrates how to use Agent operations with the Deep Research tool from
-    the Azure Agents service through the synchronous Python client. Deep Research issues
+    the Azure Agents service through the **asynchronous** Python client. Deep Research issues
     external Bing Search queries and invokes an LLM, so each run can take several minutes
     to complete.
 
     For more information see the Deep Research Tool document: https://aka.ms/agents-deep-research
 
 USAGE:
-    python sample_agents_deep_research.py
+    python sample_agents_deep_research_async.py
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-ai-agents azure-identity
+    pip install azure-ai-projects azure-ai-agents azure-identity aiohttp
 
-    Set this environment variables with your own values:
+    Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
                           page of your Azure AI Foundry portal.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the arbitration AI model, as found under the "Name" column in
@@ -31,29 +31,33 @@ USAGE:
        /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace-name}/connections/{connection-name}
 """
 
-import os, time
+import asyncio
+import os
 from typing import Optional
-from azure.ai.projects import AIProjectClient
-from azure.identity import DefaultAzureCredential
-from azure.ai.agents import AgentsClient
+
+from azure.ai.projects.aio import AIProjectClient
+from azure.ai.agents.aio import AgentsClient
 from azure.ai.agents.models import DeepResearchTool, MessageRole, ThreadMessage
+from azure.identity.aio import DefaultAzureCredential
 
 
-def fetch_and_print_new_agent_response(
+async def fetch_and_print_new_agent_response(
     thread_id: str,
     agents_client: AgentsClient,
     last_message_id: Optional[str] = None,
 ) -> Optional[str]:
-    response = agents_client.messages.get_last_message_by_role(
+    response = await agents_client.messages.get_last_message_by_role(
         thread_id=thread_id,
         role=MessageRole.AGENT,
     )
+
     if not response or response.id == last_message_id:
-        return last_message_id  # No new content
+        return last_message_id
 
     print("\nAgent response:")
     print("\n".join(t.text.value for t in response.text_messages))
 
+    # Print citation annotations (if any)
     for ann in response.url_citation_annotations:
         print(f"URL Citation: [{ann.url_citation.title}]({ann.url_citation.url})")
 
@@ -87,44 +91,40 @@ def create_research_summary(
     print(f"Research summary written to '{filepath}'.")
 
 
-project_client = AIProjectClient(
-    endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
+async def main() -> None:
 
-# [START create_agent_with_deep_research_tool]
-conn_id = os.environ["AZURE_BING_CONNECTION_ID"]
+    project_client = AIProjectClient(
+        endpoint=os.environ["PROJECT_ENDPOINT"],
+        credential=DefaultAzureCredential(),
+    )
 
-# Initialize a Deep Research tool with Bing Connection ID and Deep Research model deployment name
-deep_research_tool = DeepResearchTool(
-    bing_grounding_connection_id=conn_id,
-    deep_research_model=os.environ["DEEP_RESEARCH_MODEL_DEPLOYMENT_NAME"],
-)
+    # Initialize a Deep Research tool with Bing Connection ID and Deep Research model deployment name
+    deep_research_tool = DeepResearchTool(
+        bing_grounding_connection_id=os.environ["AZURE_BING_CONNECTION_ID"],
+        deep_research_model=os.environ["DEEP_RESEARCH_MODEL_DEPLOYMENT_NAME"],
+    )
 
-# Create Agent with the Deep Research tool and process Agent run
-with project_client:
+    async with project_client:
 
-    with project_client.agents as agents_client:
+        agents_client = project_client.agents
 
         # Create a new agent that has the Deep Research tool attached.
         # NOTE: To add Deep Research to an existing agent, fetch it with `get_agent(agent_id)` and then,
         # update the agent with the Deep Research tool.
-        agent = agents_client.create_agent(
+        agent = await agents_client.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"],
             name="my-agent",
             instructions="You are a helpful Agent that assists in researching scientific topics.",
             tools=deep_research_tool.definitions,
         )
-
-        # [END create_agent_with_deep_research_tool]
         print(f"Created agent, ID: {agent.id}")
 
         # Create thread for communication
-        thread = agents_client.threads.create()
+        thread = await agents_client.threads.create()
         print(f"Created thread, ID: {thread.id}")
 
         # Create message to thread
-        message = agents_client.messages.create(
+        message = await agents_client.messages.create(
             thread_id=thread.id,
             role="user",
             content=(
@@ -133,15 +133,15 @@ with project_client:
         )
         print(f"Created message, ID: {message.id}")
 
-        print(f"Start processing the message... this may take a few minutes to finish. Be patient!")
+        print("Start processing the message... this may take a few minutes to finish. Be patient!")
         # Poll the run as long as run status is queued or in progress
-        run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
-        last_message_id = None
+        run = await agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
+        last_message_id: Optional[str] = None
         while run.status in ("queued", "in_progress"):
-            time.sleep(1)
-            run = agents_client.runs.get(thread_id=thread.id, run_id=run.id)
+            await asyncio.sleep(1)
+            run = await agents_client.runs.get(thread_id=thread.id, run_id=run.id)
 
-            last_message_id = fetch_and_print_new_agent_response(
+            last_message_id = await fetch_and_print_new_agent_response(
                 thread_id=thread.id,
                 agents_client=agents_client,
                 last_message_id=last_message_id,
@@ -154,7 +154,7 @@ with project_client:
             print(f"Run failed: {run.last_error}")
 
         # Fetch the final message from the agent in the thread and create a research summary
-        final_message = agents_client.messages.get_last_message_by_role(
+        final_message = await agents_client.messages.get_last_message_by_role(
             thread_id=thread.id, role=MessageRole.AGENT
         )
         if final_message:
@@ -162,5 +162,9 @@ with project_client:
 
         # Clean-up and delete the agent once the run is finished.
         # NOTE: Comment out this line if you plan to reuse the agent later.
-        agents_client.delete_agent(agent.id)
+        await agents_client.delete_agent(agent.id)
         print("Deleted agent")
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
