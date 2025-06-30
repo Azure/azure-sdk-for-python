@@ -28,12 +28,19 @@
         "azure.mgmt.weightsandbiases.models.SingleSignOnType": "LiftrBase.SingleSignOnType",
         "azure.mgmt.weightsandbiases.models.SingleSignOnStates": "LiftrBase.SingleSignOnStates",
         "azure.mgmt.weightsandbiases.models.ManagedServiceIdentityType": "Azure.ResourceManager.CommonTypes.ManagedServiceIdentityType",
-        "azure.mgmt.weightsandbiases.WeightsAndBiasesMgmtClient.operations.list": "Azure.ResourceManager.Operations.list",
-        "azure.mgmt.weightsandbiases.WeightsAndBiasesMgmtClient.instances.get": "Microsoft.WeightsAndBiases.Instances.get",
-        "azure.mgmt.weightsandbiases.WeightsAndBiasesMgmtClient.instances.begin_create_or_update": "Microsoft.WeightsAndBiases.Instances.createOrUpdate",
-        "azure.mgmt.weightsandbiases.WeightsAndBiasesMgmtClient.instances.update": "Microsoft.WeightsAndBiases.Instances.update",
-        "azure.mgmt.weightsandbiases.WeightsAndBiasesMgmtClient.instances.begin_delete": "Microsoft.WeightsAndBiases.Instances.delete",
-        "azure.mgmt.weightsandbiases.WeightsAndBiasesMgmtClient.instances.list_by_resource_group": "Microsoft.WeightsAndBiases.Instances.listByResourceGroup",
-        "azure.mgmt.weightsandbiases.WeightsAndBiasesMgmtClient.instances.list_by_subscription": "Microsoft.WeightsAndBiases.Instances.listBySubscription"
+        "azure.mgmt.weightsandbiases.operations.Operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.mgmt.weightsandbiases.aio.operations.Operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.mgmt.weightsandbiases.operations.InstancesOperations.get": "Microsoft.WeightsAndBiases.Instances.get",
+        "azure.mgmt.weightsandbiases.aio.operations.InstancesOperations.get": "Microsoft.WeightsAndBiases.Instances.get",
+        "azure.mgmt.weightsandbiases.operations.InstancesOperations.begin_create_or_update": "Microsoft.WeightsAndBiases.Instances.createOrUpdate",
+        "azure.mgmt.weightsandbiases.aio.operations.InstancesOperations.begin_create_or_update": "Microsoft.WeightsAndBiases.Instances.createOrUpdate",
+        "azure.mgmt.weightsandbiases.operations.InstancesOperations.update": "Microsoft.WeightsAndBiases.Instances.update",
+        "azure.mgmt.weightsandbiases.aio.operations.InstancesOperations.update": "Microsoft.WeightsAndBiases.Instances.update",
+        "azure.mgmt.weightsandbiases.operations.InstancesOperations.begin_delete": "Microsoft.WeightsAndBiases.Instances.delete",
+        "azure.mgmt.weightsandbiases.aio.operations.InstancesOperations.begin_delete": "Microsoft.WeightsAndBiases.Instances.delete",
+        "azure.mgmt.weightsandbiases.operations.InstancesOperations.list_by_resource_group": "Microsoft.WeightsAndBiases.Instances.listByResourceGroup",
+        "azure.mgmt.weightsandbiases.aio.operations.InstancesOperations.list_by_resource_group": "Microsoft.WeightsAndBiases.Instances.listByResourceGroup",
+        "azure.mgmt.weightsandbiases.operations.InstancesOperations.list_by_subscription": "Microsoft.WeightsAndBiases.Instances.listBySubscription",
+        "azure.mgmt.weightsandbiases.aio.operations.InstancesOperations.list_by_subscription": "Microsoft.WeightsAndBiases.Instances.listBySubscription"
     }
 }

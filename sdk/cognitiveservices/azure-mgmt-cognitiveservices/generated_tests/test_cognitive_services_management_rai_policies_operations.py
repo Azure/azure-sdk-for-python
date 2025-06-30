@@ -20,11 +20,11 @@ class TestCognitiveServicesManagementRaiPoliciesOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_rai_policies_list(self, resource_group):
         response = self.client.rai_policies.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-10-01",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestCognitiveServicesManagementRaiPoliciesOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_rai_policies_get(self, resource_group):
         response = self.client.rai_policies.get(
             resource_group_name=resource_group.name,
             account_name="str",
             rai_policy_name="str",
-            api_version="2024-10-01",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestCognitiveServicesManagementRaiPoliciesOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_rai_policies_create_or_update(self, resource_group):
         response = self.client.rai_policies.create_or_update(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -74,7 +74,7 @@ class TestCognitiveServicesManagementRaiPoliciesOperations(AzureMgmtRecordedTest
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-10-01",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -82,12 +82,12 @@ class TestCognitiveServicesManagementRaiPoliciesOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_rai_policies_begin_delete(self, resource_group):
         response = self.client.rai_policies.begin_delete(
             resource_group_name=resource_group.name,
             account_name="str",
             rai_policy_name="str",
-            api_version="2024-10-01",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

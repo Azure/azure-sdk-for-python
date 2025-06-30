@@ -26,7 +26,7 @@ class TestNetworkManagementDdosCustomPoliciesOperationsAsync(AzureMgmtRecordedTe
             await self.client.ddos_custom_policies.begin_delete(
                 resource_group_name=resource_group.name,
                 ddos_custom_policy_name="str",
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -39,7 +39,7 @@ class TestNetworkManagementDdosCustomPoliciesOperationsAsync(AzureMgmtRecordedTe
         response = await self.client.ddos_custom_policies.get(
             resource_group_name=resource_group.name,
             ddos_custom_policy_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -62,7 +62,7 @@ class TestNetworkManagementDdosCustomPoliciesOperationsAsync(AzureMgmtRecordedTe
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -76,7 +76,7 @@ class TestNetworkManagementDdosCustomPoliciesOperationsAsync(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             ddos_custom_policy_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself

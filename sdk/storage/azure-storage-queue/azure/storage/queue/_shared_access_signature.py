@@ -5,10 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
-from typing import (
-    Any, Callable, Optional, Union,
-    TYPE_CHECKING
-)
+from typing import Any, Callable, Optional, Union, TYPE_CHECKING
 from urllib.parse import parse_qs
 
 from azure.storage.queue._shared import sign_string
@@ -17,45 +14,43 @@ from azure.storage.queue._shared.models import Services
 from azure.storage.queue._shared.shared_access_signature import (
     QueryStringConstants,
     SharedAccessSignature,
-    _SharedAccessHelper
+    _SharedAccessHelper,
 )
 
 if TYPE_CHECKING:
-    from azure.storage.queue import (
-        AccountSasPermissions,
-        QueueSasPermissions,
-        ResourceTypes
-    )
+    from azure.storage.queue import AccountSasPermissions, QueueSasPermissions, ResourceTypes
     from datetime import datetime
 
+
 class QueueSharedAccessSignature(SharedAccessSignature):
-    '''
+    """
     Provides a factory for creating queue shares access
     signature tokens with a common account name and account key.  Users can either
     use the factory or can construct the appropriate service and use the
     generate_*_shared_access_signature method directly.
-    '''
+    """
 
     def __init__(self, account_name: str, account_key: str) -> None:
-        '''
+        """
         :param str account_name:
             The storage account name used to generate the shared access signatures.
         :param str account_key:
             The access key to generate the shares access signatures.
-        '''
+        """
         super(QueueSharedAccessSignature, self).__init__(account_name, account_key, x_ms_version=X_MS_VERSION)
 
     def generate_queue(
-        self, queue_name: str,
+        self,
+        queue_name: str,
         permission: Optional[Union["QueueSasPermissions", str]] = None,
         expiry: Optional[Union["datetime", str]] = None,
         start: Optional[Union["datetime", str]] = None,
         policy_id: Optional[str] = None,
         ip: Optional[str] = None,
         protocol: Optional[str] = None,
-        sts_hook: Optional[Callable[[str], None]] = None
+        sts_hook: Optional[Callable[[str], None]] = None,
     ) -> str:
-        '''
+        """
         Generates a shared access signature for the queue.
         Use the returned signature with the sas_token parameter of QueueService.
         :param str queue_name:
@@ -100,7 +95,7 @@ class QueueSharedAccessSignature(SharedAccessSignature):
         :type sts_hook: Optional[Callable[[str], None]]
         :return: A Shared Access Signature (sas) token.
         :rtype: str
-        '''
+        """
         sas = _QueueSharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
         sas.add_id(policy_id)
@@ -116,32 +111,32 @@ class _QueueSharedAccessHelper(_SharedAccessHelper):
 
     def add_resource_signature(self, account_name: str, account_key: str, path: str):
         def get_value_to_append(query):
-            return_value = self.query_dict.get(query) or ''
-            return return_value + '\n'
+            return_value = self.query_dict.get(query) or ""
+            return return_value + "\n"
 
-        if path[0] != '/':
-            path = '/' + path
+        if path[0] != "/":
+            path = "/" + path
 
-        canonicalized_resource = '/queue/' + account_name + path + '\n'
+        canonicalized_resource = "/queue/" + account_name + path + "\n"
 
         # Form the string to sign from shared_access_policy and canonicalized
         # resource. The order of values is important.
-        string_to_sign = \
-            (get_value_to_append(QueryStringConstants.SIGNED_PERMISSION) +
-             get_value_to_append(QueryStringConstants.SIGNED_START) +
-             get_value_to_append(QueryStringConstants.SIGNED_EXPIRY) +
-             canonicalized_resource +
-             get_value_to_append(QueryStringConstants.SIGNED_IDENTIFIER) +
-             get_value_to_append(QueryStringConstants.SIGNED_IP) +
-             get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL) +
-             get_value_to_append(QueryStringConstants.SIGNED_VERSION))
+        string_to_sign = (
+            get_value_to_append(QueryStringConstants.SIGNED_PERMISSION)
+            + get_value_to_append(QueryStringConstants.SIGNED_START)
+            + get_value_to_append(QueryStringConstants.SIGNED_EXPIRY)
+            + canonicalized_resource
+            + get_value_to_append(QueryStringConstants.SIGNED_IDENTIFIER)
+            + get_value_to_append(QueryStringConstants.SIGNED_IP)
+            + get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL)
+            + get_value_to_append(QueryStringConstants.SIGNED_VERSION)
+        )
 
         # remove the trailing newline
-        if string_to_sign[-1] == '\n':
+        if string_to_sign[-1] == "\n":
             string_to_sign = string_to_sign[:-1]
 
-        self._add_query(QueryStringConstants.SIGNED_SIGNATURE,
-                        sign_string(account_key, string_to_sign))
+        self._add_query(QueryStringConstants.SIGNED_SIGNATURE, sign_string(account_key, string_to_sign))
         self.string_to_sign = string_to_sign
 
 
@@ -301,6 +296,7 @@ def generate_queue_sas(
         sts_hook=sts_hook,
         **kwargs
     )
+
 
 def _is_credential_sastoken(credential: Any) -> bool:
     if not credential or not isinstance(credential, str):

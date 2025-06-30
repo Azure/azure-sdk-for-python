@@ -5,6 +5,7 @@
 from enum import Enum
 from azure.ai.evaluation._common._experimental import experimental
 
+
 # cspell:ignore vuln
 @experimental
 class AdversarialScenario(Enum):
@@ -21,6 +22,7 @@ class AdversarialScenario(Enum):
     """
 
     ADVERSARIAL_QA = "adv_qa"
+    ADVERSARIAL_QA_ENTERPRISE = "adv_qa_enterprise"
     ADVERSARIAL_CONVERSATION = "adv_conversation"
     ADVERSARIAL_SUMMARIZATION = "adv_summarization"
     ADVERSARIAL_SEARCH = "adv_search"

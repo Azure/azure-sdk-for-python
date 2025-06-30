@@ -24,7 +24,7 @@ create, manage, and deploy public and private SSL/TLS certificates
 ## _Disclaimer_
 
 _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691._
-_Python 3.8 or later is required to use this package. For more details, please refer to [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy)._
+_Python 3.9 or later is required to use this package. For more details, please refer to [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy)._
 
 ## Getting started
 ### Install packages
@@ -38,7 +38,7 @@ authentication as demonstrated below.
 
 ### Prerequisites
 * An [Azure subscription][azure_sub]
-* Python 3.8 or later
+* Python 3.9 or later
 * An existing [Key Vault Managed HSM][managed_hsm]. If you need to create one, you can do so using the Azure CLI by following the steps in [this document][managed_hsm_cli].
 
 ### Authenticate the client
@@ -303,17 +303,16 @@ to the library's [credential documentation][sas_docs]. Alternatively, it is poss
 ```python
 CONTAINER_URL = os.environ["CONTAINER_URL"]
 
-check_result: KeyVaultBackupOperation = client.begin_pre_backup(CONTAINER_URL, use_managed_identity=True).result()
+try:
+    client.begin_pre_backup(CONTAINER_URL, use_managed_identity=True).wait()
+except HttpResponseError as e:
+    print(f"A backup cannot be performed: {str(e)}")
 
-if check_result.error:
-    print(f"Reason the backup cannot be performed: {check_result.error}")
-else:
-    print("A full key backup can be successfully performed.")
+print("A full key backup can be successfully performed.")
 ```
 
-Note that the `begin_pre_backup` method returns a poller. Calling `result()` on this poller returns a
-`KeyVaultBackupOperation` -- this object will  have a string `error` attribute if the check failed, and otherwise the
-check will have succeeded.
+Note that the `begin_pre_backup` method returns a poller. Calling `wait()` on this poller waits for the check to
+complete. An error will raise if the check failed; otherwise the check will have succeeded.
 
 ### Perform a full key backup
 To actually perform the key backup, you can use `KeyVaultBackupClient.begin_backup`.
@@ -350,19 +349,16 @@ to the library's [credential documentation][sas_docs]. Alternatively, it is poss
 [generate a SAS token in Storage Explorer][storage_explorer].
 
 ```python
-check_result: KeyVaultRestoreOperation = client.begin_pre_restore(
-    backup_result.folder_url, use_managed_identity=True
-).result()
+try:
+    client.begin_pre_restore(backup_result.folder_url, use_managed_identity=True).wait()
+except HttpResponseError as e:
+    print(f"A full restore cannot be performed: {str(e)}")
 
-if check_result.error:
-    print(f"Reason the backup cannot be performed: {check_result.error}")
-else:
-    print("A full key restore can be successfully performed.")
+print("A full key restore can be successfully performed.")
 ```
 
-Note that the `begin_pre_restore` method returns a poller. Calling `result()` on this poller returns a
-`KeyVaultRestoreOperation` -- this object will have a string `error` attribute if the check failed, and otherwise the
-`error` will be None if the check succeeded.
+Note that the `begin_pre_restore` method returns a poller. Calling `wait()` on this poller waits for the check to
+complete. An error will raise if the check failed; otherwise the check will have succeeded.
 
 ### Perform a full key restore
 To actually restore your entire collection of keys, you can use `KeyVaultBackupClient.begin_restore`.

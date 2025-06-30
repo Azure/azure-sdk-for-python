@@ -44,6 +44,16 @@ class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :dedent: 8
             :caption: Initialize with threshold and call a FluencyEvaluator.
 
+    .. admonition:: Example using Azure AI Project URL:
+
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START fluency_evaluator]
+            :end-before: [END fluency_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call FluencyEvaluator using Azure AI Project URL in the following format
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+
     .. note::
 
         To align with our support of a diverse set of models, an output key without the `gpt_` prefix has been added.
@@ -68,7 +78,7 @@ class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
             threshold=threshold,
-            _higher_is_better=self._higher_is_better
+            _higher_is_better=self._higher_is_better,
         )
 
     @overload

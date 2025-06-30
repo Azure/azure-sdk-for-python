@@ -7,18 +7,22 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING, cast
 from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.settings import settings
 from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core.tools import get_arm_endpoints
 
 from . import models as _models
 from ._configuration import CognitiveServicesManagementClientConfiguration
-from ._serialization import Deserializer, Serializer
+from ._utils.serialization import Deserializer, Serializer
 from .operations import (
+    AccountCapabilityHostsOperations,
+    AccountConnectionOperations,
     AccountsOperations,
     CognitiveServicesManagementClientOperationsMixin,
     CommitmentPlansOperations,
@@ -34,6 +38,9 @@ from .operations import (
     Operations,
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
+    ProjectCapabilityHostsOperations,
+    ProjectConnectionOperations,
+    ProjectsOperations,
     RaiBlocklistItemsOperations,
     RaiBlocklistsOperations,
     RaiContentFiltersOperations,
@@ -43,13 +50,12 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
 class CognitiveServicesManagementClient(
     CognitiveServicesManagementClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes
     """Cognitive Services Management Client.
 
     :ivar accounts: AccountsOperations operations
@@ -100,29 +106,45 @@ class CognitiveServicesManagementClient(
     :ivar defender_for_ai_settings: DefenderForAISettingsOperations operations
     :vartype defender_for_ai_settings:
      azure.mgmt.cognitiveservices.operations.DefenderForAISettingsOperations
+    :ivar projects: ProjectsOperations operations
+    :vartype projects: azure.mgmt.cognitiveservices.operations.ProjectsOperations
+    :ivar account_connection: AccountConnectionOperations operations
+    :vartype account_connection:
+     azure.mgmt.cognitiveservices.operations.AccountConnectionOperations
+    :ivar project_connection: ProjectConnectionOperations operations
+    :vartype project_connection:
+     azure.mgmt.cognitiveservices.operations.ProjectConnectionOperations
+    :ivar account_capability_hosts: AccountCapabilityHostsOperations operations
+    :vartype account_capability_hosts:
+     azure.mgmt.cognitiveservices.operations.AccountCapabilityHostsOperations
+    :ivar project_capability_hosts: ProjectCapabilityHostsOperations operations
+    :vartype project_capability_hosts:
+     azure.mgmt.cognitiveservices.operations.ProjectCapabilityHostsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :param base_url: Service URL. Default value is None.
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2024-10-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2025-04-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
     def __init__(
-        self,
-        credential: "TokenCredential",
-        subscription_id: str,
-        base_url: str = "https://management.azure.com",
-        **kwargs: Any
+        self, credential: "TokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
     ) -> None:
+        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _endpoints = get_arm_endpoints(_cloud)
+        if not base_url:
+            base_url = _endpoints["resource_manager"]
+        credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = CognitiveServicesManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, **kwargs
+            credential=credential, subscription_id=subscription_id, credential_scopes=credential_scopes, **kwargs
         )
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -141,7 +163,7 @@ class CognitiveServicesManagementClient(
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=cast(str, base_url), policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -189,6 +211,19 @@ class CognitiveServicesManagementClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.defender_for_ai_settings = DefenderForAISettingsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.projects = ProjectsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.account_connection = AccountConnectionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.project_connection = ProjectConnectionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.account_capability_hosts = AccountCapabilityHostsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.project_capability_hosts = ProjectCapabilityHostsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

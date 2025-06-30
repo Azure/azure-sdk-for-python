@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -44,6 +45,11 @@ def main():
                         "useHubGateway": "True",
                     }
                 ],
+                "connectivityCapabilities": {
+                    "connectedGroupAddressOverlap": "Allowed",
+                    "connectedGroupPrivateEndpointsScale": "Standard",
+                    "peeringEnforcement": "Unenforced",
+                },
                 "connectivityTopology": "HubAndSpoke",
                 "deleteExistingPeering": "True",
                 "description": "Sample Configuration",
@@ -60,6 +66,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-05-01/examples/NetworkManagerConnectivityConfigurationPut.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-07-01/examples/NetworkManagerConnectivityConfigurationPut.json
 if __name__ == "__main__":
     main()

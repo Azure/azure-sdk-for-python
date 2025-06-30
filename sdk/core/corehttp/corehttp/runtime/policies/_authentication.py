@@ -110,6 +110,9 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         :keyword auth_flows: A list of authentication flows to use for the credential.
         :paramtype auth_flows: list[dict[str, Union[str, list[dict[str, str]]]]]
         """
+        # If auth_flows is an empty list, we should not attempt to authorize the request.
+        if auth_flows is not None and len(auth_flows) == 0:
+            return
         self._enforce_https(request)
 
         if self._token is None or self._need_new_token:
@@ -142,7 +145,9 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         :return: The pipeline response object
         :rtype: ~corehttp.runtime.pipeline.PipelineResponse
         """
-        self.on_request(request, auth_flows=self._auth_flows)
+        op_auth_flows = request.context.options.pop("auth_flows", None)
+        auth_flows = op_auth_flows if op_auth_flows is not None else self._auth_flows
+        self.on_request(request, auth_flows=auth_flows)
         try:
             response = self.next.send(request)
         except Exception:

@@ -1,6 +1,12 @@
 # Release History
 
-## 1.0.0b1 (2025-04-29)
+## 1.0.0 (2025-05-19)
+
+### Other Changes
+
+  - First GA
+
+## 1.0.0b1 (2025-05-08)
 
 ### Other Changes
 

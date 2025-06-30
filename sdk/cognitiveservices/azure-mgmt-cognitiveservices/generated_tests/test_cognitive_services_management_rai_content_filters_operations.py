@@ -20,10 +20,10 @@ class TestCognitiveServicesManagementRaiContentFiltersOperations(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_rai_content_filters_list(self, resource_group):
         response = self.client.rai_content_filters.list(
             location="str",
-            api_version="2024-10-01",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -31,11 +31,11 @@ class TestCognitiveServicesManagementRaiContentFiltersOperations(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_rai_content_filters_get(self, resource_group):
         response = self.client.rai_content_filters.get(
             location="str",
             filter_name="str",
-            api_version="2024-10-01",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself

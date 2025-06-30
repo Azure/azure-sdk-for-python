@@ -45,6 +45,9 @@ class TestExamplesTests(KeyVaultTestCase):
 
         folder_url = backup_operation.folder_url
 
+        if self.is_live:
+            await asyncio.sleep(15)  # Additional waiting to ensure backup will be available for restore
+
         # [START begin_restore]
         # begin a full vault restore
         restore_poller = await backup_client.begin_restore(folder_url, use_managed_identity=True)
@@ -76,6 +79,9 @@ class TestExamplesTests(KeyVaultTestCase):
         backup_poller = await backup_client.begin_backup(container_uri, use_managed_identity=True)
         backup_operation = await backup_poller.result()
         folder_url = backup_operation.folder_url
+
+        if self.is_live:
+            await asyncio.sleep(15)  # Additional waiting to ensure backup will be available for restore
 
         # [START begin_selective_restore]
         # begin a restore of a single key from a backed up vault

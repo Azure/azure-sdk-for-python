@@ -1,6 +1,6 @@
 # Release History
 
-## 1.22.1 (Unreleased)
+## 1.23.1 (Unreleased)
 
 ### Features Added
 
@@ -8,7 +8,17 @@
 
 ### Bugs Fixed
 
+- Fixed an issue with `AzurePowerShellCredential` not working correctly for users still using older versions of PowerShell (e.g., Windows PowerShell 5.1) where `-AsPlainText` is not supported in the `ConvertFrom-SecureString` cmdlet.  ([#41675](https://github.com/Azure/azure-sdk-for-python/pull/41675))
+
 ### Other Changes
+
+## 1.23.0 (2025-05-13)
+
+### Features Added
+
+- Added `AZURE_TOKEN_CREDENTIALS` environment variable to `DefaultAzureCredential` to allow for choosing groups of credentials.
+  - `prod` for `EnvironmentCredential`, `WorkloadIdentityCredential`,  and `ManagedIdentityCredential`.
+  - `dev` for `SharedTokenCacheCredential`, `AzureCliCredential`, `AzurePowershellCredential`, and `AzureDeveloperCliCredential`.
 
 ## 1.22.0 (2025-05-06)
 

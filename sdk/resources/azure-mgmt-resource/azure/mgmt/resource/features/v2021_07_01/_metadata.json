@@ -5,13 +5,13 @@
         "name": "FeatureClient",
         "filename": "_feature_client",
         "description": "Azure Feature Exposure Control (AFEC) provides a mechanism for the resource providers to control feature exposure to users. Resource providers typically use this mechanism to provide public/private preview for new features prior to making them generally available. Users need to explicitly register for AFEC features to get access to such functionality.",
-        "host_value": "\"https://management.azure.com\"",
+        "host_value": null,
         "parameterized_host_template": null,
         "azure_arm": true,
         "has_public_lro_operations": false,
         "client_side_validation": false,
-        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"sdkcore\": {\"azure.mgmt.core\": [\"ARMPipelineClient\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMAutoResourceProviderRegistrationPolicy\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"local\": {\"._configuration\": [\"FeatureClientConfiguration\"], \".._serialization\": [\"Deserializer\", \"Serializer\"], \"._operations_mixin\": [\"FeatureClientOperationsMixin\"]}, \"stdlib\": {\"typing_extensions\": [\"Self\"]}}, \"typing\": {\"sdkcore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
-        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"sdkcore\": {\"azure.mgmt.core\": [\"AsyncARMPipelineClient\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"AsyncARMAutoResourceProviderRegistrationPolicy\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"local\": {\"._configuration\": [\"FeatureClientConfiguration\"], \"..._serialization\": [\"Deserializer\", \"Serializer\"], \"._operations_mixin\": [\"FeatureClientOperationsMixin\"]}, \"stdlib\": {\"typing_extensions\": [\"Self\"]}}, \"typing\": {\"sdkcore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"sdkcore\": {\"azure.mgmt.core\": [\"ARMPipelineClient\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMAutoResourceProviderRegistrationPolicy\"], \"azure.core.settings\": [\"settings\"], \"azure.mgmt.core.tools\": [\"get_arm_endpoints\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"stdlib\": {\"typing\": [\"Optional\", \"cast\"], \"typing_extensions\": [\"Self\"]}, \"local\": {\"._configuration\": [\"FeatureClientConfiguration\"], \"._utils.serialization\": [\"Deserializer\", \"Serializer\"], \"._operations_mixin\": [\"FeatureClientOperationsMixin\"]}}, \"typing\": {\"sdkcore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"sdkcore\": {\"azure.mgmt.core\": [\"AsyncARMPipelineClient\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"AsyncARMAutoResourceProviderRegistrationPolicy\"], \"azure.core.settings\": [\"settings\"], \"azure.mgmt.core.tools\": [\"get_arm_endpoints\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"stdlib\": {\"typing\": [\"Optional\", \"cast\"], \"typing_extensions\": [\"Self\"]}, \"local\": {\"._configuration\": [\"FeatureClientConfiguration\"], \".._utils.serialization\": [\"Deserializer\", \"Serializer\"], \"._operations_mixin\": [\"FeatureClientOperationsMixin\"]}}, \"typing\": {\"sdkcore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "global_parameters": {
         "sync": {
@@ -57,7 +57,7 @@
                     "method_location": "positional"
                 },
                 "base_url": {
-                    "signature": "base_url: str = \"https://management.azure.com\",",
+                    "signature": "base_url: Optional[str] = None,",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false,
@@ -80,7 +80,7 @@
                     "method_location": "positional"
                 },
                 "base_url": {
-                    "signature": "base_url: str = \"https://management.azure.com\",",
+                    "signature": "base_url: Optional[str] = None,",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false,
@@ -109,20 +109,20 @@
         "subscription_feature_registrations": "SubscriptionFeatureRegistrationsOperations"
     },
     "operation_mixins": {
-        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Iterable\"]}}, \"regular\": {\"local\": {\".\": [[\"models\", \"_models\"]]}, \"sdkcore\": {\"azure.core.paging\": [\"ItemPaged\"]}}}",
-        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"AsyncIterable\"]}}, \"regular\": {\"local\": {\"..\": [[\"models\", \"_models\"]]}, \"sdkcore\": {\"azure.core.async_paging\": [\"AsyncItemPaged\"]}}}",
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}, \"sdkcore\": {\"azure.core.paging\": [\"ItemPaged\"]}}, \"regular\": {\"sdkcore\": {\"azure.core.paging\": [\"ItemPaged\"]}, \"local\": {\".\": [[\"models\", \"_models\"]]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}, \"sdkcore\": {\"azure.core.async_paging\": [\"AsyncItemPaged\"]}}, \"regular\": {\"sdkcore\": {\"azure.core.async_paging\": [\"AsyncItemPaged\"]}, \"local\": {\"..\": [[\"models\", \"_models\"]]}}}",
         "sync_mixin_typing_definitions": "",
         "async_mixin_typing_definitions": "",
         "operations": {
             "list_operations" : {
                 "sync": {
-                    "signature": "def list_operations(\n    self,\n    **kwargs: Any\n) -\u003e Iterable[\"_models.Operation\"]:\n",
+                    "signature": "def list_operations(\n    self,\n    **kwargs: Any\n) -\u003e ItemPaged[\"_models.Operation\"]:\n",
                     "doc": "\"\"\"Lists all of the available Microsoft.Features REST API operations.\n\n:return: An iterator like instance of either Operation or the result of cls(response)\n:rtype:\n ~azure.core.paging.ItemPaged[~azure.mgmt.resource.features.v2021_07_01.models.Operation]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "**kwargs"
                 },
                 "async": {
                     "coroutine": false,
-                    "signature": "def list_operations(\n    self,\n    **kwargs: Any\n) -\u003e AsyncIterable[\"_models.Operation\"]:\n",
+                    "signature": "def list_operations(\n    self,\n    **kwargs: Any\n) -\u003e AsyncItemPaged[\"_models.Operation\"]:\n",
                     "doc": "\"\"\"Lists all of the available Microsoft.Features REST API operations.\n\n:return: An iterator like instance of either Operation or the result of cls(response)\n:rtype:\n ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.features.v2021_07_01.models.Operation]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "**kwargs"
                 }

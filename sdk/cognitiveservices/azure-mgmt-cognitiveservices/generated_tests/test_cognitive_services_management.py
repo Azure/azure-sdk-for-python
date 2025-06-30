@@ -26,7 +26,7 @@ class TestCognitiveServicesManagement(AzureMgmtRecordedTestCase):
             skus=["str"],
             kind="str",
             type="str",
-            api_version="2024-10-01",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestCognitiveServicesManagement(AzureMgmtRecordedTestCase):
         response = self.client.check_domain_availability(
             subdomain_name="str",
             type="str",
-            api_version="2024-10-01",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -48,7 +48,7 @@ class TestCognitiveServicesManagement(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_calculate_model_capacity(self, resource_group):
         response = self.client.calculate_model_capacity(
-            api_version="2024-10-01",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself

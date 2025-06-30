@@ -16,7 +16,7 @@ from devtools_testutils import PowerShellPreparer
 from devtools_testutils.fake_credentials import STORAGE_ACCOUNT_FAKE_KEY
 
 try:
-    from cStringIO import StringIO      # Python 2
+    from cStringIO import StringIO  # Python 2
 except ImportError:
     from io import StringIO
 try:
@@ -27,23 +27,26 @@ except ImportError:
     from .settings_fake import *
 
 
-LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
-os.environ['STORAGE_ACCOUNT_NAME'] = os.environ.get('STORAGE_ACCOUNT_NAME', None) or STORAGE_ACCOUNT_NAME
-os.environ['STORAGE_ACCOUNT_KEY'] = os.environ.get('STORAGE_ACCOUNT_KEY', None) or STORAGE_ACCOUNT_KEY
+LOGGING_FORMAT = "%(asctime)s %(name)-20s %(levelname)-5s %(message)s"
+os.environ["STORAGE_ACCOUNT_NAME"] = os.environ.get("STORAGE_ACCOUNT_NAME", None) or STORAGE_ACCOUNT_NAME
+os.environ["STORAGE_ACCOUNT_KEY"] = os.environ.get("STORAGE_ACCOUNT_KEY", None) or STORAGE_ACCOUNT_KEY
 
-os.environ['AZURE_TEST_RUN_LIVE'] = os.environ.get('AZURE_TEST_RUN_LIVE', None) or RUN_IN_LIVE
-os.environ['AZURE_SKIP_LIVE_RECORDING'] = os.environ.get('AZURE_SKIP_LIVE_RECORDING', None) or SKIP_LIVE_RECORDING
-os.environ['PROTOCOL'] = PROTOCOL
-os.environ['ACCOUNT_URL_SUFFIX'] = ACCOUNT_URL_SUFFIX
+os.environ["AZURE_TEST_RUN_LIVE"] = os.environ.get("AZURE_TEST_RUN_LIVE", None) or RUN_IN_LIVE
+os.environ["AZURE_SKIP_LIVE_RECORDING"] = os.environ.get("AZURE_SKIP_LIVE_RECORDING", None) or SKIP_LIVE_RECORDING
+os.environ["PROTOCOL"] = PROTOCOL
+os.environ["ACCOUNT_URL_SUFFIX"] = ACCOUNT_URL_SUFFIX
 
 
 QueuePreparer = functools.partial(
-    PowerShellPreparer, "storage",
+    PowerShellPreparer,
+    "storage",
     storage_account_name="storagename",
     storage_account_key=STORAGE_ACCOUNT_FAKE_KEY,
 )
 
+
 def not_for_emulator(test):
     def skip_test_if_targeting_emulator(self):
         test(self)
+
     return skip_test_if_targeting_emulator

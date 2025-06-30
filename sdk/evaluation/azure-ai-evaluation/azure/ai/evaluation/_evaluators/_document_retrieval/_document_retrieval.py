@@ -4,7 +4,7 @@
 import math
 import operator
 from itertools import starmap
-from typing import Dict, List, TypedDict, Tuple, Optional
+from typing import Any, Dict, List, TypedDict, Tuple, Optional, Union
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
 from azure.ai.evaluation._exceptions import EvaluationException
 from typing_extensions import override, overload
@@ -14,9 +14,7 @@ RetrievalGroundTruthDocument = TypedDict(
     "RetrievalGroundTruthDocument", {"document_id": str, "query_relevance_label": int}
 )
 
-RetrievedDocument = TypedDict(
-    "RetrievedDocument", {"document_id": str, "relevance_score": float}
-)
+RetrievedDocument = TypedDict("RetrievedDocument", {"document_id": str, "relevance_score": float})
 
 
 class DocumentRetrievalEvaluator(EvaluatorBase):
@@ -30,7 +28,17 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
             :end-before: [END document_retrieval_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call a Document RetrievalEvaluator
+            :caption: Initialize and call a DocumentRetrievalEvaluator
+
+    .. admonition:: Example using Azure AI Project URL:
+
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START document_retrieval_evaluator]
+            :end-before: [END document_retrieval_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call DocumentRetrievalEvaluator using Azure AI Project URL in following format
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     .. admonition:: Example with Threshold:
         .. literalinclude:: ../samples/evaluation_samples_threshold.py
@@ -46,7 +54,13 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         *,
         ground_truth_label_min: int = 0,
         ground_truth_label_max: int = 4,
-        threshold: Optional[dict] = None,
+        ndcg_threshold: Optional[float] = 0.5,
+        xdcg_threshold: Optional[float] = 50.0,
+        fidelity_threshold: Optional[float] = 0.5,
+        top1_relevance_threshold: Optional[float] = 50.0,
+        top3_max_relevance_threshold: Optional[float] = 50.0,
+        total_retrieved_documents_threshold: Optional[int] = 50,
+        total_ground_truth_documents_threshold: Optional[int] = 50,
     ):
         super().__init__()
         self.k = 3
@@ -58,39 +72,27 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
             )
 
         if not isinstance(ground_truth_label_min, int):
-            raise EvaluationException(
-                "The ground truth label minimum must be an integer value."
-            )
+            raise EvaluationException("The ground truth label minimum must be an integer value.")
 
         if not isinstance(ground_truth_label_max, int):
-            raise EvaluationException(
-                "The ground truth label maximum must be an integer value."
-            )
+            raise EvaluationException("The ground truth label maximum must be an integer value.")
 
         self.ground_truth_label_min = ground_truth_label_min
         self.ground_truth_label_max = ground_truth_label_max
 
         # The default threshold for metrics where higher numbers are better.
-        self._threshold_metrics = {
-            "ndcg@3": 0.5,
-            "xdcg@3": 0.5,
-            "fidelity": 0.5,
-            "top1_relevance": 50,
-            "top3_max_relevance": 50,
-            "total_retrieved_documents": 50,
-            "total_ground_truth_documents": 50,
+        self._threshold_metrics: Dict[str, Any] = {
+            "ndcg@3": ndcg_threshold,
+            "xdcg@3": xdcg_threshold,
+            "fidelity": fidelity_threshold,
+            "top1_relevance": top1_relevance_threshold,
+            "top3_max_relevance": top3_max_relevance_threshold,
+            "total_retrieved_documents": total_retrieved_documents_threshold,
+            "total_ground_truth_documents": total_ground_truth_documents_threshold,
         }
 
         # Ideally, the number of holes should be zero.
         self._threshold_holes = {"holes": 0, "holes_ratio": 0}
-
-        if threshold and not isinstance(threshold, dict):
-            raise EvaluationException(
-                f"Threshold must be a dictionary, got {type(threshold)}"
-            )
-
-        elif isinstance(threshold, dict):
-            self._threshold_metrics.update(threshold)
 
     def _compute_holes(self, actual_docs: List[str], labeled_docs: List[str]) -> int:
         """
@@ -114,7 +116,7 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
     ) -> float:
         """NDCG (Normalized Discounted Cumulative Gain) calculated for the top K documents retrieved from a search query.
         NDCG measures how well a document ranking compares to an ideal document ranking given a list of ground-truth documents.
-        
+
         :param result_docs_groundtruth_labels: A list of retrieved documents' ground truth labels.
         :type result_docs_groundtruth_labels: List[int]
         :param ideal_docs_groundtruth_labels: A list of ideal documents' ground truth labels.
@@ -137,7 +139,7 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
     def _compute_xdcg(self, result_docs_groundtruth_labels: List[int]) -> float:
         """XDCG calculated for the top K documents retrieved from a search query.
         XDCG measures how objectively good are the top K documents, discounted by their position in the list.
-        
+
         :param result_docs_groundtruth_labels: A list of retrieved documents' ground truth labels.
         :type result_docs_groundtruth_labels: List[int]
         :return: The XDCG@K calculation result.
@@ -151,11 +153,7 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
             return math.pow(self.xdcg_discount_factor, rank - 1)
 
         ranks = list(range(1, self.k + 1))
-        xdcg_n = sum(
-            starmap(
-                calculate_xdcg_numerator, zip(result_docs_groundtruth_labels, ranks)
-            )
-        )
+        xdcg_n = sum(starmap(calculate_xdcg_numerator, zip(result_docs_groundtruth_labels, ranks)))
         xdcg_d = sum(map(calculate_xdcg_denominator, ranks))
 
         return xdcg_n / float(xdcg_d)
@@ -167,7 +165,7 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
     ) -> float:
         """Fidelity calculated over all documents retrieved from a search query.
         Fidelity measures how objectively good are all of the documents retrieved compared with all known good documents in the underlying data store.
-        
+
         :param result_docs_groundtruth_labels: A list of retrieved documents' ground truth labels.
         :type result_docs_groundtruth_labels: List[int]
         :param ideal_docs_groundtruth_labels: A list of ideal documents' ground truth labels.
@@ -188,25 +186,16 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
                 if label >= s:
                     label_counts[str(label)] += 1
 
-            sorted_label_counts = [
-                x[1] for x in sorted(label_counts.items(), key=lambda x: x[0])
-            ]
+            sorted_label_counts = [x[1] for x in sorted(label_counts.items(), key=lambda x: x[0])]
 
             # calculate weights
-            weights = [
-                (math.pow(2, i + 1) - 1)
-                for i in range(s, self.ground_truth_label_max + 1)
-            ]
+            weights = [(math.pow(2, i + 1) - 1) for i in range(s, self.ground_truth_label_max + 1)]
 
             # return weighted sum
             return sum(starmap(operator.mul, zip(sorted_label_counts, weights)))
 
-        weighted_sum_by_rating_results = calculate_weighted_sum_by_rating(
-            result_docs_groundtruth_labels
-        )
-        weighted_sum_by_rating_index = calculate_weighted_sum_by_rating(
-            ideal_docs_groundtruth_labels
-        )
+        weighted_sum_by_rating_results = calculate_weighted_sum_by_rating(result_docs_groundtruth_labels)
+        weighted_sum_by_rating_index = calculate_weighted_sum_by_rating(ideal_docs_groundtruth_labels)
 
         if weighted_sum_by_rating_index == 0:
             return math.nan
@@ -214,21 +203,19 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         return weighted_sum_by_rating_results / float(weighted_sum_by_rating_index)
 
     def _get_binary_result(self, **metrics) -> Dict[str, float]:
-        result = {}
+        result: Dict[str, Any] = {}
 
         for metric_name, metric_value in metrics.items():
             if metric_name in self._threshold_metrics.keys():
                 result[f"{metric_name}_result"] = (
-                    metric_value >= self._threshold_metrics[metric_name]
+                    "pass" if metric_value >= self._threshold_metrics[metric_name] else "fail"
                 )
-                result[f"{metric_name}_threshold"] = self._threshold_metrics[
-                    metric_name
-                ]
+                result[f"{metric_name}_threshold"] = self._threshold_metrics[metric_name]
                 result[f"{metric_name}_higher_is_better"] = True
 
             elif metric_name in self._threshold_holes.keys():
                 result[f"{metric_name}_result"] = (
-                    metric_value <= self._threshold_holes[metric_name]
+                    "pass" if metric_value <= self._threshold_holes[metric_name] else "fail"
                 )
                 result[f"{metric_name}_threshold"] = self._threshold_holes[metric_name]
                 result[f"{metric_name}_higher_is_better"] = False
@@ -254,8 +241,10 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         # if the qrels are empty, no meaningful evaluation is possible
         if not retrieval_ground_truth:
             raise EvaluationException(
-                ("'retrieval_ground_truth' parameter must contain at least one item. "
-                 "Check your data input to be sure that each input record has ground truth defined.")
+                (
+                    "'retrieval_ground_truth' parameter must contain at least one item. "
+                    "Check your data input to be sure that each input record has ground truth defined."
+                )
             )
 
         qrels = []
@@ -275,9 +264,7 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
                 )
 
             if not isinstance(query_relevance_label, int):
-                raise EvaluationException(
-                    "Query relevance labels must be integer values."
-                )
+                raise EvaluationException("Query relevance labels must be integer values.")
 
             if query_relevance_label < self.ground_truth_label_min:
                 raise EvaluationException(
@@ -316,12 +303,8 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
                         )
                     )
 
-                if not isinstance(relevance_score, float) and not isinstance(
-                    relevance_score, int
-                ):
-                    raise EvaluationException(
-                        "Retrieved document relevance score must be a numerical value."
-                    )
+                if not isinstance(relevance_score, float) and not isinstance(relevance_score, int):
+                    raise EvaluationException("Retrieved document relevance score must be a numerical value.")
 
                 results.append(result)
 
@@ -366,24 +349,17 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         results_lookup = {x["document_id"]: x["relevance_score"] for x in results}
 
         # sort each input set by label to get the ranking
-        qrels_sorted_by_rank = sorted(
-            qrels_lookup.items(), key=lambda x: x[1], reverse=True
-        )
-        results_sorted_by_rank = sorted(
-            results_lookup.items(), key=lambda x: x[1], reverse=True
-        )
+        qrels_sorted_by_rank = sorted(qrels_lookup.items(), key=lambda x: x[1], reverse=True)
+        results_sorted_by_rank = sorted(results_lookup.items(), key=lambda x: x[1], reverse=True)
 
         # find ground truth labels for the results set and ideal set
         result_docs_groundtruth_labels = [
-            qrels_lookup[doc_id] if doc_id in qrels_lookup else 0
-            for (doc_id, _) in results_sorted_by_rank
+            qrels_lookup[doc_id] if doc_id in qrels_lookup else 0 for (doc_id, _) in results_sorted_by_rank
         ]
         ideal_docs_groundtruth_labels = [label for (_, label) in qrels_sorted_by_rank]
 
         # calculate the proportion of result docs with no ground truth label (holes)
-        holes = self._compute_holes(
-            [x[0] for x in results_sorted_by_rank], [x[0] for x in qrels_sorted_by_rank]
-        )
+        holes = self._compute_holes([x[0] for x in results_sorted_by_rank], [x[0] for x in qrels_sorted_by_rank])
         holes_ratio = holes / float(len(results))
 
         # if none of the retrieved docs are labeled, report holes only
@@ -410,12 +386,8 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
                 result_docs_groundtruth_labels[: self.k],
                 ideal_docs_groundtruth_labels[: self.k],
             ),
-            f"xdcg@{self.k}": self._compute_xdcg(
-                result_docs_groundtruth_labels[: self.k]
-            ),
-            "fidelity": self._compute_fidelity(
-                result_docs_groundtruth_labels, ideal_docs_groundtruth_labels
-            ),
+            f"xdcg@{self.k}": self._compute_xdcg(result_docs_groundtruth_labels[: self.k]),
+            "fidelity": self._compute_fidelity(result_docs_groundtruth_labels, ideal_docs_groundtruth_labels),
             "top1_relevance": result_docs_groundtruth_labels[0],
             "top3_max_relevance": max(result_docs_groundtruth_labels[: self.k]),
             "holes": holes,

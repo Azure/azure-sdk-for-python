@@ -31,8 +31,18 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :end-before: [END coherence_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call a CoherenceEvaluator with a query and response.
-    
+            :caption: Initialize and call CoherenceEvaluator using azure.ai.evaluation.AzureAIProject
+
+    .. admonition:: Example using Azure AI Project URL:
+
+        .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
+            :start-after: [START coherence_evaluator]
+            :end-before: [END coherence_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call CoherenceEvaluator using Azure AI Project URL in following format
+                https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+
     .. admonition:: Example with Threshold:
 
         .. literalinclude:: ../samples/evaluation_samples_threshold.py
@@ -40,7 +50,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :end-before: [END threshold_coherence_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize with threshold and and call a CoherenceEvaluator with a query and response.
+            :caption: Initialize with threshold and call a CoherenceEvaluator with a query and response.
 
     .. note::
 
@@ -66,7 +76,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
             threshold=threshold,
-            _higher_is_better=self._higher_is_better
+            _higher_is_better=self._higher_is_better,
         )
 
     @overload

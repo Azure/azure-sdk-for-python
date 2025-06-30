@@ -22,7 +22,7 @@ class TestNetworkManagementExpressRouteProviderPortsLocationOperations(AzureMgmt
     @recorded_by_proxy
     def test_express_route_provider_ports_location_list(self, resource_group):
         response = self.client.express_route_provider_ports_location.list(
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself

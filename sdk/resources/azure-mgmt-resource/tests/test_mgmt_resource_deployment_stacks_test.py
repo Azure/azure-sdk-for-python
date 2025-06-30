@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 
 import azure.mgmt.resource
+import azure.mgmt.resource.deploymentstacks
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 import pytest
 
@@ -14,7 +15,7 @@ import pytest
 class TestMgmtResourceLinks(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(azure.mgmt.resource.DeploymentStacksClient)
+        self.client = self.create_mgmt_client(azure.mgmt.resource.deploymentstacks.DeploymentStacksClient)
 
     @RandomNameResourceGroupPreparer()
     @recorded_by_proxy

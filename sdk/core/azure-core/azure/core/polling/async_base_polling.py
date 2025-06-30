@@ -109,9 +109,9 @@ class AsyncLROBasePolling(
         """Poll status of operation so long as operation is incomplete and
         we have an endpoint to query.
 
-        :raises: OperationFailed if operation status 'Failed' or 'Canceled'.
-        :raises: BadStatus if response status invalid.
-        :raises: BadResponse if response invalid.
+        :raises ~azure.core.polling.base_polling.OperationFailed: If operation status 'Failed' or 'Canceled'.
+        :raises ~azure.core.polling.base_polling.BadStatus: If response status invalid.
+        :raises ~azure.core.polling.base_polling.BadResponse: If response invalid.
         """
         if not self.finished():
             await self.update_status()

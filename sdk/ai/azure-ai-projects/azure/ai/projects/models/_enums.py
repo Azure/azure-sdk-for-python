@@ -10,155 +10,67 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AgentsApiResponseFormatMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Represents the mode in which the model will handle the return format of a tool call."""
+class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Strategies for attacks."""
 
-    AUTO = "auto"
-    """Default value. Let the model handle the return format."""
-    NONE = "none"
-    """Setting the value to ``none``, will result in a 400 Bad request."""
-
-
-class AgentsApiToolChoiceOptionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies how the tool choice will be used."""
-
-    NONE = "none"
-    """The model will not call a function and instead generates a message."""
-    AUTO = "auto"
-    """The model can pick between generating a message or calling a function."""
-
-
-class AgentsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Available tool types for agents named tools."""
-
-    FUNCTION = "function"
-    """Tool type ``function``"""
-    CODE_INTERPRETER = "code_interpreter"
-    """Tool type ``code_interpreter``"""
-    FILE_SEARCH = "file_search"
-    """Tool type ``file_search``"""
-    BING_GROUNDING = "bing_grounding"
-    """Tool type ``bing_grounding``"""
-    MICROSOFT_FABRIC = "fabric_dataagent"
-    """Tool type ``fabric_dataagent``"""
-    SHAREPOINT = "sharepoint_grounding"
-    """Tool type ``sharepoint_grounding``"""
-    AZURE_AI_SEARCH = "azure_ai_search"
-    """Tool type ``azure_ai_search``"""
-    BING_CUSTOM_SEARCH = "bing_custom_search"
-    """Tool type ``bing_custom_search``"""
-    CONNECTED_AGENT = "connected_agent"
-    """Tool type ``connected_agent``"""
-
-
-class AgentStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Each event in a server-sent events stream has an ``event`` and ``data`` property:
-
-
-
-    .. code-block::
-
-       event: thread.created
-       data: {"id": "thread_123", "object": "thread", ...}
-
-    We emit events whenever a new object is created, transitions to a new state, or is being
-    streamed in parts (deltas). For example, we emit ``thread.run.created`` when a new run
-    is created, ``thread.run.completed`` when a run completes, and so on. When an Agent chooses
-    to create a message during a run, we emit a ``thread.message.created event``, a
-    ``thread.message.in_progress`` event, many ``thread.message.delta`` events, and finally a
-    ``thread.message.completed`` event.
-
-    We may add additional events over time, so we recommend handling unknown events gracefully
-    in your code.
-    """
-
-    THREAD_CREATED = "thread.created"
-    """Event sent when a new thread is created. The data of this event is of type AgentThread"""
-    THREAD_RUN_CREATED = "thread.run.created"
-    """Event sent when a new run is created. The data of this event is of type ThreadRun"""
-    THREAD_RUN_QUEUED = "thread.run.queued"
-    """Event sent when a run moves to ``queued`` status. The data of this event is of type ThreadRun"""
-    THREAD_RUN_IN_PROGRESS = "thread.run.in_progress"
-    """Event sent when a run moves to ``in_progress`` status. The data of this event is of type
-    ThreadRun"""
-    THREAD_RUN_REQUIRES_ACTION = "thread.run.requires_action"
-    """Event sent when a run moves to ``requires_action`` status. The data of this event is of type
-    ThreadRun"""
-    THREAD_RUN_COMPLETED = "thread.run.completed"
-    """Event sent when a run is completed. The data of this event is of type ThreadRun"""
-    THREAD_RUN_INCOMPLETE = "thread.run.incomplete"
-    """Event sent when a run ends incomplete. The data of this event is of type ThreadRun"""
-    THREAD_RUN_FAILED = "thread.run.failed"
-    """Event sent when a run fails. The data of this event is of type ThreadRun"""
-    THREAD_RUN_CANCELLING = "thread.run.cancelling"
-    """Event sent when a run moves to ``cancelling`` status. The data of this event is of type
-    ThreadRun"""
-    THREAD_RUN_CANCELLED = "thread.run.cancelled"
-    """Event sent when a run is cancelled. The data of this event is of type ThreadRun"""
-    THREAD_RUN_EXPIRED = "thread.run.expired"
-    """Event sent when a run is expired. The data of this event is of type ThreadRun"""
-    THREAD_RUN_STEP_CREATED = "thread.run.step.created"
-    """Event sent when a new thread run step is created. The data of this event is of type RunStep"""
-    THREAD_RUN_STEP_IN_PROGRESS = "thread.run.step.in_progress"
-    """Event sent when a run step moves to ``in_progress`` status. The data of this event is of type
-    RunStep"""
-    THREAD_RUN_STEP_DELTA = "thread.run.step.delta"
-    """Event sent when a run step is being streamed. The data of this event is of type
-    RunStepDeltaChunk"""
-    THREAD_RUN_STEP_COMPLETED = "thread.run.step.completed"
-    """Event sent when a run step is completed. The data of this event is of type RunStep"""
-    THREAD_RUN_STEP_FAILED = "thread.run.step.failed"
-    """Event sent when a run step fails. The data of this event is of type RunStep"""
-    THREAD_RUN_STEP_CANCELLED = "thread.run.step.cancelled"
-    """Event sent when a run step is cancelled. The data of this event is of type RunStep"""
-    THREAD_RUN_STEP_EXPIRED = "thread.run.step.expired"
-    """Event sent when a run step is expired. The data of this event is of type RunStep"""
-    THREAD_MESSAGE_CREATED = "thread.message.created"
-    """Event sent when a new message is created. The data of this event is of type ThreadMessage"""
-    THREAD_MESSAGE_IN_PROGRESS = "thread.message.in_progress"
-    """Event sent when a message moves to ``in_progress`` status. The data of this event is of type
-    ThreadMessage"""
-    THREAD_MESSAGE_DELTA = "thread.message.delta"
-    """Event sent when a message is being streamed. The data of this event is of type
-    MessageDeltaChunk"""
-    THREAD_MESSAGE_COMPLETED = "thread.message.completed"
-    """Event sent when a message is completed. The data of this event is of type ThreadMessage"""
-    THREAD_MESSAGE_INCOMPLETE = "thread.message.incomplete"
-    """Event sent before a message is completed. The data of this event is of type ThreadMessage"""
-    ERROR = "error"
-    """Event sent when an error occurs, such as an internal server error or a timeout."""
-    DONE = "done"
-    """Event sent when the stream is done."""
-
-
-class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Authentication type used by Azure AI service to connect to another service."""
-
-    API_KEY = "ApiKey"
-    """API Key authentication"""
-    ENTRA_ID = "AAD"
-    """Entra ID authentication (formerly known as AAD)"""
-    SAS = "SAS"
-    """Shared Access Signature (SAS) authentication"""
-    CUSTOM = "CustomKeys"
-    """Custom authentication"""
-    NONE = "None"
-    """No authentication"""
-
-
-class AzureAISearchQueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Available query types for Azure AI Search tool."""
-
-    SIMPLE = "simple"
-    """Query type ``simple``"""
-    SEMANTIC = "semantic"
-    """Query type ``semantic``"""
-    VECTOR = "vector"
-    """Query type ``vector``"""
-    VECTOR_SIMPLE_HYBRID = "vector_simple_hybrid"
-    """Query type ``vector_simple_hybrid``"""
-    VECTOR_SEMANTIC_HYBRID = "vector_semantic_hybrid"
-    """Query type ``vector_semantic_hybrid``"""
+    EASY = "easy"
+    """Represents a default set of easy complexity attacks. Easy complexity attacks require less
+    effort, such as translation of a prompt into some encoding, and does not require any Large
+    Language Model to convert or orchestrate."""
+    MODERATE = "moderate"
+    """Represents a default set of moderate complexity attacks. Moderate complexity attacks require
+    having access to resources such as another generative AI model."""
+    DIFFICULT = "difficult"
+    """Represents a default set of difficult complexity attacks. Difficult complexity attacks include
+    attacks that require access to significant resources and effort to execute an attack such as
+    knowledge of search-based algorithms in addition to a generative AI model."""
+    ASCII_ART = "ascii_art"
+    """Generates visual art using ASCII characters, often used for creative or obfuscation purposes."""
+    ASCII_SMUGGLER = "ascii_smuggler"
+    """Conceals data within ASCII characters, making it harder to detect."""
+    ATBASH = "atbash"
+    """Implements the Atbash cipher, a simple substitution cipher where each letter is mapped to its
+    reverse."""
+    BASE64 = "base64"
+    """Encodes binary data into a text format using Base64, commonly used for data transmission."""
+    BINARY = "binary"
+    """Converts text into binary code, representing data in a series of 0s and 1s."""
+    CAESAR = "caesar"
+    """Applies the Caesar cipher, a substitution cipher that shifts characters by a fixed number of
+    positions."""
+    CHARACTER_SPACE = "character_space"
+    """Alters text by adding spaces between characters, often used for obfuscation."""
+    JAILBREAK = "jailbreak"
+    """Injects specially crafted prompts to bypass AI safeguards, known as User Injected Prompt
+    Attacks (UPIA)."""
+    ANSII_ATTACK = "ansii_attack"
+    """Utilizes ANSI escape sequences to manipulate text appearance and behavior."""
+    CHARACTER_SWAP = "character_swap"
+    """Swaps characters within text to create variations or obfuscate the original content."""
+    SUFFIX_APPEND = "suffix_append"
+    """Appends an adversarial suffix to the prompt."""
+    STRING_JOIN = "string_join"
+    """Joins multiple strings together, often used for concatenation or obfuscation."""
+    UNICODE_CONFUSABLE = "unicode_confusable"
+    """Uses Unicode characters that look similar to standard characters, creating visual confusion."""
+    UNICODE_SUBSTITUTION = "unicode_substitution"
+    """Substitutes standard characters with Unicode equivalents, often for obfuscation."""
+    DIACRITIC = "diacritic"
+    """Adds diacritical marks to characters, changing their appearance and sometimes their meaning."""
+    FLIP = "flip"
+    """Flips characters from front to back, creating a mirrored effect."""
+    LEETSPEAK = "leetspeak"
+    """Transforms text into Leetspeak, a form of encoding that replaces letters with similar-looking
+    numbers or symbols."""
+    ROT13 = "rot13"
+    """Applies the ROT13 cipher, a simple substitution cipher that shifts characters by 13 positions."""
+    MORSE = "morse"
+    """Encodes text into Morse code, using dots and dashes to represent characters."""
+    URL = "url"
+    """Encodes text into URL format."""
+    BASELINE = "baseline"
+    """Represents the baseline direct adversarial probing, which is used by attack strategies as the
+    attack objective."""
 
 
 class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -166,439 +78,83 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AZURE_OPEN_AI = "AzureOpenAI"
     """Azure OpenAI Service"""
-    SERVERLESS = "Serverless"
-    """Serverless API Service"""
     AZURE_BLOB_STORAGE = "AzureBlob"
-    """Azure Blob Storage"""
-    AZURE_AI_SERVICES = "AIServices"
-    """Azure AI Services"""
+    """Azure Blob Storage, with specified container"""
+    AZURE_STORAGE_ACCOUNT = "AzureStorageAccount"
+    """Azure Blob Storage, with container not specified (used by Agents)"""
     AZURE_AI_SEARCH = "CognitiveSearch"
     """Azure AI Search"""
+    COSMOS_DB = "CosmosDB"
+    """CosmosDB"""
     API_KEY = "ApiKey"
     """Generic connection that uses API Key authentication"""
+    APPLICATION_CONFIGURATION = "AppConfig"
+    """Application Configuration"""
+    APPLICATION_INSIGHTS = "AppInsights"
+    """Application Insights"""
     CUSTOM = "CustomKeys"
-    """Generic connection that uses Custom authentication"""
-    COGNITIVE_SERVICE = "CognitiveService"
-    """Cognitive Service"""
-
-
-class DoneEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Terminal event indicating the successful end of a stream."""
-
-    DONE = "done"
-    """Event sent when the stream is done."""
-
-
-class ErrorEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Terminal event indicating a server side error while streaming."""
-
-    ERROR = "error"
-    """Event sent when an error occurs, such as an internal server error or a timeout."""
-
-
-class FilePurpose(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The possible values denoting the intended usage of a file."""
-
-    FINE_TUNE = "fine-tune"
-    """Indicates a file is used for fine tuning input."""
-    FINE_TUNE_RESULTS = "fine-tune-results"
-    """Indicates a file is used for fine tuning results."""
-    AGENTS = "assistants"
-    """Indicates a file is used as input to agents."""
-    AGENTS_OUTPUT = "assistants_output"
-    """Indicates a file is used as output by agents."""
-    BATCH = "batch"
-    """Indicates a file is used as input to ."""
-    BATCH_OUTPUT = "batch_output"
-    """Indicates a file is used as output by a vector store batch operation."""
-    VISION = "vision"
-    """Indicates a file is used as input to a vision operation."""
-
-
-class FileState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The state of the file."""
-
-    UPLOADED = "uploaded"
-    """The file has been uploaded but it's not yet processed. This state is not returned by Azure
-    OpenAI and exposed only for
-    compatibility. It can be categorized as an inactive state."""
-    PENDING = "pending"
-    """The operation was created and is not queued to be processed in the future. It can be
-    categorized as an inactive state."""
-    RUNNING = "running"
-    """The operation has started to be processed. It can be categorized as an active state."""
-    PROCESSED = "processed"
-    """The operation has successfully processed and is ready for consumption. It can be categorized as
-    a terminal state."""
-    ERROR = "error"
-    """The operation has completed processing with a failure and cannot be further consumed. It can be
-    categorized as a terminal state."""
-    DELETING = "deleting"
-    """The entity is in the process to be deleted. This state is not returned by Azure OpenAI and
-    exposed only for compatibility.
-    It can be categorized as an active state."""
-    DELETED = "deleted"
-    """The entity has been deleted but may still be referenced by other entities predating the
-    deletion. It can be categorized as a
-    terminal state."""
-
-
-class Frequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Frequency of the schedule - day, week, month, hour, minute."""
-
-    MONTH = "Month"
-    WEEK = "Week"
-    DAY = "Day"
-    HOUR = "Hour"
-    MINUTE = "Minute"
-
-
-class ImageDetailLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies an image's detail level. Can be 'auto', 'low', 'high', or an unknown future value."""
-
-    AUTO = "auto"
-    """Automatically select an appropriate detail level."""
-    LOW = "low"
-    """Use a lower detail level to reduce bandwidth or cost."""
-    HIGH = "high"
-    """Use a higher detail level—potentially more resource-intensive."""
-
-
-class IncompleteDetailsReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The reason why the run is incomplete. This will point to which specific token limit was reached
-    over the course of the run.
-    """
-
-    MAX_COMPLETION_TOKENS = "max_completion_tokens"
-    """Maximum completion tokens exceeded"""
-    MAX_PROMPT_TOKENS = "max_prompt_tokens"
-    """Maximum prompt tokens exceeded"""
-
-
-class ListSortOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The available sorting options when requesting a list of response objects."""
+    """Custom Keys"""
 
-    ASCENDING = "asc"
-    """Specifies an ascending sort order."""
-    DESCENDING = "desc"
-    """Specifies a descending sort order."""
 
+class CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The credential type used by the connection."""
 
-class MessageBlockType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the kind of content block within a message. Could be text, an image file, an external
-    image URL, or an unknown future type.
-    """
+    API_KEY = "ApiKey"
+    """API Key credential"""
+    ENTRA_ID = "AAD"
+    """Entra ID credential (formerly known as AAD)"""
+    SAS = "SAS"
+    """Shared Access Signature (SAS) credential"""
+    CUSTOM = "CustomKeys"
+    """Custom credential"""
+    NONE = "None"
+    """No credential"""
 
-    TEXT = "text"
-    """Indicates a block containing text content."""
-    IMAGE_FILE = "image_file"
-    """Indicates a block referencing an internally uploaded image file."""
-    IMAGE_URL = "image_url"
-    """Indicates a block referencing an external image URL."""
-
-
-class MessageIncompleteDetailsReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A set of reasons describing why a message is marked as incomplete."""
 
-    CONTENT_FILTER = "content_filter"
-    """The run generating the message was terminated due to content filter flagging."""
-    MAX_TOKENS = "max_tokens"
-    """The run generating the message exhausted available tokens before completion."""
-    RUN_CANCELLED = "run_cancelled"
-    """The run generating the message was cancelled before completion."""
-    RUN_FAILED = "run_failed"
-    """The run generating the message failed."""
-    RUN_EXPIRED = "run_expired"
-    """The run generating the message expired."""
+class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the type of data."""
 
+    URI_FILE = "uri_file"
+    """URI file."""
+    URI_FOLDER = "uri_folder"
+    """URI folder."""
 
-class MessageRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The possible values for roles attributed to messages in a thread."""
 
-    USER = "user"
-    """The role representing the end-user."""
-    AGENT = "assistant"
-    """The role representing the agent."""
-
-
-class MessageStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The possible execution status values for a thread message."""
+class DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of DeploymentType."""
 
-    IN_PROGRESS = "in_progress"
-    """A run is currently creating this message."""
-    INCOMPLETE = "incomplete"
-    """This message is incomplete. See incomplete_details for more information."""
-    COMPLETED = "completed"
-    """This message was successfully completed by a run."""
-
-
-class MessageStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Message operation related streaming events."""
-
-    THREAD_MESSAGE_CREATED = "thread.message.created"
-    """Event sent when a new message is created. The data of this event is of type ThreadMessage"""
-    THREAD_MESSAGE_IN_PROGRESS = "thread.message.in_progress"
-    """Event sent when a message moves to ``in_progress`` status. The data of this event is of type
-    ThreadMessage"""
-    THREAD_MESSAGE_DELTA = "thread.message.delta"
-    """Event sent when a message is being streamed. The data of this event is of type
-    MessageDeltaChunk"""
-    THREAD_MESSAGE_COMPLETED = "thread.message.completed"
-    """Event sent when a message is completed. The data of this event is of type ThreadMessage"""
-    THREAD_MESSAGE_INCOMPLETE = "thread.message.incomplete"
-    """Event sent before a message is completed. The data of this event is of type ThreadMessage"""
-
-
-class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Authentication type for OpenApi endpoint. Allowed types are:
-
-    * Anonymous (no authentication required)
-    * Connection (requires connection_id to endpoint, as setup in AI Foundry)
-    * Managed_Identity (requires audience for identity based auth).
-    """
-
-    ANONYMOUS = "anonymous"
-    CONNECTION = "connection"
-    MANAGED_IDENTITY = "managed_identity"
-
-
-class ResponseFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Possible API response formats."""
-
-    TEXT = "text"
-    """``text`` format should be used for requests involving any sort of ToolCall."""
-    JSON_OBJECT = "json_object"
-    """Using ``json_object`` format will limit the usage of ToolCall to only functions."""
-
-
-class RunAdditionalFieldList(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A list of additional fields to include in the response."""
-
-    FILE_SEARCH_CONTENTS = "step_details.tool_calls[*].file_search.results[*].content"
-    """File search result content."""
-
-
-class RunStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Possible values for the status of an agent thread run."""
-
-    QUEUED = "queued"
-    """Represents a run that is queued to start."""
-    IN_PROGRESS = "in_progress"
-    """Represents a run that is in progress."""
-    REQUIRES_ACTION = "requires_action"
-    """Represents a run that needs another operation, such as tool output submission, to continue."""
-    CANCELLING = "cancelling"
-    """Represents a run that is in the process of cancellation."""
-    CANCELLED = "cancelled"
-    """Represents a run that has been cancelled."""
-    FAILED = "failed"
-    """Represents a run that failed."""
-    COMPLETED = "completed"
-    """Represents a run that successfully completed."""
-    EXPIRED = "expired"
-    """Represents a run that expired before it could otherwise finish."""
-
-
-class RunStepErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Possible error code values attributable to a failed run step."""
-
-    SERVER_ERROR = "server_error"
-    """Represents a server error."""
-    RATE_LIMIT_EXCEEDED = "rate_limit_exceeded"
-    """Represents an error indicating configured rate limits were exceeded."""
-
-
-class RunStepStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Possible values for the status of a run step."""
-
-    IN_PROGRESS = "in_progress"
-    """Represents a run step still in progress."""
-    CANCELLED = "cancelled"
-    """Represents a run step that was cancelled."""
-    FAILED = "failed"
-    """Represents a run step that failed."""
-    COMPLETED = "completed"
-    """Represents a run step that successfully completed."""
-    EXPIRED = "expired"
-    """Represents a run step that expired before otherwise finishing."""
-
-
-class RunStepStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Run step operation related streaming events."""
-
-    THREAD_RUN_STEP_CREATED = "thread.run.step.created"
-    """Event sent when a new thread run step is created. The data of this event is of type RunStep"""
-    THREAD_RUN_STEP_IN_PROGRESS = "thread.run.step.in_progress"
-    """Event sent when a run step moves to ``in_progress`` status. The data of this event is of type
-    RunStep"""
-    THREAD_RUN_STEP_DELTA = "thread.run.step.delta"
-    """Event sent when a run step is being streamed. The data of this event is of type
-    RunStepDeltaChunk"""
-    THREAD_RUN_STEP_COMPLETED = "thread.run.step.completed"
-    """Event sent when a run step is completed. The data of this event is of type RunStep"""
-    THREAD_RUN_STEP_FAILED = "thread.run.step.failed"
-    """Event sent when a run step fails. The data of this event is of type RunStep"""
-    THREAD_RUN_STEP_CANCELLED = "thread.run.step.cancelled"
-    """Event sent when a run step is cancelled. The data of this event is of type RunStep"""
-    THREAD_RUN_STEP_EXPIRED = "thread.run.step.expired"
-    """Event sent when a run step is expired. The data of this event is of type RunStep"""
-
-
-class RunStepType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The possible types of run steps."""
-
-    MESSAGE_CREATION = "message_creation"
-    """Represents a run step to create a message."""
-    TOOL_CALLS = "tool_calls"
-    """Represents a run step that calls tools."""
-
-
-class RunStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Run operation related streaming events."""
+    MODEL_DEPLOYMENT = "ModelDeployment"
+    """Model deployment"""
 
-    THREAD_RUN_CREATED = "thread.run.created"
-    """Event sent when a new run is created. The data of this event is of type ThreadRun"""
-    THREAD_RUN_QUEUED = "thread.run.queued"
-    """Event sent when a run moves to ``queued`` status. The data of this event is of type ThreadRun"""
-    THREAD_RUN_IN_PROGRESS = "thread.run.in_progress"
-    """Event sent when a run moves to ``in_progress`` status. The data of this event is of type
-    ThreadRun"""
-    THREAD_RUN_REQUIRES_ACTION = "thread.run.requires_action"
-    """Event sent when a run moves to ``requires_action`` status. The data of this event is of type
-    ThreadRun"""
-    THREAD_RUN_COMPLETED = "thread.run.completed"
-    """Event sent when a run is completed. The data of this event is of type ThreadRun"""
-    THREAD_RUN_INCOMPLETE = "thread.run.incomplete"
-    """Event sent when a run ends incomplete. The data of this event is of type ThreadRun"""
-    THREAD_RUN_FAILED = "thread.run.failed"
-    """Event sent when a run fails. The data of this event is of type ThreadRun"""
-    THREAD_RUN_CANCELLING = "thread.run.cancelling"
-    """Event sent when a run moves to ``cancelling`` status. The data of this event is of type
-    ThreadRun"""
-    THREAD_RUN_CANCELLED = "thread.run.cancelled"
-    """Event sent when a run is cancelled. The data of this event is of type ThreadRun"""
-    THREAD_RUN_EXPIRED = "thread.run.expired"
-    """Event sent when a run is expired. The data of this event is of type ThreadRun"""
-
-
-class ThreadStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Thread operation related streaming events."""
-
-    THREAD_CREATED = "thread.created"
-    """Event sent when a new thread is created. The data of this event is of type AgentThread"""
-
-
-class TruncationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Possible truncation strategies for the thread."""
-
-    AUTO = "auto"
-    """Default value. Messages in the middle of the thread will be dropped to fit the context length
-    of the model."""
-    LAST_MESSAGES = "last_messages"
-    """The thread will truncate to the ``lastMessages`` count of recent messages."""
 
+class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of IndexType."""
 
-class VectorStoreChunkingStrategyRequestType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of chunking strategy."""
-
-    AUTO = "auto"
-    STATIC = "static"
-
-
-class VectorStoreChunkingStrategyResponseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of chunking strategy."""
-
-    OTHER = "other"
-    STATIC = "static"
-
-
-class VectorStoreDataSourceAssetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of vector storage asset. Asset type may be a uri_asset, in this case it should contain
-    asset URI ID,
-    in the case of id_asset it should contain the data ID.
-    """
-
-    URI_ASSET = "uri_asset"
-    """Azure URI"""
-    ID_ASSET = "id_asset"
-    """The data ID"""
-
-
-class VectorStoreExpirationPolicyAnchor(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Describes the relationship between the days and the expiration of this vector store."""
-
-    LAST_ACTIVE_AT = "last_active_at"
-    """The expiration policy is based on the last time the vector store was active."""
-
-
-class VectorStoreFileBatchStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of the vector store file batch."""
-
-    IN_PROGRESS = "in_progress"
-    """The vector store is still processing this file batch."""
-    COMPLETED = "completed"
-    """the vector store file batch is ready for use."""
-    CANCELLED = "cancelled"
-    """The vector store file batch was cancelled."""
-    FAILED = "failed"
-    """The vector store file batch failed to process."""
-
-
-class VectorStoreFileErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Error code variants for vector store file processing."""
-
-    SERVER_ERROR = "server_error"
-    """An server error occurred."""
-    INVALID_FILE = "invalid_file"
-    """The file is not valid."""
-    UNSUPPORTED_FILE = "unsupported_file"
-    """The file is of unsupported type."""
-
-
-class VectorStoreFileStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Vector store file status."""
-
-    IN_PROGRESS = "in_progress"
-    """The file is currently being processed."""
-    COMPLETED = "completed"
-    """The file has been successfully processed."""
-    FAILED = "failed"
-    """The file has failed to process."""
-    CANCELLED = "cancelled"
-    """The file was cancelled."""
-
-
-class VectorStoreFileStatusFilter(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Query parameter filter for vector store file retrieval endpoint."""
-
-    IN_PROGRESS = "in_progress"
-    """Retrieve only files that are currently being processed"""
-    COMPLETED = "completed"
-    """Retrieve only files that have been successfully processed"""
-    FAILED = "failed"
-    """Retrieve only files that have failed to process"""
-    CANCELLED = "cancelled"
-    """Retrieve only files that were cancelled"""
-
-
-class VectorStoreStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Vector store possible status."""
-
-    EXPIRED = "expired"
-    """expired status indicates that this vector store has expired and is no longer available for use."""
-    IN_PROGRESS = "in_progress"
-    """in_progress status indicates that this vector store is still processing files."""
-    COMPLETED = "completed"
-    """completed status indicates that this vector store is ready for use."""
-
-
-class WeekDays(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """WeekDay of the schedule - Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday."""
-
-    MONDAY = "Monday"
-    TUESDAY = "Tuesday"
-    WEDNESDAY = "Wednesday"
-    THURSDAY = "Thursday"
-    FRIDAY = "Friday"
-    SATURDAY = "Saturday"
-    SUNDAY = "Sunday"
+    AZURE_SEARCH = "AzureSearch"
+    """Azure search"""
+    COSMOS_DB = "CosmosDBNoSqlVectorStore"
+    """CosmosDB"""
+    MANAGED_AZURE_SEARCH = "ManagedAzureSearch"
+    """Managed Azure Search"""
+
+
+class PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of pending upload."""
+
+    NONE = "None"
+    """No pending upload."""
+    BLOB_REFERENCE = "BlobReference"
+    """Blob Reference is the only supported type."""
+
+
+class RiskCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Risk category for the attack objective."""
+
+    HATE_UNFAIRNESS = "HateUnfairness"
+    """Represents content related to hate or unfairness."""
+    VIOLENCE = "Violence"
+    """Represents content related to violence."""
+    SEXUAL = "Sexual"
+    """Represents content of a sexual nature."""
+    SELF_HARM = "SelfHarm"
+    """Represents content related to self-harm."""

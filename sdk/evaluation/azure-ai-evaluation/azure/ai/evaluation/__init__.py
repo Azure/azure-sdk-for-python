@@ -31,6 +31,7 @@ from ._evaluators._xpia import IndirectAttackEvaluator
 from ._evaluators._code_vulnerability import CodeVulnerabilityEvaluator
 from ._evaluators._ungrounded_attributes import UngroundedAttributesEvaluator
 from ._evaluators._tool_call_accuracy import ToolCallAccuracyEvaluator
+from ._evaluators._document_retrieval import DocumentRetrievalEvaluator
 from ._model_configurations import (
     AzureAIProject,
     AzureOpenAIModelConfiguration,
@@ -44,6 +45,7 @@ from ._aoai.aoai_grader import AzureOpenAIGrader
 from ._aoai.label_grader import AzureOpenAILabelGrader
 from ._aoai.string_check_grader import AzureOpenAIStringCheckGrader
 from ._aoai.text_similarity_grader import AzureOpenAITextSimilarityGrader
+from ._aoai.score_model_grader import AzureOpenAIScoreModelGrader
 
 
 _patch_all = []
@@ -53,10 +55,19 @@ _patch_all = []
 # in ai.projects. So we only import it if it's available and the user has ai.projects.
 try:
     from ._converters._ai_services import AIAgentConverter
+
     _patch_all.append("AIAgentConverter")
 except ImportError:
-    print("[INFO] Could not import AIAgentConverter. Please install the dependency with `pip install azure-ai-projects`.")
+    print(
+        "[INFO] Could not import AIAgentConverter. Please install the dependency with `pip install azure-ai-projects`."
+    )
 
+try:
+    from ._converters._sk_services import SKAgentConverter
+
+    _patch_all.append("SKAgentConverter")
+except ImportError:
+    print("[INFO] Could not import SKAgentConverter. Please install the dependency with `pip install semantic-kernel`.")
 
 __all__ = [
     "evaluate",
@@ -98,6 +109,7 @@ __all__ = [
     "AzureOpenAILabelGrader",
     "AzureOpenAIStringCheckGrader",
     "AzureOpenAITextSimilarityGrader",
+    "AzureOpenAIScoreModelGrader",
 ]
 
 __all__.extend([p for p in _patch_all if p not in __all__])

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.resource import ResourceManagementClient
+from azure.mgmt.resource.resources import ResourceManagementClient
 
 """
 # PREREQUISITES
@@ -46,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/resources/resource-manager/Microsoft.Resources/stable/2022-09-01/examples/PutDeploymentResourceGroupTemplateSpecsWithId.json
+# x-ms-original-file: specification/resources/resource-manager/Microsoft.Resources/deployments/stable/2022-09-01/examples/PutDeploymentResourceGroupTemplateSpecsWithId.json
 if __name__ == "__main__":
     main()

@@ -20,7 +20,7 @@ class TestDnsResolverManagementOutboundEndpointsOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_outbound_endpoints_begin_create_or_update(self, resource_group):
         response = self.client.outbound_endpoints.begin_create_or_update(
             resource_group_name=resource_group.name,
             dns_resolver_name="str",
@@ -44,7 +44,7 @@ class TestDnsResolverManagementOutboundEndpointsOperations(AzureMgmtRecordedTest
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -52,13 +52,13 @@ class TestDnsResolverManagementOutboundEndpointsOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_outbound_endpoints_begin_update(self, resource_group):
         response = self.client.outbound_endpoints.begin_update(
             resource_group_name=resource_group.name,
             dns_resolver_name="str",
             outbound_endpoint_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -66,12 +66,12 @@ class TestDnsResolverManagementOutboundEndpointsOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_outbound_endpoints_begin_delete(self, resource_group):
         response = self.client.outbound_endpoints.begin_delete(
             resource_group_name=resource_group.name,
             dns_resolver_name="str",
             outbound_endpoint_name="str",
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -79,12 +79,12 @@ class TestDnsResolverManagementOutboundEndpointsOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_outbound_endpoints_get(self, resource_group):
         response = self.client.outbound_endpoints.get(
             resource_group_name=resource_group.name,
             dns_resolver_name="str",
             outbound_endpoint_name="str",
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -92,11 +92,11 @@ class TestDnsResolverManagementOutboundEndpointsOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_outbound_endpoints_list(self, resource_group):
         response = self.client.outbound_endpoints.list(
             resource_group_name=resource_group.name,
             dns_resolver_name="str",
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

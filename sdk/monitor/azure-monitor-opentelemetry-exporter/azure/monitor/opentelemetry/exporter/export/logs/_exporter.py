@@ -69,7 +69,7 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
             self._handle_transmit_from_storage(envelopes, result)
             return _get_log_export_result(result)
         except Exception:  # pylint: disable=broad-except
-            _logger.exception("Exception occurred while exporting the data.")
+            _logger.exception("Exception occurred while exporting the data.")  # pylint: disable=C4769
             return _get_log_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 
     def shutdown(self) -> None:
@@ -126,12 +126,14 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(  # type: ignore
         log_record.span_id or _DEFAULT_SPAN_ID
     )
+    if _utils._is_any_synthetic_source(log_record.attributes):
+        envelope.tags[ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE] = "True"  # type: ignore
     # Special use case: Customers want to be able to set location ip on log records
     location_ip = trace_utils._get_location_ip(log_record.attributes)
     if location_ip:
         envelope.tags[ContextTagKeys.AI_LOCATION_IP] = location_ip  # type: ignore
     properties = _utils._filter_custom_properties(
-        log_record.attributes, lambda key, val: not _is_ignored_attribute(key)
+        log_record.attributes, lambda key, val: not _is_ignored_attribute(key)  # type: ignore
     )
     exc_type = exc_message = stack_trace = None
     if log_record.attributes:

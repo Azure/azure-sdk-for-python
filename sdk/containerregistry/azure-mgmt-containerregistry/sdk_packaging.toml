@@ -2,7 +2,7 @@
 package_name = "azure-mgmt-containerregistry"
 package_pprint_name = "Container Registry"
 package_doc_id = "container-registry"
-is_stable = true
+is_stable = false
 is_arm = true
 sample_link = ""
 title = "ContainerRegistryManagementClient"

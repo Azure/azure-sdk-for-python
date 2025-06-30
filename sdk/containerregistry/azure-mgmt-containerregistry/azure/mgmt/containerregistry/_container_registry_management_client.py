@@ -21,7 +21,7 @@ from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 
 from ._configuration import ContainerRegistryManagementClientConfiguration
-from ._utils.serialization import Deserializer, Serializer
+from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports

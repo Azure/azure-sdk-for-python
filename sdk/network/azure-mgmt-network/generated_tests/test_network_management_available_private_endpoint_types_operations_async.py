@@ -24,7 +24,7 @@ class TestNetworkManagementAvailablePrivateEndpointTypesOperationsAsync(AzureMgm
     async def test_available_private_endpoint_types_list(self, resource_group):
         response = self.client.available_private_endpoint_types.list(
             location="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -36,7 +36,7 @@ class TestNetworkManagementAvailablePrivateEndpointTypesOperationsAsync(AzureMgm
         response = self.client.available_private_endpoint_types.list_by_resource_group(
             location="str",
             resource_group_name=resource_group.name,
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

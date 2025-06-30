@@ -15,9 +15,13 @@ except ImportError:
     # Python 2 compatibility
     from urlparse import urlparse
 
-from azure.mgmt.recoveryservices.models import (Vault, Sku, SkuName, VaultProperties,
-                                                VaultExtendedInfoResource,
-                                                )
+from azure.mgmt.recoveryservices.models import (
+    Vault,
+    Sku,
+    SkuName,
+    VaultProperties,
+    VaultExtendedInfoResource,
+)
 
 
 class MgmtRecoveryServicesTestDefinition(object):
@@ -43,13 +47,9 @@ class MgmtRecoveryServicesTestHelper(object):
 
     def create_vault(self, vault_name):
         params_sku = Sku(
-            name= SkuName.standard,
+            name=SkuName.standard,
         )
-        params_create = Vault(
-            location=self.location,
-            sku=params_sku,
-            properties= VaultProperties()
-        )
+        params_create = Vault(location=self.location, sku=params_sku, properties=VaultProperties())
         self.client.vaults.create_or_update(self.resource_group, vault_name, params_create)
 
     def list_vaults(self):
@@ -62,10 +62,7 @@ class MgmtRecoveryServicesTestHelper(object):
         return self.client.vaults.get(self.resource_group, vault_name)
 
     def create_or_update_vault_extended_info(self, vault):
-        params_ext_info = VaultExtendedInfoResource(
-            algorithm= "None",
-            integrity_key= self.generate_random_key()
-        )
+        params_ext_info = VaultExtendedInfoResource(algorithm="None", integrity_key=self.generate_random_key())
         return self.client.vault_extended_info.create_or_update(self.resource_group, vault.name, params_ext_info)
 
     def get_vault_extended_info(self, vault):
@@ -91,4 +88,3 @@ class MgmtRecoveryServicesTestHelper(object):
 
     def generate_random_key(self):
         return base64.b64encode(bytearray(random.getrandbits(8) for i in range(16)))
-

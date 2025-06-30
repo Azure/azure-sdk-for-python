@@ -27,12 +27,19 @@
         "azure.mgmt.arizeaiobservabilityeval.models.SingleSignOnType": "LiftrBase.SingleSignOnType",
         "azure.mgmt.arizeaiobservabilityeval.models.SingleSignOnStates": "LiftrBase.SingleSignOnStates",
         "azure.mgmt.arizeaiobservabilityeval.models.ManagedServiceIdentityType": "Azure.ResourceManager.CommonTypes.ManagedServiceIdentityType",
-        "azure.mgmt.arizeaiobservabilityeval.ArizeAIObservabilityEvalMgmtClient.operations.list": "Azure.ResourceManager.Operations.list",
-        "azure.mgmt.arizeaiobservabilityeval.ArizeAIObservabilityEvalMgmtClient.organizations.get": "ArizeAi.ObservabilityEval.Organizations.get",
-        "azure.mgmt.arizeaiobservabilityeval.ArizeAIObservabilityEvalMgmtClient.organizations.begin_create_or_update": "ArizeAi.ObservabilityEval.Organizations.createOrUpdate",
-        "azure.mgmt.arizeaiobservabilityeval.ArizeAIObservabilityEvalMgmtClient.organizations.update": "ArizeAi.ObservabilityEval.Organizations.update",
-        "azure.mgmt.arizeaiobservabilityeval.ArizeAIObservabilityEvalMgmtClient.organizations.begin_delete": "ArizeAi.ObservabilityEval.Organizations.delete",
-        "azure.mgmt.arizeaiobservabilityeval.ArizeAIObservabilityEvalMgmtClient.organizations.list_by_resource_group": "ArizeAi.ObservabilityEval.Organizations.listByResourceGroup",
-        "azure.mgmt.arizeaiobservabilityeval.ArizeAIObservabilityEvalMgmtClient.organizations.list_by_subscription": "ArizeAi.ObservabilityEval.Organizations.listBySubscription"
+        "azure.mgmt.arizeaiobservabilityeval.operations.Operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.mgmt.arizeaiobservabilityeval.aio.operations.Operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.mgmt.arizeaiobservabilityeval.operations.OrganizationsOperations.get": "ArizeAi.ObservabilityEval.Organizations.get",
+        "azure.mgmt.arizeaiobservabilityeval.aio.operations.OrganizationsOperations.get": "ArizeAi.ObservabilityEval.Organizations.get",
+        "azure.mgmt.arizeaiobservabilityeval.operations.OrganizationsOperations.begin_create_or_update": "ArizeAi.ObservabilityEval.Organizations.createOrUpdate",
+        "azure.mgmt.arizeaiobservabilityeval.aio.operations.OrganizationsOperations.begin_create_or_update": "ArizeAi.ObservabilityEval.Organizations.createOrUpdate",
+        "azure.mgmt.arizeaiobservabilityeval.operations.OrganizationsOperations.update": "ArizeAi.ObservabilityEval.Organizations.update",
+        "azure.mgmt.arizeaiobservabilityeval.aio.operations.OrganizationsOperations.update": "ArizeAi.ObservabilityEval.Organizations.update",
+        "azure.mgmt.arizeaiobservabilityeval.operations.OrganizationsOperations.begin_delete": "ArizeAi.ObservabilityEval.Organizations.delete",
+        "azure.mgmt.arizeaiobservabilityeval.aio.operations.OrganizationsOperations.begin_delete": "ArizeAi.ObservabilityEval.Organizations.delete",
+        "azure.mgmt.arizeaiobservabilityeval.operations.OrganizationsOperations.list_by_resource_group": "ArizeAi.ObservabilityEval.Organizations.listByResourceGroup",
+        "azure.mgmt.arizeaiobservabilityeval.aio.operations.OrganizationsOperations.list_by_resource_group": "ArizeAi.ObservabilityEval.Organizations.listByResourceGroup",
+        "azure.mgmt.arizeaiobservabilityeval.operations.OrganizationsOperations.list_by_subscription": "ArizeAi.ObservabilityEval.Organizations.listBySubscription",
+        "azure.mgmt.arizeaiobservabilityeval.aio.operations.OrganizationsOperations.list_by_subscription": "ArizeAi.ObservabilityEval.Organizations.listBySubscription"
     }
 }

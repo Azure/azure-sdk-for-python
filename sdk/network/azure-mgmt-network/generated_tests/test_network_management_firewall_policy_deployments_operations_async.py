@@ -26,7 +26,7 @@ class TestNetworkManagementFirewallPolicyDeploymentsOperationsAsync(AzureMgmtRec
             await self.client.firewall_policy_deployments.begin_deploy(
                 resource_group_name=resource_group.name,
                 firewall_policy_name="str",
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

@@ -133,6 +133,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         process_timeout = kwargs.pop("process_timeout", 10)
 
+        token_credentials_env = os.environ.get(EnvironmentVariables.AZURE_TOKEN_CREDENTIALS, "").strip().lower()
         exclude_workload_identity_credential = kwargs.pop("exclude_workload_identity_credential", False)
         exclude_environment_credential = kwargs.pop("exclude_environment_credential", False)
         exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
@@ -142,6 +143,26 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_cli_credential = kwargs.pop("exclude_cli_credential", False)
         exclude_interactive_browser_credential = kwargs.pop("exclude_interactive_browser_credential", True)
         exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
+
+        if token_credentials_env == "dev":
+            # In dev mode, use only developer credentials
+            exclude_environment_credential = True
+            exclude_managed_identity_credential = True
+            exclude_workload_identity_credential = True
+        elif token_credentials_env == "prod":
+            # In prod mode, use only production credentials
+            exclude_shared_token_cache_credential = True
+            exclude_visual_studio_code_credential = True
+            exclude_cli_credential = True
+            exclude_developer_cli_credential = True
+            exclude_powershell_credential = True
+            exclude_interactive_browser_credential = True
+        elif token_credentials_env != "":
+            # If the environment variable is set to something other than dev or prod, raise an error
+            raise ValueError(
+                f"Invalid value for {EnvironmentVariables.AZURE_TOKEN_CREDENTIALS}: {token_credentials_env}. "
+                "Valid values are 'dev' or 'prod'."
+            )
 
         credentials: List[SupportsTokenInfo] = []
         within_dac.set(True)
@@ -155,7 +176,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
                         client_id=cast(str, client_id),
                         tenant_id=workload_identity_tenant_id,
                         token_file_path=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
-                        **kwargs
+                        **kwargs,
                     )
                 )
         if not exclude_managed_identity_credential:
@@ -163,7 +184,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 ManagedIdentityCredential(
                     client_id=managed_identity_client_id,
                     _exclude_workload_identity_credential=exclude_workload_identity_credential,
-                    **kwargs
+                    **kwargs,
                 )
             )
         if not exclude_shared_token_cache_credential and SharedTokenCacheCredential.supported():

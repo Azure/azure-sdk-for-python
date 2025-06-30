@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from datetime import datetime
 from typing import List, Optional, Union, TYPE_CHECKING
 from typing_extensions import Literal
 from ._generated.models import (
@@ -16,7 +17,9 @@ from ._generated.models import (
     Choice as ChoiceInternal,
     ChannelAffinity as ChannelAffinityInternal,
     MediaStreamingSubscription as MediaStreamingSubscriptionInternal,
-    TranscriptionSubscription as TranscriptionSubscriptionInternal
+    TranscriptionSubscription as TranscriptionSubscriptionInternal,
+    RecordingStorageInfo,
+    Error
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -25,6 +28,7 @@ from ._shared.models import (
 )
 from ._generated.models._enums import PlaySourceType
 from ._generated.models._enums import RecordingStorageKind
+from ._generated.models._enums import CallSessionEndReason
 from ._utils import (
     deserialize_phone_identifier,
     deserialize_identifier,
@@ -55,9 +59,11 @@ if TYPE_CHECKING:
         RemoveParticipantResponse as RemoveParticipantResultRest,
         TransferCallResponse as TransferParticipantResultRest,
         RecordingStateResponse as RecordingStateResultRest,
+        RecordingResultResponse as RecordingResultRest,
         MuteParticipantsResult as MuteParticipantsResultRest,
         SendDtmfTonesResult as SendDtmfTonesResultRest,
         CancelAddParticipantResponse as CancelAddParticipantResultRest,
+        MoveParticipantsResponse as MoveParticipantsResponseRest,
     )
 
 
@@ -712,7 +718,6 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
             else None,
         )
 
-
 class RecordingProperties:
     """Detailed recording properties of the call.
 
@@ -739,6 +744,80 @@ class RecordingProperties:
             recording_id=recording_state_result.recording_id, recording_state=recording_state_result.recording_state
         )
 
+class RecordingResult:
+    """Recording result data.
+    Variables are only populated by the server, and will be ignored when sending a request.
+    :ivar recording_id:
+    :vartype recording_id: str
+    :ivar recording_storage_info: Container for chunks.
+    :vartype recording_storage_info:
+     ~azure.communication.callautomation.models.RecordingStorageInfo
+    :ivar errors:
+    :vartype errors: list[~azure.communication.callautomation.models.Error]
+    :ivar recording_start_time:
+    :vartype recording_start_time: ~datetime.datetime
+    :ivar recording_duration_ms:
+    :vartype recording_duration_ms: int
+    :ivar session_end_reason: Known values are: "sessionStillOngoing", "callEnded",
+     "initiatorLeft", "handedOverOrTransferred", "maximumSessionTimeReached", "callStartTimeout",
+     "mediaTimeout", "audioStreamFailure", "allInstancesBusy", "teamsTokenConversionFailed",
+     "reportCallStateFailed", "reportCallStateFailedAndSessionMustBeDiscarded",
+     "couldNotRejoinCall", "invalidBotData", "couldNotStart",
+     "appHostedMediaFailureOutcomeWithError", "appHostedMediaFailureOutcomeGracefully",
+     "handedOverDueToMediaTimeout", "handedOverDueToAudioStreamFailure",
+     "speechRecognitionSessionNonRetriableError",
+     "speechRecognitionSessionRetriableErrorMaxRetryCountReached",
+     "handedOverDueToChunkCreationFailure", "chunkCreationFailed",
+     "handedOverDueToProcessingTimeout", "processingTimeout", and "transcriptObjectCreationFailed".
+    :vartype session_end_reason: str or
+     ~azure.communication.callautomation.models.CallSessionEndReason
+    :ivar recording_expiration_time:
+    :vartype recording_expiration_time: ~datetime.datetime
+    """
+
+    recording_id: Optional[str]
+    """Id of this recording operation."""
+    recording_storage_info: Optional[RecordingStorageInfo]
+    """recording storage info."""
+    errors: Optional[List[Error]]
+    """Error."""
+    session_end_reason: Optional[Union[str, 'CallSessionEndReason']]
+    """session end reason."""
+    recording_start_time: Optional[datetime]
+    """recording start time."""
+    recording_duration_ms: Optional[int]
+    """recording duration ms."""
+    recording_expiration_time: Optional[datetime]
+    """recording expiration time."""
+
+    def __init__(
+        self, *, recording_id: Optional[str] = None,
+        recording_storage_info: Optional[RecordingStorageInfo] = None,
+        session_end_reason: Optional[Union[str,  'CallSessionEndReason']] = None,
+        recording_start_time: Optional[datetime] = None,
+        recording_duration_ms: Optional[int] = None,
+        recording_expiration_time: Optional[datetime] = None,
+        errors: Optional[List[Error]]
+    ):
+        self.recording_id = recording_id
+        self.recording_storage_info = recording_storage_info
+        self.session_end_reason = session_end_reason
+        self.recording_start_time = recording_start_time
+        self.recording_duration_ms = recording_duration_ms
+        self.recording_expiration_time = recording_expiration_time
+        self.errors = errors
+
+    @classmethod
+    def _from_generated(cls, recording_result: "RecordingResultRest"):
+        return cls(
+            recording_id=recording_result.recording_id,
+            recording_storage_info=recording_result.recording_storage_info,
+            session_end_reason=recording_result.session_end_reason,
+            recording_start_time=recording_result.recording_start_time,
+            recording_duration_ms=recording_result.recording_duration_ms,
+            recording_expiration_time=recording_result.recording_expiration_time,
+            errors=recording_result.errors
+        )
 
 class CallParticipant:
     """Details of an Azure Communication Service call participant.
@@ -832,6 +911,50 @@ class RemoveParticipantResult:
     @classmethod
     def _from_generated(cls, remove_participant_result_generated: "RemoveParticipantResultRest"):
         return cls(operation_context=remove_participant_result_generated.operation_context)
+
+
+class MoveParticipantsResult:
+    """The response payload for moving participants to the call.
+
+    :keyword participants: List of current participants in the call.
+    :paramtype participants: list[~azure.communication.callautomation.CallParticipant]
+    :keyword operation_context: The operation context provided by client.
+    :paramtype operation_context: str
+    :keyword from_call: The CallConnectionId for the call you want to move the participant from.
+    :paramtype from_call: str
+    """
+
+    participants: Optional[List[CallParticipant]]
+    """List of current participants in the call."""
+    operation_context: Optional[str]
+    """The operation context provided by client."""
+    from_call: Optional[str]
+    """The CallConnectionId for the call you want to move the participant from."""
+
+    def __init__(
+        self,
+        *,
+        participants: Optional[List[CallParticipant]] = None,
+        operation_context: Optional[str] = None,
+        from_call: Optional[str] = None,
+    ) -> None:
+        self.participants = participants
+        self.operation_context = operation_context
+        self.from_call = from_call
+
+    @classmethod
+    def _from_generated(cls, move_participants_result_generated: "MoveParticipantsResponseRest"):
+        participants = None
+        if move_participants_result_generated.participants:
+            participants = [
+                CallParticipant._from_generated(participant)  # pylint:disable=protected-access
+                for participant in move_participants_result_generated.participants
+            ]
+        return cls(
+            participants=participants,
+            operation_context=move_participants_result_generated.operation_context,
+            from_call=move_participants_result_generated.from_call,
+        )
 
 
 class TransferCallResult:

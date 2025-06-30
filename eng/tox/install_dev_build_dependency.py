@@ -19,7 +19,7 @@ common_task_path = path.abspath(path.join(root_dir, "scripts", "devops_tasks"))
 sys.path.append(common_task_path)
 
 from common_tasks import get_installed_packages
-from ci_tools.functions import discover_targeted_packages
+from ci_tools.functions import discover_targeted_packages, get_pip_command
 from ci_tools.parsing import ParsedSetup
 
 EXCLUDED_PKGS = [
@@ -61,12 +61,8 @@ def get_installed_azure_packages(pkg_name_to_exclude):
 
 def uninstall_packages(packages):
     # This method uninstall list of given packages so dev build version can be reinstalled
-    commands = [
-        sys.executable,
-        "-m",
-        "pip",
-        "uninstall",
-    ]
+    commands = get_pip_command()
+    commands.append("uninstall")
 
     logging.info("Uninstalling packages: %s", packages)
     commands.extend(packages)
@@ -79,12 +75,8 @@ def uninstall_packages(packages):
 def install_packages(packages):
     # install list of given packages from devops feed
 
-    commands = [
-        sys.executable,
-        "-m",
-        "pip",
-        "install",
-    ]
+    commands = get_pip_command()
+    commands.append("install")
 
     logging.info("Installing dev build version for packages: %s", packages)
     commands.extend(packages)

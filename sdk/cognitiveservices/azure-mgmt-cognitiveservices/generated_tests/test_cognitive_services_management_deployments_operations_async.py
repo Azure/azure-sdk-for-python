@@ -21,11 +21,11 @@ class TestCognitiveServicesManagementDeploymentsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_deployments_list(self, resource_group):
         response = self.client.deployments.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-10-01",
+            api_version="2025-04-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestCognitiveServicesManagementDeploymentsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_deployments_get(self, resource_group):
         response = await self.client.deployments.get(
             resource_group_name=resource_group.name,
             account_name="str",
             deployment_name="str",
-            api_version="2024-10-01",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestCognitiveServicesManagementDeploymentsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_deployments_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.deployments.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -111,6 +111,7 @@ class TestCognitiveServicesManagementDeploymentsOperationsAsync(AzureMgmtRecorde
                             }
                         ],
                         "scaleSettings": {"activeCapacity": 0, "capacity": 0, "scaleType": "str"},
+                        "spilloverDeploymentName": "str",
                         "versionUpgradeOption": "str",
                     },
                     "sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
@@ -125,7 +126,7 @@ class TestCognitiveServicesManagementDeploymentsOperationsAsync(AzureMgmtRecorde
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-10-01",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -134,7 +135,7 @@ class TestCognitiveServicesManagementDeploymentsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_deployments_begin_update(self, resource_group):
         response = await (
             await self.client.deployments.begin_update(
                 resource_group_name=resource_group.name,
@@ -144,7 +145,7 @@ class TestCognitiveServicesManagementDeploymentsOperationsAsync(AzureMgmtRecorde
                     "sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
                     "tags": {"str": "str"},
                 },
-                api_version="2024-10-01",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -153,13 +154,13 @@ class TestCognitiveServicesManagementDeploymentsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_deployments_begin_delete(self, resource_group):
         response = await (
             await self.client.deployments.begin_delete(
                 resource_group_name=resource_group.name,
                 account_name="str",
                 deployment_name="str",
-                api_version="2024-10-01",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -168,12 +169,12 @@ class TestCognitiveServicesManagementDeploymentsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_skus(self, resource_group):
+    async def test_deployments_list_skus(self, resource_group):
         response = self.client.deployments.list_skus(
             resource_group_name=resource_group.name,
             account_name="str",
             deployment_name="str",
-            api_version="2024-10-01",
+            api_version="2025-04-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

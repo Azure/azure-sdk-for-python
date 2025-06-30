@@ -24,29 +24,30 @@ class TestHealthDeidentificationCreateAndListJob(DeidBaseTestCase):
                 location=storage_location,
                 prefix=inputPrefix,
             ),
-            target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH),
-            operation=OperationType.TAG,
-            data_type=DocumentDataType.PLAINTEXT,
+            target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH, overwrite=True),
+            operation_type=DeidentificationOperationType.REDACT,
+            customizations=DeidentificationJobCustomizationOptions(redaction_format="[{type}]"),
         )
 
-        client.begin_create_job(jobname, job)
+        client.begin_deidentify_documents(jobname, job)
         jobs = client.list_jobs()
 
         job = None
         jobsToLookThrough = 10
         for j in jobs:
             jobsToLookThrough -= 1
-            if j.name == jobname:
+            if j.job_name == jobname:
                 job = j
                 break
             elif jobsToLookThrough <= 0:
                 raise Exception("Job not found in list_jobs")
 
-        assert job.name == jobname
-        assert job.status == JobStatus.NOT_STARTED or job.status == JobStatus.RUNNING
-        assert job.operation == OperationType.TAG
+        assert job is not None
+        assert job.job_name == jobname
+        assert job.status == OperationStatus.NOT_STARTED or job.status == OperationStatus.RUNNING
+        assert job.operation_type == DeidentificationOperationType.REDACT
         assert job.error is None
-        assert job.summary is None
         assert job.created_at is not None
         assert job.last_updated_at is not None
-        assert job.redaction_format is None
+        assert job.customizations is not None
+        assert job.customizations.redaction_format == "[{type}]"

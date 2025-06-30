@@ -8,7 +8,7 @@
 
 from typing import Any, List, Optional, TYPE_CHECKING
 
-from ... import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models

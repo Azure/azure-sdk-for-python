@@ -27,7 +27,6 @@ class TestDnsResolverManagementDnsResolversOperationsAsync(AzureMgmtRecordedTest
         )
         result = [r async for r in response]
         assert result == []
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
@@ -35,4 +34,3 @@ class TestDnsResolverManagementDnsResolversOperationsAsync(AzureMgmtRecordedTest
         response = self.client.dns_resolvers.list()
         result = [r async for r in response]
         assert response
-        

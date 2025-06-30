@@ -4,10 +4,11 @@
 from typing import Any, Dict, Union, List
 
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
-from openai.types.eval_create_params import TestingCriterionLabelModel
+from openai.types.graders import LabelModelGrader
 from azure.ai.evaluation._common._experimental import experimental
 
 from .aoai_grader import AzureOpenAIGrader
+
 
 @experimental
 class AzureOpenAILabelGrader(AzureOpenAIGrader):
@@ -47,7 +48,7 @@ class AzureOpenAILabelGrader(AzureOpenAIGrader):
     def __init__(
         self,
         *,
-        model_config : Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+        model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
         input: List[Dict[str, str]],
         labels: List[str],
         model: str,
@@ -55,7 +56,7 @@ class AzureOpenAILabelGrader(AzureOpenAIGrader):
         passing_labels: List[str],
         **kwargs: Any
     ):
-        grader = TestingCriterionLabelModel(
+        grader = LabelModelGrader(
             input=input,
             labels=labels,
             model=model,

@@ -5,10 +5,11 @@ from typing import Any, Dict, Union
 from typing_extensions import Literal
 
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
-from openai.types.eval_string_check_grader import EvalStringCheckGrader
+from openai.types.graders import StringCheckGrader
 from azure.ai.evaluation._common._experimental import experimental
 
 from .aoai_grader import AzureOpenAIGrader
+
 
 @experimental
 class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
@@ -43,7 +44,7 @@ class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
     def __init__(
         self,
         *,
-        model_config : Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+        model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
         input: str,
         name: str,
         operation: Literal[
@@ -55,7 +56,7 @@ class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
         reference: str,
         **kwargs: Any
     ):
-        grader = EvalStringCheckGrader(
+        grader = StringCheckGrader(
             input=input,
             name=name,
             operation=operation,

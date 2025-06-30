@@ -66,6 +66,7 @@ class KnowledgeAgentRetrievalClient(HeadersMixin):
                 api_version=self._api_version,
                 **kwargs
             )
+        self.knowledge_retrieval = self._client.knowledge_retrieval
 
     def __repr__(self) -> str:
         return "<KnowledgeAgentRetrievalClient [endpoint={}, agent={}]>".format(

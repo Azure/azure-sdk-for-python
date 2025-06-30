@@ -17,9 +17,9 @@ from azure.mgmt.core import AsyncARMPipelineClient
 from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import OnlineExperimentationMgmtClientConfiguration
-from .operations import OnlineExperimentWorkspacesOperations, Operations
+from .operations import OnlineExperimentationWorkspacesOperations, Operations
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -30,9 +30,9 @@ class OnlineExperimentationMgmtClient:
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.onlineexperimentation.aio.operations.Operations
-    :ivar online_experiment_workspaces: OnlineExperimentWorkspacesOperations operations
-    :vartype online_experiment_workspaces:
-     azure.mgmt.onlineexperimentation.aio.operations.OnlineExperimentWorkspacesOperations
+    :ivar online_experimentation_workspaces: OnlineExperimentationWorkspacesOperations operations
+    :vartype online_experimentation_workspaces:
+     azure.mgmt.onlineexperimentation.aio.operations.OnlineExperimentationWorkspacesOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -90,7 +90,7 @@ class OnlineExperimentationMgmtClient:
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.online_experiment_workspaces = OnlineExperimentWorkspacesOperations(
+        self.online_experimentation_workspaces = OnlineExperimentationWorkspacesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

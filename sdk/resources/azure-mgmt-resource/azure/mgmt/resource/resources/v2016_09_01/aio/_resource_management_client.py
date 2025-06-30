@@ -7,16 +7,18 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
 from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.settings import settings
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core.tools import get_arm_endpoints
 
 from .. import models as _models
-from ..._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import ResourceManagementClientConfiguration
 from .operations import (
     DeploymentOperationsOperations,
@@ -34,9 +36,6 @@ if TYPE_CHECKING:
 class ResourceManagementClient:
     """Provides operations for working with resources and resource groups.
 
-    :ivar deployments: DeploymentsOperations operations
-    :vartype deployments:
-     azure.mgmt.resource.resources.v2016_09_01.aio.operations.DeploymentsOperations
     :ivar providers: ProvidersOperations operations
     :vartype providers:
      azure.mgmt.resource.resources.v2016_09_01.aio.operations.ProvidersOperations
@@ -48,6 +47,9 @@ class ResourceManagementClient:
      azure.mgmt.resource.resources.v2016_09_01.aio.operations.ResourcesOperations
     :ivar tags: TagsOperations operations
     :vartype tags: azure.mgmt.resource.resources.v2016_09_01.aio.operations.TagsOperations
+    :ivar deployments: DeploymentsOperations operations
+    :vartype deployments:
+     azure.mgmt.resource.resources.v2016_09_01.aio.operations.DeploymentsOperations
     :ivar deployment_operations: DeploymentOperationsOperations operations
     :vartype deployment_operations:
      azure.mgmt.resource.resources.v2016_09_01.aio.operations.DeploymentOperationsOperations
@@ -55,7 +57,7 @@ class ResourceManagementClient:
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :param base_url: Service URL. Default value is None.
     :type base_url: str
     :keyword api_version: Api Version. Default value is "2016-09-01". Note that overriding this
      default value may result in unsupported behavior.
@@ -65,15 +67,17 @@ class ResourceManagementClient:
     """
 
     def __init__(
-        self,
-        credential: "AsyncTokenCredential",
-        subscription_id: str,
-        base_url: str = "https://management.azure.com",
-        **kwargs: Any
+        self, credential: "AsyncTokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
     ) -> None:
+        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _endpoints = get_arm_endpoints(_cloud)
+        if not base_url:
+            base_url = _endpoints["resource_manager"]
+        credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = ResourceManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, **kwargs
+            credential=credential, subscription_id=subscription_id, credential_scopes=credential_scopes, **kwargs
         )
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -92,15 +96,14 @@ class ResourceManagementClient:
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(
+            base_url=cast(str, base_url), policies=_policies, **kwargs
+        )
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.deployments = DeploymentsOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2016-09-01"
-        )
         self.providers = ProvidersOperations(
             self._client, self._config, self._serialize, self._deserialize, "2016-09-01"
         )
@@ -111,6 +114,9 @@ class ResourceManagementClient:
             self._client, self._config, self._serialize, self._deserialize, "2016-09-01"
         )
         self.tags = TagsOperations(self._client, self._config, self._serialize, self._deserialize, "2016-09-01")
+        self.deployments = DeploymentsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2016-09-01"
+        )
         self.deployment_operations = DeploymentOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize, "2016-09-01"
         )

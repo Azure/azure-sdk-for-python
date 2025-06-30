@@ -16,6 +16,7 @@ from azure.ai.evaluation import (
     CodeVulnerabilityEvaluator,
     CoherenceEvaluator,
     ContentSafetyEvaluator,
+    DocumentRetrievalEvaluator,
     F1ScoreEvaluator,
     FluencyEvaluator,
     GleuScoreEvaluator,
@@ -37,7 +38,7 @@ from azure.ai.evaluation import (
     TaskAdherenceEvaluator,
     ToolCallAccuracyEvaluator,
     UngroundedAttributesEvaluator,
-    ViolenceEvaluator
+    ViolenceEvaluator,
 )
 
 EVAL_CLASS_MAP = {
@@ -45,6 +46,7 @@ EVAL_CLASS_MAP = {
     CodeVulnerabilityEvaluator: "code_vulnerability",
     CoherenceEvaluator: "coherence",
     ContentSafetyEvaluator: "content_safety",
+    DocumentRetrievalEvaluator: "document_retrieval",
     ECIEvaluator: "eci",
     F1ScoreEvaluator: "f1_score",
     FluencyEvaluator: "fluency",

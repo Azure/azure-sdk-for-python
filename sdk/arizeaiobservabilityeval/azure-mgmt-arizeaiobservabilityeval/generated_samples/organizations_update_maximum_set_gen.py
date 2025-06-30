@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-10-01-preview/Organizations_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2024-10-01/Organizations_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

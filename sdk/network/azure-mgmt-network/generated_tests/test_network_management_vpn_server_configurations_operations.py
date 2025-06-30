@@ -24,7 +24,7 @@ class TestNetworkManagementVpnServerConfigurationsOperations(AzureMgmtRecordedTe
         response = self.client.vpn_server_configurations.get(
             resource_group_name=resource_group.name,
             vpn_server_configuration_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -149,7 +149,7 @@ class TestNetworkManagementVpnServerConfigurationsOperations(AzureMgmtRecordedTe
                 "vpnClientRootCertificates": [{"name": "str", "publicCertData": "str"}],
                 "vpnProtocols": ["str"],
             },
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -162,7 +162,7 @@ class TestNetworkManagementVpnServerConfigurationsOperations(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             vpn_server_configuration_name="str",
             vpn_server_configuration_parameters={"tags": {"str": "str"}},
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -174,7 +174,7 @@ class TestNetworkManagementVpnServerConfigurationsOperations(AzureMgmtRecordedTe
         response = self.client.vpn_server_configurations.begin_delete(
             resource_group_name=resource_group.name,
             vpn_server_configuration_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -185,7 +185,7 @@ class TestNetworkManagementVpnServerConfigurationsOperations(AzureMgmtRecordedTe
     def test_vpn_server_configurations_list_by_resource_group(self, resource_group):
         response = self.client.vpn_server_configurations.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -195,7 +195,7 @@ class TestNetworkManagementVpnServerConfigurationsOperations(AzureMgmtRecordedTe
     @recorded_by_proxy
     def test_vpn_server_configurations_list(self, resource_group):
         response = self.client.vpn_server_configurations.list(
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

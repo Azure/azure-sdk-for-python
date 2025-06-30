@@ -26,7 +26,7 @@ class TestNetworkManagementRoutingRulesOperations(AzureMgmtRecordedTestCase):
             network_manager_name="str",
             configuration_name="str",
             rule_collection_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -41,7 +41,7 @@ class TestNetworkManagementRoutingRulesOperations(AzureMgmtRecordedTestCase):
             configuration_name="str",
             rule_collection_name="str",
             rule_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -75,7 +75,7 @@ class TestNetworkManagementRoutingRulesOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -90,7 +90,7 @@ class TestNetworkManagementRoutingRulesOperations(AzureMgmtRecordedTestCase):
             configuration_name="str",
             rule_collection_name="str",
             rule_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

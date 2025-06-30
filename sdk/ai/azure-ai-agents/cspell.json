@@ -1,0 +1,20 @@
+{
+    "ignoreWords": [
+      "GRNWAVE",
+      "BLPHARMA",
+      "STLAUTO",
+      "QNTECH",
+      "LUMIFOOD",
+      "PRIFINS",
+      "NBFCS",
+      "HORIZCHEM",
+      "VELRAIL",
+      "AEROJET",
+      "OCEACARGO",
+      "GENAI"
+    ],
+    "ignorePaths": [
+      "*.csv",
+      "*.json"
+    ]
+  }

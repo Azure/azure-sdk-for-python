@@ -14,6 +14,7 @@ omitted_paths:
   - sdk/**/swagger/*
   - sdk/ml/azure-ai-ml/tests/*
   - sdk/vision/azure-ai-vision-imageanalysis/tests/*
+  - sdk/ai/azure-ai-agents/tests/*
   - sdk/ai/azure-ai-inference/tests/*
   - sdk/ai/azure-ai-projects/tests/*
   - sdk/storage/azure-storage-extensions/*

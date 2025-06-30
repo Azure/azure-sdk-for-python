@@ -11,14 +11,13 @@
 import datetime
 from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .. import _model_base
-from .._model_base import rest_field
+from .._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class ErrorAdditionalInfo(_model_base.Model):
+class ErrorAdditionalInfo(_Model):
     """The resource management error additional info.
 
     :ivar type: The additional info type.
@@ -33,7 +32,7 @@ class ErrorAdditionalInfo(_model_base.Model):
     """The additional info."""
 
 
-class ErrorDetail(_model_base.Model):
+class ErrorDetail(_Model):
     """The error detail.
 
     :ivar code: The error code.
@@ -62,7 +61,7 @@ class ErrorDetail(_model_base.Model):
     """The error additional info."""
 
 
-class ErrorResponse(_model_base.Model):
+class ErrorResponse(_Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed
     operations.
 
@@ -91,7 +90,7 @@ class ErrorResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class InstanceProperties(_model_base.Model):
+class InstanceProperties(_Model):
     """Properties specific to Instance.
 
     :ivar marketplace: Marketplace details of the resource. Required.
@@ -102,7 +101,7 @@ class InstanceProperties(_model_base.Model):
      "Failed", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.weightsandbiases.models.ResourceProvisioningState
-    :ivar partner_properties: partner properties.
+    :ivar partner_properties: partner properties. Required.
     :vartype partner_properties: ~azure.mgmt.weightsandbiases.models.PartnerProperties
     :ivar single_sign_on_properties: Single sign-on properties.
     :vartype single_sign_on_properties:
@@ -118,10 +117,10 @@ class InstanceProperties(_model_base.Model):
     )
     """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
      \"Canceled\"."""
-    partner_properties: Optional["_models.PartnerProperties"] = rest_field(
+    partner_properties: "_models.PartnerProperties" = rest_field(
         name="partnerProperties", visibility=["read", "create", "update", "delete", "query"]
     )
-    """partner properties."""
+    """partner properties. Required."""
     single_sign_on_properties: Optional["_models.SingleSignOnPropertiesV2"] = rest_field(
         name="singleSignOnProperties", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -133,7 +132,7 @@ class InstanceProperties(_model_base.Model):
         *,
         marketplace: "_models.MarketplaceDetails",
         user: "_models.UserDetails",
-        partner_properties: Optional["_models.PartnerProperties"] = None,
+        partner_properties: "_models.PartnerProperties",
         single_sign_on_properties: Optional["_models.SingleSignOnPropertiesV2"] = None,
     ) -> None: ...
 
@@ -148,7 +147,7 @@ class InstanceProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Resource(_model_base.Model):
+class Resource(_Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -276,7 +275,7 @@ class InstanceResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class InstanceResourceUpdate(_model_base.Model):
+class InstanceResourceUpdate(_Model):
     """The type used for update operations of the Instance Resource.
 
     :ivar tags: Resource tags.
@@ -311,7 +310,7 @@ class InstanceResourceUpdate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_model_base.Model):
+class ManagedServiceIdentity(_Model):
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -363,7 +362,7 @@ class ManagedServiceIdentity(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MarketplaceDetails(_model_base.Model):
+class MarketplaceDetails(_Model):
     """Marketplace details for an organization.
 
     :ivar subscription_id: Azure subscription id for the the marketplace offer is purchased from.
@@ -409,7 +408,7 @@ class MarketplaceDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OfferDetails(_model_base.Model):
+class OfferDetails(_Model):
     """Offer details for the marketplace that is selected by the user.
 
     :ivar publisher_id: Publisher Id for the marketplace offer. Required.
@@ -462,7 +461,7 @@ class OfferDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_model_base.Model):
+class Operation(_Model):
     """Details of a REST API operation, returned from the Resource Provider Operations API.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -519,7 +518,7 @@ class Operation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_model_base.Model):
+class OperationDisplay(_Model):
     """Localized display information for and operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
@@ -550,7 +549,7 @@ class OperationDisplay(_model_base.Model):
      views."""
 
 
-class PartnerProperties(_model_base.Model):
+class PartnerProperties(_Model):
     """Partner's specific Properties.
 
     :ivar region: The region of the instance. Required. Known values are: "eastus", "centralus",
@@ -585,7 +584,7 @@ class PartnerProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SingleSignOnPropertiesV2(_model_base.Model):
+class SingleSignOnPropertiesV2(_Model):
     """Properties specific to Single Sign On Resource.
 
     :ivar type: Type of Single Sign-On mechanism being used. Required. Known values are: "Saml" and
@@ -645,7 +644,7 @@ class SingleSignOnPropertiesV2(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_model_base.Model):
+class SystemData(_Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -712,7 +711,7 @@ class SystemData(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UserAssignedIdentity(_model_base.Model):
+class UserAssignedIdentity(_Model):
     """User assigned identity properties.
 
     :ivar client_id: The client ID of the assigned identity.
@@ -727,7 +726,7 @@ class UserAssignedIdentity(_model_base.Model):
     """The principal ID of the assigned identity."""
 
 
-class UserDetails(_model_base.Model):
+class UserDetails(_Model):
     """User details for an organization.
 
     :ivar first_name: First name of the user.
