@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -72,7 +72,7 @@ class FileSharesOperations:
         filter: Optional[str] = None,
         expand: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.FileShareItem"]:
+    ) -> AsyncItemPaged["_models.FileShareItem"]:
         """Lists all shares.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The

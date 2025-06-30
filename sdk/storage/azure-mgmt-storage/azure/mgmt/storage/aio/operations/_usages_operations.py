@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Dict, Optional, TypeVar
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -54,7 +54,7 @@ class UsagesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_by_location(self, location: str, **kwargs: Any) -> AsyncIterable["_models.Usage"]:
+    def list_by_location(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.Usage"]:
         """Gets the current usage count and the limit for the resources of the location under the
         subscription.
 
