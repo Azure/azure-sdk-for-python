@@ -1324,27 +1324,48 @@ class _AIAgentsInstrumentorPreview:
         server_address = self.get_server_address_from_arg(args[0])
         thread_id = kwargs.get("thread_id")
 
-        span = self.start_list_messages_span(server_address=server_address, thread_id=thread_id)
-
-        return _InstrumentedItemPaged(function(*args, **kwargs), self.add_thread_message_event, span)
+        return _InstrumentedItemPaged(
+            function(*args, **kwargs),
+            start_span_function=self.start_trace_list_messages,
+            item_instrumentation_function=self.add_thread_message_event,
+            server_address=server_address,
+            thread_id=thread_id,
+            run_id=None,
+        )
 
     def trace_list_messages_async(self, function, *args, **kwargs):
         # Note that this method is not async, but it operates on AsyncIterable.
         server_address = self.get_server_address_from_arg(args[0])
         thread_id = kwargs.get("thread_id")
 
-        span = self.start_list_messages_span(server_address=server_address, thread_id=thread_id)
+        return _AsyncInstrumentedItemPaged(
+            function(*args, **kwargs),
+            start_span_function=self.start_trace_list_messages,
+            item_instrumentation_function=self.add_thread_message_event,
+            server_address=server_address,
+            thread_id=thread_id,
+            run_id=None,
+        )
 
-        return _AsyncInstrumentedItemPaged(function(*args, **kwargs), self.add_thread_message_event, span)
+    def start_trace_list_messages(
+        self, server_address: Optional[str] = None, thread_id: Optional[str] = None, run_id: Optional[str] = None
+    ):
+        _ = run_id  # Unused parameter, but kept for compatibility.
+        return self.start_list_messages_span(server_address=server_address, thread_id=thread_id)
 
     def trace_list_run_steps(self, function, *args, **kwargs):
         server_address = self.get_server_address_from_arg(args[0])
         run_id = kwargs.get("run_id")
         thread_id = kwargs.get("thread_id")
 
-        span = self.start_list_run_steps_span(server_address=server_address, run_id=run_id, thread_id=thread_id)
-
-        return _InstrumentedItemPaged(function(*args, **kwargs), self.add_run_step_event, span)
+        return _InstrumentedItemPaged(
+            function(*args, **kwargs),
+            start_span_function=self.start_list_run_steps_span,
+            item_instrumentation_function=self.add_run_step_event,
+            server_address=server_address,
+            thread_id=thread_id,
+            run_id=run_id,
+        )
 
     def trace_list_run_steps_async(self, function, *args, **kwargs):
         # Note that this method is not async, but it operates on AsyncIterable.
@@ -1352,9 +1373,19 @@ class _AIAgentsInstrumentorPreview:
         run_id = kwargs.get("run_id")
         thread_id = kwargs.get("thread_id")
 
-        span = self.start_list_run_steps_span(server_address=server_address, run_id=run_id, thread_id=thread_id)
+        return _AsyncInstrumentedItemPaged(
+            function(*args, **kwargs),
+            start_span_function=self.start_list_run_steps_span,
+            item_instrumentation_function=self.add_run_step_event,
+            server_address=server_address,
+            thread_id=thread_id,
+            run_id=run_id,
+        )
 
-        return _AsyncInstrumentedItemPaged(function(*args, **kwargs), self.add_run_step_event, span)
+    def start_trace_list_run_steps(
+        self, server_address: Optional[str] = None, thread_id: Optional[str] = None, run_id: Optional[str] = None
+    ):
+        return self.start_list_run_steps_span(server_address=server_address, thread_id=thread_id, run_id=run_id)
 
     def handle_run_stream_exit(self, _function, *args, **kwargs):
         agent_run_stream = args[0]
@@ -1839,7 +1870,7 @@ class _AIAgentsInstrumentorPreview:
                         yield api, method_name, trace_type, injector, name
                 except AttributeError as e:
                     # Log the attribute exception with the missing class information
-                    logger.warning(
+                    logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
                         "AttributeError: The module '%s' does not have the class '%s'. %s",
                         module_name,
                         class_name,
@@ -1847,7 +1878,9 @@ class _AIAgentsInstrumentorPreview:
                     )
                 except Exception as e:  # pylint: disable=broad-except
                     # Log other exceptions as a warning, as we are not sure what they might be
-                    logger.warning("An unexpected error occurred: '%s'", str(e))
+                    logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
+                        "An unexpected error occurred: '%s'", str(e)
+                    )
 
     def _available_agents_apis_and_injectors(self):
         """
