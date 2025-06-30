@@ -152,12 +152,10 @@ class DefaultAzureCredential(ChainedTokenCredential):
             },
             "shared_token_cache": {
                 "exclude_param": "exclude_shared_token_cache_credential",
-                "env_name": "sharedtokencachecredential",
                 "default_exclude": False,
             },
             "visual_studio_code": {
                 "exclude_param": "exclude_visual_studio_code_credential",
-                "env_name": "visualstudiocodecredential",
                 "default_exclude": True,
             },
             "cli": {

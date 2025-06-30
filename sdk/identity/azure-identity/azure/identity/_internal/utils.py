@@ -170,7 +170,7 @@ def process_credential_exclusions(credential_config: dict, exclude_flags: dict, 
             exclude_flags[cred_key] = cred_key not in prod_credentials
     elif token_credentials_env:
         # If a specific credential is specified, exclude all others except the specified one
-        valid_credentials = {config["env_name"] for config in credential_config.values()}
+        valid_credentials = {config["env_name"] for config in credential_config.values() if "env_name" in config}
 
         if token_credentials_env not in valid_credentials:
             valid_values = ["dev", "prod"] + sorted(valid_credentials)
@@ -182,7 +182,7 @@ def process_credential_exclusions(credential_config: dict, exclude_flags: dict, 
         # Find which credential was selected and exclude all others
         selected_cred_key = None
         for cred_key, config in credential_config.items():
-            if config["env_name"] == token_credentials_env:
+            if config.get("env_name") == token_credentials_env:
                 selected_cred_key = cred_key
                 break
 

@@ -230,6 +230,17 @@ def test_token_credentials_env_invalid_specific_credential():
         error_msg = str(exc_info.value)
         assert "Invalid value" in error_msg
 
+    # Test case: specific credential that is not supported
+    # For example, SharedTokenCacheCredential is not supported in this context
+    with patch.dict(
+        "os.environ", {EnvironmentVariables.AZURE_TOKEN_CREDENTIALS: "sharedtokencachecredential"}, clear=True
+    ):
+        with pytest.raises(ValueError):
+            DefaultAzureCredential()
+
+        error_msg = str(exc_info.value)
+        assert "Invalid value" in error_msg
+
 
 def test_user_exclude_flags_override_env_var():
     """User-provided exclude flags should take precedence over AZURE_TOKEN_CREDENTIALS environment variable"""
