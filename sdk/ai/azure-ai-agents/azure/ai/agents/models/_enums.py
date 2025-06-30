@@ -33,6 +33,8 @@ class AgentsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tool type ``connected_agent``"""
     DEEP_RESEARCH = "deep_research"
     """Tool type ``deep_research``"""
+    MCP = "mcp"
+    """Tool type ``mcp``"""
 
 
 class AgentsResponseFormatMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
