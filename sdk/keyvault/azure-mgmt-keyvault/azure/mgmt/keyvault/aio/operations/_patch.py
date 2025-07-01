@@ -7,7 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import sys
-from typing import AsyncIterable, Any, Optional, List, Type
+from typing import Any, Optional, List
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -42,7 +42,7 @@ else:
 class VaultsOperations(_VaultsOperations):
 
     @distributed_trace
-    def list(self, top: Optional[int] = None, **kwargs: Any) -> AsyncIterable["_models.Resource"]:
+    def list(self, top: Optional[int] = None, **kwargs: Any) -> AsyncItemPaged["_models.Resource"]:
         """The List operation gets information about the vaults associated with the subscription.
 
         :param top: Maximum number of results to return. Default value is None.
@@ -61,7 +61,7 @@ class VaultsOperations(_VaultsOperations):
         api_version: Literal["2015-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2015-11-01"))
         cls: ClsType[_models.ResourceListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
