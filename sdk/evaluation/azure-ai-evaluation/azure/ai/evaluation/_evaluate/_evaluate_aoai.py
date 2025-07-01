@@ -250,14 +250,14 @@ def _get_single_run_results(
 
     # Collect all results with pagination
     all_results = []
-    after = None
-    limit = 100  # Adjust based on API limits
+    next_cursor = None
+    limit = 100  # 100 is the max value for the limit parameter in the API
 
     while True:
         # Build kwargs for the API call
         list_kwargs = {"eval_id": run_info["eval_group_id"], "run_id": run_info["eval_run_id"], "limit": limit}
-        if after is not None:
-            list_kwargs["after"] = after
+        if next_cursor is not None:
+            list_kwargs["after"] = next_cursor
 
         raw_list_results = run_info["client"].evals.runs.output_items.list(**list_kwargs)
 
@@ -268,7 +268,7 @@ def _get_single_run_results(
         if hasattr(raw_list_results, "has_more") and raw_list_results.has_more:
             if hasattr(raw_list_results, "data") and len(raw_list_results.data) > 0:
                 # Get the last item's ID for cursor-based pagination
-                after = raw_list_results.data[-1].id
+                next_cursor = raw_list_results.data[-1].id
             else:
                 break
         else:
