@@ -133,3 +133,17 @@ def resolve_tenant(
         'when creating the credential, or add "*" to additionally_allowed_tenants to allow '
         "acquiring tokens for any tenant.".format(tenant_id)
     )
+
+
+def get_broker_credential() -> Optional[type]:
+    """Return the InteractiveBrowserBrokerCredential class if available, otherwise None.
+
+    :return: InteractiveBrowserBrokerCredential class or None
+    :rtype: Optional[type]
+    """
+    try:
+        from azure.identity.broker import InteractiveBrowserBrokerCredential
+
+        return InteractiveBrowserBrokerCredential
+    except ImportError:
+        return None
