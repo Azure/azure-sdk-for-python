@@ -713,9 +713,7 @@ class TestRedTeamScan:
 
         with patch.object(red_team, "_get_chat_target", return_value=MagicMock()), patch.object(
             red_team, "_one_dp_project", True
-        ), patch("os.makedirs", return_value=None), patch(
-            "builtins.open", mock_open()
-        ), patch(
+        ), patch("os.makedirs", return_value=None), patch("builtins.open", mock_open()), patch(
             "azure.ai.evaluation.red_team._red_team.setup_logger"
         ) as mock_setup_logger, patch.object(
             red_team.generated_rai_client, "_evaluation_onedp_client"
