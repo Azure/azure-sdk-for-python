@@ -1,5 +1,5 @@
 # Release History
-## 1.28.0 (unreleased)
+## 1.28.0 (2025-07-08)
 
 ### Features Added
 
