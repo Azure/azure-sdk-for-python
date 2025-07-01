@@ -1,6 +1,9 @@
 # Release History
 ## 1.28.0 (2025-07-08)
 
+### Features Added
+- Added a workflow(action) to check the major version release of dependencies 
+
 ## 1.27.1 (2025-05-13)
 
 ### Bugs Fixed
