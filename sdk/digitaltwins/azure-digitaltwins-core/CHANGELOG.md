@@ -9,6 +9,9 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Migrated from AutoRest v2 to AutoRest v3 for code generation, improving code quality and maintainability.
+- Updated internal implementation while maintaining API compatibility.
+- Improved type annotations throughout the library.
 
 ## 1.2.0 (2022-05-31)
  - GA release
