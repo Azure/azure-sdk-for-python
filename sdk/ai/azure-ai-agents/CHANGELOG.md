@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.2 (Unreleased)
+## 1.0.2 (2025-07-01)
 
 ### Bugs Fixed
 - Fixed a tracing related bug that caused an error when process was ending if messages or run steps were listed and the resulting list was not iterated completely.
