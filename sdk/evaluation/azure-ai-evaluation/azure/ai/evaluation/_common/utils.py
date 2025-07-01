@@ -504,7 +504,7 @@ def _get_conversation_history(query, include_system_messages=False):
         if not "role" in msg:
             continue
         if include_system_messages and msg["role"] == "system" and "content" in msg:
-            system_message = msg.get("content", '')
+            system_message = msg.get("content", "")
         if msg["role"] == "user" and "content" in msg:
             if cur_agent_response != []:
                 all_agent_responses.append(cur_agent_response)
@@ -533,10 +533,7 @@ def _get_conversation_history(query, include_system_messages=False):
             category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
         )
-    result = {
-        "user_queries": all_user_queries,
-        "agent_responses": all_agent_responses
-    }
+    result = {"user_queries": all_user_queries, "agent_responses": all_agent_responses}
     if include_system_messages:
         result["system_message"] = system_message
     return result
@@ -593,7 +590,7 @@ def _get_agent_response(agent_response_msgs, include_tool_messages=False):
                 for content in msg.get("content", []):
                     if content.get("type") == "tool_result":
                         result = content.get("tool_result")
-                        tool_results[msg["tool_call_id"]] = f'[TOOL_RESULT] {result}'
+                        tool_results[msg["tool_call_id"]] = f"[TOOL_RESULT] {result}"
 
     # Second pass: parse assistant messages and tool calls
     for msg in agent_response_msgs:
@@ -615,7 +612,7 @@ def _get_agent_response(agent_response_msgs, include_tool_messages=False):
                             func_name = content.get("name", "")
                             args = content.get("arguments", {})
                         args_str = ", ".join(f'{k}="{v}"' for k, v in args.items())
-                        call_line = f'[TOOL_CALL] {func_name}({args_str})'
+                        call_line = f"[TOOL_CALL] {func_name}({args_str})"
                         agent_response_text.append(call_line)
                         if tool_call_id in tool_results:
                             agent_response_text.append(tool_results[tool_call_id])

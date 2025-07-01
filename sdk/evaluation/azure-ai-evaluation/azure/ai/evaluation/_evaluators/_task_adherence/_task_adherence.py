@@ -16,6 +16,7 @@ from azure.ai.evaluation._common._experimental import experimental
 
 logger = logging.getLogger(__name__)
 
+
 @experimental
 class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """The Task Adherence evaluator assesses how well an AI-generated response follows the assigned task based on:
@@ -142,10 +143,10 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.TASK_ADHERENCE_EVALUATOR,
             )
-        eval_input['query'] = reformat_conversation_history(eval_input["query"], logger, include_system_messages=True)
-        eval_input['response'] = reformat_agent_response(eval_input["response"], logger, include_tool_messages=True)
+        eval_input["query"] = reformat_conversation_history(eval_input["query"], logger, include_system_messages=True)
+        eval_input["response"] = reformat_agent_response(eval_input["response"], logger, include_tool_messages=True)
         if "tool_definitions" in eval_input and eval_input["tool_definitions"] is not None:
-            eval_input['tool_definitions'] = reformat_tool_definitions(eval_input["tool_definitions"], logger)
+            eval_input["tool_definitions"] = reformat_tool_definitions(eval_input["tool_definitions"], logger)
         llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         if isinstance(llm_output, dict):
             score = float(llm_output.get("score", math.nan))
