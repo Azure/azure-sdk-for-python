@@ -16,7 +16,7 @@ async def run_queries(container, iterations):
     for i in range(iterations):
         curr = str(random.randint(0, 10))
         query = 'SELECT * FROM c WHERE c.attr1=' + curr + ' order by c.attr1'
-        qlist = [item async for item in container.query_items(query=query, enable_cross_partition_query=True)]
+        qlist = [item async for item in container.query_items(query=query)]
         ret_list.append((curr, qlist))
     for ret in ret_list:
         curr = ret[0]
