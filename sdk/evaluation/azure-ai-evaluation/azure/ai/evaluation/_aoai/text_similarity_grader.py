@@ -53,7 +53,7 @@ class AzureOpenAITextSimilarityGrader(AzureOpenAIGrader):
 
     """
 
-    id = "aoai://text_similarity"
+    id = "azureai://built-in/evaluators/azure-openai/text_similarity_grader"
 
     def __init__(
         self,
