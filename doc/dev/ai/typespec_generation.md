@@ -15,17 +15,15 @@ An AI agent to simplfy the workflows in the azure-sdk-for-python repo.
 
 **The best starting point is understanding what you need to accomplish for your specific package:**
 
-### 📋 Quick Assessment Prompts
-
-Start with one of these to get personalized guidance:
+### 📋 Quick Start Prompts
 
 - `"What needs to be done to release azure-ai-projects?"`
-- `"Help me create a PR for azure-cognitiveservices-textanalytics"`
-- `"Check the health status of my package and show me next steps"`
+- `"I need to update azure-eventgrid"`
 - `"Check package release readiness for [package-name]"`
-- `"I need to update [package-name] - what's the workflow?"`
+- `"Generate a Python SDK using TypeSpec"`
+- `"Help me update [package-name] - walk me through the workflow"`
 
-**Copilot will assess your package's current state and guide you through the exact steps needed.**
+**Copilot will ask clarifying questions to understand your specific scenario and guide you through the exact steps needed.**
 
 
 ## Common Workflows
@@ -116,13 +114,12 @@ After PR creation, if working through the release plan steps with the DevEx agen
 
 ### Package Assessment (Start Here!)
 
-**Check what your package needs:**
+**Common starting points:**
 ```
 "What needs to be done to release azure-ai-projects?"
-"Help me create a PR for azure-cognitiveservices-textanalytics"
-"What is the health status of my package?"
+"I need to update azure-eventgrid"
 "Check package release readiness for azure-storage-blob"
-"Check if azure-storage-blob is ready for release"
+"Help me create a PR for azure-cognitiveservices-textanalytics"
 ```
 
 ### Starting SDK Generation
@@ -186,4 +183,16 @@ After PR creation, if working through the release plan steps with the DevEx agen
 "Check package release readiness for azure-ai-projects"
 "Is azure-cognitiveservices-textanalytics ready to release?"
 "Verify all release requirements for my package"
+```
+
+## Package Update Workflows
+
+### When You Need to Update an Existing Package
+
+**Simple prompts - the AI will ask clarifying questions:**
+```
+"I need to update azure-eventgrid"
+"Update my package with the latest spec changes"
+"Help me update [package-name]"
+"Regenerate my SDK from TypeSpec"
 ```

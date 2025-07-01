@@ -9,14 +9,20 @@ This comprehensive guide combines the interactive flow system with the complete 
 
 ## 🚀 Getting Started - Context Assessment
 
-**PHASE 1: Determine your starting point**
+**CRITICAL: Always ask clarifying questions to understand the user's scenario**
 
-Tell me about your project:
-- TypeSpec project location (local path or commit hash)
-- Package name and service type (Data Plane/Management)
-- Current development stage (new generation, update, customization)
+When a user says things like:
+- "I need to update azure-eventgrid"
+- "Help me with [package-name]"
+- "What's the workflow for updating a package?"
 
-**I'll assess your situation and guide you through the optimal workflow.**
+**YOU MUST ASK:**
+1. What specifically needs to be updated? (TypeSpec changes, validation fixes, version bump, etc.)
+2. Is this a TypeSpec-generated package or manual package?
+3. Are you starting from scratch or updating existing code?
+4. What's driving this update? (New API version, fixing CI, preparing for release, etc.)
+
+**DO NOT assume what type of update they want - always clarify first.**
 
 ## ⚡ COMPLETE TYPESPEC WORKFLOW - 8 PHASES
 
@@ -63,71 +69,49 @@ After initial generation, I'll guide you through additional flows as needed:
 
 ## 📋 Available Iterative Flows
 
+**REMEMBER: Always ask clarifying questions before starting any flow**
+
 ### **Flow 1: TypeSpec Client Customization (client.tsp)**
 **When to use:** TypeSpec-level customizations for data plane SDKs
-**Triggers:** "customize TypeSpec", "edit client.tsp", "TypeSpec changes"
+**Before starting, ask:** 
+- Do you want to modify the TypeSpec definition or just regenerate from existing?
+- Is this a local TypeSpec project or remote?
+- What specific changes do you need to make?
 
-**Process:**
-1. Edit `client.tsp` file for TypeSpec customizations
-2. Regenerate SDK using tsp-client
-3. Validate generated output
-4. Return to flow selection
-
-**Critical Rules:**
-- Use commit hash (NOT branch name) for tspconfig.yaml URLs
-- Let commands auto-create directories
-- Don't grab commit hash for local repos
-
-### **Flow 2: Python Patch File Approach (_patch.py)**
+### **Flow 2: Python Patch File Approach (_patch.py)**  
 **When to use:** Python-specific modifications, custom methods, overrides
-**Triggers:** "customize Python code", "add methods", "_patch.py", "handwritten code"
-
-**Process:**
-1. Validate handwritten code in `_patch.py`
-2. Write comprehensive tests for custom code
-3. Ensure compatibility with generated code
-4. Return to flow selection
+**Before starting, ask:**
+- What specific functionality do you want to add?
+- Is this for a TypeSpec-generated package?
+- Do you already have handwritten code that needs to be integrated?
 
 ### **Flow 4: Generate & Record Tests**
 **When to use:** Setting up complete test infrastructure with recordings
-**Triggers:** "test generation", "create tests", "test infrastructure", "Bicep"
-
-**Process:**
-1. Generate test templates
-2. Create Bicep infrastructure files if needed
-3. Set up test recordings and environment variables
-4. Run and validate test suites
-5. Return to flow selection
+**Before starting, ask:**
+- Is this for a new package or updating existing tests?
+- Do you need Bicep infrastructure files?
+- What type of tests do you need (unit, integration, live)?
 
 ### **Flow 5: Update & Re-record Tests**
-**When to use:** Refreshing tests after SDK updates
-**Triggers:** "update tests", "re-record", "test refresh"
-
-**Process:**
-1. Update SDK to latest version
-2. Clean old recordings and re-run recording process
-3. Validate new recordings
-4. Return to flow selection
+**When to use:** Refreshing tests after SDK updates  
+**Before starting, ask:**
+- What changed that requires re-recording?
+- Are tests failing or just need refresh?
+- Do you need to update test code or just recordings?
 
 ### **Flow 6: Update & Test Samples**
 **When to use:** Ensuring samples work with SDK updates
-**Triggers:** "sample updates", "test samples", "sample validation"
-
-**Process:**
-1. Update SDK dependencies in samples
-2. Generate and test sample execution
-3. Update documentation
-4. Return to flow selection
+**Before starting, ask:**
+- Are you updating for a new SDK version?
+- Are current samples broken or just need enhancement?
+- Do you need new samples or fix existing ones?
 
 ### **Flow 7: Documentation & Release Preparation**
 **When to use:** Preparing for release, updating documentation
-**Triggers:** "changelog", "documentation", "release prep", "version update"
-
-**Process:**
-1. Update CHANGELOG.md with today's date
-2. Verify/update package version in `_version.py`
-3. Update README.md and generate API docs
-4. Return to flow selection
+**Before starting, ask:**
+- What version are you releasing?
+- What changes need to be documented?
+- Is this a new release or patch update?
 
 ## **PHASE 5: STATIC VALIDATION (SEQUENTIAL)**
 *Check package readiness status before proceeding*
@@ -181,16 +165,20 @@ Final actions:
 
 ## 🎯 Flow Selection Decision Tree
 
-**Tell me what you want to accomplish:**
+**IMPORTANT: Ask clarifying questions before proceeding with any workflow**
 
-- **"Generate new SDK from TypeSpec"** → Complete Workflow (Phases 1-8)
-- **"Add custom method to client"** → Flow 2 (_patch.py)
-- **"Modify TypeSpec definition"** → Flow 1 (client.tsp)
-- **"Set up test infrastructure"** → Flow 4 (Generate Tests)
-- **"Tests failing after update"** → Flow 5 (Re-record)
-- **"Update samples"** → Flow 6 (Sample Updates)
-- **"Prepare for release"** → Flow 7 (Documentation)
-- **"Check release status"** → Phase 8 (Release Readiness)
+Common user requests and what to ask:
+
+**"Generate new SDK from TypeSpec"** → Ask: Local TypeSpec project or remote? New package or updating existing?
+**"I need to update [package]"** → Ask: What kind of update? TypeSpec regeneration, validation fixes, version bump?
+**"Add custom method to client"** → Ask: Is this TypeSpec-generated? Do you want to use _patch.py?
+**"Set up test infrastructure"** → Ask: New tests or updating existing? Do you need Bicep infrastructure?
+**"Tests failing after update"** → Ask: What changed? SDK update, API changes, or environment issues?
+**"Update samples"** → Ask: New SDK version or fixing existing samples?
+**"Prepare for release"** → Ask: What's the current package status? What needs to be updated?
+**"Check release status"** → Proceed with release readiness check
+
+**Always understand the user's specific needs before selecting a workflow.**
 
 ## 🔄 Workflow Flowchart
 
