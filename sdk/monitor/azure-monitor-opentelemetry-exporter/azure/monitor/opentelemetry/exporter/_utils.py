@@ -9,9 +9,8 @@ import platform
 import threading
 import time
 import warnings
-from typing import Callable, Dict, Any
+from typing import Callable, Dict, Any, Optional
 
-from opentelemetry.semconv.attributes.service_attributes import SERVICE_NAME
 from opentelemetry.semconv.resource import ResourceAttributes
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.util import ns_to_iso_str
@@ -71,10 +70,10 @@ def _is_on_aks():
 
 
 def _is_attach_enabled():
-    if _is_on_app_service():
-        return isdir("/agents/python/")
     if _is_on_functions():
         return environ.get(_PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY) == "true"
+    if _is_on_app_service():
+        return isdir("/agents/python/")
     if _is_on_aks():
         return _AKS_ARM_NAMESPACE_ID in environ
     return False
@@ -131,7 +130,6 @@ def _getlocale():
 azure_monitor_context = {
     ContextTagKeys.AI_DEVICE_ID: platform.node(),
     ContextTagKeys.AI_DEVICE_LOCALE: _getlocale(),
-    ContextTagKeys.AI_DEVICE_OS_VERSION: platform.version(),
     ContextTagKeys.AI_DEVICE_TYPE: "Other",
     ContextTagKeys.AI_INTERNAL_SDK_VERSION: _get_sdk_version(),
 }
@@ -230,22 +228,12 @@ def _create_telemetry_item(timestamp: int) -> TelemetryItem:
 def _populate_part_a_fields(resource: Resource):
     tags = {}
     if resource and resource.attributes:
-        service_name = resource.attributes.get(SERVICE_NAME)
-        service_namespace = resource.attributes.get(ResourceAttributes.SERVICE_NAMESPACE)
-        service_instance_id = resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
         device_id = resource.attributes.get(ResourceAttributes.DEVICE_ID)
         device_model = resource.attributes.get(ResourceAttributes.DEVICE_MODEL_NAME)
         device_make = resource.attributes.get(ResourceAttributes.DEVICE_MANUFACTURER)
         app_version = resource.attributes.get(ResourceAttributes.SERVICE_VERSION)
-        if service_name:
-            if service_namespace:
-                tags[ContextTagKeys.AI_CLOUD_ROLE] = str(service_namespace) + "." + str(service_name)
-            else:
-                tags[ContextTagKeys.AI_CLOUD_ROLE] = service_name  # type: ignore
-        if service_instance_id:
-            tags[ContextTagKeys.AI_CLOUD_ROLE_INSTANCE] = service_instance_id  # type: ignore
-        else:
-            tags[ContextTagKeys.AI_CLOUD_ROLE_INSTANCE] = platform.node()  # hostname default
+        tags[ContextTagKeys.AI_CLOUD_ROLE] = _get_cloud_role(resource)
+        tags[ContextTagKeys.AI_CLOUD_ROLE_INSTANCE] = _get_cloud_role_instance(resource)
         tags[ContextTagKeys.AI_INTERNAL_NODE_NAME] = tags[ContextTagKeys.AI_CLOUD_ROLE_INSTANCE]
         if device_id:
             tags[ContextTagKeys.AI_DEVICE_ID] = device_id  # type: ignore
@@ -259,10 +247,93 @@ def _populate_part_a_fields(resource: Resource):
     return tags
 
 
-def _is_synthetic_source(properties: Attributes) -> bool:
+# pylint:disable=too-many-return-statements
+def _get_cloud_role(resource: Resource) -> str:
+    cloud_role = ""
+    service_name = resource.attributes.get(ResourceAttributes.SERVICE_NAME)
+    if service_name:
+        service_namespace = resource.attributes.get(ResourceAttributes.SERVICE_NAMESPACE)
+        if service_namespace:
+            cloud_role = str(service_namespace) + "." + str(service_name)
+        else:
+            cloud_role = str(service_name)
+        # If service_name starts with "unknown_service", only use it if kubernetes attributes are not present.
+        if not str(service_name).startswith("unknown_service"):
+            return cloud_role
+    k8s_dep_name = resource.attributes.get(ResourceAttributes.K8S_DEPLOYMENT_NAME)
+    if k8s_dep_name:
+        return k8s_dep_name  # type: ignore
+    k8s_rep_set_name = resource.attributes.get(ResourceAttributes.K8S_REPLICASET_NAME)
+    if k8s_rep_set_name:
+        return k8s_rep_set_name  # type: ignore
+    k8s_stateful_set_name = resource.attributes.get(ResourceAttributes.K8S_STATEFULSET_NAME)
+    if k8s_stateful_set_name:
+        return k8s_stateful_set_name  # type: ignore
+    k8s_job_name = resource.attributes.get(ResourceAttributes.K8S_JOB_NAME)
+    if k8s_job_name:
+        return k8s_job_name  # type: ignore
+    k8s_cronjob_name = resource.attributes.get(ResourceAttributes.K8S_CRONJOB_NAME)
+    if k8s_cronjob_name:
+        return k8s_cronjob_name  # type: ignore
+    k8s_daemonset_name = resource.attributes.get(ResourceAttributes.K8S_DAEMONSET_NAME)
+    if k8s_daemonset_name:
+        return k8s_daemonset_name  # type: ignore
+    # If service_name starts with "unknown_service", only use it if kubernetes attributes are not present.
+    return cloud_role
+
+
+def _get_cloud_role_instance(resource: Resource) -> str:
+    service_instance_id = resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
+    if service_instance_id:
+        return service_instance_id  # type: ignore
+    k8s_pod_name = resource.attributes.get(ResourceAttributes.K8S_POD_NAME)
+    if k8s_pod_name:
+        return k8s_pod_name  # type: ignore
+    return platform.node()  # hostname default
+
+
+def _is_synthetic_source(properties: Optional[Any]) -> bool:
     # TODO: Use semconv symbol when released in upstream
+    if not properties:
+        return False
     synthetic_type = properties.get("user_agent.synthetic.type")  # type: ignore
     return synthetic_type in ("bot", "test")
+
+
+def _is_synthetic_load(properties: Optional[Any]) -> bool:
+    """
+    Check if the request is from a synthetic load test by examining the HTTP user agent.
+
+    :param properties: The attributes/properties to check for user agent information
+    :type properties: Optional[Any]
+    :return: True if the user agent contains "AlwaysOn", False otherwise
+    :rtype: bool
+    """
+    if not properties:
+        return False
+
+    # Check both old and new semantic convention attributes for HTTP user agent
+    user_agent = (
+        properties.get("user_agent.original") or  # type: ignore  # New semantic convention
+        properties.get("http.user_agent")  # type: ignore  # Legacy semantic convention
+    )
+
+    if user_agent and isinstance(user_agent, str):
+        return "AlwaysOn" in user_agent
+
+    return False
+
+
+def _is_any_synthetic_source(properties: Optional[Any]) -> bool:
+    """
+    Check if the telemetry should be marked as synthetic from any source.
+
+    :param properties: The attributes/properties to check
+    :type properties: Optional[Any]
+    :return: True if any synthetic source is detected, False otherwise
+    :rtype: bool
+    """
+    return _is_synthetic_source(properties) or _is_synthetic_load(properties)
 
 
 # pylint: disable=W0622

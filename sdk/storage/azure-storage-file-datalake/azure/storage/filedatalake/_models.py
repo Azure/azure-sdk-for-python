@@ -755,7 +755,8 @@ class FileSystemProperties(DictMixin):
 class FileSystemPropertiesPaged(ContainerPropertiesPaged):
     """An Iterable of File System properties.
 
-    :param callable command: Function to retrieve the next page of items.
+    :param command: Function to retrieve the next page of items.
+    :type command: ~typing.Callable[]
     :param str prefix: Filters the results to return only file systems whose names
         begin with the specified prefix.
     :param int results_per_page: The maximum number of file system names to retrieve per call.

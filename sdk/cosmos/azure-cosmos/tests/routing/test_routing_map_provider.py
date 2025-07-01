@@ -182,7 +182,7 @@ class TestRoutingMapProvider(unittest.TestCase):
             self.validate_overlapping_ranges_results(queryRanges, [])
 
     def get_overlapping_ranges(self, queryRanges):
-        return self.smart_routing_map_provider.get_overlapping_ranges("sample collection id", queryRanges)
+        return self.smart_routing_map_provider.get_overlapping_ranges("dbs/db/colls/container", queryRanges)
 
 
 if __name__ == "__main__":

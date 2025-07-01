@@ -319,9 +319,9 @@ class BatchEngine:
                         # to maximize the parallelism, we run the synchronous function in a separate thread
                         # and await its result
                         output = await asyncio.get_event_loop().run_in_executor(
-                            self._executor,
-                            partial(self._func, **inputs))
-                    
+                            self._executor, partial(self._func, **inputs)
+                        )
+
                     # This should in theory never happen but as an extra precaution, let's check if the output
                     # is awaitable and await it if it is.
                     if inspect.isawaitable(output):

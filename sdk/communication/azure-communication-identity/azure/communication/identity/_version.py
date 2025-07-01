@@ -4,6 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-VERSION = "1.5.1"
+VERSION = "1.6.0"
 
 SDK_MONIKER = f"communication-identity/{VERSION}"  # type: str

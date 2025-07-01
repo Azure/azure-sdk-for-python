@@ -10,9 +10,11 @@ import pytest
 import pytest_asyncio
 
 from azure.cosmos.aio import CosmosClient
+from azure.cosmos.partition_key import PartitionKey
 from test_excluded_locations import (TestDataType, set_test_data_type,
                                      read_item_test_data, write_item_test_data, read_and_write_item_test_data,
                                      verify_endpoint)
+
 
 class MockHandler(logging.Handler):
     def __init__(self):
@@ -74,9 +76,9 @@ async def setup_and_teardown_async():
 @pytest.mark.cosmosMultiRegion
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup_and_teardown_async")
-class TestExcludedLocations:
+class TestExcludedLocationsAsync:
     @pytest.mark.parametrize('test_data', read_item_test_data())
-    async def test_read_item(self, test_data):
+    async def test_read_item_async(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 
@@ -97,7 +99,7 @@ class TestExcludedLocations:
             verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
 
     @pytest.mark.parametrize('test_data', read_item_test_data())
-    async def test_read_all_items(self, test_data):
+    async def test_read_all_items_async(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 
@@ -118,7 +120,7 @@ class TestExcludedLocations:
             verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
 
     @pytest.mark.parametrize('test_data', read_item_test_data())
-    async def test_query_items_with_partition_key(self, test_data):
+    async def test_query_items_with_partition_key_async(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 
@@ -140,7 +142,7 @@ class TestExcludedLocations:
             verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
 
     @pytest.mark.parametrize('test_data', read_item_test_data())
-    async def test_query_items_with_query_plan(self, test_data):
+    async def test_query_items_with_query_plan_async(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 
@@ -162,7 +164,7 @@ class TestExcludedLocations:
             verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
 
     @pytest.mark.parametrize('test_data', read_item_test_data())
-    async def test_query_items_change_feed(self, test_data):
+    async def test_query_items_change_feed_async(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 
@@ -250,8 +252,8 @@ class TestExcludedLocations:
                 # get location from mock_handler
                 verify_endpoint(MOCK_HANDLER.messages, client, expected_locations, multiple_write_locations)
 
-    @pytest.mark.parametrize('test_data', write_item_test_data())
-    async def test_patch_item(self, test_data):
+    @pytest.mark.parametrize('test_data', read_and_write_item_test_data())
+    async def test_patch_item_async(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 
@@ -278,8 +280,8 @@ class TestExcludedLocations:
                 # get location from mock_handler
                 verify_endpoint(MOCK_HANDLER.messages, client, expected_locations, multiple_write_locations)
 
-    @pytest.mark.parametrize('test_data', write_item_test_data())
-    async def test_execute_item_batch(self, test_data):
+    @pytest.mark.parametrize('test_data', read_and_write_item_test_data())
+    async def test_execute_item_batch_async(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 
@@ -312,7 +314,7 @@ class TestExcludedLocations:
                 verify_endpoint(MOCK_HANDLER.messages, client, expected_locations, multiple_write_locations)
 
     @pytest.mark.parametrize('test_data', write_item_test_data())
-    async def test_delete_item(self, test_data):
+    async def test_delete_item_async(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 

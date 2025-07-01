@@ -79,9 +79,6 @@ class TestLocalFileBlob(unittest.TestCase):
 
 # pylint: disable=protected-access
 class TestLocalFileStorage(unittest.TestCase):
-    @classmethod
-    def setup_class(cls):
-        os.makedirs(TEST_FOLDER, exist_ok=True)
 
     @classmethod
     def tearDownClass(cls):

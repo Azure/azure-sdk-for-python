@@ -21,19 +21,28 @@
 
 """Represents a request object.
 """
-from typing import Optional, Mapping, Any
+from typing import Optional, Mapping, Any, Dict, List
 
-class RequestObject(object):
-    def __init__(self, resource_type: str, operation_type: str, endpoint_override: Optional[str] = None) -> None:
+class RequestObject(object): # pylint: disable=too-many-instance-attributes
+    def __init__(
+            self,
+            resource_type: str,
+            operation_type: str,
+            headers: Dict[str, Any],
+            endpoint_override: Optional[str] = None,
+    ) -> None:
         self.resource_type = resource_type
         self.operation_type = operation_type
         self.endpoint_override = endpoint_override
         self.should_clear_session_token_on_session_read_failure: bool = False  # pylint: disable=name-too-long
+        self.headers = headers
         self.use_preferred_locations: Optional[bool] = None
         self.location_index_to_route: Optional[int] = None
         self.location_endpoint_to_route: Optional[str] = None
         self.last_routed_location_endpoint_within_region: Optional[str] = None
-        self.excluded_locations = None
+        self.excluded_locations: Optional[List[str]] = None
+        self.excluded_locations_circuit_breaker: List[str] = []
+        self.healthy_tentative_location: Optional[str] = None
 
     def route_to_location_with_preferred_location_flag(  # pylint: disable=name-too-long
         self,
@@ -70,3 +79,6 @@ class RequestObject(object):
     def set_excluded_location_from_options(self, options: Mapping[str, Any]) -> None:
         if self._can_set_excluded_location(options):
             self.excluded_locations = options['excludedLocations']
+
+    def set_excluded_locations_from_circuit_breaker(self, excluded_locations: List[str]) -> None: # pylint: disable=name-too-long
+        self.excluded_locations_circuit_breaker = excluded_locations

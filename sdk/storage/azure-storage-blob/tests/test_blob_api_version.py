@@ -5,18 +5,22 @@
 # --------------------------------------------------------------------------
 
 import pytest
-from azure.core.exceptions import ResourceExistsError
+from unittest import mock
+
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.storage.blob import (
     ContainerClient,
     BlobClient,
     BlobServiceClient,
 )
 from azure.storage.blob._shared.constants import X_MS_VERSION
+from azure.storage.blob._shared.response_handlers import SV_DOCS_URL
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
+INVALID_X_MS_VERSION = "2099-11-05"
 TEST_BLOB_PREFIX = 'blob'
 
 
@@ -182,5 +186,24 @@ class TestStorageBlobApiVersion(StorageRecordedTestCase):
         assert len(cleared2) == 1
         assert cleared2[0]['start'] == 512
         assert cleared2[0]['end'] == 1023
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_invalid_service_version_message(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        with mock.patch("azure.storage.blob._serialize._SUPPORTED_API_VERSIONS", [INVALID_X_MS_VERSION]):
+            bsc = BlobServiceClient(
+                self.account_url(storage_account_name, "blob"),
+                credential=storage_account_key,
+                api_version=INVALID_X_MS_VERSION
+            )
+
+            with pytest.raises(HttpResponseError) as e:
+                bsc.create_container(self.get_resource_name("utcontainer"))
+
+            assert "The provided service version is not enabled on this storage account." in e.value.message
+            assert f"Please see {SV_DOCS_URL} for additional information." in e.value.message
 
 # ------------------------------------------------------------------------------

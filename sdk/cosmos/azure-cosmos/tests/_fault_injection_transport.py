@@ -167,6 +167,12 @@ class FaultInjectionTransport(RequestsTransport):
         return is_operation_type
 
     @staticmethod
+    def predicate_is_resource_type(r: HttpRequest, resource_type: str) -> bool:
+        is_resource_type = r.headers.get(HttpHeaders.ThinClientProxyResourceType) == resource_type
+
+        return is_resource_type
+
+    @staticmethod
     def predicate_is_write_operation(r: HttpRequest, uri_prefix: str) -> bool:
         is_write_document_operation = documents._OperationType.IsWriteOperation(
             str(r.headers.get(HttpHeaders.ThinClientProxyOperationType)),)
@@ -229,7 +235,7 @@ class FaultInjectionTransport(RequestsTransport):
             first_region_name: str,
             second_region_name: str,
             inner: Callable[[], RequestsTransportResponse],
-            first_region_url: str = None,
+            first_region_url: str = test_config.TestConfig.local_host.replace("localhost", "127.0.0.1"),
             second_region_url: str = test_config.TestConfig.local_host
     ) -> RequestsTransportResponse:
 

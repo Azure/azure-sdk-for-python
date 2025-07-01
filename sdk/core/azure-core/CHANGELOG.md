@@ -4,6 +4,12 @@
 
 ### Features Added
 
+- Added a `start_time` keyword argument to the `start_span` and `start_as_current_span` methods in the `OpenTelemetryTracer` class. This allows users to specify a custom start time for created spans. #41106
+- Added a `context` keyword argument to the `start_span` and `start_as_current_span` methods in the `OpenTelemetryTracer` class. This allows users to specify a custom parent context for created spans. #41511
+- Added method `as_attribute_dict` to `azure.core.serialization` for backcompat migration purposes. Will return a generated model as a dictionary where the keys are in attribute syntax.
+- Added `is_generated_model` method to `azure.core.serialization`. Returns whether a given input is a model from one of our generated sdks. #41445
+- Added `attribute_list` method to `azure.core.serialization`. Returns all of the attributes of a given model from one of our generated sdks. #41571
+
 ### Breaking Changes
 
 ### Bugs Fixed

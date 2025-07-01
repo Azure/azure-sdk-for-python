@@ -9,7 +9,6 @@ import argparse
 import pdb
 import json
 
-import pkg_resources
 from test_regression import find_package_dependency, AZURE_GLOB_STRING
 
 from ci_tools.functions import discover_targeted_packages
@@ -85,7 +84,7 @@ if __name__ == "__main__":
         print("The json file {} cannot be loaded.".format(args.json))
         exit(1)
 
-    if len(service_list) > 0: 
+    if len(service_list) > 0:
         settings = json.loads(settings_json)
         settings["matrix"]["DependentService"] = list(service_list)
         json_result = json.dumps(settings)

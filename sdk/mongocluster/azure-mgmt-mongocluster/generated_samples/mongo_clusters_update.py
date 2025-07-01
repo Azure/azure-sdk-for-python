@@ -36,19 +36,21 @@ def main():
         properties={
             "properties": {
                 "administrator": {"userName": "mongoAdmin"},
+                "authConfig": {"allowedModes": ["NativeAuth"]},
                 "compute": {"tier": "M50"},
+                "dataApi": {"mode": "Disabled"},
                 "highAvailability": {"targetMode": "SameZone"},
                 "previewFeatures": [],
                 "publicNetworkAccess": "Enabled",
                 "serverVersion": "5.0",
                 "sharding": {"shardCount": 4},
-                "storage": {"sizeGb": 256},
+                "storage": {"sizeGb": 256, "type": "PremiumSSD"},
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2024-07-01/MongoClusters_Update.json
+# x-ms-original-file: 2025-04-01-preview/MongoClusters_Update.json
 if __name__ == "__main__":
     main()

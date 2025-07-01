@@ -397,8 +397,9 @@ def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> No
             for line in content:
                 if package_name in line:
                     return
-            content.append(f"    - name: {package_name}\n")
-            content.append(f"      safeName: {safe_name}\n")
+            new_line = "" if content[-1].endswith("\n") else "\n"
+            content.append(f"{new_line}    - name: {package_name}\n")
+            content.append(f"      safeName: {safe_name}")
     with open(ci, "w") as file_out:
         file_out.writelines(content)
 

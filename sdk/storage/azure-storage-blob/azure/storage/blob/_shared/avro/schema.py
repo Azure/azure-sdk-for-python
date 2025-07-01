@@ -311,7 +311,7 @@ class Names(object):
         """Creates a new name tracker from this tracker, but with a new default ns.
 
         :param Any namespace: New default namespace to use.
-        :returns: New name tracker with the specified default namespace.
+        :return: New name tracker with the specified default namespace.
         :rtype: Names
         """
         return Names(names=self._names, default_namespace=namespace)
@@ -321,7 +321,7 @@ class Names(object):
 
         :param Any name: Name to resolve (absolute or relative).
         :param Optional[Any] namespace: Optional explicit namespace.
-        :returns: The specified name, resolved according to this tracker.
+        :return: The specified name, resolved according to this tracker.
         :rtype: Name
         """
         if namespace is None:
@@ -333,7 +333,7 @@ class Names(object):
 
         :param Any name: Name (absolute or relative) of the Avro schema to look up.
         :param Optional[Any] namespace: Optional explicit namespace.
-        :returns: The schema with the specified name, if any, or None
+        :return: The schema with the specified name, if any, or None
         :rtype: Union[Any, None]
         """
         avro_name = self.get_name(name=name, namespace=namespace)
@@ -427,7 +427,7 @@ class NamedSchema(Schema):
         """Reports this schema name relative to the specified name tracker.
 
         :param Any names: Avro name tracker to relativize this schema name against.
-        :returns: This schema name, relativized against the specified name tracker.
+        :return: This schema name, relativized against the specified name tracker.
         :rtype: Any
         """
         if self.namespace == names.default_namespace:
@@ -856,7 +856,7 @@ class RecordSchema(NamedSchema):
         :param int index: 0-based index of the field in the record.
         :param Any field_desc: JSON descriptors of a record field.
         :param Any names: The names for this schema.
-        :returns: The field schema.
+        :return: The field schema.
         :rtype: Field
         """
         field_schema = schema_from_json_data(
@@ -882,7 +882,7 @@ class RecordSchema(NamedSchema):
 
         :param Any field_desc_list: Collection of field JSON descriptors.
         :param Any names: The names for this schema.
-        :returns: Field schemas.
+        :return: Field schemas.
         :rtype: Field
         """
         for index, field_desc in enumerate(field_desc_list):
@@ -894,7 +894,7 @@ class RecordSchema(NamedSchema):
         Guarantees field name unicity.
 
         :param Any fields: Iterable of field schema.
-        :returns: A map of field schemas, indexed by name.
+        :return: A map of field schemas, indexed by name.
         :rtype: Dict[Any, Any]
         """
         field_map = {}
@@ -1001,7 +1001,7 @@ def filter_keys_out(items, keys):
 
     :param Dict[Any, Any] items: Dictionary of items to filter the keys out of.
     :param Dict[Any, Any] keys: Dictionary of keys to filter the extracted keys against.
-    :returns: Filtered items.
+    :return: Filtered items.
     :rtype: Tuple(Any, Any)
     """
     for key, value in items.items():
@@ -1119,7 +1119,7 @@ def schema_from_json_data(json_data, names=None):
 
     :param Any json_data: JSON data representing the descriptor of the Avro schema.
     :param Any names: Optional tracker for Avro named schemas.
-    :returns: The Avro schema parsed from the JSON descriptor.
+    :return: The Avro schema parsed from the JSON descriptor.
     :rtype: Any
     """
     if names is None:
@@ -1140,7 +1140,7 @@ def parse(json_string):
     Raises SchemaParseException if a JSON parsing error is met, or if the JSON descriptor is invalid.
 
     :param str json_string: String representation of the JSON descriptor of the schema.
-    :returns: The parsed schema.
+    :return: The parsed schema.
     :rtype: Any
     """
     try:
