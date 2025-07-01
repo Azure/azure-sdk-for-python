@@ -23,29 +23,25 @@ class TestLazyImports(unittest.TestCase):
 
             # This should not print any messages during setup
             _lazy_imports = {}
+            _patch_all = []
 
-            def _try_import_aiagentconverter():
-                try:
-                    # This will likely fail in test environment
-                    from azure.ai.evaluation._converters._ai_services import AIAgentConverter
-                    return AIAgentConverter
-                except ImportError:
-                    raise ImportError(
-                        "[INFO] Could not import AIAgentConverter. Please install the dependency with `pip install azure-ai-projects`."
-                    )
-
-            def _try_import_skagentconverter():
-                try:
-                    from azure.ai.evaluation._converters._sk_services import SKAgentConverter
-                    return SKAgentConverter
-                except ImportError:
-                    raise ImportError(
-                        "[INFO] Could not import SKAgentConverter. Please install the dependency with `pip install semantic-kernel`."
-                    )
+            def _create_lazy_import(class_name, module_path, dependency_name):
+                """Create a lazy import function for optional dependencies."""
+                def lazy_import():
+                    try:
+                        module = __import__(module_path, fromlist=[class_name])
+                        cls = getattr(module, class_name)
+                        _patch_all.append(class_name)
+                        return cls
+                    except ImportError:
+                        raise ImportError(
+                            f"[INFO] Could not import {class_name}. Please install the dependency with `pip install {dependency_name}`."
+                        )
+                return lazy_import
 
             # Setting up lazy imports should not print any messages
-            _lazy_imports["AIAgentConverter"] = _try_import_aiagentconverter
-            _lazy_imports["SKAgentConverter"] = _try_import_skagentconverter
+            _lazy_imports["AIAgentConverter"] = _create_lazy_import("AIAgentConverter", "azure.ai.evaluation._converters._ai_services", "azure-ai-projects")
+            _lazy_imports["SKAgentConverter"] = _create_lazy_import("SKAgentConverter", "azure.ai.evaluation._converters._sk_services", "semantic-kernel")
 
             # Check that no messages were printed during setup
             stderr_output = captured_stderr.getvalue()
@@ -59,17 +55,21 @@ class TestLazyImports(unittest.TestCase):
         # Test the __getattr__ functionality
         _lazy_imports = {}
 
-        def _try_import_aiagentconverter():
-            try:
-                # This should fail in most test environments
-                from azure.ai.evaluation._converters._ai_services import AIAgentConverter
-                return AIAgentConverter
-            except ImportError:
-                raise ImportError(
-                    "[INFO] Could not import AIAgentConverter. Please install the dependency with `pip install azure-ai-projects`."
-                )
+        def _create_lazy_import(class_name, module_path, dependency_name):
+            """Create a lazy import function for optional dependencies."""
+            def lazy_import():
+                try:
+                    # This should fail in most test environments
+                    module = __import__(module_path, fromlist=[class_name])
+                    cls = getattr(module, class_name)
+                    return cls
+                except ImportError:
+                    raise ImportError(
+                        f"[INFO] Could not import {class_name}. Please install the dependency with `pip install {dependency_name}`."
+                    )
+            return lazy_import
 
-        _lazy_imports["AIAgentConverter"] = _try_import_aiagentconverter
+        _lazy_imports["AIAgentConverter"] = _create_lazy_import("AIAgentConverter", "azure.ai.evaluation._converters._ai_services", "azure-ai-projects")
 
         def mock_getattr(name):
             """Mock __getattr__ function like the one in __init__.py"""
