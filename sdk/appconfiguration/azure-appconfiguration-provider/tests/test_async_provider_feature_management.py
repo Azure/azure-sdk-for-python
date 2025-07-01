@@ -31,7 +31,7 @@ class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
     @recorded_by_proxy_async
     async def test_select_feature_flags(self, appconfiguration_connection_string):
         client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
-        await setup_configs(client, None)
+        await setup_configs(client, None, None)
 
         async with await load(
             connection_string=appconfiguration_connection_string,

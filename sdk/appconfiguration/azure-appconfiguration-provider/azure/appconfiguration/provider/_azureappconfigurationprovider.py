@@ -344,7 +344,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         self._replica_client_manager.refresh_clients()
         self._replica_client_manager.find_active_clients()
         replica_count = self._replica_client_manager.get_client_count() - 1
-
         while client := self._replica_client_manager.get_next_active_client():
             headers = update_correlation_context_header(
                 kwargs.pop("headers", {}),
@@ -385,7 +384,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         def refresh_operation(client, headers, **inner_kwargs):
             configuration_settings: Optional[List[ConfigurationSetting]] = None
             need_refresh = False
-
+            force = inner_kwargs.pop("force", False)
             if not force:
                 need_refresh, self._refresh_on, configuration_settings = client.refresh_configuration_settings(
                     self._selects, self._refresh_on, headers=headers, **inner_kwargs
@@ -394,7 +393,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 # Force a refresh to make sure secrets are up to date
                 configuration_settings = client.load_configuration_settings(
                     self._selects, self._refresh_on, headers=headers, **inner_kwargs
-                )
+                )[0]
                 need_refresh = True
 
             configuration_settings_processed: Dict[str, Any] = {}
@@ -418,12 +417,12 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 self._secret_refresh_timer.reset()
 
             return True
-
         self._common_refresh(
             refresh_operation=refresh_operation,
             error_log_message="Failed to refresh configurations from endpoint %s",
             timer=self._refresh_timer,
-            refresh_condition=bool(self._refresh_on),
+            refresh_condition=bool(self._refresh_on or force),
+            force=force,
             **kwargs,
         )
 
@@ -460,16 +459,16 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         )
 
     def refresh(self, **kwargs) -> None:  # pylint: disable=too-many-statements
-        if not self._refresh_on and not self._feature_flag_refresh_enabled:
+        if not self._refresh_on and not self._feature_flag_refresh_enabled and not self._secret_refresh_timer:
             logger.debug("Refresh called but no refresh enabled.")
             return
         if not self._refresh_lock.acquire(blocking=False):  # pylint: disable= consider-using-with
             logger.debug("Refresh called but refresh already in progress.")
             return
         try:
-            if (self._secret_refresh_timer and self._secret_refresh_timer.needs_refresh()) or (
-                self._refresh_timer and self._refresh_timer.needs_refresh()
-            ):
+            if (self._secret_refresh_timer and self._secret_refresh_timer.needs_refresh()):
+                self._refresh_configuration_settings(force=True, **kwargs)
+            elif(self._refresh_timer and self._refresh_timer.needs_refresh()):
                 self._refresh_configuration_settings(**kwargs)
             if self._feature_flag_refresh_enabled and (
                 self._feature_flag_refresh_timer and self._feature_flag_refresh_timer.needs_refresh()

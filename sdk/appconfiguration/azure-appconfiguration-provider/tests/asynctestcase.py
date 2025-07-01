@@ -19,6 +19,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         trim_prefixes=[],
         selects={SettingSelector(key_filter="*", label_filter="\0")},
         keyvault_secret_url=None,
+        keyvault_secret_url2=None,
         refresh_on=None,
         refresh_interval=30,
         secret_resolver=None,
@@ -35,7 +36,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
             keyvault_cred = None
 
         client = AzureAppConfigurationClient(appconfiguration_endpoint_string, cred)
-        await setup_configs(client, keyvault_secret_url)
+        await setup_configs(client, keyvault_secret_url, keyvault_secret_url2)
 
         if not secret_resolver and keyvault_secret_url and not key_vault_options:
             keyvault_cred = cred
@@ -88,6 +89,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         trim_prefixes=[],
         selects={SettingSelector(key_filter="*", label_filter="\0")},
         keyvault_secret_url=None,
+        keyvault_secret_url2=None,
         refresh_on=None,
         refresh_interval=30,
         secret_resolver=None,
@@ -97,7 +99,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         feature_flag_refresh_enabled=False,
     ):
         client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
-        await setup_configs(client, keyvault_secret_url)
+        await setup_configs(client, keyvault_secret_url, keyvault_secret_url2)
 
         if not secret_resolver and keyvault_secret_url and not key_vault_options:
             return await load(
@@ -153,9 +155,9 @@ class AppConfigTestCase(AzureRecordedTestCase):
         return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, user_agent="SDK/Integration")
 
 
-async def setup_configs(client, keyvault_secret_url):
+async def setup_configs(client, keyvault_secret_url, keyvault_secret_url2):
     async with client:
-        for config in get_configs(keyvault_secret_url):
+        for config in get_configs(keyvault_secret_url, keyvault_secret_url2):
             await client.set_configuration_setting(config)
 
 
