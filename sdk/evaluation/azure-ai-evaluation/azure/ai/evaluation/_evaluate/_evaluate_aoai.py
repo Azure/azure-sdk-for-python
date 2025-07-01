@@ -203,6 +203,7 @@ def _get_single_run_results(
     """
     # Wait for evaluation run to complete
     run_results = _wait_for_run_conclusion(run_info["client"], run_info["eval_group_id"], run_info["eval_run_id"])
+
     if run_results.status != "completed":
         raise EvaluationException(
             message=f"AOAI evaluation run {run_info['eval_group_id']}/{run_info['eval_run_id']}"
@@ -211,10 +212,7 @@ def _get_single_run_results(
             category=ErrorCategory.FAILED_EXECUTION,
             target=ErrorTarget.AOAI_GRADER,
         )
-    LOGGER.info(
-        f"AOAI: Evaluation run {run_info['eval_group_id']}/{run_info['eval_run_id']}"
-        + " completed successfully. Gathering results..."
-    )
+
     # Convert run results into a dictionary of metrics
     run_metrics = {}
     if run_results.per_testing_criteria_results is None:
@@ -251,10 +249,11 @@ def _get_single_run_results(
     # Collect all results with pagination
     all_results = []
     next_cursor = None
+    limit = 100  # Max allowed by API
 
     while True:
         # Build kwargs for the API call
-        list_kwargs = {"eval_id": run_info["eval_group_id"], "run_id": run_info["eval_run_id"]}
+        list_kwargs = {"eval_id": run_info["eval_group_id"], "run_id": run_info["eval_run_id"], "limit": limit}
         if next_cursor is not None:
             list_kwargs["after"] = next_cursor
 
@@ -296,6 +295,19 @@ def _get_single_run_results(
                 if formatted_column_name not in listed_results:
                     listed_results[formatted_column_name] = []
                 listed_results[formatted_column_name].append(value)
+
+    # Ensure all columns have the same length as the index
+    num_rows = len(listed_results["index"])
+    for col_name in list(listed_results.keys()):
+        if col_name != "index":
+            col_length = len(listed_results[col_name])
+            if col_length < num_rows:
+                # Pad with None values
+                listed_results[col_name].extend([None] * (num_rows - col_length))
+            elif col_length > num_rows:
+                # This shouldn't happen, but truncate if it does
+                listed_results[col_name] = listed_results[col_name][:num_rows]
+
     output_df = pd.DataFrame(listed_results)
     # sort by index
     output_df = output_df.sort_values("index", ascending=[True])
