@@ -30,6 +30,8 @@ from azure.ai.agents.models import (
     ListSortOrder,
 )
 from azure.identity import DefaultAzureCredential
+from dotenv import load_dotenv
+load_dotenv()
 
 asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/product_info_1.md"))
 
@@ -69,13 +71,20 @@ with project_client:
 
     # Create message to thread
     message = agents_client.messages.create(
-        thread_id=thread.id, role="user", content="Hello, what Contoso products do you know?"
+        thread_id=thread.id, role="user", content="Hello, what Microsoft products do you know?"
     )
     print(f"Created message, ID: {message.id}")
 
     # Create and process agent run in thread with tools
     run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
     print(f"Run finished with status: {run.status}")
+
+    for run_step in agents_client.run_steps.list(
+            thread_id=thread.id,
+            run_id=run.id,
+            include=["step_details.tool_calls[*].file_search.results[*].content"]
+    ):
+        print(run_step)
 
     if run.status == "failed":
         # Check if you got "Rate limit is exceeded.", then you want to get more quota
