@@ -6,9 +6,9 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import sys
-from typing import Any, Optional, List
+from typing import Any, Optional, List, Literal
 import urllib.parse
+from collections.abc import MutableMapping
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -28,15 +28,6 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ._vaults_operations import VaultsOperations as _VaultsOperations, ClsType
 from ...operations._vaults_operations import build_list_request
-
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 
 
 class VaultsOperations(_VaultsOperations):

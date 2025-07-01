@@ -6,9 +6,9 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import sys
-from typing import Any, List, Iterable, Optional, Type
+from typing import Any, List, Optional, Literal
 import urllib.parse
+from collections.abc import MutableMapping
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
@@ -28,19 +28,10 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ._vaults_operations import VaultsOperations as _VaultsOperations, ClsType, build_list_request
 from .. import models as _models
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-
 
 class VaultsOperations(_VaultsOperations):
     @distributed_trace
-    def list(self, top: Optional[int] = None, **kwargs: Any) -> Iterable["_models.Resource"]:
+    def list(self, top: Optional[int] = None, **kwargs: Any) -> ItemPaged["_models.Resource"]:
         """The List operation gets information about the vaults associated with the subscription.
 
         :param top: Maximum number of results to return. Default value is None.
@@ -58,7 +49,7 @@ class VaultsOperations(_VaultsOperations):
         api_version: Literal["2015-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2015-11-01"))
         cls: ClsType[_models.ResourceListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
