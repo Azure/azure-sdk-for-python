@@ -7,9 +7,11 @@
 # --------------------------------------------------------------------------
 
 from ._async_operations_operations import AsyncOperationsOperations
-from ._registry_management_non_workspace_operations import RegistryManagementNonWorkspaceOperations
+from ._registry_management_non_workspace_operations import (
+    RegistryManagementNonWorkspaceOperations,
+)
 
 __all__ = [
-    'AsyncOperationsOperations',
-    'RegistryManagementNonWorkspaceOperations',
+    "AsyncOperationsOperations",
+    "RegistryManagementNonWorkspaceOperations",
 ]

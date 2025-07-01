@@ -34,7 +34,12 @@ if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Iterable, Optional, TypeVar, Union
 
     T = TypeVar("T")
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+    ClsType = Optional[
+        Callable[
+            [PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]],
+            Any,
+        ]
+    ]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -213,6 +218,7 @@ def build_create_or_update_request_initial(
         **kwargs
     )
 
+
 # fmt: on
 class RegistryComponentVersionsOperations(object):
     """RegistryComponentVersionsOperations operations.
@@ -271,10 +277,18 @@ class RegistryComponentVersionsOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.ComponentVersionResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
 
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ComponentVersionResourceArmPaginatedResult"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.ComponentVersionResourceArmPaginatedResult"]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
         def prepare_request(next_link=None):
@@ -313,7 +327,9 @@ class RegistryComponentVersionsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("ComponentVersionResourceArmPaginatedResult", pipeline_response)
+            deserialized = self._deserialize(
+                "ComponentVersionResourceArmPaginatedResult", pipeline_response
+            )
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -322,15 +338,25 @@ class RegistryComponentVersionsOperations(object):
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            pipeline_response = (
+                self._client._pipeline.run(  # pylint: disable=protected-access
+                    request, stream=False, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse, pipeline_response
+                )
+                raise HttpResponseError(
+                    response=response, model=error, error_format=ARMErrorFormat
+                )
 
             return pipeline_response
 
@@ -348,10 +374,16 @@ class RegistryComponentVersionsOperations(object):
     ):
         # type: (...) -> None
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
 
         request = build_delete_request_initial(
             subscription_id=self._config.subscription_id,
@@ -365,22 +397,37 @@ class RegistryComponentVersionsOperations(object):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        pipeline_response = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
         )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            raise HttpResponseError(
+                response=response, error_format=ARMErrorFormat
+            )
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["x-ms-async-operation-timeout"] = self._deserialize(
-                "duration", response.headers.get("x-ms-async-operation-timeout")
+            response_headers["x-ms-async-operation-timeout"] = (
+                self._deserialize(
+                    "duration",
+                    response.headers.get("x-ms-async-operation-timeout"),
+                )
             )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize(
+                "str", response.headers.get("Location")
+            )
+            response_headers["Retry-After"] = self._deserialize(
+                "int", response.headers.get("Retry-After")
+            )
 
         if cls:
             return cls(pipeline_response, None, response_headers)
@@ -421,11 +468,19 @@ class RegistryComponentVersionsOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
+        polling = kwargs.pop(
+            "polling", True
+        )  # type: Union[bool, PollingMethod]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        lro_delay = kwargs.pop(
+            "polling_interval", self._config.polling_interval
+        )
+        cont_token = kwargs.pop(
+            "continuation_token", None
+        )  # type: Optional[str]
         if cont_token is None:
             raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
@@ -443,7 +498,11 @@ class RegistryComponentVersionsOperations(object):
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            polling_method = ARMPolling(
+                lro_delay,
+                lro_options={"final-state-via": "location"},
+                **kwargs
+            )
         elif polling is False:
             polling_method = NoPolling()
         else:
@@ -455,7 +514,9 @@ class RegistryComponentVersionsOperations(object):
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(
+            self._client, raw_result, get_long_running_output, polling_method
+        )
 
     begin_delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{componentName}/versions/{version}"}  # type: ignore
 
@@ -486,11 +547,19 @@ class RegistryComponentVersionsOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.ComponentVersion
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ComponentVersion"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.ComponentVersion"]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
 
         request = build_get_request(
             subscription_id=self._config.subscription_id,
@@ -504,15 +573,25 @@ class RegistryComponentVersionsOperations(object):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        pipeline_response = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
         )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
         deserialized = self._deserialize("ComponentVersion", pipeline_response)
 
@@ -533,12 +612,22 @@ class RegistryComponentVersionsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.ComponentVersion"
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ComponentVersion"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.ComponentVersion"]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
+        content_type = kwargs.pop(
+            "content_type", "application/json"
+        )  # type: Optional[str]
 
         _json = self._serialize.body(body, "ComponentVersion")
 
@@ -556,28 +645,43 @@ class RegistryComponentVersionsOperations(object):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        pipeline_response = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
         )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            raise HttpResponseError(
+                response=response, error_format=ARMErrorFormat
+            )
 
         response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize("ComponentVersion", pipeline_response)
+            deserialized = self._deserialize(
+                "ComponentVersion", pipeline_response
+            )
 
         if response.status_code == 201:
-            response_headers["x-ms-async-operation-timeout"] = self._deserialize(
-                "duration", response.headers.get("x-ms-async-operation-timeout")
+            response_headers["x-ms-async-operation-timeout"] = (
+                self._deserialize(
+                    "duration",
+                    response.headers.get("x-ms-async-operation-timeout"),
+                )
             )
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
 
-            deserialized = self._deserialize("ComponentVersion", pipeline_response)
+            deserialized = self._deserialize(
+                "ComponentVersion", pipeline_response
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
@@ -625,12 +729,24 @@ class RegistryComponentVersionsOperations(object):
          ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.ComponentVersion]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ComponentVersion"]
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
+        content_type = kwargs.pop(
+            "content_type", "application/json"
+        )  # type: Optional[str]
+        polling = kwargs.pop(
+            "polling", True
+        )  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.ComponentVersion"]
+        lro_delay = kwargs.pop(
+            "polling_interval", self._config.polling_interval
+        )
+        cont_token = kwargs.pop(
+            "continuation_token", None
+        )  # type: Optional[str]
         if cont_token is None:
             raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
@@ -647,13 +763,19 @@ class RegistryComponentVersionsOperations(object):
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize("ComponentVersion", pipeline_response)
+            deserialized = self._deserialize(
+                "ComponentVersion", pipeline_response
+            )
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
         if polling is True:
-            polling_method = ARMPolling(lro_delay, lro_options={"final-state-via": "original-uri"}, **kwargs)
+            polling_method = ARMPolling(
+                lro_delay,
+                lro_options={"final-state-via": "original-uri"},
+                **kwargs
+            )
         elif polling is False:
             polling_method = NoPolling()
         else:
@@ -665,6 +787,8 @@ class RegistryComponentVersionsOperations(object):
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(
+            self._client, raw_result, get_long_running_output, polling_method
+        )
 
     begin_create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{componentName}/versions/{version}"}  # type: ignore

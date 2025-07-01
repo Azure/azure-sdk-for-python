@@ -6,7 +6,10 @@ from marshmallow import INCLUDE, fields, post_load, pre_dump
 
 from ..._schema import ArmVersionedStr, NestedField, RegistryStr, UnionField
 from ..._schema.core.fields import DumpableEnumField
-from ..._schema.pipeline.component_job import BaseNodeSchema, _resolve_inputs_outputs
+from ..._schema.pipeline.component_job import (
+    BaseNodeSchema,
+    _resolve_inputs_outputs,
+)
 from ...constants._common import AzureMLResourceType
 from .component import InternalComponentSchema, NodeType
 
@@ -20,13 +23,16 @@ class InternalBaseNodeSchema(BaseNodeSchema):
             # for registry type assets
             RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
             # existing component
-            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+            ArmVersionedStr(
+                azureml_type=AzureMLResourceType.COMPONENT,
+                allow_default_version=True,
+            ),
             # inline component or component file reference starting with FILE prefix
             NestedField(InternalComponentSchema),
         ],
-        required=True)
-    type = DumpableEnumField(
-        allowed_values=NodeType.all_values())
+        required=True,
+    )
+    type = DumpableEnumField(allowed_values=NodeType.all_values())
 
     @post_load
     def make(self, data, **kwargs):  # pylint: disable=unused-argument
@@ -36,12 +42,16 @@ class InternalBaseNodeSchema(BaseNodeSchema):
         data = parse_inputs_outputs(data)
 
         # dict to node object
-        from ...entities._job.pipeline._load_component import pipeline_node_factory
+        from ...entities._job.pipeline._load_component import (
+            pipeline_node_factory,
+        )
 
         return pipeline_node_factory.load_from_dict(data=data)
 
     @pre_dump
-    def resolve_inputs_outputs(self, job, **kwargs):  # pylint: disable=unused-argument
+    def resolve_inputs_outputs(
+        self, job, **kwargs
+    ):  # pylint: disable=unused-argument
         return _resolve_inputs_outputs(job)
 
 
@@ -68,5 +78,6 @@ class HDInsightSchema(InternalBaseNodeSchema):
     number_executors = fields.Int()
     conf = UnionField(
         # dictionary or json string
-        union_fields=[fields.Dict(keys=fields.Str()), fields.Str()])
+        union_fields=[fields.Dict(keys=fields.Str()), fields.Str()]
+    )
     hdinsight_spark_job_name = fields.Str()

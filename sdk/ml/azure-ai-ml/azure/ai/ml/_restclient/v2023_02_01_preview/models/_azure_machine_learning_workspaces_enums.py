@@ -64,7 +64,9 @@ class BaseEnvironmentSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ENVIRONMENT_ASSET = "EnvironmentAsset"
 
 
-class BatchDeploymentPropertyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class BatchDeploymentPropertyType(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The enumerated property types for batch deployments."""
 
     MODEL = "Model"
@@ -196,7 +198,9 @@ class ClassificationModels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     XG_BOOST_CLASSIFIER = "XGBoostClassifier"
 
 
-class ClassificationMultilabelPrimaryMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ClassificationMultilabelPrimaryMetrics(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Primary metrics for classification multilabel tasks."""
 
     #: AUC is the Area under the curve.
@@ -218,7 +222,9 @@ class ClassificationMultilabelPrimaryMetrics(str, Enum, metaclass=CaseInsensitiv
     IOU = "IOU"
 
 
-class ClassificationPrimaryMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ClassificationPrimaryMetrics(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Primary metrics for classification tasks."""
 
     #: AUC is the Area under the curve.
@@ -246,7 +252,9 @@ class ClusterPurpose(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DEV_TEST = "DevTest"
 
 
-class ComputeInstanceAuthorizationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ComputeInstanceAuthorizationType(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The Compute Instance Authorization type. Available values are personal (default)."""
 
     PERSONAL = "personal"
@@ -369,7 +377,9 @@ class DataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MLTABLE = "mltable"
 
 
-class DeploymentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class DeploymentProvisioningState(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Possible values for DeploymentProvisioningState."""
 
     CREATING = "Creating"
@@ -404,7 +414,9 @@ class EarlyTerminationPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TRUNCATION_SELECTION = "TruncationSelection"
 
 
-class EgressPublicNetworkAccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class EgressPublicNetworkAccessType(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Enum to determine whether PublicNetworkAccess is Enabled or Disabled for egress of a
     deployment.
     """
@@ -413,7 +425,9 @@ class EgressPublicNetworkAccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta
     DISABLED = "Disabled"
 
 
-class EmailNotificationEnableType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class EmailNotificationEnableType(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Enum to determine the email notification type."""
 
     JOB_COMPLETED = "JobCompleted"
@@ -685,7 +699,9 @@ class InputPathType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PATH_VERSION = "PathVersion"
 
 
-class InstanceSegmentationPrimaryMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class InstanceSegmentationPrimaryMetrics(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Primary metrics for InstanceSegmentation tasks."""
 
     #: Mean Average Precision (MAP) is the average of AP (Average Precision).
@@ -981,7 +997,9 @@ class NodesValueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CUSTOM = "Custom"
 
 
-class ObjectDetectionPrimaryMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ObjectDetectionPrimaryMetrics(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Primary metrics for Image ObjectDetection task."""
 
     #: Mean Average Precision (MAP) is the average of AP (Average Precision).
@@ -1074,7 +1092,9 @@ class PackageInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     URI_FOLDER = "UriFolder"
 
 
-class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class PrivateEndpointConnectionProvisioningState(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
@@ -1083,7 +1103,9 @@ class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsens
     FAILED = "Failed"
 
 
-class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class PrivateEndpointServiceConnectionStatus(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The private endpoint connection status."""
 
     PENDING = "Pending"
@@ -1144,7 +1166,9 @@ class QuotaUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COUNT = "Count"
 
 
-class RandomSamplingAlgorithmRule(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class RandomSamplingAlgorithmRule(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The specific type of random algorithm"""
 
     RANDOM = "Random"
@@ -1234,7 +1258,9 @@ class RegressionPrimaryMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NORMALIZED_MEAN_ABSOLUTE_ERROR = "NormalizedMeanAbsoluteError"
 
 
-class RemoteLoginPortPublicAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class RemoteLoginPortPublicAccess(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """State of the public SSH port. Possible values are: Disabled - Indicates that the public ssh
     port is closed on all nodes of the cluster. Enabled - Indicates that the public ssh port is
     open on all nodes of the cluster. NotSpecified - Indicates that the public ssh port is closed
@@ -1319,7 +1345,9 @@ class SecretsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KERBEROS_KEYTAB = "KerberosKeytab"
 
 
-class ServiceDataAccessAuthIdentity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ServiceDataAccessAuthIdentity(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
 
     #: Do not use any identity for service data access.
     NONE = "None"
@@ -1329,7 +1357,9 @@ class ServiceDataAccessAuthIdentity(str, Enum, metaclass=CaseInsensitiveEnumMeta
     WORKSPACE_USER_ASSIGNED_IDENTITY = "WorkspaceUserAssignedIdentity"
 
 
-class ShortSeriesHandlingConfiguration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ShortSeriesHandlingConfiguration(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The parameter defining how if AutoML should handle short time series."""
 
     #: Represents no/null value.
@@ -1427,7 +1457,9 @@ class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SUCCESS = "Success"
     FAILURE = "Failure"
     INVALID_QUOTA_BELOW_CLUSTER_MINIMUM = "InvalidQuotaBelowClusterMinimum"
-    INVALID_QUOTA_EXCEEDS_SUBSCRIPTION_LIMIT = "InvalidQuotaExceedsSubscriptionLimit"
+    INVALID_QUOTA_EXCEEDS_SUBSCRIPTION_LIMIT = (
+        "InvalidQuotaExceedsSubscriptionLimit"
+    )
     INVALID_VM_FAMILY_NAME = "InvalidVMFamilyName"
     OPERATION_NOT_SUPPORTED_FOR_SKU = "OperationNotSupportedForSku"
     OPERATION_NOT_ENABLED_FOR_REGION = "OperationNotEnabledForRegion"
@@ -1481,7 +1513,9 @@ class TargetLagsMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CUSTOM = "Custom"
 
 
-class TargetRollingWindowSizeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class TargetRollingWindowSizeMode(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Target rolling windows size mode."""
 
     #: Determine rolling windows size automatically.

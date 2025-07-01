@@ -24,7 +24,8 @@ from .entities import (
     Parallel,
     Pipeline,
     Scope,
-    Starlite)
+    Starlite,
+)
 from .entities.spark import InternalSparkComponent
 
 _registered = False
@@ -40,12 +41,18 @@ def _enable_internal_components():
     for _type in NodeType.all_values():
         component_factory.register_type(
             _type=_type,
-            create_instance_func=lambda: InternalComponent.__new__(InternalComponent),
-            create_schema_func=create_schema_func)
+            create_instance_func=lambda: InternalComponent.__new__(
+                InternalComponent
+            ),
+            create_schema_func=create_schema_func,
+        )
     component_factory.register_type(
         _type=NodeType.SPARK,
-        create_instance_func=lambda: InternalSparkComponent.__new__(InternalSparkComponent),
-        create_schema_func=InternalSparkComponent._create_schema_for_validation)
+        create_instance_func=lambda: InternalSparkComponent.__new__(
+            InternalSparkComponent
+        ),
+        create_schema_func=InternalSparkComponent._create_schema_for_validation,
+    )
 
 
 def _register_node(_type, node_cls, schema_cls):
@@ -53,7 +60,8 @@ def _register_node(_type, node_cls, schema_cls):
         _type=_type,
         create_instance_func=lambda: node_cls.__new__(node_cls),
         load_from_rest_object_func=node_cls._from_rest_object,
-        nested_schema=NestedField(schema_cls))
+        nested_schema=NestedField(schema_cls),
+    )
 
 
 def enable_internal_components_in_pipeline(*, force=False) -> NoReturn:
@@ -74,7 +82,9 @@ def enable_internal_components_in_pipeline(*, force=False) -> NoReturn:
         _register_node(_type, InternalBaseNode, InternalBaseNodeSchema)
 
     # redo the registration for those with specific runsettings
-    _register_node(NodeType.DATA_TRANSFER, DataTransfer, InternalBaseNodeSchema)
+    _register_node(
+        NodeType.DATA_TRANSFER, DataTransfer, InternalBaseNodeSchema
+    )
     _register_node(NodeType.COMMAND, Command, CommandSchema)
     _register_node(NodeType.DISTRIBUTED, Distributed, DistributedSchema)
     _register_node(NodeType.PARALLEL, Parallel, ParallelSchema)

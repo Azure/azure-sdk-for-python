@@ -12,7 +12,11 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException
 
 
 def _print_command_results(test_passed, time_taken, output):
-    print("Command {} in {} seconds.".format("successful" if test_passed else "failed", time_taken))
+    print(
+        "Command {} in {} seconds.".format(
+            "successful" if test_passed else "failed", time_taken
+        )
+    )
     print("Output: \n{}\n".format(output))
 
 
@@ -31,8 +35,12 @@ def run_cli_command(
     # argv form on a mac OS.
     command_to_execute = " ".join(cmd_arguments)
 
-    if not do_not_print:  # Avoid printing the az login service principal password, for example
-        print("Preparing to run CLI command: \n{}\n".format(command_to_execute))
+    if (
+        not do_not_print
+    ):  # Avoid printing the az login service principal password, for example
+        print(
+            "Preparing to run CLI command: \n{}\n".format(command_to_execute)
+        )
         print("Current directory: {}".format(os.getcwd()))
 
     start_time = time.time()
@@ -56,7 +64,9 @@ def run_cli_command(
         if sys.version_info[0] != 2:
             subprocess_args["timeout"] = timeout
 
-        output = subprocess.check_output(command_to_execute, **subprocess_args).decode(encoding="UTF-8")
+        output = subprocess.check_output(
+            command_to_execute, **subprocess_args
+        ).decode(encoding="UTF-8")
 
         time_taken = time.time() - start_time
         if not do_not_print:

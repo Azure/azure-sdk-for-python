@@ -115,7 +115,9 @@ class ITPConfiguration(BaseProperty):
         self,
         resource_configuration: Optional[ITPResourceConfiguration] = None,
         priority_configuration: Optional[ITPPriorityConfiguration] = None,
-        interactive_configuration: Optional[ITPInteractiveConfiguration] = None,
+        interactive_configuration: Optional[
+            ITPInteractiveConfiguration
+        ] = None,
         retry: Optional[ITPRetrySettings] = None,
         **kwargs
     ):
@@ -130,8 +132,14 @@ class ITPConfiguration(BaseProperty):
         compute.
         :type interactive_configuration: ITPInteractiveConfiguration
         """
-        self.resource_configuration = resource_configuration or ITPResourceConfiguration()
-        self.priority_configuration = priority_configuration or ITPPriorityConfiguration()
-        self.interactive_configuration = interactive_configuration or ITPInteractiveConfiguration()
+        self.resource_configuration = (
+            resource_configuration or ITPResourceConfiguration()
+        )
+        self.priority_configuration = (
+            priority_configuration or ITPPriorityConfiguration()
+        )
+        self.interactive_configuration = (
+            interactive_configuration or ITPInteractiveConfiguration()
+        )
         self.retry = retry or ITPRetrySettings()
         super().__init__(**kwargs)

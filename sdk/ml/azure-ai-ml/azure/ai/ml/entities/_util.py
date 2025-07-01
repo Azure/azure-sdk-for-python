@@ -189,9 +189,21 @@ def load_from_dict(schema: Any, data: Dict, context: Dict, additional_message: s
     :rtype: Any
     """
     try:
-        # In marshmallow 4.x, only pass context to schema constructor,
-        # other parameters should be passed to load() method
-        return schema(context=context).load(data, **kwargs)
+        # In marshmallow 4.x, context should not be passed to schema constructor
+        # Instead, it should be passed to the load() method
+        # Some schemas (like PathAwareSchema) handle context in constructor but filter it properly
+
+        # Try to create schema with context (for PathAwareSchema compatibility)
+        try:
+            schema_instance = schema(context=context)
+        except TypeError:
+            # If schema doesn't accept context parameter, create without it
+            schema_instance = schema()
+            # Pass context to load method instead
+            return schema_instance.load(data, context=context, **kwargs)
+
+        # If schema creation succeeded, use it (PathAwareSchema case)
+        return schema_instance.load(data, **kwargs)
     except ValidationError as e:
         pretty_error = json.dumps(e.normalized_messages(), indent=2)
         raise ValidationError(decorate_validation_error(schema, pretty_error, additional_message)) from e

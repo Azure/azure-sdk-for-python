@@ -14,14 +14,20 @@ import yaml  # type: ignore[import]
 from marshmallow import Schema
 
 from ... import Input, Output
-from ..._restclient.v2022_10_01.models import ComponentVersion, ComponentVersionProperties
+from ..._restclient.v2022_10_01.models import (
+    ComponentVersion,
+    ComponentVersionProperties,
+)
 from ..._schema import PathAwareSchema
 from ..._utils._arm_id_utils import parse_name_label
 from ..._utils._asset_utils import IgnoreFile
 from ...constants._common import DefaultOpenEncoding
 from ...entities import Component
 from ...entities._assets import Code
-from ...entities._component._additional_includes import AdditionalIncludes, AdditionalIncludesMixin
+from ...entities._component._additional_includes import (
+    AdditionalIncludes,
+    AdditionalIncludesMixin,
+)
 from ...entities._component.code import ComponentIgnoreFile
 from ...entities._job.distribution import DistributionConfiguration
 from ...entities._system_data import SystemData
@@ -130,7 +136,11 @@ class InternalComponent(Component, AdditionalIncludesMixin):
 
         self.successful_return_code = successful_return_code
         self.code = code
-        self.environment = InternalEnvironment(**environment) if isinstance(environment, dict) else environment
+        self.environment = (
+            InternalEnvironment(**environment)
+            if isinstance(environment, dict)
+            else environment
+        )
         self.environment_variables = environment_variables
         # TODO: remove these to keep it a general component class
         self.command = command
@@ -181,9 +191,14 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         :return: The list of additional includes
         :rtype: List[str]
         """
-        additional_includes_config_path = yaml_path.with_suffix(_ADDITIONAL_INCLUDES_SUFFIX)
+        additional_includes_config_path = yaml_path.with_suffix(
+            _ADDITIONAL_INCLUDES_SUFFIX
+        )
         if additional_includes_config_path.is_file():
-            with open(additional_includes_config_path, encoding=DefaultOpenEncoding.READ) as f:
+            with open(
+                additional_includes_config_path,
+                encoding=DefaultOpenEncoding.READ,
+            ) as f:
                 file_content = f.read()
                 try:
                     configs = yaml.safe_load(file_content)
@@ -192,7 +207,11 @@ class InternalComponent(Component, AdditionalIncludesMixin):
                 except Exception:  # pylint: disable=W0718
                     # TODO: check if we should catch yaml.YamlError instead here
                     pass
-                return [line.strip() for line in file_content.splitlines(keepends=False) if len(line.strip()) > 0]
+                return [
+                    line.strip()
+                    for line in file_content.splitlines(keepends=False)
+                    if len(line.strip()) > 0
+                ]
         return []
 
     @classmethod
@@ -240,18 +259,24 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         :rtype: AdditionalIncludes
         """
         obj = self._generate_additional_includes_obj()
-        from azure.ai.ml._internal.entities._additional_includes import InternalAdditionalIncludes
+        from azure.ai.ml._internal.entities._additional_includes import (
+            InternalAdditionalIncludes,
+        )
 
         obj.__class__ = InternalAdditionalIncludes
         return obj
 
     # region SchemaValidatableMixin
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(
+        cls, context
+    ) -> Union[PathAwareSchema, Schema]:
         return InternalComponentSchema(context=context)
 
     def _customized_validate(self) -> MutableValidationResult:
-        validation_result = super(InternalComponent, self)._customized_validate()
+        validation_result = super(
+            InternalComponent, self
+        )._customized_validate()
         skip_path_validation = not self._append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(
             validation_result
         )
@@ -277,11 +302,15 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         distribution = obj.properties.component_spec.pop("distribution", None)
         init_kwargs = super()._from_rest_object_to_init_params(obj)
         if distribution:
-            init_kwargs["distribution"] = DistributionConfiguration._from_rest_object(distribution)
+            init_kwargs["distribution"] = (
+                DistributionConfiguration._from_rest_object(distribution)
+            )
         return init_kwargs
 
     def _to_rest_object(self) -> ComponentVersion:
-        component: Union[Dict[Any, Any], List[Any]] = convert_ordered_dict_to_dict(self._to_dict())
+        component: Union[Dict[Any, Any], List[Any]] = (
+            convert_ordered_dict_to_dict(self._to_dict())
+        )
         component["_source"] = self._source  # type: ignore[call-overload]
         # TODO: 2883063
 

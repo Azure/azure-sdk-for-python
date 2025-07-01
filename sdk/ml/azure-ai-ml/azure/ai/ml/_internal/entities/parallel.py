@@ -19,12 +19,16 @@ class Parallel(Command):
         kwargs.pop("type", None)
         super(Parallel, self).__init__(type=NodeType.PARALLEL, **kwargs)
         self._init = True
-        self._max_concurrency_per_instance = kwargs.pop("max_concurrency_per_instance", None)
+        self._max_concurrency_per_instance = kwargs.pop(
+            "max_concurrency_per_instance", None
+        )
         self._error_threshold = kwargs.pop("error_threshold", None)
         self._mini_batch_size = kwargs.pop("mini_batch_size", None)
         self._partition_keys = kwargs.pop("partition_keys", None)
         self._logging_level = kwargs.pop("logging_level", None)
-        self._retry_settings = kwargs.pop("retry_settings", BatchRetrySettings())
+        self._retry_settings = kwargs.pop(
+            "retry_settings", BatchRetrySettings()
+        )
         self._init = False
 
     @property
@@ -108,7 +112,9 @@ class Parallel(Command):
         ]
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(
+        cls, context
+    ) -> Union[PathAwareSchema, Schema]:
         from .._schema.command import ParallelSchema
 
         return ParallelSchema(context=context)

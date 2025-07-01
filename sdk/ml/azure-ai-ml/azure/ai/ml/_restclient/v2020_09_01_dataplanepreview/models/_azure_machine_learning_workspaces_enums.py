@@ -20,19 +20,21 @@ class BatchLoggingLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WARNING = "Warning"
     DEBUG = "Debug"
 
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that created the resource.
-    """
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
+
 class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SIMPLE = "Simple"
     DATAFLOW = "Dataflow"
+
 
 class InferenceDataInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
@@ -40,9 +42,9 @@ class InferenceDataInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DATASET_ID = "DatasetId"
     DATA_URL = "DataUrl"
 
+
 class InputDeliveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum to determine the input data delivery mode.
-    """
+    """Enum to determine the input data delivery mode."""
 
     READ_ONLY_MOUNT = "ReadOnlyMount"
     READ_WRITE_MOUNT = "ReadWriteMount"
@@ -51,9 +53,9 @@ class InputDeliveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EVAL_MOUNT = "EvalMount"
     EVAL_DOWNLOAD = "EvalDownload"
 
+
 class JobInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum to determine the Job Input Type.
-    """
+    """Enum to determine the Job Input Type."""
 
     URI_FILE = "UriFile"
     URI_FOLDER = "UriFolder"
@@ -63,9 +65,9 @@ class JobInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ML_FLOW_MODEL = "MLFlowModel"
     TRITON_MODEL = "TritonModel"
 
+
 class JobOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum to determine the Job Output Type.
-    """
+    """Enum to determine the Job Output Type."""
 
     URI_FILE = "UriFile"
     URI_FOLDER = "UriFolder"
@@ -74,6 +76,7 @@ class JobOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ML_FLOW_MODEL = "MLFlowModel"
     TRITON_MODEL = "TritonModel"
 
+
 class JobProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SUCCEEDED = "Succeeded"
@@ -81,9 +84,9 @@ class JobProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
     IN_PROGRESS = "InProgress"
 
+
 class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of a job.
-    """
+    """The status of a job."""
 
     NOT_STARTED = "NotStarted"
     STARTING = "Starting"
@@ -100,9 +103,9 @@ class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PAUSED = "Paused"
     UNKNOWN = "Unknown"
 
+
 class OutputDeliveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Output data delivery mode enums.
-    """
+    """Output data delivery mode enums."""
 
     READ_WRITE_MOUNT = "ReadWriteMount"
     UPLOAD = "Upload"
