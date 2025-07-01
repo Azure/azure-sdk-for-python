@@ -16,7 +16,7 @@ vanilla: true
 clear-output-folder: true
 python: true
 models-mode: "msrest"
-package-version: 1.2.1
+package-version: 1.3.0
 ```
 
 ### Replace dtTimestamp with timestamp
