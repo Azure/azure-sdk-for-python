@@ -247,13 +247,41 @@ def _get_single_run_results(
     # The passed and score values are then added to the results dictionary, prepended with the grader's name
     # as entered by the user in the inputted dictionary.
     # Other values, if they exist, are also added to the results dictionary.
-    raw_list_results = run_info["client"].evals.runs.output_items.list(
-        eval_id=run_info["eval_group_id"], run_id=run_info["eval_run_id"]
-    )
+    
+    # Collect all results with pagination
+    all_results = []
+    after = None
+    limit = 100  # Adjust based on API limits
+    
+    while True:
+        # Build kwargs for the API call
+        list_kwargs = {
+            "eval_id": run_info["eval_group_id"],
+            "run_id": run_info["eval_run_id"],
+            "limit": limit
+        }
+        if after is not None:
+            list_kwargs["after"] = after
+            
+        raw_list_results = run_info["client"].evals.runs.output_items.list(**list_kwargs)
+        
+        # Add current page results
+        all_results.extend(raw_list_results.data)
+        
+        # Check for more pages
+        if hasattr(raw_list_results, 'has_more') and raw_list_results.has_more:
+            if hasattr(raw_list_results, 'data') and len(raw_list_results.data) > 0:
+                # Get the last item's ID for cursor-based pagination
+                after = raw_list_results.data[-1].id
+            else:
+                break
+        else:
+            break
+            
     listed_results = {"index": []}
     # raw data has no order guarantees, we need to sort them by their
     # datasource_item_id
-    for row_result in raw_list_results.data:
+    for row_result in all_results:
         # Add the datasource_item_id for later sorting
         listed_results["index"].append(row_result.datasource_item_id)
         for single_grader_row_result in row_result.results:
