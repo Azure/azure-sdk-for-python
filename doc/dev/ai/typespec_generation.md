@@ -20,9 +20,11 @@ Start with one of these to get personalized guidance:
 
 ## Prerequisites
 
-1. **GitHub CLI authentication**: Run `gh auth login`
-2. **Feature branch**: Create a new branch with `git checkout -b <branch-name>`
-3. **Python environment**: Ensure `uv` package manager is installed
+1. **Repository setup**: Open the azure-sdk-for-python repository at the root directory in VS Code
+2. **MCP servers**: Ensure the azure-sdk-python-mcp server and azure-sdk-mcp server are running and connected in VS Code
+3. **Package manager**: Install `uv` package manager (`pip install uv` or follow [uv installation guide](https://docs.astral.sh/uv/getting-started/installation/))
+4. **GitHub CLI authentication**: Run `gh auth login`
+5. **Feature branch**: Create a new branch with `git checkout -b <branch-name>`
 
 ## Common Workflows
 
