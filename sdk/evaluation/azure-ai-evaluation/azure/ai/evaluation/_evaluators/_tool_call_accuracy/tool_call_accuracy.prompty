@@ -136,15 +136,15 @@ Your output should consist only of a JSON object, as provided in the examples, t
           - correct_tool_percentage: percentage of correct calls made by the agent for this tool. It is a value between 0.0 and 1.0
           - tool_call_errors: number of errors encountered during the tool call
           - tool_success_result: 'pass' or 'fail' based on the evaluation of the tool call accuracy for this tool
-  - excess_tool_calls: a dictionary with the following keys:
-      - total: total number of excess, unnecessary tool calls made by the agent
-      - details: a list of dictionaries, each containing:
-        - tool_name: name of the tool
-        - excess_count: number of excess calls made for this query
-  - missing_tool_calls: a dictionary with the following keys:
-      - total: total number of missing tool calls that should have been made by the agent to be able to answer the query
-      - details: a list of dictionaries, each containing:
-        - tool_name: name of the tool
-        - missing_count: number of missing calls for this query
+        - excess_tool_calls: a dictionary with the following keys:
+            - total: total number of excess, unnecessary tool calls made by the agent
+            - details: a list of dictionaries, each containing:
+              - tool_name: name of the tool
+              - excess_count: number of excess calls made for this query
+        - missing_tool_calls: a dictionary with the following keys:
+            - total: total number of missing tool calls that should have been made by the agent to be able to answer the query
+            - details: a list of dictionaries, each containing:
+              - tool_name: name of the tool
+              - missing_count: number of missing calls for this query
 
 # Output

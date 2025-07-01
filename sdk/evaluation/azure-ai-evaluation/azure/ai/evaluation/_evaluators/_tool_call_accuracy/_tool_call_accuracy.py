@@ -77,8 +77,6 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _INVALID_SCORE_MESSAGE = "Tool call accuracy score must be between 1 and 5."
 
     _LLM_SCORE_KEY = "tool_calls_success_level"
-    _EXCESS_TOOL_CALLS_KEY = "excess_tool_calls"
-    _MISSING_TOOL_CALLS_KEY = "missing_tool_calls"
 
     id = "id"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
@@ -216,8 +214,6 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_threshold": self.threshold,
                 f"{self._result_key}_reason": reason,
                 'per_tool_call_details': llm_output.get('additional_details', {}),
-                self._EXCESS_TOOL_CALLS_KEY: llm_output.get(self._EXCESS_TOOL_CALLS_KEY, {}),
-                self._MISSING_TOOL_CALLS_KEY: llm_output.get(self._MISSING_TOOL_CALLS_KEY, {}),
             }
             return response_dict
             
@@ -262,8 +258,6 @@ pr
             f"{self._result_key}_threshold": self.threshold,
             f"{self._result_key}_reason": error_message,
             "per_tool_call_details": {},
-            self._EXCESS_TOOL_CALLS_KEY: {},
-            self._MISSING_TOOL_CALLS_KEY: {},
 
         }
     

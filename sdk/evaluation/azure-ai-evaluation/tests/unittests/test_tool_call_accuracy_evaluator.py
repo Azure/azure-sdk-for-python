@@ -21,8 +21,6 @@ async def flow_side_effect(timeout, **kwargs):
             "chain_of_thought": "The tool calls were very correct that I returned a huge number!",
             "tool_calls_success_level": 25,
             "additional_details": {},
-            ToolCallAccuracyEvaluator._EXCESS_TOOL_CALLS_KEY: {},
-            ToolCallAccuracyEvaluator._MISSING_TOOL_CALLS_KEY: {}
         }
 
     score = 1  # Default score for "all bad"
@@ -39,8 +37,6 @@ async def flow_side_effect(timeout, **kwargs):
             "tool_calls_made_by_agent": total_calls,
             "correct_tool_calls_made_by_agent": good_calls
         },
-        ToolCallAccuracyEvaluator._EXCESS_TOOL_CALLS_KEY: {"total": 0},
-        ToolCallAccuracyEvaluator._MISSING_TOOL_CALLS_KEY: {"total": 0}
     }
 
 
@@ -102,8 +98,6 @@ class TestToolCallAccuracyEvaluator:
         assert f"{key}_reason" in result
         assert result[f"{key}_reason"] == "Evaluated 2 tool calls with 1 correct calls."
         assert "per_tool_call_details" in result
-        assert ToolCallAccuracyEvaluator._EXCESS_TOOL_CALLS_KEY in result
-        assert ToolCallAccuracyEvaluator._MISSING_TOOL_CALLS_KEY in result
 
     def test_evaluate_tools_valid2(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -160,8 +154,6 @@ class TestToolCallAccuracyEvaluator:
         assert f"{key}_reason" in result
         assert result[f"{key}_reason"] == "Evaluated 2 tool calls with 0 correct calls."
         assert "per_tool_call_details" in result
-        assert ToolCallAccuracyEvaluator._EXCESS_TOOL_CALLS_KEY in result
-        assert ToolCallAccuracyEvaluator._MISSING_TOOL_CALLS_KEY in result
 
     def test_evaluate_tools_valid3(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -218,8 +210,6 @@ class TestToolCallAccuracyEvaluator:
         assert f"{key}_reason" in result
         assert result[f"{key}_reason"] == "Evaluated 2 tool calls with 2 correct calls."
         assert "per_tool_call_details" in result
-        assert ToolCallAccuracyEvaluator._EXCESS_TOOL_CALLS_KEY in result
-        assert ToolCallAccuracyEvaluator._MISSING_TOOL_CALLS_KEY in result
 
     def test_evaluate_tools_one_eval_fails(self, mock_model_config):
         with pytest.raises(EvaluationException) as exc_info:
@@ -306,8 +296,6 @@ class TestToolCallAccuracyEvaluator:
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
         assert result[f"{key}_reason"] == ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE
         assert result["per_tool_call_details"] == {}
-        assert result[ToolCallAccuracyEvaluator._EXCESS_TOOL_CALLS_KEY] == {}
-        assert result[ToolCallAccuracyEvaluator._MISSING_TOOL_CALLS_KEY] == {}
 
     def test_evaluate_tools_all_not_applicable(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -345,8 +333,6 @@ class TestToolCallAccuracyEvaluator:
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
         assert result[f"{key}_reason"] == ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE
         assert result["per_tool_call_details"] == {}
-        assert result[ToolCallAccuracyEvaluator._EXCESS_TOOL_CALLS_KEY] == {}
-        assert result[ToolCallAccuracyEvaluator._MISSING_TOOL_CALLS_KEY] == {}
 
     def test_evaluate_tools_no_tools(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -377,5 +363,3 @@ class TestToolCallAccuracyEvaluator:
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
         assert result[f"{key}_reason"] == ToolCallAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE
         assert result["per_tool_call_details"] == {}
-        assert result[ToolCallAccuracyEvaluator._EXCESS_TOOL_CALLS_KEY] == {}
-        assert result[ToolCallAccuracyEvaluator._MISSING_TOOL_CALLS_KEY] == {}
