@@ -251,11 +251,10 @@ def _get_single_run_results(
     # Collect all results with pagination
     all_results = []
     next_cursor = None
-    limit = 100  # 100 is the max value for the limit parameter in the API
 
     while True:
         # Build kwargs for the API call
-        list_kwargs = {"eval_id": run_info["eval_group_id"], "run_id": run_info["eval_run_id"], "limit": limit}
+        list_kwargs = {"eval_id": run_info["eval_group_id"], "run_id": run_info["eval_run_id"]}
         if next_cursor is not None:
             list_kwargs["after"] = next_cursor
 
