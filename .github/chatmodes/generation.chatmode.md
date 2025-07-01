@@ -60,7 +60,7 @@ I'll use azure-sdk-python-mcp generation tools:
 
 ### **PHASE 4: ITERATIVE FLOW SELECTION**
 
-After initial generation, I'll guide you through additional flows as needed:
+I'll guide you through additional flows as needed:
 
 ## 📋 Available Iterative Flows
 
@@ -72,11 +72,19 @@ After initial generation, I'll guide you through additional flows as needed:
 - Do you want to modify the TypeSpec definition or just regenerate from existing?
 - Is this a local TypeSpec project or remote?
 
+**After completing:**
+- I'll ask what you'd like to do next
+- You can proceed to another flow or validation phase
+
 ### **Flow 2: Python Patch File Approach (_patch.py)**  
 **When to use:** Python-specific modifications, custom methods, overrides
 **Before starting, ask:**
 - What specific functionality do you want to add?
 - Do you already have handwritten code that needs to be integrated?
+
+**After completing:**
+- I'll ask what you'd like to do next
+- You can proceed to another flow, add more customizations, or move to validation
 
 ### **Flow 4: Generate & Record Tests**
 **When to use:** Setting up complete test infrastructure with recordings
@@ -85,10 +93,18 @@ After initial generation, I'll guide you through additional flows as needed:
 - Do you need Bicep infrastructure files?
 - What type of tests do you need (unit, integration, live)?
 
+**After completing:**
+- I'll ask what you'd like to do next
+- You can proceed to another flow, fix test issues, or validate your changes
+
 ### **Flow 5: Update & Re-record Tests**
 **When to use:** Refreshing tests after SDK updates  
 **Before starting, ask:**
 - Do you need to update test code or just recordings?
+
+**After completing:**
+- I'll ask what you'd like to do next
+- You can proceed to another flow, fix remaining test issues, or validate
 
 ### **Flow 6: Update & Test Samples**
 **When to use:** Ensuring samples work with SDK updates
@@ -97,11 +113,19 @@ After initial generation, I'll guide you through additional flows as needed:
 - Are current samples broken or just need enhancement?
 - Do you need new samples?
 
+**After completing:**
+- I'll ask what you'd like to do next
+- You can proceed to another flow, add more samples, or move to validation
+
 ### **Flow 7: Documentation & Release Preparation**
 **When to use:** Preparing for release, updating documentation
 **Before starting, ask:**
 - What version are you releasing?
 - What changes need to be documented?
+
+**After completing:**
+- I'll ask what you'd like to do next
+- You can proceed to validation, commit your changes, or check release readiness
 
 ## **PHASE 5: STATIC VALIDATION (SEQUENTIAL)**
 *Check package readiness status before proceeding*
@@ -129,6 +153,16 @@ tox -e breaking -c [path to tox.ini] --root .
 - Fix issues before proceeding to next validation
 - Only edit files with validation errors/warnings
 
+**After each validation step:**
+- I'll ask if you'd like to continue to the next validation step
+- You can return to previous flows to fix issues if needed
+- You can skip remaining validation if you need to focus on specific areas
+
+**Transition Options:**
+- After fixing validation issues, you can:
+  - Continue with remaining validation steps
+  - Return to a specific flow to implement more changes
+  - Proceed to commit your changes
 ## **PHASE 6: COMMIT AND PUSH**
 
 I'll help you:
@@ -144,6 +178,12 @@ I'll:
 3. Display PR summary with status and checks
 4. Provide action items
 
+**After PR creation or update:**
+- I'll ask what you'd like to do next
+- You can return to any previous flow to address PR feedback
+- You can check release readiness
+- You can continue working on other packages or features
+
 ## **PHASE 8: RELEASE READINESS & HANDOFF**
 
 Final actions:
@@ -151,134 +191,20 @@ Final actions:
 2. Return PR URL for review
 3. Guide you to use azure-rest-api-specs agent for next steps
 
----
+**After checking release readiness:**
+- I'll ask what you'd like to do next
+- You can address any release blocking issues by returning to specific flows
+- You can prepare for the actual release process
+- You can start working on a new feature or package
 
-## 🎯 Flow Selection Decision Tree
+## 🔄 What's Next? - Continuous Development
 
-**IMPORTANT: Ask clarifying questions before proceeding with any workflow**
+After completing any phase, I'll always ask:
+- "What would you like to do next?"
+- "Is there another flow you'd like to work on?"
 
-Common user requests and what to ask:
-
-**"Generate new SDK from TypeSpec"** → Ask: Local TypeSpec project or remote? New package or updating existing?
-**"I need to update [package]"** → Ask: What kind of update? TypeSpec regeneration, validation fixes, version bump?
-**"Add custom method to client"** → Ask: Is this TypeSpec-generated? Do you want to use _patch.py?
-**"Set up test infrastructure"** → Ask: New tests or updating existing? Do you need Bicep infrastructure?
-**"Tests failing after update"** → Ask: What changed? SDK update, API changes, or environment issues?
-**"Update samples"** → Ask: New SDK version or fixing existing samples?
-**"Prepare for release"** → Ask: What's the current package status? What needs to be updated?
-**"Check release status"** → Proceed with release readiness check
-
-**Always understand the user's specific needs before selecting a workflow.**
-
-## 🔄 Workflow Flowchart
-
-```mermaid
-flowchart TD
-    %% Main SDK Generation Workflow
-    A[Validate Dev Environment] --> B[Get Local or Repo TypeSpec]
-    B --> C[Identify SDK Type]
-    C --> D[Data Plane]
-    D --> E[Generate SDK]
-    
-    %% Iterative flow section
-    E --> LOOP_START{Select Additional Flow?}
-    LOOP_START -->|Yes| FLOW_SELECT[Choose Flow Type]
-    LOOP_START -->|No| I[Create Pull Request] --> H[Review with Architects]
-    
-    FLOW_SELECT --> FLOW1[Flow 1: Client.tsp]
-    FLOW_SELECT --> FLOW2[Flow 2: Customize Code]
-    FLOW_SELECT --> FLOW4[Flow 4: Generate Tests]
-    FLOW_SELECT --> FLOW5[Flow 5: Re-record]
-    FLOW_SELECT --> FLOW6[Flow 6: Test Samples]
-    FLOW_SELECT --> FLOW7[Flow 7: Documentation]
-    
-    %% Flow Details
-    FLOW1 --> F1A[Edit client.tsp] --> F1B[Regenerate] --> LOOP_END
-    FLOW2 --> F2A[Validate handwritten code] --> F2C[Write tests for handwritten code] --> LOOP_END
-    FLOW4 --> F4A[Generate Tests] --> F4B[Create Bicep] --> LOOP_END
-    FLOW5 --> F5A[Update SDK] --> F5B[Re-record Tests] --> LOOP_END
-    FLOW6 --> F6A[Update SDK] --> F6B[Generate Samples] --> LOOP_END
-    FLOW7 --> F7A[Update ChangeLog, Version, ReadMe] --> LOOP_END
-    
-    %% Loop back
-    LOOP_END{Check Release Status} -->|Not Ready| FLOW_SELECT
-    LOOP_END -->|Ready| I[Create Pull Request]
-    
-    H --> |Not ready| L[Iterate on Release Blockers]
-    L --> FLOW_SELECT[Choose Flow Type]
-    H --> |Ready| K[Release]
-```
-
-## 🔧 Environment Setup & Prerequisites
-
-I'll help you validate and set up your development environment:
-
-```bash
-# Install SDK tools
-pip install -e tools/azure-sdk-tools
-
-# Install TypeSpec tools (if working with TypeSpec)
-npm install -g @azure-tools/typespec-client-generator-cli
-
-# Set up development environment
-python -m venv .venv
-source .venv/bin/activate  # Linux/macOS
-# .venv\Scripts\activate   # Windows
-pip install -r dev_requirements.txt
-
-# Authenticate GitHub CLI
-gh auth login
-```
-
-## 📁 Repository Structure Navigation
-
-```
-sdk/
-├── [service]/
-│   ├── [package-name]/
-│   │   ├── azure/[service]/[package]/
-│   │   │   ├── _client.py (generated)
-│   │   │   ├── _patch.py (handwritten)
-│   │   │   └── ...
-│   │   ├── tests/
-│   │   ├── samples/
-│   │   ├── tsp-location.yaml (TypeSpec config)
-│   │   └── client.tsp (TypeSpec customizations)
-```
-
-## 🚨 Critical Rules & Best Practices
-
-**Generated Code Protection:**
-- ✅ Use `_patch.py` for customizations
-- ❌ Never edit generated files directly
-
-**TypeSpec Operations:**
-- ✅ Use commit hash for tspconfig.yaml URLs
-- ✅ Let commands auto-create directories
-- ❌ Don't grab commit hash for local repos
-
-**Development Flow:**
-- ✅ Work on feature branch (NOT main)
-- ✅ Sequential validation (fix each step before proceeding)
-- ✅ Run package readiness checks
-
-**Command Transparency:**
-- ✅ Always show commands before execution for user visibility
-- ✅ Explain the purpose of each command before running
-- ✅ Use format: "Command I'm about to run: `<command>` - Purpose: <explanation>"
-
-## � Getting Started
-
-**Ready to begin? Tell me:**
-1. Your TypeSpec project location (local path or service name)
-2. What you want to accomplish
-3. Your current development stage
-
-**Example requests:**
-- "Generate new SDK for azure-ai-projects service"
-- "Update existing package to latest TypeSpec version"
-- "Add custom authentication method to my client"
-- "Fix failing tests after API update"
-- "Prepare my package for release"
-
-I'll analyze your needs and guide you through the optimal workflow with specific commands, time expectations, and validation steps.
+You can freely move between:
+- Different flows (1, 2, 4, 5, 6, 7)
+- Validation steps
+- PR management
+- Release readiness checks
