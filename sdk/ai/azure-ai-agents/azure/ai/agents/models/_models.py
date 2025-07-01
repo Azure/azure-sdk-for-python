@@ -3915,7 +3915,7 @@ class RunStepToolCall(_Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RunStepAzureAISearchToolCall, RunStepBingCustomSearchToolCall, RunStepBingGroundingToolCall,
     RunStepCodeInterpreterToolCall, RunStepDeepResearchToolCall, RunStepMicrosoftFabricToolCall,
-    RunStepFileSearchToolCall, RunStepFunctionToolCall, RunStepOpenAPIToolCall,
+    RunStepFileSearchToolCall, RunStepFunctionToolCall, RunStepMcpToolCall, RunStepOpenAPIToolCall,
     RunStepSharepointToolCall
 
     :ivar type: The object type. Required. Default value is None.
@@ -5253,6 +5253,61 @@ class RunStepFunctionToolCallDetails(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class RunStepMcpToolCall(RunStepToolCall, discriminator="mcp"):
+    """A record of a call to a MCP tool, issued by the model in evaluation of a defined tool, that
+    represents
+    executed MCP actions.
+
+    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
+     Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'mcp'. Required. Default value is "mcp".
+    :vartype type: str
+    :ivar arguments: Arguments to the MCP tool call, as provided by the model. Arguments are
+     presented as a JSON document that should be validated and parsed for evaluation. Required.
+    :vartype arguments: str
+    :ivar name: Name of the function used on the MCP server. Required.
+    :vartype name: str
+    :ivar output: Output of the MCP tool call. Required.
+    :vartype output: str
+    :ivar server_label: The label for the MCP server.
+    :vartype server_label: str
+    """
+
+    type: Literal["mcp"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'mcp'. Required. Default value is \"mcp\"."""
+    arguments: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Arguments to the MCP tool call, as provided by the model. Arguments are presented as a JSON
+     document that should be validated and parsed for evaluation. Required."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the function used on the MCP server. Required."""
+    output: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Output of the MCP tool call. Required."""
+    server_label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The label for the MCP server."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        arguments: str,
+        name: str,
+        output: str,
+        server_label: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="mcp", **kwargs)
 
 
 class RunStepMessageCreationDetails(RunStepDetails, discriminator="message_creation"):

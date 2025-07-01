@@ -81,7 +81,8 @@ with project_client:
     print(f"Created message, ID: {message.id}")
 
     # Create and process agent run in thread with MCP tools
-    run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
+    mcp_tool.update_headers("SuperSecret", "123456")
+    run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id, tool_resources=mcp_tool.resources)
     print(f"Created run, ID: {run.id}")
 
     while run.status in ["queued", "in_progress", "requires_action"]:
@@ -108,11 +109,13 @@ with project_client:
                             )
                         )
                     except Exception as e:
-                        print(f"Error executing tool_call {tool_call.id}: {e}")
+                        print(f"Error approving tool_call {tool_call.id}: {e}")
 
             print(f"tool_approvals: {tool_approvals}")
             if tool_approvals:
-                agents_client.runs.submit_tool_approvals(thread_id=thread.id, run_id=run.id, tool_approvals=tool_approvals)
+                agents_client.runs.submit_tool_approvals(
+                    thread_id=thread.id, run_id=run.id, tool_approvals=tool_approvals
+                )
 
         print(f"Current run status: {run.status}")
 

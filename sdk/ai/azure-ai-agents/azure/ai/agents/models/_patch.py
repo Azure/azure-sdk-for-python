@@ -817,13 +817,16 @@ class McpTool(Tool[MCPToolDefinition]):
         self._server_label = server_label
         self._server_url = server_url
         self._allowed_tools = allowed_tools or []
+        self._require_approval = "never"
         self._definition = MCPToolDefinition(
             server_label=server_label,
             server_url=server_url,
             allowed_tools=self._allowed_tools if self._allowed_tools else None,
         )
         self._resource = MCPToolResource(
-            server_label=self._server_label, headers={}, require_approval="never"  # Empty headers by default
+            server_label=self._server_label,
+            headers={},
+            #require_approval=self._require_approval  # Enable once service supports it
         )
 
     @property
@@ -882,7 +885,11 @@ class McpTool(Tool[MCPToolDefinition]):
         :raises ValueError: If the key is empty.
         """
         if key:
-            self._resource.headers[key] = value
+            self._resource = MCPToolResource(
+                server_label=self._server_label,
+                headers={key: value},
+                #require_approval=self._require_approval  # Enable once service supports it
+            )
         else:
             raise ValueError(f"Header key cannot be empty.")
 

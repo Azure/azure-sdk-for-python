@@ -132,6 +132,7 @@
         "azure.ai.agents.models.RunStepFileSearchToolCallResults": "Azure.AI.Agents.RunStepFileSearchToolCallResults",
         "azure.ai.agents.models.RunStepFunctionToolCall": "Azure.AI.Agents.RunStepFunctionToolCall",
         "azure.ai.agents.models.RunStepFunctionToolCallDetails": "Azure.AI.Agents.RunStepFunctionToolCallDetails",
+        "azure.ai.agents.models.RunStepMcpToolCall": "Azure.AI.Agents.RunStepMcpToolCall",
         "azure.ai.agents.models.RunStepMessageCreationDetails": "Azure.AI.Agents.RunStepMessageCreationDetails",
         "azure.ai.agents.models.RunStepMessageCreationReference": "Azure.AI.Agents.RunStepMessageCreationReference",
         "azure.ai.agents.models.RunStepMicrosoftFabricToolCall": "Azure.AI.Agents.RunStepMicrosoftFabricToolCall",
