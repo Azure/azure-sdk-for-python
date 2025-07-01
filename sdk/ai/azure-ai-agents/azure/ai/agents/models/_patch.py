@@ -902,6 +902,11 @@ class McpTool(Tool[MCPToolDefinition]):
         return self._allowed_tools.copy()
 
     @property
+    def headers(self) -> Dict[str, str]:
+        """Get the headers for the MCP tool."""
+        return self._resource.headers
+
+    @property
     def resources(self) -> ToolResources:
         """
         Get the tool resources for the agent.

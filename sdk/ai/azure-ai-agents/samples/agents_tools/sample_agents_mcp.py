@@ -26,10 +26,10 @@ USAGE:
     4) MCP_SERVER_LABEL - A label for your MCP server.
 """
 
-import os
+import os, time
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.agents.models import McpTool
+from azure.ai.agents.models import McpTool, RequiredMcpToolCall, SubmitToolApprovalAction, ToolApproval
 
 # Get MCP server configuration from environment variables
 mcp_server_url = os.environ.get("MCP_SERVER_URL", "https://gitmcp.io/Azure/azure-rest-api-specs")
@@ -49,7 +49,8 @@ mcp_tool = McpTool(
 )
 
 # You can also add or remove allowed tools dynamically
-mcp_tool.add_allowed_tool("search_azure_rest_api_code")
+search_api_code = "search_azure_rest_api_code"
+mcp_tool.add_allowed_tool(search_api_code)
 print(f"Allowed tools: {mcp_tool.allowed_tools}")
 
 # Create agent with MCP tool and process agent run
@@ -61,7 +62,6 @@ with project_client:
         name="my-mcp-agent",
         instructions="You are a helpful agent that can use MCP tools to assist users. Use the available MCP tools to answer questions and perform tasks.",
         tools=mcp_tool.definitions,
-        tool_resources=mcp_tool.resources,
     )
     # [END create_agent_with_mcp]
 
@@ -81,9 +81,42 @@ with project_client:
     print(f"Created message, ID: {message.id}")
 
     # Create and process agent run in thread with MCP tools
-    run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
-    print(f"Run finished with status: {run.status}")
+    run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
+    print(f"Created run, ID: {run.id}")
 
+    while run.status in ["queued", "in_progress", "requires_action"]:
+        time.sleep(1)
+        run = agents_client.runs.get(thread_id=thread.id, run_id=run.id)
+
+        if run.status == "requires_action" and isinstance(run.required_action, SubmitToolApprovalAction):
+            tool_calls = run.required_action.submit_tool_approval
+            if not tool_calls:
+                print("No tool calls provided - cancelling run")
+                agents_client.runs.cancel(thread_id=thread.id, run_id=run.id)
+                break
+
+            tool_approvals = []
+            for tool_call in tool_calls:
+                if isinstance(tool_call, RequiredMcpToolCall):
+                    try:
+                        print(f"Approving tool call: {tool_call}")
+                        tool_approvals.append(
+                            ToolApproval(
+                                tool_call_id=tool_call.id,
+                                approve=True,
+                                headers=mcp_tool.headers,
+                            )
+                        )
+                    except Exception as e:
+                        print(f"Error executing tool_call {tool_call.id}: {e}")
+
+            print(f"tool_approvals: {tool_approvals}")
+            if tool_approvals:
+                agents_client.runs.submit_tool_approvals(thread_id=thread.id, run_id=run.id, tool_approvals=tool_approvals)
+
+        print(f"Current run status: {run.status}")
+
+    print(f"Run completed with status: {run.status}")
     if run.status == "failed":
         print(f"Run failed: {run.last_error}")
 
@@ -106,11 +139,7 @@ with project_client:
 
                 # Handle MCP tool calls
                 if call.get("type") == "mcp":
-                    mcp_details = call.get("mcp", {})
-                    if mcp_details:
-                        print(f"    MCP Server: {mcp_details.get('server_label', 'Unknown')}")
-                        print(f"    Tool Name: {mcp_details.get('tool_name', 'Unknown')}")
-                        print(f"    Arguments: {mcp_details.get('arguments', {})}")
+                    print(call)
         print()  # add an extra newline between steps
 
     # Fetch and log all messages
@@ -129,14 +158,10 @@ with project_client:
 
     # Remove a tool
     try:
-        mcp_tool.remove_allowed_tool("search")
-        print(f"After removing 'search': {mcp_tool.allowed_tools}")
+        mcp_tool.remove_allowed_tool(search_api_code)
+        print(f"After removing {search_api_code}: {mcp_tool.allowed_tools}")
     except ValueError as e:
         print(f"Error removing tool: {e}")
-
-    # Add a new tool
-    mcp_tool.add_allowed_tool("file_operations")
-    print(f"After adding 'file_operations': {mcp_tool.allowed_tools}")
 
     # Delete the agent when done
     agents_client.delete_agent(agent.id)
