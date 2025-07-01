@@ -43,11 +43,6 @@ ELSE:
     ASK for tspconfig.yaml file path or commit hash
 ```
 
-**Required Conditions I'll verify:**
-1. GitHub CLI authenticated: `gh auth login`
-2. User on feature branch (NOT main)
-3. Dependencies installed: node, python, tox
-
 ### **PHASE 2: ENVIRONMENT VERIFICATION** 
 *Check package readiness status before proceeding*
 
@@ -76,13 +71,11 @@ After initial generation, I'll guide you through additional flows as needed:
 **Before starting, ask:** 
 - Do you want to modify the TypeSpec definition or just regenerate from existing?
 - Is this a local TypeSpec project or remote?
-- What specific changes do you need to make?
 
 ### **Flow 2: Python Patch File Approach (_patch.py)**  
 **When to use:** Python-specific modifications, custom methods, overrides
 **Before starting, ask:**
 - What specific functionality do you want to add?
-- Is this for a TypeSpec-generated package?
 - Do you already have handwritten code that needs to be integrated?
 
 ### **Flow 4: Generate & Record Tests**
@@ -95,8 +88,6 @@ After initial generation, I'll guide you through additional flows as needed:
 ### **Flow 5: Update & Re-record Tests**
 **When to use:** Refreshing tests after SDK updates  
 **Before starting, ask:**
-- What changed that requires re-recording?
-- Are tests failing or just need refresh?
 - Do you need to update test code or just recordings?
 
 ### **Flow 6: Update & Test Samples**
@@ -104,14 +95,13 @@ After initial generation, I'll guide you through additional flows as needed:
 **Before starting, ask:**
 - Are you updating for a new SDK version?
 - Are current samples broken or just need enhancement?
-- Do you need new samples or fix existing ones?
+- Do you need new samples?
 
 ### **Flow 7: Documentation & Release Preparation**
 **When to use:** Preparing for release, updating documentation
 **Before starting, ask:**
 - What version are you releasing?
 - What changes need to be documented?
-- Is this a new release or patch update?
 
 ## **PHASE 5: STATIC VALIDATION (SEQUENTIAL)**
 *Check package readiness status before proceeding*
