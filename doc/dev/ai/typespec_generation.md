@@ -2,33 +2,93 @@
 
 Generate Azure SDK for Python from TypeSpec definitions using GitHub Copilot.
 
+## Where to Start
+
+**The best starting point is understanding what you need to accomplish for your specific package:**
+
+### 📋 Quick Assessment Prompts
+
+Start with one of these to get personalized guidance:
+
+- `"What needs to be done to release azure-ai-projects?"`
+- `"Help me create a PR for azure-cognitiveservices-textanalytics"`
+- `"Check the health status of my package and show me next steps"`
+- `"Check package release readiness for [package-name]"`
+- `"I need to update [package-name] - what's the workflow?"`
+
+**Copilot will assess your package's current state and guide you through the exact steps needed.**
+
 ## Prerequisites
 
 1. **GitHub CLI authentication**: Run `gh auth login`
 2. **Feature branch**: Create a new branch with `git checkout -b <branch-name>`
 3. **Python environment**: Ensure `uv` package manager is installed
 
-## Quick Start
+## Common Workflows
 
-### 1. Initiate Generation
+### 1. New Package Generation
 
-In Copilot **Agent** mode, use one of these prompts:
+For creating a completely new SDK from TypeSpec:
 
 - `"Generate a Python SDK using TypeSpec"`
 - `"Start TypeSpec SDK generation for Python"`
 - `"Generate SDK from tspconfig.yaml at <path>"`
 
+### 2. Package Updates & Fixes
+
+For existing packages that need updates or fixes:
+
+- `"What validation issues does azure-ai-projects have?"`
+- `"Fix the pylint warnings in my package"`
+- `"Update my package to the latest TypeSpec version"`
+
+### 3. Release Preparation
+
+For packages ready for release:
+
+- `"Prepare azure-ai-projects for release"`
+- `"Check if my package is ready to release"`
+- `"Update documentation and changelog for release"`
+
 ### 2. Follow Copilot's Workflow
 
 Copilot will automatically:
 
-1. **Verify environment** - Check dependencies and virtual environment
-2. **Generate SDK** - Run TypeSpec generation (~5-6 minutes)
-3. **Validate code** - Run Pylint, MyPy, Pyright, Verifytypes, Sphinx, Mindependency, Bandit, Black, Samples, Breaking changes (~3-5 minutes each)
-4. **Update docs** - Create/update CHANGELOG.md and version files
-5. **Commit changes** - Add, commit, and push to your branch
-6. **Create PR** - Generate pull request in draft mode
-7. **Handoff** - Provide PR link for azure-rest-api-specs agent
+1. **Assess your package** - Check current health status and identify blockers
+2. **Verify environment** - Check dependencies and virtual environment
+3. **Generate SDK** - Run TypeSpec generation (~5-6 minutes)
+4. **Validate code** - Run Pylint, MyPy, Pyright, Verifytypes, Sphinx, Mindependency, Bandit, Black, Samples, Breaking changes (~3-5 minutes each)
+5. **Update docs** - Create/update CHANGELOG.md and version files
+6. **Commit changes** - Add, commit, and push to your branch
+7. **Create PR** - Generate pull request in draft mode
+8. **Handoff** - Provide PR link for azure-rest-api-specs agent
+
+## Package Health & Release Readiness
+
+**Start here to understand what your package needs:**
+
+### Health Status Check
+```
+What is the health status of azure-ai-projects?
+```
+
+This reports the library's status from [aka.ms/azsdk/python/health](https://www.aka.ms/azsdk/python/health) and identifies:
+- Release blocking issues
+- Validation failures that need fixing
+- Missing documentation or tests
+- Recommended next steps
+
+### Release Readiness Check
+```
+Check package release readiness for azure-ai-projects
+```
+
+This comprehensive check includes:
+- Pipeline status verification
+- APIView review status
+- Changelog validation
+- Namespace approval status
+- All release-blocking requirements
 
 ### 3. Your Actions
 
@@ -44,21 +104,22 @@ Copilot will automatically:
 - **Validation**: 3-5 minutes per step
 - **Documentation**: 2-4 minutes
 
-## Library Health Check
-
-Check a library's release readiness:
-
-```
-What is the health status of azure-ai-projects?
-```
-
-This reports the library's status from [aka.ms/azsdk/python/health](https://www.aka.ms/azsdk/python/health) and identifies any release blockers.
-
 ## Next Steps
 
-After PR creation, use the **azure-rest-api-specs agent** with your PR link to complete the release process.
+After PR creation, if working through the release plan steps with the DevEx agent, use the **azure-rest-api-specs agent** with your PR link to complete the release process.
 
 ## Useful Prompts
+
+### Package Assessment (Start Here!)
+
+**Check what your package needs:**
+```
+"What needs to be done to release azure-ai-projects?"
+"Help me create a PR for azure-cognitiveservices-textanalytics"
+"What is the health status of my package?"
+"Check package release readiness for azure-storage-blob"
+"Check if azure-storage-blob is ready for release"
+```
 
 ### Starting SDK Generation
 
@@ -113,6 +174,12 @@ After PR creation, use the **azure-rest-api-specs agent** with your PR link to c
 **Check library health:**
 ```
 "What is the health status of azure-ai-projects?"
-"Check if azure-cognitiveservices-textanalytics is ready for release"
 "Show me the CI status for my library"
+```
+
+**Check release readiness:**
+```
+"Check package release readiness for azure-ai-projects"
+"Is azure-cognitiveservices-textanalytics ready to release?"
+"Verify all release requirements for my package"
 ```
