@@ -47,7 +47,7 @@ class AzureOpenAIScoreModelGrader(AzureOpenAIGrader):
     :type kwargs: Any
     """
 
-    id = "azureai://built-in/evaluators/azure-openai/scorer_grader"
+    id = "azureai://built-in/evaluators/azure-openai/score_model_grader"
 
     def __init__(
         self,
