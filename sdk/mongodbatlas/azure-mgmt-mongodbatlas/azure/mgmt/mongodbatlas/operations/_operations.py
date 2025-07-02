@@ -655,7 +655,7 @@ class OrganizationsOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        properties: Union[_models.OrganizationResource, JSON, IO[bytes]],
+        properties: Union[_models.OrganizationResourceUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -727,7 +727,7 @@ class OrganizationsOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        properties: _models.OrganizationResource,
+        properties: _models.OrganizationResourceUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -740,7 +740,7 @@ class OrganizationsOperations:
         :param organization_name: Name of the Organization resource. Required.
         :type organization_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.mongodbatlas.models.OrganizationResource
+        :type properties: ~azure.mgmt.mongodbatlas.models.OrganizationResourceUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -811,7 +811,7 @@ class OrganizationsOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        properties: Union[_models.OrganizationResource, JSON, IO[bytes]],
+        properties: Union[_models.OrganizationResourceUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.OrganizationResource]:
         """Update a OrganizationResource.
@@ -822,8 +822,9 @@ class OrganizationsOperations:
         :param organization_name: Name of the Organization resource. Required.
         :type organization_name: str
         :param properties: The resource properties to be updated. Is one of the following types:
-         OrganizationResource, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.mongodbatlas.models.OrganizationResource or JSON or IO[bytes]
+         OrganizationResourceUpdate, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.mongodbatlas.models.OrganizationResourceUpdate or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns OrganizationResource. The OrganizationResource
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.mongodbatlas.models.OrganizationResource]
