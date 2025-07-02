@@ -1,5 +1,10 @@
 # Release History
 
+## 1.0.3 (Unreleased)
+
+### Bugs Fixed
+- `AgentsClientOperationsMixin` class is supposed to be abstract class.  Now it raises `TypeError` during instantiation.   
+
 ## 1.0.2 (2025-07-01)
 
 ### Bugs Fixed
