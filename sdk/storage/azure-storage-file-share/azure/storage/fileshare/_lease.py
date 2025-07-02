@@ -6,7 +6,7 @@
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 import uuid
-from typing import Union, Optional, Any, TYPE_CHECKING
+from typing import Any, cast, Optional, Union, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
@@ -246,4 +246,4 @@ class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        return response.get('lease_time')  # type: ignore
+        return cast(int, response.get('lease_time'))
