@@ -51,7 +51,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
                 "keyvault_credential": keyvault_cred,
                 "on_refresh_success": on_refresh_success,
                 "feature_flag_enabled": feature_flag_enabled,
-                "feature_flag_selectors"=feature_flag_selectors,
+                "feature_flag_selectors": feature_flag_selectors,
                 "feature_flag_refresh_enabled": feature_flag_refresh_enabled,
             }
             if secret_refresh_interval is not None:
@@ -71,7 +71,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
                 "key_vault_options": key_vault_options,
                 "on_refresh_success": on_refresh_success,
                 "feature_flag_enabled": feature_flag_enabled,
-                "feature_flag_selectors"=feature_flag_selectors,
+                "feature_flag_selectors": feature_flag_selectors,
                 "feature_flag_refresh_enabled": feature_flag_refresh_enabled,
             }
             if secret_refresh_interval is not None:
@@ -240,6 +240,7 @@ def get_configs(keyvault_secret_url, keyvault_secret_url2):
 def create_config_setting(key, label, value, content_type="text/plain", tags=None):
     return ConfigurationSetting(key=key, label=label, value=value, content_type=content_type, tags=tags)
 
+
 def create_secret_config_setting(key, label, value):
     return SecretReferenceConfigurationSetting(
         key=key,
@@ -247,9 +248,9 @@ def create_secret_config_setting(key, label, value):
         secret_id=value,
     )
 
+
 def create_feature_flag_config_setting(key, label, enabled, tags=None):
     return FeatureFlagConfigurationSetting(feature_id=key, label=label, enabled=enabled, tags=tags)
-
 
 
 def get_feature_flag(client, feature_id):
