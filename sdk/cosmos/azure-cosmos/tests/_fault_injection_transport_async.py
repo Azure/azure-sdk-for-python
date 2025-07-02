@@ -28,6 +28,7 @@ import logging
 import sys
 from typing import Callable, Optional, Any, Dict, List, Awaitable, MutableMapping
 import aiohttp
+from aiohttp import ClientConnectionError, ConnectionTimeoutError
 from azure.core.pipeline.transport import AioHttpTransport, AioHttpTransportResponse
 from azure.core.rest import HttpRequest, AsyncHttpResponse
 from azure.cosmos import documents
@@ -192,6 +193,10 @@ class FaultInjectionTransportAsync(AioHttpTransport):
         )
 
     @staticmethod
+    async def connection_refused() -> Exception:
+        return ConnectionTimeoutError()
+
+    @staticmethod
     async def error_service_response() -> Exception:
         return ServiceResponseError(
             message="Injected Service Response Error.",
@@ -219,6 +224,23 @@ class FaultInjectionTransportAsync(AioHttpTransport):
             FaultInjectionTransportAsync.logger.info("Transformed Account Topology: {}".format(result))
             request: HttpRequest = response.request
             return FaultInjectionTransportAsync.MockHttpResponse(request, 200, result)
+
+        return response
+
+    @staticmethod
+    async def change_status_code(
+            inner: Callable[[], Awaitable[AioHttpTransportResponse]]) -> AioHttpTransportResponse:
+
+        response = await inner()
+        is_request_to_read_region: Callable[[HttpRequest], bool] = lambda \
+                r: (FaultInjectionTransportAsync.predicate_targets_region(response.request, "https://tomasvaron-full-fidelity-westus3.documents.azure.com:443/") and
+                    (FaultInjectionTransportAsync.predicate_is_operation_type(response.request, "Read") and
+                     FaultInjectionTransportAsync.predicate_is_document_operation(response.request)))
+        if is_request_to_read_region:
+            response.status_code = 500
+            response.reason = "Not Ok"
+            return response
+
 
         return response
 

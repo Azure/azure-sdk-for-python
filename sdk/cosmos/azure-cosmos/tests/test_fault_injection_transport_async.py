@@ -11,6 +11,7 @@ import uuid
 from typing import Any, Callable, Awaitable, Dict
 from unittest import IsolatedAsyncioTestCase
 
+import aiohttp
 import pytest
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.pipeline.transport._aiohttp import AioHttpTransportResponse
@@ -238,6 +239,50 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
                 request = read_document.get_response_headers()["_request"]
                 # Validate the response comes from "Write Region" ("Read Region" the most preferred read-only region is down)
                 assert request.url.startswith(expected_write_region_uri)
+
+        finally:
+            await TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
+
+    async def test_swr_mrr_region_down_read_succeeds_session_async(self: "TestFaultInjectionTransportAsync"):
+        session = aiohttp.ClientSession(raise_for_status=True)
+        custom_transport = FaultInjectionTransportAsync(session=session)
+        # custom_transport = FaultInjectionTransportAsync()
+
+        # Inject rule to simulate regional outage in "Read Region"
+        is_request_to_read_region: Callable[[HttpRequest], bool] = lambda \
+                r: (FaultInjectionTransportAsync.predicate_targets_region(r, "https://tomasvaron-full-fidelity-westus3.documents.azure.com:443/") and
+                    (FaultInjectionTransportAsync.predicate_is_operation_type(r, "Read") and
+                    FaultInjectionTransportAsync.predicate_is_document_operation(r)))
+
+        change_status_code = \
+            lambda r, inner: FaultInjectionTransportAsync.change_status_code(inner)
+
+        custom_transport.add_response_transformation(is_request_to_read_region, change_status_code)
+
+
+
+        # custom_transport.add_fault(
+        #     is_request_to_read_region,
+        #     lambda r: asyncio.create_task(FaultInjectionTransportAsync.connection_refused()))
+
+        id_value: str = str(uuid.uuid4())
+        document_definition = {'id': id_value,
+                               'pk': id_value,
+                               'name': 'sample document',
+                               'key': 'value'}
+        initialized_objects = await TestFaultInjectionTransportAsync.setup_method_with_custom_transport(
+            custom_transport,
+            default_endpoint="https://tomasvaron-full-fidelity-westus.documents.azure.com:443/",
+            preferred_locations=["West US 3", "West US"])
+        container: ContainerProxy = initialized_objects["col"]
+        await container.create_item(body=document_definition)
+
+        try:
+
+            created_document = await container.read_item(document_definition["id"], document_definition["pk"])
+            request: HttpRequest = created_document.get_response_headers()["_request"]
+            # Validate the response comes from "South Central US" (the write region)
+            assert request.url.startswith("https://tomasvaron-full-fidelity-westus.documents.azure.com:443/")
 
         finally:
             await TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
