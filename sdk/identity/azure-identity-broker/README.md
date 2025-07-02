@@ -4,8 +4,10 @@ This package extends the [Azure Identity][azure_identity] library by providing s
 
 | Broker                                    | Minimum package version |
 |-------------------------------------------|-------------------------|
-| [Company Portal][company_portal] on macOS | 1.3.0b1                 |
 | Web Account Manager (WAM) on Windows 10+  | 1.0.0                   |
+| [Company Portal][company_portal] on macOS | 1.3.0b1                 |
+| Web Account Manager (WAM) on WSL 2.4.13+  | 1.3.0b2                 |
+| Broker on Linux                           | 1.3.0b2                 |
 
 [Source code][source_code] | [Package (PyPI)][azure_identity_broker] | [API reference documentation][ref_docs] | [Microsoft Entra ID documentation][entra_id]
 
@@ -37,8 +39,10 @@ Microsoft Entra applications rely on redirect URIs to determine where to send th
 
 | Platform    | Redirect URI                                                                                                          |
 |-------------|-----------------------------------------------------------------------------------------------------------------------|
-| macOS       | `msauth.com.msauth.unsignedapp://auth` for unsigned applications<br>`msauth.BUNDLE_ID://auth` for signed applications |
 | Windows 10+ | `ms-appx-web://Microsoft.AAD.BrokerPlugin/your_client_id`                                                             |
+| macOS       | `msauth.com.msauth.unsignedapp://auth` for unsigned applications<br>`msauth.BUNDLE_ID://auth` for signed applications |
+| WSL         | `ms-appx-web://Microsoft.AAD.BrokerPlugin/your_client_id`                                                             |
+| Linux | `https://login.microsoftonline.com/common/oauth2/nativeclient`                                                             |
 
 ## Examples
 

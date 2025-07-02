@@ -586,3 +586,42 @@ class TestUtils(unittest.TestCase):
     def test_is_synthetic_source_other(self):
         properties = {"user_agent.synthetic.type": "user"}
         self.assertFalse(_utils._is_synthetic_source(properties))
+
+    def test_is_synthetic_load_always_on_legacy(self):
+        properties = {"http.user_agent": "Mozilla/5.0 AlwaysOn"}
+        self.assertTrue(_utils._is_synthetic_load(properties))
+
+    def test_is_synthetic_load_always_on_new_convention(self):
+        properties = {"user_agent.original": "Azure-Load-Testing/1.0 AlwaysOn"}
+        self.assertTrue(_utils._is_synthetic_load(properties))
+
+    def test_is_synthetic_load_always_on_case_sensitive(self):
+        properties = {"http.user_agent": "Mozilla/5.0 alwayson"}
+        self.assertFalse(_utils._is_synthetic_load(properties))
+
+    def test_is_synthetic_load_no_user_agent(self):
+        properties = {}
+        self.assertFalse(_utils._is_synthetic_load(properties))
+
+    def test_is_synthetic_load_normal_user_agent(self):
+        properties = {"http.user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+        self.assertFalse(_utils._is_synthetic_load(properties))
+
+    def test_is_any_synthetic_source_bot(self):
+        properties = {"user_agent.synthetic.type": "bot"}
+        self.assertTrue(_utils._is_any_synthetic_source(properties))
+
+    def test_is_any_synthetic_source_always_on(self):
+        properties = {"http.user_agent": "Azure-Load-Testing/1.0 AlwaysOn"}
+        self.assertTrue(_utils._is_any_synthetic_source(properties))
+
+    def test_is_any_synthetic_source_both(self):
+        properties = {
+            "user_agent.synthetic.type": "bot",
+            "http.user_agent": "Azure-Load-Testing/1.0 AlwaysOn"
+        }
+        self.assertTrue(_utils._is_any_synthetic_source(properties))
+
+    def test_is_any_synthetic_source_none(self):
+        properties = {"http.user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+        self.assertFalse(_utils._is_any_synthetic_source(properties))

@@ -25,6 +25,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         key_vault_options=None,
         on_refresh_success=None,
         feature_flag_enabled=False,
+        feature_flag_selectors=[SettingSelector(key_filter="*", label_filter="\0")],
         feature_flag_refresh_enabled=False,
         secret_refresh_interval=None,
     ):
@@ -45,6 +46,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
                 "keyvault_credential": keyvault_cred,
                 "on_refresh_success": on_refresh_success,
                 "feature_flag_enabled": feature_flag_enabled,
+                "feature_flag_selectors"=feature_flag_selectors,
                 "feature_flag_refresh_enabled": feature_flag_refresh_enabled,
             }
             if secret_refresh_interval is not None:
@@ -64,6 +66,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
                 "key_vault_options": key_vault_options,
                 "on_refresh_success": on_refresh_success,
                 "feature_flag_enabled": feature_flag_enabled,
+                "feature_flag_selectors"=feature_flag_selectors,
                 "feature_flag_refresh_enabled": feature_flag_refresh_enabled,
             }
             if secret_refresh_interval is not None:
@@ -80,6 +83,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
             secret_resolver=secret_resolver,
             on_refresh_success=on_refresh_success,
             feature_flag_enabled=feature_flag_enabled,
+            feature_flag_selectors=feature_flag_selectors,
             feature_flag_refresh_enabled=feature_flag_refresh_enabled,
         )
 
@@ -96,6 +100,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         key_vault_options=None,
         on_refresh_success=None,
         feature_flag_enabled=False,
+        feature_flag_selectors=[SettingSelector(key_filter="*", label_filter="\0")],
         feature_flag_refresh_enabled=False,
     ):
         client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
@@ -112,6 +117,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
                 keyvault_credential=self.get_credential(AzureAppConfigurationClient, is_async=True),
                 on_refresh_success=on_refresh_success,
                 feature_flag_enabled=feature_flag_enabled,
+                feature_flag_selectors=feature_flag_selectors,
                 feature_flag_refresh_enabled=feature_flag_refresh_enabled,
             )
         if key_vault_options:
@@ -129,6 +135,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
                 key_vault_options=key_vault_options,
                 on_refresh_success=on_refresh_success,
                 feature_flag_enabled=feature_flag_enabled,
+                feature_flag_selectors=feature_flag_selectors,
                 feature_flag_refresh_enabled=feature_flag_refresh_enabled,
             )
         return await load(
@@ -141,6 +148,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
             secret_resolver=secret_resolver,
             on_refresh_success=on_refresh_success,
             feature_flag_enabled=feature_flag_enabled,
+            feature_flag_selectors=feature_flag_selectors,
             feature_flag_refresh_enabled=feature_flag_refresh_enabled,
         )
 

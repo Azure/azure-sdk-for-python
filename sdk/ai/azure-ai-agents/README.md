@@ -37,6 +37,8 @@ To report an issue with the client library, or request additional features, plea
     - [Azure Function Call](#create-agent-with-azure-function-call)
     - [OpenAPI](#create-agent-with-openapi)
     - [Fabric data](#create-an-agent-with-fabric)
+    - [Connected agents](#create-an-agent-using-another-agents)
+    - [Deep Research](#create-agent-with-deep-research)
   - [Create thread](#create-thread) with
     - [Tool resource](#create-thread-with-tool-resource)
   - [Create message](#create-message) with:
@@ -81,8 +83,62 @@ pip install azure-ai-agents
 
 ### Create and authenticate the client
 
-To construct a synchronous client:
+To use this SDK, start by creating an `AIProjectClient`. For more information on `azure-ai-projects`, refer to its [README](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/README.md).
 
+Here is an example of creating a synchronous `AIProjectClient`:
+
+```python
+import os
+from azure.ai.projects import AIProjectClient
+from azure.identity import DefaultAzureCredential
+
+project_client = AIProjectClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
+    credential=DefaultAzureCredential(),
+)
+```
+
+To construct an asynchronous client, install the `aiohttp` package:
+
+```bash
+pip install aiohttp
+```
+
+Then use the code below with `AIProjectClient` and `DefaultAzureCredential` in `aio` packages:
+
+```python
+import asyncio
+import os
+from azure.ai.projects.aio import AIProjectClient
+from azure.identity.aio import DefaultAzureCredential
+
+async def main() -> None:
+    project_client = AIProjectClient(
+       endpoint=os.environ["PROJECT_ENDPOINT"],
+       credential=DefaultAzureCredential(),
+    )
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+Once you have an `AIProjectClient`, you can obtain an `AgentsClient` like this:
+
+**Synchronous Client:**
+```python
+with project_client:
+    agents_client = project_client.agents
+```
+
+**Asynchronous Client:**
+```python
+async with project_client:
+    agents_client = project_client.agents
+```
+
+Alternatively, you can instantiate an AgentsClient directly as a standalone approach without using `azure-ai-projects`. However, this is not recommended, as it has limitations and lacks the integrated capabilities provided by using an `AIProjectClient`.   Here is is the example:
+
+**Synchronous Client:**
 ```python
 import os
 from azure.ai.agents import AgentsClient
@@ -90,28 +146,33 @@ from azure.identity import DefaultAzureCredential
 
 agents_client = AgentsClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential()
 )
+
+with agents_client:
+    # your code to consume the client
+    pass
+
 ```
 
-To construct an asynchronous client, Install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
-
-```bash
-pip install aiohttp
-```
-
-and update the code above to import `asyncio`, and import `AgentsClient` from the `azure.ai.agents.aio` namespace:
-
+**Asynchronous Client:**
 ```python
-import os
 import asyncio
+import os
 from azure.ai.agents.aio import AgentsClient
-from azure.core.credentials import AzureKeyCredential
+from azure.identity.aio import DefaultAzureCredential
 
-agent_client = AgentsClient(
-   endpoint=os.environ["PROJECT_ENDPOINT"],
-   credential=DefaultAzureCredential(),
-)
+async def main() -> None:
+    agents_client = AgentsClient(
+        endpoint=os.environ["PROJECT_ENDPOINT"],
+        credential=DefaultAzureCredential()
+    )
+    async with agents_client:
+        # your code to consume the client
+        pass
+
+if __name__ == "__main__":
+    asyncio.run(main())
 ```
 
 ## Examples
@@ -311,6 +372,47 @@ with project_client:
 
 <!-- END SNIPPET -->
 
+### Create Agent with Deep Research
+
+To enable your Agent to do a detailed research of a topic, use the `DeepResearchTool` along with a connection to a Bing Grounding resource.
+This scenarios requires you to specify two model deployments. One is the generic chat model that does arbitration, and is
+specified as usual when you call the `create_agent` method. The other is the Deep Research model, which is specified
+when you define the `DeepResearchTool`.
+
+Here is an example:
+
+<!-- SNIPPET:sample_agents_deep_research.create_agent_with_deep_research_tool -->
+
+```python
+conn_id = os.environ["AZURE_BING_CONNECTION_ID"]
+
+# Initialize a Deep Research tool with Bing Connection ID and Deep Research model deployment name
+deep_research_tool = DeepResearchTool(
+    bing_grounding_connection_id=conn_id,
+    deep_research_model=os.environ["DEEP_RESEARCH_MODEL_DEPLOYMENT_NAME"],
+)
+
+# Create Agent with the Deep Research tool and process Agent run
+with project_client:
+
+    with project_client.agents as agents_client:
+
+        # Create a new agent that has the Deep Research tool attached.
+        # NOTE: To add Deep Research to an existing agent, fetch it with `get_agent(agent_id)` and then,
+        # update the agent with the Deep Research tool.
+        agent = agents_client.create_agent(
+            model=os.environ["MODEL_DEPLOYMENT_NAME"],
+            name="my-agent",
+            instructions="You are a helpful Agent that assists in researching scientific topics.",
+            tools=deep_research_tool.definitions,
+        )
+```
+
+<!-- END SNIPPET -->
+
+> **Limitation**: The Deep Research tool is currently recommended **only** in non-streaming scenarios.
+> Using it with streaming can work, but it may occasionally time-out and is therefore not yet recommended.
+
 ### Create Agent with Azure AI Search
 
 Azure AI Search is an enterprise search system for high-performance applications. It integrates with Azure OpenAI Service and Azure Machine Learning, offering advanced search technologies like vector search and full-text search. Ideal for knowledge base insights, information discovery, and automation. Creating an Agent with Azure AI Search requires an existing Azure AI Search Index. For more information and setup guides, see [Azure AI Search Tool Guide](https://learn.microsoft.com/azure/ai-services/agents/how-to/tools/azure-ai-search?tabs=azurecli%2Cpython&pivots=overview-azure-ai-search).
@@ -320,22 +422,24 @@ Here is an example to integrate Azure AI Search:
 <!-- SNIPPET:sample_agents_azure_ai_search.create_agent_with_azure_ai_search_tool -->
 
 ```python
-conn_id = os.environ["AI_AZURE_AI_CONNECTION_ID"]
-
-print(conn_id)
-
-# Initialize agent AI search tool and add the search index connection id
-ai_search = AzureAISearchTool(
-    index_connection_id=conn_id, index_name="sample_index", query_type=AzureAISearchQueryType.SIMPLE, top_k=3, filter=""
-)
-
-# Create agent with AI search tool and process agent run
-project_client = AIProjectClient(
+with AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
-)
+) as project_client:
+    conn_id = project_client.connections.get_default(ConnectionType.AZURE_AI_SEARCH).id
 
-with project_client:
+    print(conn_id)
+
+    # Initialize agent AI search tool and add the search index connection id
+    ai_search = AzureAISearchTool(
+        index_connection_id=conn_id,
+        index_name="sample_index",
+        query_type=AzureAISearchQueryType.SIMPLE,
+        top_k=3,
+        filter="",
+    )
+
+    # Create agent with AI search tool and process agent run
     agents_client = project_client.agents
 
     agent = agents_client.create_agent(
@@ -694,6 +798,178 @@ with project_client:
         instructions="You are a helpful agent",
         tools=fabric.definitions,
     )
+```
+
+<!-- END SNIPPET -->
+
+### Create an Agent using another agents
+
+We can use `ConnectedAgentTool` to call specialized agents. In the example below we will create two agents, one is returning the Microsoft stock price and another returns weather. Note that the `ConnectedAgentTool` does not support local functions, we will use Azure function to return weather. The code of that function is given below; please see [Azure Function Call](#create-agent-with-azure-function-call) section for the instructions on how to deploy Azure Function.
+
+```python
+import azure.functions as func
+import datetime
+import json
+import logging
+
+app = func.FunctionApp()
+
+@app.function_name(name="GetWeather")
+@app.queue_trigger(
+    arg_name="arguments",
+    queue_name="weather-input",
+    connection="AzureWebJobsStorage")
+@app.queue_output(
+    arg_name="outputQueue",
+    queue_name="weather-output",
+    connection="AzureWebJobsStorage")
+def foo(arguments: func.QueueMessage, outputQueue: func.Out[str]) -> None:
+    """
+    The function, answering question about weather.
+
+    :param arguments: The arguments, containing json serialized request.
+    :param outputQueue: The output queue to write messages to.
+    """
+
+    parsed_args = json.loads(arguments.get_body().decode('utf-8'))
+    location = parsed_args.get("Location")
+    try:
+        response = {
+            "Value": "60 degrees and cloudy" if location == "Seattle" else "10 degrees and sunny",
+            "CorrelationId": parsed_args['CorrelationId']
+        }
+        outputQueue.set(json.dumps(response))
+        logging.info(f'The function returns the following message: {json.dumps(response)}')
+    except Exception as e:
+        logging.error(f"Error processing message: {e}")
+        raise
+```
+We will define two agents that has descriptions, explaining when they need to be called.
+
+<!-- SNIPPET:sample_agents_multiple_connected_agents.create_two_toy_agents -->
+
+```python
+connected_agent_name = "stock_price_bot"
+weather_agent_name = "weather_bot"
+
+stock_price_agent = agents_client.create_agent(
+    model=os.environ["MODEL_DEPLOYMENT_NAME"],
+    name=connected_agent_name,
+    instructions=(
+        "Your job is to get the stock price of a company. If asked for the Microsoft stock price, always return $350."
+    ),
+)
+
+azure_function_tool = AzureFunctionTool(
+    name="GetWeather",
+    description="Get answers from the weather bot.",
+    parameters={
+        "type": "object",
+        "properties": {
+            "Location": {"type": "string", "description": "The location to get the weather for."},
+        },
+    },
+    input_queue=AzureFunctionStorageQueue(
+        queue_name="weather-input",
+        storage_service_endpoint=storage_service_endpoint,
+    ),
+    output_queue=AzureFunctionStorageQueue(
+        queue_name="weather-output",
+        storage_service_endpoint=storage_service_endpoint,
+    ),
+)
+
+weather_agent = agents_client.create_agent(
+    model=os.environ["MODEL_DEPLOYMENT_NAME"],
+    name=weather_agent_name,
+    instructions=(
+        "Your job is to get the weather for a given location. "
+        "Use the provided function to get the weather in the given location."
+    ),
+    tools=azure_function_tool.definitions,
+)
+
+# Initialize Connected Agent tools with the agent id, name, and description
+connected_agent = ConnectedAgentTool(
+    id=stock_price_agent.id, name=connected_agent_name, description="Gets the stock price of a company"
+)
+connected_weather_agent = ConnectedAgentTool(
+    id=weather_agent.id, name=weather_agent_name, description="Gets the weather for a given location"
+)
+```
+
+<!-- END SNIPPET -->
+
+Add the `ConnectedAgentTool`-s to main agent.
+
+<!-- SNIPPET:sample_agents_multiple_connected_agents.create_agent_with_connected_agent_tool -->
+
+```python
+# Create agent with the Connected Agent tool and process assistant run
+agent = agents_client.create_agent(
+    model=os.environ["MODEL_DEPLOYMENT_NAME"],
+    name="my-assistant",
+    instructions="You are a helpful assistant, and use the connected agents to get stock prices and weather.",
+    tools=[
+        connected_agent.definitions[0],
+        connected_weather_agent.definitions[0],
+    ],
+)
+```
+
+<!-- END SNIPPET -->
+
+Create thread and run.
+
+<!-- SNIPPET:sample_agents_multiple_connected_agents.run_agent_with_connected_agent_tool -->
+
+```python
+# Create thread for communication
+thread = agents_client.threads.create()
+print(f"Created thread, ID: {thread.id}")
+
+# Create message to thread
+message = agents_client.messages.create(
+    thread_id=thread.id,
+    role=MessageRole.USER,
+    content="What is the stock price of Microsoft and the weather in Seattle?",
+)
+print(f"Created message, ID: {message.id}")
+
+# Create and process Agent run in thread with tools
+run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
+print(f"Run finished with status: {run.status}")
+```
+
+<!-- END SNIPPET -->
+
+To understand what calls were made by the main agent to the connected ones, we will list run steps.
+
+<!-- SNIPPET:sample_agents_multiple_connected_agents.list_tool_calls -->
+
+```python
+for run_step in agents_client.run_steps.list(thread_id=thread.id, run_id=run.id, order=ListSortOrder.ASCENDING):
+    if isinstance(run_step.step_details, RunStepToolCallDetails):
+        for tool_call in run_step.step_details.tool_calls:
+            print(f"\tAgent: {tool_call._data['connected_agent']['name']} "
+                  f"query: {tool_call._data['connected_agent']['arguments']} ",
+                  f"output: {tool_call._data['connected_agent']['output']}")
+```
+
+<!-- END SNIPPET -->
+
+The messages contain references, marked by unicode opening and closing brackets, which cannot be printed by python `print` command. To fix this issue we will replace them by ASCII brackets.
+
+<!-- SNIPPET:sample_agents_multiple_connected_agents.list_messages -->
+
+```python
+# Fetch and log all messages
+messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+for msg in messages:
+    if msg.text_messages:
+        last_text = msg.text_messages[-1]
+        text = last_text.text.value.replace('\u3010', '[').replace('\u3011', ']')
+        print(f"{msg.role}: {text}")
 ```
 
 <!-- END SNIPPET -->

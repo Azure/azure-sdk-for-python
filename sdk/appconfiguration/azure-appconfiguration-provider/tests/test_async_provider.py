@@ -89,7 +89,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         async with await self.create_client(
             appconfiguration_connection_string, selects=selects, secret_resolver=secret_resolver
         ) as client:
-            assert client["secret"] == "Reslover Value"
+            assert client["secret"] == "Resolver Value"
 
     # method: provider_selectors
     @app_config_decorator_async
@@ -116,7 +116,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         async with await self.create_client(
             appconfiguration_connection_string, selects=selects, key_vault_options=key_vault_options
         ) as client:
-            assert client["secret"] == "Reslover Value"
+            assert client["secret"] == "Resolver Value"
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -219,6 +219,22 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             )
             assert headers["Correlation-Context"] == "RequestType=fake-request,Features=AI+AICC"
 
+    @app_config_decorator_async
+    @recorded_by_proxy_async
+    async def test_provider_tag_filters(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
+        selects = {SettingSelector(key_filter="*", tag_filters=["a=b"])}
+        async with await self.create_client(
+            appconfiguration_connection_string,
+            selects=selects,
+            feature_flag_enabled=True,
+            feature_flag_selectors={SettingSelector(key_filter="*", tag_filters=["a=b"])},
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+        ) as client:
+            assert "tagged_config" in client
+            assert FEATURE_MANAGEMENT_KEY in client
+            assert has_feature_flag(client, "TaggedFeatureFlag")
+            assert "message" not in client
+
 
 async def secret_resolver(secret_id):
-    return "Reslover Value"
+    return "Resolver Value"

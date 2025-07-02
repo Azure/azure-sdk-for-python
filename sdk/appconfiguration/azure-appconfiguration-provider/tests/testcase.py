@@ -12,6 +12,7 @@ from azure.appconfiguration import (
     SecretReferenceConfigurationSetting,
 )
 from azure.appconfiguration.provider import SettingSelector, load, AzureAppConfigurationKeyVaultOptions
+from azure.appconfiguration.provider._constants import NULL_CHAR
 from test_constants import FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_KEY
 
 
@@ -20,7 +21,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         self,
         appconfiguration_endpoint_string,
         trim_prefixes=[],
-        selects={SettingSelector(key_filter="*", label_filter="\0")},
+        selects={SettingSelector(key_filter="*", label_filter=NULL_CHAR)},
         keyvault_secret_url=None,
         keyvault_secret_url2=None,
         refresh_on=None,
@@ -29,6 +30,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         key_vault_options=None,
         on_refresh_success=None,
         feature_flag_enabled=False,
+        feature_flag_selectors=[SettingSelector(key_filter="*", label_filter=NULL_CHAR)],
         feature_flag_refresh_enabled=False,
         secret_refresh_interval=None,
     ):
@@ -49,6 +51,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
                 "keyvault_credential": keyvault_cred,
                 "on_refresh_success": on_refresh_success,
                 "feature_flag_enabled": feature_flag_enabled,
+                "feature_flag_selectors"=feature_flag_selectors,
                 "feature_flag_refresh_enabled": feature_flag_refresh_enabled,
             }
             if secret_refresh_interval is not None:
@@ -68,6 +71,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
                 "key_vault_options": key_vault_options,
                 "on_refresh_success": on_refresh_success,
                 "feature_flag_enabled": feature_flag_enabled,
+                "feature_flag_selectors"=feature_flag_selectors,
                 "feature_flag_refresh_enabled": feature_flag_refresh_enabled,
             }
             if secret_refresh_interval is not None:
@@ -84,6 +88,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
             secret_resolver=secret_resolver,
             on_refresh_success=on_refresh_success,
             feature_flag_enabled=feature_flag_enabled,
+            feature_flag_selectors=feature_flag_selectors,
             feature_flag_refresh_enabled=feature_flag_refresh_enabled,
         )
 
@@ -91,7 +96,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         self,
         appconfiguration_connection_string,
         trim_prefixes=[],
-        selects={SettingSelector(key_filter="*", label_filter="\0")},
+        selects={SettingSelector(key_filter="*", label_filter=NULL_CHAR)},
         keyvault_secret_url=None,
         keyvault_secret_url2=None,
         refresh_on=None,
@@ -100,6 +105,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         key_vault_options=None,
         on_refresh_success=None,
         feature_flag_enabled=False,
+        feature_flag_selectors=[SettingSelector(key_filter="*", label_filter=NULL_CHAR)],
         feature_flag_refresh_enabled=False,
     ):
         client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
@@ -116,6 +122,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
                 keyvault_credential=self.get_credential(AzureAppConfigurationClient),
                 on_refresh_success=on_refresh_success,
                 feature_flag_enabled=feature_flag_enabled,
+                feature_flag_selectors=feature_flag_selectors,
                 feature_flag_refresh_enabled=feature_flag_refresh_enabled,
             )
         if key_vault_options:
@@ -133,6 +140,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
                 key_vault_options=key_vault_options,
                 on_refresh_success=on_refresh_success,
                 feature_flag_enabled=feature_flag_enabled,
+                feature_flag_selectors=feature_flag_selectors,
                 feature_flag_refresh_enabled=feature_flag_refresh_enabled,
             )
         return load(
@@ -145,6 +153,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
             secret_resolver=secret_resolver,
             on_refresh_success=on_refresh_success,
             feature_flag_enabled=feature_flag_enabled,
+            feature_flag_selectors=feature_flag_selectors,
             feature_flag_refresh_enabled=feature_flag_refresh_enabled,
         )
 
@@ -166,20 +175,49 @@ def setup_configs(client, keyvault_secret_url, keyvault_secret_url2):
 
 def get_configs(keyvault_secret_url, keyvault_secret_url2):
     configs = []
-    configs.append(create_config_setting("message", "\0", "hi"))
+    configs.append(create_config_setting("message", NULL_CHAR, "hi"))
     configs.append(create_config_setting("message", "dev", "test"))
-    configs.append(create_config_setting("my_json", "\0", '{"key": "value"}', "application/json"))
-    configs.append(create_config_setting("test.trimmed", "\0", "key"))
-    configs.append(create_config_setting("refresh_message", "\0", "original value"))
-    configs.append(create_config_setting("non_refreshed_message", "\0", "Static"))
+    configs.append(create_config_setting("my_json", NULL_CHAR, '{"key": "value"}', "application/json"))
+    configs.append(create_config_setting("test.trimmed", NULL_CHAR, "key"))
+    configs.append(create_config_setting("refresh_message", NULL_CHAR, "original value"))
+    configs.append(create_config_setting("non_refreshed_message", NULL_CHAR, "Static"))
+    configs.append(create_config_setting("tagged_config", NULL_CHAR, None, tags={"a": "b"}))
+    configs.append(create_config_setting("two_tagged", NULL_CHAR, None, tags={"a": "b", "second": "tag"}))
+    configs.append(create_config_setting("only_second_tag", NULL_CHAR, None, tags={"second": "tag"}))
+    configs.append(
+        create_config_setting(
+            "complex_tag", NULL_CHAR, None, tags={"Special:Tag": "Value:With:Colons", "Tag@With@At": "Value@With@At"}
+        )
+    )
     configs.append(
         create_config_setting(
             ".appconfig.featureflag/Alpha",
-            "\0",
+            NULL_CHAR,
             '{	"id": "Alpha", "description": "", "enabled": false, "conditions": {	"client_filters": []	}}',
             "application/vnd.microsoft.appconfig.ff+json;charset=utf-8",
         )
     )
+    configs.append(
+        create_config_setting(
+            ".appconfig.featureflag/TaggedFeatureFlag",
+            NULL_CHAR,
+            '{	"id": "TaggedFeatureFlag", "description": "", "enabled": false, "conditions": {	"client_filters": []	}}',
+            "application/vnd.microsoft.appconfig.ff+json;charset=utf-8",
+            tags={"a": "b"},
+        )
+    )
+    # Configuration with multiple tags
+    configs.append(create_config_setting("multi_tagged", NULL_CHAR, "multi tagged value", tags={"a": "b", "c": "d"}))
+    # Configuration with tag that has special characters
+    configs.append(create_config_setting("special_chars", NULL_CHAR, "special", tags={"special@tag": "special:value"}))
+    # Configuration with no tags
+    configs.append(create_config_setting("no_tags", NULL_CHAR, "no tags"))
+    # Configuration with tag that has no value
+    configs.append(create_config_setting("tag_no_value", NULL_CHAR, "no value", tags={"a": ""}))
+    # Configuration with different tag
+    configs.append(create_config_setting("different_tag", NULL_CHAR, "different", tags={"different": "tag"}))
+    # Configuration with null tag
+    configs.append(create_config_setting("null_tag", NULL_CHAR, "null tag", tags={"tag": None}))
     if keyvault_secret_url:
         configs.append(
             create_secret_config_setting(
@@ -199,14 +237,8 @@ def get_configs(keyvault_secret_url, keyvault_secret_url2):
     return configs
 
 
-def create_config_setting(key, label, value, content_type="text/plain"):
-    return ConfigurationSetting(
-        key=key,
-        label=label,
-        value=value,
-        content_type=content_type,
-    )
-
+def create_config_setting(key, label, value, content_type="text/plain", tags=None):
+    return ConfigurationSetting(key=key, label=label, value=value, content_type=content_type, tags=tags)
 
 def create_secret_config_setting(key, label, value):
     return SecretReferenceConfigurationSetting(
@@ -215,13 +247,9 @@ def create_secret_config_setting(key, label, value):
         secret_id=value,
     )
 
+def create_feature_flag_config_setting(key, label, enabled, tags=None):
+    return FeatureFlagConfigurationSetting(feature_id=key, label=label, enabled=enabled, tags=tags)
 
-def create_feature_flag_config_setting(key, label, enabled):
-    return FeatureFlagConfigurationSetting(
-        feature_id=key,
-        label=label,
-        enabled=enabled,
-    )
 
 
 def get_feature_flag(client, feature_id):

@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Literal, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterator, Literal, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -628,7 +628,7 @@ class BlobContainersOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: StorageManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -644,7 +644,7 @@ class BlobContainersOperations:
         filter: Optional[str] = None,
         include: Optional[Union[str, _models.ListContainersInclude]] = None,
         **kwargs: Any
-    ) -> Iterable["_models.ListContainerItem"]:
+    ) -> ItemPaged["_models.ListContainerItem"]:
         """Lists all containers and does not support a prefix like data plane. Also SRP today does not
         return continuation token.
 

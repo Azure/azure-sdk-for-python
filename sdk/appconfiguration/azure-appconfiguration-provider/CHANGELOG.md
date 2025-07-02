@@ -6,6 +6,7 @@
 
 * Added support for forced refresh of configurations when using Key Vault references. Adds `secret_refresh_interval` to the `AzureAppConfigurationProvider.load` method. This allows the provider to refresh Key Vault secrets at a specified interval. Is set to 60 seconds by default, and can only be set if using Key Vault references.
 * Added support for async `on_refresh_success`.
+- Added `tag_filters` in `SettingSelector` to filter settings by tags.
 
 ### Breaking Changes
 
