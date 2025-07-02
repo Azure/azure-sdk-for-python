@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: skip-file
 
+from contextlib import AbstractContextManager
 from datetime import datetime
 from types import TracebackType
 from typing import (
@@ -38,7 +39,7 @@ from ._models import (
 from ._shared.base_client import StorageAccountHostsMixin
 from ._shared.models import UserDelegationKey
 
-class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
+class BlobServiceClient(AbstractContextManager, StorageAccountHostsMixin, StorageEncryptionMixin):
     def __init__(
         self,
         account_url: str,
@@ -58,7 +59,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         audience: Optional[str] = None,
         **kwargs: Any
     ) -> None: ...
-    def __enter__(self) -> Self: ...
+    def __enter__(self) -> "BlobServiceClient": ...
     def __exit__(
         self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
     ) -> None: ...
@@ -82,7 +83,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         max_chunk_get_size: int = 4 * 1024 * 1024,
         audience: Optional[str] = None,
         **kwargs: Any
-    ) -> Self: ...
+    ) -> "BlobServiceClient": ...
     @distributed_trace
     def get_user_delegation_key(
         self, key_start_time: datetime, key_expiry_time: datetime, *, timeout: Optional[int] = None, **kwargs: Any

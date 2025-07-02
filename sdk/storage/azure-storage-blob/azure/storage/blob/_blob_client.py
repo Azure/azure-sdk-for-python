@@ -13,7 +13,6 @@ from typing import (
     Any, AnyStr, cast, Dict, IO, Iterable, List, Optional, Tuple, Union,
     TYPE_CHECKING
 )
-from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.core.paging import ItemPaged

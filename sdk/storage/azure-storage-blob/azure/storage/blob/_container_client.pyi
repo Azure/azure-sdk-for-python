@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: skip-file
 
+from contextlib import AbstractContextManager
 from datetime import datetime
 from types import TracebackType
 from typing import (
@@ -20,7 +21,6 @@ from typing import (
     overload,
     Union,
 )
-from typing_extensions import Self
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
@@ -72,7 +72,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         use_byte_buffer: Optional[bool] = None,
         **kwargs: Any,
     ) -> None: ...
-    def __enter__(self) -> Self: ...
+    def __enter__(self) -> "ContainerClient": ...
     def __exit__(
         self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
     ) -> None: ...
@@ -96,7 +96,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         min_large_block_upload_threshold: int = 4 * 1024 * 1024 + 1,
         use_byte_buffer: Optional[bool] = None,
         **kwargs: Any,
-    ) -> Self: ...
+    ) -> "ContainerClient": ...
     @classmethod
     def from_connection_string(
         cls,
@@ -117,7 +117,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         min_large_block_upload_threshold: int = 4 * 1024 * 1024 + 1,
         use_byte_buffer: Optional[bool] = None,
         **kwargs: Any,
-    ) -> Self: ...
+    ) -> "ContainerClient": ...
     @distributed_trace
     def create_container(
         self,
@@ -136,7 +136,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any,
-    ) -> Self: ...
+    ) -> "ContainerClient": ...
     @distributed_trace
     def delete_container(
         self,
