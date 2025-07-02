@@ -38,6 +38,7 @@ from .._constants import (
 )
 from .._azureappconfigurationproviderbase import (
     AzureAppConfigurationProviderBase,
+    _RefreshTimer,
     update_correlation_context_header,
     delay_failure,
     is_json_content_type,
@@ -343,7 +344,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         self,
         refresh_operation: Callable,
         error_log_message: str,
-        timer,  # Type is _RefreshTimer but avoiding import
+        timer: _RefreshTimer,
         refresh_condition: bool,
         **kwargs,
     ) -> None:
@@ -432,7 +433,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     # If feature flags were already loaded, we need to keep them
                     self._dict[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags
 
-            # Even if we don't need to refresh, we should reset the timer
             self._refresh_timer.reset()
             if self._secret_refresh_timer:
                 self._secret_refresh_timer.reset()
@@ -468,7 +468,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 self._dict[FEATURE_MANAGEMENT_KEY] = {}
                 self._dict[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags
 
-            # Even if we don't need to refresh, we should reset the timer
             self._feature_flag_refresh_timer.reset()
             return True
 
@@ -573,14 +572,12 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         raise exception
 
     async def _process_configurations(self, configuration_settings: List[ConfigurationSetting]) -> Dict[str, Any]:
-        # Reset feature flag usage
         self._uses_ai_configuration = False
         self._uses_aicc_configuration = False
 
         configuration_settings_processed = {}
         for config in configuration_settings:
             if isinstance(config, FeatureFlagConfigurationSetting):
-                # Feature flags are not processed like other settings
                 continue
             key = self._process_key_name(config)
             value = await self._process_key_value(config)
@@ -593,7 +590,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         if isinstance(config, SecretReferenceConfigurationSetting):
             return await _resolve_keyvault_reference(config, self)
         if is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting):
-            # Feature flags are of type json, but don't treat them as such
             try:
                 if APP_CONFIG_AI_MIME_PROFILE in config.content_type:
                     self._uses_ai_configuration = True
