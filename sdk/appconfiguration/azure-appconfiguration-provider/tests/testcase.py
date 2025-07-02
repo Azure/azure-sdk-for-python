@@ -5,7 +5,12 @@
 # license information.
 # --------------------------------------------------------------------------
 from devtools_testutils import AzureRecordedTestCase
-from azure.appconfiguration import AzureAppConfigurationClient, ConfigurationSetting, FeatureFlagConfigurationSetting, SecretReferenceConfigurationSetting
+from azure.appconfiguration import (
+    AzureAppConfigurationClient,
+    ConfigurationSetting,
+    FeatureFlagConfigurationSetting,
+    SecretReferenceConfigurationSetting,
+)
 from azure.appconfiguration.provider import SettingSelector, load, AzureAppConfigurationKeyVaultOptions
 from test_constants import FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_KEY
 
@@ -202,12 +207,13 @@ def create_config_setting(key, label, value, content_type="text/plain"):
         content_type=content_type,
     )
 
+
 def create_secret_config_setting(key, label, value):
     return SecretReferenceConfigurationSetting(
         key=key,
         label=label,
         secret_id=value,
-    ) 
+    )
 
 
 def create_feature_flag_config_setting(key, label, enabled):

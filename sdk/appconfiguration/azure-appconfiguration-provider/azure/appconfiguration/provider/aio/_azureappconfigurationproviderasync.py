@@ -410,9 +410,11 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 )
             else:
                 # Force a refresh to make sure secrets are up to date
-                configuration_settings = (await client.load_configuration_settings(
-                    self._selects, self._refresh_on, headers=headers, **inner_kwargs
-                ))[0]
+                configuration_settings = (
+                    await client.load_configuration_settings(
+                        self._selects, self._refresh_on, headers=headers, **inner_kwargs
+                    )
+                )[0]
                 need_refresh = True
 
             configuration_settings_processed: Dict[str, Any] = {}
@@ -486,9 +488,9 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             logger.debug("Refresh called but refresh already in progress.")
             return
         try:
-            if (self._secret_refresh_timer and self._secret_refresh_timer.needs_refresh()):
+            if self._secret_refresh_timer and self._secret_refresh_timer.needs_refresh():
                 await self._refresh_configuration_settings(force=True, **kwargs)
-            elif (self._refresh_timer and self._refresh_timer.needs_refresh()):
+            elif self._refresh_timer and self._refresh_timer.needs_refresh():
                 await self._refresh_configuration_settings(**kwargs)
             if self._feature_flag_refresh_enabled and (
                 self._feature_flag_refresh_timer and self._feature_flag_refresh_timer.needs_refresh()

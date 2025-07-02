@@ -468,9 +468,9 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             logger.debug("Refresh called but refresh already in progress.")
             return
         try:
-            if (self._secret_refresh_timer and self._secret_refresh_timer.needs_refresh()):
+            if self._secret_refresh_timer and self._secret_refresh_timer.needs_refresh():
                 self._refresh_configuration_settings(force=True, **kwargs)
-            elif(self._refresh_timer and self._refresh_timer.needs_refresh()):
+            elif self._refresh_timer and self._refresh_timer.needs_refresh():
                 self._refresh_configuration_settings(**kwargs)
             if self._feature_flag_refresh_enabled and (
                 self._feature_flag_refresh_timer and self._feature_flag_refresh_timer.needs_refresh()
