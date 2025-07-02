@@ -25,20 +25,6 @@ except ImportError:
     # marshmallow 3.x
     from marshmallow.utils import resolve_field_instance
 
-
-# Custom implementation for from_iso_datetime compatibility
-def from_iso_datetime(value):
-    """Parse an ISO8601 datetime string, handling the 'Z' suffix."""
-    from datetime import datetime
-
-    if isinstance(value, str):
-        # Replace 'Z' with '+00:00' for compatibility with datetime.fromisoformat
-        if value.endswith("Z"):
-            value = value[:-1] + "+00:00"
-        return datetime.fromisoformat(value)
-    return value
-
-
 from ..._utils._arm_id_utils import (
     AMLVersionedArmId,
     is_ARM_id_for_resource,
@@ -72,6 +58,31 @@ from ...constants._common import (
 from ...entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr
 from ...exceptions import MlException, ValidationException
 from ..core.schema import PathAwareSchema
+
+
+# Custom implementation for from_iso_datetime compatibility
+def from_iso_datetime(value):
+    """Parse an ISO8601 datetime string, handling the 'Z' suffix.
+
+    :param value: The datetime string to parse or a datetime object
+    :type value: str or datetime
+    :return: Parsed datetime object
+    :rtype: datetime
+    """
+    from datetime import datetime
+
+    if isinstance(value, str):
+        # Validate that this is a proper datetime string, not just a date
+        # The original marshmallow from_iso_datetime expects datetime format
+        if 'T' not in value and 'Z' not in value and ' ' not in value:
+            # This is likely just a date string, not a datetime
+            raise ValueError(f"Expected datetime string but got date string: {value}")
+        
+        # Replace 'Z' with '+00:00' for compatibility with datetime.fromisoformat
+        if value.endswith("Z"):
+            value = value[:-1] + "+00:00"
+        return datetime.fromisoformat(value)
+    return value
 
 module_logger = logging.getLogger(__name__)
 T = typing.TypeVar("T")
