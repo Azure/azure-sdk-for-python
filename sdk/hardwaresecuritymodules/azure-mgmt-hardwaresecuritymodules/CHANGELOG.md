@@ -4,7 +4,6 @@
 
 ### Features Added
 
-  - Client `HardwareSecurityModulesMgmtClient` added method `send_request`
   - Enum `ProvisioningState` added member `UPDATING`
   - Model `CloudHsmClusterBackupStatusOperations` added method `begin_get`
   - Model `CloudHsmClusterRestoreStatusOperations` added method `begin_get`
@@ -29,7 +28,6 @@
   - Method `CloudHsmClustersOperations.list_by_subscription` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
   - Method `DedicatedHsmOperations.begin_update` inserted a `positional_or_keyword` parameter `parameters`
   - Method `DedicatedHsmOperations.begin_update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
-  - Method `DedicatedHsmOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'name', 'tags', 'kwargs']` to `['self', 'resource_group_name', 'name', 'parameters', 'kwargs']`
 
 ## 1.0.0b2 (2025-02-06)
 
