@@ -167,7 +167,6 @@ class AdversarialTemplateHandler:
         if self.categorized_ch_parameters is None:
             categorized_parameters: Dict[str, _CategorizedParameter] = {}
             util = ContentHarmTemplatesUtils
-
             if isinstance(self.rai_client, RAIClient):
                 parameters = await self.rai_client.get_contentharm_parameters()
             elif isinstance(self.rai_client, AIProjectClient):
@@ -183,24 +182,30 @@ class AdversarialTemplateHandler:
             self.categorized_ch_parameters = categorized_parameters
 
         template_category = collection_key.split("adv_")[-1]
-        if template_category == "qa_enterprise":
+
+        # Handle both qa_enterprise and qa_documents mapping to qa
+        if template_category in ["qa_enterprise", "qa_documents"]:
             template_category = "qa"
 
         plist = self.categorized_ch_parameters
         ch_templates = []
+
         for key, value in plist.items():
+            # Skip enterprise templates for ADVERSARIAL_QA
             if collection_key == AdversarialScenario.ADVERSARIAL_QA.value and "enterprise" in key:
                 continue
+            # Skip non-enterprise templates for ADVERSARIAL_QA_DOCUMENTS
             if collection_key == AdversarialScenario.ADVERSARIAL_QA_DOCUMENTS.value and "enterprise" not in key:
                 continue
+
             if value["category"] == template_category:
                 params = value["parameters"]
                 for p in params:
                     p.update({"ch_template_placeholder": "{{ch_template_placeholder}}"})
 
                 template = AdversarialTemplate(template_name=key, text=None, context_key=[], template_parameters=params)
-
                 ch_templates.append(template)
+
         return ch_templates
 
     def get_template(self, template_name: str) -> Optional[AdversarialTemplate]:
