@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- When creating a certificate with an unknown issuer, `CertificateClient.(begin_)create_certificate` now returns a
+  `CertificateOperation` instead of `None`
+
 ### Other Changes
 
 ## 4.10.0 (2025-06-16)
