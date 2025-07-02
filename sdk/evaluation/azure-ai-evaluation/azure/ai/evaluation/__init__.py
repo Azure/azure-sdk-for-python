@@ -13,6 +13,7 @@ from ._evaluators._content_safety import (
     ViolenceEvaluator,
 )
 from ._evaluators._f1_score import F1ScoreEvaluator
+from ._evaluators._mmlu import MMLUEvaluator
 from ._evaluators._fluency import FluencyEvaluator
 from ._evaluators._gleu import GleuScoreEvaluator
 from ._evaluators._groundedness import GroundednessEvaluator
@@ -82,6 +83,7 @@ __all__ = [
     "ContentSafetyEvaluator",
     "IndirectAttackEvaluator",
     "BleuScoreEvaluator",
+    "MMLUEvaluator",
     "GleuScoreEvaluator",
     "MeteorScoreEvaluator",
     "RetrievalEvaluator",

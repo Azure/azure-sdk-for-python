@@ -23,6 +23,7 @@ from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline
 from azure.ai.evaluation import (
     BleuScoreEvaluator,
+    MMLUEvaluator,
     CoherenceEvaluator,
     ContentSafetyEvaluator,
     F1ScoreEvaluator,
@@ -62,6 +63,15 @@ class TestBuiltInEvaluators:
         )
         assert score is not None and "bleu_score" in score
         assert 0 <= score["bleu_score"] <= 1
+
+    def test_math_evaluator_mmlu_score(self):
+        eval_fn = MMLUEvaluator()
+        score = eval_fn(
+            ground_truth="{\"answer\": \"F\", \"subject\": \"business\", \"category\": \"other\"}",
+            response="ANSWER: F",
+        )
+        assert score is not None and "mmlu_score" in score
+        assert 0 <= score["mmlu_score"] <= 1
 
     def test_math_evaluator_gleu_score(self):
         eval_fn = GleuScoreEvaluator()

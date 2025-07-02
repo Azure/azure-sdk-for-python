@@ -73,6 +73,13 @@ class EvaluationEvaluateSamples(object):
         bleu_evaluator(response="Lyon is the capital of France.", ground_truth="Paris is the capital of France.")
         # [END bleu_score_evaluator]
 
+        # [START mmlu_score_evaluator]
+        from azure.ai.evaluation import MMLUEvaluator
+
+        mmlu_evaluator = MMLUEvaluator()
+        mmlu_evaluator(response="ANSWER: F", ground_truth="{\"answer\": \"F\", \"subject\": \"business\", \"category\": \"other\"}")
+        # [END mmlu_score_evaluator]
+
         # [START coherence_evaluator]
         import os
         from azure.ai.evaluation import CoherenceEvaluator

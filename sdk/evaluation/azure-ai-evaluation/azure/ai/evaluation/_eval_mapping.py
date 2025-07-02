@@ -13,6 +13,7 @@
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
 from azure.ai.evaluation import (
     BleuScoreEvaluator,
+    MMLUEvaluator,
     CodeVulnerabilityEvaluator,
     CoherenceEvaluator,
     ContentSafetyEvaluator,
@@ -43,6 +44,7 @@ from azure.ai.evaluation import (
 
 EVAL_CLASS_MAP = {
     BleuScoreEvaluator: "bleu_score",
+    MMLUEvaluator: "mmlu_score",
     CodeVulnerabilityEvaluator: "code_vulnerability",
     CoherenceEvaluator: "coherence",
     ContentSafetyEvaluator: "content_safety",
