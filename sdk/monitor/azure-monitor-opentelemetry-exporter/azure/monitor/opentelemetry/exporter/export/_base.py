@@ -247,6 +247,24 @@ class BaseExporter:
                     if self._should_collect_stats():
                         _update_requests_map(_REQ_RETRY_NAME[1], value=response_error.status_code)
                     result = ExportResult.FAILED_RETRYABLE
+                    # Log error for 401: Unauthorized, 403: Forbidden to assist with customer troubleshooting
+                    if not self._is_stats_exporter():
+                        if response_error.status_code == 401:
+                            logger.error(
+                                "Retryable server side error: %s. " \
+                                "Your Application Insights resource may be configured to use entra ID authentication. " \
+                                "Please make sure your application is configured to use the correct token credential.",
+                                response_error.message,
+                            )
+                        elif response_error.status_code == 403:
+                            logger.error(
+                                "Retryable server side error: %s. " \
+                                "Your application may be configured with a token credential " \
+                                "but your Application Insights resource may be configured incorrectly. Please make sure " \
+                                "your Application Insights resource has enabled entra Id authentication and " \
+                                "has the correct `Monitoring Metrics Publisher` role assigned.",
+                                response_error.message,
+                            )
                 elif _is_throttle_code(response_error.status_code):
                     if self._should_collect_stats():
                         _update_requests_map(_REQ_THROTTLE_NAME[1], value=response_error.status_code)
@@ -443,9 +461,9 @@ def _format_storage_telemetry_item(item: TelemetryItem) -> TelemetryItem:
 def _get_authentication_credential(**kwargs: Any) -> Optional[ManagedIdentityCredential]:
     if "credential" in kwargs:
         return kwargs.get("credential")
+    auth_string = os.getenv(_APPLICATIONINSIGHTS_AUTHENTICATION_STRING, "")
     try:
         if _APPLICATIONINSIGHTS_AUTHENTICATION_STRING in os.environ:
-            auth_string = os.getenv(_APPLICATIONINSIGHTS_AUTHENTICATION_STRING, "")
             kv_pairs = auth_string.split(";")
             auth_string_d = dict(s.split("=") for s in kv_pairs)
             auth_string_d = {key.lower(): value for key, value in auth_string_d.items()}

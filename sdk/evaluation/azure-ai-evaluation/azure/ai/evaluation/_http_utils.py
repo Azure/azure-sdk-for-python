@@ -7,7 +7,7 @@ from typing import Any, Dict, MutableMapping, Optional, TypedDict, cast
 
 from typing_extensions import Self, Unpack
 
-from azure.ai.evaluation._user_agent import USER_AGENT
+from azure.ai.evaluation._user_agent import UserAgentSingleton
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline, Pipeline
 from azure.core.pipeline.policies import (
@@ -454,7 +454,7 @@ def get_http_client(**kwargs: Any) -> HttpPipeline:
     :returns: An HttpPipeline with a set of applied policies:
     :rtype: HttpPipeline
     """
-    kwargs.setdefault("user_agent_policy", UserAgentPolicy(base_user_agent=USER_AGENT))
+    kwargs.setdefault("user_agent_policy", UserAgentPolicy(base_user_agent=UserAgentSingleton().value))
     return HttpPipeline(**kwargs)
 
 
@@ -464,5 +464,5 @@ def get_async_http_client(**kwargs: Any) -> AsyncHttpPipeline:
     :returns: An AsyncHttpPipeline with a set of applied policies:
     :rtype: AsyncHttpPipeline
     """
-    kwargs.setdefault("user_agent_policy", UserAgentPolicy(base_user_agent=USER_AGENT))
+    kwargs.setdefault("user_agent_policy", UserAgentPolicy(base_user_agent=UserAgentSingleton().value))
     return AsyncHttpPipeline(**kwargs)
