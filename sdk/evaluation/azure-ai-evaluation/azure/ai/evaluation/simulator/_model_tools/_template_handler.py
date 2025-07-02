@@ -191,7 +191,7 @@ class AdversarialTemplateHandler:
         for key, value in plist.items():
             if collection_key == AdversarialScenario.ADVERSARIAL_QA.value and "enterprise" in key:
                 continue
-            if collection_key == AdversarialScenario.ADVERSARIAL_QA_ENTERPRISE.value and "enterprise" not in key:
+            if collection_key == AdversarialScenario.ADVERSARIAL_QA_DOCUMENTS.value and "enterprise" not in key:
                 continue
             if value["category"] == template_category:
                 params = value["parameters"]
