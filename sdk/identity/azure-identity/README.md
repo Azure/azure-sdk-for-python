@@ -297,6 +297,31 @@ variables:
 
 Configuration is attempted in the preceding order. For example, if values for a client secret and certificate are both present, the client secret is used.
 
+### Configuring DefaultAzureCredential
+
+`DefaultAzureCredential` supports an additional environment variable to customize its behavior:
+
+|Variable name|Value
+|-|-
+|`AZURE_TOKEN_CREDENTIALS`|Credential name or group
+
+#### AZURE_TOKEN_CREDENTIALS values
+
+You can set `AZURE_TOKEN_CREDENTIALS` to one of the following values to control which credentials `DefaultAzureCredential` attempts to use:
+
+**Individual Credentials:**
+- `EnvironmentCredential` - Only use environment variables for service principal authentication
+- `WorkloadIdentityCredential` - Only use workload identity for Kubernetes authentication
+- `ManagedIdentityCredential` - Only use managed identity authentication
+- `AzureCliCredential` - Only use Azure CLI authentication
+- `AzurePowerShellCredential` - Only use Azure PowerShell authentication
+- `AzureDeveloperCliCredential` - Only use Azure Developer CLI authentication
+- `InteractiveBrowserCredential` - Only use interactive browser authentication
+
+**Credential Groups:**
+- `prod` - Use deployed service credentials: `EnvironmentCredential`, `WorkloadIdentityCredential`, and `ManagedIdentityCredential`
+- `dev` - Use developer credentials: `SharedTokenCacheCredential`, `AzureCliCredential`, `AzurePowerShellCredential`, and `AzureDeveloperCliCredential`
+
 ## Continuous Access Evaluation
 
 As of version 1.14.0, accessing resources protected by [Continuous Access Evaluation (CAE)][cae] is possible on a per-request basis. This behavior can be enabled by setting the `enable_cae` keyword argument to `True` in the credential's `get_token` method. CAE isn't supported for developer and managed identity credentials.

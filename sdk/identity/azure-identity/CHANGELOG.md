@@ -5,6 +5,7 @@
 ### Features Added
 
 - Expanded the set of acceptable values for environment variable `AZURE_TOKEN_CREDENTIALS` to allow for selection of a specific credential in the `DefaultAzureCredential` chain. At runtime, only the specified credential will be used when acquiring tokens with `DefaultAzureCredential`. For example, setting `AZURE_TOKEN_CREDENTIALS=WorkloadIdentityCredential` will make `DefaultAzureCredential` use only `WorkloadIdentityCredential`.
+  - Valid values are `EnvironmentCredential`, `WorkloadIdentityCredential`, `ManagedIdentityCredential`,  `AzureCliCredential`, `AzurePowershellCredential`, `AzureDeveloperCliCredential`, and `InteractiveBrowserCredential`. ([#41709](https://github.com/Azure/azure-sdk-for-python/pull/41709))
 
 ### Breaking Changes
 
