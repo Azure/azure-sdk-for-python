@@ -40,6 +40,7 @@ from ._operations import ThreadsOperations as ThreadsOperationsGenerated
 from ._operations import VectorStoresOperations as VectorStoresOperationsGenerated
 from ._operations import VectorStoreFilesOperations as VectorStoreFilesOperationsGenerated
 from ._operations import VectorStoreFileBatchesOperations as VectorStoreFileBatchesOperationsGenerated
+from ._operations import AgentsClientOperationsMixin as AgentsClientOperationsMixinGenerated
 from ..._utils.utils import FileType
 
 if sys.version_info >= (3, 9):
@@ -75,6 +76,21 @@ def _has_errors_in_toolcalls_output(tool_outputs: List[Dict]) -> bool:
             except json.JSONDecodeError:
                 continue
     return False
+
+
+class AgentsClientOperationsMixin(AgentsClientOperationsMixinGenerated):
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should instantiate
+        :class:`~azure.ai.agents.aio.AgentsClient`.
+    """
+
+    def __init__(self) -> None:
+        raise TypeError(
+            "AgentsClientOperationsMixin is an abstract class. Please use the inherited class `azure.ai.agents.AgentsClient"
+        )
 
 
 class ThreadsOperations(ThreadsOperationsGenerated):
@@ -1362,7 +1378,7 @@ class FilesOperations(FilesOperationsGenerated):
         :paramtype file: Optional[FileType]
         :keyword file_path: Path to the file. Required if `body` and `purpose` are not provided.
         :paramtype file_path: Optional[str]
-        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision". 
+        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision".
             Required if `body` and `file` are not provided.
         :paramtype purpose: Union[str, _models.FilePurpose, None]
         :keyword filename: The name of the file.
@@ -1502,7 +1518,7 @@ class FilesOperations(FilesOperationsGenerated):
         :paramtype file: Optional[FileType]
         :keyword file_path: Path to the file. Required if `body` and `purpose` are not provided.
         :paramtype file_path: Optional[str]
-        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision". 
+        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision".
             Required if `body` and `file` are not provided.
         :paramtype purpose: Union[str, _models.FilePurpose, None]
         :keyword filename: The name of the file.
