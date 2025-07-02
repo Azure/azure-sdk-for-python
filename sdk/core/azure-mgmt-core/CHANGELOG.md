@@ -1,10 +1,11 @@
 # Release History
 
-## 1.5.1 (2023-XX-XX)
+## 1.6.0 (2025-07-02)
 
 ### Other Changes
 
 - `ARMChallengeAuthenticationPolicy` adopt `on_challenge` in `BearerTokenCredentialPolicy` of `azure-core` to support complete CAE challenges.
+- Python 3.8 is no longer supported. Please use Python version 3.9 or later.
 
 ## 1.5.0 (2024-10-31)
 
