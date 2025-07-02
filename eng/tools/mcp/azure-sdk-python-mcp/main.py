@@ -224,32 +224,10 @@ def init_tool(tsp_config_url: str, repo_path: str) -> Dict[str, Any]:
 
 
 @mcp.tool("init_local")
-def init_local_tool(tsp_config_path: str, repo_path: str) -> Dict[str, Any]:
+def init_local_tool(tsp_config_path: str, repo_path: str, commit_id: str) -> Dict[str, Any]:
     """Initializes and subsequently generates a typespec client library directory from a local azure-rest-api-specs repo.
 
     This command is used to generate a client library from a local azure-rest-api-specs repository. No additional
-    commands are needed to generate the client library.
-
-    Args:
-        tsp_config_path: The path to the local tspconfig.yaml file.
-        repo_path: The path to the repository root (i.e. ./azure-sdk-for-python/).
-
-    Returns:
-        A dictionary containing the result of the command."""
-    try:
-
-        # Run the init command with local path using the combined function
-        return run_command(["init"], cwd=repo_path, is_typespec=True, typespec_args={"tsp-config": tsp_config_path})
-
-    except RuntimeError as e:
-        return {"success": False, "message": str(e), "stdout": "", "stderr": "", "code": 1}
-
-
-@mcp.tool("init_local_arm")
-def init_local_tool_arm(tsp_config_path: str, repo_path: str, commit_id: str) -> Dict[str, Any]:
-    """Initializes and subsequently generates a arm typespec client library directory from a local azure-rest-api-specs repo.
-
-    This command is used to generate a arm client library from a local azure-rest-api-specs repository. No additional
     commands are needed to generate the client library.
 
     Args:
