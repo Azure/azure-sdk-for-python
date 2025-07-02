@@ -236,7 +236,8 @@ def main(generate_input, generate_output):
         try:
             code_generation_start_time = time.time()
             if input_type == "relatedTypeSpecProjectFolder":
-                del_outdated_generated_files(str(Path(spec_folder, readme_or_tsp)))
+                if run_in_pipeline:
+                    del_outdated_generated_files(str(Path(spec_folder, readme_or_tsp)))
                 config = gen_typespec(
                     readme_or_tsp,
                     spec_folder,
