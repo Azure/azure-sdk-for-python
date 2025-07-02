@@ -182,8 +182,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:  # type: ignore[override]
-        """Do a relevance evaluation.
-
+        """Do a tool call accuracy evaluation.
         :param eval_input: The input to the evaluator. Expected to contain
         whatever inputs are needed for the _flow method, including context
         and other fields depending on the child class.
@@ -245,7 +244,6 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     
     def _not_applicable_result(self, error_message):
         """Return a result indicating that the tool call is not applicable for evaluation.
-pr
         :param eval_input: The input to the evaluator.
         :type eval_input: Dict
         :return: A dictionary containing the result of the evaluation.
