@@ -39,6 +39,7 @@ from ._operations import MessagesOperations as MessagesOperationsGenerated
 from ._operations import VectorStoresOperations as VectorStoresOperationsGenerated
 from ._operations import VectorStoreFilesOperations as VectorStoreFilesOperationsGenerated
 from ._operations import VectorStoreFileBatchesOperations as VectorStoreFileBatchesOperationsGenerated
+from ._operations import AgentsClientOperationsMixin as AgentsClientOperationsMixinGenerated
 from .._utils.utils import FileType
 
 if sys.version_info >= (3, 9):
@@ -74,6 +75,15 @@ def _has_errors_in_toolcalls_output(tool_outputs: List[Dict]) -> bool:
             except json.JSONDecodeError:
                 continue
     return False
+
+
+class AgentsClientOperationsMixin(AgentsClientOperationsMixinGenerated):
+    """This is an abstract class. Please use the inherited class `azure.ai.agents.AgentsClient`."""
+
+    def __init__(self) -> None:
+        raise TypeError(
+            "AgentsClientOperationsMixin is an abstract class. Please use the inherited class `azure.ai.agents.AgentsClient"
+        )
 
 
 class ThreadsOperations(ThreadsOperationsGenerated):
@@ -2271,6 +2281,7 @@ __all__: List[str] = [
     "VectorStoresOperations",
     "VectorStoreFilesOperations",
     "VectorStoreFileBatchesOperations",
+    "AgentsClientOperationsMixin",
 ]  # Add all objects you want publicly available to users at this package level
 
 
