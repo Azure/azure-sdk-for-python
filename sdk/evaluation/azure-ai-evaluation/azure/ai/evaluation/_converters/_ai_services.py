@@ -718,6 +718,7 @@ class AIAgentConverter:
 
         return AIAgentConverter._convert_from_conversation(data, run_id)
 
+
 @experimental
 class AIAgentDataRetriever:
     # Maximum items to fetch in a single AI Services API call (imposed by the service).
@@ -748,6 +749,7 @@ class AIAgentDataRetriever:
     def _list_run_ids_chronological(self, thread_id: str) -> List[str]:
         pass
 
+
 @experimental
 class LegacyAgentDataRetriever(AIAgentDataRetriever):
 
@@ -768,7 +770,8 @@ class LegacyAgentDataRetriever(AIAgentDataRetriever):
         after = None
         while has_more:
             messages = self.project_client.agents.list_messages(
-            thread_id=thread_id, limit=self._AI_SERVICES_API_MAX_LIMIT, order="asc", after=after)
+                thread_id=thread_id, limit=self._AI_SERVICES_API_MAX_LIMIT, order="asc", after=after
+            )
             has_more = messages.has_more
             after = messages.last_id
             if messages.data:
@@ -812,6 +815,7 @@ class LegacyAgentDataRetriever(AIAgentDataRetriever):
     def _get_run(self, thread_id: str, run_id: str):
         return self.project_client.agents.get_run(thread_id=thread_id, run_id=run_id)
 
+
 @experimental
 class FDPAgentDataRetriever(AIAgentDataRetriever):
 
@@ -833,12 +837,9 @@ class FDPAgentDataRetriever(AIAgentDataRetriever):
 
     def _list_run_steps_chronological(self, thread_id: str, run_id: str):
 
-        return  self.project_client.agents.run_steps.list(
-                thread_id=thread_id,
-                run_id=run_id,
-                limit=self._AI_SERVICES_API_MAX_LIMIT,
-                order="asc"
-            )
+        return self.project_client.agents.run_steps.list(
+            thread_id=thread_id, run_id=run_id, limit=self._AI_SERVICES_API_MAX_LIMIT, order="asc"
+        )
 
     def _list_run_ids_chronological(self, thread_id: str) -> List[str]:
         runs = self.project_client.agents.runs.list(thread_id=thread_id, order="asc")

@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import asyncio
+import base64
 import sys
 import time
 from unittest.mock import Mock, patch, AsyncMock, create_autospec
@@ -12,7 +13,7 @@ from requests import Response
 from azure.core.credentials import AccessToken, AccessTokenInfo
 from azure.core.credentials_async import AsyncTokenCredential, AsyncSupportsTokenInfo
 from azure.core.exceptions import ServiceRequestError
-from azure.core.pipeline import AsyncPipeline, PipelineRequest, PipelineContext
+from azure.core.pipeline import AsyncPipeline, PipelineRequest, PipelineContext, PipelineResponse
 from azure.core.pipeline.policies import (
     AsyncBearerTokenCredentialPolicy,
     SansIOHTTPPolicy,
@@ -593,3 +594,49 @@ def test_async_token_credential_sync():
         # Ensure trio isn't in sys.modules (i.e. imported).
         sys.modules.pop("trio", None)
         AsyncBearerTokenCredentialPolicy(Mock(), "scope")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_async_bearer_policy_on_challenge_caches_token(http_request):
+    """Test that async on_challenge caches the token when handling claims challenges"""
+    # Setup credentials that return different tokens for different calls
+    initial_token = AccessToken("initial_token", int(time.time()) + 3600)
+    claims_token = AccessToken("claims_token", int(time.time()) + 3600)
+
+    call_count = 0
+
+    async def mock_get_token_info(*scopes, options=None):
+        nonlocal call_count
+        call_count += 1
+        if options and "claims" in options:
+            return claims_token
+        return initial_token
+
+    fake_credential = Mock(spec_set=["get_token_info"], get_token_info=mock_get_token_info)
+    policy = AsyncBearerTokenCredentialPolicy(fake_credential, "scope")
+
+    # Create request and initial response
+    http_req = http_request("GET", "https://example.com")
+    request = PipelineRequest(http_req, PipelineContext(None))
+
+    # Create a 401 response with insufficient_claims challenge
+    test_claims = '{"access_token":{"foo":"bar"}}'
+    encoded_claims = base64.urlsafe_b64encode(test_claims.encode()).decode().rstrip("=")
+    challenge_header = f'Bearer error="insufficient_claims", claims="{encoded_claims}"'
+
+    response_mock = Mock(status_code=401, headers={"WWW-Authenticate": challenge_header})
+    response = PipelineResponse(request, response_mock, PipelineContext(None))
+
+    # Call on_challenge
+    result = await policy.on_challenge(request, response)
+
+    # Verify the challenge was handled successfully
+    assert result is True
+
+    # Verify the token was cached
+    assert policy._token is claims_token
+    assert policy._token.token == "claims_token"
+
+    # Verify the Authorization header was set correctly
+    assert request.http_request.headers["Authorization"] == "Bearer claims_token"

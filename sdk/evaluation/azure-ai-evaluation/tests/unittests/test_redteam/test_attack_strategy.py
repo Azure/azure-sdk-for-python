@@ -20,12 +20,12 @@ class TestAttackStrategyEnum:
         assert AttackStrategy.DIFFICULT.value == "difficult"
         assert AttackStrategy.Baseline.value == "baseline"
         assert AttackStrategy.Jailbreak.value == "jailbreak"
-        
+
         # Test some specific attack strategies
         assert AttackStrategy.Base64.value == "base64"
         assert AttackStrategy.Morse.value == "morse"
         assert AttackStrategy.CharSwap.value == "char_swap"
-        
+
         # Make sure all values are lowercase
         for strategy in AttackStrategy:
             assert strategy.value.islower()
@@ -59,11 +59,7 @@ class TestAttackStrategyCompose:
     def test_compose_too_many(self):
         """Test AttackStrategy.Compose with too many strategies."""
         with pytest.raises(ValueError) as excinfo:
-            AttackStrategy.Compose([
-                AttackStrategy.Base64, 
-                AttackStrategy.Morse, 
-                AttackStrategy.Flip
-            ])
+            AttackStrategy.Compose([AttackStrategy.Base64, AttackStrategy.Morse, AttackStrategy.Flip])
         assert "Composed strategies must have at most 2 items" in str(excinfo.value)
 
     def test_compose_empty(self):

@@ -122,6 +122,24 @@ tox -e pyright -c [path to tox.ini] --root .
 
 # Step 3d: Verifytypes
 tox -e verifytypes -c [path to tox.ini] --root .
+
+# Step 3e: Sphinx
+tox -e sphinx -c [path to tox.ini] --root .
+
+# Step 3f: Mindependency
+tox -e mindependency -c [path to tox.ini] --root .
+
+# Step 3g: Bandit
+tox -e bandit -c [path to tox.ini] --root .
+
+# Step 3h: Black
+tox -e black -c [path to tox.ini] --root .
+
+# Step 3i: Samples
+tox -e samples -c [path to tox.ini] --root .
+
+# Step 3j: Breaking
+tox -e breaking -c [path to tox.ini] --root .
 ```
 
 **REQUIREMENTS:**
@@ -262,3 +280,25 @@ Mypy: FAIL
 Tests - CI: FAIL
 
 This library is failing two release blocking checks - Mypy and Tests - CI. The library needs attention primarily due to Pylint warnings, disabled sample tests, and open customer-reported issues.
+
+---
+
+## SDK release
+
+There are two tools to help with SDK releases:
+- Check SDK release readiness
+- Release SDK
+
+### Check SDK Release Readiness
+Run `CheckPackageReleaseReadiness` to verify if the package is ready for release. This tool checks:
+- API review status
+- Change log status
+- Package name approval(If package is new and releasing a preview version)
+- Release date is set in release tracker
+
+### Release SDK
+Run `ReleasePackage` to release the package. This tool requires package name and language as inputs. It will:
+- Check if the package is ready for release
+- Identify the release pipeline
+- Trigger the release pipeline.
+User needs to approve the release stage in the pipeline after it is triggered.
