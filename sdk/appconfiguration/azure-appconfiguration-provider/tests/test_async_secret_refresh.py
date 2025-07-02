@@ -107,7 +107,7 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
         await client.refresh()
 
         # Verify the value was updated
-        assert client["secret"] == "Very secret value2"
+        assert client["secret"] == "Very secret value 2"
         assert mock_callback.call_count >= 1
 
     @recorded_by_proxy
