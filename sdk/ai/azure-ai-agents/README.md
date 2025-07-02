@@ -384,7 +384,7 @@ Here is an example:
 <!-- SNIPPET:sample_agents_deep_research.create_agent_with_deep_research_tool -->
 
 ```python
-conn_id = os.environ["AZURE_BING_CONNECTION_ID"]
+conn_id = project_client.connections.get(name=os.environ["BING_RESOURCE_NAME"]).id
 
 # Initialize a Deep Research tool with Bing Connection ID and Deep Research model deployment name
 deep_research_tool = DeepResearchTool(
