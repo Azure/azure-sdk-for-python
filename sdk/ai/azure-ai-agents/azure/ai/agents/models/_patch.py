@@ -817,7 +817,8 @@ class McpTool(Tool[MCPToolDefinition]):
         self._server_label = server_label
         self._server_url = server_url
         self._allowed_tools = allowed_tools or []
-        self._require_approval = "never"
+        self._require_approval = "always"
+        self._headers = {}
         self._definition = MCPToolDefinition(
             server_label=server_label,
             server_url=server_url,
@@ -825,8 +826,8 @@ class McpTool(Tool[MCPToolDefinition]):
         )
         self._resource = MCPToolResource(
             server_label=self._server_label,
-            headers={},
-            #require_approval=self._require_approval  # Enable once service supports it
+            headers=self._headers,
+            require_approval=self._require_approval  # Enable once service supports it
         )
 
     @property
@@ -874,6 +875,20 @@ class McpTool(Tool[MCPToolDefinition]):
         else:
             raise ValueError(f"Tool '{tool_name}' is not in the allowed tools list.")
 
+    def update_require_approval(self, require_approval: str) -> None:
+        """
+        Update the headers for the MCP tool.
+
+        :param require_approval: The require_approval setting to update.
+        :type require_approval: str
+        """
+        self._require_approval = require_approval
+        self._resource = MCPToolResource(
+            server_label=self._server_label,
+            headers=self._headers,
+            require_approval=self._require_approval
+        )
+
     def update_headers(self, key: str, value: str) -> None:
         """
         Update the headers for the MCP tool.
@@ -885,10 +900,11 @@ class McpTool(Tool[MCPToolDefinition]):
         :raises ValueError: If the key is empty.
         """
         if key:
+            self._headers[key] = value
             self._resource = MCPToolResource(
                 server_label=self._server_label,
-                headers={key: value},
-                #require_approval=self._require_approval  # Enable once service supports it
+                headers=self._headers,
+                require_approval=self._require_approval
             )
         else:
             raise ValueError(f"Header key cannot be empty.")

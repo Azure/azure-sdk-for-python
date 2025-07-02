@@ -142,6 +142,7 @@
         "azure.ai.agents.models.SharepointGroundingToolParameters": "Azure.AI.Agents.SharepointGroundingToolParameters",
         "azure.ai.agents.models.SharepointToolDefinition": "Azure.AI.Agents.SharepointToolDefinition",
         "azure.ai.agents.models.SubmitToolApprovalAction": "Azure.AI.Agents.SubmitToolApprovalAction",
+        "azure.ai.agents.models.SubmitToolApprovalDetails": "Azure.AI.Agents.SubmitToolApprovalDetails",
         "azure.ai.agents.models.SubmitToolOutputsAction": "Azure.AI.Agents.SubmitToolOutputsAction",
         "azure.ai.agents.models.SubmitToolOutputsDetails": "Azure.AI.Agents.SubmitToolOutputsDetails",
         "azure.ai.agents.models.ThreadMessage": "Azure.AI.Agents.ThreadMessage",

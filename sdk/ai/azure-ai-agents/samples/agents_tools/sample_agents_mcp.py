@@ -82,6 +82,8 @@ with project_client:
 
     # Create and process agent run in thread with MCP tools
     mcp_tool.update_headers("SuperSecret", "123456")
+    #mcp_tool.update_require_approval("never")
+    print(mcp_tool)
     run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id, tool_resources=mcp_tool.resources)
     print(f"Created run, ID: {run.id}")
 
@@ -90,7 +92,7 @@ with project_client:
         run = agents_client.runs.get(thread_id=thread.id, run_id=run.id)
 
         if run.status == "requires_action" and isinstance(run.required_action, SubmitToolApprovalAction):
-            tool_calls = run.required_action.submit_tool_approval
+            tool_calls = run.required_action.submit_tool_approval.tool_calls
             if not tool_calls:
                 print("No tool calls provided - cancelling run")
                 agents_client.runs.cancel(thread_id=thread.id, run_id=run.id)

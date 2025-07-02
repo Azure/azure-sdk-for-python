@@ -5609,13 +5609,13 @@ class SubmitToolApprovalAction(RequiredAction, discriminator="submit_tool_approv
     :vartype type: str
     :ivar submit_tool_approval: The details describing tools that should be approved to continue
      run. Required.
-    :vartype submit_tool_approval: list[~azure.ai.agents.models.RequiredToolCall]
+    :vartype submit_tool_approval: ~azure.ai.agents.models.SubmitToolApprovalDetails
     """
 
     type: Literal["submit_tool_approval"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'submit_tool_approval'. Required. Default value is
      \"submit_tool_approval\"."""
-    submit_tool_approval: List["_models.RequiredToolCall"] = rest_field(
+    submit_tool_approval: "_models.SubmitToolApprovalDetails" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The details describing tools that should be approved to continue run. Required."""
@@ -5624,7 +5624,7 @@ class SubmitToolApprovalAction(RequiredAction, discriminator="submit_tool_approv
     def __init__(
         self,
         *,
-        submit_tool_approval: List["_models.RequiredToolCall"],
+        submit_tool_approval: "_models.SubmitToolApprovalDetails",
     ) -> None: ...
 
     @overload
@@ -5636,6 +5636,37 @@ class SubmitToolApprovalAction(RequiredAction, discriminator="submit_tool_approv
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type="submit_tool_approval", **kwargs)
+
+
+class SubmitToolApprovalDetails(_Model):
+    """The details describing tools that should be approved.
+
+    :ivar tool_calls: The list of tool calls that must be approved for the agent thread run to
+     continue. Required.
+    :vartype tool_calls: list[~azure.ai.agents.models.RequiredToolCall]
+    """
+
+    tool_calls: List["_models.RequiredToolCall"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of tool calls that must be approved for the agent thread run to continue. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tool_calls: List["_models.RequiredToolCall"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class SubmitToolOutputsAction(RequiredAction, discriminator="submit_tool_outputs"):
