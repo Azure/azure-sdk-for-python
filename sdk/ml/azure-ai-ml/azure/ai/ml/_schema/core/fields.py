@@ -15,9 +15,26 @@ from pathlib import Path
 from typing import List, Optional, Union
 
 from marshmallow import RAISE, fields
-from marshmallow.exceptions import ValidationError
+from marshmallow.exceptions import ValidationError, FieldInstanceResolutionError
 from marshmallow.fields import Field, Nested
-from marshmallow.utils import FieldInstanceResolutionError, from_iso_datetime, resolve_field_instance
+
+try:
+    # marshmallow 4.x
+    from marshmallow.class_registry import resolve_field_instance
+except ImportError:
+    # marshmallow 3.x
+    from marshmallow.utils import resolve_field_instance
+
+# Custom implementation for from_iso_datetime compatibility
+def from_iso_datetime(value):
+    """Parse an ISO8601 datetime string, handling the 'Z' suffix."""
+    from datetime import datetime
+    if isinstance(value, str):
+        # Replace 'Z' with '+00:00' for compatibility with datetime.fromisoformat
+        if value.endswith('Z'):
+            value = value[:-1] + '+00:00'
+        return datetime.fromisoformat(value)
+    return value
 
 from ..._utils._arm_id_utils import AMLVersionedArmId, is_ARM_id_for_resource, parse_name_label, parse_name_version
 from ..._utils._experimental import _is_warning_cached
@@ -435,13 +452,13 @@ class UnionField(fields.Field):
         super().__init__(**kwargs)
         try:
             # add the validation and make sure union_fields must be subclasses or instances of
-            # marshmallow.base.FieldABC
+            # marshmallow fields
             self._union_fields = [resolve_field_instance(cls_or_instance) for cls_or_instance in union_fields]
             # TODO: make serialization/de-serialization work in the same way as json schema when is_strict is True
             self.is_strict = is_strict  # S\When True, combine fields with oneOf instead of anyOf at schema generation
         except FieldInstanceResolutionError as error:
             raise ValueError(
-                'Elements of "union_fields" must be subclasses or instances of marshmallow.base.FieldABC.'
+                'Elements of "union_fields" must be subclasses or instances of marshmallow fields.'
             ) from error
 
     @property
@@ -878,7 +895,7 @@ class ExperimentalField(fields.Field):
             self.required = experimental_field.required
         except FieldInstanceResolutionError as error:
             raise ValueError(
-                '"experimental_field" must be subclasses or instances of marshmallow.base.FieldABC.'
+                '"experimental_field" must be subclasses or instances of marshmallow fields.'
             ) from error
 
     @property
