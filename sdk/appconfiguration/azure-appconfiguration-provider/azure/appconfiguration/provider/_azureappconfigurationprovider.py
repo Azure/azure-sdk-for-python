@@ -344,6 +344,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         self._replica_client_manager.refresh_clients()
         self._replica_client_manager.find_active_clients()
         replica_count = self._replica_client_manager.get_client_count() - 1
+
         while client := self._replica_client_manager.get_next_active_client():
             headers = update_correlation_context_header(
                 kwargs.pop("headers", {}),
@@ -417,6 +418,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 self._secret_refresh_timer.reset()
 
             return True
+
         self._common_refresh(
             refresh_operation=refresh_operation,
             error_log_message="Failed to refresh configurations from endpoint %s",
