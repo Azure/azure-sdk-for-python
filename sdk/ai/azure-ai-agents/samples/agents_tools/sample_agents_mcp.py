@@ -82,7 +82,7 @@ with project_client:
 
     # Create and process agent run in thread with MCP tools
     mcp_tool.update_headers("SuperSecret", "123456")
-    #mcp_tool.update_require_approval("never")
+    mcp_tool.update_require_approval("always")
     print(mcp_tool)
     run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id, tool_resources=mcp_tool.resources)
     print(f"Created run, ID: {run.id}")
@@ -115,7 +115,7 @@ with project_client:
 
             print(f"tool_approvals: {tool_approvals}")
             if tool_approvals:
-                agents_client.runs.submit_tool_approvals(
+                agents_client.runs.submit_tool_outputs(
                     thread_id=thread.id, run_id=run.id, tool_approvals=tool_approvals
                 )
 

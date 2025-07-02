@@ -817,7 +817,7 @@ class McpTool(Tool[MCPToolDefinition]):
         self._server_label = server_label
         self._server_url = server_url
         self._allowed_tools = allowed_tools or []
-        self._require_approval = "always"
+        self._require_approval = "never"
         self._headers = {}
         self._definition = MCPToolDefinition(
             server_label=server_label,
@@ -825,9 +825,7 @@ class McpTool(Tool[MCPToolDefinition]):
             allowed_tools=self._allowed_tools if self._allowed_tools else None,
         )
         self._resource = MCPToolResource(
-            server_label=self._server_label,
-            headers=self._headers,
-            require_approval=self._require_approval  # Enable once service supports it
+            server_label=self._server_label, headers=self._headers, require_approval=self._require_approval
         )
 
     @property
@@ -884,9 +882,7 @@ class McpTool(Tool[MCPToolDefinition]):
         """
         self._require_approval = require_approval
         self._resource = MCPToolResource(
-            server_label=self._server_label,
-            headers=self._headers,
-            require_approval=self._require_approval
+            server_label=self._server_label, headers=self._headers, require_approval=self._require_approval
         )
 
     def update_headers(self, key: str, value: str) -> None:
@@ -902,9 +898,7 @@ class McpTool(Tool[MCPToolDefinition]):
         if key:
             self._headers[key] = value
             self._resource = MCPToolResource(
-                server_label=self._server_label,
-                headers=self._headers,
-                require_approval=self._require_approval
+                server_label=self._server_label, headers=self._headers, require_approval=self._require_approval
             )
         else:
             raise ValueError(f"Header key cannot be empty.")

@@ -232,8 +232,6 @@
         "azure.ai.agents.aio.operations.RunsOperations.update": "Azure.AI.Agents.Runs.updateRun",
         "azure.ai.agents.operations.RunsOperations.submit_tool_outputs": "Azure.AI.Agents.Runs.submitToolOutputsToRun",
         "azure.ai.agents.aio.operations.RunsOperations.submit_tool_outputs": "Azure.AI.Agents.Runs.submitToolOutputsToRun",
-        "azure.ai.agents.operations.RunsOperations.submit_tool_approvals": "Azure.AI.Agents.Runs.submitToolApprovals",
-        "azure.ai.agents.aio.operations.RunsOperations.submit_tool_approvals": "Azure.AI.Agents.Runs.submitToolApprovals",
         "azure.ai.agents.operations.RunsOperations.cancel": "Azure.AI.Agents.Runs.cancelRun",
         "azure.ai.agents.aio.operations.RunsOperations.cancel": "Azure.AI.Agents.Runs.cancelRun",
         "azure.ai.agents.operations.RunStepsOperations.get": "Azure.AI.Agents.RunSteps.getRunStep",
