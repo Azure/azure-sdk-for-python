@@ -150,7 +150,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
             appconfiguration_connection_string, user_agent="SDK/Integration"
         )
 
-    async def create_aad_sdk_client(self, appconfiguration_endpoint_string):
+    def create_aad_sdk_client(self, appconfiguration_endpoint_string):
         cred = self.get_credential(AzureAppConfigurationClient, is_async=True)
         return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, user_agent="SDK/Integration")
 

@@ -6,6 +6,7 @@
 import json
 import datetime
 import logging
+import inspect
 from typing import (
     Any,
     Awaitable,
@@ -392,8 +393,10 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 return
             raise exception
 
-        if self._on_refresh_success:
+        if self._on_refresh_success and inspect.iscoroutinefunction(self._on_refresh_success):
             await self._on_refresh_success()
+        elif self._on_refresh_success:
+            self._on_refresh_success()
 
     async def _refresh_configuration_settings(self, force: bool = False, **kwargs: Any) -> None:
 

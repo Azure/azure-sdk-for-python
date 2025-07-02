@@ -19,7 +19,10 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
     @app_config_aad_decorator_async
     async def test_secret_refresh_timer(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url, appconfiguration_keyvault_secret_url2):
         """Test that secrets are refreshed based on the secret_refresh_interval."""
-        mock_callback = Mock()
+        # Create an async mock callback
+        async def async_callback():
+            pass
+        mock_callback = Mock(side_effect=async_callback)
         
         # Create client with key vault reference and secret refresh interval
         client = await self.create_aad_client(
@@ -57,7 +60,10 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
     @app_config_aad_decorator_async
     async def test_secret_refresh_with_updated_values(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url, appconfiguration_keyvault_secret_url2):
         """Test that secrets are refreshed with updated values."""
-        mock_callback = Mock()
+        # Create an async mock callback
+        async def async_callback():
+            pass
+        mock_callback = Mock(side_effect=async_callback)
         
         # Create client with the mock secret resolver
         client = await self.create_aad_client(
@@ -92,7 +98,6 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
         await client.refresh()
         
         # Verify the value was updated
-        breakpoint()
         assert client["secret"] == "Very secret value2"
         assert mock_callback.call_count >= 1
     
@@ -100,7 +105,10 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
     @app_config_aad_decorator_async
     async def test_no_secret_refresh_without_timer(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url, appconfiguration_keyvault_secret_url2):
         """Test that secrets are not refreshed if secret_refresh_interval is not set."""
-        mock_callback = Mock()
+        # Create an async mock callback
+        async def async_callback():
+            pass
+        mock_callback = Mock(side_effect=async_callback)
         
         # Create client without specifying secret_refresh_interval
         client = await self.create_aad_client(
@@ -135,7 +143,10 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
     @app_config_aad_decorator_async
     async def test_secret_refresh_timer_triggers_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url, appconfiguration_keyvault_secret_url2):
         """Test that the secret refresh timer triggers a refresh after the specified interval."""
-        mock_callback = Mock()
+        # Create an async mock callback
+        async def async_callback():
+            pass
+        mock_callback = Mock(side_effect=async_callback)
         
         # Create client with key vault reference and separate refresh intervals
         client = await self.create_aad_client(
@@ -165,7 +176,10 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
     @app_config_aad_decorator_async
     async def test_secret_refresh_interval_parameter(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url, appconfiguration_keyvault_secret_url2):
         """Test that secret_refresh_interval parameter is correctly passed and used."""
-        mock_callback = Mock()
+        # Create an async mock callback
+        async def async_callback():
+            pass
+        mock_callback = Mock(side_effect=async_callback)
         
         # Create client with specific secret_refresh_interval
         client = await self.create_aad_client(
