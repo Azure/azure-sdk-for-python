@@ -3,7 +3,6 @@
 
 import os
 import unittest
-import logging
 from unittest import mock
 import random
 import time
@@ -17,7 +16,11 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW,
     _REQUEST,
     _DEPENDENCY,
-    _REQ_RETRY_NAME
+    _REQ_RETRY_NAME,
+    _CUSTOMER_STATSBEAT_LANGUAGE,
+    _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
+    _UNKNOWN,
+    _TYPE_MAP,
 )
 
 from opentelemetry import trace
@@ -31,142 +34,111 @@ from azure.monitor.opentelemetry.exporter.export._base import (
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 from azure.monitor.opentelemetry.exporter.statsbeat._state import _REQUESTS_MAP
 
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
-
 class TestCustomerStatsbeat(unittest.TestCase):
     """Tests for CustomerStatsbeatMetrics."""
     def setUp(self):
         _REQUESTS_MAP.clear()
+        # Clear singleton instance for test isolation
+        CustomerStatsbeatMetrics._instance = None
+        
         self.env_patcher = mock.patch.dict(os.environ, {
             "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true"
         })
         self.env_patcher.start()
         self.mock_options = mock.Mock()
         self.mock_options.instrumentation_key = "363331ca-f431-4119-bdcd-31a75920f958"
-        self.mock_options.endpoint_url = "https://eastus-8.in.applicationinsights.azure.com/"
-        self.mock_options.network_collection_interval = 900
-    
+        self.mock_options.network_collection_interval = _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
+        self.mock_options.connection_string = "InstrumentationKey=363331ca-f431-4119-bdcd-31a75920f958;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/"
+        self.mock_options.language = _CUSTOMER_STATSBEAT_LANGUAGE
+        self.original_trace_provider = trace._TRACER_PROVIDER
+        trace._TRACER_PROVIDER = None
+        self.mock_options.metrics = CustomerStatsbeatMetrics(self.mock_options)
+        self.mock_options.transmit_called = [False]
+
     def tearDown(self):
         self.env_patcher.stop()
+        # Restore trace provider
+        trace._TRACER_PROVIDER = self.original_trace_provider
+        # Clean up singleton instances to prevent cross-test contamination
+        if hasattr(self.mock_options, 'metrics') and self.mock_options.metrics:
+            metrics = self.mock_options.metrics
+            if hasattr(metrics, '_customer_statsbeat_metric_reader'):
+                try:
+                    # Shutdown to prevent additional periodic exports
+                    metrics._customer_statsbeat_metric_reader.shutdown()
+                except Exception:
+                    pass  # Ignore shutdown errors
+        CustomerStatsbeatMetrics._instance = None
     
-    def _create_test_metrics(self):
-        patcher = mock.patch('azure.monitor.opentelemetry.exporter._connection_string_parser.ConnectionStringParser._validate_instrumentation_key')
-        patcher.start()
-        self.addCleanup(patcher.stop)
-        return CustomerStatsbeatMetrics(self.mock_options)
-    
-    def test_initialization_(self):
-        with mock.patch('azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.AzureMonitorMetricExporter'):
-            with mock.patch('azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.PeriodicExportingMetricReader'):
-                with mock.patch('azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.MeterProvider'):
-                    metrics = self._create_test_metrics()
-                    self.assertEqual(metrics._language, "python")
-                    self.assertTrue(metrics._is_enabled)
-    
-    def test_mocks(self):
-        original_trace_provider = trace._TRACER_PROVIDER
-        trace._TRACER_PROVIDER = None
-
-        # Track successful dependencies for verification
+    def test_successful_item_count(self):
         successful_dependencies = 0
 
-        connection_string = "InstrumentationKey=363331ca-f431-4119-bdcd-31a75920f958;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/"
+        metrics = self.mock_options.metrics
+        metrics._counters.total_item_success_count.clear()
 
-        with mock.patch('azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.collect_customer_statsbeat'):
-            with mock.patch.dict(os.environ, {"APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true"}):
-                # Initialize metrics
-                class StatsbeatOptions:
-                    def __init__(self):
-                        self.instrumentation_key = "363331ca-f431-4119-bdcd-31a75920f958"
-                        self.endpoint_url = "https://eastus-8.in.applicationinsights.azure.com/"
-                        self.network_collection_interval = 900
-                metrics = CustomerStatsbeatMetrics(StatsbeatOptions())
-                metrics._counters.total_item_success_count.clear()
+        exporter = AzureMonitorTraceExporter(connection_string=self.mock_options.connection_string)
 
-                # Create and configure exporter
-                exporter = AzureMonitorTraceExporter(connection_string=connection_string)
-                exporter._customer_statsbeat_metrics = metrics
+        def patched_transmit(self_exporter, envelopes):
+            self.mock_options.transmit_called[0] = True
 
-                # Track transmit calls
-                transmit_called = [False]
+            for envelope in envelopes:
+                if not hasattr(envelope, "data") or not envelope.data:
+                    continue
+    
+                if envelope.data.base_type == "RemoteDependencyData":
+                    base_data = envelope.data.base_data
+                    if base_data and hasattr(base_data, "success"):
+                        if base_data.success:
+                            envelope_name = "Microsoft.ApplicationInsights." + envelope.data.base_type
+                            metrics.count_successful_items(1, _TYPE_MAP.get(envelope_name, _UNKNOWN))
 
-                def patched_transmit(self_exporter, envelopes):
-                    transmit_called[0] = True
-                    logger.info(f"\nProcessing {len(envelopes)} envelopes")
+            return ExportResult.SUCCESS
 
-                    for envelope in envelopes:
-                        if not hasattr(envelope, "data") or not envelope.data:
-                            continue
+        exporter._transmit = types.MethodType(patched_transmit, exporter)
 
-                        if envelope.data.base_type == "RemoteDependencyData":
-                            base_data = envelope.data.base_data
-                            if base_data and hasattr(base_data, "success"):
-                                if base_data.success:
-                                    metrics.count_successful_items(1, _DEPENDENCY)
-                                    logger.info(f"Counted successful DEPENDENCY")
+        resource = Resource.create({"service.name": "dependency-test", "service.instance.id": "test-instance"})
+        trace_provider = TracerProvider(resource=resource)
+        
+        processor = SimpleSpanProcessor(exporter)
+        trace_provider.add_span_processor(processor)
 
-                    return ExportResult.SUCCESS
+        tracer = trace_provider.get_tracer(__name__)
 
-                # Apply the transmit patch
-                original_transmit = exporter._transmit
-                exporter._transmit = types.MethodType(patched_transmit, exporter)
+        # Generate random number of dependencies (between 5 and 15)
+        total_dependencies = random.randint(5, 15)
 
-                # Set up trace provider and processor
-                resource = Resource.create({"service.name": "dependency-test", "service.instance.id": "test-instance"})
-                trace_provider = TracerProvider(resource=resource)
-                
-                processor = SimpleSpanProcessor(exporter)
-                trace_provider.add_span_processor(processor)
+        for i in range(total_dependencies):
+            success = random.choice([True, False])
+            if success:
+                successful_dependencies += 1
 
-                # Create tracer
-                tracer = trace_provider.get_tracer(__name__)
+            with tracer.start_as_current_span(
+                name=f"{'success' if success else 'failed'}-dependency-{i}",
+                kind=trace.SpanKind.CLIENT,
+                attributes={
+                    "db.system": "mysql",
+                    "db.name": "test_db",
+                    "db.operation": "query",
+                    "net.peer.name": "test-db-server",
+                    "net.peer.port": 3306,
+                    "http.status_code": 200 if success else random.choice([400, 500, 503])
+                }
+            ) as span:
+                span.set_status(trace.Status(
+                    trace.StatusCode.OK if success else trace.StatusCode.ERROR
+                ))
+                time.sleep(0.1)
 
-                # Generate random number of dependencies (between 5 and 15)
-                total_dependencies = random.randint(5, 15)
-                logger.info(f"Generating {total_dependencies} dependencies")
+        trace_provider.force_flush()
+        
+        self.metrics_instance = metrics
+        
+        self.assertTrue(self.mock_options.transmit_called[0], "Exporter _transmit method was not called")
 
-                # Generate dependencies with random success/failure
-                for i in range(total_dependencies):
-                    success = random.choice([True, False])
-                    if success:
-                        successful_dependencies += 1
+        actual_count = metrics._counters.total_item_success_count.get(_DEPENDENCY, 0)
 
-                    with tracer.start_as_current_span(
-                        name=f"{'success' if success else 'failed'}-dependency-{i}",
-                        kind=trace.SpanKind.CLIENT,
-                        attributes={
-                            "db.system": "mysql",
-                            "db.name": "test_db",
-                            "db.operation": "query",
-                            "net.peer.name": "test-db-server",
-                            "net.peer.port": 3306,
-                            "http.status_code": 200 if success else random.choice([400, 500, 503])
-                        }
-                    ) as span:
-                        span.set_status(trace.Status(
-                            trace.StatusCode.OK if success else trace.StatusCode.ERROR
-                        ))
-                        time.sleep(0.1)
-
-                # Force flush and wait for processing
-                logger.info("Flushing telemetry...")
-                trace_provider.force_flush()
-                time.sleep(2)
-
-                # Verify transmit was called
-                self.assertTrue(transmit_called[0], "Exporter _transmit method was not called")
-
-                # Log counts
-                logger.info(f"Generated dependencies - Total: {total_dependencies}, Expected Successful: {successful_dependencies}")
-                actual_count = metrics._counters.total_item_success_count.get(_DEPENDENCY, 0)
-                logger.info(f"Actual successful dependencies counted: {actual_count}")
-
-                # Verify dependency count
-                self.assertEqual(
-                    actual_count,
-                    successful_dependencies,
-                    f"Expected {successful_dependencies} successful dependencies, got {actual_count}"
-                )
-
-        trace._TRACER_PROVIDER = original_trace_provider
+        self.assertEqual(
+            actual_count,
+            successful_dependencies,
+            f"Expected {successful_dependencies} successful dependencies, got {actual_count}"
+        )

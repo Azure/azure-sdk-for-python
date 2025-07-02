@@ -31,6 +31,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
 from azure.monitor.opentelemetry.exporter._constants import (
     _TYPE_MAP,
     _UNKNOWN,
+    _RP_Names,
 )
 
 opentelemetry_version = ""
@@ -390,3 +391,12 @@ def _get_telemetry_type(item: TelemetryItem):
         if base_type:
             return _TYPE_MAP.get(base_type, _UNKNOWN)
     return _UNKNOWN
+
+def get_compute_type():
+    if _is_on_functions():
+        return _RP_Names.FUNCTIONS.value
+    if _is_on_app_service():
+        return _RP_Names.APP_SERVICE.value
+    if _is_on_aks():
+        return _RP_Names.AKS.value
+    return _RP_Names.UNKNOWN.value
