@@ -18,8 +18,7 @@ if TYPE_CHECKING:
     from ._generated.models import CommunicationIdentifierModel
 
 
-def serialize_identifier(identifier):
-    # type: (CommunicationIdentifier) -> Dict[str, Any]
+def serialize_identifier(identifier: CommunicationIdentifier) -> Dict[str, Any]:
     """Serialize the Communication identifier into CommunicationIdentifierModel
 
     :param identifier: Identifier object
@@ -39,8 +38,7 @@ def serialize_identifier(identifier):
         )
 
 
-def deserialize_identifier(identifier_model):
-    # type: (CommunicationIdentifierModel) -> CommunicationIdentifier
+def deserialize_identifier(identifier_model: "CommunicationIdentifierModel") -> CommunicationIdentifier:
     """
     Deserialize the CommunicationIdentifierModel into Communication Identifier
 
