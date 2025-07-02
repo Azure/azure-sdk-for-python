@@ -60,7 +60,10 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
             return False
 
         circuit_breaker_enabled = os.environ.get(Constants.CIRCUIT_BREAKER_ENABLED_CONFIG,
-                                                 Constants.CIRCUIT_BREAKER_ENABLED_CONFIG_DEFAULT) == "True"
+                                                 Constants.CIRCUIT_BREAKER_ENABLED_CONFIG_DEFAULT).lower() == "true"
+        if not circuit_breaker_enabled and self.client._global_endpoint_manager is not None:
+            if self.client._global_endpoint_manager._database_account_cache is not None:
+                circuit_breaker_enabled = self.client._global_endpoint_manager._database_account_cache._EnablePerPartitionFailoverBehavior == True # pylint: disable=line-too-long
         if not circuit_breaker_enabled:
             return False
 
