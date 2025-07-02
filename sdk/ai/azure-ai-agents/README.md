@@ -419,8 +419,12 @@ agent = await agents_client.create_agent(
 
 <!-- END SNIPPET -->
 
-Notice that if `enable_auto_function_calls` is called, the SDK will invoke the functions automatically during `create_and_process` or streaming.  If you prefer to execute them manually, refer to [`sample_agents_stream_eventhandler_with_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_streaming/sample_agents_stream_eventhandler_with_functions.py) or
-[`sample_agents_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_tools/sample_agents_functions.py)
+When `enable_auto_function_calls` is called, the SDK will automatically invoke functions during both `create_and_process` and streaming workflows. This simplifies agent logic by handling function execution internally.
+
+- For an example of automatic function calls in action, see: [`sample_agents_auto_function_call.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_tools/sample_agents_auto_function_call.py).
+- If you prefer to manage function execution manually, refer to [`sample_agents_stream_eventhandler_with_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_streaming/sample_agents_stream_eventhandler_with_functions.py) or
+[`sample_agents_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_tools/sample_agents_functions.py).
+
 
 ### Create Agent With Azure Function Call
 
