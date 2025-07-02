@@ -11,7 +11,7 @@ import hmac
 try:
     from urllib.parse import quote, unquote
 except ImportError:
-    from urllib2 import quote, unquote # type: ignore
+    from urllib2 import quote, unquote  # type: ignore
 
 
 def url_quote(url):
@@ -24,20 +24,20 @@ def url_unquote(url):
 
 def encode_base64(data):
     if isinstance(data, str):
-        data = data.encode('utf-8')
+        data = data.encode("utf-8")
     encoded = base64.b64encode(data)
-    return encoded.decode('utf-8')
+    return encoded.decode("utf-8")
 
 
 def decode_base64_to_bytes(data):
     if isinstance(data, str):
-        data = data.encode('utf-8')
+        data = data.encode("utf-8")
     return base64.b64decode(data)
 
 
 def decode_base64_to_text(data):
     decoded_bytes = decode_base64_to_bytes(data)
-    return decoded_bytes.decode('utf-8')
+    return decoded_bytes.decode("utf-8")
 
 
 def sign_string(key, string_to_sign, key_is_base64=True):
@@ -45,9 +45,9 @@ def sign_string(key, string_to_sign, key_is_base64=True):
         key = decode_base64_to_bytes(key)
     else:
         if isinstance(key, str):
-            key = key.encode('utf-8')
+            key = key.encode("utf-8")
     if isinstance(string_to_sign, str):
-        string_to_sign = string_to_sign.encode('utf-8')
+        string_to_sign = string_to_sign.encode("utf-8")
     signed_hmac_sha256 = hmac.HMAC(key, string_to_sign, hashlib.sha256)
     digest = signed_hmac_sha256.digest()
     encoded_digest = encode_base64(digest)

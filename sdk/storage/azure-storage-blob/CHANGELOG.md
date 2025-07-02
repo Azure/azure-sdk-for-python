@@ -5,6 +5,9 @@
 ### Features Added
 - Stable release of features from 12.26.0b1
 
+### Bugs Fixed
+- Fixed an issue where `BlobClient`'s `start_copy_from_url` with `incremental_copy=True` results in `TypeError`.
+
 ## 12.26.0b1 (2025-05-06)
 
 ### Features Added
