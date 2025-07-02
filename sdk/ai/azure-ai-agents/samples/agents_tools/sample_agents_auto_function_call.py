@@ -48,10 +48,10 @@ with agents_client:
     #   functions = FunctionTool(user_functions)
     #   agents_client.enable_auto_function_calls(functions)
     # Example 3:
-    #   agents_client.enable_auto_function_calls(user_functions)
     #   functions = FunctionTool(user_functions)
     #   toolset = ToolSet()
     #   toolset.add(functions)
+    #   agents_client.enable_auto_function_calls(toolset)
     agents_client.enable_auto_function_calls(user_functions)
     # Notices that `enable_auto_function_calls` can be made at any time.
 
