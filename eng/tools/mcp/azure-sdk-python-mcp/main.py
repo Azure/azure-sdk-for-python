@@ -196,50 +196,27 @@ def tox_tool(package_path: str, environment: str, repo_path: str, tox_ini_path: 
     return run_command(command, cwd=repo_path)
 
 @mcp.tool("init")
-def init_tool(tsp_config_url: str, repo_path: str) -> Dict[str, Any]:
-    """Initializes and generates a typespec client library directory given the url.
+def init_tool(tsp_config_path: str, repo_path: str, is_local: bool = False) -> Dict[str, Any]:
+    """Initializes and generates a typespec client library directory.
     
     Args:
-        tsp_config_url: The URL to the tspconfig.yaml file.
+        tsp_config_path: Either the URL to the tspconfig.yaml file or the path to a local tspconfig.yaml file.
         repo_path: The path to the repository root (i.e. ./azure-sdk-for-python/).
+        is_local: Whether the tsp_config_path is a local file path (True) or a URL (False).
     Returns:
         A dictionary containing the result of the command.
     """
     try:
-        # Get updated URL with latest commit hash
-        updated_url = get_latest_commit(tsp_config_url)
+        config_path = tsp_config_path
+        
+        # If not a local path, get updated URL with latest commit hash
+        if not is_local and tsp_config_path.startswith("http"):
+            config_path = get_latest_commit(tsp_config_path)
+            logger.info(f"Using updated TypeSpec config URL with latest commit: {config_path}")
         
         # Run the init command using the combined function
         return run_command(["init"], cwd=repo_path, is_typespec=True,
-                          typespec_args={"tsp-config": updated_url})
-                          
-    except RuntimeError as e:
-        return {
-            "success": False,
-            "message": str(e),
-            "stdout": "",
-            "stderr": "",
-            "code": 1
-        }
-
-@mcp.tool("init_local")
-def init_local_tool(tsp_config_path: str, repo_path:str) -> Dict[str, Any]:
-    """Initializes and subsequently generates a typespec client library directory from a local azure-rest-api-specs repo.
-
-    This command is used to generate a client library from a local azure-rest-api-specs repository. No additional
-    commands are needed to generate the client library.
-
-    Args:
-        tsp_config_path: The path to the local tspconfig.yaml file.
-        repo_path: The path to the repository root (i.e. ./azure-sdk-for-python/).
-
-    Returns:
-        A dictionary containing the result of the command.    """
-    try:
-        
-        # Run the init command with local path using the combined function
-        return run_command(["init"], cwd=repo_path, is_typespec=True,
-                          typespec_args={"tsp-config": tsp_config_path})
+                          typespec_args={"tsp-config": config_path})
                           
     except RuntimeError as e:
         return {
