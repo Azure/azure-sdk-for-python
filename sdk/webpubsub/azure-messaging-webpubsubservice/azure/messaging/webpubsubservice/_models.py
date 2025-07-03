@@ -9,7 +9,7 @@ class GroupMember:
     :type user_id: Optional[str]
     """
 
-    def __init__(self, connection_id: str, user_id: Optional[str] = None) -> None:
+    def __init__(self, *, connection_id: str, user_id: Optional[str] = None) -> None:
         self._connection_id = connection_id
         self._user_id = user_id
 
