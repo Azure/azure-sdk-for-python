@@ -655,9 +655,10 @@ def reformat_tool_definitions(tool_definitions, logger=None):
         # If the tool definitions cannot be parsed for whatever reason, the original tool definitions are returned
         # This is a fallback to ensure that the evaluation can still proceed. See comments on reformat_conversation_history for more details.
         if logger:
-            logger.warning(f"Tool definitions could not be parsed, falling back to original definitions: {tool_definitions}")
+            logger.warning(
+                f"Tool definitions could not be parsed, falling back to original definitions: {tool_definitions}"
+            )
         return tool_definitions
-
 
 
 def upload(path: str, container_client: ContainerClient, logger=None):
