@@ -57,6 +57,8 @@ print(f"Allowed tools: {mcp_tool.allowed_tools}")
 with project_client:
     agents_client = project_client.agents
 
+    # Create a new agent.
+    # NOTE: To reuse existing agent, fetch it with get_agent(agent_id)
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-mcp-agent",
