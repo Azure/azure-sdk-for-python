@@ -92,7 +92,7 @@ IF missing dependencies:
 ACTION: Use azure-sdk-python-mcp sdk generation server tools (init, init_local)
 TIMING: ALWAYS inform user before starting: "This SDK generation step will take approximately 5-6 minutes to complete."
 IF local path provided:
-    Get commit id of repo where local tspconfig.yaml path is then use local mcp tools `init_local_arm` to generate SDK
+    Get commit id of repo where local tspconfig.yaml path is then use local mcp tools `init_local` to generate SDK
 ELSE:
     Use `init` to generate SDK from tspconfig.yaml URL
 IF commands fail:
