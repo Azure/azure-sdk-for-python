@@ -3,13 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from datetime import datetime
 from typing import List, Optional, Union, TYPE_CHECKING
 from typing_extensions import Literal
 from ._generated.models import (
     CallLocator,
-    MediaStreamingOptions as MediaStreamingOptionsRest,
-    TranscriptionOptions as TranscriptionOptionsRest,
+    WebSocketMediaStreamingOptions as WebSocketMediaStreamingOptionsRest,
+    WebSocketTranscriptionOptions as WebSocketTranscriptionOptionsRest,
     FileSource as FileSourceInternal,
     TextSource as TextSourceInternal,
     SsmlSource as SsmlSourceInternal,
@@ -17,9 +16,7 @@ from ._generated.models import (
     Choice as ChoiceInternal,
     ChannelAffinity as ChannelAffinityInternal,
     MediaStreamingSubscription as MediaStreamingSubscriptionInternal,
-    TranscriptionSubscription as TranscriptionSubscriptionInternal,
-    RecordingStorageInfo,
-    Error
+    TranscriptionSubscription as TranscriptionSubscriptionInternal
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -28,7 +25,6 @@ from ._shared.models import (
 )
 from ._generated.models._enums import PlaySourceType
 from ._generated.models._enums import RecordingStorageKind
-from ._generated.models._enums import CallSessionEndReason
 from ._utils import (
     deserialize_phone_identifier,
     deserialize_identifier,
@@ -39,12 +35,11 @@ from ._utils import (
 if TYPE_CHECKING:
     from ._generated.models._enums  import (
         MediaStreamingSubscriptionState,
-        MediaStreamingTransportType,
+        StreamingTransportType,
         MediaStreamingContentType,
         MediaStreamingAudioChannelType,
         TranscriptionSubscriptionState,
         TranscriptionResultType,
-        TranscriptionTransportType,
         CallConnectionState,
         RecordingState,
         RecordingKind,
@@ -59,11 +54,9 @@ if TYPE_CHECKING:
         RemoveParticipantResponse as RemoveParticipantResultRest,
         TransferCallResponse as TransferParticipantResultRest,
         RecordingStateResponse as RecordingStateResultRest,
-        RecordingResultResponse as RecordingResultRest,
         MuteParticipantsResult as MuteParticipantsResultRest,
         SendDtmfTonesResult as SendDtmfTonesResultRest,
         CancelAddParticipantResponse as CancelAddParticipantResultRest,
-        MoveParticipantsResponse as MoveParticipantsResponseRest,
     )
 
 
@@ -366,7 +359,7 @@ class MediaStreamingOptions:
     :param transport_url: Transport URL for media streaming.
     :type transport_url: str
     :param transport_type: The type of transport to be used for media streaming.
-    :type transport_type: str or ~azure.communication.callautomation.MediaStreamingTransportType
+    :type transport_type: str or ~azure.communication.callautomation.StreamingTransport
     :param content_type: Content type to stream, eg. audio, audio/video.
     :type content_type: str or ~azure.communication.callautomation.MediaStreamingContentType
     :param audio_channel_type: Audio channel type to stream, eg. unmixed audio, mixed audio.
@@ -382,7 +375,7 @@ class MediaStreamingOptions:
 
     transport_url: str
     """Transport URL for media streaming."""
-    transport_type: Union[str, "MediaStreamingTransportType"]
+    transport_type: Union[str, "StreamingTransportType"]
     """The type of transport to be used for media streaming."""
     content_type: Union[str, "MediaStreamingContentType"]
     """Content type to stream, eg. audio, audio/video."""
@@ -395,16 +388,20 @@ class MediaStreamingOptions:
     """A value indicating whether bidirectional streaming is enabled"""
     audio_format: Optional[Union[str, 'AudioFormat']] = None
     """Specifies the audio format used for encoding."""
+    enable_dtmf_tones: Optional[bool] = None
+    """A value that indicates whether to stream the DTMF tones."""
 
     def __init__(
         self,
+        *,
         transport_url: str,
-        transport_type: Union[str, 'MediaStreamingTransportType'],
+        transport_type: Union[str, 'StreamingTransportType'],
         content_type: Union[str, 'MediaStreamingContentType'],
         audio_channel_type: Union[str, 'MediaStreamingAudioChannelType'],
         start_media_streaming: Optional[bool] = None,
         enable_bidirectional: Optional[bool] = None,
         audio_format: Optional[Union[str, 'AudioFormat']] = None,
+        enable_dtmf_tones: Optional[bool] = None,
     ):
         self.transport_url = transport_url
         self.transport_type = transport_type
@@ -413,16 +410,18 @@ class MediaStreamingOptions:
         self.start_media_streaming = start_media_streaming
         self.enable_bidirectional = enable_bidirectional
         self.audio_format = audio_format
+        self.enable_dtmf_tones = enable_dtmf_tones
 
-    def to_generated(self):
-        return MediaStreamingOptionsRest(
+    def _to_generated(self):
+        return WebSocketMediaStreamingOptionsRest(
             transport_url=self.transport_url,
             transport_type=self.transport_type,
             content_type=self.content_type,
             audio_channel_type=self.audio_channel_type,
             start_media_streaming=self.start_media_streaming,
             enable_bidirectional = self.enable_bidirectional,
-            audio_format=self.audio_format
+            audio_format=self.audio_format,
+            enable_dtmf_tones=self.enable_dtmf_tones,
         )
 
 class TranscriptionOptions:
@@ -432,7 +431,7 @@ class TranscriptionOptions:
     :type transport_url: str
     :param transport_type: The type of transport to be used for live transcription, eg. Websocket.
      Required. "websocket"
-    :type transport_type: str or ~azure.communication.callautomation.TranscriptionTransportType
+    :type transport_type: str or ~azure.communication.callautomation.StreamingTransportType
     :param locale: Defines the locale for the data e.g en-CA, en-AU. Required.
     :type locale: str
     :param start_transcription: Determines if the transcription should be started immediately after
@@ -446,7 +445,7 @@ class TranscriptionOptions:
 
     transport_url: str
     """Transport URL for live transcription."""
-    transport_type: Union[str, "TranscriptionTransportType"]
+    transport_type: Union[str, "StreamingTransportType"]
     """The type of transport to be used for live transcription."""
     locale: str
     """Defines the locale for the data."""
@@ -459,8 +458,9 @@ class TranscriptionOptions:
 
     def __init__(
         self,
+        *,
         transport_url: str,
-        transport_type: Union[str, "TranscriptionTransportType"],
+        transport_type: Union[str, "StreamingTransportType"],
         locale: str,
         start_transcription: bool,
         speech_recognition_model_endpoint_id: Optional[str] = None,
@@ -473,8 +473,8 @@ class TranscriptionOptions:
         self.speech_recognition_model_endpoint_id = speech_recognition_model_endpoint_id
         self.enable_intermediate_results = enable_intermediate_results
 
-    def to_generated(self):
-        return TranscriptionOptionsRest(
+    def _to_generated(self):
+        return WebSocketTranscriptionOptionsRest(
             transport_url=self.transport_url,
             transport_type=self.transport_type,
             locale=self.locale,
@@ -554,23 +554,28 @@ class TranscriptionSubscription:
     """transcription subscription state."""
     subscribed_result_types: Optional[List[Union[str, 'TranscriptionResultType']]]
     """subscribed transcription result types."""
+    locale: Optional[str]
+    """Specifies the locale used for transcription, e.g., en-CA or en-AU."""
 
     def __init__(
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         state: Optional[Union[str, "TranscriptionSubscriptionState"]] = None,
-        subscribed_result_types: Optional[List[Union[str, "TranscriptionResultType"]]] = None
+        subscribed_result_types: Optional[List[Union[str, "TranscriptionResultType"]]] = None,
+        locale: Optional[str] = None,
     ) -> None:
         self.id = id
         self.state = state
         self.subscribed_result_types = subscribed_result_types
+        self.locale = locale
 
     def _to_generated(self):
         return TranscriptionSubscriptionInternal(
             id=self.id,
             state=self.state ,
-            subscribed_result_types=self.subscribed_result_types
+            subscribed_result_types=self.subscribed_result_types,
+            locale=self.locale
         )
 
 
@@ -587,10 +592,6 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     :paramtype call_connection_state: str or ~azure.communication.callautomation.CallConnectionState
     :keyword callback_url: The callback URL.
     :paramtype callback_url: str
-    :keyword media_subscription_id: SubscriptionId for media streaming.
-    :paramtype media_subscription_id: str
-    :keyword data_subscription_id: SubscriptionId for transcription.
-    :paramtype data_subscription_id: str
     :keyword source_caller_id_number:
      The source caller Id, a phone number, that's shown to the
      PSTN participant being invited.
@@ -623,10 +624,6 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     """The state of the call."""
     callback_url: Optional[str]
     """The callback URL."""
-    media_subscription_id: Optional[str]
-    """SubscriptionId for media streaming."""
-    data_subscription_id: Optional[str] = None
-    """SubscriptionId for transcription."""
     source_caller_id_number: Optional[PhoneNumberIdentifier]
     """The source caller Id, a phone number, that's shown to the
      PSTN participant being invited.
@@ -654,8 +651,6 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
         targets: Optional[List[CommunicationIdentifier]] = None,
         call_connection_state: Optional[Union[str, "CallConnectionState"]] = None,
         callback_url: Optional[str] = None,
-        media_subscription_id: Optional[str] = None,
-        data_subscription_id: Optional[str] = None,
         source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
         source_display_name: Optional[str] = None,
         source: Optional[CommunicationIdentifier] = None,
@@ -670,8 +665,6 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
         self.targets = targets
         self.call_connection_state = call_connection_state
         self.callback_url = callback_url
-        self.media_subscription_id = media_subscription_id
-        self.data_subscription_id = data_subscription_id
         self.source_caller_id_number = source_caller_id_number
         self.source_display_name = source_display_name
         self.source = source
@@ -693,8 +686,6 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
             targets=target_models,
             call_connection_state=call_connection_properties_generated.call_connection_state,
             callback_url=call_connection_properties_generated.callback_uri,
-            media_subscription_id=call_connection_properties_generated.media_subscription_id,
-            data_subscription_id=call_connection_properties_generated.data_subscription_id,
             source_caller_id_number=deserialize_phone_identifier(
             call_connection_properties_generated.source_caller_id_number)
             if call_connection_properties_generated.source_caller_id_number
@@ -718,6 +709,7 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
             else None,
         )
 
+
 class RecordingProperties:
     """Detailed recording properties of the call.
 
@@ -725,99 +717,35 @@ class RecordingProperties:
     :paramtype recording_id: str
     :keyword recording_state: state of ongoing recording.
     :paramtype recording_state: str or ~azure.communication.callautomation.RecordingState
+    :keyword recording_kind: kind of the recording.
+    :paramtype recording_kind: str or ~azure.communication.callautomation.RecordingKind
     """
 
     recording_id: Optional[str]
     """Id of this recording operation."""
     recording_state: Optional[Union[str, "RecordingState"]]
     """state of ongoing recording."""
-
+    recording_kind: Optional[Union[str, 'RecordingKind']]
+    """kind of the recording."""
     def __init__(
-        self, *, recording_id: Optional[str] = None, recording_state: Optional[Union[str, "RecordingState"]] = None
+        self,
+        *,
+        recording_id: Optional[str] = None,
+        recording_state: Optional[Union[str,'RecordingState']] = None,
+        recording_kind: Optional[Union[str, 'RecordingKind']] = None,
     ):
         self.recording_id = recording_id
         self.recording_state = recording_state
+        self.recording_kind = recording_kind
 
     @classmethod
-    def _from_generated(cls, recording_state_result: "RecordingStateResultRest"):
+    def _from_generated(cls, recording_state_result: 'RecordingStateResultRest'):
         return cls(
-            recording_id=recording_state_result.recording_id, recording_state=recording_state_result.recording_state
+            recording_id=recording_state_result.recording_id,
+            recording_state=recording_state_result.recording_state,
+            recording_kind=recording_state_result.recording_kind,
         )
 
-class RecordingResult:
-    """Recording result data.
-    Variables are only populated by the server, and will be ignored when sending a request.
-    :ivar recording_id:
-    :vartype recording_id: str
-    :ivar recording_storage_info: Container for chunks.
-    :vartype recording_storage_info:
-     ~azure.communication.callautomation.models.RecordingStorageInfo
-    :ivar errors:
-    :vartype errors: list[~azure.communication.callautomation.models.Error]
-    :ivar recording_start_time:
-    :vartype recording_start_time: ~datetime.datetime
-    :ivar recording_duration_ms:
-    :vartype recording_duration_ms: int
-    :ivar session_end_reason: Known values are: "sessionStillOngoing", "callEnded",
-     "initiatorLeft", "handedOverOrTransferred", "maximumSessionTimeReached", "callStartTimeout",
-     "mediaTimeout", "audioStreamFailure", "allInstancesBusy", "teamsTokenConversionFailed",
-     "reportCallStateFailed", "reportCallStateFailedAndSessionMustBeDiscarded",
-     "couldNotRejoinCall", "invalidBotData", "couldNotStart",
-     "appHostedMediaFailureOutcomeWithError", "appHostedMediaFailureOutcomeGracefully",
-     "handedOverDueToMediaTimeout", "handedOverDueToAudioStreamFailure",
-     "speechRecognitionSessionNonRetriableError",
-     "speechRecognitionSessionRetriableErrorMaxRetryCountReached",
-     "handedOverDueToChunkCreationFailure", "chunkCreationFailed",
-     "handedOverDueToProcessingTimeout", "processingTimeout", and "transcriptObjectCreationFailed".
-    :vartype session_end_reason: str or
-     ~azure.communication.callautomation.models.CallSessionEndReason
-    :ivar recording_expiration_time:
-    :vartype recording_expiration_time: ~datetime.datetime
-    """
-
-    recording_id: Optional[str]
-    """Id of this recording operation."""
-    recording_storage_info: Optional[RecordingStorageInfo]
-    """recording storage info."""
-    errors: Optional[List[Error]]
-    """Error."""
-    session_end_reason: Optional[Union[str, 'CallSessionEndReason']]
-    """session end reason."""
-    recording_start_time: Optional[datetime]
-    """recording start time."""
-    recording_duration_ms: Optional[int]
-    """recording duration ms."""
-    recording_expiration_time: Optional[datetime]
-    """recording expiration time."""
-
-    def __init__(
-        self, *, recording_id: Optional[str] = None,
-        recording_storage_info: Optional[RecordingStorageInfo] = None,
-        session_end_reason: Optional[Union[str,  'CallSessionEndReason']] = None,
-        recording_start_time: Optional[datetime] = None,
-        recording_duration_ms: Optional[int] = None,
-        recording_expiration_time: Optional[datetime] = None,
-        errors: Optional[List[Error]]
-    ):
-        self.recording_id = recording_id
-        self.recording_storage_info = recording_storage_info
-        self.session_end_reason = session_end_reason
-        self.recording_start_time = recording_start_time
-        self.recording_duration_ms = recording_duration_ms
-        self.recording_expiration_time = recording_expiration_time
-        self.errors = errors
-
-    @classmethod
-    def _from_generated(cls, recording_result: "RecordingResultRest"):
-        return cls(
-            recording_id=recording_result.recording_id,
-            recording_storage_info=recording_result.recording_storage_info,
-            session_end_reason=recording_result.session_end_reason,
-            recording_start_time=recording_result.recording_start_time,
-            recording_duration_ms=recording_result.recording_duration_ms,
-            recording_expiration_time=recording_result.recording_expiration_time,
-            errors=recording_result.errors
-        )
 
 class CallParticipant:
     """Details of an Azure Communication Service call participant.
@@ -911,50 +839,6 @@ class RemoveParticipantResult:
     @classmethod
     def _from_generated(cls, remove_participant_result_generated: "RemoveParticipantResultRest"):
         return cls(operation_context=remove_participant_result_generated.operation_context)
-
-
-class MoveParticipantsResult:
-    """The response payload for moving participants to the call.
-
-    :keyword participants: List of current participants in the call.
-    :paramtype participants: list[~azure.communication.callautomation.CallParticipant]
-    :keyword operation_context: The operation context provided by client.
-    :paramtype operation_context: str
-    :keyword from_call: The CallConnectionId for the call you want to move the participant from.
-    :paramtype from_call: str
-    """
-
-    participants: Optional[List[CallParticipant]]
-    """List of current participants in the call."""
-    operation_context: Optional[str]
-    """The operation context provided by client."""
-    from_call: Optional[str]
-    """The CallConnectionId for the call you want to move the participant from."""
-
-    def __init__(
-        self,
-        *,
-        participants: Optional[List[CallParticipant]] = None,
-        operation_context: Optional[str] = None,
-        from_call: Optional[str] = None,
-    ) -> None:
-        self.participants = participants
-        self.operation_context = operation_context
-        self.from_call = from_call
-
-    @classmethod
-    def _from_generated(cls, move_participants_result_generated: "MoveParticipantsResponseRest"):
-        participants = None
-        if move_participants_result_generated.participants:
-            participants = [
-                CallParticipant._from_generated(participant)  # pylint:disable=protected-access
-                for participant in move_participants_result_generated.participants
-            ]
-        return cls(
-            participants=participants,
-            operation_context=move_participants_result_generated.operation_context,
-            from_call=move_participants_result_generated.from_call,
-        )
 
 
 class TransferCallResult:
