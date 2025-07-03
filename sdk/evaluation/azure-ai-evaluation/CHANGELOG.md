@@ -2,6 +2,8 @@
 
 ## 2.0.0 (Unreleased)
 
+### Features Added
+
 ### Bugs Fixed
 
 - Significant improvements to TaskAdherence evaluator. New version has less variance, is much faster and consumes fewer tokens.
