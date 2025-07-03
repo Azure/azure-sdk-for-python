@@ -7,13 +7,13 @@
 
 import functools
 import warnings
+from contextlib import AbstractContextManager
 from datetime import datetime
 from typing import (
     Any, AnyStr, cast, Dict, List, IO, Iterable, Iterator, Optional, overload, Union,
     TYPE_CHECKING
 )
 from urllib.parse import unquote, urlparse
-from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
@@ -66,7 +66,7 @@ if TYPE_CHECKING:
     )
 
 
-class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # pylint: disable=too-many-public-methods
+class ContainerClient(AbstractContextManager, StorageAccountHostsMixin, StorageEncryptionMixin):    # pylint: disable=too-many-public-methods
     """A client to interact with a specific container, although that container
     may not yet exist.
 
@@ -150,7 +150,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         self._client = self._build_generated_client()
         self._configure_encryption(kwargs)
 
-    def __enter__(self) -> Self:
+    def __enter__(self) -> "ContainerClient":
         self._client.__enter__()
         return self
 
@@ -184,7 +184,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         cls, container_url: str,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
-    ) -> Self:
+    ) -> "ContainerClient":
         """Create ContainerClient from a container url.
 
         :param str container_url:
@@ -237,7 +237,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         container_name: str,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
-    ) -> Self:
+    ) -> "ContainerClient":
         """Create ContainerClient from a Connection String.
 
         :param str conn_str:
