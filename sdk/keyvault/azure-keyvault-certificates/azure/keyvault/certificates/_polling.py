@@ -44,6 +44,8 @@ class CreateCertificatePoller(PollingMethod):
     def finished(self) -> bool:
         operation = self._pending_certificate_op
         if operation and operation.issuer_name and operation.issuer_name.lower() == "unknown":
+            # Because we've finished, self._resource won't be set by the run method; set it here so we don't return None
+            self._resource = self._pending_certificate_op
             return True
         return self._pending_certificate_op.status.lower() != "inprogress"  # type: ignore
 
