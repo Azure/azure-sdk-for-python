@@ -1,3 +1,4 @@
+from datetime import timedelta
 from typing import List, Union
 
 import pytest
@@ -105,7 +106,7 @@ class TestComputeEntity:
         assert rest_intermediate.properties.disable_local_auth is True
         assert rest_intermediate.location == compute.location
         assert rest_intermediate.properties.properties.remote_login_port_public_access == "NotSpecified"
-        assert rest_intermediate.properties.properties.scale_settings.max_node_count == 2
+        assert rest_intermediate.properties.properties.scale_settings.max_node_count == 4
         assert rest_intermediate.properties.properties.scale_settings.min_node_count == 0
         assert rest_intermediate.properties.properties.scale_settings.node_idle_time_before_scale_down == "PT2M"
 
@@ -352,6 +353,11 @@ class TestComputeEntity:
             assert compute.enable_node_public_ip == False
             compute_resource = compute._to_rest_object()
             assert compute_resource.properties.properties.enable_node_public_ip == False
+            # AmlCompute _from_rest_object expects a timedelta object for node_idle_time_before_scale_down
+            if compute_resource.properties.compute_type == "AmlCompute":
+                compute_resource.properties.properties.scale_settings.node_idle_time_before_scale_down = timedelta(
+                    seconds=120
+                )
             compute_from_rest = Compute._from_rest_object(compute_resource)
             assert compute_from_rest.enable_node_public_ip == False
 

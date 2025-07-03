@@ -3,6 +3,4 @@ type: amlcompute
 tier: dedicated
 description: some_desc_aml
 size: Standard_DS2_v2
-min_instances: 0
-max_instances: 2
 location: eastus

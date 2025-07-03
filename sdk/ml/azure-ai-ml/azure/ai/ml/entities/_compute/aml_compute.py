@@ -131,8 +131,8 @@ class AmlCompute(Compute):
         tags: Optional[dict] = None,
         ssh_public_access_enabled: Optional[bool] = None,
         ssh_settings: Optional[AmlComputeSshSettings] = None,
-        min_instances: Optional[int] = None,
-        max_instances: Optional[int] = None,
+        min_instances: Optional[int] = 0,
+        max_instances: Optional[int] = 4,
         network_settings: Optional[NetworkSettings] = None,
         idle_time_before_scale_down: Optional[int] = 120,
         identity: Optional[IdentityConfiguration] = None,
@@ -149,8 +149,8 @@ class AmlCompute(Compute):
             **kwargs,
         )
         self.size = size
-        self.min_instances = min_instances or 0
-        self.max_instances = max_instances or 1
+        self.min_instances = min_instances
+        self.max_instances = max_instances
         self.idle_time_before_scale_down = idle_time_before_scale_down
         self.identity = identity
         self.ssh_public_access_enabled = ssh_public_access_enabled
