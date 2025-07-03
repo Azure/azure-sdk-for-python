@@ -37,6 +37,7 @@ from .http_constants import StatusCodes as _StatusCodes
 from .exceptions import CosmosResourceNotFoundError
 from .user import UserProxy
 from .documents import IndexingMode
+from ._cosmos_responses import CosmosDict
 
 __all__ = ("DatabaseProxy",)
 
@@ -84,7 +85,8 @@ class DatabaseProxy(object):
         self,
         client_connection: CosmosClientConnection,
         id: str,
-        properties: Optional[Dict[str, Any]] = None
+        properties: Optional[Dict[str, Any]] = None,
+        header: Optional[CosmosDict] = None
     ) -> None:
         """
         :param ClientSession client_connection: Client from which this database was retrieved.
@@ -94,6 +96,7 @@ class DatabaseProxy(object):
         self.id = id
         self.database_link: str = "dbs/{}".format(self.id)
         self._properties: Optional[Dict[str, Any]] = properties
+        self._response_headers = header
 
     def __repr__(self) -> str:
         return "<DatabaseProxy [{}]>".format(self.database_link)[:1024]
@@ -120,6 +123,14 @@ class DatabaseProxy(object):
             self._properties = self.read()
         return self._properties
 
+    def get_response_headers(self) -> CosmosDict:
+        """Returns a copy of the response headers associated to this response
+
+        :return: Dict of response headers
+        :rtype: dict[str, Any]
+        """
+        return self._response_headers
+
     @distributed_trace
     def read(  # pylint:disable=docstring-missing-param
         self,
@@ -127,7 +138,7 @@ class DatabaseProxy(object):
         *,
         initial_headers: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Read the database properties.
 
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
@@ -284,7 +295,8 @@ class DatabaseProxy(object):
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
         )
 
-        return ContainerProxy(self.client_connection, self.database_link, result["id"], properties=result)
+        return ContainerProxy(self.client_connection, self.database_link, result["id"], properties=result,
+                              header=result.get_response_headers())
 
     @distributed_trace
     def create_container_if_not_exists(  # pylint:disable=docstring-missing-param
@@ -673,7 +685,8 @@ class DatabaseProxy(object):
             container_link, collection=parameters, options=request_options, **kwargs)
 
         return ContainerProxy(
-            self.client_connection, self.database_link, container_properties["id"], properties=container_properties)
+            self.client_connection, self.database_link, container_properties["id"], properties=container_properties,
+            header=container_properties.get_response_headers())
 
     @distributed_trace
     def list_users(
