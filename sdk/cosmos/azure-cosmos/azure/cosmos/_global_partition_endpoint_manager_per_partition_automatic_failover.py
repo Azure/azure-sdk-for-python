@@ -5,13 +5,11 @@
 endpoint manager, since enabling per partition automatic failover also enables the circuit breaker logic.
 """
 import logging
-import os
 import threading
 
 from typing import Dict, Set, TYPE_CHECKING, Optional
 
 from azure.cosmos.http_constants import ResourceType
-from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._global_partition_endpoint_manager_circuit_breaker import \
     _GlobalPartitionEndpointManagerForCircuitBreaker
 from azure.cosmos.documents import _OperationType
