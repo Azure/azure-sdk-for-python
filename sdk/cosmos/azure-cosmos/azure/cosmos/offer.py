@@ -22,7 +22,6 @@
 
 
 from typing import Any, Dict, Optional
-from ._cosmos_client_connection import CosmosClientConnection
 
 
 class ThroughputProperties:
@@ -40,19 +39,10 @@ class ThroughputProperties:
      the increment percent should be greater than or equal to zero.
     """
 
-    def __init__(self, client_connection: CosmosClientConnection, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs) -> None:
         self.offer_throughput: Optional[int] = args[0] if args else kwargs.get('offer_throughput')
         self.properties: Optional[Dict[str, Any]] = args[1] if len(args) > 1 else kwargs.get('properties')
         self.auto_scale_max_throughput: Optional[int] = kwargs.get('auto_scale_max_throughput')
         self.auto_scale_increment_percent: Optional[int] = kwargs.get('auto_scale_increment_percent')
-        self._response_headers = client_connection.last_response_headers.copy()
-
-    def get_response_headers(self) -> dict[str, Any]:
-        """Returns a copy of the response headers associated to this response
-
-        :return: Dict of response headers
-        :rtype: dict[str, Any]
-        """
-        return self._response_headers
 
 Offer = ThroughputProperties

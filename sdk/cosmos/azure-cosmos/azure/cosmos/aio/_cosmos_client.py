@@ -310,7 +310,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
         result = await self.client_connection.CreateDatabase(database={"id": id}, options=request_options, **kwargs)
-        return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
+        return DatabaseProxy(self.client_connection, id=result["id"], properties=result, header=result.get_response_headers())
 
     @distributed_trace_async
     async def create_database_if_not_exists(  # pylint: disable=redefined-builtin

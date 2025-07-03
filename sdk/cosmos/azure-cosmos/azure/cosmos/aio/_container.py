@@ -86,7 +86,8 @@ class ContainerProxy:
         client_connection: CosmosClientConnection,
         database_link: str,
         id: str,
-        properties: Optional[Dict[str, Any]] = None
+        properties: Optional[Dict[str, Any]] = None,
+        header: Optional[CosmosDict] = None
     ) -> None:
         self.client_connection = client_connection
         self.id = id
@@ -94,7 +95,7 @@ class ContainerProxy:
         self.container_link = "{}/colls/{}".format(database_link, self.id)
         self._is_system_key: Optional[bool] = None
         self._scripts: Optional[ScriptsProxy] = None
-        self._response_headers = self.client_connection.last_response_headers.copy()
+        self._response_headers = header
         if properties:
             self.client_connection._set_container_properties_cache(self.container_link,
                                                                    _build_properties_cache(properties,
@@ -114,7 +115,7 @@ class ContainerProxy:
             await self.read(**kwargs)
         return self.client_connection._container_properties_cache[self.container_link]
 
-    def get_response_headers(self) -> dict[str, Any]:
+    def get_response_headers(self) -> CosmosDict:
         """Returns a copy of the response headers associated to this response
 
         :return: Dict of response headers

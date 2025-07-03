@@ -328,7 +328,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         result = self.client_connection.CreateDatabase(database={"id": id}, options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
-        return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
+        return DatabaseProxy(self.client_connection, id=result["id"], properties=result, header=result.get_response_headers())
 
     @distributed_trace
     def create_database_if_not_exists(  # pylint:disable=docstring-missing-param
