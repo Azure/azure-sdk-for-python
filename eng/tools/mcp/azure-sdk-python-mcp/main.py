@@ -249,7 +249,33 @@ def init_local_tool(tsp_config_path: str, repo_path:str) -> Dict[str, Any]:
             "stderr": "",
             "code": 1
         }
+    
+@mcp.tool("update")
+def update_tool(commit_hash: str, package_path:str) -> Dict[str, Any]:
+    """Initializes and subsequently generates a typespec client library directory from a local azure-rest-api-specs repo.
 
+    This command is used to update a client library to a specific commit hash in the azure-rest-api-specs repository.
+
+    Args:
+        commit_hash: The commit hash to update to.
+        package_path: The path to the directory of the tsp-location.yaml (i.e. ./azure-sdk-for-python/sdk/eventgrid/azure-eventgrid).
+
+    Returns:
+        A dictionary containing the result of the command.    """
+    try:
+        
+        # Run the update command
+        return run_command(["update"], cwd=package_path, is_typespec=True,
+                          typespec_args={"commit": commit_hash})
+                          
+    except RuntimeError as e:
+        return {
+            "success": False,
+            "message": str(e),
+            "stdout": "",
+            "stderr": "",
+            "code": 1
+        }
 
 @mcp.tool("check_library_health")
 def check_library_health(library_name: str) -> Dict[str, Any]:
