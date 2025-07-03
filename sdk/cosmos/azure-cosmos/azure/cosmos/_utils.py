@@ -100,6 +100,24 @@ def add_args_to_kwargs(
             raise ValueError(f"{name} cannot be used as positional and keyword argument at the same time.")
         kwargs[name] = arg
 
+
+def format_list_with_and(items: List[str]) -> str:
+    """Format a list of items into a string with commas and 'and' for the last item.
+
+    :param List[str] items: The list of items to format.
+    :return: A formatted string with items separated by commas and 'and' before the last item.
+    """
+    quoted = [f"'{item}'" for item in items]
+    if len(quoted) > 2:
+        return ", ".join(quoted[:-1]) + ", and " + quoted[-1]
+    elif len(quoted) == 2:
+        return " and ".join(quoted)
+    elif quoted:
+        return quoted[0]
+    else:
+        return ""
+
+
 def verify_exclusive_arguments(
         exclusive_keys: List[str],
         **kwargs: Dict[str, Any]) -> None:
@@ -112,4 +130,4 @@ def verify_exclusive_arguments(
     keys_in_kwargs = [key for key in exclusive_keys if key in kwargs and kwargs[key] is not None]
 
     if len(keys_in_kwargs) > 1:
-        raise ValueError(f"{', '.join(keys_in_kwargs)} are exclusive parameters, please only set one of them")
+        raise ValueError(f"{format_list_with_and(keys_in_kwargs)} are exclusive parameters, please only set one of them.")

@@ -458,7 +458,7 @@ class ContainerProxy:
         :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
-            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
+            in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
@@ -470,10 +470,10 @@ class ContainerProxy:
             Each parameter is a dict() with 'name' and 'value' keys.
             Ignored if no query is provided.
         :paramtype parameters: [List[Dict[str, object]]]
-        :keyword partition_key: partition key at which the query request is targeted.
+        :keyword partition_key: Partition key at which the query request is targeted.
         :paramtype partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
-            existing indexes and how it could use potential new indexes. Please note that this options will incur
+            existing indexes and how it could use potential new indexes. Please note that this option will incur
             overhead, so it should be enabled only when debugging slow queries.
         :keyword bool populate_query_metrics: Enable returning query metrics in response headers.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
@@ -482,20 +482,20 @@ class ContainerProxy:
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword str session_token: Token for use with Session consistency.
-        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
         :returns: An Iterable of items (dicts).
         :rtype: ItemPaged[Dict[str, Any]]
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/examples.py
+            .. literalinclude:: ../samples/examples_async.py
                 :start-after: [START query_items]
                 :end-before: [END query_items]
                 :language: python
                 :dedent: 0
                 :caption: Get all products that have not been discontinued:
 
-            .. literalinclude:: ../samples/examples.py
+            .. literalinclude:: ../samples/examples_async.py
                 :start-after: [START query_items_param]
                 :end-before: [END query_items_param]
                 :language: python
@@ -538,7 +538,7 @@ class ContainerProxy:
         :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
-            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
+            in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Dict[str, Any] feed_range: The feed range that is used to define the scope.
@@ -552,7 +552,7 @@ class ContainerProxy:
             Ignored if no query is provided.
         :paramtype parameters: [List[Dict[str, object]]]
         :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
-            existing indexes and how it could use potential new indexes. Please note that this options will incur
+            existing indexes and how it could use potential new indexes. Please note that this option will incur
             overhead, so it should be enabled only when debugging slow queries.
         :keyword bool populate_query_metrics: Enable returning query metrics in response headers.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
@@ -561,20 +561,20 @@ class ContainerProxy:
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword str session_token: Token for use with Session consistency.
-        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
         :returns: An Iterable of items (dicts).
         :rtype: ItemPaged[Dict[str, Any]]
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/examples.py
+            .. literalinclude:: ../samples/examples_async.py
                 :start-after: [START query_items]
                 :end-before: [END query_items]
                 :language: python
                 :dedent: 0
                 :caption: Get all products that have not been discontinued:
 
-            .. literalinclude:: ../samples/examples.py
+            .. literalinclude:: ../samples/examples_async.py
                 :start-after: [START query_items_param]
                 :end-before: [END query_items_param]
                 :language: python
@@ -606,7 +606,7 @@ class ContainerProxy:
         :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
-            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
+            in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Dict[str, Any] feed_range: The feed range that is used to define the scope.
@@ -619,10 +619,10 @@ class ContainerProxy:
             Each parameter is a dict() with 'name' and 'value' keys.
             Ignored if no query is provided.
         :paramtype parameters: [List[Dict[str, object]]]
-        :keyword partition_key: partition key at which the query request is targeted.
+        :keyword partition_key: Partition key at which the query request is targeted.
         :paramtype partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
-            existing indexes and how it could use potential new indexes. Please note that this options will incur
+            existing indexes and how it could use potential new indexes. Please note that this option will incur
             overhead, so it should be enabled only when debugging slow queries.
         :keyword bool populate_query_metrics: Enable returning query metrics in response headers.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
@@ -632,20 +632,20 @@ class ContainerProxy:
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword str session_token: Token for use with Session consistency.
-        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
         :returns: An Iterable of items (dicts).
         :rtype: ItemPaged[Dict[str, Any]]
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/examples.py
+            .. literalinclude:: ../samples/examples_async.py
                 :start-after: [START query_items]
                 :end-before: [END query_items]
                 :language: python
                 :dedent: 0
                 :caption: Get all products that have not been discontinued:
 
-            .. literalinclude:: ../samples/examples.py
+            .. literalinclude:: ../samples/examples_async.py
                 :start-after: [START query_items_param]
                 :end-before: [END query_items_param]
                 :language: python

@@ -71,7 +71,7 @@ class TestQueryFeedRange():
         assert actual_pk_values == expected_pk_values
 
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
-    def test_query_with_feed_range_for_single_partition_key(self, container_id):
+    def test_query_with_feed_range_for_partition_key(self, container_id):
         container = get_container(container_id)
         query = 'SELECT * from c'
 
@@ -79,7 +79,7 @@ class TestQueryFeedRange():
             expected_pk_values = {pk_value}
             actual_pk_values = set()
 
-            feed_range = test_config.create_feed_range_between_pk_values(pk_value, pk_value)
+            feed_range = container.feed_range_from_partition_key(pk_value)
             items = list(container.query_items(
                 query=query,
                 enable_cross_partition_query=True,
@@ -89,22 +89,21 @@ class TestQueryFeedRange():
             assert actual_pk_values == expected_pk_values
 
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
-    def test_query_with_feed_range_for_multiple_partition_key(self, container_id):
+    def test_query_with_both_feed_range_and_partition_key(self, container_id):
         container = get_container(container_id)
+
+        expected_error_message = "'feed_range' and 'partition_key' are exclusive parameters, please only set one of them."
         query = 'SELECT * from c'
-
-        for pk_value1, pk_value2 in combinations(PK_VALUES, 2):
-            expected_pk_values = {pk_value1, pk_value2}
-            actual_pk_values = set()
-
-            feed_range = test_config.create_feed_range_between_pk_values(pk_value1, pk_value2)
-            items = list(container.query_items(
+        partition_key = PK_VALUES[0]
+        feed_range = container.feed_range_from_partition_key(partition_key)
+        with pytest.raises(ValueError) as e:
+            list(container.query_items(
                 query=query,
                 enable_cross_partition_query=True,
-                feed_range=feed_range
+                feed_range=feed_range,
+                partition_key=partition_key
             ))
-            add_all_pk_values_to_set(items, actual_pk_values)
-            assert expected_pk_values.issubset(actual_pk_values)
+        assert str(e.value) == expected_error_message
 
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
     def test_query_with_feed_range_for_a_full_range(self, container_id):

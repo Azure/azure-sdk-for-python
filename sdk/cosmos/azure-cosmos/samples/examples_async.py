@@ -7,6 +7,7 @@ import asyncio
 from azure.cosmos import exceptions, PartitionKey
 from azure.cosmos.aio import CosmosClient
 
+import json
 import os
 
 
@@ -97,8 +98,6 @@ async def examples_async():
         # The asynchronous client returns asynchronous iterators for its query methods;
         # as such, we iterate over it by using an async for loop
         # [START query_items]
-        import json
-
         async for queried_item in container.query_items(
                 query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"'
         ):
@@ -247,8 +246,6 @@ async def examples_async():
         # Query the items in a container using SQL-like syntax. This example
         # gets all items whose product model hasn't been discontinued.
         # [START query_items]
-        import json
-
         async for queried_item in container.query_items(
                 query='SELECT * FROM location l WHERE l.state = "WA"'
         ):
@@ -265,8 +262,6 @@ async def examples_async():
         # Query items with feed range is also supported. This example
         # gets all items within the feed range.
         # [START query_items_feed_range]
-        import json
-
         async for feed_range in container.read_feed_ranges():
             async for queried_item in container.query_items(
                     query='SELECT * from c',

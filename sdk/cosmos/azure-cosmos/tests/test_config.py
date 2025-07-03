@@ -553,12 +553,3 @@ def create_range(range_min: str, range_max: str, is_min_inclusive: bool = True, 
 
 def create_feed_range_in_dict(feed_range):
     return FeedRangeInternalEpk(feed_range).to_dict()
-
-def create_feed_range_between_pk_values(pk1, pk2):
-    range_min = hash_partition_key_value([pk1])
-    range_max = hash_partition_key_value([pk2])
-    if range_min > range_max:
-        range_min, range_max = range_max, range_min
-    range_max += "FF"
-    new_range = create_range(range_min, range_max)
-    return FeedRangeInternalEpk(new_range).to_dict()
