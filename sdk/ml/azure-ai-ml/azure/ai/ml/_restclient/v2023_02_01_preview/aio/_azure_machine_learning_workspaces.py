@@ -213,22 +213,38 @@ class AzureMachineLearningWorkspaces:  # pylint: disable=too-many-instance-attri
         self._config = AzureMachineLearningWorkspacesConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = AsyncARMPipelineClient(
+            base_url=base_url, config=self._config, **kwargs
+        )
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {
+            k: v for k, v in models.__dict__.items() if isinstance(v, type)
+        }
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.workspaces = WorkspacesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workspaces = WorkspacesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.usages = UsagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.virtual_machine_sizes = VirtualMachineSizesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.quotas = QuotasOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.compute = ComputeOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+        self.quotas = QuotasOperations(
             self._client, self._config, self._serialize, self._deserialize
+        )
+        self.compute = ComputeOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_endpoint_connections = (
+            PrivateEndpointConnectionsOperations(
+                self._client, self._config, self._serialize, self._deserialize
+            )
         )
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -236,7 +252,9 @@ class AzureMachineLearningWorkspaces:  # pylint: disable=too-many-instance-attri
         self.workspace_connections = WorkspaceConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.registries = RegistriesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.registries = RegistriesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.workspace_features = WorkspaceFeaturesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -246,8 +264,10 @@ class AzureMachineLearningWorkspaces:  # pylint: disable=too-many-instance-attri
         self.registry_code_versions = RegistryCodeVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.registry_component_containers = RegistryComponentContainersOperations(
-            self._client, self._config, self._serialize, self._deserialize
+        self.registry_component_containers = (
+            RegistryComponentContainersOperations(
+                self._client, self._config, self._serialize, self._deserialize
+            )
         )
         self.registry_component_versions = RegistryComponentVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -258,11 +278,15 @@ class AzureMachineLearningWorkspaces:  # pylint: disable=too-many-instance-attri
         self.registry_data_versions = RegistryDataVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.registry_environment_containers = RegistryEnvironmentContainersOperations(
-            self._client, self._config, self._serialize, self._deserialize
+        self.registry_environment_containers = (
+            RegistryEnvironmentContainersOperations(
+                self._client, self._config, self._serialize, self._deserialize
+            )
         )
-        self.registry_environment_versions = RegistryEnvironmentVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+        self.registry_environment_versions = (
+            RegistryEnvironmentVersionsOperations(
+                self._client, self._config, self._serialize, self._deserialize
+            )
         )
         self.registry_model_containers = RegistryModelContainersOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -270,21 +294,33 @@ class AzureMachineLearningWorkspaces:  # pylint: disable=too-many-instance-attri
         self.registry_model_versions = RegistryModelVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.batch_endpoints = BatchEndpointsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.batch_endpoints = BatchEndpointsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.batch_deployments = BatchDeploymentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.code_containers = CodeContainersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.code_versions = CodeVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.code_containers = CodeContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.code_versions = CodeVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.component_containers = ComponentContainersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.component_versions = ComponentVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.data_containers = DataContainersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.data_versions = DataVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.datastores = DatastoresOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.data_containers = DataContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.data_versions = DataVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.datastores = DatastoresOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.environment_containers = EnvironmentContainersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -297,27 +333,41 @@ class AzureMachineLearningWorkspaces:  # pylint: disable=too-many-instance-attri
         self.featureset_versions = FeaturesetVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.featurestore_entity_containers = FeaturestoreEntityContainersOperations(
+        self.featurestore_entity_containers = (
+            FeaturestoreEntityContainersOperations(
+                self._client, self._config, self._serialize, self._deserialize
+            )
+        )
+        self.featurestore_entity_versions = (
+            FeaturestoreEntityVersionsOperations(
+                self._client, self._config, self._serialize, self._deserialize
+            )
+        )
+        self.jobs = JobsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.featurestore_entity_versions = FeaturestoreEntityVersionsOperations(
+        self.labeling_jobs = LabelingJobsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.jobs = JobsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.labeling_jobs = LabelingJobsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.model_containers = ModelContainersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.model_versions = ModelVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.model_versions = ModelVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.online_endpoints = OnlineEndpointsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.online_deployments = OnlineDeploymentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.schedules = SchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.schedules = SchedulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(
+        self, request: HttpRequest, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest

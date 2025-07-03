@@ -24,8 +24,8 @@ class Artifact(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'prefix': {'key': 'prefix', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "prefix": {"key": "prefix", "type": "str"},
     }
 
     def __init__(
@@ -76,21 +76,21 @@ class Asset(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'artifacts': {'key': 'artifacts', 'type': '[Artifact]'},
-        'kv_tags': {'key': 'kvTags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'runid': {'key': 'runid', 'type': 'str'},
-        'projectid': {'key': 'projectid', 'type': 'str'},
-        'meta': {'key': 'meta', 'type': '{str}'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "artifacts": {"key": "artifacts", "type": "[Artifact]"},
+        "kv_tags": {"key": "kvTags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "runid": {"key": "runid", "type": "str"},
+        "projectid": {"key": "projectid", "type": "str"},
+        "meta": {"key": "meta", "type": "{str}"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
     }
 
     def __init__(
@@ -168,13 +168,16 @@ class AssetDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'asset_id': {'key': 'assetId', 'type': 'str'},
-        'entity_id': {'key': 'entityId', 'type': 'str'},
-        'data_items': {'key': 'dataItems', 'type': '{DataItem}'},
-        'data_references': {'key': 'dataReferences', 'type': 'DataReferences'},
-        'should_index': {'key': 'shouldIndex', 'type': 'bool'},
-        'dependencies': {'key': 'dependencies', 'type': '[DependentAsset]'},
-        'intellectual_property_publisher_information': {'key': 'intellectualPropertyPublisherInformation', 'type': 'IntellectualPropertyPublisherInformation'},
+        "asset_id": {"key": "assetId", "type": "str"},
+        "entity_id": {"key": "entityId", "type": "str"},
+        "data_items": {"key": "dataItems", "type": "{DataItem}"},
+        "data_references": {"key": "dataReferences", "type": "DataReferences"},
+        "should_index": {"key": "shouldIndex", "type": "bool"},
+        "dependencies": {"key": "dependencies", "type": "[DependentAsset]"},
+        "intellectual_property_publisher_information": {
+            "key": "intellectualPropertyPublisherInformation",
+            "type": "IntellectualPropertyPublisherInformation",
+        },
     }
 
     def __init__(
@@ -186,7 +189,9 @@ class AssetDto(msrest.serialization.Model):
         data_references: Optional["DataReferences"] = None,
         should_index: Optional[bool] = None,
         dependencies: Optional[List["DependentAsset"]] = None,
-        intellectual_property_publisher_information: Optional["IntellectualPropertyPublisherInformation"] = None,
+        intellectual_property_publisher_information: Optional[
+            "IntellectualPropertyPublisherInformation"
+        ] = None,
         **kwargs
     ):
         """
@@ -213,7 +218,9 @@ class AssetDto(msrest.serialization.Model):
         self.data_references = data_references
         self.should_index = should_index
         self.dependencies = dependencies
-        self.intellectual_property_publisher_information = intellectual_property_publisher_information
+        self.intellectual_property_publisher_information = (
+            intellectual_property_publisher_information
+        )
 
 
 class AssetPaginatedResult(msrest.serialization.Model):
@@ -228,9 +235,9 @@ class AssetPaginatedResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Asset]'},
-        'continuation_token': {'key': 'continuationToken', 'type': 'str'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Asset]"},
+        "continuation_token": {"key": "continuationToken", "type": "str"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -263,15 +270,10 @@ class BatchGetResolvedUrisDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'values': {'key': 'values', 'type': '[str]'},
+        "values": {"key": "values", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        values: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, values: Optional[List[str]] = None, **kwargs):
         """
         :keyword values:
         :paramtype values: list[str]
@@ -288,7 +290,7 @@ class BatchModelPathResponseDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'values': {'key': 'values', 'type': '{ModelPathResponseDto}'},
+        "values": {"key": "values", "type": "{ModelPathResponseDto}"},
     }
 
     def __init__(
@@ -315,8 +317,11 @@ class BlobReference(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'blob_uri': {'key': 'blobUri', 'type': 'str'},
-        'storage_account_arm_id': {'key': 'storageAccountArmId', 'type': 'str'},
+        "blob_uri": {"key": "blobUri", "type": "str"},
+        "storage_account_arm_id": {
+            "key": "storageAccountArmId",
+            "type": "str",
+        },
     }
 
     def __init__(
@@ -349,9 +354,15 @@ class BlobReferenceForConsumptionDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'blob_uri': {'key': 'blobUri', 'type': 'str'},
-        'storage_account_arm_id': {'key': 'storageAccountArmId', 'type': 'str'},
-        'credential': {'key': 'credential', 'type': 'DataReferenceCredentialDto'},
+        "blob_uri": {"key": "blobUri", "type": "str"},
+        "storage_account_arm_id": {
+            "key": "storageAccountArmId",
+            "type": "str",
+        },
+        "credential": {
+            "key": "credential",
+            "type": "DataReferenceCredentialDto",
+        },
     }
 
     def __init__(
@@ -396,13 +407,13 @@ class ContainerResourceRequirements(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'cpu': {'key': 'cpu', 'type': 'float'},
-        'cpu_limit': {'key': 'cpuLimit', 'type': 'float'},
-        'memory_in_gb': {'key': 'memoryInGB', 'type': 'float'},
-        'memory_in_gb_limit': {'key': 'memoryInGBLimit', 'type': 'float'},
-        'gpu_enabled': {'key': 'gpuEnabled', 'type': 'bool'},
-        'gpu': {'key': 'gpu', 'type': 'int'},
-        'fpga': {'key': 'fpga', 'type': 'int'},
+        "cpu": {"key": "cpu", "type": "float"},
+        "cpu_limit": {"key": "cpuLimit", "type": "float"},
+        "memory_in_gb": {"key": "memoryInGB", "type": "float"},
+        "memory_in_gb_limit": {"key": "memoryInGBLimit", "type": "float"},
+        "gpu_enabled": {"key": "gpuEnabled", "type": "bool"},
+        "gpu": {"key": "gpu", "type": "int"},
+        "fpga": {"key": "fpga", "type": "int"},
     }
 
     def __init__(
@@ -455,9 +466,9 @@ class CreatedBy(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'user_object_id': {'key': 'userObjectId', 'type': 'str'},
-        'user_tenant_id': {'key': 'userTenantId', 'type': 'str'},
-        'user_name': {'key': 'userName', 'type': 'str'},
+        "user_object_id": {"key": "userObjectId", "type": "str"},
+        "user_tenant_id": {"key": "userTenantId", "type": "str"},
+        "user_name": {"key": "userName", "type": "str"},
     }
 
     def __init__(
@@ -496,10 +507,10 @@ class CreateUnregisteredInputModelDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'run_id': {'key': 'runId', 'type': 'str'},
-        'input_name': {'key': 'inputName', 'type': 'str'},
-        'path': {'key': 'path', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "run_id": {"key": "runId", "type": "str"},
+        "input_name": {"key": "inputName", "type": "str"},
+        "path": {"key": "path", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
@@ -542,10 +553,10 @@ class CreateUnregisteredOutputModelDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'run_id': {'key': 'runId', 'type': 'str'},
-        'output_name': {'key': 'outputName', 'type': 'str'},
-        'path': {'key': 'path', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "run_id": {"key": "runId", "type": "str"},
+        "output_name": {"key": "outputName", "type": "str"},
+        "path": {"key": "path", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
@@ -589,10 +600,10 @@ class CreationContext(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'created_by': {'key': 'createdBy', 'type': 'CreatedBy'},
-        'creation_source': {'key': 'creationSource', 'type': 'str'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "created_by": {"key": "createdBy", "type": "CreatedBy"},
+        "creation_source": {"key": "creationSource", "type": "str"},
     }
 
     def __init__(
@@ -630,15 +641,10 @@ class DataItem(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'data': {'key': 'data', 'type': 'object'},
+        "data": {"key": "data", "type": "object"},
     }
 
-    def __init__(
-        self,
-        *,
-        data: Optional[Any] = None,
-        **kwargs
-    ):
+    def __init__(self, *, data: Optional[Any] = None, **kwargs):
         """
         :keyword data: Anything.
         :paramtype data: any
@@ -658,8 +664,8 @@ class DataReferenceCredentialDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'credential_type': {'key': 'credentialType', 'type': 'str'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "credential_type": {"key": "credentialType", "type": "str"},
     }
 
     def __init__(
@@ -692,15 +698,23 @@ class DataReferences(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'blob_references': {'key': 'blobReferences', 'type': '{BlobReference}'},
-        'image_registry_references': {'key': 'imageRegistryReferences', 'type': '{ImageReference}'},
+        "blob_references": {
+            "key": "blobReferences",
+            "type": "{BlobReference}",
+        },
+        "image_registry_references": {
+            "key": "imageRegistryReferences",
+            "type": "{ImageReference}",
+        },
     }
 
     def __init__(
         self,
         *,
         blob_references: Optional[Dict[str, "BlobReference"]] = None,
-        image_registry_references: Optional[Dict[str, "ImageReference"]] = None,
+        image_registry_references: Optional[
+            Dict[str, "ImageReference"]
+        ] = None,
         **kwargs
     ):
         """
@@ -727,15 +741,25 @@ class DataReferencesForConsumptionDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'blob_references': {'key': 'blobReferences', 'type': '{BlobReferenceForConsumptionDto}'},
-        'image_registry_references': {'key': 'imageRegistryReferences', 'type': '{ImageReferenceForConsumptionDto}'},
+        "blob_references": {
+            "key": "blobReferences",
+            "type": "{BlobReferenceForConsumptionDto}",
+        },
+        "image_registry_references": {
+            "key": "imageRegistryReferences",
+            "type": "{ImageReferenceForConsumptionDto}",
+        },
     }
 
     def __init__(
         self,
         *,
-        blob_references: Optional[Dict[str, "BlobReferenceForConsumptionDto"]] = None,
-        image_registry_references: Optional[Dict[str, "ImageReferenceForConsumptionDto"]] = None,
+        blob_references: Optional[
+            Dict[str, "BlobReferenceForConsumptionDto"]
+        ] = None,
+        image_registry_references: Optional[
+            Dict[str, "ImageReferenceForConsumptionDto"]
+        ] = None,
         **kwargs
     ):
         """
@@ -761,16 +785,12 @@ class DatasetReference(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        id: Optional[str] = None,
-        **kwargs
+        self, *, name: Optional[str] = None, id: Optional[str] = None, **kwargs
     ):
         """
         :keyword name:
@@ -791,7 +811,10 @@ class DependencyMapDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'dependencies': {'key': 'dependencies', 'type': '[DependencyMapItemDto]'},
+        "dependencies": {
+            "key": "dependencies",
+            "type": "[DependencyMapItemDto]",
+        },
     }
 
     def __init__(
@@ -818,8 +841,8 @@ class DependencyMapItemDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'source_id': {'key': 'sourceId', 'type': 'str'},
-        'destination_id': {'key': 'destinationId', 'type': 'str'},
+        "source_id": {"key": "sourceId", "type": "str"},
+        "destination_id": {"key": "destinationId", "type": "str"},
     }
 
     def __init__(
@@ -848,15 +871,10 @@ class DependentAsset(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'asset_id': {'key': 'assetId', 'type': 'str'},
+        "asset_id": {"key": "assetId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        asset_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, asset_id: Optional[str] = None, **kwargs):
         """
         :keyword asset_id:
         :paramtype asset_id: str
@@ -875,8 +893,8 @@ class DependentEntitiesDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'asset_id': {'key': 'assetId', 'type': 'str'},
-        'dependencies': {'key': 'dependencies', 'type': '[DependentAsset]'},
+        "asset_id": {"key": "assetId", "type": "str"},
+        "dependencies": {"key": "dependencies", "type": "[DependentAsset]"},
     }
 
     def __init__(
@@ -915,12 +933,12 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'status_code': {'key': 'statusCode', 'type': 'int'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[InnerErrorDetails]'},
-        'correlation': {'key': 'correlation', 'type': '{str}'},
+        "code": {"key": "code", "type": "str"},
+        "status_code": {"key": "statusCode", "type": "int"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[InnerErrorDetails]"},
+        "correlation": {"key": "correlation", "type": "{str}"},
     }
 
     def __init__(
@@ -969,9 +987,12 @@ class ExtensiveModel(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'model': {'key': 'Model', 'type': 'Model'},
-        'service_list': {'key': 'ServiceList', 'type': '[ServiceResponseBase]'},
-        'asset_list': {'key': 'AssetList', 'type': '[Asset]'},
+        "model": {"key": "Model", "type": "Model"},
+        "service_list": {
+            "key": "ServiceList",
+            "type": "[ServiceResponseBase]",
+        },
+        "asset_list": {"key": "AssetList", "type": "[Asset]"},
     }
 
     def __init__(
@@ -1008,9 +1029,9 @@ class FeedIndexEntityDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'index_entity': {'key': 'indexEntity', 'type': 'IndexEntity'},
-        'schema_id': {'key': 'schemaId', 'type': 'str'},
-        'entity_schema': {'key': 'entitySchema', 'type': 'object'},
+        "index_entity": {"key": "indexEntity", "type": "IndexEntity"},
+        "schema_id": {"key": "schemaId", "type": "str"},
+        "entity_schema": {"key": "entitySchema", "type": "object"},
     }
 
     def __init__(
@@ -1045,8 +1066,11 @@ class FeedIndexEntityRequestDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'feed_entity': {'key': 'feedEntity', 'type': 'AssetDto'},
-        'label_to_version_mapping': {'key': 'labelToVersionMapping', 'type': '{str}'},
+        "feed_entity": {"key": "feedEntity", "type": "AssetDto"},
+        "label_to_version_mapping": {
+            "key": "labelToVersionMapping",
+            "type": "{str}",
+        },
     }
 
     def __init__(
@@ -1075,14 +1099,14 @@ class ImageReference(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'image_registry_reference': {'key': 'imageRegistryReference', 'type': 'str'},
+        "image_registry_reference": {
+            "key": "imageRegistryReference",
+            "type": "str",
+        },
     }
 
     def __init__(
-        self,
-        *,
-        image_registry_reference: Optional[str] = None,
-        **kwargs
+        self, *, image_registry_reference: Optional[str] = None, **kwargs
     ):
         """
         :keyword image_registry_reference:
@@ -1102,8 +1126,14 @@ class ImageReferenceForConsumptionDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'image_registry_reference': {'key': 'imageRegistryReference', 'type': 'str'},
-        'credential': {'key': 'credential', 'type': 'DataReferenceCredentialDto'},
+        "image_registry_reference": {
+            "key": "imageRegistryReference",
+            "type": "str",
+        },
+        "credential": {
+            "key": "credential",
+            "type": "DataReferenceCredentialDto",
+        },
     }
 
     def __init__(
@@ -1137,9 +1167,9 @@ class IndexAnnotations(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'archived': {'key': 'archived', 'type': 'bool'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "archived": {"key": "archived", "type": "bool"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
@@ -1201,27 +1231,27 @@ class IndexEntity(msrest.serialization.Model):
     """
 
     _validation = {
-        'version': {'readonly': True},
-        'entity_container_id': {'readonly': True},
-        'entity_object_id': {'readonly': True},
-        'resource_type': {'readonly': True},
+        "version": {"readonly": True},
+        "entity_container_id": {"readonly": True},
+        "entity_object_id": {"readonly": True},
+        "resource_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'schema_id': {'key': 'schemaId', 'type': 'str'},
-        'entity_id': {'key': 'entityId', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'annotations': {'key': 'annotations', 'type': 'IndexAnnotations'},
-        'properties': {'key': 'properties', 'type': 'IndexProperties'},
-        'internal': {'key': 'internal', 'type': '{object}'},
-        'update_sequence': {'key': 'updateSequence', 'type': 'long'},
-        'type': {'key': 'type', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-        'entity_container_id': {'key': 'entityContainerId', 'type': 'str'},
-        'entity_object_id': {'key': 'entityObjectId', 'type': 'str'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'relationships': {'key': 'relationships', 'type': '[Relationship]'},
-        'asset_id': {'key': 'assetId', 'type': 'str'},
+        "schema_id": {"key": "schemaId", "type": "str"},
+        "entity_id": {"key": "entityId", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "annotations": {"key": "annotations", "type": "IndexAnnotations"},
+        "properties": {"key": "properties", "type": "IndexProperties"},
+        "internal": {"key": "internal", "type": "{object}"},
+        "update_sequence": {"key": "updateSequence", "type": "long"},
+        "type": {"key": "type", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+        "entity_container_id": {"key": "entityContainerId", "type": "str"},
+        "entity_object_id": {"key": "entityObjectId", "type": "str"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "relationships": {"key": "relationships", "type": "[Relationship]"},
+        "asset_id": {"key": "assetId", "type": "str"},
     }
 
     def __init__(
@@ -1289,8 +1319,11 @@ class IndexProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'creation_context': {'key': 'creationContext', 'type': 'CreationContext'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "creation_context": {
+            "key": "creationContext",
+            "type": "CreationContext",
+        },
     }
 
     def __init__(
@@ -1324,9 +1357,9 @@ class InnerErrorDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
     }
 
     def __init__(
@@ -1359,7 +1392,10 @@ class IntellectualPropertyPublisherInformation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'intellectual_property_publisher': {'key': 'intellectualPropertyPublisher', 'type': 'str'},
+        "intellectual_property_publisher": {
+            "key": "intellectualPropertyPublisher",
+            "type": "str",
+        },
     }
 
     def __init__(
@@ -1372,7 +1408,9 @@ class IntellectualPropertyPublisherInformation(msrest.serialization.Model):
         :keyword intellectual_property_publisher:
         :paramtype intellectual_property_publisher: str
         """
-        super(IntellectualPropertyPublisherInformation, self).__init__(**kwargs)
+        super(IntellectualPropertyPublisherInformation, self).__init__(
+            **kwargs
+        )
         self.intellectual_property_publisher = intellectual_property_publisher
 
 
@@ -1417,23 +1455,23 @@ class ListModelsRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tag': {'key': 'tag', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-        'framework': {'key': 'framework', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'count': {'key': 'count', 'type': 'int'},
-        'offset': {'key': 'offset', 'type': 'int'},
-        'skip_token': {'key': 'skipToken', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'str'},
-        'run_id': {'key': 'runId', 'type': 'str'},
-        'dataset_id': {'key': 'datasetId', 'type': 'str'},
-        'order_by': {'key': 'orderBy', 'type': 'str'},
-        'latest_version_only': {'key': 'latestVersionOnly', 'type': 'bool'},
-        'modified_after': {'key': 'modifiedAfter', 'type': 'iso-8601'},
-        'modified_before': {'key': 'modifiedBefore', 'type': 'iso-8601'},
-        'list_view_type': {'key': 'listViewType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "tag": {"key": "tag", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+        "framework": {"key": "framework", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "count": {"key": "count", "type": "int"},
+        "offset": {"key": "offset", "type": "int"},
+        "skip_token": {"key": "skipToken", "type": "str"},
+        "tags": {"key": "tags", "type": "str"},
+        "properties": {"key": "properties", "type": "str"},
+        "run_id": {"key": "runId", "type": "str"},
+        "dataset_id": {"key": "datasetId", "type": "str"},
+        "order_by": {"key": "orderBy", "type": "str"},
+        "latest_version_only": {"key": "latestVersionOnly", "type": "bool"},
+        "modified_after": {"key": "modifiedAfter", "type": "iso-8601"},
+        "modified_before": {"key": "modifiedBefore", "type": "iso-8601"},
+        "list_view_type": {"key": "listViewType", "type": "str"},
     }
 
     def __init__(
@@ -1602,49 +1640,55 @@ class Model(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'mime_type': {'required': True},
+        "name": {"required": True},
+        "mime_type": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'framework': {'key': 'framework', 'type': 'str'},
-        'framework_version': {'key': 'frameworkVersion', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'long'},
-        'tags': {'key': 'tags', 'type': '[str]'},
-        'datasets': {'key': 'datasets', 'type': '[DatasetReference]'},
-        'url': {'key': 'url', 'type': 'str'},
-        'mime_type': {'key': 'mimeType', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'modified_time': {'key': 'modifiedTime', 'type': 'iso-8601'},
-        'unpack': {'key': 'unpack', 'type': 'bool'},
-        'parent_model_id': {'key': 'parentModelId', 'type': 'str'},
-        'run_id': {'key': 'runId', 'type': 'str'},
-        'experiment_name': {'key': 'experimentName', 'type': 'str'},
-        'kv_tags': {'key': 'kvTags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'derived_model_ids': {'key': 'derivedModelIds', 'type': '[str]'},
-        'inputs_schema': {'key': 'inputsSchema', 'type': '[ModelSchema]'},
-        'outputs_schema': {'key': 'outputsSchema', 'type': '[ModelSchema]'},
-        'sample_input_data': {'key': 'sampleInputData', 'type': 'str'},
-        'sample_output_data': {'key': 'sampleOutputData', 'type': 'str'},
-        'resource_requirements': {'key': 'resourceRequirements', 'type': 'ContainerResourceRequirements'},
-        'created_by': {'key': 'createdBy', 'type': 'User'},
-        'modified_by': {'key': 'modifiedBy', 'type': 'User'},
-        'flavors': {'key': 'flavors', 'type': '{{str}}'},
-        'model_format': {'key': 'modelFormat', 'type': 'str'},
-        'stage': {'key': 'stage', 'type': 'str'},
-        'model_container_id': {'key': 'modelContainerId', 'type': 'str'},
-        'mms_id': {'key': 'mmsId', 'type': 'str'},
-        'default_deployment_settings': {'key': 'defaultDeploymentSettings', 'type': 'ModelDeploymentSettings'},
-        'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
-        'is_archived': {'key': 'isArchived', 'type': 'bool'},
-        'is_registered': {'key': 'isRegistered', 'type': 'bool'},
-        'data_path': {'key': 'dataPath', 'type': 'str'},
-        'model_type': {'key': 'modelType', 'type': 'str'},
-        'asset_id': {'key': 'assetId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "framework": {"key": "framework", "type": "str"},
+        "framework_version": {"key": "frameworkVersion", "type": "str"},
+        "version": {"key": "version", "type": "long"},
+        "tags": {"key": "tags", "type": "[str]"},
+        "datasets": {"key": "datasets", "type": "[DatasetReference]"},
+        "url": {"key": "url", "type": "str"},
+        "mime_type": {"key": "mimeType", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "modified_time": {"key": "modifiedTime", "type": "iso-8601"},
+        "unpack": {"key": "unpack", "type": "bool"},
+        "parent_model_id": {"key": "parentModelId", "type": "str"},
+        "run_id": {"key": "runId", "type": "str"},
+        "experiment_name": {"key": "experimentName", "type": "str"},
+        "kv_tags": {"key": "kvTags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "derived_model_ids": {"key": "derivedModelIds", "type": "[str]"},
+        "inputs_schema": {"key": "inputsSchema", "type": "[ModelSchema]"},
+        "outputs_schema": {"key": "outputsSchema", "type": "[ModelSchema]"},
+        "sample_input_data": {"key": "sampleInputData", "type": "str"},
+        "sample_output_data": {"key": "sampleOutputData", "type": "str"},
+        "resource_requirements": {
+            "key": "resourceRequirements",
+            "type": "ContainerResourceRequirements",
+        },
+        "created_by": {"key": "createdBy", "type": "User"},
+        "modified_by": {"key": "modifiedBy", "type": "User"},
+        "flavors": {"key": "flavors", "type": "{{str}}"},
+        "model_format": {"key": "modelFormat", "type": "str"},
+        "stage": {"key": "stage", "type": "str"},
+        "model_container_id": {"key": "modelContainerId", "type": "str"},
+        "mms_id": {"key": "mmsId", "type": "str"},
+        "default_deployment_settings": {
+            "key": "defaultDeploymentSettings",
+            "type": "ModelDeploymentSettings",
+        },
+        "is_anonymous": {"key": "isAnonymous", "type": "bool"},
+        "is_archived": {"key": "isArchived", "type": "bool"},
+        "is_registered": {"key": "isRegistered", "type": "bool"},
+        "data_path": {"key": "dataPath", "type": "str"},
+        "model_type": {"key": "modelType", "type": "str"},
+        "asset_id": {"key": "assetId", "type": "str"},
     }
 
     def __init__(
@@ -1673,7 +1717,9 @@ class Model(msrest.serialization.Model):
         outputs_schema: Optional[List["ModelSchema"]] = None,
         sample_input_data: Optional[str] = None,
         sample_output_data: Optional[str] = None,
-        resource_requirements: Optional["ContainerResourceRequirements"] = None,
+        resource_requirements: Optional[
+            "ContainerResourceRequirements"
+        ] = None,
         created_by: Optional["User"] = None,
         modified_by: Optional["User"] = None,
         flavors: Optional[Dict[str, Dict[str, str]]] = None,
@@ -1681,7 +1727,9 @@ class Model(msrest.serialization.Model):
         stage: Optional[str] = None,
         model_container_id: Optional[str] = None,
         mms_id: Optional[str] = None,
-        default_deployment_settings: Optional["ModelDeploymentSettings"] = None,
+        default_deployment_settings: Optional[
+            "ModelDeploymentSettings"
+        ] = None,
         is_anonymous: Optional[bool] = None,
         is_archived: Optional[bool] = None,
         is_registered: Optional[bool] = None,
@@ -1820,15 +1868,10 @@ class ModelBatchDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'model_ids': {'key': 'modelIds', 'type': '[str]'},
+        "model_ids": {"key": "modelIds", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        model_ids: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, model_ids: Optional[List[str]] = None, **kwargs):
         """
         :keyword model_ids:
         :paramtype model_ids: list[str]
@@ -1845,14 +1888,11 @@ class ModelBatchResponseDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'models': {'key': 'models', 'type': '{Model}'},
+        "models": {"key": "models", "type": "{Model}"},
     }
 
     def __init__(
-        self,
-        *,
-        models: Optional[Dict[str, "Model"]] = None,
-        **kwargs
+        self, *, models: Optional[Dict[str, "Model"]] = None, **kwargs
     ):
         """
         :keyword models: Dictionary of :code:`<Model>`.
@@ -1880,15 +1920,15 @@ class ModelContainerRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'kv_tags': {'key': 'kvTags', 'type': '{str}'},
-        'is_archived': {'key': 'isArchived', 'type': 'bool'},
-        'is_registered': {'key': 'isRegistered', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "kv_tags": {"key": "kvTags", "type": "{str}"},
+        "is_archived": {"key": "isArchived", "type": "bool"},
+        "is_registered": {"key": "isRegistered", "type": "bool"},
     }
 
     def __init__(
@@ -1937,14 +1977,14 @@ class ModelDeploymentSettings(msrest.serialization.Model):
     """
 
     _validation = {
-        'model_format': {'required': True},
+        "model_format": {"required": True},
     }
 
     _attribute_map = {
-        'model_format': {'key': 'modelFormat', 'type': 'str'},
-        'model_name': {'key': 'ModelName', 'type': 'str'},
-        'model_version': {'key': 'ModelVersion', 'type': 'str'},
-        'model_type': {'key': 'ModelType', 'type': 'str'},
+        "model_format": {"key": "modelFormat", "type": "str"},
+        "model_name": {"key": "ModelName", "type": "str"},
+        "model_version": {"key": "ModelVersion", "type": "str"},
+        "model_type": {"key": "ModelType", "type": "str"},
     }
 
     def __init__(
@@ -1988,10 +2028,10 @@ class ModelListModelsRequestPagedResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Model]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'continuation_token': {'key': 'continuationToken', 'type': 'str'},
-        'next_request': {'key': 'nextRequest', 'type': 'ListModelsRequest'},
+        "value": {"key": "value", "type": "[Model]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "continuation_token": {"key": "continuationToken", "type": "str"},
+        "next_request": {"key": "nextRequest", "type": "ListModelsRequest"},
     }
 
     def __init__(
@@ -2032,9 +2072,9 @@ class ModelPagedResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Model]'},
-        'continuation_token': {'key': 'continuationToken', 'type': 'str'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Model]"},
+        "continuation_token": {"key": "continuationToken", "type": "str"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -2069,8 +2109,8 @@ class ModelPathResponseDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'path': {'key': 'path', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "path": {"key": "path", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
@@ -2107,13 +2147,13 @@ class ModelSchema(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'data_type': {'key': 'dataType', 'type': 'str'},
-        'shape': {'key': 'shape', 'type': '[int]'},
+        "name": {"key": "name", "type": "str"},
+        "data_type": {"key": "dataType", "type": "str"},
+        "shape": {"key": "shape", "type": "[int]"},
     }
 
     def __init__(
@@ -2150,8 +2190,8 @@ class ModelSettingsIdentifiers(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'model_id': {'key': 'modelId', 'type': 'str'},
-        'engine_id': {'key': 'engineId', 'type': 'str'},
+        "model_id": {"key": "modelId", "type": "str"},
+        "engine_id": {"key": "engineId", "type": "str"},
     }
 
     def __init__(
@@ -2186,10 +2226,10 @@ class Operation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'object'},
-        'path': {'key': 'path', 'type': 'str'},
-        'op': {'key': 'op', 'type': 'str'},
-        'from_property': {'key': 'from', 'type': 'str'},
+        "value": {"key": "value", "type": "object"},
+        "path": {"key": "path", "type": "str"},
+        "op": {"key": "op", "type": "str"},
+        "from_property": {"key": "from", "type": "str"},
     }
 
     def __init__(
@@ -2231,9 +2271,18 @@ class ProviderFeedEntityRequestDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'source_and_target_asset_ids': {'key': 'sourceAndTargetAssetIds', 'type': 'DependencyMapItemDto'},
-        'dependency_map_dto': {'key': 'dependencyMapDto', 'type': 'DependencyMapDto'},
-        'label_to_version_mapping': {'key': 'labelToVersionMapping', 'type': '{str}'},
+        "source_and_target_asset_ids": {
+            "key": "sourceAndTargetAssetIds",
+            "type": "DependencyMapItemDto",
+        },
+        "dependency_map_dto": {
+            "key": "dependencyMapDto",
+            "type": "DependencyMapDto",
+        },
+        "label_to_version_mapping": {
+            "key": "labelToVersionMapping",
+            "type": "{str}",
+        },
     }
 
     def __init__(
@@ -2282,18 +2331,18 @@ class Relationship(msrest.serialization.Model):
     """
 
     _validation = {
-        'entity_type': {'readonly': True},
-        'entity_container_id': {'readonly': True},
+        "entity_type": {"readonly": True},
+        "entity_container_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'relation_type': {'key': 'relationType', 'type': 'str'},
-        'target_entity_id': {'key': 'targetEntityId', 'type': 'str'},
-        'asset_id': {'key': 'assetId', 'type': 'str'},
-        'entity_type': {'key': 'entityType', 'type': 'str'},
-        'direction': {'key': 'direction', 'type': 'str'},
-        'entity_container_id': {'key': 'entityContainerId', 'type': 'str'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "relation_type": {"key": "relationType", "type": "str"},
+        "target_entity_id": {"key": "targetEntityId", "type": "str"},
+        "asset_id": {"key": "assetId", "type": "str"},
+        "entity_type": {"key": "entityType", "type": "str"},
+        "direction": {"key": "direction", "type": "str"},
+        "entity_container_id": {"key": "entityContainerId", "type": "str"},
     }
 
     def __init__(
@@ -2369,21 +2418,21 @@ class ServiceResponseBase(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '[str]'},
-        'kv_tags': {'key': 'kvTags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'operation_id': {'key': 'operationId', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'updated_time': {'key': 'updatedTime', 'type': 'iso-8601'},
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
-        'compute_type': {'key': 'computeType', 'type': 'str'},
-        'deployment_type': {'key': 'deploymentType', 'type': 'str'},
-        'created_by': {'key': 'createdBy', 'type': 'User'},
-        'endpoint_name': {'key': 'endpointName', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "tags": {"key": "tags", "type": "[str]"},
+        "kv_tags": {"key": "kvTags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "operation_id": {"key": "operationId", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "updated_time": {"key": "updatedTime", "type": "iso-8601"},
+        "error": {"key": "error", "type": "ErrorResponse"},
+        "compute_type": {"key": "computeType", "type": "str"},
+        "deployment_type": {"key": "deploymentType", "type": "str"},
+        "created_by": {"key": "createdBy", "type": "User"},
+        "endpoint_name": {"key": "endpointName", "type": "str"},
     }
 
     def __init__(
@@ -2483,14 +2532,14 @@ class User(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'user_object_id': {'key': 'userObjectId', 'type': 'str'},
-        'user_pu_id': {'key': 'userPuId', 'type': 'str'},
-        'user_idp': {'key': 'userIdp', 'type': 'str'},
-        'user_alt_sec_id': {'key': 'userAltSecId', 'type': 'str'},
-        'user_iss': {'key': 'userIss', 'type': 'str'},
-        'user_tenant_id': {'key': 'userTenantId', 'type': 'str'},
-        'user_name': {'key': 'userName', 'type': 'str'},
-        'upn': {'key': 'upn', 'type': 'str'},
+        "user_object_id": {"key": "userObjectId", "type": "str"},
+        "user_pu_id": {"key": "userPuId", "type": "str"},
+        "user_idp": {"key": "userIdp", "type": "str"},
+        "user_alt_sec_id": {"key": "userAltSecId", "type": "str"},
+        "user_iss": {"key": "userIss", "type": "str"},
+        "user_tenant_id": {"key": "userTenantId", "type": "str"},
+        "user_name": {"key": "userName", "type": "str"},
+        "upn": {"key": "upn", "type": "str"},
     }
 
     def __init__(

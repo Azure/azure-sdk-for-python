@@ -36,8 +36,7 @@ class FeatureStoreSchema(PathAwareSchema):
     image_build_compute = fields.Str()
     public_network_access = StringTransformedEnum(
         allowed_values=[PublicNetworkAccess.DISABLED, PublicNetworkAccess.ENABLED],
-        casing_transform=snake_to_pascal,
-    )
+        casing_transform=snake_to_pascal)
     identity = NestedField(IdentitySchema)
     primary_user_assigned_identity = fields.Str()
-    managed_network = NestedField(ManagedNetworkSchema, unknown=EXCLUDE)
+    managed_network = NestedField(ManagedNetworkSchema)

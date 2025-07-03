@@ -22,10 +22,10 @@ except (SyntaxError, ImportError):
     from ._models import RootError  # type: ignore
 
 __all__ = [
-    'DebugInfoResponse',
-    'ErrorAdditionalInfo',
-    'ErrorResponse',
-    'InnerErrorResponse',
-    'RegistryDiscoveryDto',
-    'RootError',
+    "DebugInfoResponse",
+    "ErrorAdditionalInfo",
+    "ErrorResponse",
+    "InnerErrorResponse",
+    "RegistryDiscoveryDto",
+    "RootError",
 ]

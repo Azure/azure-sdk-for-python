@@ -39,11 +39,21 @@ from azure.ai.ml._utils._storage_utils import (
     get_storage_client,
 )
 from azure.ai.ml._utils.utils import is_mlflow_uri, is_url
-from azure.ai.ml.constants._common import SHORT_URI_FORMAT, STORAGE_ACCOUNT_URLS
+from azure.ai.ml.constants._common import (
+    SHORT_URI_FORMAT,
+    STORAGE_ACCOUNT_URLS,
+)
 from azure.ai.ml.entities import Environment
-from azure.ai.ml.entities._assets._artifacts.artifact import Artifact, ArtifactStorageInfo
+from azure.ai.ml.entities._assets._artifacts.artifact import (
+    Artifact,
+    ArtifactStorageInfo,
+)
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
-from azure.ai.ml.exceptions import ErrorTarget, MlException, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorTarget,
+    MlException,
+    ValidationException,
+)
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import BlobSasPermissions, generate_blob_sas
@@ -63,12 +73,19 @@ if TYPE_CHECKING:
 module_logger = logging.getLogger(__name__)
 
 
-def _get_datastore_name(*, datastore_name: Optional[str] = WORKSPACE_BLOB_STORE) -> str:
-    datastore_name = WORKSPACE_BLOB_STORE if not datastore_name else datastore_name
+def _get_datastore_name(
+    *, datastore_name: Optional[str] = WORKSPACE_BLOB_STORE
+) -> str:
+    datastore_name = (
+        WORKSPACE_BLOB_STORE if not datastore_name else datastore_name
+    )
     try:
         datastore_name = get_resource_name_from_arm_id(datastore_name)
     except (ValueError, AttributeError, ValidationException):
-        module_logger.debug("datastore_name %s is not a full arm id. Proceed with a shortened name.\n", datastore_name)
+        module_logger.debug(
+            "datastore_name %s is not a full arm id. Proceed with a shortened name.\n",
+            datastore_name,
+        )
     datastore_name = remove_aml_prefix(datastore_name)
     if is_ARM_id_for_resource(datastore_name):
         datastore_name = get_resource_name_from_arm_id(datastore_name)
@@ -81,7 +98,16 @@ def get_datastore_info(
     *,
     credential=None,
     **kwargs,
-) -> Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str]:
+) -> Dict[
+    Literal[
+        "storage_type",
+        "storage_account",
+        "account_url",
+        "container_name",
+        "credential",
+    ],
+    str,
+]:
     """Get datastore account, type, and auth information.
 
     :param operations: DatastoreOperations object
@@ -101,9 +127,9 @@ def get_datastore_info(
     storage_endpoint = _get_storage_endpoint_from_metadata()
     datastore_info["storage_type"] = datastore.type
     datastore_info["storage_account"] = datastore.account_name
-    datastore_info["account_url"] = STORAGE_ACCOUNT_URLS[datastore.type].format(
-        datastore.account_name, storage_endpoint
-    )
+    datastore_info["account_url"] = STORAGE_ACCOUNT_URLS[
+        datastore.type
+    ].format(datastore.account_name, storage_endpoint)
 
     try:
         credential = operations._list_secrets(name=name, expirable_secret=True)
@@ -130,7 +156,16 @@ def get_datastore_info(
 
 
 def list_logs_in_datastore(
-    ds_info: Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str],
+    ds_info: Dict[
+        Literal[
+            "storage_type",
+            "storage_account",
+            "account_url",
+            "container_name",
+            "credential",
+        ],
+        str,
+    ],
     prefix: str,
     legacy_log_folder_name: str,
 ) -> Dict[str, str]:
@@ -164,7 +199,9 @@ def list_logs_in_datastore(
 
     items = storage_client.list(starts_with=prefix + "/user_logs/")
     # Append legacy log files if present
-    items.extend(storage_client.list(starts_with=prefix + legacy_log_folder_name))
+    items.extend(
+        storage_client.list(starts_with=prefix + legacy_log_folder_name)
+    )
 
     log_dict = {}
     for item_name in items:
@@ -179,13 +216,15 @@ def list_logs_in_datastore(
                 expiry=datetime.utcnow() + timedelta(minutes=30),
             )
         elif isinstance(storage_client, Gen2StorageClient):
-            token = generate_file_sas(  # pylint: disable=no-value-for-parameter
-                account_name=ds_info["storage_account"],
-                file_system_name=ds_info["container_name"],
-                file_name=item_name,
-                credential=ds_info["credential"],
-                permission=FileSasPermissions(read=True),
-                expiry=datetime.utcnow() + timedelta(minutes=30),
+            token = (
+                generate_file_sas(  # pylint: disable=no-value-for-parameter
+                    account_name=ds_info["storage_account"],
+                    file_system_name=ds_info["container_name"],
+                    file_name=item_name,
+                    credential=ds_info["credential"],
+                    permission=FileSasPermissions(read=True),
+                    expiry=datetime.utcnow() + timedelta(minutes=30),
+                )
             )
 
         log_dict[sub_name] = "{}/{}/{}?{}".format(
@@ -239,10 +278,14 @@ def upload_artifact(
     :rtype: ArtifactStorageInfo
     """
     if sas_uri:
-        storage_client = get_storage_client(credential=None, storage_account=None, account_url=sas_uri)
+        storage_client = get_storage_client(
+            credential=None, storage_account=None, account_url=sas_uri
+        )
     else:
         datastore_name = _get_datastore_name(datastore_name=datastore_name)
-        datastore_info = get_datastore_info(datastore_operation, datastore_name)
+        datastore_info = get_datastore_info(
+            datastore_operation, datastore_name
+        )
         storage_client = get_storage_client(**datastore_info)
 
     artifact_info = storage_client.upload(
@@ -258,11 +301,19 @@ def upload_artifact(
         name=artifact_info["name"],
         version=artifact_info["version"],
         relative_path=artifact_info["remote path"],
-        datastore_arm_id=get_datastore_arm_id(datastore_name, operation_scope) if not sas_uri else None,
-        container_name=(
-            storage_client.container if isinstance(storage_client, BlobStorageClient) else storage_client.file_system
+        datastore_arm_id=(
+            get_datastore_arm_id(datastore_name, operation_scope)
+            if not sas_uri
+            else None
         ),
-        storage_account_url=datastore_info.get("account_url") if not sas_uri else sas_uri,
+        container_name=(
+            storage_client.container
+            if isinstance(storage_client, BlobStorageClient)
+            else storage_client.file_system
+        ),
+        storage_account_url=(
+            datastore_info.get("account_url") if not sas_uri else sas_uri
+        ),
         indicator_file=artifact_info["indicator file"],
         is_file=Path(local_path).is_file(),
     )
@@ -291,10 +342,16 @@ def download_artifact(
     :return: Path that files were written to
     :rtype: str
     """
-    starts_with = starts_with.as_posix() if isinstance(starts_with, Path) else starts_with
+    starts_with = (
+        starts_with.as_posix()
+        if isinstance(starts_with, Path)
+        else starts_with
+    )
     datastore_name = _get_datastore_name(datastore_name=datastore_name)
     if datastore_info is None:
-        datastore_info = get_datastore_info(datastore_operation, datastore_name)
+        datastore_info = get_datastore_info(
+            datastore_operation, datastore_name
+        )
     storage_client = get_storage_client(**datastore_info)
     storage_client.download(starts_with=starts_with, destination=destination)
     return destination
@@ -322,7 +379,8 @@ def download_artifact_from_storage_url(
     datastore_name = _get_datastore_name(datastore_name=datastore_name)
     datastore_info = get_datastore_info(datastore_operation, datastore_name)
     starts_with = get_artifact_path_from_storage_url(
-        blob_url=str(blob_url), container_name=datastore_info.get("container_name")
+        blob_url=str(blob_url),
+        container_name=datastore_info.get("container_name"),
     )
     return download_artifact(
         starts_with=starts_with,
@@ -333,7 +391,9 @@ def download_artifact_from_storage_url(
     )
 
 
-def download_artifact_from_aml_uri(uri: str, destination: str, datastore_operation: DatastoreOperations) -> str:
+def download_artifact_from_aml_uri(
+    uri: str, destination: str, datastore_operation: DatastoreOperations
+) -> str:
     """Downloads artifact pointed to by URI of the form `azureml://...` to destination.
 
     :param str uri: AzureML uri of artifact to download
@@ -352,7 +412,9 @@ def download_artifact_from_aml_uri(uri: str, destination: str, datastore_operati
 
 
 def aml_datastore_path_exists(
-    uri: str, datastore_operation: DatastoreOperations, datastore_info: Optional[dict] = None
+    uri: str,
+    datastore_operation: DatastoreOperations,
+    datastore_info: Optional[dict] = None,
 ) -> bool:
     """Checks whether `uri` of the form "azureml://" points to either a directory or a file.
 
@@ -363,7 +425,9 @@ def aml_datastore_path_exists(
     :rtype: bool
     """
     parsed_uri = AzureMLDatastorePathUri(uri)
-    datastore_info = datastore_info or get_datastore_info(datastore_operation, parsed_uri.datastore)
+    datastore_info = datastore_info or get_datastore_info(
+        datastore_operation, parsed_uri.datastore
+    )
     return get_storage_client(**datastore_info).exists(parsed_uri.path)
 
 
@@ -438,7 +502,9 @@ def _update_metadata(name, version, indicator_file, datastore_info) -> None:
         _update_gen2_metadata(name, version, indicator_file, storage_client)
 
 
-def _update_blob_metadata(name, version, indicator_file, storage_client) -> None:
+def _update_blob_metadata(
+    name, version, indicator_file, storage_client
+) -> None:
     container_client = storage_client.container_client
     if indicator_file.startswith(storage_client.container):
         indicator_file = indicator_file.split(storage_client.container)[1]
@@ -446,9 +512,15 @@ def _update_blob_metadata(name, version, indicator_file, storage_client) -> None
     blob.set_blob_metadata(_build_metadata_dict(name=name, version=version))
 
 
-def _update_gen2_metadata(name, version, indicator_file, storage_client) -> None:
-    artifact_directory_client = storage_client.file_system_client.get_directory_client(indicator_file)
-    artifact_directory_client.set_metadata(_build_metadata_dict(name=name, version=version))
+def _update_gen2_metadata(
+    name, version, indicator_file, storage_client
+) -> None:
+    artifact_directory_client = (
+        storage_client.file_system_client.get_directory_client(indicator_file)
+    )
+    artifact_directory_client.set_metadata(
+        _build_metadata_dict(name=name, version=version)
+    )
 
 
 T = TypeVar("T", bound=Artifact)
@@ -522,7 +594,9 @@ def _check_and_upload_path(
             ignore_file=getattr(artifact, "_ignore_file", None),
             blob_uri=blob_uri,
         )
-        indicator_file = uploaded_artifact.indicator_file  # reference to storage contents
+        indicator_file = (
+            uploaded_artifact.indicator_file
+        )  # reference to storage contents
         if artifact._is_anonymous:
             artifact.name, artifact.version = (
                 uploaded_artifact.name,
@@ -554,11 +628,15 @@ def _check_and_upload_env_build_context(
         )
         if environment.build is not None:
             # TODO: Depending on decision trailing "/" needs to stay or not. EMS requires it to be present
-            environment.build.path = str(uploaded_artifact.full_storage_path) + "/"
+            environment.build.path = (
+                str(uploaded_artifact.full_storage_path) + "/"
+            )
     return environment
 
 
-def _get_snapshot_path_info(artifact) -> Optional[Tuple[Path, IgnoreFile, str]]:
+def _get_snapshot_path_info(
+    artifact,
+) -> Optional[Tuple[Path, IgnoreFile, str]]:
     """
     Validate an Artifact's local path and get its resolved path, ignore file, and hash. If no local path, return None.
     :param artifact: Artifact object

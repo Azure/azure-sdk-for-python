@@ -41,7 +41,9 @@ class CredentialsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SERVICE_PRINCIPAL = "ServicePrincipal"
 
 
-class DataReferenceCredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class DataReferenceCredentialType(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
 
     SAS = "SAS"
     DOCKER_CREDENTIALS = "DockerCredentials"
@@ -251,7 +253,9 @@ class SecretsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SERVICE_PRINCIPAL = "ServicePrincipal"
 
 
-class ServiceDataAccessAuthIdentity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ServiceDataAccessAuthIdentity(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
 
     NONE = "None"
     WORKSPACE_SYSTEM_ASSIGNED_IDENTITY = "WorkspaceSystemAssignedIdentity"

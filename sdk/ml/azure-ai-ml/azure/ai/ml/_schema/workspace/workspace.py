@@ -35,14 +35,13 @@ class WorkspaceSchema(PathAwareSchema):
     image_build_compute = fields.Str()
     public_network_access = StringTransformedEnum(
         allowed_values=[PublicNetworkAccess.DISABLED, PublicNetworkAccess.ENABLED],
-        casing_transform=snake_to_pascal,
-    )
+        casing_transform=snake_to_pascal)
     network_acls = NestedField(NetworkAclsSchema)
     system_datastores_auth_mode = fields.Str()
     identity = NestedField(IdentitySchema)
     primary_user_assigned_identity = fields.Str()
     workspace_hub = fields.Str(validate=validate_arm_str)
-    managed_network = NestedField(ManagedNetworkSchema, unknown=EXCLUDE)
+    managed_network = NestedField(ManagedNetworkSchema)
     provision_network_now = fields.Bool()
     enable_data_isolation = fields.Bool()
     allow_roleassignment_on_rg = fields.Bool()

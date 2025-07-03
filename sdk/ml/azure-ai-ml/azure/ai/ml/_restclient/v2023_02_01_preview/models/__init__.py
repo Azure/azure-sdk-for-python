@@ -202,10 +202,14 @@ try:
     from ._models_py3 import FeaturesetVersionResourceArmPaginatedResult
     from ._models_py3 import FeaturestoreEntityContainer
     from ._models_py3 import FeaturestoreEntityContainerProperties
-    from ._models_py3 import FeaturestoreEntityContainerResourceArmPaginatedResult
+    from ._models_py3 import (
+        FeaturestoreEntityContainerResourceArmPaginatedResult,
+    )
     from ._models_py3 import FeaturestoreEntityVersion
     from ._models_py3 import FeaturestoreEntityVersionProperties
-    from ._models_py3 import FeaturestoreEntityVersionResourceArmPaginatedResult
+    from ._models_py3 import (
+        FeaturestoreEntityVersionResourceArmPaginatedResult,
+    )
     from ._models_py3 import FeaturizationSettings
     from ._models_py3 import FlavorData
     from ._models_py3 import ForecastHorizon
@@ -288,7 +292,9 @@ try:
     from ._models_py3 import MLTableJobInput
     from ._models_py3 import MLTableJobOutput
     from ._models_py3 import ManagedIdentity
-    from ._models_py3 import ManagedIdentityAuthTypeWorkspaceConnectionProperties
+    from ._models_py3 import (
+        ManagedIdentityAuthTypeWorkspaceConnectionProperties,
+    )
     from ._models_py3 import ManagedOnlineDeployment
     from ._models_py3 import ManagedServiceIdentity
     from ._models_py3 import MaterializationComputeResource
@@ -338,7 +344,9 @@ try:
     from ._models_py3 import PackageResponse
     from ._models_py3 import PaginatedComputeResourcesList
     from ._models_py3 import PartialBatchDeployment
-    from ._models_py3 import PartialBatchDeploymentPartialMinimalTrackedResourceWithProperties
+    from ._models_py3 import (
+        PartialBatchDeploymentPartialMinimalTrackedResourceWithProperties,
+    )
     from ._models_py3 import PartialManagedServiceIdentity
     from ._models_py3 import PartialMinimalTrackedResource
     from ._models_py3 import PartialMinimalTrackedResourceWithIdentity
@@ -393,7 +401,9 @@ try:
     from ._models_py3 import ScriptsToExecute
     from ._models_py3 import Seasonality
     from ._models_py3 import ServiceManagedResourcesSettings
-    from ._models_py3 import ServicePrincipalAuthTypeWorkspaceConnectionProperties
+    from ._models_py3 import (
+        ServicePrincipalAuthTypeWorkspaceConnectionProperties,
+    )
     from ._models_py3 import ServicePrincipalDatastoreCredentials
     from ._models_py3 import ServicePrincipalDatastoreSecrets
     from ._models_py3 import SetupScripts
@@ -457,7 +467,9 @@ try:
     from ._models_py3 import UserCreatedAcrAccount
     from ._models_py3 import UserCreatedStorageAccount
     from ._models_py3 import UserIdentity
-    from ._models_py3 import UsernamePasswordAuthTypeWorkspaceConnectionProperties
+    from ._models_py3 import (
+        UsernamePasswordAuthTypeWorkspaceConnectionProperties,
+    )
     from ._models_py3 import VirtualMachine
     from ._models_py3 import VirtualMachineImage
     from ._models_py3 import VirtualMachineSchema
@@ -475,7 +487,9 @@ try:
     from ._models_py3 import WorkspaceConnectionPersonalAccessToken
     from ._models_py3 import WorkspaceConnectionPropertiesV2
     from ._models_py3 import WorkspaceConnectionPropertiesV2BasicResource
-    from ._models_py3 import WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult
+    from ._models_py3 import (
+        WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult,
+    )
     from ._models_py3 import WorkspaceConnectionServicePrincipal
     from ._models_py3 import WorkspaceConnectionSharedAccessSignature
     from ._models_py3 import WorkspaceConnectionUsernamePassword

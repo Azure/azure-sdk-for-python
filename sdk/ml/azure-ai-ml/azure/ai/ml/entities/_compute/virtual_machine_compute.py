@@ -141,7 +141,7 @@ class VirtualMachineCompute(Compute):
         return response
 
     def _to_dict(self) -> Dict:
-        res: dict = VirtualMachineComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = VirtualMachineComputeSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res
 
     @classmethod

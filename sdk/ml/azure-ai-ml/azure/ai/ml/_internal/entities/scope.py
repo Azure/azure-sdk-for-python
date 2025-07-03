@@ -20,7 +20,9 @@ class Scope(InternalBaseNode):
         self._init = True
         self._adla_account_name = kwargs.pop("adla_account_name", None)
         self._scope_param = kwargs.pop("scope_param", None)
-        self._custom_job_name_suffix = kwargs.pop("custom_job_name_suffix", None)
+        self._custom_job_name_suffix = kwargs.pop(
+            "custom_job_name_suffix", None
+        )
         self._priority = kwargs.pop("priority", None)
         self._auto_token = kwargs.pop("auto_token", None)
         self._tokens = kwargs.pop("tokens", None)
@@ -122,10 +124,20 @@ class Scope(InternalBaseNode):
 
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
-        return ["custom_job_name_suffix", "scope_param", "adla_account_name", "priority", "auto_token", "tokens", "vcp"]
+        return [
+            "custom_job_name_suffix",
+            "scope_param",
+            "adla_account_name",
+            "priority",
+            "auto_token",
+            "tokens",
+            "vcp",
+        ]
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(
+        cls, context
+    ) -> Union[PathAwareSchema, Schema]:
         from .._schema.node import ScopeSchema
 
         return ScopeSchema(context=context)

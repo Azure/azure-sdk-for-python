@@ -117,5 +117,5 @@ class HdfsDatastore(Datastore):
 
     def _to_dict(self) -> Dict:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
-        res: dict = HdfsSchema(context=context).dump(self)
+        res: dict = HdfsSchema().dump(self, context=context)
         return res

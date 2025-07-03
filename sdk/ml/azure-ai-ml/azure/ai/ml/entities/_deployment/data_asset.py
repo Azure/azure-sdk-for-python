@@ -34,5 +34,5 @@ class DataAsset:
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        res: dict = DataAssetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = DataAssetSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res

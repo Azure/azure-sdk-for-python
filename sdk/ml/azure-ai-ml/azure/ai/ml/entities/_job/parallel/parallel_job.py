@@ -97,7 +97,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
         self.identity = identity
 
     def _to_dict(self) -> Dict:
-        res: dict = ParallelJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = ParallelJobSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res
 
     def _to_rest_object(self) -> None:

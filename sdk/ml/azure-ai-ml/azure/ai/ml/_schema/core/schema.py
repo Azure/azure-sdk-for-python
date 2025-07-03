@@ -17,6 +17,7 @@ from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, FILE_PREFIX, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.exceptions import MlException
 
+
 module_logger = logging.getLogger(__name__)
 
 
@@ -32,7 +33,22 @@ class PathAwareSchema(PatchedBaseSchema, metaclass=PatchedSchemaMeta):
         # set old base path, note it's an Path object and point to the same object with
         # self.context.get(BASE_PATH_CONTEXT_KEY)
         self.old_base_path = self.context.get(BASE_PATH_CONTEXT_KEY)
-        super().__init__(*args, **kwargs)
+        
+        # In marshmallow 4.x, filter out unsupported constructor parameters
+        # Valid parameters for Schema constructor: only, exclude, many, load_only, dump_only, partial
+        # Note: context is NOT a valid constructor parameter in marshmallow 4.x
+        valid_schema_params = {'only', 'exclude', 'many', 'load_only', 'dump_only', 'partial'}
+        filtered_kwargs = {k: v for k, v in kwargs.items() if k in valid_schema_params}
+        
+        super().__init__(*args, **filtered_kwargs)
+
+    def load(self, json_data, *, many=None, partial=None, unknown=None):
+        """Override load to use stored context"""
+        return super().load(json_data, many=many, partial=partial, unknown=unknown, context=self.context)
+
+    def dump(self, obj, *, many=None):
+        """Override dump to use stored context"""
+        return super().dump(obj, many=many, context=self.context)
 
     @pre_load
     def add_param_overrides(self, data, **kwargs):

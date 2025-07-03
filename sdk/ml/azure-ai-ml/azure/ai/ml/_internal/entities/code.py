@@ -27,9 +27,16 @@ class InternalCode(Code):
         return getattr(super(InternalCode, self), "_upload_hash")
 
     def __setattr__(self, key, value):
-        if key == "name" and hasattr(self, key) and self._is_anonymous is True and value != self.name:
+        if (
+            key == "name"
+            and hasattr(self, key)
+            and self._is_anonymous is True
+            and value != self.name
+        ):
             raise AttributeError(
                 "InternalCode name are calculated based on its content and cannot "
-                "be changed: current name is {} and new value is {}".format(self.name, value)
+                "be changed: current name is {} and new value is {}".format(
+                    self.name, value
+                )
             )
         super().__setattr__(key, value)

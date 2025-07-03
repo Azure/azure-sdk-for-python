@@ -54,5 +54,5 @@ class JobDefinition:
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        res: dict = JobDefinitionSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = JobDefinitionSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res

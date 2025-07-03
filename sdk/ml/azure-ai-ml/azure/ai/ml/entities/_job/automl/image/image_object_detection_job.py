@@ -223,7 +223,7 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
                 context={BASE_PATH_CONTEXT_KEY: "./", "inside_pipeline": True}
             ).dump(self)
         else:
-            schema_dict = ImageObjectDetectionSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+            schema_dict = ImageObjectDetectionSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
 
         return schema_dict
 

@@ -126,7 +126,7 @@ class AzureFileDatastore(Datastore):
 
     def _to_dict(self) -> Dict:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
-        res: dict = AzureFileSchema(context=context).dump(self)
+        res: dict = AzureFileSchema().dump(self, context=context)
         return res
 
 
@@ -227,7 +227,7 @@ class AzureBlobDatastore(Datastore):
 
     def _to_dict(self) -> Dict:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
-        res: dict = AzureBlobSchema(context=context).dump(self)
+        res: dict = AzureBlobSchema().dump(self, context=context)
         return res
 
 
@@ -333,5 +333,5 @@ class AzureDataLakeGen2Datastore(Datastore):
 
     def _to_dict(self) -> Dict:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
-        res: dict = AzureDataLakeGen2Schema(context=context).dump(self)
+        res: dict = AzureDataLakeGen2Schema().dump(self, context=context)
         return res

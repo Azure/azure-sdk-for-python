@@ -11,13 +11,14 @@ import re
 import traceback
 import typing
 from abc import abstractmethod
+from datetime import datetime
 from pathlib import Path
 from typing import List, Optional, Union
 
 from marshmallow import RAISE, fields
 from marshmallow.exceptions import ValidationError
 from marshmallow.fields import Field, Nested
-from marshmallow.utils import FieldInstanceResolutionError, from_iso_datetime, resolve_field_instance
+
 
 from ..._utils._arm_id_utils import AMLVersionedArmId, is_ARM_id_for_resource, parse_name_label, parse_name_version
 from ..._utils._experimental import _is_warning_cached
@@ -47,13 +48,50 @@ module_logger = logging.getLogger(__name__)
 T = typing.TypeVar("T")
 
 
+def _resolve_field_instance(cls_or_instance):
+    """
+    Helper function to replace marshmallow.utils.resolve_field_instance
+    which was removed in marshmallow 4.x.
+    
+    Returns a field instance from either a field class or field instance.
+    """
+    if isinstance(cls_or_instance, Field):
+        # Already a field instance
+        return cls_or_instance
+    elif isinstance(cls_or_instance, type) and issubclass(cls_or_instance, Field):
+        # Field class, instantiate it
+        return cls_or_instance()
+    else:
+        # Not a valid field class or instance
+        raise ValueError(
+            f'Expected a field class or instance, got {cls_or_instance!r}'
+        )
+
+
+def _filter_field_kwargs(**kwargs):
+    """
+    Helper function to filter kwargs to only include parameters that are 
+    valid for marshmallow 4.x Field constructor.
+    
+    Returns a dict containing only valid Field parameters.
+    """
+    valid_field_params = {}
+    for param in ['load_default', 'dump_default', 'missing', 'allow_none', 'validate', 
+                  'required', 'load_only', 'dump_only', 'error_messages', 'metadata', 'data_key']:
+        if param in kwargs:
+            valid_field_params[param] = kwargs[param]
+    return valid_field_params
+
+
 class StringTransformedEnum(Field):
     def __init__(self, **kwargs):
-        # pop marshmallow unknown args to avoid warnings
+        # Extract custom parameters that are not supported by Field in marshmallow 4.x
         self.allowed_values = kwargs.pop("allowed_values", None)
         self.casing_transform = kwargs.pop("casing_transform", lambda x: x.lower())
         self.pass_original = kwargs.pop("pass_original", False)
-        super().__init__(**kwargs)
+        
+        # Only pass valid Field parameters to parent constructor
+        super().__init__(**_filter_field_kwargs(**kwargs))
         if isinstance(self.allowed_values, str):
             self.allowed_values = [self.allowed_values]
         self.allowed_values = [self.casing_transform(x) for x in self.allowed_values]
@@ -100,8 +138,8 @@ class LocalPathField(fields.Str):
     def __init__(self, allow_dir=True, allow_file=True, **kwargs):
         self._allow_dir = allow_dir
         self._allow_file = allow_file
-        self._pattern = kwargs.get("pattern", None)
-        super().__init__()
+        self._pattern = kwargs.pop("pattern", None)
+        super().__init__(**kwargs)
 
     def _jsonschema_type_mapping(self):
         schema = {"type": "string", "arm_type": LOCAL_PATH}
@@ -249,7 +287,12 @@ class DateTimeStr(fields.Str):
 
     def _validate(self, value):
         try:
-            from_iso_datetime(value)
+            # Replace marshmallow's from_iso_datetime with Python's built-in datetime parsing
+            # This supports ISO 8601 format parsing starting from Python 3.7
+            if not isinstance(value, str):
+                raise ValueError("Value must be a string")
+            # Handle Z suffix by replacing with +00:00 for ISO 8601 compatibility
+            datetime.fromisoformat(value.replace('Z', '+00:00'))
         except Exception as e:
             raise ValidationError(f"Not a valid ISO8601-formatted datetime string: {value}") from e
 
@@ -258,9 +301,12 @@ class ArmStr(Field):
     """A string represents an ARM ID for some AzureML resource."""
 
     def __init__(self, **kwargs):
+        # Extract custom parameters that are not supported by Field in marshmallow 4.x
         self.azureml_type = kwargs.pop("azureml_type", None)
         self.pattern = kwargs.pop("pattern", r"^azureml:.+")
-        super().__init__(**kwargs)
+        
+        # Only pass valid Field parameters to parent constructor
+        super().__init__(**_filter_field_kwargs(**kwargs))
 
     def _jsonschema_type_mapping(self):
         schema = {
@@ -312,6 +358,7 @@ class ArmVersionedStr(ArmStr):
     """A string represents an ARM ID for some AzureML resource with version."""
 
     def __init__(self, **kwargs):
+        # Extract custom parameters that are not supported by Field in marshmallow 4.x
         self.allow_default_version = kwargs.pop("allow_default_version", False)
         super().__init__(**kwargs)
 
@@ -415,11 +462,12 @@ class RefField(Field):
 
 
 class NestedField(Nested):
-    """anticipates the default coming in next marshmallow version, unknown=True."""
+    """Nested field compatible with marshmallow 4.x - unknown parameter handled at schema level."""
 
     def __init__(self, *args, **kwargs):
-        if kwargs.get("unknown") is None:
-            kwargs["unknown"] = RAISE
+        # In marshmallow 4.x, 'unknown' parameter is not accepted by field constructors
+        # Remove it from kwargs to avoid TypeError
+        kwargs.pop("unknown", None)
         super().__init__(*args, **kwargs)
 
 
@@ -432,16 +480,20 @@ class UnionField(fields.Field):
     """A field that can be one of multiple types."""
 
     def __init__(self, union_fields: List[fields.Field], is_strict=False, **kwargs):
-        super().__init__(**kwargs)
+        # Store custom parameter separately
+        self.is_strict = is_strict
+        
+        # Only pass valid Field parameters to parent constructor
+        super().__init__(**_filter_field_kwargs(**kwargs))
         try:
             # add the validation and make sure union_fields must be subclasses or instances of
-            # marshmallow.base.FieldABC
-            self._union_fields = [resolve_field_instance(cls_or_instance) for cls_or_instance in union_fields]
+            # marshmallow.Field
+            self._union_fields = [_resolve_field_instance(cls_or_instance) for cls_or_instance in union_fields]
             # TODO: make serialization/de-serialization work in the same way as json schema when is_strict is True
-            self.is_strict = is_strict  # S\When True, combine fields with oneOf instead of anyOf at schema generation
-        except FieldInstanceResolutionError as error:
+            # When True, combine fields with oneOf instead of anyOf at schema generation
+        except ValueError as error:
             raise ValueError(
-                'Elements of "union_fields" must be subclasses or instances of marshmallow.base.FieldABC.'
+                'Elements of "union_fields" must be subclasses or instances of marshmallow.Field.'
             ) from error
 
     @property
@@ -549,7 +601,7 @@ class TypeSensitiveUnionField(UnionField):
         for type_name, type_sensitive_fields in type_sensitive_fields_dict.items():
             union_fields.extend(type_sensitive_fields)
             self._type_sensitive_fields_dict[type_name] = [
-                resolve_field_instance(cls_or_instance) for cls_or_instance in type_sensitive_fields
+                _resolve_field_instance(cls_or_instance) for cls_or_instance in type_sensitive_fields
             ]
 
         super(TypeSensitiveUnionField, self).__init__(union_fields, **kwargs)
@@ -874,11 +926,11 @@ class ExperimentalField(fields.Field):
     def __init__(self, experimental_field: fields.Field, **kwargs):
         super().__init__(**kwargs)
         try:
-            self._experimental_field = resolve_field_instance(experimental_field)
+            self._experimental_field = _resolve_field_instance(experimental_field)
             self.required = experimental_field.required
-        except FieldInstanceResolutionError as error:
+        except ValueError as error:
             raise ValueError(
-                '"experimental_field" must be subclasses or instances of marshmallow.base.FieldABC.'
+                '"experimental_field" must be subclasses or instances of marshmallow.Field.'
             ) from error
 
     @property
@@ -908,8 +960,11 @@ class RegistryStr(Field):
     """A string represents a registry ID for some AzureML resource."""
 
     def __init__(self, **kwargs):
+        # Extract custom parameters that are not supported by Field in marshmallow 4.x
         self.azureml_type = kwargs.pop("azureml_type", None)
-        super().__init__(**kwargs)
+        
+        # Only pass valid Field parameters to parent constructor
+        super().__init__(**_filter_field_kwargs(**kwargs))
 
     def _jsonschema_type_mapping(self):
         schema = {

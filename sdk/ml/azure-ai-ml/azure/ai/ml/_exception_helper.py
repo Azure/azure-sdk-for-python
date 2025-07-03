@@ -15,7 +15,12 @@ from azure.ai.ml.constants._common import (
     SCHEMA_VALIDATION_ERROR_TEMPLATE,
     YAML_CREATION_ERROR_DESCRIPTION,
 )
-from azure.ai.ml.exceptions import ErrorTarget, MlException, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorTarget,
+    MlException,
+    ValidationErrorType,
+    ValidationException,
+)
 
 module_logger = logging.getLogger(__name__)
 
@@ -38,7 +43,9 @@ def _find_deepest_dictionary(data: dict) -> dict:
     return data
 
 
-def get_entity_type(error: Union[str, SchemaValidationError, ValidationException]) -> Tuple[str, str]:
+def get_entity_type(
+    error: Union[str, SchemaValidationError, ValidationException],
+) -> Tuple[str, str]:
     """Get entity name from schema type referenced in the error.
 
     :param error: The validation error
@@ -48,7 +55,9 @@ def get_entity_type(error: Union[str, SchemaValidationError, ValidationException
     """
     details = ""
 
-    error_name = error.exc_msg if hasattr(error, "exc_msg") else error.split(":")[0]
+    error_name = (
+        error.exc_msg if hasattr(error, "exc_msg") else error.split(":")[0]
+    )
     if isinstance(error, ValidationException):
         entity_type = error.target
     else:
@@ -82,7 +91,9 @@ def get_entity_type(error: Union[str, SchemaValidationError, ValidationException
 
 
 def format_details_section(
-    error: Union[str, SchemaValidationError, ValidationException], details: str, entity_type: str
+    error: Union[str, SchemaValidationError, ValidationException],
+    details: str,
+    entity_type: str,
 ) -> Tuple[Dict[str, bool], str]:
     """Builds strings for details of the error message template's Details section.
 
@@ -116,8 +127,12 @@ def format_details_section(
             # This separate treatment will be unnecessary once
             # task https://msdata.visualstudio.com/Vienna/_workitems/edit/1925982/ is resolved.
             parsed_error_msg = error[error.find("{") : (error.rfind("}") + 1)]
-            error_msg = json.loads(parsed_error_msg).get("errors")[0].get("message")
-            error_msg = error_msg[error_msg.find("{") : (error_msg.rfind("}") + 1)]
+            error_msg = (
+                json.loads(parsed_error_msg).get("errors")[0].get("message")
+            )
+            error_msg = error_msg[
+                error_msg.find("{") : (error_msg.rfind("}") + 1)
+            ]
             error_msg = error_msg[: (error_msg.rfind("}") + 1)]
             error_msg = json.loads(error_msg)
         else:
@@ -129,16 +144,23 @@ def format_details_section(
                 field_error = field_error[0]
             except KeyError:
                 error_msg = _find_deepest_dictionary(field_error)
-                if entity_type not in [ErrorTarget.PIPELINE, ErrorTarget.COMMAND_JOB]:
+                if entity_type not in [
+                    ErrorTarget.PIPELINE,
+                    ErrorTarget.COMMAND_JOB,
+                ]:
                     field = list(error_msg.keys())[0]
                 field_error = list(error_msg.values())[0][0]
             field_error_string = str(field_error)
 
             if not error_types[ValidationErrorType.INVALID_VALUE] and any(
-                s in field_error_string for s in ["Not a valid", "is not in set"]
+                s in field_error_string
+                for s in ["Not a valid", "is not in set"]
             ):
                 error_types[ValidationErrorType.INVALID_VALUE] = True
-            if not error_types[ValidationErrorType.UNKNOWN_FIELD] and "Unknown field" in field_error_string:
+            if (
+                not error_types[ValidationErrorType.UNKNOWN_FIELD]
+                and "Unknown field" in field_error_string
+            ):
                 error_types[ValidationErrorType.UNKNOWN_FIELD] = True
             if (
                 not error_types[ValidationErrorType.MISSING_FIELD]
@@ -149,8 +171,13 @@ def format_details_section(
                 not error_types[ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND]
                 and "No such file or directory" in field_error_string
             ):
-                error_types[ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND] = True
-            if not error_types[ValidationErrorType.CANNOT_SERIALIZE] and "Cannot dump" in field_error_string:
+                error_types[ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND] = (
+                    True
+                )
+            if (
+                not error_types[ValidationErrorType.CANNOT_SERIALIZE]
+                and "Cannot dump" in field_error_string
+            ):
                 error_types[ValidationErrorType.CANNOT_SERIALIZE] = True
             if (
                 not error_types[ValidationErrorType.CANNOT_PARSE]
@@ -161,7 +188,9 @@ def format_details_section(
             if isinstance(field_error, dict):
                 field_error = f"{list(field_error.keys())[0]}:\n    - {list(field_error.values())[0][0]}"
 
-            details += f"{Fore.RED}\n(x) {field}:\n- {field_error}{Fore.RESET}\n"
+            details += (
+                f"{Fore.RED}\n(x) {field}:\n- {field_error}{Fore.RESET}\n"
+            )
     return error_types, details
 
 
@@ -215,7 +244,8 @@ def format_errors_and_resolutions_sections(
     if error_types[ValidationErrorType.RESOURCE_NOT_FOUND]:
         errors += f"\n{count}) Resource was not found.\n"
         resolutions += (
-            f"\n{count}) Double-check that the resource has been specified correctly and " "that you have access to it."
+            f"\n{count}) Double-check that the resource has been specified correctly and "
+            "that you have access to it."
         )
         count += 1
 
@@ -263,10 +293,14 @@ def format_create_validation_error(
         error = raw_error
     entity_type, details = get_entity_type(error)
     error_types, details = format_details_section(error, details, entity_type)
-    errors, resolutions = format_errors_and_resolutions_sections(entity_type, error_types, cli)
+    errors, resolutions = format_errors_and_resolutions_sections(
+        entity_type, error_types, cli
+    )
 
     if yaml_operation:
-        description = YAML_CREATION_ERROR_DESCRIPTION.format(entity_type=entity_type)
+        description = YAML_CREATION_ERROR_DESCRIPTION.format(
+            entity_type=entity_type
+        )
         description = Style.BRIGHT + description + Style.RESET_ALL
 
         if entity_type == ErrorTarget.MODEL:
@@ -277,7 +311,10 @@ def format_create_validation_error(
             schema_type = CommandJobSchema
         elif entity_type == ErrorTarget.SWEEP_JOB:
             schema_type = SweepJobSchema
-        elif entity_type in [ErrorTarget.BLOB_DATASTORE, ErrorTarget.DATASTORE]:
+        elif entity_type in [
+            ErrorTarget.BLOB_DATASTORE,
+            ErrorTarget.DATASTORE,
+        ]:
             schema_type = AzureBlobSchema
         elif entity_type == ErrorTarget.GEN1_DATASTORE:
             schema_type = AzureDataLakeGen1Schema
@@ -308,7 +345,9 @@ def format_create_validation_error(
     return formatted_error
 
 
-def log_and_raise_error(error: Exception, debug: bool = False, yaml_operation: bool = False) -> NoReturn:
+def log_and_raise_error(
+    error: Exception, debug: bool = False, yaml_operation: bool = False
+) -> NoReturn:
     init()
 
     # use an f-string to automatically call str() on error
@@ -318,7 +357,9 @@ def log_and_raise_error(error: Exception, debug: bool = False, yaml_operation: b
     if isinstance(error, SchemaValidationError):
         module_logger.debug(traceback.format_exc())
         try:
-            formatted_error = format_create_validation_error(error.messages[0], yaml_operation=yaml_operation)
+            formatted_error = format_create_validation_error(
+                error.messages[0], yaml_operation=yaml_operation
+            )
         except NotImplementedError:
             formatted_error = error
     elif isinstance(error, ValidationException):
@@ -328,10 +369,14 @@ def log_and_raise_error(error: Exception, debug: bool = False, yaml_operation: b
             if error_type == ValidationErrorType.GENERIC:
                 formatted_error = error
             else:
-                formatted_error = format_create_validation_error(error, yaml_operation=yaml_operation)
+                formatted_error = format_create_validation_error(
+                    error, yaml_operation=yaml_operation
+                )
         except NotImplementedError:
             formatted_error = error
     else:
         raise error
 
-    raise MlException(message=formatted_error, no_personal_data_message=formatted_error)
+    raise MlException(
+        message=formatted_error, no_personal_data_message=formatted_error
+    )

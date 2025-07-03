@@ -7,7 +7,10 @@ import json
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from azure.ai.ml._local_endpoints.utilities.wsl_utility import get_wsl_path, in_wsl
+from azure.ai.ml._local_endpoints.utilities.wsl_utility import (
+    get_wsl_path,
+    in_wsl,
+)
 from azure.ai.ml._local_endpoints.vscode_debug.devcontainer_properties import (
     AppPort,
     Build,
@@ -21,7 +24,11 @@ from azure.ai.ml._local_endpoints.vscode_debug.devcontainer_properties import (
     Settings,
 )
 from azure.ai.ml.constants._common import DefaultOpenEncoding
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationException,
+)
 
 
 class DevContainerResolver:
@@ -106,14 +113,20 @@ class DevContainerResolver:
             self._properties.update(Settings().to_dict())
 
             if self._environment:
-                self._properties.update(ContainerEnv(environment_variables=self._environment).to_dict())
+                self._properties.update(
+                    ContainerEnv(
+                        environment_variables=self._environment
+                    ).to_dict()
+                )
             if self._mounts:
                 self._properties.update(Mounts(mounts=self._mounts).to_dict())
             if self._labels:
                 self._properties.update(RunArgs(labels=self._labels).to_dict())
             if self._port:
                 self._properties.update(AppPort(port=self._port).to_dict())
-                self._properties.update(ForwardPorts(port=self._port).to_dict())
+                self._properties.update(
+                    ForwardPorts(port=self._port).to_dict()
+                )
 
     def write_file(self, directory_path: str) -> None:
         """Writes this devcontainer.json to provided directory.
@@ -121,14 +134,18 @@ class DevContainerResolver:
         :param directory_path: absolute path of local directory to write devcontainer.json.
         :type directory_path: str
         """
-        self._local_path = get_wsl_path(directory_path) if in_wsl() else directory_path
+        self._local_path = (
+            get_wsl_path(directory_path) if in_wsl() else directory_path
+        )
 
         file_path = _get_devcontainer_file_path(directory_path=directory_path)
         with open(file_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
             f.write(f"{json.dumps(self._properties, indent=4)}\n")
 
 
-def _reformat_mounts(mounts: Dict[str, Dict[str, Dict[str, str]]]) -> List[str]:
+def _reformat_mounts(
+    mounts: Dict[str, Dict[str, Dict[str, str]]],
+) -> List[str]:
     """Reformat mounts from Docker format to DevContainer format.
 
     :param mounts: Dictionary with mount information for Docker container. For example:
@@ -151,7 +168,9 @@ def _reformat_mounts(mounts: Dict[str, Dict[str, Dict[str, str]]]) -> List[str]:
     for mount_dict in mounts.values():
         for source, dest in mount_dict.items():
             for mount_type, container_dest in dest.items():
-                devcontainer_mounts.append(f"source={source},target={container_dest},type={mount_type}")
+                devcontainer_mounts.append(
+                    f"source={source},target={container_dest},type={mount_type}"
+                )
     return devcontainer_mounts
 
 

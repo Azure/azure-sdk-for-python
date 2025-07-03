@@ -5,7 +5,9 @@
 
 from platform import uname
 
-from azure.ai.ml._local_endpoints.utilities.commandline_utility import run_cli_command
+from azure.ai.ml._local_endpoints.utilities.commandline_utility import (
+    run_cli_command,
+)
 
 
 def in_wsl() -> bool:

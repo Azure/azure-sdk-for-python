@@ -104,7 +104,9 @@ class AppPort(object):
 class RunArgs(object):
     """Python object representation of devcontainer runArgs property."""
 
-    def __init__(self, name: Optional[str] = None, labels: Optional[list] = None):
+    def __init__(
+        self, name: Optional[str] = None, labels: Optional[list] = None
+    ):
         labels = labels or []
         self._run_args = labels
         if name:
@@ -127,7 +129,12 @@ class Extensions(object):
         pass
 
     def to_dict(self) -> dict:
-        return {"extensions": ["ms-python.python", "ms-toolsai.vscode-ai-inference"]}
+        return {
+            "extensions": [
+                "ms-python.python",
+                "ms-toolsai.vscode-ai-inference",
+            ]
+        }
 
 
 class Settings(object):

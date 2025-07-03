@@ -14,16 +14,14 @@ from azure.ai.ml._schema.core.fields import (
     NestedField,
     RegistryStr,
     StringTransformedEnum,
-    UnionField,
-)
+    UnionField)
 from azure.ai.ml._schema.job import BaseJobSchema
 from azure.ai.ml._schema.job.input_output_fields_provider import InputsField, OutputsField
 from azure.ai.ml._schema.pipeline.component_job import _resolve_inputs_outputs
 from azure.ai.ml._schema.pipeline.pipeline_component import (
     PipelineComponentFileRefField,
     PipelineJobsField,
-    _post_load_pipeline_jobs,
-)
+    _post_load_pipeline_jobs)
 from azure.ai.ml._schema.pipeline.settings import PipelineJobSettingsSchema
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import AzureMLResourceType
@@ -34,7 +32,7 @@ module_logger = logging.getLogger(__name__)
 class PipelineJobSchema(BaseJobSchema):
     type = StringTransformedEnum(allowed_values=[JobType.PIPELINE])
     compute = ComputeField()
-    settings = NestedField(PipelineJobSettingsSchema, unknown=INCLUDE)
+    settings = NestedField(PipelineJobSettingsSchema)
     # Support databinding in inputs as we support macro like ${{name}}
     inputs = InputsField(support_databinding=True)
     outputs = OutputsField()
@@ -47,8 +45,7 @@ class PipelineJobSchema(BaseJobSchema):
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
             # component file reference
             PipelineComponentFileRefField(),
-        ],
-    )
+        ])
 
     @pre_dump()
     def backup_jobs_and_remove_component(self, job, **kwargs):

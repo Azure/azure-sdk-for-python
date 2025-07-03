@@ -16,8 +16,7 @@ from azure.ai.ml._schema.core.fields import (
     FileRefField,
     NestedField,
     StringTransformedEnum,
-    UnionField,
-)
+    UnionField)
 from azure.ai.ml._schema.job import BaseJobSchema
 from azure.ai.ml._schema.job.input_output_fields_provider import InputsField, OutputsField
 from azure.ai.ml._schema.pipeline.settings import PipelineJobSettingsSchema
@@ -52,8 +51,7 @@ class CreateJobFileRefField(FileRefField):
         return Job._load(
             data=job_dict,
             yaml_path=self.context[BASE_PATH_CONTEXT_KEY] / value,
-            **kwargs,
-        )
+            **kwargs)
 
 
 class BaseCreateJobSchema(BaseJobSchema):
@@ -63,8 +61,7 @@ class BaseCreateJobSchema(BaseJobSchema):
             ArmStr(azureml_type=AzureMLResourceType.JOB),
             CreateJobFileRefField,
         ],
-        required=True,
-    )
+        required=True)
 
     # pylint: disable-next=docstring-missing-param
     def _get_job_instance_for_remote_job(self, id: Optional[str], data: Optional[dict], **kwargs) -> "Job":
@@ -81,8 +78,7 @@ class BaseCreateJobSchema(BaseJobSchema):
         # Create a job instance if job is arm id
         job_instance = Job._load(
             data=data,
-            **kwargs,
-        )
+            **kwargs)
         # Set back the id and base path to created job
         job_instance._id = id
         job_instance._base_path = self.context[BASE_PATH_CONTEXT_KEY]
@@ -114,8 +110,7 @@ class BaseCreateJobSchema(BaseJobSchema):
             return Job._load(
                 data=merge_dict(job_dict, raw_data),
                 yaml_path=job._source_path,
-                **kwargs,
-            )
+                **kwargs)
         # Create a job instance for remote job
         return self._get_job_instance_for_remote_job(job, raw_data, **kwargs)
 
@@ -125,7 +120,7 @@ class PipelineCreateJobSchema(BaseCreateJobSchema):
     type = StringTransformedEnum(allowed_values=[JobType.PIPELINE])
     inputs = InputsField()
     outputs = OutputsField()
-    settings = NestedField(PipelineJobSettingsSchema, unknown=INCLUDE)
+    settings = NestedField(PipelineJobSettingsSchema)
 
 
 class CommandCreateJobSchema(BaseCreateJobSchema, CommandJobSchema):

@@ -1163,13 +1163,13 @@ class TestPipelineJobSchema:
         with pytest.raises(
             ValidationError, match=r"Cannot dump non-PyTorchDistribution object into PyTorchDistributionSchema"
         ):
-            _ = PyTorchDistributionSchema(context={"base_path": "./"}).dump(distribution_dict)
+            _ = PyTorchDistributionSchema().dump(distribution_dict, context={"base_path": "./"})
         with pytest.raises(
             ValidationError, match=r"Cannot dump non-PyTorchDistribution object into PyTorchDistributionSchema"
         ):
-            _ = PyTorchDistributionSchema(context={"base_path": "./"}).dump(distribution_obj)
+            _ = PyTorchDistributionSchema().dump(distribution_obj, context={"base_path": "./"})
 
-        after_dump_correct = TensorFlowDistributionSchema(context={"base_path": "./"}).dump(distribution_obj)
+        after_dump_correct = TensorFlowDistributionSchema().dump(distribution_obj, context={"base_path": "./"})
         assert after_dump_correct == distribution_dict
 
     def test_job_defaults(self, mocker: MockFixture):
