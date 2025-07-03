@@ -24,7 +24,7 @@ class TestEventGridManagementTopicsOperations(AzureMgmtRecordedTestCase):
         response = self.client.topics.get(
             resource_group_name=resource_group.name,
             topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -52,6 +52,7 @@ class TestEventGridManagementTopicsOperations(AzureMgmtRecordedTestCase):
                     },
                     "kind": "str",
                 },
+                "extendedLocation": {"name": "str", "type": "str"},
                 "id": "str",
                 "identity": {
                     "principalId": "str",
@@ -62,6 +63,7 @@ class TestEventGridManagementTopicsOperations(AzureMgmtRecordedTestCase):
                 "inboundIpRules": [{"action": "str", "ipMask": "str"}],
                 "inputSchema": "str",
                 "inputSchemaMapping": "input_schema_mapping",
+                "kind": "Azure",
                 "metricResourceId": "str",
                 "minimumTlsVersionAllowed": "str",
                 "name": "str",
@@ -82,6 +84,7 @@ class TestEventGridManagementTopicsOperations(AzureMgmtRecordedTestCase):
                 ],
                 "provisioningState": "str",
                 "publicNetworkAccess": "str",
+                "sku": {"name": "Basic"},
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -93,7 +96,7 @@ class TestEventGridManagementTopicsOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -105,7 +108,7 @@ class TestEventGridManagementTopicsOperations(AzureMgmtRecordedTestCase):
         response = self.client.topics.begin_delete(
             resource_group_name=resource_group.name,
             topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -140,9 +143,10 @@ class TestEventGridManagementTopicsOperations(AzureMgmtRecordedTestCase):
                 "inboundIpRules": [{"action": "str", "ipMask": "str"}],
                 "minimumTlsVersionAllowed": "str",
                 "publicNetworkAccess": "str",
+                "sku": {"name": "Basic"},
                 "tags": {"str": "str"},
             },
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -152,7 +156,7 @@ class TestEventGridManagementTopicsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_topics_list_by_subscription(self, resource_group):
         response = self.client.topics.list_by_subscription(
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -163,7 +167,7 @@ class TestEventGridManagementTopicsOperations(AzureMgmtRecordedTestCase):
     def test_topics_list_by_resource_group(self, resource_group):
         response = self.client.topics.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -175,7 +179,7 @@ class TestEventGridManagementTopicsOperations(AzureMgmtRecordedTestCase):
         response = self.client.topics.list_shared_access_keys(
             resource_group_name=resource_group.name,
             topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -188,7 +192,7 @@ class TestEventGridManagementTopicsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             topic_name="str",
             regenerate_key_request={"keyName": "str"},
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -202,7 +206,7 @@ class TestEventGridManagementTopicsOperations(AzureMgmtRecordedTestCase):
             provider_namespace="str",
             resource_type_name="str",
             resource_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

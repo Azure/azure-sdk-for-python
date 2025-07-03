@@ -25,7 +25,7 @@ class TestEventGridManagementDomainTopicsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             domain_name="str",
             domain_topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestEventGridManagementDomainTopicsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             domain_name="str",
             domain_topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestEventGridManagementDomainTopicsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             domain_name="str",
             domain_topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -63,7 +63,7 @@ class TestEventGridManagementDomainTopicsOperations(AzureMgmtRecordedTestCase):
         response = self.client.domain_topics.list_by_domain(
             resource_group_name=resource_group.name,
             domain_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
