@@ -642,14 +642,22 @@ def reformat_agent_response(response, logger=None, include_tool_messages=False):
 
 
 def reformat_tool_definitions(tool_definitions, logger=None):
-    output_lines = ["TOOL_DEFINITIONS:"]
-    for tool in tool_definitions:
-        name = tool.get("name", "unnamed_tool")
-        desc = tool.get("description", "").strip()
-        params = tool.get("parameters", {}).get("properties", {})
-        param_names = ", ".join(params.keys()) if params else "no parameters"
-        output_lines.append(f"- {name}: {desc} (inputs: {param_names})")
-    return "\n".join(output_lines)
+    try:
+        output_lines = ["TOOL_DEFINITIONS:"]
+        for tool in tool_definitions:
+            name = tool.get("name", "unnamed_tool")
+            desc = tool.get("description", "").strip()
+            params = tool.get("parameters", {}).get("properties", {})
+            param_names = ", ".join(params.keys()) if params else "no parameters"
+            output_lines.append(f"- {name}: {desc} (inputs: {param_names})")
+        return "\n".join(output_lines)
+    except Exception as e:
+        # If the tool definitions cannot be parsed for whatever reason, the original tool definitions are returned
+        # This is a fallback to ensure that the evaluation can still proceed. See comments on reformat_conversation_history for more details.
+        if logger:
+            logger.warning(f"Tool definitions could not be parsed, falling back to original definitions: {tool_definitions}")
+        return tool_definitions
+
 
 
 def upload(path: str, container_client: ContainerClient, logger=None):
