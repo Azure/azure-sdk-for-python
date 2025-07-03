@@ -2,6 +2,9 @@
 
 ## 1.9.0 (2025-07-02)
 
+### Breaking Changes
+- Added `_evaluate_query` parameter to `RaiServiceEvaluatorBase` class with a default value of `False`. This parameter controls whether queries are included in evaluation data when evaluating query-response pairs. Previously, queries were always included in evaluations. Existing code that relies on queries being evaluated will need to explicitly set `_evaluate_query=True` to maintain the previous behavior.
+
 ### Features Added
 
 - Added support for Azure Open AI evaluation via `AzureOpenAIScoreModelGrader` class, which serves as a wrapper around Azure Open AI score model configurations. This new grader object can be supplied to the main `evaluate` method as if it were a normal callable evaluator.
