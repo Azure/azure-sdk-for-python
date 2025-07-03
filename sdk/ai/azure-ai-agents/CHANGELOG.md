@@ -2,6 +2,16 @@
 
 # Release History
 
+## 1.1.0b4 (Unreleased)
+
+### Features Added
+
+- Added support for MCP tool. For more information, see https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/model-context-protocol
+
+### Sample updates
+
+- Added sample showing usage of MCP tool.
+
 ## 1.1.0b3 (2025-06-30)
 
 ### Features Added
