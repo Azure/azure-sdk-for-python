@@ -838,7 +838,7 @@ class McpTool(Tool[MCPToolDefinition]):
         """
         return [self._definition]
 
-    def add_allowed_tool(self, tool_name: str) -> None:
+    def allow_tool(self, tool_name: str) -> None:
         """
         Add a tool to the list of allowed tools.
 
@@ -854,7 +854,7 @@ class McpTool(Tool[MCPToolDefinition]):
                 allowed_tools=self._allowed_tools if self._allowed_tools else None,
             )
 
-    def remove_allowed_tool(self, tool_name: str) -> None:
+    def disallow_tool(self, tool_name: str) -> None:
         """
         Remove a tool from the list of allowed tools.
 

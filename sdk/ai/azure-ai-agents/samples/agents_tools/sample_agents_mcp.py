@@ -50,7 +50,7 @@ mcp_tool = McpTool(
 
 # You can also add or remove allowed tools dynamically
 search_api_code = "search_azure_rest_api_code"
-mcp_tool.add_allowed_tool(search_api_code)
+mcp_tool.allow_tool(search_api_code)
 print(f"Allowed tools: {mcp_tool.allowed_tools}")
 
 # Create agent with MCP tool and process agent run
@@ -161,7 +161,7 @@ with project_client:
 
     # Remove a tool
     try:
-        mcp_tool.remove_allowed_tool(search_api_code)
+        mcp_tool.disallow_tool(search_api_code)
         print(f"After removing {search_api_code}: {mcp_tool.allowed_tools}")
     except ValueError as e:
         print(f"Error removing tool: {e}")
