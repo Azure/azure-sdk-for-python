@@ -36,7 +36,6 @@ project_client = AIProjectClient(
 with project_client:
     agents_client = project_client.agents
 
-    # [START create_agent]
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
@@ -61,7 +60,7 @@ with project_client:
     functions = FunctionTool(user_functions)
 
     # Initialize agent.
-    # Whehter you would like the functions to be called automatically or not, it is required to pass functions as tools or toolset.
+    # Whether you would like the functions to be called automatically or not, it is required to pass functions as tools or toolset.
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",

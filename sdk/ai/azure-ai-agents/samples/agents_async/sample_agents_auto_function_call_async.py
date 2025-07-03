@@ -59,7 +59,7 @@ async def main() -> None:
         functions = AsyncFunctionTool(user_async_functions)
 
         # Initialize agent.
-        # Whehter you would like the functions to be called automatically or not, it is required to pass functions as tools or toolset.
+        # Whether you would like the functions to be called automatically or not, it is required to pass functions as tools or toolset.
         agent = await agents_client.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"],
             name="my-agent",
