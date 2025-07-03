@@ -873,7 +873,7 @@ class McpTool(Tool[MCPToolDefinition]):
         else:
             raise ValueError(f"Tool '{tool_name}' is not in the allowed tools list.")
 
-    def update_require_approval(self, require_approval: str) -> None:
+    def set_approval_mode(self, require_approval: str) -> None:
         """
         Update the headers for the MCP tool.
 
@@ -935,7 +935,7 @@ class McpTool(Tool[MCPToolDefinition]):
 
     def execute(self, tool_call: Any) -> None:
         """
-        McpTool execution should currently be handled with developer code.
+        McpTool approvals should currently be handled client-side.
 
         :param Any tool_call: The tool call to execute.
         :type tool_call: Any
