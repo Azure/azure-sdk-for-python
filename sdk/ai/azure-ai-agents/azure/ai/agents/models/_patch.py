@@ -818,7 +818,7 @@ class McpTool(Tool[MCPToolDefinition]):
         self._server_url = server_url
         self._allowed_tools = allowed_tools or []
         self._require_approval = "always"
-        self._headers = {}
+        self._headers: Dict[str, str] = {}
         self._definition = MCPToolDefinition(
             server_label=server_label,
             server_url=server_url,
