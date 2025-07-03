@@ -23,7 +23,7 @@ class TestEventGridManagementVerifiedPartnersOperations(AzureMgmtRecordedTestCas
     def test_verified_partners_get(self, resource_group):
         response = self.client.verified_partners.get(
             verified_partner_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestEventGridManagementVerifiedPartnersOperations(AzureMgmtRecordedTestCas
     @recorded_by_proxy
     def test_verified_partners_list(self, resource_group):
         response = self.client.verified_partners.list(
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
