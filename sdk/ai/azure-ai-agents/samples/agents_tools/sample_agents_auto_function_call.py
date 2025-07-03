@@ -16,35 +16,38 @@ USAGE:
     pip install azure-ai-agents azure-identity
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview 
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
                           page of your Azure AI Foundry portal.
-    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 
 import os, sys
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.agents.models import FunctionTool, ToolSet, CodeInterpreterTool
-
-current_path = os.path.dirname(__file__)
-root_path = os.path.abspath(os.path.join(current_path, os.pardir, os.pardir))
-if root_path not in sys.path:
-    sys.path.insert(0, root_path)
+from azure.ai.agents.models import FunctionTool
 from samples.utils.user_functions import user_functions
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
 
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
+
+    # [START create_agent]
+    agent = agents_client.create_agent(
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
+        name="my-agent",
+        instructions="You are helpful agent",
+    )
 
     # To enable tool calls executed automatically you can pass a functions in one of these types:
     # Set[Callable[..., Any]], _models.FunctionTool, or _models.ToolSet
     # Example 1:
     #    agents_client.enable_auto_function_calls(user_functions)
-    # Example 2: 
+    # Example 2:
     #   functions = FunctionTool(user_functions)
     #   agents_client.enable_auto_function_calls(functions)
     # Example 3:
@@ -58,14 +61,14 @@ with agents_client:
     functions = FunctionTool(user_functions)
 
     # Initialize agent.
-    # Whehter you would like the functions to be called automatically or not, it is required to pass functions as tools or toolset. 
+    # Whehter you would like the functions to be called automatically or not, it is required to pass functions as tools or toolset.
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
         instructions="You are a helpful agent",
         tools=functions.definitions,
     )
-    
+
     print(f"Created agent, ID: {agent.id}")
 
     # Create thread for communication
