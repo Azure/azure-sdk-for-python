@@ -34,10 +34,22 @@ USAGE:
        as found under the "Name" column in the "Connected Resources" tab in your Azure AI Foundry project.
 """
 
+import json
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import AzureAISearchQueryType, AzureAISearchTool, ListSortOrder, MessageRole
+from dotenv import load_dotenv
+from azure.ai.evaluation import AIAgentConverter, ToolCallAccuracyEvaluator, AzureOpenAIModelConfiguration
+
+load_dotenv()
+
+model_config = AzureOpenAIModelConfiguration(
+    azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
+    api_key=os.environ["AZURE_OPENAI_API_KEY"],
+    api_version=os.environ["AZURE_OPENAI_API_VERSION"],
+    azure_deployment=os.environ["MODEL_DEPLOYMENT_NAME"],
+)
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
@@ -51,7 +63,7 @@ print(conn_id)
 
 # Initialize agent AI search tool and add the search index connection id
 ai_search = AzureAISearchTool(
-    index_connection_id=conn_id, index_name="sample_index", query_type=AzureAISearchQueryType.SIMPLE, top_k=3, filter=""
+    index_connection_id=conn_id, index_name="contoso-manuals-index", query_type=AzureAISearchQueryType.SIMPLE, top_k=3, filter=""
 )
 
 # Create agent with AI search tool and process agent run
@@ -66,7 +78,7 @@ with project_client:
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
-        instructions="You are a helpful agent",
+        instructions="Hello, you are helpful agent and can search information from search index using Azure AI Search tool provided. Use the tool to answer questions about Contoso products.",
         tools=ai_search.definitions,
         tool_resources=ai_search.resources,
     )
@@ -81,7 +93,7 @@ with project_client:
     message = agents_client.messages.create(
         thread_id=thread.id,
         role="user",
-        content="What is the temperature rating of the cozynights sleeping bag?",
+        content="What contso tent do you recommend for hiking ?",
     )
     print(f"Created message, ID: {message.id}")
 
@@ -108,7 +120,7 @@ with project_client:
                 azure_ai_search_details = call.get("azure_ai_search", {})
                 if azure_ai_search_details:
                     print(f"    azure_ai_search input: {azure_ai_search_details.get('input')}")
-                    print(f"    azure_ai_search output: {azure_ai_search_details.get('output')}")
+                    print(f"    azure_ai_search output: {json.dumps(azure_ai_search_details.get('output'), indent=2)}")
         print()  # add an extra newline between steps
 
     # Delete the agent when done
@@ -133,3 +145,12 @@ with project_client:
             for message_text in message.text_messages:
                 print(f"{message.role}: {message_text.text.value}")
     # [END populate_references_agent_with_azure_ai_search_tool]
+
+    # Evaluate the run using the converter
+    converter = AIAgentConverter(project_client)
+    converted_output = converter.convert(thread_id=thread.id, run_id=run.id)
+    print(converted_output)
+
+    tool_call_accuracy = ToolCallAccuracyEvaluator(model_config=model_config)
+    response = tool_call_accuracy(**converted_output)
+    print(f"Tool call accuracy: {json.dumps(response, indent=4)}")

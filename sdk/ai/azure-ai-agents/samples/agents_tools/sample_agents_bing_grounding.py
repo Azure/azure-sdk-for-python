@@ -25,11 +25,21 @@ USAGE:
        /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace-name}/connections/{connection-name}
 """
 
+import json
 import os
 from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import MessageRole, BingGroundingTool
 from azure.identity import DefaultAzureCredential
+from azure.ai.evaluation import AIAgentConverter, ToolCallAccuracyEvaluator, AzureOpenAIModelConfiguration
+from dotenv import load_dotenv
+load_dotenv()
 
+model_config = AzureOpenAIModelConfiguration(
+    azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
+    api_key=os.environ["AZURE_OPENAI_API_KEY"],
+    api_version=os.environ["AZURE_OPENAI_API_VERSION"],
+    azure_deployment=os.environ["MODEL_DEPLOYMENT_NAME"],
+)
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
@@ -90,6 +100,7 @@ with project_client:
                 bing_grounding_details = call.get("bing_grounding", {})
                 if bing_grounding_details:
                     print(f"    Bing Grounding ID: {bing_grounding_details.get('requesturl')}")
+                    print(f"    Bing Grounding Full response: {bing_grounding_details}")
 
         print()  # add an extra newline between steps
 
@@ -104,3 +115,11 @@ with project_client:
             print(f"Agent response: {text_message.text.value}")
         for annotation in response_message.url_citation_annotations:
             print(f"URL Citation: [{annotation.url_citation.title}]({annotation.url_citation.url})")
+
+    # Evaluate the run using the converter
+    converter = AIAgentConverter(project_client)
+    converted_output = converter.convert(thread_id=thread.id, run_id=run.id)
+
+    tool_call_accuracy = ToolCallAccuracyEvaluator(model_config=model_config)
+    response = tool_call_accuracy(**converted_output)
+    print(f"Tool call accuracy Response: {json.dumps(response, indent=4)}")

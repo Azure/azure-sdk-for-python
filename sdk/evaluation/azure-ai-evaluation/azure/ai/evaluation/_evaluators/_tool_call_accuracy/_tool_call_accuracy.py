@@ -278,7 +278,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if tool_definition is None or len(tool_definition) != 1:
             return False
         tool_type = tool_definition[0].get("type")
-        if tool_type is None or tool_type != "function":
+        if tool_type is None or tool_type != "function" and tool_type not in  ["file_search", "azure_ai_search", "bing_grounding", "code_interpreter"]:
             return False
         return True
 

@@ -23,16 +23,28 @@ USAGE:
        the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 
+import json
 import os
 from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import CodeInterpreterTool
 from azure.ai.agents.models import FilePurpose, MessageRole
 from azure.identity import DefaultAzureCredential
+from azure.ai.evaluation import AIAgentConverter, ToolCallAccuracyEvaluator, AzureOpenAIModelConfiguration
 from pathlib import Path
+from dotenv import load_dotenv
+load_dotenv()
 
 asset_file_path = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "../assets/synthetic_500_quarterly_results.csv")
 )
+
+model_config = AzureOpenAIModelConfiguration(
+    azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
+    api_key=os.environ["AZURE_OPENAI_API_KEY"],
+    api_version=os.environ["AZURE_OPENAI_API_VERSION"],
+    azure_deployment=os.environ["MODEL_DEPLOYMENT_NAME"],
+)
+
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
@@ -81,6 +93,23 @@ with project_client:
     agents_client.files.delete(file.id)
     print("Deleted file")
 
+    # Fetch run steps to get the details of the agent run
+    run_steps = agents_client.run_steps.list(thread_id=thread.id, run_id=run.id)
+    for step in run_steps:
+        print(f"Step {step['id']} status: {step['status']}")
+        step_details = step.get("step_details", {})
+        tool_calls = step_details.get("tool_calls", [])
+
+        if tool_calls:
+            print("  Tool calls:")
+            for call in tool_calls:
+                print(f"    Tool Call ID: {call.get('id')}")
+                print(f"    Type: {call.get('type')}")
+                print(f"    Input: {call.get("code_interpreter").input if call.get('code_interpreter') else 'N/A'}")
+                print(f"    Output: {call.get("code_interpreter").outputs if call.get('code_interpreter') else 'N/A'}")
+                print("***********Tool Call End***********")
+
+
     # [START get_messages_and_save_files]
     messages = agents_client.messages.list(thread_id=thread.id)
     print(f"Messages: {messages}")
@@ -109,3 +138,11 @@ with project_client:
 
     agents_client.delete_agent(agent.id)
     print("Deleted agent")
+
+        # Evaluate the run using the converter
+    converter = AIAgentConverter(project_client)
+    converted_output = converter.convert(thread_id=thread.id, run_id=run.id)
+
+    tool_call_accuracy = ToolCallAccuracyEvaluator(model_config=model_config)
+    response = tool_call_accuracy(**converted_output)
+    print(f"Tool call accuracy Response: {json.dumps(response, indent=4)}")

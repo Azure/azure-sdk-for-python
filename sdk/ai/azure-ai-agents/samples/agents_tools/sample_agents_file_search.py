@@ -22,8 +22,10 @@ USAGE:
        the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 
+import json
 import os
 from azure.ai.projects import AIProjectClient
+from azure.ai.evaluation import AIAgentConverter, ToolCallAccuracyEvaluator, AzureOpenAIModelConfiguration, RetrievalEvaluator
 from azure.ai.agents.models import (
     FileSearchTool,
     FilePurpose,
@@ -34,6 +36,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/product_info_1.md"))
+
+model_config = AzureOpenAIModelConfiguration(
+    azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
+    api_key=os.environ["AZURE_OPENAI_API_KEY"],
+    api_version=os.environ["AZURE_OPENAI_API_VERSION"],
+    azure_deployment=os.environ["MODEL_DEPLOYMENT_NAME"],
+)
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
@@ -71,20 +80,35 @@ with project_client:
 
     # Create message to thread
     message = agents_client.messages.create(
-        thread_id=thread.id, role="user", content="Hello, what Microsoft products do you know?"
+        thread_id=thread.id, role="user", content="Hello, what Contoso products do you know?"
     )
     print(f"Created message, ID: {message.id}")
 
     # Create and process agent run in thread with tools
     run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
     print(f"Run finished with status: {run.status}")
+    
+    run_steps = agents_client.run_steps.list(thread_id=thread.id, run_id=run.id, include=["step_details.tool_calls[*].file_search.results[*].content"])
+    for step in run_steps:
+        print(f"Step {step['id']} status: {step['status']}")
+        step_details = step.get("step_details", {})
+        tool_calls = step_details.get("tool_calls", [])
 
-    for run_step in agents_client.run_steps.list(
-            thread_id=thread.id,
-            run_id=run.id,
-            include=["step_details.tool_calls[*].file_search.results[*].content"]
-    ):
-        print(run_step)
+        if tool_calls:
+            print("  Tool calls:")
+            for call in tool_calls:
+                print(f"    Tool Call ID: {call.get('id')}")
+                print(f"    Type: {call.get('type')}")
+
+                file_search_details = call.get("file_search", {})
+                if file_search_details:
+                    print(f"    file_search ranking_options/inputs: {json.dumps(file_search_details.get('ranking_options').as_dict(), indent=6)}")
+                    print(f"    file_search results/outputs:")
+                    results = file_search_details.get('results', [])
+                    for i, result in enumerate(results, 1):
+                        print(f"      Result {i}: {json.dumps(result.as_dict(), indent=8)}")
+                        print()  # add line after each result
+        print()  # add an extra newline between steps
 
     if run.status == "failed":
         # Check if you got "Rate limit is exceeded.", then you want to get more quota
@@ -93,6 +117,7 @@ with project_client:
     # [START teardown]
     # Delete the file when done
     agents_client.vector_stores.delete(vector_store.id)
+    print("vector store id " + vector_store.id)
     print("Deleted vector store")
 
     agents_client.files.delete(file_id=file.id)
@@ -111,3 +136,12 @@ with project_client:
         if msg.text_messages:
             last_text = msg.text_messages[-1]
             print(f"{msg.role}: {last_text.text.value}")
+
+
+    # Evaluate the run using the converter
+    converter = AIAgentConverter(project_client)
+    converted_output = converter.convert(thread_id=thread.id, run_id=run.id)
+
+    tool_call_accuracy = ToolCallAccuracyEvaluator(model_config=model_config)
+    response = tool_call_accuracy(**converted_output)
+    print(f"Tool call accuracy Response: {json.dumps(response, indent=4)}")
