@@ -9,9 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING, cast
+from typing_extensions import Self
 
+from azure.core.pipeline import policies
+from azure.core.settings import settings
 from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core.tools import get_arm_endpoints
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 
@@ -24,7 +29,7 @@ if TYPE_CHECKING:
 
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
-        """This is a fake class to support current implemetation of MultiApiClientMixin."
+        """This is a fake class to support current implementation of MultiApiClientMixin."
         Will be removed in final version of multiapi azure-core based client
         """
         pass
@@ -52,7 +57,7 @@ class ManagedServiceIdentityClient(MultiApiClientMixin, _SDKClient):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2023-01-31'
+    DEFAULT_API_VERSION = '2024-11-30'
     _PROFILE_TAG = "azure.mgmt.msi.ManagedServiceIdentityClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -66,12 +71,37 @@ class ManagedServiceIdentityClient(MultiApiClientMixin, _SDKClient):
         credential: "TokenCredential",
         subscription_id: str,
         api_version: Optional[str]=None,
-        base_url: str = "https://management.azure.com",
+        base_url: Optional[str] = None,
         profile: KnownProfiles=KnownProfiles.default,
         **kwargs: Any
     ):
-        self._config = ManagedServiceIdentityClientConfiguration(credential, subscription_id, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        if api_version:
+            kwargs.setdefault('api_version', api_version)
+        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _endpoints = get_arm_endpoints(_cloud)
+        if not base_url:
+            base_url = _endpoints["resource_manager"]
+        credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
+        self._config = ManagedServiceIdentityClientConfiguration(credential, subscription_id, credential_scopes=credential_scopes, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                ARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=cast(str, base_url), policies=_policies, **kwargs)
         super(ManagedServiceIdentityClient, self).__init__(
             api_version=api_version,
             profile=profile
@@ -88,7 +118,7 @@ class ManagedServiceIdentityClient(MultiApiClientMixin, _SDKClient):
            * 2018-11-30: :mod:`v2018_11_30.models<azure.mgmt.msi.v2018_11_30.models>`
            * 2021-09-30-preview: :mod:`v2021_09_30_preview.models<azure.mgmt.msi.v2021_09_30_preview.models>`
            * 2022-01-31-preview: :mod:`v2022_01_31_preview.models<azure.mgmt.msi.v2022_01_31_preview.models>`
-           * 2023-01-31: :mod:`v2023_01_31.models<azure.mgmt.msi.v2023_01_31.models>`
+           * 2024-11-30: :mod:`v2024_11_30.models<azure.mgmt.msi.v2024_11_30.models>`
         """
         if api_version == '2018-11-30':
             from .v2018_11_30 import models
@@ -99,8 +129,8 @@ class ManagedServiceIdentityClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2022-01-31-preview':
             from .v2022_01_31_preview import models
             return models
-        elif api_version == '2023-01-31':
-            from .v2023_01_31 import models
+        elif api_version == '2024-11-30':
+            from .v2024_11_30 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -109,17 +139,17 @@ class ManagedServiceIdentityClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2022-01-31-preview: :class:`FederatedIdentityCredentialsOperations<azure.mgmt.msi.v2022_01_31_preview.operations.FederatedIdentityCredentialsOperations>`
-           * 2023-01-31: :class:`FederatedIdentityCredentialsOperations<azure.mgmt.msi.v2023_01_31.operations.FederatedIdentityCredentialsOperations>`
+           * 2024-11-30: :class:`FederatedIdentityCredentialsOperations<azure.mgmt.msi.v2024_11_30.operations.FederatedIdentityCredentialsOperations>`
         """
         api_version = self._get_api_version('federated_identity_credentials')
         if api_version == '2022-01-31-preview':
             from .v2022_01_31_preview.operations import FederatedIdentityCredentialsOperations as OperationClass
-        elif api_version == '2023-01-31':
-            from .v2023_01_31.operations import FederatedIdentityCredentialsOperations as OperationClass
+        elif api_version == '2024-11-30':
+            from .v2024_11_30.operations import FederatedIdentityCredentialsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'federated_identity_credentials'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def operations(self):
@@ -128,7 +158,7 @@ class ManagedServiceIdentityClient(MultiApiClientMixin, _SDKClient):
            * 2018-11-30: :class:`Operations<azure.mgmt.msi.v2018_11_30.operations.Operations>`
            * 2021-09-30-preview: :class:`Operations<azure.mgmt.msi.v2021_09_30_preview.operations.Operations>`
            * 2022-01-31-preview: :class:`Operations<azure.mgmt.msi.v2022_01_31_preview.operations.Operations>`
-           * 2023-01-31: :class:`Operations<azure.mgmt.msi.v2023_01_31.operations.Operations>`
+           * 2024-11-30: :class:`Operations<azure.mgmt.msi.v2024_11_30.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2018-11-30':
@@ -137,12 +167,12 @@ class ManagedServiceIdentityClient(MultiApiClientMixin, _SDKClient):
             from .v2021_09_30_preview.operations import Operations as OperationClass
         elif api_version == '2022-01-31-preview':
             from .v2022_01_31_preview.operations import Operations as OperationClass
-        elif api_version == '2023-01-31':
-            from .v2023_01_31.operations import Operations as OperationClass
+        elif api_version == '2024-11-30':
+            from .v2024_11_30.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def system_assigned_identities(self):
@@ -151,7 +181,7 @@ class ManagedServiceIdentityClient(MultiApiClientMixin, _SDKClient):
            * 2018-11-30: :class:`SystemAssignedIdentitiesOperations<azure.mgmt.msi.v2018_11_30.operations.SystemAssignedIdentitiesOperations>`
            * 2021-09-30-preview: :class:`SystemAssignedIdentitiesOperations<azure.mgmt.msi.v2021_09_30_preview.operations.SystemAssignedIdentitiesOperations>`
            * 2022-01-31-preview: :class:`SystemAssignedIdentitiesOperations<azure.mgmt.msi.v2022_01_31_preview.operations.SystemAssignedIdentitiesOperations>`
-           * 2023-01-31: :class:`SystemAssignedIdentitiesOperations<azure.mgmt.msi.v2023_01_31.operations.SystemAssignedIdentitiesOperations>`
+           * 2024-11-30: :class:`SystemAssignedIdentitiesOperations<azure.mgmt.msi.v2024_11_30.operations.SystemAssignedIdentitiesOperations>`
         """
         api_version = self._get_api_version('system_assigned_identities')
         if api_version == '2018-11-30':
@@ -160,12 +190,12 @@ class ManagedServiceIdentityClient(MultiApiClientMixin, _SDKClient):
             from .v2021_09_30_preview.operations import SystemAssignedIdentitiesOperations as OperationClass
         elif api_version == '2022-01-31-preview':
             from .v2022_01_31_preview.operations import SystemAssignedIdentitiesOperations as OperationClass
-        elif api_version == '2023-01-31':
-            from .v2023_01_31.operations import SystemAssignedIdentitiesOperations as OperationClass
+        elif api_version == '2024-11-30':
+            from .v2024_11_30.operations import SystemAssignedIdentitiesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'system_assigned_identities'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def user_assigned_identities(self):
@@ -174,7 +204,7 @@ class ManagedServiceIdentityClient(MultiApiClientMixin, _SDKClient):
            * 2018-11-30: :class:`UserAssignedIdentitiesOperations<azure.mgmt.msi.v2018_11_30.operations.UserAssignedIdentitiesOperations>`
            * 2021-09-30-preview: :class:`UserAssignedIdentitiesOperations<azure.mgmt.msi.v2021_09_30_preview.operations.UserAssignedIdentitiesOperations>`
            * 2022-01-31-preview: :class:`UserAssignedIdentitiesOperations<azure.mgmt.msi.v2022_01_31_preview.operations.UserAssignedIdentitiesOperations>`
-           * 2023-01-31: :class:`UserAssignedIdentitiesOperations<azure.mgmt.msi.v2023_01_31.operations.UserAssignedIdentitiesOperations>`
+           * 2024-11-30: :class:`UserAssignedIdentitiesOperations<azure.mgmt.msi.v2024_11_30.operations.UserAssignedIdentitiesOperations>`
         """
         api_version = self._get_api_version('user_assigned_identities')
         if api_version == '2018-11-30':
@@ -183,12 +213,12 @@ class ManagedServiceIdentityClient(MultiApiClientMixin, _SDKClient):
             from .v2021_09_30_preview.operations import UserAssignedIdentitiesOperations as OperationClass
         elif api_version == '2022-01-31-preview':
             from .v2022_01_31_preview.operations import UserAssignedIdentitiesOperations as OperationClass
-        elif api_version == '2023-01-31':
-            from .v2023_01_31.operations import UserAssignedIdentitiesOperations as OperationClass
+        elif api_version == '2024-11-30':
+            from .v2024_11_30.operations import UserAssignedIdentitiesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'user_assigned_identities'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     def close(self):
         self._client.close()
