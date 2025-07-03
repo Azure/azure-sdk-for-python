@@ -164,6 +164,7 @@ with project_client:
     except ValueError as e:
         print(f"Error removing tool: {e}")
 
-    # Delete the agent when done
+    # Clean-up and delete the agent once the run is finished.
+    # NOTE: Comment out this line if you plan to reuse the agent later.
     agents_client.delete_agent(agent.id)
     print("Deleted agent")
