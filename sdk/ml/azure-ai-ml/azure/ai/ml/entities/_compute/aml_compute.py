@@ -134,7 +134,7 @@ class AmlCompute(Compute):
         min_instances: Optional[int] = None,
         max_instances: Optional[int] = None,
         network_settings: Optional[NetworkSettings] = None,
-        idle_time_before_scale_down: Optional[int] = None,
+        idle_time_before_scale_down: Optional[int] = 120,
         identity: Optional[IdentityConfiguration] = None,
         tier: Optional[str] = None,
         enable_node_public_ip: bool = True,
