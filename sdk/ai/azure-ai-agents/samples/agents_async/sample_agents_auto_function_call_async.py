@@ -60,6 +60,7 @@ async def main() -> None:
 
         # Initialize agent.
         # Whether you would like the functions to be called automatically or not, it is required to pass functions as tools or toolset.
+        # NOTE: To reuse existing agent, fetch it with get_agent(agent_id)
         agent = await agents_client.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"],
             name="my-agent",
@@ -88,7 +89,8 @@ async def main() -> None:
         if run.status == "failed":
             print(f"Run failed: {run.last_error}")
 
-        # Delete the agent when done
+        # Clean-up and delete the agent once the run is finished.
+        # NOTE: Comment out this line if you plan to reuse the agent later.
         await agents_client.delete_agent(agent.id)
         print("Deleted agent")
 
