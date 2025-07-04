@@ -319,7 +319,7 @@ async def fetch_result(operation_id: str, rai_svc_url: str, credential: TokenCre
         token = await fetch_or_reuse_token(credential, token)
         headers = get_common_headers(token)
 
-        async with get_async_http_client_with_timeout() as client:
+        async with get_async_http_client() as client:
             response = await client.get(url, headers=headers)
 
         if response.status_code == 200:
