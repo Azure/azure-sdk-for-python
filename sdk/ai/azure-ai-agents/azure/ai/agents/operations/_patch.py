@@ -1261,8 +1261,8 @@ class RunsOperations(RunsOperationsGenerated):
         run_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        tool_outputs: Optional[List[_models.ToolOutput]] = None,
-        tool_approvals: Optional[List[_models.ToolApproval]] = None,
+        tool_outputs: Optional[List[_models.ToolOutput]] = _Unset,
+        tool_approvals: Optional[List[_models.ToolApproval]] = _Unset,
         event_handler: _models.BaseAgentEventHandler,
         **kwargs: Any,
     ) -> None:
@@ -1291,12 +1291,12 @@ class RunsOperations(RunsOperationsGenerated):
             content_type = kwargs.get("content_type", "application/json")
             response = super().submit_tool_outputs(thread_id, run_id, body, content_type=content_type, **kwargs)
 
-        elif tool_outputs is not None:
+        elif tool_outputs is not _Unset:
             response = super().submit_tool_outputs(
                 thread_id, run_id, tool_outputs=tool_outputs, stream_parameter=True, stream=True, **kwargs
             )
 
-        elif tool_approvals is not None:
+        elif tool_approvals is not _Unset:
             response = super().submit_tool_outputs(
                 thread_id, run_id, tool_approvals=tool_approvals, stream_parameter=True, stream=True, **kwargs
             )
