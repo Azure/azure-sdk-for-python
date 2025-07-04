@@ -1,4 +1,5 @@
 import pytest
+import unittest
 import os
 import pathlib
 import base64
@@ -13,12 +14,13 @@ from azure.ai.evaluation._common.utils import (
     reformat_conversation_history,
     _get_agent_response,
     reformat_agent_response,
+    reformat_tool_definitions,
 )
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorMessage
 
 
 @pytest.mark.unittest
-class TestUtils:
+class TestUtils(unittest.TestCase):
     def test_nltk_tokenize(self):
 
         # Test with English text
@@ -341,6 +343,23 @@ class TestUtils:
         }
         assert result == expected
 
+    def test__get_conversation_history_with_system_messages(self):
+        """Test _get_conversation_history with system messages"""
+        query = [
+            {"role": "system", "content": "This is a system message."},
+            {"role": "user", "content": [{"type": "text", "text": "What is the weather?"}]},
+            {"role": "assistant", "content": [{"type": "text", "text": "It's sunny today."}]},
+            {"role": "user", "content": [{"type": "text", "text": "Will it rain tomorrow?"}]},
+        ]
+
+        result = _get_conversation_history(query, include_system_messages=True)
+        expected = {
+            "system_message": "This is a system message.",
+            "user_queries": [[["What is the weather?"]], [["Will it rain tomorrow?"]]],
+            "agent_responses": [[["It's sunny today."]]],
+        }
+        assert result == expected
+
     def test__get_conversation_history_with_invalid_data(self):
         """Test _get_conversation_history with edge cases"""
         # Test with messages missing role
@@ -393,6 +412,25 @@ class TestUtils:
         )
         assert result == expected
 
+    def test__pretty_format_conversation_history_with_system_messages(self):
+        """Test _pretty_format_conversation_history with system messages"""
+        conversation_history = {
+            "system_message": "This is a system message.",
+            "user_queries": [[["What is the weather?"]]],
+            "agent_responses": [[["It's sunny today."]]],
+        }
+
+        result = _pretty_format_conversation_history(conversation_history)
+        expected = (
+            "SYSTEM_PROMPT:\n"
+            "  This is a system message.\n\n"
+            "User turn 1:\n"
+            "  What is the weather?\n\n"
+            "Agent turn 1:\n"
+            "  It's sunny today.\n\n"
+        )
+        assert result == expected
+
     def test_reformat_conversation_history(self):
         """Test reformat_conversation_history function"""
         # Test valid conversation
@@ -417,6 +455,28 @@ class TestUtils:
         invalid_query = "This is not a valid conversation format"
         result = reformat_conversation_history(invalid_query)
         assert result == invalid_query
+
+    def test_reformat_conversation_history_with_system_messages(self):
+        """Test reformat_conversation_history with system messages"""
+        query = [
+            {"role": "system", "content": "This is a system message."},
+            {"role": "user", "content": [{"type": "text", "text": "What is AI?"}]},
+            {"role": "assistant", "content": [{"type": "text", "text": "AI stands for Artificial Intelligence."}]},
+            {"role": "user", "content": [{"type": "text", "text": "Tell me more."}]},
+        ]
+
+        result = reformat_conversation_history(query, include_system_messages=True)
+        expected = (
+            "SYSTEM_PROMPT:\n"
+            "  This is a system message.\n\n"
+            "User turn 1:\n"
+            "  What is AI?\n\n"
+            "Agent turn 1:\n"
+            "  AI stands for Artificial Intelligence.\n\n"
+            "User turn 2:\n"
+            "  Tell me more.\n\n"
+        )
+        assert result == expected
 
     def test__get_agent_response(self):
         """Test _get_agent_response function"""
@@ -462,6 +522,37 @@ class TestUtils:
 
         result = _get_agent_response(agent_response_msgs)
         assert result == ["Valid message"]
+
+    def test__get_agent_response_with_tool_messages(self):
+        """Test _get_agent_response with tool messages"""
+        agent_response_msgs = [
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "text", "text": "Hello!"},
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "123",
+                        "name": "get_weather",
+                        "arguments": {"location": "Seattle"},
+                    },
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "123",
+                "content": [{"type": "tool_result", "tool_result": "It's sunny in Seattle."}],
+            },
+            {"role": "assistant", "content": [{"type": "text", "text": "How can I help you?"}]},
+        ]
+
+        result = _get_agent_response(agent_response_msgs, include_tool_messages=True)
+        assert result == [
+            "Hello!",
+            '[TOOL_CALL] get_weather(location="Seattle")',
+            "[TOOL_RESULT] It's sunny in Seattle.",
+            "How can I help you?",
+        ]
 
     def test_reformat_agent_response(self):
         """Test reformat_agent_response function"""
@@ -634,3 +725,123 @@ class TestUtils:
         unicode_content = [{"text": "Hello 世界 🌍"}]
         result = _extract_text_from_content(unicode_content)
         assert result == ["Hello 世界 🌍"]
+
+    def test_reformat_agent_response_with_tool_calls(self):
+        response = [
+            {"role": "assistant", "content": [{"type": "text", "text": "Let me check that for you."}]},
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call": {
+                            "id": "tool_call_1",
+                            "type": "function",
+                            "function": {"name": "get_orders", "arguments": {"account_number": "123"}},
+                        },
+                    }
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "tool_call_1",
+                "content": [{"type": "tool_result", "tool_result": '[{ "order_id": "A1" }]'}],
+            },
+            {"role": "assistant", "content": [{"type": "text", "text": "You have one order on file."}]},
+        ]
+
+        formatted = reformat_agent_response(response, include_tool_messages=True)
+
+        assert '[TOOL_CALL] get_orders(account_number="123")' in formatted
+        assert '[TOOL_RESULT] [{ "order_id": "A1" }]' in formatted
+        assert "Let me check that for you." in formatted
+        assert "You have one order on file." in formatted
+
+    def test_reformat_agent_response_with_tool_calls_non_function(self):
+        response = [
+            {"role": "assistant", "content": [{"type": "text", "text": "Let me check that for you."}]},
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "tool_call_1", "name": "get_orders"}],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "tool_call_1",
+                "content": [{"type": "tool_result", "tool_result": '[{ "order_id": "A1" }]'}],
+            },
+            {"role": "assistant", "content": [{"type": "text", "text": "You have one order on file."}]},
+        ]
+        formatted = reformat_agent_response(response, include_tool_messages=True)
+        assert "[TOOL_CALL] get_orders()" in formatted
+        assert '[TOOL_RESULT] [{ "order_id": "A1" }]' in formatted
+        assert "Let me check that for you." in formatted
+        assert "You have one order on file." in formatted
+
+    def test_reformat_agent_response_without_tool_calls(self):
+        response = [
+            {"role": "assistant", "content": [{"type": "text", "text": "Let me check that for you."}]},
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call": {
+                            "id": "tool_call_1",
+                            "type": "function",
+                            "function": {"name": "get_orders", "arguments": {"account_number": "123"}},
+                        },
+                    }
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "tool_call_1",
+                "content": [{"type": "tool_result", "tool_result": '[{ "order_id": "A1" }]'}],
+            },
+            {"role": "assistant", "content": [{"type": "text", "text": "You have one order on file."}]},
+        ]
+
+        formatted = reformat_agent_response(response, include_tool_messages=False)
+
+        assert formatted == "Let me check that for you.\nYou have one order on file."
+
+    def test_single_tool_with_parameters(self):
+        tools = [
+            {
+                "name": "search",
+                "description": "Searches the web.",
+                "parameters": {"properties": {"query": {"type": "string"}, "lang": {"type": "string"}}},
+            }
+        ]
+        expected_output = "TOOL_DEFINITIONS:\n" "- search: Searches the web. (inputs: query, lang)"
+        self.assertEqual(reformat_tool_definitions(tools), expected_output)
+
+    def test_tool_with_no_parameters(self):
+        tools = [{"name": "ping", "description": "Check if server is reachable.", "parameters": {}}]
+        expected_output = "TOOL_DEFINITIONS:\n" "- ping: Check if server is reachable. (inputs: no parameters)"
+        self.assertEqual(reformat_tool_definitions(tools), expected_output)
+
+    def test_tool_missing_description_and_parameters(self):
+        tools = [{"name": "noop"}]
+        expected_output = "TOOL_DEFINITIONS:\n" "- noop:  (inputs: no parameters)"
+        self.assertEqual(reformat_tool_definitions(tools), expected_output)
+
+    def test_tool_missing_name(self):
+        tools = [{"description": "Does something.", "parameters": {"properties": {"x": {"type": "number"}}}}]
+        expected_output = "TOOL_DEFINITIONS:\n" "- unnamed_tool: Does something. (inputs: x)"
+        self.assertEqual(reformat_tool_definitions(tools), expected_output)
+
+    def test_multiple_tools(self):
+        tools = [
+            {"name": "alpha", "description": "Tool A.", "parameters": {"properties": {"a1": {"type": "string"}}}},
+            {"name": "beta", "description": "Tool B.", "parameters": {}},
+        ]
+        expected_output = (
+            "TOOL_DEFINITIONS:\n" "- alpha: Tool A. (inputs: a1)\n" "- beta: Tool B. (inputs: no parameters)"
+        )
+        self.assertEqual(reformat_tool_definitions(tools), expected_output)
+
+    def test_empty_tool_list(self):
+        tools = []
+        expected_output = "TOOL_DEFINITIONS:"
+        self.assertEqual(reformat_tool_definitions(tools), expected_output)
