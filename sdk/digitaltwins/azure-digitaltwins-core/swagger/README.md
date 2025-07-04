@@ -4,7 +4,7 @@
 
 ### Settings
 ``` yaml
-input-file: https://github.com/Azure/azure-rest-api-specs/blob/3026119ab41bbce77275cfa3a1afbabf43af5aea/specification/digitaltwins/data-plane/Microsoft.DigitalTwins/preview/2021-06-30-preview/digitaltwins.json
+input-file: https://github.com/Azure/azure-rest-api-specs/blob/764484f6d4d2eeace159a19d3df364abc0645c7e/specification/digitaltwins/data-plane/Microsoft.DigitalTwins/stable/2023-10-31/digitaltwins.json
 output-folder: ../azure/digitaltwins/core/_generated
 namespace: azure.digitaltwins.core
 no-namespace-folders: true
