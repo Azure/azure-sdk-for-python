@@ -4,9 +4,9 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to get a chat completions response from
-    the service using a synchronous client, with the input in Prompty format
-    from a Prompty file. Prompty website: https://prompty.ai
+    This sample demonstrates how to use Prompty (https://prompty.ai) as model config and
+    prompt template, and get the chat completions response from the service using a
+    synchronous client.
 
     This sample assumes the AI model is hosted on a Serverless API or
     Managed Compute endpoint. For GitHub Models or Azure OpenAI endpoints,
@@ -14,7 +14,7 @@ DESCRIPTION:
     https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/README.md#key-concepts
 
 USAGE:
-    python sample_chat_completions_from_input_prompty.py
+    python sample_chat_completions_with_prompty_file.py
 
     Set these two environment variables before running the sample:
     1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL, in the form 
@@ -25,11 +25,15 @@ USAGE:
 """
 # pyright: reportAttributeAccessIssue=false
 
+try:
+    from prompty import load, prepare
+except ImportError as exc:
+    MISSING_PROMPTY_PACKAGE_MESSAGE = "Please install the 'prompty' package by running 'pip install prompty'."
+    raise ImportError(MISSING_PROMPTY_PACKAGE_MESSAGE) from exc
 
-def sample_chat_completions_from_input_prompty():
+def sample_chat_completions_with_prompty_file():
     import os
     from azure.ai.inference import ChatCompletionsClient
-    from azure.ai.inference.prompts import PromptTemplate
     from azure.core.credentials import AzureKeyCredential
 
     try:
@@ -40,8 +44,8 @@ def sample_chat_completions_from_input_prompty():
         print("Set them before running this sample.")
         exit()
 
-    path = "./sample1.prompty"
-    prompt_template = PromptTemplate.from_prompty(file_path=path)
+    # Load Prompty file
+    prompty = load("./sample1.prompty")
 
     input = "When I arrived, can I still have breakfast?"
     rules = [
@@ -53,18 +57,26 @@ def sample_chat_completions_from_input_prompty():
         {"role": "user", "content": "I'll arrive at 2pm. What's the check-in and check-out time?"},
         {"role": "system", "content": "The check-in time is 3 PM, and the check-out time is 11 AM."},
     ]
-    messages = prompt_template.create_messages(input=input, rules=rules, chat_history=chat_history)
 
     client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
+    # Retrieve the prompt template and model configuration from the Prompty file
+    data = {
+        "input": input,
+        "rules": rules,
+        "chat_history": chat_history,
+    }
+    messages = prepare(prompty, data)
+    model_name = prompty.model.configuration["azure_deployment"] if "azure_deployment" in prompty.model.configuration else None
+
     response = client.complete(
         messages=messages,
-        model=prompt_template.model_name,
-        **prompt_template.parameters,
+        model=model_name,
+        **prompty.model.parameters,
     )
 
     print(response.choices[0].message.content)
 
 
 if __name__ == "__main__":
-    sample_chat_completions_from_input_prompty()
+    sample_chat_completions_with_prompty_file()
