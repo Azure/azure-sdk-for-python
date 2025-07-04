@@ -797,6 +797,7 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         :type tool_call: Any
         """
 
+
 class McpTool(Tool[MCPToolDefinition]):
     """
     A tool that connects to Model Context Protocol (MCP) servers.
