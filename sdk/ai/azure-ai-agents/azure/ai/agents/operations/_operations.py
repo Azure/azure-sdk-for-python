@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -5104,7 +5103,9 @@ class VectorStoreFileBatchesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AgentsClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], AgentsClientConfiguration]):
+class _AgentsClientOperationsMixin(
+    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], AgentsClientConfiguration]
+):
 
     @overload
     def create_agent(

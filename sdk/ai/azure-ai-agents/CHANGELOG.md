@@ -8,6 +8,10 @@
 
 - Added support for MCP tool. For more information, see https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/model-context-protocol
 
+### Bugs Fixed
+
+- `_AgentsClientOperationsMixin` was supposed to be an abstract class.  Now it is private.  
+
 ### Sample updates
 
 - Added sample showing usage of MCP tool.
