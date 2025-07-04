@@ -23,7 +23,7 @@ class TestEventHubManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_clusters_list_available_cluster_region(self, resource_group):
         response = await self.client.clusters.list_available_cluster_region(
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestEventHubManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_clusters_list_by_subscription(self, resource_group):
         response = self.client.clusters.list_by_subscription(
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -44,7 +44,7 @@ class TestEventHubManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_clusters_list_by_resource_group(self, resource_group):
         response = self.client.clusters.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -56,7 +56,7 @@ class TestEventHubManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.clusters.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -75,7 +75,6 @@ class TestEventHubManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
                     "location": "str",
                     "metricId": "str",
                     "name": "str",
-                    "provisioningState": "str",
                     "sku": {"name": "str", "capacity": 0},
                     "status": "str",
                     "supportsScaling": bool,
@@ -91,7 +90,7 @@ class TestEventHubManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "updatedAt": "str",
                 },
-                api_version="2024-01-01",
+                api_version="2022-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -111,7 +110,6 @@ class TestEventHubManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
                     "location": "str",
                     "metricId": "str",
                     "name": "str",
-                    "provisioningState": "str",
                     "sku": {"name": "str", "capacity": 0},
                     "status": "str",
                     "supportsScaling": bool,
@@ -127,7 +125,7 @@ class TestEventHubManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "updatedAt": "str",
                 },
-                api_version="2024-01-01",
+                api_version="2022-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -141,7 +139,7 @@ class TestEventHubManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.clusters.begin_delete(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
-                api_version="2024-01-01",
+                api_version="2022-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -154,7 +152,7 @@ class TestEventHubManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.clusters.list_namespaces(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
