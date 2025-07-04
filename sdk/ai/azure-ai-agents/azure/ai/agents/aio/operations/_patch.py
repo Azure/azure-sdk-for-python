@@ -1030,7 +1030,8 @@ class RunsOperations(RunsOperationsGenerated):
         thread_id: str,
         run_id: str,
         *,
-        tool_outputs: List[_models.ToolOutput],
+        tool_outputs: Optional[List[_models.ToolOutput]] = None,
+        tool_approvals: Optional[List[_models.ToolApproval]] = None,
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> _models.ThreadRun:
@@ -1042,8 +1043,8 @@ class RunsOperations(RunsOperationsGenerated):
         :type thread_id: str
         :param run_id: Required.
         :type run_id: str
-        :keyword tool_outputs: Required.
         :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
+        :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1103,7 +1104,8 @@ class RunsOperations(RunsOperationsGenerated):
         run_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        tool_outputs: List[_models.ToolOutput] = _Unset,
+        tool_outputs: Optional[List[_models.ToolOutput]] = _Unset,
+        tool_approvals: Optional[List[_models.ToolApproval]] = _Unset,
         **kwargs: Any,
     ) -> _models.ThreadRun:
         """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
@@ -1116,8 +1118,8 @@ class RunsOperations(RunsOperationsGenerated):
         :type run_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword tool_outputs: Required.
         :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
+        :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1130,6 +1132,11 @@ class RunsOperations(RunsOperationsGenerated):
         elif tool_outputs is not _Unset:
             response = super().submit_tool_outputs(
                 thread_id, run_id, tool_outputs=tool_outputs, stream_parameter=False, stream=False, **kwargs
+            )
+
+        elif tool_approvals is not _Unset:
+            response = super().submit_tool_outputs(
+                thread_id, run_id, tool_approvals=tool_approvals, stream_parameter=False, stream=False, **kwargs
             )
 
         elif isinstance(body, io.IOBase):
@@ -1177,7 +1184,8 @@ class RunsOperations(RunsOperationsGenerated):
         thread_id: str,
         run_id: str,
         *,
-        tool_outputs: List[_models.ToolOutput],
+        tool_outputs: Optional[List[_models.ToolOutput]] = None,
+        tool_approvals: Optional[List[_models.ToolApproval]] = None,
         content_type: str = "application/json",
         event_handler: _models.BaseAsyncAgentEventHandler,
         **kwargs: Any,
@@ -1190,8 +1198,8 @@ class RunsOperations(RunsOperationsGenerated):
         :type thread_id: str
         :param run_id: Required.
         :type run_id: str
-        :keyword tool_outputs: Required.
         :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
+        :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1207,7 +1215,8 @@ class RunsOperations(RunsOperationsGenerated):
         run_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        tool_outputs: List[_models.ToolOutput] = _Unset,
+        tool_outputs: Optional[List[_models.ToolOutput]] = _Unset,
+        tool_approvals: Optional[List[_models.ToolApproval]] = _Unset,
         event_handler: _models.BaseAsyncAgentEventHandler,
         **kwargs: Any,
     ) -> None:
@@ -1221,8 +1230,8 @@ class RunsOperations(RunsOperationsGenerated):
         :type run_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword tool_outputs: Required.
         :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
+        :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
         :keyword event_handler: The event handler to use for processing events during the run.
         :paramtype event_handler: ~azure.ai.agents.models.AsyncAgentEventHandler
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1235,6 +1244,11 @@ class RunsOperations(RunsOperationsGenerated):
         elif tool_outputs is not _Unset:
             response = super().submit_tool_outputs(
                 thread_id, run_id, tool_outputs=tool_outputs, stream_parameter=True, stream=True, **kwargs
+            )
+
+        elif tool_approvals is not _Unset:
+            response = super().submit_tool_outputs(
+                thread_id, run_id, tool_approvals=tool_approvals, stream_parameter=True, stream=True, **kwargs
             )
 
         elif isinstance(body, io.IOBase):

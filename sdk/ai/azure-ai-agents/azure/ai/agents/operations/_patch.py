@@ -114,6 +114,7 @@ class RunsOperations(RunsOperationsGenerated):
         additional_instructions: Optional[str] = None,
         additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_prompt_tokens: Optional[int] = None,
@@ -155,6 +156,9 @@ class RunsOperations(RunsOperationsGenerated):
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
+        :keyword tool_resources: The overridden enabled tool resources that the agent should use to run the
+         thread. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -278,6 +282,7 @@ class RunsOperations(RunsOperationsGenerated):
         additional_instructions: Optional[str] = None,
         additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_prompt_tokens: Optional[int] = None,
@@ -318,6 +323,9 @@ class RunsOperations(RunsOperationsGenerated):
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
+        :keyword tool_resources: The overridden enabled tool resources that the agent should use to run the
+         thread. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -384,6 +392,7 @@ class RunsOperations(RunsOperationsGenerated):
                 additional_instructions=additional_instructions,
                 additional_messages=additional_messages,
                 tools=tools,
+                tool_resources=tool_resources,
                 stream_parameter=False,
                 stream=False,
                 temperature=temperature,
@@ -593,6 +602,7 @@ class RunsOperations(RunsOperationsGenerated):
         additional_instructions: Optional[str] = None,
         additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_prompt_tokens: Optional[int] = None,
@@ -635,6 +645,9 @@ class RunsOperations(RunsOperationsGenerated):
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
+        :keyword tool_resources: The overridden enabled tool resources that the agent should use to run the
+         thread. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -702,6 +715,7 @@ class RunsOperations(RunsOperationsGenerated):
         additional_instructions: Optional[str] = None,
         additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_prompt_tokens: Optional[int] = None,
@@ -744,6 +758,9 @@ class RunsOperations(RunsOperationsGenerated):
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
+        :keyword tool_resources: The overridden enabled tool resources that the agent should use to run the
+         thread. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -881,6 +898,7 @@ class RunsOperations(RunsOperationsGenerated):
         additional_instructions: Optional[str] = None,
         additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_prompt_tokens: Optional[int] = None,
@@ -924,6 +942,9 @@ class RunsOperations(RunsOperationsGenerated):
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
+        :keyword tool_resources: The overridden enabled tool resources that the agent should use to run the
+         thread. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -993,6 +1014,7 @@ class RunsOperations(RunsOperationsGenerated):
                 additional_instructions=additional_instructions,
                 additional_messages=additional_messages,
                 tools=tools,
+                tool_resources=tool_resources,
                 stream_parameter=True,
                 stream=True,
                 temperature=temperature,
@@ -1029,7 +1051,8 @@ class RunsOperations(RunsOperationsGenerated):
         thread_id: str,
         run_id: str,
         *,
-        tool_outputs: List[_models.ToolOutput],
+        tool_outputs: Optional[List[_models.ToolOutput]] = None,
+        tool_approvals: Optional[List[_models.ToolApproval]] = None,
         content_type: str = "application/json",
         event_handler: Optional[_models.AgentEventHandler] = None,
         **kwargs: Any,
@@ -1042,8 +1065,8 @@ class RunsOperations(RunsOperationsGenerated):
         :type thread_id: str
         :param run_id: Required.
         :type run_id: str
-        :keyword tool_outputs: Required.
         :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
+        :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1106,7 +1129,8 @@ class RunsOperations(RunsOperationsGenerated):
         run_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        tool_outputs: List[_models.ToolOutput] = _Unset,
+        tool_outputs: Optional[List[_models.ToolOutput]] = _Unset,
+        tool_approvals: Optional[List[_models.ToolApproval]] = _Unset,
         **kwargs: Any,
     ) -> _models.ThreadRun:
         """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
@@ -1119,8 +1143,8 @@ class RunsOperations(RunsOperationsGenerated):
         :type run_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword tool_outputs: Required.
         :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
+        :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1135,6 +1159,16 @@ class RunsOperations(RunsOperationsGenerated):
                 thread_id,
                 run_id,
                 tool_outputs=tool_outputs,
+                stream_parameter=False,
+                stream=False,
+                **kwargs,
+            )
+
+        elif tool_approvals is not _Unset:
+            response = super().submit_tool_outputs(
+                thread_id,
+                run_id,
+                tool_approvals=tool_approvals,
                 stream_parameter=False,
                 stream=False,
                 **kwargs,
@@ -1184,7 +1218,8 @@ class RunsOperations(RunsOperationsGenerated):
         thread_id: str,
         run_id: str,
         *,
-        tool_outputs: List[_models.ToolOutput],
+        tool_outputs: Optional[List[_models.ToolOutput]] = None,
+        tool_approvals: Optional[List[_models.ToolApproval]] = None,
         content_type: str = "application/json",
         event_handler: _models.BaseAgentEventHandler,
         **kwargs: Any,
@@ -1197,8 +1232,8 @@ class RunsOperations(RunsOperationsGenerated):
         :type thread_id: str
         :param run_id: Required.
         :type run_id: str
-        :keyword tool_outputs: Required.
         :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
+        :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1214,7 +1249,8 @@ class RunsOperations(RunsOperationsGenerated):
         run_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        tool_outputs: List[_models.ToolOutput] = _Unset,
+        tool_outputs: Optional[List[_models.ToolOutput]] = None,
+        tool_approvals: Optional[List[_models.ToolApproval]] = None,
         event_handler: _models.BaseAgentEventHandler,
         **kwargs: Any,
     ) -> None:
@@ -1228,8 +1264,8 @@ class RunsOperations(RunsOperationsGenerated):
         :type run_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword tool_outputs: Required.
         :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
+        :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
         :keyword event_handler: The event handler to use for processing events during the run.
         :paramtype event_handler: ~azure.ai.agents.models.BaseAgentEventHandler
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1242,6 +1278,11 @@ class RunsOperations(RunsOperationsGenerated):
         elif tool_outputs is not _Unset:
             response = super().submit_tool_outputs(
                 thread_id, run_id, tool_outputs=tool_outputs, stream_parameter=True, stream=True, **kwargs
+            )
+
+        elif tool_approvals is not _Unset:
+            response = super().submit_tool_outputs(
+                thread_id, run_id, tool_approvals=tool_approvals, stream_parameter=True, stream=True, **kwargs
             )
 
         elif isinstance(body, io.IOBase):

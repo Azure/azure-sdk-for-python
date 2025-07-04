@@ -27,8 +27,8 @@ USAGE:
        the "Models + endpoints" tab in your Azure AI Foundry project.
     3) DEEP_RESEARCH_MODEL_DEPLOYMENT_NAME - The deployment name of the Deep Research AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
-    4) AZURE_BING_CONNECTION_ID - The ID of the Bing connection, in the format of:
-       /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace-name}/connections/{connection-name}
+    4) BING_RESOURCE_NAME - The resource name of the Bing connection, you can find it in the "Connected resources" tab
+       in the Management Center of your AI Foundry project.
 """
 
 import asyncio
@@ -98,9 +98,11 @@ async def main() -> None:
         credential=DefaultAzureCredential(),
     )
 
+    bing_connection = await project_client.connections.get(name=os.environ["BING_RESOURCE_NAME"])
+
     # Initialize a Deep Research tool with Bing Connection ID and Deep Research model deployment name
     deep_research_tool = DeepResearchTool(
-        bing_grounding_connection_id=os.environ["AZURE_BING_CONNECTION_ID"],
+        bing_grounding_connection_id=bing_connection.id,
         deep_research_model=os.environ["DEEP_RESEARCH_MODEL_DEPLOYMENT_NAME"],
     )
 

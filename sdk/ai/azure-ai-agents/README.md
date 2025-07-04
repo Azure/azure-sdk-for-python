@@ -384,7 +384,7 @@ Here is an example:
 <!-- SNIPPET:sample_agents_deep_research.create_agent_with_deep_research_tool -->
 
 ```python
-conn_id = os.environ["AZURE_BING_CONNECTION_ID"]
+conn_id = project_client.connections.get(name=os.environ["BING_RESOURCE_NAME"]).id
 
 # Initialize a Deep Research tool with Bing Connection ID and Deep Research model deployment name
 deep_research_tool = DeepResearchTool(
@@ -634,6 +634,7 @@ def foo(arguments: func.QueueMessage, outputQueue: func.Out[str]) -> None:
 To deploy your function to Azure properly, follow Microsoft's official documentation step by step:
 
 [Azure Functions Python Developer Guide](https://learn.microsoft.com/azure/azure-functions/create-first-function-cli-python?tabs=windows%2Cbash%2Cazure-cli%2Cbrowser)
+**Note:** The Azure Function may be only used in standard agent setup. Please follow the [instruction](https://github.com/azure-ai-foundry/foundry-samples/tree/main/samples/microsoft/infrastructure-setup/41-standard-agent-setup) to deploy an agent, capable of calling Azure Functions.
 
 **Summary of required steps:**
 
