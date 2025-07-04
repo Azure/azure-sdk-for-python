@@ -34,11 +34,15 @@ def main():
     response = client.action_groups.update(
         resource_group_name="Default-NotificationRules",
         action_group_name="SampleActionGroup",
-        action_group_patch={"properties": {"enabled": False}, "tags": {"key1": "value1", "key2": "value2"}},
+        action_group_patch={
+            "identity": {"type": "SystemAssigned"},
+            "properties": {"enabled": False},
+            "tags": {"key1": "value1", "key2": "value2"},
+        },
     )
     print(response)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2022-06-01/examples/patchActionGroup.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/preview/2024-10-01-preview/examples/patchActionGroup.json
 if __name__ == "__main__":
     main()

@@ -37,6 +37,6 @@ def main():
     )
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2022-06-01/examples/deleteActionGroup.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/preview/2024-10-01-preview/examples/deleteActionGroup.json
 if __name__ == "__main__":
     main()

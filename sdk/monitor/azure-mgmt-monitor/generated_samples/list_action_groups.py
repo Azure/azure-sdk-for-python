@@ -36,6 +36,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2022-06-01/examples/listActionGroups.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/preview/2024-10-01-preview/examples/listActionGroups.json
 if __name__ == "__main__":
     main()

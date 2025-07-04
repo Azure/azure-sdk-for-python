@@ -16,7 +16,7 @@ from azure.mgmt.monitor import MonitorManagementClient
     pip install azure-identity
     pip install azure-mgmt-monitor
 # USAGE
-    python enable_receiver.py
+    python list_scheduled_query_rules_by_subscription.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,16 +28,14 @@ from azure.mgmt.monitor import MonitorManagementClient
 def main():
     client = MonitorManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="187f412d-1758-44d9-b052-169e2564721d",
+        subscription_id="dd4bfc94-a096-412b-9c43-4bd13e35afbc",
     )
 
-    client.action_groups.enable_receiver(
-        resource_group_name="Default-NotificationRules",
-        action_group_name="SampleActionGroup",
-        enable_request={"receiverName": "John Doe's mobile"},
-    )
+    response = client.scheduled_query_rules.list_by_subscription()
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/preview/2024-10-01-preview/examples/enableReceiver.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/preview/2025-01-01-preview/examples/listScheduledQueryRulesBySubscription.json
 if __name__ == "__main__":
     main()

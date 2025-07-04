@@ -65,6 +65,7 @@ def main():
                     "functionAppResourceId": "/subscriptions/5def922a-3ed4-49c1-b9fd-05ec533819a3/resourceGroups/aznsTest/providers/Microsoft.Web/sites/testFunctionApp",
                     "functionName": "HttpTriggerCSharp1",
                     "httpTriggerUrl": "http://test.me",
+                    "managedIdentity": "f11979a4-36d1-45d0-9097-a0da3c7e855d",
                     "name": "Sample azureFunction",
                     "useCommonAlertSchema": True,
                 }
@@ -94,6 +95,7 @@ def main():
             "logicAppReceivers": [
                 {
                     "callbackUrl": "https://prod-27.northcentralus.logic.azure.com/workflows/68e572e818e5457ba898763b7db90877/triggers/manual/paths/invoke/azns/test?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Abpsb72UYJxPPvmDo937uzofupO5r_vIeWEx7KVHo7w",
+                    "managedIdentity": "f11979a4-36d1-45d0-9097-a0da3c7e855d",
                     "name": "Sample logicApp",
                     "resourceId": "/subscriptions/187f412d-1758-44d9-b052-169e2564721d/resourceGroups/LogicApp/providers/Microsoft.Logic/workflows/testLogicApp",
                     "useCommonAlertSchema": False,
@@ -125,6 +127,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2022-06-01/examples/postTestNotificationsAtActionGroupResourceLevel.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/preview/2024-10-01-preview/examples/postTestNotificationsAtActionGroupResourceLevel.json
 if __name__ == "__main__":
     main()
