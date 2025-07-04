@@ -790,6 +790,12 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         """
         return ToolResources()
 
+    def execute(self, tool_call: Any) -> None:
+        """
+        OpenApiTool does not execute client-side.
+        :param Any tool_call: The tool call to execute.
+        :type tool_call: Any
+        """
 
 class McpTool(Tool[MCPToolDefinition]):
     """
