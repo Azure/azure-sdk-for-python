@@ -185,11 +185,12 @@ Here is an example of how to create an Agent:
 <!-- SNIPPET:sample_agents_basics.create_agent -->
 
 ```python
-agent = agents_client.create_agent(
-    model=os.environ["MODEL_DEPLOYMENT_NAME"],
-    name="my-agent",
-    instructions="You are helpful agent",
-)
+
+    agent = agents_client.create_agent(
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
+        name="my-agent",
+        instructions="You are helpful agent",
+    )
 ```
 
 <!-- END SNIPPET -->
@@ -360,8 +361,7 @@ conn_id = os.environ["AZURE_BING_CONNECTION_ID"]
 bing = BingGroundingTool(connection_id=conn_id)
 
 # Create agent with the bing tool and process agent run
-with project_client:
-    agents_client = project_client.agents
+with agents_client:
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
@@ -422,26 +422,17 @@ Here is an example to integrate Azure AI Search:
 <!-- SNIPPET:sample_agents_azure_ai_search.create_agent_with_azure_ai_search_tool -->
 
 ```python
-with AIProjectClient(
-    endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-) as project_client:
-    conn_id = project_client.connections.get_default(ConnectionType.AZURE_AI_SEARCH).id
+conn_id = os.environ["AI_AZURE_AI_CONNECTION_ID"]
 
-    print(conn_id)
+print(conn_id)
 
-    # Initialize agent AI search tool and add the search index connection id
-    ai_search = AzureAISearchTool(
-        index_connection_id=conn_id,
-        index_name="sample_index",
-        query_type=AzureAISearchQueryType.SIMPLE,
-        top_k=3,
-        filter="",
-    )
+# Initialize agent AI search tool and add the search index connection id
+ai_search = AzureAISearchTool(
+    index_connection_id=conn_id, index_name="sample_index", query_type=AzureAISearchQueryType.SIMPLE, top_k=3, filter=""
+)
 
-    # Create agent with AI search tool and process agent run
-    agents_client = project_client.agents
-
+# Create agent with AI search tool and process agent run
+with agents_client:
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
@@ -702,7 +693,7 @@ Below is an example of how to create an Azure Logic App utility tool and registe
 ```python
 
 # Create the agents client
-project_client = AIProjectClient(
+agents_client = AgentsClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
@@ -763,9 +754,7 @@ openapi_tool.add_definition(
 )
 
 # Create agent with OpenApi tool and process agent run
-with project_client:
-    agents_client = project_client.agents
-
+with agents_client:
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
@@ -956,9 +945,11 @@ To understand what calls were made by the main agent to the connected ones, we w
 for run_step in agents_client.run_steps.list(thread_id=thread.id, run_id=run.id, order=ListSortOrder.ASCENDING):
     if isinstance(run_step.step_details, RunStepToolCallDetails):
         for tool_call in run_step.step_details.tool_calls:
-            print(f"\tAgent: {tool_call._data['connected_agent']['name']} "
-                  f"query: {tool_call._data['connected_agent']['arguments']} ",
-                  f"output: {tool_call._data['connected_agent']['output']}")
+            print(
+                f"\tAgent: {tool_call._data['connected_agent']['name']} "
+                f"query: {tool_call._data['connected_agent']['arguments']} ",
+                f"output: {tool_call._data['connected_agent']['output']}",
+            )
 ```
 
 <!-- END SNIPPET -->
@@ -973,7 +964,7 @@ messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.
 for msg in messages:
     if msg.text_messages:
         last_text = msg.text_messages[-1]
-        text = last_text.text.value.replace('\u3010', '[').replace('\u3011', ']')
+        text = last_text.text.value.replace("\u3010", "[").replace("\u3011", "]")
         print(f"{msg.role}: {text}")
 ```
 
@@ -1473,8 +1464,7 @@ scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
 with tracer.start_as_current_span(scenario):
-    with project_client:
-        agents_client = project_client.agents
+    with agents_client:
 ```
 
 <!-- END SNIPPET -->
