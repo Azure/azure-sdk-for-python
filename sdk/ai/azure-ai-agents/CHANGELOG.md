@@ -7,6 +7,8 @@
 ### Features Added
 
 - Added support for MCP tool. For more information, see https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/model-context-protocol
+- Added samples, [`sample_agents_auto_function_call.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_tools/sample_agents_auto_function_call.py) and [`sample_agents_auto_function_call_async.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_async/sample_agents_auto_function_call_async.py).
+
 
 ### Sample updates
 
