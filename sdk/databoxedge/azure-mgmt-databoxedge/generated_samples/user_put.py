@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -41,7 +42,6 @@ def main():
                     "encryptionCertThumbprint": "blah",
                     "value": "<value>",
                 },
-                "shareAccessRights": [],
                 "userType": "Share",
             }
         },
@@ -49,6 +49,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/databoxedge/resource-manager/Microsoft.DataBoxEdge/stable/2019-08-01/examples/UserPut.json
+# x-ms-original-file: specification/databoxedge/resource-manager/Microsoft.DataBoxEdge/preview/2021-02-01-preview/examples/UserPut.json
 if __name__ == "__main__":
     main()

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.databoxedge import DataBoxEdgeManagementClient
 
 """
@@ -29,14 +31,13 @@ def main():
         subscription_id="4385cf00-2d3a-425a-832f-f4285b1c9dce",
     )
 
-    response = client.monitoring_config.begin_delete(
+    client.monitoring_config.begin_delete(
         device_name="testedgedevice",
         role_name="testrole",
         resource_group_name="GroupForEdgeAutomation",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/databoxedge/resource-manager/Microsoft.DataBoxEdge/stable/2022-03-01/examples/DeleteMonitoringConfig.json
+# x-ms-original-file: specification/databoxedge/resource-manager/Microsoft.DataBoxEdge/preview/2021-02-01-preview/examples/DeleteMonitoringConfig.json
 if __name__ == "__main__":
     main()

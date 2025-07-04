@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -37,14 +38,14 @@ def main():
             "properties": {
                 "deviceAdminPassword": {
                     "encryptionAlgorithm": "AES256",
-                    "encryptionCertThumbprint": "7DCBDFC44ED968D232C9A998FC105B5C70E84BE0",
-                    "value": "<value>",
+                    "encryptionCertThumbprint": "<encryptionThumprint>",
+                    "value": "<deviceAdminPassword>",
                 }
             }
         },
     ).result()
 
 
-# x-ms-original-file: specification/databoxedge/resource-manager/Microsoft.DataBoxEdge/stable/2019-08-01/examples/SecuritySettingsUpdatePost.json
+# x-ms-original-file: specification/databoxedge/resource-manager/Microsoft.DataBoxEdge/preview/2021-02-01-preview/examples/SecuritySettingsUpdatePost.json
 if __name__ == "__main__":
     main()
