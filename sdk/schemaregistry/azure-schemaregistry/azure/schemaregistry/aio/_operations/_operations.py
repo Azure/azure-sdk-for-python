@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, List, Optional, TypeVar
+import json
+from typing import Any, AsyncIterator, Callable, Dict, List, Optional, TypeVar
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -36,7 +37,7 @@ from ..._operations._operations import (
     build_schema_registry_list_schema_versions_request,
     build_schema_registry_register_schema_request,
 )
-from ..._utils.model_base import _deserialize
+from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.utils import ClientMixinABC
 from .._configuration import SchemaRegistryClientConfiguration
 
@@ -44,10 +45,12 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class SchemaRegistryClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, SchemaRegistryClientConfiguration]):
+class _SchemaRegistryClientOperationsMixin(
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], SchemaRegistryClientConfiguration]
+):
 
     @distributed_trace
-    def _list_schema_groups(self, **kwargs: Any) -> AsyncIterable[str]:
+    def _list_schema_groups(self, **kwargs: Any) -> AsyncItemPaged[str]:
         """Get list of schema groups.
 
         Gets the list of schema groups user is authorized to access.
@@ -137,7 +140,7 @@ class SchemaRegistryClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, Sc
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def _list_schema_versions(self, group_name: str, schema_name: str, **kwargs: Any) -> AsyncIterable[int]:
+    def _list_schema_versions(self, group_name: str, schema_name: str, **kwargs: Any) -> AsyncItemPaged[int]:
         """List schema versions.
 
         Gets the list of all versions of one schema.
