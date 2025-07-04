@@ -9,8 +9,7 @@ from typing import Dict, Union, List
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
-from ..._common.utils import reformat_conversation_history, \
-    reformat_agent_response
+from ..._common.utils import reformat_conversation_history, reformat_agent_response
 
 from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
@@ -167,10 +166,10 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
                 category=ErrorCategory.INVALID_VALUE,
                 target=ErrorTarget.CONVERSATION,
             )
-        if not isinstance(eval_input['query'], str):
-            eval_input['query'] = reformat_conversation_history(eval_input["query"], logger)
-        if not isinstance(eval_input['response'], str):
-            eval_input['response'] = reformat_agent_response(eval_input["response"], logger)
+        if not isinstance(eval_input["query"], str):
+            eval_input["query"] = reformat_conversation_history(eval_input["query"], logger)
+        if not isinstance(eval_input["response"], str):
+            eval_input["response"] = reformat_agent_response(eval_input["response"], logger)
         llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         score = math.nan
 
