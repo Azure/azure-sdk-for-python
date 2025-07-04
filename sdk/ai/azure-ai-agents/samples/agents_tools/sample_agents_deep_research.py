@@ -60,10 +60,7 @@ def fetch_and_print_new_agent_response(
     return response.id
 
 
-def create_research_summary(
-        message : ThreadMessage,
-        filepath: str = "research_summary.md"
-) -> None:
+def create_research_summary(message: ThreadMessage, filepath: str = "research_summary.md") -> None:
     if not message:
         print("No message content provided, cannot create research summary.")
         return
@@ -154,9 +151,7 @@ with project_client:
             print(f"Run failed: {run.last_error}")
 
         # Fetch the final message from the agent in the thread and create a research summary
-        final_message = agents_client.messages.get_last_message_by_role(
-            thread_id=thread.id, role=MessageRole.AGENT
-        )
+        final_message = agents_client.messages.get_last_message_by_role(thread_id=thread.id, role=MessageRole.AGENT)
         if final_message:
             create_research_summary(final_message)
 

@@ -1275,12 +1275,12 @@ class RunsOperations(RunsOperationsGenerated):
             content_type = kwargs.get("content_type", "application/json")
             response = super().submit_tool_outputs(thread_id, run_id, body, content_type=content_type, **kwargs)
 
-        elif tool_outputs is not _Unset:
+        elif tool_outputs is not None:
             response = super().submit_tool_outputs(
                 thread_id, run_id, tool_outputs=tool_outputs, stream_parameter=True, stream=True, **kwargs
             )
 
-        elif tool_approvals is not _Unset:
+        elif tool_approvals is not None:
             response = super().submit_tool_outputs(
                 thread_id, run_id, tool_approvals=tool_approvals, stream_parameter=True, stream=True, **kwargs
             )
