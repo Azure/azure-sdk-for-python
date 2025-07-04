@@ -1065,7 +1065,11 @@ class RunsOperations(RunsOperationsGenerated):
         :type thread_id: str
         :param run_id: Required.
         :type run_id: str
+        :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
+         is None.
         :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
+        :keyword tool_approvals: A list of tool approvals allowing data to be sent to tools. Default
+         value is None.
         :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1143,7 +1147,11 @@ class RunsOperations(RunsOperationsGenerated):
         :type run_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
+        :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
+         is None.
         :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
+        :keyword tool_approvals: A list of tool approvals allowing data to be sent to tools. Default
+         value is None.
         :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.ThreadRun
@@ -1232,7 +1240,11 @@ class RunsOperations(RunsOperationsGenerated):
         :type thread_id: str
         :param run_id: Required.
         :type run_id: str
+        :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
+         is None.
         :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
+        :keyword tool_approvals: A list of tool approvals allowing data to be sent to tools. Default
+         value is None.
         :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1264,7 +1276,11 @@ class RunsOperations(RunsOperationsGenerated):
         :type run_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
+        :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
+         is None.
         :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
+        :keyword tool_approvals: A list of tool approvals allowing data to be sent to tools. Default
+         value is None.
         :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
         :keyword event_handler: The event handler to use for processing events during the run.
         :paramtype event_handler: ~azure.ai.agents.models.BaseAgentEventHandler
