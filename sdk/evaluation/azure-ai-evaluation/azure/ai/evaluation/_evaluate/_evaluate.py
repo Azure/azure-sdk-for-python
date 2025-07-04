@@ -611,18 +611,18 @@ def _apply_target_to_data(
             category=ErrorCategory.FAILED_EXECUTION,
             blame=ErrorBlame.USER_ERROR,
         )
-    
+
     # Log a warning if some rows failed
     failed_lines = run_summary.get("failed_lines", 0)
     completed_lines = run_summary["completed_lines"]
     total_lines = failed_lines + completed_lines
-    
+
     if failed_lines > 0:
         LOGGER.warning(
             f"Target function completed {completed_lines} out of {total_lines} rows. "
             f"{failed_lines} rows failed and will be filled with NaN values."
         )
-    
+
     # Remove input and output prefix
     generated_columns = {
         col[len(Prefixes.OUTPUTS) :] for col in target_output.columns if col.startswith(Prefixes.OUTPUTS)
@@ -630,13 +630,13 @@ def _apply_target_to_data(
     # Sort output by line numbers
     target_output.set_index(f"inputs.{LINE_NUMBER}", inplace=True)
     target_output.sort_index(inplace=True)
-    
+
     initial_data_with_line_numbers = initial_data.copy()
     initial_data_with_line_numbers[LINE_NUMBER] = range(len(initial_data))
-    
+
     complete_index = initial_data_with_line_numbers[LINE_NUMBER]
     target_output = target_output.reindex(complete_index)
-    
+
     target_output.reset_index(inplace=True, drop=False)
     # target_output contains only input columns, taken by function,
     # so we need to concatenate it to the input data frame.
@@ -649,6 +649,7 @@ def _apply_target_to_data(
     target_output = pd.concat([initial_data, target_output], axis=1)
 
     return target_output, generated_columns, run
+
 
 def _process_column_mappings(
     column_mapping: Dict[str, Optional[Dict[str, str]]],
