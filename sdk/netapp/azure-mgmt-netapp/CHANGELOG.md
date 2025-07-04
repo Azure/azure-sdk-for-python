@@ -1,5 +1,11 @@
 # Release History
 
+## 13.6.0 (2025-07-21)
+
+### Features Added
+
+  - Model `SubscriptionQuotaItemList` added property `next_link`
+
 ## 14.0.0b1 (2025-05-20)
 
 ### Features Added
