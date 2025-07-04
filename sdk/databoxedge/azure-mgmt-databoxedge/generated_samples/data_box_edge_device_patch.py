@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -33,11 +34,19 @@ def main():
     response = client.devices.update(
         device_name="testedgedevice",
         resource_group_name="GroupForEdgeAutomation",
-        parameters={"tags": {"Key1": "value1", "Key2": "value2"}},
+        parameters={
+            "properties": {
+                "edgeProfile": {
+                    "subscription": {
+                        "id": "/subscriptions/0d44739e-0563-474f-97e7-24a0cdb23b29/resourceGroups/rapvs-rg/providers/Microsoft.AzureStack/linkedSubscriptions/ca014ddc-5cf2-45f8-b390-e901e4a0ae87"
+                    }
+                }
+            }
+        },
     )
     print(response)
 
 
-# x-ms-original-file: specification/databoxedge/resource-manager/Microsoft.DataBoxEdge/stable/2019-08-01/examples/DataBoxEdgeDevicePatch.json
+# x-ms-original-file: specification/databoxedge/resource-manager/Microsoft.DataBoxEdge/preview/2021-02-01-preview/examples/DataBoxEdgeDevicePatch.json
 if __name__ == "__main__":
     main()

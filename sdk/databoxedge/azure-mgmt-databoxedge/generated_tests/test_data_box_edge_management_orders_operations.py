@@ -24,7 +24,7 @@ class TestDataBoxEdgeManagementOrdersOperations(AzureMgmtRecordedTestCase):
         response = self.client.orders.list_by_data_box_edge_device(
             device_name="str",
             resource_group_name=resource_group.name,
-            api_version="2019-08-01",
+            api_version="2021-02-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -36,7 +36,7 @@ class TestDataBoxEdgeManagementOrdersOperations(AzureMgmtRecordedTestCase):
         response = self.client.orders.get(
             device_name="str",
             resource_group_name=resource_group.name,
-            api_version="2019-08-01",
+            api_version="2021-02-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -59,6 +59,12 @@ class TestDataBoxEdgeManagementOrdersOperations(AzureMgmtRecordedTestCase):
                     "status": "str",
                     "additionalOrderDetails": {"str": "str"},
                     "comments": "str",
+                    "trackingInformation": {
+                        "carrierName": "str",
+                        "serialNumber": "str",
+                        "trackingId": "str",
+                        "trackingUrl": "str",
+                    },
                     "updateDateTime": "2020-02-20 00:00:00",
                 },
                 "deliveryTrackingInfo": [
@@ -71,6 +77,12 @@ class TestDataBoxEdgeManagementOrdersOperations(AzureMgmtRecordedTestCase):
                         "status": "str",
                         "additionalOrderDetails": {"str": "str"},
                         "comments": "str",
+                        "trackingInformation": {
+                            "carrierName": "str",
+                            "serialNumber": "str",
+                            "trackingId": "str",
+                            "trackingUrl": "str",
+                        },
                         "updateDateTime": "2020-02-20 00:00:00",
                     }
                 ],
@@ -78,18 +90,27 @@ class TestDataBoxEdgeManagementOrdersOperations(AzureMgmtRecordedTestCase):
                     {"carrierName": "str", "serialNumber": "str", "trackingId": "str", "trackingUrl": "str"}
                 ],
                 "serialNumber": "str",
+                "shipmentType": "str",
                 "shippingAddress": {
-                    "addressLine1": "str",
-                    "city": "str",
                     "country": "str",
-                    "postalCode": "str",
-                    "state": "str",
+                    "addressLine1": "str",
                     "addressLine2": "str",
                     "addressLine3": "str",
+                    "city": "str",
+                    "postalCode": "str",
+                    "state": "str",
+                },
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
                 },
                 "type": "str",
             },
-            api_version="2019-08-01",
+            api_version="2021-02-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -101,8 +122,20 @@ class TestDataBoxEdgeManagementOrdersOperations(AzureMgmtRecordedTestCase):
         response = self.client.orders.begin_delete(
             device_name="str",
             resource_group_name=resource_group.name,
-            api_version="2019-08-01",
+            api_version="2021-02-01-preview",
         ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_orders_list_dc_access_code(self, resource_group):
+        response = self.client.orders.list_dc_access_code(
+            device_name="str",
+            resource_group_name=resource_group.name,
+            api_version="2021-02-01-preview",
+        )
 
         # please add some check logic here by yourself
         # ...
