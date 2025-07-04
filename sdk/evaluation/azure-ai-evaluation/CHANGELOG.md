@@ -7,6 +7,8 @@
 ### Bugs Fixed
 
 - Significant improvements to TaskAdherence evaluator. New version has less variance, is much faster and consumes fewer tokens.
+- Significant improvements to Relevance evaluator. New version has more concrete rubrics and has less variance, is much faster and consumes fewer tokens.
+
 
 ## 1.9.0 (2025-07-02)
 

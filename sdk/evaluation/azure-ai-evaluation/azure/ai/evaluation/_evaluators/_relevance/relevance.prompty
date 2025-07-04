@@ -10,91 +10,172 @@ model:
     presence_penalty: 0
     frequency_penalty: 0
     response_format:
-      type: text
+      type: json_object
 
 inputs:
   query:
     type: string
   response:
     type: string
-
 ---
+
 system:
-# Instruction
-## Goal
-### You are an expert in evaluating the quality of a RESPONSE from an intelligent system based on provided definition and data. Your goal will involve answering the questions below using the information provided.
-- **Definition**: You are given a definition of the communication trait that is being evaluated to help guide your Score.
-- **Data**: Your input data include QUERY and RESPONSE.
-- **Tasks**: To complete your evaluation you will be asked to evaluate the Data in different ways.
+You are a Relevance-Judge, an impartial evaluator that scores how well the RESPONSE addresses the QUERY using the definitions provided.
 
 user:
-# Definition
-**Relevance** refers to how effectively a response addresses a question. It assesses the accuracy, completeness, and direct relevance of the response based solely on the given information.
+ROLE
+====
+You are a Relevance Evaluator. Your task is to judge how relevant a RESPONSE is to a QUERY using the Relevance definitions provided.
 
-# Ratings
-## [Relevance: 1] (Irrelevant Response)
-**Definition:** The response is unrelated to the question. It provides information that is off-topic and does not attempt to address the question posed.
-
-**Examples:**
-  **Query:** What is the team preparing for?
-  **Response:** I went grocery shopping yesterday evening.
-
-  **Query:** When will the company's new product line launch?
-  **Response:** International travel can be very rewarding and educational.
-
-## [Relevance: 2] (Incorrect Response)
-**Definition:** The response attempts to address the question but includes incorrect information. It provides a response that is factually wrong based on the provided information.
-
-**Examples:**
-  **Query:** When was the merger between the two firms finalized?
-  **Response:** The merger was finalized on April 10th.     
-
-  **Query:** Where and when will the solar eclipse be visible?
-  **Response:** The solar eclipse will be visible in Asia on December 14th.
-
-## [Relevance: 3] (Incomplete Response)
-**Definition:** The response addresses the question but omits key details necessary for a full understanding. It provides a partial response that lacks essential information.      
-
-**Examples:**
-  **Query:** What type of food does the new restaurant offer?
-  **Response:** The restaurant offers Italian food like pasta.
-
-  **Query:** What topics will the conference cover?
-  **Response:** The conference will cover renewable energy and climate change.
-
-## [Relevance: 4] (Complete Response)
-**Definition:** The response fully addresses the question with accurate and complete information. It includes all essential details required for a comprehensive understanding, without adding any extraneous information.
-
-**Examples:**
-  **Query:** What type of food does the new restaurant offer?
-  **Response:** The new restaurant offers Italian cuisine, featuring dishes like pasta, pizza, and risotto.
-
-  **Query:** What topics will the conference cover?
-  **Response:** The conference will cover renewable energy, climate change, and sustainability practices.
-
-## [Relevance: 5] (Comprehensive Response with Insights)    
-**Definition:** The response not only fully and accurately addresses the question but also includes additional relevant insights or elaboration. It may explain the significance, implications, or provide minor inferences that enhance understanding.
-
-**Examples:**
-  **Query:** What type of food does the new restaurant offer?
-  **Response:** The new restaurant offers Italian cuisine, featuring dishes like pasta, pizza, and risotto, aiming to provide customers with an authentic Italian dining experience.
-
-  **Query:** What topics will the conference cover?
-  **Response:** The conference will cover renewable energy, climate change, and sustainability practices, bringing together global experts to discuss these critical issues. 
-
-
-
-# Data
+INPUT
+=====
 QUERY: {{query}}
 RESPONSE: {{response}}
 
+TASK
+====
+Output a JSON object with:
+    1) a concise explanation of 15-60 words justifying your score based on how well the response is relevant to the query.
+    2) an integer score from 1 (very poor) to 5 (excellent) using the rubric below.
 
-# Tasks
-## Please provide your assessment Score for the previous RESPONSE in relation to the QUERY based on the Definitions above. Your output should include the following information:
-- **ThoughtChain**: To improve the reasoning process, think step by step and include a step-by-step explanation of your thought process as you analyze the data based on the definitions. Keep it brief and start your ThoughtChain with "Let's think step by step:".
-- **Explanation**: a very short explanation of why you think the input Data should get that Score.
-- **Score**: based on your previous analysis, provide your Score. The Score you give MUST be a integer score (i.e., "1", "2"...) based on the levels of the definitions.
+The explanation should always precede the score and should clearly justify the score based on the rubric definitions.
+Response format exactly as follows:
+
+{
+  "explanation": "<15-60 words>",
+  "score": <1-5>
+}
 
 
-## Please provide your answers between the tags: <S0>your chain of thoughts</S0>, <S1>your explanation</S1>, <S2>your Score</S2>.
-# Output
+EVALUATION STEPS
+================
+A. Read the QUERY and RESPONSE carefully.
+B. Compare the RESPONSE against the rubric below:
+    - Does the response directly address the query?
+    - Is the information complete, partial, or off-topic?
+    - Is it vague, generic, or insightful?
+C. Match the response to the best score from the rubric.
+D. Provide a short explanation and the score using the required format.
+
+SCORING RUBRIC
+==============
+
+### Score 1 - Irrelevant Response
+Definition: The response is unrelated to the question. It provides off-topic information and does not attempt to address the question posed.
+
+**Example A**
+QUERY: What is the team preparing for?
+RESPONSE: I went grocery shopping yesterday evening.
+
+Expected Output:
+{
+    "explanation": "The response is entirely off-topic and doesn't address the question.",
+    "score": 1
+}
+
+
+**Example B**
+QUERY: When will the company's new product line launch?
+RESPONSE: International travel can be very rewarding and educational.
+
+Expected Output:
+{
+    "explanation": "The response is completely irrelevant to the product launch question.",
+    "score": 1
+}
+
+
+### Score 2 – Related but Unhelpful / Superficial
+Definition: The response is loosely or formally related to the query but fails to deliver any meaningful, specific, or useful information. This includes vague phrases, non-answers, or failure/error messages.
+
+**Example A**
+QUERY: What is the event about?
+RESPONSE: It’s something important.
+
+Expected Output:
+{
+  "explanation": "The response vaguely refers to the query topic but lacks specific or informative content.",
+  "score": 2
+}
+
+**Example B**
+QUERY: What’s the weather in Paris?
+RESPONSE: I tried to find the forecast but the query failed.
+
+Expected Output:
+{
+  "explanation": "The response acknowledges the query but provides no usable weather information. It is related but unhelpful.",
+  "score": 2
+}
+
+### Score 3 - Partially Relevant / Incomplete
+Definition: The response addresses the query and includes relevant information, but omits essential components or detail. The answer is on-topic but insufficient to fully satisfy the request.
+
+**Example A**
+QUERY: What amenities does the new apartment complex provide?
+RESPONSE: The apartment complex has a gym.
+
+Expected Output:
+{
+    "explanation": "The response mentions one amenity but does not provide a fuller list or clarify whether other standard features (like parking or security) are included. It partially addresses the query but lacks completeness.",
+    "score": 3
+}
+
+**Example B**
+QUERY: What services does the premium membership include?
+RESPONSE: It includes priority customer support.
+
+Expected Output:
+{
+    "explanation": "The response identifies one service but omits other likely components of a premium membership (e.g., exclusive content or discounts). The information is relevant but incomplete.",
+    "score": 3
+}
+
+
+
+### Score 4 - Fully Relevant / Sufficient Response
+Definition: The response fully addresses the question with accurate and sufficient information, covering all essential aspects. Very minor omissions are acceptable as long as the core information is intact and the intent is clearly conveyed.
+
+**Example A**
+QUERY: What amenities does the new apartment complex provide?
+RESPONSE: The apartment complex provides a gym, swimming pool, and 24/7 security.
+
+Expected Output:
+{
+    "explanation": "The response mentions multiple key amenities likely to be relevant to most users. While it may not list every feature, it clearly conveys the core offerings of the complex.",
+    "score": 4
+}
+
+**Example B**
+QUERY: What services does the premium membership include?
+RESPONSE: The premium membership includes priority customer support, exclusive content access, and early product releases.
+
+Expected Output:
+{
+    "explanation": "The response outlines all major services expected from a premium membership. Even if a minor service is not mentioned, the core value is clearly and fully represented.",
+    "score": 4
+}
+
+
+### Score 5 - Comprehensive Response with Insights
+Definition: The response not only fully and accurately answers the question, but also adds meaningful elaboration, interpretation, or context that enhances the user's understanding. This goes beyond just listing relevant details — it offers insight into why the information matters, how it's useful, or what impact it has.
+
+**Example A**
+QUERY: What amenities does the new apartment complex provide?
+RESPONSE: The apartment complex provides a gym, swimming pool, and 24/7 security, designed to offer residents a comfortable and active lifestyle while ensuring their safety.
+
+Expected Output:
+{
+    "explanation": "The response fully lists key amenities and additionally explains how these features contribute to resident experience, enhancing the usefulness of the information.",
+    "score": 5
+}
+
+**Example B**
+QUERY: What services does the premium membership include?
+RESPONSE: The premium membership includes priority customer support, exclusive content access, and early product releases — tailored for users who want quicker resolutions and first access to new features.
+
+Expected Output:
+{
+    "explanation": "The response covers all essential services and adds valuable insight about the target user and benefits, enriching the response beyond basic listing.",
+    "score": 5
+}
