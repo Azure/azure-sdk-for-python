@@ -42,6 +42,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/resources/resource-manager/Microsoft.Resources/stable/2024-07-01/examples/ExportResourceGroupAsBicep.json
+# x-ms-original-file: specification/resources/resource-manager/Microsoft.Resources/stable/2025-04-01/examples/ExportResourceGroupAsBicep.json
 if __name__ == "__main__":
     main()

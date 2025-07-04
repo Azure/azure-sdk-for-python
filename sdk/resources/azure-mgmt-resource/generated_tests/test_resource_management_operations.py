@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.resource.resources.v2022_09_01 import ResourceManagementClient
+from azure.mgmt.resource.resources import ResourceManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -22,7 +22,7 @@ class TestResourceManagementOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_operations_list(self, resource_group):
         response = self.client.operations.list(
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
