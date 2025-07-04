@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.servicebus.v2021_11_01.aio import ServiceBusManagementClient
+from azure.mgmt.servicebus.aio import ServiceBusManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -23,7 +23,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
     @recorded_by_proxy_async
     async def test_namespaces_list(self, resource_group):
         response = self.client.namespaces.list(
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
     async def test_namespaces_list_by_resource_group(self, resource_group):
         response = self.client.namespaces.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -72,7 +72,9 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
                         "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                     },
                     "metricId": "str",
+                    "minimumTlsVersion": "str",
                     "name": "str",
+                    "premiumMessagingPartitions": 0,
                     "privateEndpointConnections": [
                         {
                             "id": "str",
@@ -93,6 +95,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
                         }
                     ],
                     "provisioningState": "str",
+                    "publicNetworkAccess": "Enabled",
                     "serviceBusEndpoint": "str",
                     "sku": {"name": "str", "capacity": 0, "tier": "str"},
                     "status": "str",
@@ -109,7 +112,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
                     "updatedAt": "2020-02-20 00:00:00",
                     "zoneRedundant": bool,
                 },
-                api_version="2021-11-01",
+                api_version="2022-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -123,7 +126,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
             await self.client.namespaces.begin_delete(
                 resource_group_name=resource_group.name,
                 namespace_name="str",
-                api_version="2021-11-01",
+                api_version="2022-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -136,7 +139,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
         response = await self.client.namespaces.get(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -201,7 +204,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
                 "type": "str",
                 "updatedAt": "2020-02-20 00:00:00",
             },
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -232,7 +235,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
                 "type": "str",
                 "virtualNetworkRules": [{"ignoreMissingVnetServiceEndpoint": bool, "subnet": {"id": "str"}}],
             },
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -244,7 +247,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
         response = await self.client.namespaces.get_network_rule_set(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -256,7 +259,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
         response = self.client.namespaces.list_network_rule_sets(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -268,7 +271,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
         response = self.client.namespaces.list_authorization_rules(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -296,7 +299,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
                 },
                 "type": "str",
             },
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -309,7 +312,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             namespace_name="str",
             authorization_rule_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -322,7 +325,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             namespace_name="str",
             authorization_rule_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -335,7 +338,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             namespace_name="str",
             authorization_rule_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -349,7 +352,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
             namespace_name="str",
             authorization_rule_name="str",
             parameters={"keyType": "str", "key": "str"},
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -360,7 +363,7 @@ class TestServiceBusManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCas
     async def test_namespaces_check_name_availability(self, resource_group):
         response = await self.client.namespaces.check_name_availability(
             parameters={"name": "str"},
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
