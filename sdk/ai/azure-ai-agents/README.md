@@ -185,12 +185,11 @@ Here is an example of how to create an Agent:
 <!-- SNIPPET:sample_agents_basics.create_agent -->
 
 ```python
-
-    agent = agents_client.create_agent(
-        model=os.environ["MODEL_DEPLOYMENT_NAME"],
-        name="my-agent",
-        instructions="You are helpful agent",
-    )
+agent = agents_client.create_agent(
+    model=os.environ["MODEL_DEPLOYMENT_NAME"],
+    name="my-agent",
+    instructions="You are helpful agent",
+)
 ```
 
 <!-- END SNIPPET -->
@@ -361,7 +360,8 @@ conn_id = os.environ["AZURE_BING_CONNECTION_ID"]
 bing = BingGroundingTool(connection_id=conn_id)
 
 # Create agent with the bing tool and process agent run
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
@@ -422,24 +422,29 @@ Here is an example to integrate Azure AI Search:
 <!-- SNIPPET:sample_agents_azure_ai_search.create_agent_with_azure_ai_search_tool -->
 
 ```python
-conn_id = os.environ["AI_AZURE_AI_CONNECTION_ID"]
+conn_id = project_client.connections.get_default(ConnectionType.AZURE_AI_SEARCH).id
 
 print(conn_id)
 
 # Initialize agent AI search tool and add the search index connection id
 ai_search = AzureAISearchTool(
-    index_connection_id=conn_id, index_name="sample_index", query_type=AzureAISearchQueryType.SIMPLE, top_k=3, filter=""
+    index_connection_id=conn_id,
+    index_name="sample_index",
+    query_type=AzureAISearchQueryType.SIMPLE,
+    top_k=3,
+    filter="",
 )
 
 # Create agent with AI search tool and process agent run
-with agents_client:
-    agent = agents_client.create_agent(
-        model=os.environ["MODEL_DEPLOYMENT_NAME"],
-        name="my-agent",
-        instructions="You are a helpful agent",
-        tools=ai_search.definitions,
-        tool_resources=ai_search.resources,
-    )
+agents_client = project_client.agents
+
+agent = agents_client.create_agent(
+    model=os.environ["MODEL_DEPLOYMENT_NAME"],
+    name="my-agent",
+    instructions="You are a helpful agent",
+    tools=ai_search.definitions,
+    tool_resources=ai_search.resources,
+)
 ```
 
 <!-- END SNIPPET -->
@@ -522,7 +527,7 @@ agent = await agents_client.create_agent(
 
 <!-- END SNIPPET -->
 
-When `enable_auto_function_calls` is called, the SDK will automatically invoke functions during both `create_and_process` and streaming workflows. This simplifies agent logic by handling function execution internally.
+When `enable_auto_function_calls` is called, the SDK will automatically invoke functions during both `create_and_process` and streaming workflows. This simplifies agent logic by handling function execution internally.  Furthermore, althought function tools and definitions are preserved in Agent service, their function implements are not.  Therefore, if your code queries earlier created agents through `update_agents` or `get_agents` function, you MUST also provide the function implementations through `enable_auto_function_calls`.
 
 - For examples of automatic function calls in action, refer to [`sample_agents_auto_function_call.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_tools/sample_agents_auto_function_call.py) or [`sample_agents_auto_function_call_async.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_async/sample_agents_auto_function_call_async.py).
 - If you prefer to manage function execution manually, refer to [`sample_agents_stream_eventhandler_with_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_streaming/sample_agents_stream_eventhandler_with_functions.py) or
@@ -691,13 +696,6 @@ Below is an example of how to create an Azure Logic App utility tool and registe
 <!-- SNIPPET:sample_agents_logic_apps.register_logic_app -->
 
 ```python
-
-# Create the agents client
-agents_client = AgentsClient(
-    endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
-
 # Extract subscription and resource group from the project scope
 subscription_id = os.environ["SUBSCRIPTION_ID"]
 resource_group = os.environ["resource_group_name"]
@@ -754,7 +752,9 @@ openapi_tool.add_definition(
 )
 
 # Create agent with OpenApi tool and process agent run
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
+
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
@@ -1464,7 +1464,8 @@ scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
 with tracer.start_as_current_span(scenario):
-    with agents_client:
+    with project_client:
+        agents_client = project_client.agents
 ```
 
 <!-- END SNIPPET -->
