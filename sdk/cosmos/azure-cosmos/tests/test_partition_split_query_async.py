@@ -1,25 +1,22 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-import random
 import time
 import unittest
-import os
+import random
 
 import pytest
 
-import azure.cosmos.cosmos_client as cosmos_client
 import test_config
-from azure.cosmos import DatabaseProxy, PartitionKey, ContainerProxy
-from azure.cosmos.exceptions import CosmosHttpResponseError
+from azure.cosmos import PartitionKey
+from azure.cosmos.aio import CosmosClient, DatabaseProxy, ContainerProxy
 
-
-def run_queries(container, iterations):
+async def run_queries(container, iterations):
     ret_list = []
     for i in range(iterations):
         curr = str(random.randint(0, 10))
         query = 'SELECT * FROM c WHERE c.attr1=' + curr + ' order by c.attr1'
-        qlist = list(container.query_items(query=query, enable_cross_partition_query=True))
+        qlist = [item async for item in container.query_items(query=query)]
         ret_list.append((curr, qlist))
     for ret in ret_list:
         curr = ret[0]
@@ -31,64 +28,66 @@ def run_queries(container, iterations):
 
 
 @pytest.mark.cosmosSplit
-class TestPartitionSplitQuery(unittest.TestCase):
+class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
     database: DatabaseProxy = None
     container: ContainerProxy = None
-    client: cosmos_client.CosmosClient = None
+    client: CosmosClient = None
     configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
     throughput = 400
     TEST_DATABASE_ID = configs.TEST_DATABASE_ID
-    TEST_CONTAINER_ID = "Single-partition-container-without-throughput"
+    TEST_CONTAINER_ID = "Single-partition-container-without-throughput-async"
     MAX_TIME = 60 * 10  # 10 minutes for the test to complete, should be enough for partition split to complete
 
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
-        cls.container = cls.database.create_container(
-            id=cls.TEST_CONTAINER_ID,
+        if (cls.masterKey == '[YOUR_KEY_HERE]' or
+                cls.host == '[YOUR_ENDPOINT_HERE]'):
+            raise Exception(
+                "You must specify your Azure Cosmos account values for "
+                "'masterKey' and 'host' at the top of this class to run the "
+                "tests.")
+
+    async def asyncSetUp(self):
+        self.client = CosmosClient(self.host, self.masterKey)
+        await self.client.__aenter__()
+        self.created_database = self.client.get_database_client(self.TEST_DATABASE_ID)
+        self.container = await self.created_database.create_container(
+            id=self.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/id"),
-            offer_throughput=cls.throughput)
-        if cls.host == "https://localhost:8081/":
-            os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "True"
+            offer_throughput=self.throughput)
 
-    @classmethod
-    def tearDownClass(cls) -> None:
-        try:
-            cls.database.delete_container(cls.container.id)
-        except CosmosHttpResponseError:
-            pass
+    async def asyncTearDown(self):
+        await self.client.close()
 
-    def test_partition_split_query(self):
+    async def test_partition_split_query_async(self):
         for i in range(100):
             body = test_config.get_test_item()
-            self.container.create_item(body=body)
+            await self.container.create_item(body=body)
 
         start_time = time.time()
         print("created items, changing offer to 11k and starting queries")
-        self.container.replace_throughput(11000)
+        await self.container.replace_throughput(11000)
         offer_time = time.time()
         print("changed offer to 11k")
         print("--------------------------------")
         print("now starting queries")
 
-        run_queries(self.container, 100)  # initial check for queries before partition split
+        await run_queries(self.container, 100)  # initial check for queries before partition split
         print("initial check succeeded, now reading offer until replacing is done")
-        offer = self.container.get_throughput()
+        offer = await self.container.get_throughput()
         while True:
             if time.time() - start_time > self.MAX_TIME:  # timeout test at 10 minutes
-                self.skipTest("Partition split didn't complete in time")
+                self.skipTest("Partition split didn't complete in time.")
             if offer.properties['content'].get('isOfferReplacePending', False):
                 time.sleep(30)  # wait for the offer to be replaced, check every 30 seconds
-                offer = self.container.get_throughput()
+                offer = await self.container.get_throughput()
             else:
                 print("offer replaced successfully, took around {} seconds".format(time.time() - offer_time))
-                run_queries(self.container, 100)  # check queries work post partition split
+                await run_queries(self.container, 100)  # check queries work post partition split
                 self.assertTrue(offer.offer_throughput > self.throughput)
                 return
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
