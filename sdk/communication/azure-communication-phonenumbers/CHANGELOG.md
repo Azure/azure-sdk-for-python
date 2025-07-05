@@ -1,4 +1,10 @@
 # Release History
+## 1.4.0b1 (unreleased)
+
+### Features Added
+- Adds support for mobile number types
+  - mobile numbers are location associated phone numbers with SMS capabilities
+- API version `2025-06-01` is the default.
 
 ## 1.3.0 (2025-06-20)
 
