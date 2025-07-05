@@ -15,7 +15,7 @@ from azure.core import PipelineClient
 
 from . import models
 from ._configuration import AzureDigitalTwinsAPIConfiguration
-from .operations import DigitalTwinModelsOperations, DigitalTwinsOperations, EventRoutesOperations, QueryOperations
+from .operations import DeleteJobsOperations, DigitalTwinModelsOperations, DigitalTwinsOperations, EventRoutesOperations, ImportJobsOperations, QueryOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -35,6 +35,10 @@ class AzureDigitalTwinsAPI(object):
     :vartype digital_twins: azure.digitaltwins.core.operations.DigitalTwinsOperations
     :ivar event_routes: EventRoutesOperations operations
     :vartype event_routes: azure.digitaltwins.core.operations.EventRoutesOperations
+    :ivar import_jobs: ImportJobsOperations operations
+    :vartype import_jobs: azure.digitaltwins.core.operations.ImportJobsOperations
+    :ivar delete_jobs: DeleteJobsOperations operations
+    :vartype delete_jobs: azure.digitaltwins.core.operations.DeleteJobsOperations    
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param base_url: Service URL. Default value is "https://digitaltwins-hostname".
@@ -62,7 +66,8 @@ class AzureDigitalTwinsAPI(object):
         self.query = QueryOperations(self._client, self._config, self._serialize, self._deserialize)
         self.digital_twins = DigitalTwinsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.event_routes = EventRoutesOperations(self._client, self._config, self._serialize, self._deserialize)
-
+        self.import_jobs = ImportJobsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.delete_jobs = DeleteJobsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(
         self,
