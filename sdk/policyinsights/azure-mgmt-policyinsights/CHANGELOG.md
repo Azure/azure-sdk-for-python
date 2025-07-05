@@ -1,5 +1,18 @@
 # Release History
 
+## 1.1.0b5 (2025-07-21)
+
+### Features Added
+
+  - Model `CheckRestrictionsRequest` added property `include_audit_effect`
+  - Model `FieldRestriction` added property `policy_effect`
+  - Model `FieldRestriction` added property `reason`
+  - Enum `FieldRestrictionResult` added member `AUDIT`
+  - Model `PolicyEvaluationResult` added property `effect_details`
+  - Model `RemediationFilters` added property `resource_ids`
+  - Added model `CheckRestrictionEvaluationDetails`
+  - Added model `PolicyEffectDetails`
+
 ## 1.1.0b4 (2022-12-29)
 
 ### Features Added

@@ -13,12 +13,12 @@ from azure.core import CaseInsensitiveEnumMeta
 class ComplianceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The compliance state that should be set on the resource."""
 
-    #: The resource is in compliance with the policy.
     COMPLIANT = "Compliant"
-    #: The resource is not in compliance with the policy.
+    """The resource is in compliance with the policy."""
     NON_COMPLIANT = "NonCompliant"
-    #: The compliance state of the resource is not known.
+    """The resource is not in compliance with the policy."""
     UNKNOWN = "Unknown"
+    """The compliance state of the resource is not known."""
 
 
 class ComponentPolicyStatesResource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -39,12 +39,14 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class FieldRestrictionResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of restriction that is imposed on the field."""
 
-    #: The field and/or values are required by policy.
     REQUIRED = "Required"
-    #: The field will be removed by policy.
+    """The field and/or values are required by policy."""
     REMOVED = "Removed"
-    #: The field and/or values will be denied by policy.
+    """The field will be removed by policy."""
     DENY = "Deny"
+    """The field and/or values will be denied by policy."""
+    AUDIT = "Audit"
+    """The field and/or values will be audited by policy."""
 
 
 class PolicyEventsResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -77,8 +79,8 @@ class ResourceDiscoveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     specified.
     """
 
-    #: Remediate resources that are already known to be non-compliant.
     EXISTING_NON_COMPLIANT = "ExistingNonCompliant"
-    #: Re-evaluate the compliance state of resources and then remediate the resources found to be
-    #: non-compliant.
+    """Remediate resources that are already known to be non-compliant."""
     RE_EVALUATE_COMPLIANCE = "ReEvaluateCompliance"
+    """Re-evaluate the compliance state of resources and then remediate the resources found to be
+    non-compliant. The resourceIds filter cannot be used in this mode."""
