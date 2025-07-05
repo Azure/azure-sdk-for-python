@@ -790,6 +790,13 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         """
         return ToolResources()
 
+    def execute(self, tool_call: Any) -> None:
+        """
+        OpenApiTool does not execute client-side.
+        :param Any tool_call: The tool call to execute.
+        :type tool_call: Any
+        """
+
 
 class McpTool(Tool[MCPToolDefinition]):
     """
@@ -901,26 +908,46 @@ class McpTool(Tool[MCPToolDefinition]):
                 server_label=self._server_label, headers=self._headers, require_approval=self._require_approval
             )
         else:
-            raise ValueError(f"Header key cannot be empty.")
+            raise ValueError("Header key cannot be empty.")
 
     @property
     def server_label(self) -> str:
-        """Get the server label."""
+        """
+        Get the server label for the MCP tool.
+
+        :return: The label identifying the MCP server.
+        :rtype: str
+        """
         return self._server_label
 
     @property
     def server_url(self) -> str:
-        """Get the server URL."""
+        """
+        Get the server URL for the MCP tool.
+
+        :return: The endpoint URL for the MCP server.
+        :rtype: str
+        """
         return self._server_url
 
     @property
     def allowed_tools(self) -> List[str]:
-        """Get the list of allowed tools."""
+        """
+        Get the list of allowed tools for the MCP server.
+
+        :return: A copy of the list of tool names that are allowed to be executed on this MCP server.
+        :rtype: List[str]
+        """
         return self._allowed_tools.copy()
 
     @property
     def headers(self) -> Dict[str, str]:
-        """Get the headers for the MCP tool."""
+        """
+        Get the headers for the MCP tool.
+
+        :return: Dictionary of HTTP headers to be sent with MCP server requests.
+        :rtype: Dict[str, str]
+        """
         return self._resource.headers
 
     @property

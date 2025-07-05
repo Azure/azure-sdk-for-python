@@ -422,33 +422,29 @@ Here is an example to integrate Azure AI Search:
 <!-- SNIPPET:sample_agents_azure_ai_search.create_agent_with_azure_ai_search_tool -->
 
 ```python
-with AIProjectClient(
-    endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-) as project_client:
-    conn_id = project_client.connections.get_default(ConnectionType.AZURE_AI_SEARCH).id
+conn_id = project_client.connections.get_default(ConnectionType.AZURE_AI_SEARCH).id
 
-    print(conn_id)
+print(conn_id)
 
-    # Initialize agent AI search tool and add the search index connection id
-    ai_search = AzureAISearchTool(
-        index_connection_id=conn_id,
-        index_name="sample_index",
-        query_type=AzureAISearchQueryType.SIMPLE,
-        top_k=3,
-        filter="",
-    )
+# Initialize agent AI search tool and add the search index connection id
+ai_search = AzureAISearchTool(
+    index_connection_id=conn_id,
+    index_name="sample_index",
+    query_type=AzureAISearchQueryType.SIMPLE,
+    top_k=3,
+    filter="",
+)
 
-    # Create agent with AI search tool and process agent run
-    agents_client = project_client.agents
+# Create agent with AI search tool and process agent run
+agents_client = project_client.agents
 
-    agent = agents_client.create_agent(
-        model=os.environ["MODEL_DEPLOYMENT_NAME"],
-        name="my-agent",
-        instructions="You are a helpful agent",
-        tools=ai_search.definitions,
-        tool_resources=ai_search.resources,
-    )
+agent = agents_client.create_agent(
+    model=os.environ["MODEL_DEPLOYMENT_NAME"],
+    name="my-agent",
+    instructions="You are a helpful agent",
+    tools=ai_search.definitions,
+    tool_resources=ai_search.resources,
+)
 ```
 
 <!-- END SNIPPET -->
@@ -531,8 +527,12 @@ agent = await agents_client.create_agent(
 
 <!-- END SNIPPET -->
 
-Notice that if `enable_auto_function_calls` is called, the SDK will invoke the functions automatically during `create_and_process` or streaming.  If you prefer to execute them manually, refer to [`sample_agents_stream_eventhandler_with_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_streaming/sample_agents_stream_eventhandler_with_functions.py) or
-[`sample_agents_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_tools/sample_agents_functions.py)
+When `enable_auto_function_calls` is called, the SDK will automatically invoke functions during both `create_and_process` and streaming workflows. This simplifies agent logic by handling function execution internally.  Furthermore, although function tools and definitions are preserved in Agent service, their function implements are not.  Therefore, if your code queries earlier created agents through `update_agents` or `get_agents` function, you MUST also provide the function implementations through `enable_auto_function_calls` to complete auto function callings.
+
+- For examples of automatic function calls in action, refer to [`sample_agents_auto_function_call.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_tools/sample_agents_auto_function_call.py) or [`sample_agents_auto_function_call_async.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_async/sample_agents_auto_function_call_async.py).
+- If you prefer to manage function execution manually, refer to [`sample_agents_stream_eventhandler_with_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_streaming/sample_agents_stream_eventhandler_with_functions.py) or
+[`sample_agents_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_tools/sample_agents_functions.py).
+
 
 ### Create Agent With Azure Function Call
 
@@ -696,13 +696,6 @@ Below is an example of how to create an Azure Logic App utility tool and registe
 <!-- SNIPPET:sample_agents_logic_apps.register_logic_app -->
 
 ```python
-
-# Create the agents client
-project_client = AIProjectClient(
-    endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-)
-
 # Extract subscription and resource group from the project scope
 subscription_id = os.environ["SUBSCRIPTION_ID"]
 resource_group = os.environ["resource_group_name"]
@@ -952,9 +945,11 @@ To understand what calls were made by the main agent to the connected ones, we w
 for run_step in agents_client.run_steps.list(thread_id=thread.id, run_id=run.id, order=ListSortOrder.ASCENDING):
     if isinstance(run_step.step_details, RunStepToolCallDetails):
         for tool_call in run_step.step_details.tool_calls:
-            print(f"\tAgent: {tool_call._data['connected_agent']['name']} "
-                  f"query: {tool_call._data['connected_agent']['arguments']} ",
-                  f"output: {tool_call._data['connected_agent']['output']}")
+            print(
+                f"\tAgent: {tool_call._data['connected_agent']['name']} "
+                f"query: {tool_call._data['connected_agent']['arguments']} ",
+                f"output: {tool_call._data['connected_agent']['output']}",
+            )
 ```
 
 <!-- END SNIPPET -->
@@ -969,7 +964,7 @@ messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.
 for msg in messages:
     if msg.text_messages:
         last_text = msg.text_messages[-1]
-        text = last_text.text.value.replace('\u3010', '[').replace('\u3011', ']')
+        text = last_text.text.value.replace("\u3010", "[").replace("\u3011", "]")
         print(f"{msg.role}: {text}")
 ```
 

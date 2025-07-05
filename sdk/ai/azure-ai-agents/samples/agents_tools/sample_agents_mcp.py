@@ -84,7 +84,7 @@ with project_client:
 
     # Create and process agent run in thread with MCP tools
     mcp_tool.update_headers("SuperSecret", "123456")
-    #mcp_tool.set_approval_mode("never")  # Uncomment to disable approval requirement
+    # mcp_tool.set_approval_mode("never")  # Uncomment to disable approval requirement
     run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id, tool_resources=mcp_tool.resources)
     print(f"Created run, ID: {run.id}")
 
