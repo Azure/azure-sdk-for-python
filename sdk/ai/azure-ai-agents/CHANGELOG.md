@@ -6,6 +6,10 @@
 
 - Added samples, [`sample_agents_auto_function_call.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_tools/sample_agents_auto_function_call.py) and [`sample_agents_auto_function_call_async.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_async/sample_agents_auto_function_call_async.py).
 
+### Bugs Fixed
+
+- `_AgentsClientOperationsMixin` now it is private.
+
 ## 1.0.2 (2025-07-01)
 
 ### Bugs Fixed
