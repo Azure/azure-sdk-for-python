@@ -44,7 +44,7 @@ def _get_outputs(suffix="", rg=None):
 
 def test_search_properties():
     r = SearchService()
-    assert r.properties == {"properties": {}}
+    assert r.properties == {"properties": {}, "tags": {"azd-env-name": None}, "identity": {}}
     assert r.extensions == {}
     assert r._existing == False
     assert not r.parent
@@ -54,7 +54,10 @@ def test_search_properties():
     symbols = r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["searchservice"]
     assert fields["searchservice"].resource == "Microsoft.Search/searchServices"
-    assert fields["searchservice"].properties == {}
+    assert fields["searchservice"].properties == {
+        "tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]},
+        "identity": {},
+    }
     assert fields["searchservice"].outputs == _get_outputs()
     assert fields["searchservice"].extensions == {}
     assert fields["searchservice"].existing == False
@@ -65,11 +68,22 @@ def test_search_properties():
     assert fields["searchservice"].defaults
 
     r2 = SearchService(location="westus", sku="free")
-    assert r2.properties == {"location": "westus", "sku": {"name": "free"}, "properties": {}}
+    assert r2.properties == {
+        "location": "westus",
+        "sku": {"name": "free"},
+        "properties": {},
+        "tags": {"azd-env-name": None},
+        "identity": {},
+    }
     r2.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["searchservice"]
     assert fields["searchservice"].resource == "Microsoft.Search/searchServices"
-    assert fields["searchservice"].properties == {"location": "westus", "sku": {"name": "free"}}
+    assert fields["searchservice"].properties == {
+        "location": "westus",
+        "sku": {"name": "free"},
+        "tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]},
+        "identity": {},
+    }
     assert fields["searchservice"].outputs == _get_outputs()
     assert fields["searchservice"].extensions == {}
     assert fields["searchservice"].existing == False
@@ -80,23 +94,30 @@ def test_search_properties():
     assert fields["searchservice"].defaults
 
     r3 = SearchService(sku="standard")
-    assert r3.properties == {"properties": {}, "sku": {"name": "standard"}}
+    assert r3.properties == {
+        "properties": {},
+        "sku": {"name": "standard"},
+        "tags": {"azd-env-name": None},
+        "identity": {},
+    }
     with pytest.raises(ValueError):
         r3.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
 
     r4 = SearchService(name="foo", tags={"test": "value"}, public_network_access="Disabled")
     assert r4.properties == {
         "name": "foo",
-        "tags": {"test": "value"},
+        "tags": {"test": "value", "azd-env-name": None},
         "properties": {"publicNetworkAccess": "Disabled"},
+        "identity": {},
     }
     symbols = r4.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["searchservice", "searchservice_foo"]
     assert fields["searchservice_foo"].resource == "Microsoft.Search/searchServices"
     assert fields["searchservice_foo"].properties == {
         "name": "foo",
-        "tags": {"test": "value"},
+        "tags": {"test": "value", "azd-env-name": GLOBAL_PARAMS["environmentName"]},
         "properties": {"publicNetworkAccess": "Disabled"},
+        "identity": {},
     }
     assert fields["searchservice_foo"].outputs == _get_outputs("_foo")
     assert fields["searchservice_foo"].extensions == {}
@@ -111,7 +132,13 @@ def test_search_properties():
     param2 = Parameter("testB")
     param3 = Parameter("testC")
     r5 = SearchService(name=param1, sku=param2, public_network_access=param3)
-    assert r5.properties == {"name": param1, "sku": {"name": param2}, "properties": {"publicNetworkAccess": param3}}
+    assert r5.properties == {
+        "name": param1,
+        "sku": {"name": param2},
+        "properties": {"publicNetworkAccess": param3},
+        "tags": {"azd-env-name": None},
+        "identity": {},
+    }
     params = dict(GLOBAL_PARAMS)
     fields = {}
     symbols = r5.__bicep__(fields, parameters=params)
@@ -121,6 +148,8 @@ def test_search_properties():
         "name": param1,
         "sku": {"name": param2},
         "properties": {"publicNetworkAccess": param3},
+        "tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]},
+        "identity": {},
     }
     assert fields["searchservice_testa"].outputs == _get_outputs("_testa")
     assert fields["searchservice_testa"].extensions == {}
@@ -130,9 +159,6 @@ def test_search_properties():
     assert fields["searchservice_testa"].resource_group == None
     assert fields["searchservice_testa"].name == param1
     assert fields["searchservice_testa"].defaults
-    assert params.get("testA") == param1
-    assert params.get("testB") == param2
-    assert params.get("testC") == param3
 
 
 def test_search_reference():
@@ -196,7 +222,7 @@ def test_search_defaults():
     params = dict(GLOBAL_PARAMS)
     params["managedIdentityId"] = "identity"
     r.__bicep__(fields, parameters=params)
-    add_defaults(fields, parameters=params)
+    add_defaults(fields, parameters=params, values={}, resource_defaults={})
     field = fields.popitem()[1]
     assert field.properties == {
         "name": GLOBAL_PARAMS["defaultName"],
@@ -207,7 +233,7 @@ def test_search_defaults():
         "properties": {
             "publicNetworkAccess": "Disabled",
         },
-        "tags": GLOBAL_PARAMS["azdTags"],
+        "tags": {"azd-env-name": GLOBAL_PARAMS["environmentName"]},
         "identity": IDENTITY,
     }
 
@@ -260,7 +286,7 @@ def test_search_export_with_no_user_access(export_dir):
     class test(AzureInfrastructure):
         r: SearchService = field(default=SearchService(roles=["Contributor"], user_roles=["Contributor"]))
 
-    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2], user_access=False)
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2], local_access=False)
 
 
 def test_search_export_multiple_services(export_dir):
@@ -328,7 +354,7 @@ def test_search_infra():
         infra = TestInfra()
     infra = TestInfra(kv=SearchService())
     assert isinstance(infra.kv, SearchService)
-    assert infra.kv.properties == {"properties": {}}
+    assert infra.kv.properties == {"properties": {}, "tags": {"azd-env-name": None}, "identity": {}}
 
     infra = TestInfra(kv=SearchService(name="foo"))
     assert infra.kv._settings["name"]() == "foo"

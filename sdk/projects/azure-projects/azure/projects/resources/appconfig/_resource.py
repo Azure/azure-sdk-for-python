@@ -11,9 +11,8 @@ import inspect
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
+    TypedDict,
     Generic,
-    List,
     Literal,
     Mapping,
     Tuple,
@@ -24,7 +23,7 @@ from typing import (
     overload,
     get_origin,
 )
-from typing_extensions import TypeVar, Unpack, TypedDict
+from typing_extensions import TypeVar, Unpack
 
 from ..resourcegroup import ResourceGroup
 from .._identifiers import ResourceIdentifiers
@@ -34,7 +33,7 @@ from ..._bicep.expressions import Output, ResourceSymbol, Parameter
 from ..._resource import _ClientResource, ResourceReference, ExtensionResources
 
 if TYPE_CHECKING:
-    from .types import ConfigStoreResource
+    from ._types import ConfigurationStoreResource
 
     from azure.core.credentials import SupportsTokenInfo
     from azure.core.credentials_async import AsyncSupportsTokenInfo
@@ -75,7 +74,7 @@ class ConfigStoreKwargs(TypedDict, total=False):
     # """All Replicas to create."""
     roles: Union[
         Parameter,
-        List[
+        list[
             Union[
                 Parameter,
                 "RoleAssignment",
@@ -98,7 +97,7 @@ class ConfigStoreKwargs(TypedDict, total=False):
     """Array of role assignments to create for the managed identity."""
     user_roles: Union[
         Parameter,
-        List[
+        list[
             Union[
                 Parameter,
                 "RoleAssignment",
@@ -123,13 +122,15 @@ class ConfigStoreKwargs(TypedDict, total=False):
     """Pricing tier of App Configuration."""
     soft_delete_retention: int
     """The amount of time in days that the configuration store will be retained when it is soft deleted."""
-    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
+    tags: Mapping[str, Union[str, Parameter]]
     """Resource tags."""
 
 
-ConfigStoreResourceType = TypeVar("ConfigStoreResourceType", bound=Mapping[str, Any], default="ConfigStoreResource")
+ConfigStoreResourceType = TypeVar(
+    "ConfigStoreResourceType", bound=Mapping[str, Any], default="ConfigurationStoreResource"
+)
 ClientType = TypeVar("ClientType")
-_DEFAULT_CONFIG_STORE: "ConfigStoreResource" = {
+_DEFAULT_CONFIG_STORE: "ConfigurationStoreResource" = {
     "name": GLOBAL_PARAMS["defaultName"],
     "sku": {"name": "Standard"},
     "properties": {
@@ -139,8 +140,6 @@ _DEFAULT_CONFIG_STORE: "ConfigStoreResource" = {
         "publicNetworkAccess": "Enabled",
     },
     "location": GLOBAL_PARAMS["location"],
-    "tags": GLOBAL_PARAMS["azdTags"],
-    "identity": {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}},
 }
 _DEFAULT_CONFIG_STORE_EXTENSIONS: ExtensionResources = {
     # TODO: Not sure what the best roles are here, does the managed identity need to be able to
@@ -151,14 +150,57 @@ _DEFAULT_CONFIG_STORE_EXTENSIONS: ExtensionResources = {
 
 
 class ConfigStore(_ClientResource, Generic[ConfigStoreResourceType]):
-    DEFAULTS: "ConfigStoreResource" = _DEFAULT_CONFIG_STORE  # type: ignore[assignment]
+    """Azure App Configuration Store resource representation.
+
+    A class representing an Azure App Configuration Store that provides centralized storage and management
+    of application settings and feature flags.
+
+    :ivar DEFAULTS: Default configuration settings for the Config Store resource
+    :vartype DEFAULTS: ConfigurationStoreResource
+    :ivar DEFAULT_EXTENSIONS: Default role assignments and extensions configuration
+    :vartype DEFAULT_EXTENSIONS: ExtensionResources
+    :ivar properties: Properties of the Config Store resource
+    :vartype properties: ConfigStoreResourceType
+    :ivar parent: Parent resource (None for ConfigStore as it's a top-level resource)
+    :vartype parent: None
+
+    :param properties: Optional dictionary containing the Config Store resource properties
+    :type properties: Optional[ConfigurationStoreResource]
+    :param name: Optional name for the Config Store
+    :type name: Optional[Union[str, Parameter]]
+    :keyword create_mode: Indicates whether the configuration store needs to be recovered
+    :paramtype create_mode: Union[Literal["Default", "Recover"], Parameter]
+    :keyword disable_local_auth: Disables all authentication methods other than AAD authentication
+    :paramtype disable_local_auth: Union[bool, Parameter]
+    :keyword enable_purge_protection: Property specifying whether protection against purge is enabled
+    :paramtype enable_purge_protection: Union[bool, Parameter]
+    :keyword location: Location for all resources
+    :paramtype location: Union[str, Parameter]
+    :keyword managed_identities: The managed identity definition for this resource
+    :paramtype managed_identities: Optional[ManagedIdentity]
+    :keyword public_network_access: Whether or not public network access is allowed for this resource
+    :paramtype public_network_access: Union[Literal["Disabled", "Enabled"], Parameter]
+    :keyword roles: Array of role assignments to create for the managed identity
+    :paramtype roles: Union[Parameter, list[Union[Parameter, RoleAssignment, str]]]
+    :keyword user_roles: Array of role assignments to create for the user principal ID
+    :paramtype user_roles: Union[Parameter, list[Union[Parameter, RoleAssignment, str]]]
+    :keyword sku: Pricing tier of App Configuration
+    :paramtype sku: Literal["Free", "Standard"]
+    :keyword soft_delete_retention: The amount of time in days that the configuration store will be
+     retained when soft deleted
+    :paramtype soft_delete_retention: int
+    :keyword tags: Resource tags
+    :paramtype tags: Mapping[str, Union[str, Parameter]]
+    """
+
+    DEFAULTS: "ConfigurationStoreResource" = _DEFAULT_CONFIG_STORE  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_CONFIG_STORE_EXTENSIONS
     properties: ConfigStoreResourceType
     parent: None  # type: ignore[reportIncompatibleVariableOverride]
 
     def __init__(
         self,
-        properties: Optional["ConfigStoreResource"] = None,
+        properties: Optional["ConfigurationStoreResource"] = None,
         /,
         name: Optional[Union[str, Parameter]] = None,
         **kwargs: Unpack[ConfigStoreKwargs],
@@ -176,6 +218,7 @@ class ConfigStore(_ClientResource, Generic[ConfigStoreResourceType]):
                 properties["properties"] = {}
             if name:
                 properties["name"] = name
+            properties["identity"] = convert_managed_identities(kwargs.pop("managed_identities", None))
             if "create_mode" in kwargs:
                 properties["properties"]["createMode"] = kwargs.pop("create_mode")
             if "disable_local_auth" in kwargs:
@@ -184,16 +227,18 @@ class ConfigStore(_ClientResource, Generic[ConfigStoreResourceType]):
                 properties["properties"]["enablePurgeProtection"] = kwargs.pop("enable_purge_protection")
             if "location" in kwargs:
                 properties["location"] = kwargs.pop("location")
-            if "managed_identities" in kwargs:
-                properties["identity"] = convert_managed_identities(kwargs.pop("managed_identities"))
             if "soft_delete_retention" in kwargs:
                 properties["properties"]["softDeleteRetentionInDays"] = kwargs.pop("soft_delete_retention")
             if "public_network_access" in kwargs:
                 properties["properties"]["publicNetworkAccess"] = kwargs.pop("public_network_access")
             if "sku" in kwargs:
                 properties["sku"] = {"name": kwargs.pop("sku")}
+            if "tags" not in properties:
+                properties["tags"] = {}
             if "tags" in kwargs:
-                properties["tags"] = kwargs.pop("tags")
+                properties["tags"].update(kwargs.pop("tags"))
+            if "azd-env-name" not in properties["tags"]:
+                properties["tags"]["azd-env-name"] = None
         super().__init__(
             properties,
             extensions=extensions,
@@ -209,7 +254,7 @@ class ConfigStore(_ClientResource, Generic[ConfigStoreResourceType]):
 
     @property
     def version(self) -> str:
-        from .types import VERSION
+        from ._types import VERSION
 
         return VERSION
 
@@ -229,7 +274,7 @@ class ConfigStore(_ClientResource, Generic[ConfigStoreResourceType]):
     def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
         return f"https://{self._settings['name'](config_store=config_store)}.azconfig.io"
 
-    def _outputs(self, *, symbol: ResourceSymbol, suffix: str, **kwargs) -> Dict[str, List[Output]]:
+    def _outputs(self, *, symbol: ResourceSymbol, suffix: str, **kwargs) -> dict[str, list[Output]]:
         if suffix == "_CONFIG_STORE":
             # This is the default config store attrname - let's just ignore it.
             suffix = ""
