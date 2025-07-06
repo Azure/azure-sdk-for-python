@@ -4,6 +4,10 @@
 
 ## 1.1.0b4 (Unreleased)
 
+### Bugs Fixed
+
+- `_AgentsClientOperationsMixin` now it is private.
+
 ### Sample updates
 
 - Added a sample showing usage of MCP tool, [`sample_agents_mcp.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_tools/sample_agents_mcp.py).
