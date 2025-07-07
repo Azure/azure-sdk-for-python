@@ -197,7 +197,7 @@ def tox_tool(package_path: str, environment: str, repo_path: str, tox_ini_path: 
 
 @mcp.tool("init")
 def init_tool(tsp_config_path: str, repo_path: str, is_local: bool = False) -> Dict[str, Any]:
-    """Initializes and generates a typespec client library directory.
+    """Initializes a new typespec client library directory.
     
     Args:
         tsp_config_path: Either the URL to the tspconfig.yaml file or the path to a local tspconfig.yaml file.
@@ -228,22 +228,38 @@ def init_tool(tsp_config_path: str, repo_path: str, is_local: bool = False) -> D
         }
     
 @mcp.tool("update")
-def update_tool(commit_hash: str, package_path:str) -> Dict[str, Any]:
-    """Updates a client library from a local azure-rest-api-specs repo.
+def update_tool(package_path: str, commit_hash: Optional[str] = None, repo: Optional[str] = None, 
+                tsp_config: Optional[str] = None, local_spec_repo: Optional[str] = None) -> Dict[str, Any]:
+    """Updates an existing client library with local or remote TypeSpec changes.
 
-    This command is used to update a client library to a specific commit hash in the azure-rest-api-specs repository.
+    This command is used to update an existing client library.
 
     Args:
-        commit_hash: The commit hash to update to.
         package_path: The path to the directory of the tsp-location.yaml (i.e. ./azure-sdk-for-python/sdk/eventgrid/azure-eventgrid).
+        commit_hash: Optional. The commit hash to update to.
+        repo: Optional. Repository where the project is defined.
+        tsp_config: Optional. Path to tspconfig.yaml.
+        local_spec_repo: Optional. Path to local spec repo.
 
     Returns:
-        A dictionary containing the result of the command.    """
+        A dictionary containing the result of the command.
+    """
     try:
+        # Build TypeSpec arguments
+        typespec_args = {}
+        
+        if commit_hash:
+            typespec_args["commit"] = commit_hash
+        if repo:
+            typespec_args["repo"] = repo
+        if tsp_config:
+            typespec_args["tsp-config"] = tsp_config
+        if local_spec_repo:
+            typespec_args["local-spec-repo"] = local_spec_repo
         
         # Run the update command
         return run_command(["update"], cwd=package_path, is_typespec=True,
-                          typespec_args={"commit": commit_hash})
+                          typespec_args=typespec_args)
                           
     except RuntimeError as e:
         return {
