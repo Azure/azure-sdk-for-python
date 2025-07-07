@@ -42,8 +42,7 @@ async def main():
         ledger_endpoint = os.environ["CONFIDENTIALLEDGER_ENDPOINT"]
     except KeyError:
         LOG.error(
-            "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - "
-            "please set it before running the example"
+            "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - " "please set it before running the example"
         )
         sys.exit(1)
 
@@ -53,9 +52,7 @@ async def main():
 
     identity_service_client = ConfidentialLedgerCertificateClient()  # type: ignore[call-arg]
     async with identity_service_client:
-        ledger_certificate = await identity_service_client.get_ledger_identity(
-            ledger_id
-        )
+        ledger_certificate = await identity_service_client.get_ledger_identity(ledger_id)
 
     # The Confidential Ledger's TLS certificate must be written to a file to be used by the
     # ConfidentialLedgerClient. Here, we write it to a temporary file so that is is cleaned up
@@ -98,20 +95,15 @@ async def main():
                             msg = f"{sender}'s message {msg_idx}"
 
                         post_poller = await ledger_client.begin_create_ledger_entry(  # type: ignore[attr-defined]
-                            entry={"contents": msg}, collection_id=sender,
+                            entry={"contents": msg},
+                            collection_id=sender,
                         )
                         post_result = await post_poller.result()
 
                         if sender is None:
-                            print(
-                                f"Wrote '{msg}' to the default collection at "
-                                f"{post_result['transactionId']}"
-                            )
+                            print(f"Wrote '{msg}' to the default collection at " f"{post_result['transactionId']}")
                         else:
-                            print(
-                                f"Wrote '{msg}' to collection {sender} at "
-                                f"{post_result['transactionId']}"
-                            )
+                            print(f"Wrote '{msg}' to collection {sender} at " f"{post_result['transactionId']}")
 
                         if sender not in tids:
                             tids[sender] = {}
@@ -122,7 +114,7 @@ async def main():
                 print("Let's retrieve the latest entry in each collection")
                 for sender in senders:
                     current_entry = await ledger_client.get_current_ledger_entry()
-                    
+
                     output = "Current entry in {0} is {1}"
                     print(
                         output.format(
@@ -134,11 +126,10 @@ async def main():
                 print("Let's retrieve the first entry in each collection")
                 for sender in senders:
                     get_poller = await ledger_client.begin_get_ledger_entry(  # type: ignore[attr-defined]
-                        tids[sender]["first"],
-                        collection_id=sender
+                        tids[sender]["first"], collection_id=sender
                     )
                     first_entry = await get_poller.result()
-                    
+
                     output = "First entry in {0} is {1}"
                     print(
                         output.format(
@@ -154,13 +145,12 @@ async def main():
                         from_transaction_id=tids[sender]["first"],
                         to_transaction_id=tids[sender]["last"],
                     )
-                    
+
                     async for entry in entries_list:
                         output = "Entry in {0}: {1}"
                         print(
                             output.format(
-                                "default collection" if sender is None else f"{sender}'s "
-                                "collection",
+                                "default collection" if sender is None else f"{sender}'s " "collection",
                                 entry,
                             )
                         )
@@ -171,8 +161,8 @@ async def main():
                     collection_ids.append(collection["collectionId"])
 
                 print(
-                    "In conclusion, these are all the collections in the Confidential Ledger:\n" +
-                    "\n\t".join(collection_ids)
+                    "In conclusion, these are all the collections in the Confidential Ledger:\n"
+                    + "\n\t".join(collection_ids)
                 )
 
 

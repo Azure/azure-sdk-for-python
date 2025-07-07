@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -51,15 +52,9 @@ def get_test_valid_receipt_1():
             writeSetDigest="fef1aa22972daba05864a7e986c1bb94aa6b8fea43781cb48907c972e9761e71",
         ),
         proof=[
-            ProofElement(
-                left="5e949d6d17b88900aeb8fb292f041075272d3b58108f2016a3ceea2a47ffad8f"
-            ),
-            ProofElement(
-                left="fb199f029ed1e7886ca95f8ecb4f9a56edede5f15fb425874c2a34861a9765ee"
-            ),
-            ProofElement(
-                left="efe9c61961fc189e292edeadb4317040ea4a6e5abc8cf349dc74295930ed7435"
-            ),
+            ProofElement(left="5e949d6d17b88900aeb8fb292f041075272d3b58108f2016a3ceea2a47ffad8f"),
+            ProofElement(left="fb199f029ed1e7886ca95f8ecb4f9a56edede5f15fb425874c2a34861a9765ee"),
+            ProofElement(left="efe9c61961fc189e292edeadb4317040ea4a6e5abc8cf349dc74295930ed7435"),
         ],
         signature="MEYCIQC05OyTn/a5ZKphfY4AsnnBF2Rfj0j0pNrfPtHHO5JvnwIhAPItujuzkC8enmxIsG2X82hBgHCaNoFHL9GC3XfejOUI",
     )
@@ -75,36 +70,16 @@ def get_test_valid_receipt_2():
         ),
         nodeId="a16d14661618d220365594fc4986f4401ff74785b70818b00e6590bb3c1a1a5d",
         proof=[
-            ProofElement(
-                left="113d89bdcb5282bf773ca12ba97a7baa1b2515a5ffecdb9feaae67bddc89c639"
-            ),
-            ProofElement(
-                left="5f8edd797d0146b76e0ebfa6ee9d5e34a8f8b9795f3957202b3f92817b991918"
-            ),
-            ProofElement(
-                left="7e00bfbb86030ac74e8db5b08af1a9dbe15659c083cdcedc78fc915ecd57ab3e"
-            ),
-            ProofElement(
-                left="842e1dd9cb8768f9c158e61a51041d94c5a52c7a905068c85b6c5cc165010417"
-            ),
-            ProofElement(
-                left="2921ba478d7cbfb8964b1b0221a6909ef8793738045d24c095200fa88396fa1b"
-            ),
-            ProofElement(
-                left="65fa347e5392b4a1b399194321446ff7e0b25fc44609c9ddff2558674cc8b8fe"
-            ),
-            ProofElement(
-                left="96736d241bfd0890cdbefdca97633f13cb345e18d62464ca4d3aeb4c4e2acc05"
-            ),
-            ProofElement(
-                left="75fdb2b7f6589d7f38218dcdf09ad06d1873cc11692ac11ca099956c4d0df2c6"
-            ),
-            ProofElement(
-                left="7cb66ee49ecb284ad967be5ae9f735e9046ebe5fb49bd093e29b851932afcac7"
-            ),
-            ProofElement(
-                left="b5acc41d51ebc21112882d9e444dffcddc1135a6a1edd9b287ec6927e7baac84"
-            ),
+            ProofElement(left="113d89bdcb5282bf773ca12ba97a7baa1b2515a5ffecdb9feaae67bddc89c639"),
+            ProofElement(left="5f8edd797d0146b76e0ebfa6ee9d5e34a8f8b9795f3957202b3f92817b991918"),
+            ProofElement(left="7e00bfbb86030ac74e8db5b08af1a9dbe15659c083cdcedc78fc915ecd57ab3e"),
+            ProofElement(left="842e1dd9cb8768f9c158e61a51041d94c5a52c7a905068c85b6c5cc165010417"),
+            ProofElement(left="2921ba478d7cbfb8964b1b0221a6909ef8793738045d24c095200fa88396fa1b"),
+            ProofElement(left="65fa347e5392b4a1b399194321446ff7e0b25fc44609c9ddff2558674cc8b8fe"),
+            ProofElement(left="96736d241bfd0890cdbefdca97633f13cb345e18d62464ca4d3aeb4c4e2acc05"),
+            ProofElement(left="75fdb2b7f6589d7f38218dcdf09ad06d1873cc11692ac11ca099956c4d0df2c6"),
+            ProofElement(left="7cb66ee49ecb284ad967be5ae9f735e9046ebe5fb49bd093e29b851932afcac7"),
+            ProofElement(left="b5acc41d51ebc21112882d9e444dffcddc1135a6a1edd9b287ec6927e7baac84"),
         ],
         serviceEndorsements=[],
         signature="MEUCIBehRsSl0CyNwMHiObY3Kxw9cV5e/rSQKmCrEJooxWvmAiEAnYwaT5yVGFkSFuJ8JdbW0ZolbDHzRrfl+fm6jIrDzxw=",
@@ -147,36 +122,16 @@ def get_test_valid_receipt_2_dict():
         },
         "nodeId": "a16d14661618d220365594fc4986f4401ff74785b70818b00e6590bb3c1a1a5d",
         "proof": [
-            {
-                "left": "113d89bdcb5282bf773ca12ba97a7baa1b2515a5ffecdb9feaae67bddc89c639"
-            },
-            {
-                "left": "5f8edd797d0146b76e0ebfa6ee9d5e34a8f8b9795f3957202b3f92817b991918"
-            },
-            {
-                "left": "7e00bfbb86030ac74e8db5b08af1a9dbe15659c083cdcedc78fc915ecd57ab3e"
-            },
-            {
-                "left": "842e1dd9cb8768f9c158e61a51041d94c5a52c7a905068c85b6c5cc165010417"
-            },
-            {
-                "left": "2921ba478d7cbfb8964b1b0221a6909ef8793738045d24c095200fa88396fa1b"
-            },
-            {
-                "left": "65fa347e5392b4a1b399194321446ff7e0b25fc44609c9ddff2558674cc8b8fe"
-            },
-            {
-                "left": "96736d241bfd0890cdbefdca97633f13cb345e18d62464ca4d3aeb4c4e2acc05"
-            },
-            {
-                "left": "75fdb2b7f6589d7f38218dcdf09ad06d1873cc11692ac11ca099956c4d0df2c6"
-            },
-            {
-                "left": "7cb66ee49ecb284ad967be5ae9f735e9046ebe5fb49bd093e29b851932afcac7"
-            },
-            {
-                "left": "b5acc41d51ebc21112882d9e444dffcddc1135a6a1edd9b287ec6927e7baac84"
-            },
+            {"left": "113d89bdcb5282bf773ca12ba97a7baa1b2515a5ffecdb9feaae67bddc89c639"},
+            {"left": "5f8edd797d0146b76e0ebfa6ee9d5e34a8f8b9795f3957202b3f92817b991918"},
+            {"left": "7e00bfbb86030ac74e8db5b08af1a9dbe15659c083cdcedc78fc915ecd57ab3e"},
+            {"left": "842e1dd9cb8768f9c158e61a51041d94c5a52c7a905068c85b6c5cc165010417"},
+            {"left": "2921ba478d7cbfb8964b1b0221a6909ef8793738045d24c095200fa88396fa1b"},
+            {"left": "65fa347e5392b4a1b399194321446ff7e0b25fc44609c9ddff2558674cc8b8fe"},
+            {"left": "96736d241bfd0890cdbefdca97633f13cb345e18d62464ca4d3aeb4c4e2acc05"},
+            {"left": "75fdb2b7f6589d7f38218dcdf09ad06d1873cc11692ac11ca099956c4d0df2c6"},
+            {"left": "7cb66ee49ecb284ad967be5ae9f735e9046ebe5fb49bd093e29b851932afcac7"},
+            {"left": "b5acc41d51ebc21112882d9e444dffcddc1135a6a1edd9b287ec6927e7baac84"},
         ],
         "serviceEndorsements": [],
         "signature": "MEUCIBehRsSl0CyNwMHiObY3Kxw9cV5e/rSQKmCrEJooxWvmAiEAnYwaT5yVGFkSFuJ8JdbW0ZolbDHzRrfl+fm6jIrDzxw=",

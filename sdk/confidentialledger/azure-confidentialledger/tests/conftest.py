@@ -2,6 +2,7 @@ from devtools_testutils import test_proxy, remove_batch_sanitizers
 
 import pytest
 
+
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):

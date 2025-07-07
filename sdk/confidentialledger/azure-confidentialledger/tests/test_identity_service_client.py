@@ -18,11 +18,7 @@ class TestConfidentialLedgerCertificateClient(AzureRecordedTestCase):
             credential=None,
         )
 
-        network_identity = (
-            client.get_ledger_identity(
-                ledger_id=confidentialledger_id
-            )
-        )
+        network_identity = client.get_ledger_identity(ledger_id=confidentialledger_id)
 
         assert network_identity["ledgerId"] == confidentialledger_id
         assert network_identity["ledgerTlsCertificate"]

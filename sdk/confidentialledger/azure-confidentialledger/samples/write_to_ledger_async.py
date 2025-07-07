@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -41,8 +42,7 @@ async def main():
         ledger_endpoint = os.environ["CONFIDENTIALLEDGER_ENDPOINT"]
     except KeyError:
         LOG.error(
-            "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - "
-            "please set it before running the example"
+            "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - " "please set it before running the example"
         )
         sys.exit(1)
 
@@ -52,9 +52,7 @@ async def main():
 
     identity_service_client = ConfidentialLedgerCertificateClient()  # type: ignore[call-arg]
     async with identity_service_client:
-        ledger_certificate = await identity_service_client.get_ledger_identity(
-            ledger_id
-        )
+        ledger_certificate = await identity_service_client.get_ledger_identity(ledger_id)
 
     # The Confidential Ledger's TLS certificate must be written to a file to be used by the
     # ConfidentialLedgerClient. Here, we write it to a temporary file so that is is cleaned up
@@ -82,9 +80,7 @@ async def main():
             async with ledger_client:
                 # Write a ledger entry.
                 try:
-                    post_entry_result = await ledger_client.create_ledger_entry(
-                        {"contents": "Hello world!"}
-                    )
+                    post_entry_result = await ledger_client.create_ledger_entry({"contents": "Hello world!"})
                     transaction_id = post_entry_result["transactionId"]
                     print(
                         f"Successfully sent a ledger entry to be written. It will become durable "
@@ -104,10 +100,7 @@ async def main():
                     )
                     wait_poller = await ledger_client.begin_wait_for_commit(transaction_id)  # type: ignore[attr-defined]
                     await wait_poller.wait()
-                    print(
-                        f"Ledger entry at transaction id {transaction_id} has been committed "
-                        "successfully"
-                    )
+                    print(f"Ledger entry at transaction id {transaction_id} has been committed " "successfully")
                 except HttpResponseError as e:
                     print("Request failed: {}".format(e.response.json()))  # type: ignore[union-attr]
                     raise
@@ -124,10 +117,7 @@ async def main():
                 # Users may wait for a durable commit when writing a ledger entry though this will
                 # reduce client throughput.
                 try:
-                    print(
-                        f"Writing another entry. This time, we'll have the client method wait for "
-                        "commit."
-                    )
+                    print(f"Writing another entry. This time, we'll have the client method wait for " "commit.")
                     post_poller = await ledger_client.begin_create_ledger_entry(  # type: ignore[attr-defined]
                         {"contents": "Hello world again!"}
                     )
