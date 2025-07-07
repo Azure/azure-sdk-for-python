@@ -7,6 +7,8 @@ import json
 import logging
 import os
 import re
+import tempfile
+import json
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, Union, cast
 
 from openai import OpenAI, AzureOpenAI
@@ -1031,18 +1033,51 @@ def _preprocess_data(
         input_data_df, target_generated_columns, target_run = _apply_target_to_data(
             target, batch_run_data, batch_run_client, input_data_df, evaluation_name, **kwargs
         )
-
-        for evaluator_name, mapping in column_mapping.items():
-            mapped_to_values = set(mapping.values())
-            for col in target_generated_columns:
-                # If user defined mapping differently, do not change it.
-                # If it was mapped to target, we have already changed it
-                # in _process_column_mappings
-                run_output = f"${{run.outputs.{col}}}"
-                # We will add our mapping only if
-                # customer did not mapped target output.
-                if col not in mapping and run_output not in mapped_to_values:
-                    column_mapping[evaluator_name][col] = run_output  # pylint: disable=unnecessary-dict-index-lookup
+        
+        # IMPORTANT FIX: For ProxyClient, create a temporary file with the complete dataframe
+        # This ensures that evaluators get all rows (including failed ones with NaN values)
+        if isinstance(batch_run_client, ProxyClient):
+            # Create a temporary JSONL file with the complete dataframe
+            temp_file = tempfile.NamedTemporaryFile(mode='w', suffix='.jsonl', delete=False)
+            try:
+                for _, row in input_data_df.iterrows():
+                    row_dict = row.to_dict()
+                    temp_file.write(json.dumps(row_dict) + '\n')
+                temp_file.close()
+                batch_run_data = temp_file.name
+                
+                # Update column mappings to use data references instead of run outputs
+                for evaluator_name, mapping in column_mapping.items():
+                    mapped_to_values = set(mapping.values())
+                    for col in target_generated_columns:
+                        # Use data reference instead of run output to ensure we get all rows
+                        target_reference = f"${{data.{Prefixes.TSG_OUTPUTS}{col}}}"
+                        
+                        # We will add our mapping only if customer did not map target output.
+                        if col not in mapping and target_reference not in mapped_to_values:
+                            column_mapping[evaluator_name][col] = target_reference
+                
+                # Don't pass the target_run since we're now using the complete dataframe
+                target_run = None
+                
+            except Exception as e:
+                # Clean up the temp file if something goes wrong
+                if os.path.exists(temp_file.name):
+                    os.unlink(temp_file.name)
+                raise e
+        else:
+            # For DataFrame-based clients, update batch_run_data to use the updated input_data_df
+            batch_run_data = input_data_df
+            
+            # Update column mappings for DataFrame clients
+            for evaluator_name, mapping in column_mapping.items():
+                mapped_to_values = set(mapping.values())
+                for col in target_generated_columns:
+                    target_reference = f"${{data.{Prefixes.TSG_OUTPUTS}{col}}}"
+                    
+                    # We will add our mapping only if customer did not map target output.
+                    if col not in mapping and target_reference not in mapped_to_values:
+                        column_mapping[evaluator_name][col] = target_reference
 
     # After we have generated all columns, we can check if we have everything we need for evaluators.
     _validate_columns_for_evaluators(input_data_df, evaluators, target, target_generated_columns, column_mapping)
@@ -1081,30 +1116,46 @@ def _run_callable_evaluators(
     batch_run_data = validated_data["batch_run_data"]
     column_mapping = validated_data["column_mapping"]
     evaluators = validated_data["evaluators"]
-    with EvalRunContext(batch_run_client):
-        runs = {
-            evaluator_name: batch_run_client.run(
-                flow=evaluator,
-                data=batch_run_data,
-                run=target_run,
-                evaluator_name=evaluator_name,
-                column_mapping=column_mapping.get(evaluator_name, column_mapping.get("default", None)),
-                stream=True,
-                name=kwargs.get("_run_name"),
-            )
-            for evaluator_name, evaluator in evaluators.items()
-        }
-
-        # get_details needs to be called within EvalRunContext scope in order to have user agent populated
-        per_evaluator_results: Dict[str, __EvaluatorInfo] = {
-            evaluator_name: {
-                "result": batch_run_client.get_details(run, all_results=True),
-                "metrics": batch_run_client.get_metrics(run),
-                "run_summary": batch_run_client.get_run_summary(run),
+    
+    # Clean up temporary file after evaluation if it was created
+    temp_file_to_cleanup = None
+    if isinstance(batch_run_client, ProxyClient) and isinstance(batch_run_data, str) and batch_run_data.endswith('.jsonl'):
+        # Check if it's a temporary file (contains temp directory path)
+        if tempfile.gettempdir() in batch_run_data:
+            temp_file_to_cleanup = batch_run_data
+    
+    try:
+        with EvalRunContext(batch_run_client):
+            runs = {
+                evaluator_name: batch_run_client.run(
+                    flow=evaluator,
+                    data=batch_run_data,
+                    # Don't pass target_run when using complete dataframe
+                    run=target_run,
+                    evaluator_name=evaluator_name,
+                    column_mapping=column_mapping.get(evaluator_name, column_mapping.get("default", None)),
+                    stream=True,
+                    name=kwargs.get("_run_name"),
+                )
+                for evaluator_name, evaluator in evaluators.items()
             }
-            for evaluator_name, run in runs.items()
-        }
 
+            # get_details needs to be called within EvalRunContext scope in order to have user agent populated
+            per_evaluator_results: Dict[str, __EvaluatorInfo] = {
+                evaluator_name: {
+                    "result": batch_run_client.get_details(run, all_results=True),
+                    "metrics": batch_run_client.get_metrics(run),
+                    "run_summary": batch_run_client.get_run_summary(run),
+                }
+                for evaluator_name, run in runs.items()
+            }
+    finally:
+        # Clean up temporary file if it was created
+        if temp_file_to_cleanup and os.path.exists(temp_file_to_cleanup):
+            try:
+                os.unlink(temp_file_to_cleanup)
+            except Exception as e:
+                LOGGER.warning(f"Failed to clean up temporary file {temp_file_to_cleanup}: {e}")
     # Concatenate all results
     evaluators_result_df = pd.DataFrame()
     evaluators_metric = {}
