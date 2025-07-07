@@ -157,7 +157,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         *,
         group: str,
         top: Optional[int] = None,
-        continuation_token_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> ItemPaged[GroupMember]:
         """List connections in a group.
@@ -170,12 +169,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :keyword top: The maximum number of connections to return. If the value is not set, then all
          the connections in a group are returned. Default value is None.
         :paramtype top: int
-        :keyword continuation_token_parameter: A token that allows the client to retrieve the next page
-         of results. This parameter is provided by the service in the response of a previous request
-         when there are additional results to be fetched. Clients should include the continuationToken
-         in the next request to receive the subsequent page of data. If this parameter is omitted, the
-         server will return the first page of results. Default value is None.
-        :paramtype continuation_token_parameter: str
         :return: An iterator like instance of GroupMember object
         :rtype: ~azure.core.paging.ItemPaged[GroupMember]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -196,7 +189,6 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         paged_json = super().list_connections(
             group=group,
             top=top,
-            continuation_token_parameter=continuation_token_parameter,
             **kwargs
         )
 
