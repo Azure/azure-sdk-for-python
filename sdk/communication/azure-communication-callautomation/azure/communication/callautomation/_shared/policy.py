@@ -89,7 +89,7 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
                 query_url = str(URL(query_url))
         except (ImportError, TypeError):
             pass
-        
+
         if self._decode_url:
             query_url = urllib.parse.unquote(query_url)
 
