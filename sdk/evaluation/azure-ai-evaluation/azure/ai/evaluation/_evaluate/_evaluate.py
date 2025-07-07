@@ -1033,33 +1033,33 @@ def _preprocess_data(
         input_data_df, target_generated_columns, target_run = _apply_target_to_data(
             target, batch_run_data, batch_run_client, input_data_df, evaluation_name, **kwargs
         )
-        
+
         # IMPORTANT FIX: For ProxyClient, create a temporary file with the complete dataframe
         # This ensures that evaluators get all rows (including failed ones with NaN values)
         if isinstance(batch_run_client, ProxyClient):
             # Create a temporary JSONL file with the complete dataframe
-            temp_file = tempfile.NamedTemporaryFile(mode='w', suffix='.jsonl', delete=False)
+            temp_file = tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False)
             try:
                 for _, row in input_data_df.iterrows():
                     row_dict = row.to_dict()
-                    temp_file.write(json.dumps(row_dict) + '\n')
+                    temp_file.write(json.dumps(row_dict) + "\n")
                 temp_file.close()
                 batch_run_data = temp_file.name
-                
+
                 # Update column mappings to use data references instead of run outputs
                 for evaluator_name, mapping in column_mapping.items():
                     mapped_to_values = set(mapping.values())
                     for col in target_generated_columns:
                         # Use data reference instead of run output to ensure we get all rows
                         target_reference = f"${{data.{Prefixes.TSG_OUTPUTS}{col}}}"
-                        
+
                         # We will add our mapping only if customer did not map target output.
                         if col not in mapping and target_reference not in mapped_to_values:
                             column_mapping[evaluator_name][col] = target_reference
-                
+
                 # Don't pass the target_run since we're now using the complete dataframe
                 target_run = None
-                
+
             except Exception as e:
                 # Clean up the temp file if something goes wrong
                 if os.path.exists(temp_file.name):
@@ -1068,13 +1068,13 @@ def _preprocess_data(
         else:
             # For DataFrame-based clients, update batch_run_data to use the updated input_data_df
             batch_run_data = input_data_df
-            
+
             # Update column mappings for DataFrame clients
             for evaluator_name, mapping in column_mapping.items():
                 mapped_to_values = set(mapping.values())
                 for col in target_generated_columns:
                     target_reference = f"${{data.{Prefixes.TSG_OUTPUTS}{col}}}"
-                    
+
                     # We will add our mapping only if customer did not map target output.
                     if col not in mapping and target_reference not in mapped_to_values:
                         column_mapping[evaluator_name][col] = target_reference
@@ -1116,14 +1116,18 @@ def _run_callable_evaluators(
     batch_run_data = validated_data["batch_run_data"]
     column_mapping = validated_data["column_mapping"]
     evaluators = validated_data["evaluators"]
-    
+
     # Clean up temporary file after evaluation if it was created
     temp_file_to_cleanup = None
-    if isinstance(batch_run_client, ProxyClient) and isinstance(batch_run_data, str) and batch_run_data.endswith('.jsonl'):
+    if (
+        isinstance(batch_run_client, ProxyClient)
+        and isinstance(batch_run_data, str)
+        and batch_run_data.endswith(".jsonl")
+    ):
         # Check if it's a temporary file (contains temp directory path)
         if tempfile.gettempdir() in batch_run_data:
             temp_file_to_cleanup = batch_run_data
-    
+
     try:
         with EvalRunContext(batch_run_client):
             runs = {

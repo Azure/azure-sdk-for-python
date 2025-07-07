@@ -38,7 +38,7 @@ class RunSubmitterClient:
         **kwargs: Any,
     ) -> BatchClientRun:
         # if not isinstance(data, pd.DataFrame):
-            # raise ValueError("Data must be a pandas DataFrame")
+        # raise ValueError("Data must be a pandas DataFrame")
 
         # The column mappings are indexed by data to indicate they come from the data
         # input. Update the inputs so that each entry is a dictionary with a data key
