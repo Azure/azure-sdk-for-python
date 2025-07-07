@@ -212,7 +212,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_result": score_result,
                 f"{self._result_key}_threshold": self.threshold,
                 f"{self._result_key}_reason": reason,
-                'per_tool_call_details': llm_output.get('additional_details', {}),
+                'details': llm_output.get('details', {}),
             }
             return response_dict
             
@@ -255,7 +255,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             f"{self._result_key}_result": 'pass',
             f"{self._result_key}_threshold": self.threshold,
             f"{self._result_key}_reason": error_message,
-            "per_tool_call_details": {},
+            "details": {},
 
         }
     
