@@ -229,7 +229,7 @@ def init_tool(tsp_config_path: str, repo_path: str, is_local: bool = False) -> D
     
 @mcp.tool("update")
 def update_tool(commit_hash: str, package_path:str) -> Dict[str, Any]:
-    """Initializes and subsequently generates a typespec client library directory from a local azure-rest-api-specs repo.
+    """Updates a client library from a local azure-rest-api-specs repo.
 
     This command is used to update a client library to a specific commit hash in the azure-rest-api-specs repository.
 
