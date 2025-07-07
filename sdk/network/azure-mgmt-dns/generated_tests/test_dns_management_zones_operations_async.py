@@ -21,7 +21,7 @@ class TestDnsManagementZonesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_zones_create_or_update(self, resource_group):
         response = await self.client.zones.create_or_update(
             resource_group_name=resource_group.name,
             zone_name="str",
@@ -48,7 +48,7 @@ class TestDnsManagementZonesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_zones_begin_delete(self, resource_group):
         response = await (
             await self.client.zones.begin_delete(
                 resource_group_name=resource_group.name,
@@ -62,7 +62,7 @@ class TestDnsManagementZonesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_zones_get(self, resource_group):
         response = await self.client.zones.get(
             resource_group_name=resource_group.name,
             zone_name="str",
@@ -74,7 +74,7 @@ class TestDnsManagementZonesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_zones_update(self, resource_group):
         response = await self.client.zones.update(
             resource_group_name=resource_group.name,
             zone_name="str",
@@ -87,7 +87,7 @@ class TestDnsManagementZonesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_zones_list_by_resource_group(self, resource_group):
         response = self.client.zones.list_by_resource_group(
             resource_group_name=resource_group.name,
             api_version="2018-05-01",
@@ -98,7 +98,7 @@ class TestDnsManagementZonesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_zones_list(self, resource_group):
         response = self.client.zones.list(
             api_version="2018-05-01",
         )
