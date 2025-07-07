@@ -106,17 +106,17 @@ def format_list_with_and(items: List[str]) -> str:
 
     :param List[str] items: The list of items to format.
     :return: A formatted string with items separated by commas and 'and' before the last item.
+    :rtype: str
     """
+    formatted_items = ""
     quoted = [f"'{item}'" for item in items]
     if len(quoted) > 2:
-        return ", ".join(quoted[:-1]) + ", and " + quoted[-1]
+        formatted_items = ", ".join(quoted[:-1]) + ", and " + quoted[-1]
     elif len(quoted) == 2:
-        return " and ".join(quoted)
+        formatted_items = " and ".join(quoted)
     elif quoted:
-        return quoted[0]
-    else:
-        return ""
-
+        formatted_items = quoted[0]
+    return formatted_items
 
 def verify_exclusive_arguments(
         exclusive_keys: List[str],
@@ -130,4 +130,5 @@ def verify_exclusive_arguments(
     keys_in_kwargs = [key for key in exclusive_keys if key in kwargs and kwargs[key] is not None]
 
     if len(keys_in_kwargs) > 1:
-        raise ValueError(f"{format_list_with_and(keys_in_kwargs)} are exclusive parameters, please only set one of them.")
+        raise ValueError(f"{format_list_with_and(keys_in_kwargs)} are exclusive parameters, "
+                         f"please only set one of them.")
