@@ -15,13 +15,29 @@ from pathlib import Path
 from typing import List, Optional, Union
 
 from marshmallow import RAISE, fields
-from marshmallow.exceptions import ValidationError
+from marshmallow.exceptions import ValidationError, FieldInstanceResolutionError
 from marshmallow.fields import Field, Nested
-from marshmallow.utils import FieldInstanceResolutionError, from_iso_datetime, resolve_field_instance
 
-from ..._utils._arm_id_utils import AMLVersionedArmId, is_ARM_id_for_resource, parse_name_label, parse_name_version
+try:
+    # marshmallow 4.x
+    from marshmallow.class_registry import resolve_field_instance
+except ImportError:
+    # marshmallow 3.x
+    from marshmallow.utils import resolve_field_instance
+
+from ..._utils._arm_id_utils import (
+    AMLVersionedArmId,
+    is_ARM_id_for_resource,
+    parse_name_label,
+    parse_name_version,
+)
 from ..._utils._experimental import _is_warning_cached
-from ..._utils.utils import is_data_binding_expression, is_valid_node_name, load_file, load_yaml
+from ..._utils.utils import (
+    is_data_binding_expression,
+    is_valid_node_name,
+    load_file,
+    load_yaml,
+)
 from ...constants._common import (
     ARM_ID_PREFIX,
     AZUREML_RESOURCE_PROVIDER,
@@ -42,6 +58,32 @@ from ...constants._common import (
 from ...entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr
 from ...exceptions import MlException, ValidationException
 from ..core.schema import PathAwareSchema
+
+
+# Custom implementation for from_iso_datetime compatibility
+def from_iso_datetime(value):
+    """Parse an ISO8601 datetime string, handling the 'Z' suffix.
+
+    :param value: The datetime string to parse or a datetime object
+    :type value: str or datetime
+    :return: Parsed datetime object
+    :rtype: datetime
+    """
+    from datetime import datetime
+
+    if isinstance(value, str):
+        # Validate that this is a proper datetime string, not just a date
+        # The original marshmallow from_iso_datetime expects datetime format
+        if "T" not in value and "Z" not in value and " " not in value:
+            # This is likely just a date string, not a datetime
+            raise ValueError(f"Expected datetime string but got date string: {value}")
+
+        # Replace 'Z' with '+00:00' for compatibility with datetime.fromisoformat
+        if value.endswith("Z"):
+            value = value[:-1] + "+00:00"
+        return datetime.fromisoformat(value)
+    return value
+
 
 module_logger = logging.getLogger(__name__)
 T = typing.TypeVar("T")
@@ -435,13 +477,13 @@ class UnionField(fields.Field):
         super().__init__(**kwargs)
         try:
             # add the validation and make sure union_fields must be subclasses or instances of
-            # marshmallow.base.FieldABC
+            # marshmallow fields
             self._union_fields = [resolve_field_instance(cls_or_instance) for cls_or_instance in union_fields]
             # TODO: make serialization/de-serialization work in the same way as json schema when is_strict is True
             self.is_strict = is_strict  # S\When True, combine fields with oneOf instead of anyOf at schema generation
         except FieldInstanceResolutionError as error:
             raise ValueError(
-                'Elements of "union_fields" must be subclasses or instances of marshmallow.base.FieldABC.'
+                'Elements of "union_fields" must be subclasses or instances of marshmallow fields.'
             ) from error
 
     @property
@@ -808,7 +850,13 @@ class NumberVersionField(VersionField):
         "invalid": "Number version must be integers concatenated by '.', like 1.0.1.",
     }
 
-    def __init__(self, *args, upper_bound: Optional[str] = None, lower_bound: Optional[str] = None, **kwargs) -> None:
+    def __init__(
+        self,
+        *args,
+        upper_bound: Optional[str] = None,
+        lower_bound: Optional[str] = None,
+        **kwargs,
+    ) -> None:
         self._upper = None if upper_bound is None else self._version_to_tuple(upper_bound)
         self._lower = None if lower_bound is None else self._version_to_tuple(lower_bound)
         super().__init__(*args, **kwargs)
@@ -877,9 +925,7 @@ class ExperimentalField(fields.Field):
             self._experimental_field = resolve_field_instance(experimental_field)
             self.required = experimental_field.required
         except FieldInstanceResolutionError as error:
-            raise ValueError(
-                '"experimental_field" must be subclasses or instances of marshmallow.base.FieldABC.'
-            ) from error
+            raise ValueError('"experimental_field" must be subclasses or instances of marshmallow fields.') from error
 
     @property
     def experimental_field(self):
