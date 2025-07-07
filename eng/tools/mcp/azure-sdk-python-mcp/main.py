@@ -200,9 +200,10 @@ def init_tool(tsp_config_path: str, repo_path: str, is_local: bool = False) -> D
     """Initializes a new typespec client library directory.
     
     Args:
-        tsp_config_path: Either the URL to the tspconfig.yaml file or the path to a local tspconfig.yaml file.
-        repo_path: The path to the repository root (i.e. ./azure-sdk-for-python/).
-        is_local: Whether the tsp_config_path is a local file path (True) or a URL (False).
+        :param str tsp_config_path: Either the URL to the tspconfig.yaml file or the path to a local tspconfig.yaml file.
+        :param str repo_path: The path to the repository root (i.e. ./azure-sdk-for-python/).
+        :param bool is_local: Whether the tsp_config_path is a local file path (True) or a URL (False).
+
     Returns:
         A dictionary containing the result of the command.
     """
@@ -235,11 +236,11 @@ def update_tool(package_path: str, commit_hash: Optional[str] = None, repo: Opti
     This command is used to update an existing client library.
 
     Args:
-        package_path: The path to the directory of the tsp-location.yaml (i.e. ./azure-sdk-for-python/sdk/eventgrid/azure-eventgrid).
-        commit_hash: Optional. The commit hash to update to.
-        repo: Optional. Repository where the project is defined.
-        tsp_config: Optional. Path to tspconfig.yaml.
-        local_spec_repo: Optional. Path to local spec repo.
+        :param str package_path: The path to the directory of the tsp-location.yaml (i.e. ./azure-sdk-for-python/sdk/eventgrid/azure-eventgrid).
+        :param Optional[str] commit_hash: Optional. The commit hash to update to.
+        :param Optional[str] repo: Optional. Repository where the project is defined.
+        :param Optional[str] tsp_config: Optional. Path to tspconfig.yaml.
+        :param Optional[str] local_spec_repo: Optional. Path to local spec repo.
 
     Returns:
         A dictionary containing the result of the command.
