@@ -89,9 +89,7 @@ IF missing dependencies:
 
 ### STEP 2: SDK GENERATION
 ```
-ACTION: Use azure-sdk-python-mcp sdk generation server tools (init, init_local)
-IF local path provided:
-    USE local mcp tools with tspconfig.yaml path
+ACTION: Use azure-sdk-python-mcp sdk generation server tools (init for new packages, update for existing packages)
 IF commands fail:
     ANALYZE error messages
     DIRECT user to fix TypeSpec errors in source repo
