@@ -1,5 +1,13 @@
 # Release History
 
+## 1.10.0 (Unreleased)
+
+### Features Added
+
+### Bugs Fixed
+
+- Significant improvements to TaskAdherence evaluator. New version has less variance, is much faster and consumes fewer tokens.
+
 ## 1.9.0 (2025-07-02)
 
 ### Features Added
