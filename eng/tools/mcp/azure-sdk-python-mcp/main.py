@@ -246,7 +246,9 @@ def update_tool(package_path: str, commit_hash: Optional[str] = None, repo: Opti
     """
     try:
         # Build TypeSpec arguments
-        typespec_args = {}
+        typespec_args = {
+            "output-dir": package_path
+        }
         
         if commit_hash:
             typespec_args["commit"] = commit_hash
