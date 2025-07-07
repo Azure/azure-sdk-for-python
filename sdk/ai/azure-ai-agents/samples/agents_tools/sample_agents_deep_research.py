@@ -18,7 +18,8 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-ai-agents azure-identity
+    pip install azure-identity
+    pip install --pre azure-ai-projects
 
     Set this environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
