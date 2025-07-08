@@ -27,6 +27,83 @@ OLD_VERSION_PY = "version.py"
 VERSION_REGEX = r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]'
 NEW_REQ_PACKAGES = ["azure-core", "azure-mgmt-core"]
 
+INIT_PY_FILE = "__init__.py"
+INIT_EXTENSION_SUBSTRING = ".extend_path(__path__, __name__)"
+
+
+def discover_namespace(package_root_path: str) -> Optional[str]:
+    """
+    Discover the true namespace of a package by walking through its directory structure
+    and finding the first __init__.py that contains actual content (not just namespace extension).
+    
+    :param str package_root_path: Root path of the package directory
+    :rtype: str or None
+    :return: The discovered namespace string, or None if no suitable namespace found
+    """
+    if not os.path.exists(package_root_path):
+        return None
+        
+    namespace = None
+    
+    for root, subdirs, files in os.walk(package_root_path):
+        # Ignore any modules with name starts with "_"
+        # For e.g. _generated, _shared etc
+        # Ignore build, which is created when installing a package from source.
+        # Ignore tests, which may have an __init__.py but is not part of the package.
+        dirs_to_skip = [x for x in subdirs if x.startswith(("_", ".", "test", "build"))]
+        for d in dirs_to_skip:
+            logging.debug("Dirs to skip: {}".format(dirs_to_skip))
+            subdirs.remove(d)
+            
+        if INIT_PY_FILE in files:
+            module_name = os.path.relpath(root, package_root_path).replace(
+                os.path.sep, "."
+            )
+            
+            # If namespace has not been set yet, try to find the first __init__.py that's not purely for extension.
+            if not namespace:
+                namespace = _set_root_namespace(
+                    os.path.join(root, INIT_PY_FILE), module_name
+                )
+    
+    return namespace
+
+
+def _set_root_namespace(init_file_path: str, module_name: str) -> Optional[str]:
+    """
+    Examine an __init__.py file to determine if it represents a substantial namespace 
+    or is just a namespace extension file.
+    
+    :param str init_file_path: Path to the __init__.py file
+    :param str module_name: The module name corresponding to this __init__.py
+    :rtype: str or None
+    :return: The namespace if this file contains substantial content, None otherwise
+    """
+    try:
+        with open(init_file_path, "r", encoding="utf-8") as f:
+            in_docstring = False
+            content = []
+            for line in f:
+                stripped_line = line.strip()
+                # If in multi-line docstring, skip following lines until end of docstring.
+                # If single-line docstring, skip the docstring line.
+                if stripped_line.startswith(('"""', "'''")) and not stripped_line.endswith(('"""', "'''")):
+                    in_docstring = not in_docstring
+                # If comment, skip line. Otherwise, add to content.
+                if not in_docstring and not stripped_line.startswith("#"):
+                    content.append(line)
+            
+            # If there's more than one line of content, or if there's one line that's not just namespace extension
+            if len(content) > 1 or (
+                len(content) == 1 and INIT_EXTENSION_SUBSTRING not in content[0]
+            ):
+                return module_name
+                
+    except Exception as e:
+        logging.debug(f"Error reading {init_file_path}: {e}")
+        
+    return None
+
 
 class ParsedSetup:
     """
@@ -294,13 +371,17 @@ def parse_setup_py(
 
     version = kwargs.get("version")
     name = kwargs.get("name")
-    name_space = name.replace("-", ".")
     packages = kwargs.get("packages", [])
 
     if packages:
+        # If packages are explicitly defined, use the first one as namespace
         name_space = packages[0]
         metapackage = False
     else:
+        # Try to discover the namespace from the package directory structure
+        package_directory = os.path.dirname(setup_filename)
+        discovered_namespace = discover_namespace(package_directory)
+        name_space = discovered_namespace if discovered_namespace else name.replace("-", ".")
         metapackage = True
 
     requires = kwargs.get("install_requires", [])
@@ -394,7 +475,11 @@ def parse_pyproject(
     requires = project_config.get("dependencies")
     is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x).name in NEW_REQ_PACKAGES), requires))
 
-    name_space = name.replace("-", ".")
+    # Discover the actual namespace by walking the package directory
+    package_directory = os.path.dirname(pyproject_filename)
+    discovered_namespace = discover_namespace(package_directory)
+    name_space = discovered_namespace if discovered_namespace else name.replace("-", ".")
+    
     package_data = get_value_from_dict(toml_dict, "tool.setuptools.package-data", None)
     include_package_data = get_value_from_dict(toml_dict, "tool.setuptools.include-package-data", True)
     classifiers = project_config.get("classifiers", [])
