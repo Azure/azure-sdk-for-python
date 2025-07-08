@@ -222,7 +222,7 @@ def main(generate_input, generate_output):
     with open(generate_input, "r") as reader:
         data = json.load(reader)
 
-    spec_folder = data["specFolder"]
+    spec_folder = data.get("specFolder", "")
     sdk_folder = "."
     result = {}
     python_tag = data.get("python_tag")
