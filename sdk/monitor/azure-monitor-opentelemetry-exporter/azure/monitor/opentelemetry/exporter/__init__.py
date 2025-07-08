@@ -16,5 +16,6 @@ __all__ = [
     "AzureMonitorMetricExporter",
     "AzureMonitorLogExporter",
     "AzureMonitorTraceExporter",
+    "RateLimitedSampler",
 ]
 __version__ = VERSION
