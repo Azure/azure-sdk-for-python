@@ -218,6 +218,9 @@ _INSTRUMENTATION_SUPPORTING_METRICS_LIST = (
 # sampleRate
 
 _SAMPLE_RATE_KEY = "_MS.sampleRate"
+_HASH = 5381
+_INTEGER_MAX: int = 2**31 - 1
+_INTEGER_MIN: int = -2**31
 
 # AAD Auth
 
