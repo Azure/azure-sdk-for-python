@@ -29,7 +29,7 @@ def test_token_credentials_env_dev():
         credential = DefaultAzureCredential()
 
         # Get the actual credential classes in the chain
-        actual_classes = {c.__class__ for c in credential.credentials}
+        actual_classes = [c.__class__ for c in credential.credentials]
 
         # All dev credentials should be present (if supported)
         if SharedTokenCacheCredential.supported():
@@ -39,6 +39,9 @@ def test_token_credentials_env_dev():
         assert AzureCliCredential in actual_classes
         assert AzureDeveloperCliCredential in actual_classes
         assert AzurePowerShellCredential in actual_classes
+
+        # Assert no duplicates
+        assert len(actual_classes) == len(set(actual_classes))
 
         # Production credentials should NOT be present
         for cred_class in prod_credentials:
@@ -60,18 +63,10 @@ def test_token_credentials_env_prod():
     }
 
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_TOKEN_CREDENTIALS: "prod"}, clear=False):
-        # Print to verify the environment variable is set in the test
-        print(f"AZURE_TOKEN_CREDENTIALS={os.environ.get(EnvironmentVariables.AZURE_TOKEN_CREDENTIALS)}")
-
         credential = DefaultAzureCredential()
 
         # Get the actual credential classes in the chain
-        actual_classes = {c.__class__ for c in credential.credentials}
-
-        # Print which credentials are actually in the chain
-        print("Credentials in chain:")
-        for cls in actual_classes:
-            print(f" - {cls.__name__}")
+        actual_classes = [c.__class__ for c in credential.credentials]
 
         # Production credentials should be present
         assert EnvironmentCredential in actual_classes
@@ -80,6 +75,9 @@ def test_token_credentials_env_prod():
         # Check WorkloadIdentityCredential only if env vars are set
         if all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS):
             assert WorkloadIdentityCredential in actual_classes
+
+        # Assert no duplicates
+        assert len(actual_classes) == len(set(actual_classes))
 
         # Developer credentials should NOT be present
         for cred_class in dev_credentials:
@@ -93,7 +91,7 @@ def test_token_credentials_env_case_insensitive():
         credential = DefaultAzureCredential()
 
         # Get the actual credential classes in the chain
-        actual_classes = {c.__class__ for c in credential.credentials}
+        actual_classes = [c.__class__ for c in credential.credentials]
 
         # EnvironmentCredential (prod) should not be present
         assert EnvironmentCredential not in actual_classes
@@ -113,7 +111,7 @@ def test_token_credentials_env_invalid():
 def test_token_credentials_env_with_exclude():
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_TOKEN_CREDENTIALS: "prod"}, clear=False):
         credential = DefaultAzureCredential(exclude_environment_credential=True)
-        actual_classes = {c.__class__ for c in credential.credentials}
+        actual_classes = [c.__class__ for c in credential.credentials]
 
         assert EnvironmentCredential not in actual_classes
 
@@ -135,16 +133,11 @@ def test_token_credentials_env_workload_identity_credential():
         credential = DefaultAzureCredential()
 
         # Get the actual credential classes in the chain
-        actual_classes = {c.__class__ for c in credential.credentials}
+        actual_classes = [c.__class__ for c in credential.credentials]
 
         # Only WorkloadIdentityCredential should be present
         assert WorkloadIdentityCredential in actual_classes
         assert len(actual_classes) == 1
-
-        # Verify other credentials are not present
-        assert EnvironmentCredential not in actual_classes
-        assert ManagedIdentityCredential not in actual_classes
-        assert AzureCliCredential not in actual_classes
 
 
 def test_token_credentials_env_environment_credential():
@@ -154,16 +147,11 @@ def test_token_credentials_env_environment_credential():
         credential = DefaultAzureCredential()
 
         # Get the actual credential classes in the chain
-        actual_classes = {c.__class__ for c in credential.credentials}
+        actual_classes = [c.__class__ for c in credential.credentials]
 
         # Only EnvironmentCredential should be present
         assert EnvironmentCredential in actual_classes
         assert len(actual_classes) == 1
-
-        # Verify other credentials are not present
-        assert WorkloadIdentityCredential not in actual_classes
-        assert ManagedIdentityCredential not in actual_classes
-        assert AzureCliCredential not in actual_classes
 
 
 def test_token_credentials_env_managed_identity_credential():
@@ -175,16 +163,11 @@ def test_token_credentials_env_managed_identity_credential():
         credential = DefaultAzureCredential()
 
         # Get the actual credential classes in the chain
-        actual_classes = {c.__class__ for c in credential.credentials}
+        actual_classes = [c.__class__ for c in credential.credentials]
 
         # Only ManagedIdentityCredential should be present
         assert ManagedIdentityCredential in actual_classes
         assert len(actual_classes) == 1
-
-        # Verify other credentials are not present
-        assert EnvironmentCredential not in actual_classes
-        assert WorkloadIdentityCredential not in actual_classes
-        assert AzureCliCredential not in actual_classes
 
 
 def test_token_credentials_env_azure_cli_credential():
@@ -194,16 +177,11 @@ def test_token_credentials_env_azure_cli_credential():
         credential = DefaultAzureCredential()
 
         # Get the actual credential classes in the chain
-        actual_classes = {c.__class__ for c in credential.credentials}
+        actual_classes = [c.__class__ for c in credential.credentials]
 
         # Only AzureCliCredential should be present
         assert AzureCliCredential in actual_classes
         assert len(actual_classes) == 1
-
-        # Verify other credentials are not present
-        assert EnvironmentCredential not in actual_classes
-        assert ManagedIdentityCredential not in actual_classes
-        assert WorkloadIdentityCredential not in actual_classes
 
 
 def test_token_credentials_env_specific_credential_case_insensitive():
@@ -213,7 +191,7 @@ def test_token_credentials_env_specific_credential_case_insensitive():
         credential = DefaultAzureCredential()
 
         # Get the actual credential classes in the chain
-        actual_classes = {c.__class__ for c in credential.credentials}
+        actual_classes = [c.__class__ for c in credential.credentials]
 
         # Only EnvironmentCredential should be present
         assert EnvironmentCredential in actual_classes
@@ -255,7 +233,7 @@ def test_user_exclude_flags_override_env_var():
     # Test case 2: env var says use specific credential, user includes additional credential
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_TOKEN_CREDENTIALS: "environmentcredential"}, clear=False):
         credential = DefaultAzureCredential(exclude_powershell_credential=False)
-        actual_classes = {c.__class__ for c in credential.credentials}
+        actual_classes = [c.__class__ for c in credential.credentials]
 
         # Both EnvironmentCredential and AzurePowerShellCredential should be present
         assert EnvironmentCredential in actual_classes
@@ -264,7 +242,7 @@ def test_user_exclude_flags_override_env_var():
     # Test case 3: env var says "dev" mode, user excludes a dev credential
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_TOKEN_CREDENTIALS: "dev"}, clear=False):
         credential = DefaultAzureCredential(exclude_cli_credential=True)
-        actual_classes = {c.__class__ for c in credential.credentials}
+        actual_classes = [c.__class__ for c in credential.credentials]
 
         # AzureCliCredential should NOT be present despite "dev" mode
         assert AzureCliCredential not in actual_classes
