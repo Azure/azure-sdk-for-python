@@ -428,7 +428,7 @@ def gen_typespec(
                     yaml.dump(content, file_out)
             cmd = f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url}"
         else:
-            tsp_config_url = f"{rest_repo_url}/blob/{head_sha}/{spec_folder}/tspconfig.yaml"
+            tsp_config_url = f"{rest_repo_url}/blob/{head_sha}/{typespec_relative_path}/tspconfig.yaml"
             cmd = f"tsp-client init -c {tsp_config_url}"
         if run_in_pipeline:
             emitter_name = "@azure-tools/typespec-python"
