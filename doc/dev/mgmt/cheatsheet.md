@@ -36,12 +36,6 @@ python ./scripts/dev_setup.py -p $PACKAGE
 python -m packaging_tools.generate_sdk -v -m restapi_path/readme.md
 ```
 
-Regenerate multi-api client:<br/>
-`python ./scripts/multiapi_init_gen.py azure-mgmt-myservice`
-
-Regenerate multi-api of multi-client package:<br/>
-`python ./scripts/multiapi_init_gen.py azure-mgmt-myservice#subclientname`
-
 ## Update packaging setup.py / MANIFEST / etc.
 
 Locally:<br/>
