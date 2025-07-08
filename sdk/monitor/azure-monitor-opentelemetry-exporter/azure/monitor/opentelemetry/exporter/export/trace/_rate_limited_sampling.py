@@ -6,7 +6,7 @@ import threading
 import time
 from typing import Callable, Optional, Sequence
 from opentelemetry.context import Context
-from opentelemetry.trace import Link, SpanKind, format_trace_id
+from opentelemetry.trace import Link, SpanKind, format_trace_id, get_current_span
 from opentelemetry.sdk.trace.sampling import (
     Decision,
     Sampler,
@@ -96,6 +96,46 @@ class RateLimitedSampler(Sampler):
         links: Optional[Sequence["Link"]] = None,
         trace_state: Optional["TraceState"] = None,
     ) -> "SamplingResult":
+    
+        if parent_context is not None:
+            parent_span = get_current_span(parent_context)
+            parent_span_context = parent_span.get_span_context()
+            
+            # Check if parent is valid and local (not remote)
+            if parent_span_context.is_valid and not parent_span_context.is_remote:
+                # Check if parent was dropped/record-only first
+                if not parent_span.is_recording():
+                    # Parent was dropped, drop this child too
+                    if attributes is None:
+                        new_attributes = {}
+                    else:
+                        new_attributes = dict(attributes)
+                    new_attributes[_SAMPLE_RATE_KEY] = 0.0
+                    
+                    return SamplingResult(
+                        Decision.DROP,
+                        new_attributes,
+                        _get_parent_trace_state(parent_context),
+                    )
+                
+                # Parent is recording, check for sample rate attribute
+                parent_attributes = getattr(parent_span, 'attributes', {})
+                parent_sample_rate = parent_attributes.get(_SAMPLE_RATE_KEY)
+                
+                if parent_sample_rate is not None:
+                    # Honor parent's sampling rate
+                    if attributes is None:
+                        new_attributes = {}
+                    else:
+                        new_attributes = dict(attributes)
+                    new_attributes[_SAMPLE_RATE_KEY] = parent_sample_rate
+                    
+                    return SamplingResult(
+                        Decision.RECORD_AND_SAMPLE,
+                        new_attributes,
+                        _get_parent_trace_state(parent_context),
+                    )
+        
         sampling_percentage = self._sampling_percentage_generator.get()
         sampling_score = _get_djb2_sample_score(format_trace_id(trace_id).lower())
         
@@ -105,12 +145,14 @@ class RateLimitedSampler(Sampler):
             decision = Decision.DROP
             
         if attributes is None:
-            attributes = {}
-        attributes[_SAMPLE_RATE_KEY] = sampling_percentage  # type: ignore
+            new_attributes = {}
+        else:
+            new_attributes = dict(attributes)
+        new_attributes[_SAMPLE_RATE_KEY] = sampling_percentage
         
         return SamplingResult(
             decision,
-            attributes,
+            new_attributes,
             _get_parent_trace_state(parent_context),
         )
 

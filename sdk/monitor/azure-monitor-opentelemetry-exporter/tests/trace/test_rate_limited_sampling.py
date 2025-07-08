@@ -1,12 +1,17 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 import random
 import sys
 import threading
 import time
 import unittest
-from typing import List
-from unittest.mock import patch
+from typing import List, Optional
+from unittest.mock import patch, Mock
+
+from opentelemetry.context import Context
+from opentelemetry.trace import SpanContext, TraceFlags, set_span_in_context
+from opentelemetry.trace.span import NonRecordingSpan
 
 from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling import (
     Decision,
@@ -16,6 +21,29 @@ from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling im
 )
 
 from azure.monitor.opentelemetry.exporter._constants import _SAMPLE_RATE_KEY
+
+
+def create_parent_span(sampled: bool, sample_rate: Optional[float] = None, is_remote: bool = False):
+    trace_flags = TraceFlags.SAMPLED if sampled else TraceFlags.DEFAULT
+    
+    span_context = SpanContext(
+        trace_id=0x1234567890abcdef1234567890abcdef,
+        span_id=0x1234567890abcdef,
+        is_remote=is_remote,
+        trace_flags=trace_flags,
+        trace_state=None,
+    )
+    
+    mock_span = Mock()
+    mock_span.get_span_context.return_value = span_context
+    mock_span.is_recording.return_value = sampled
+    
+    attributes = {}
+    if sample_rate is not None:
+        attributes[_SAMPLE_RATE_KEY] = sample_rate
+    mock_span.attributes = attributes
+    
+    return mock_span
 
 
 class TestRateLimitedSampler(unittest.TestCase):
@@ -259,6 +287,178 @@ class TestRateLimitedSampler(unittest.TestCase):
             self.assertIn(result.decision, [Decision.RECORD_AND_SAMPLE, Decision.DROP])
             self.assertIn(_SAMPLE_RATE_KEY, result.attributes)
 
+    def test_parent_span_sampled_with_sample_rate(self):
+        sampler = RateLimitedSampler(10.0)
+        
+        parent_span = create_parent_span(sampled=True, sample_rate=75.0, is_remote=False)
+        
+        with patch('azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling.get_current_span', return_value=parent_span):
+            context = Mock()
+            
+            result = sampler.should_sample(
+                parent_context=context,
+                trace_id=0xabc123,
+                name="test-span"
+            )
+            
+            self.assertEqual(result.decision, Decision.RECORD_AND_SAMPLE)
+            self.assertEqual(result.attributes[_SAMPLE_RATE_KEY], 75.0)
+
+    def test_parent_span_not_sampled_with_sample_rate(self):
+        sampler = RateLimitedSampler(10.0)
+        
+        parent_span = create_parent_span(sampled=False, sample_rate=25.0, is_remote=False)
+        
+        with patch('azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling.get_current_span', return_value=parent_span):
+            context = Mock()
+            
+            result = sampler.should_sample(
+                parent_context=context,
+                trace_id=0xabc123,
+                name="test-span"
+            )
+            
+            self.assertEqual(result.decision, Decision.DROP)
+            self.assertEqual(result.attributes[_SAMPLE_RATE_KEY], 0.0)
+
+    def test_parent_span_sampled_with_100_percent_sample_rate(self):
+        sampler = RateLimitedSampler(5.0)
+        
+        parent_span = create_parent_span(sampled=True, sample_rate=100.0, is_remote=False)
+        
+        with patch('azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling.get_current_span', return_value=parent_span):
+            context = Mock()
+            
+            result = sampler.should_sample(
+                parent_context=context,
+                trace_id=0xabc123,
+                name="test-span"
+            )
+            
+            self.assertEqual(result.decision, Decision.RECORD_AND_SAMPLE)
+            self.assertEqual(result.attributes[_SAMPLE_RATE_KEY], 100.0)
+
+    def test_parent_span_remote_ignored(self):
+        sampler = RateLimitedSampler(5.0)
+        sampler._sampling_percentage_generator._nano_time_supplier = self.nano_time_supplier
+        
+        parent_span = create_parent_span(sampled=True, sample_rate=80.0, is_remote=True)
+        
+        with patch('azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling.get_current_span', return_value=parent_span):
+            context = Mock()
+            
+            from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling import _State
+            initial_time = self.nano_time_supplier()
+            sampler._sampling_percentage_generator._state = _State(0.0, 0.0, initial_time)
+            
+            self.advance_time(100_000_000)
+            
+            result = sampler.should_sample(
+                parent_context=context,
+                trace_id=0xabc123,
+                name="test-span"
+            )
+            
+            self.assertNotEqual(result.attributes[_SAMPLE_RATE_KEY], 80.0)
+
+    def test_parent_span_no_sample_rate_attribute(self):
+        sampler = RateLimitedSampler(5.0)
+        sampler._sampling_percentage_generator._nano_time_supplier = self.nano_time_supplier
+        
+        parent_span = create_parent_span(sampled=True, sample_rate=None, is_remote=False)
+        
+        with patch('azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling.get_current_span', return_value=parent_span):
+            context = Mock()
+            
+            from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling import _State
+            initial_time = self.nano_time_supplier()
+            sampler._sampling_percentage_generator._state = _State(0.0, 0.0, initial_time)
+            
+            self.advance_time(100_000_000)
+            
+            result = sampler.should_sample(
+                parent_context=context,
+                trace_id=0xabc123,
+                name="test-span"
+            )
+            
+            self.assertIn(result.decision, [Decision.RECORD_AND_SAMPLE, Decision.DROP])
+            sample_rate = result.attributes[_SAMPLE_RATE_KEY]
+            self.assertIsInstance(sample_rate, (int, float))
+
+    def test_parent_span_invalid_context(self):
+        sampler = RateLimitedSampler(5.0)
+        sampler._sampling_percentage_generator._nano_time_supplier = self.nano_time_supplier
+        
+        parent_span = Mock()
+        invalid_context = Mock()
+        invalid_context.is_valid = False
+        invalid_context.is_remote = False
+        parent_span.get_span_context.return_value = invalid_context
+        
+        with patch('azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling.get_current_span', return_value=parent_span):
+            context = Mock()
+            
+            from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling import _State
+            initial_time = self.nano_time_supplier()
+            sampler._sampling_percentage_generator._state = _State(0.0, 0.0, initial_time)
+            
+            self.advance_time(100_000_000)
+            
+            result = sampler.should_sample(
+                parent_context=context,
+                trace_id=0xabc123,
+                name="test-span"
+            )
+            
+            self.assertIn(result.decision, [Decision.RECORD_AND_SAMPLE, Decision.DROP])
+            sample_rate = result.attributes[_SAMPLE_RATE_KEY]
+            self.assertIsInstance(sample_rate, (int, float))
+
+    def test_no_parent_context_uses_local_sampling(self):
+        sampler = RateLimitedSampler(5.0)
+        sampler._sampling_percentage_generator._nano_time_supplier = self.nano_time_supplier
+        
+        from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling import _State
+        initial_time = self.nano_time_supplier()
+        sampler._sampling_percentage_generator._state = _State(0.0, 0.0, initial_time)
+        
+        self.advance_time(100_000_000)
+        
+        result = sampler.should_sample(
+            parent_context=None,
+            trace_id=0xabc123,
+            name="test-span"
+        )
+        
+        self.assertIn(result.decision, [Decision.RECORD_AND_SAMPLE, Decision.DROP])
+        sample_rate = result.attributes[_SAMPLE_RATE_KEY]
+        self.assertIsInstance(sample_rate, (int, float))
+
+    def test_parent_context_preserves_original_attributes(self):
+        sampler = RateLimitedSampler(10.0)
+        
+        parent_span = create_parent_span(sampled=True, sample_rate=50.0, is_remote=False)
+        
+        with patch('azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling.get_current_span', return_value=parent_span):
+            context = Mock()
+            
+            original_attributes = {
+                "service.name": "test-service",
+                "operation.name": "test-operation"
+            }
+            
+            result = sampler.should_sample(
+                parent_context=context,
+                trace_id=0xabc123,
+                name="test-span",
+                attributes=original_attributes
+            )
+            
+            self.assertEqual(result.decision, Decision.RECORD_AND_SAMPLE)
+            self.assertEqual(result.attributes["service.name"], "test-service")
+            self.assertEqual(result.attributes["operation.name"], "test-operation")
+            self.assertEqual(result.attributes[_SAMPLE_RATE_KEY], 50.0)
 
 class TestUtilityFunctions(unittest.TestCase):
     

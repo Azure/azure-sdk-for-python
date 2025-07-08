@@ -136,9 +136,9 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
     resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
     if SAMPLING_TRACES_PER_SECOND_ARG in configurations:
-        sampling_traces_per_second = configurations[SAMPLING_TRACES_PER_SECOND_ARG]
+        traces_per_second = configurations[SAMPLING_TRACES_PER_SECOND_ARG]
         tracer_provider = TracerProvider(
-            sampler=RateLimitedSampler(sampling_ratio=cast(float, sampling_traces_per_second), resource=resource)
+            sampler=RateLimitedSampler(sampling_ratio=cast(float, traces_per_second), resource=resource)
         )
     else:
         sampling_ratio = configurations[SAMPLING_RATIO_ARG]
