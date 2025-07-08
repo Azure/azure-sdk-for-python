@@ -145,7 +145,6 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
         tracer_provider = TracerProvider(
             sampler=ApplicationInsightsSampler(sampling_ratio=cast(float, sampling_ratio)), resource=resource
         )
-    
 
     for span_processor in configurations[SPAN_PROCESSORS_ARG]:  # type: ignore
         tracer_provider.add_span_processor(span_processor)  # type: ignore

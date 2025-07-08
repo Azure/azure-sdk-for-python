@@ -123,12 +123,12 @@ def _default_resource(configurations):
 
 def _default_sampling_ratio(configurations):
     default = 1.0
-    
+
     if environ.get(OTEL_TRACES_SAMPLER_ARG) is not None:
         try:
             if float(environ[OTEL_TRACES_SAMPLER_ARG]) < 0:
                 _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a non-negative number.")
-        except:
+        except ValueError:
             pass
     else:
         _logger.error("OTEL_TRACES_SAMPLER_ARG is not set.")
@@ -161,8 +161,11 @@ def _default_sampling_ratio(configurations):
     else:
         # Default behavior - always set sampling_ratio
         configurations[SAMPLING_RATIO_ARG] = default
-        _logger.error(  # pylint: disable=C
-            f"Invalid argument for the sampler to be used for tracing. Supported values are {RATE_LIMITED_SAMPLER} and {FIXED_PERCENTAGE_SAMPLER}. Defaulting to %s: %s",
+        _logger.error(
+            "Invalid argument for the sampler to be used for tracing. "
+            "Supported values are %s and %s. Defaulting to %s: %s",
+            RATE_LIMITED_SAMPLER,
+            FIXED_PERCENTAGE_SAMPLER,
             OTEL_TRACES_SAMPLER,
             OTEL_TRACES_SAMPLER_ARG,
         )
