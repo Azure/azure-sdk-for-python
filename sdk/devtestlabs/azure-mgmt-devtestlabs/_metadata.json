@@ -1,6 +1,6 @@
 {
   "apiVersion": "2018-09-15",
-  "commit": "220aa608045b4094d376e4a7ed10e5e2002d6e27",
+  "commit": "220aa60804",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/devtestlabs/Microsoft.DevTestLab.Management",
   "emitterVersion": "0.46.0"
