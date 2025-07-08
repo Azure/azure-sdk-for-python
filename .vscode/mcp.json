@@ -3,12 +3,10 @@
         "azure-sdk-python-mcp": {
             "command": "uv",
             "args": [
+                "--directory",
+                "${workspaceFolder}/eng/tools/mcp/azure-sdk-python-mcp",
                 "run",
-                "--index-url",
-                "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
-                "--with",
-                "azure-sdk-python-mcp",
-                "azure-sdk-python-mcp"
+                "main.py",
             ],
         },
         "azure-sdk-mcp": {
