@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.lab_costs.get(
+    response = client.costs.get(
         resource_group_name="resourceGroupName",
         lab_name="{labName}",
         name="targetCost",

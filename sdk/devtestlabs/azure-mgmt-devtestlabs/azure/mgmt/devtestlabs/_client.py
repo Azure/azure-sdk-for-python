@@ -24,20 +24,19 @@ from .operations import (
     ArmTemplatesOperations,
     ArtifactSourcesOperations,
     ArtifactsOperations,
+    CostsOperations,
     CustomImagesOperations,
     DisksOperations,
-    DtlEnvironmentsOperations,
+    EnvironmentsOperations,
     FormulasOperations,
     GalleryImagesOperations,
-    LabCostsOperations,
-    LabVirtualMachinesOperations,
+    GlobalSchedulesOperations,
     LabsOperations,
     NotificationChannelsOperations,
-    OperationsOperationGroupOperations,
+    Operations,
     PoliciesOperations,
     PolicySetsOperations,
     ProviderOperationsOperations,
-    ScheduleOperationGroupOperations,
     SchedulesOperations,
     SecretsOperations,
     ServiceFabricSchedulesOperations,
@@ -45,6 +44,7 @@ from .operations import (
     ServiceRunnersOperations,
     UsersOperations,
     VirtualMachineSchedulesOperations,
+    VirtualMachinesOperations,
     VirtualNetworksOperations,
 )
 
@@ -59,11 +59,10 @@ class DevTestLabClient:  # pylint: disable=too-many-instance-attributes
     :vartype provider_operations: azure.mgmt.devtestlabs.operations.ProviderOperationsOperations
     :ivar labs: LabsOperations operations
     :vartype labs: azure.mgmt.devtestlabs.operations.LabsOperations
+    :ivar global_schedules: GlobalSchedulesOperations operations
+    :vartype global_schedules: azure.mgmt.devtestlabs.operations.GlobalSchedulesOperations
     :ivar schedules: SchedulesOperations operations
     :vartype schedules: azure.mgmt.devtestlabs.operations.SchedulesOperations
-    :ivar schedule_operation_group: ScheduleOperationGroupOperations operations
-    :vartype schedule_operation_group:
-     azure.mgmt.devtestlabs.operations.ScheduleOperationGroupOperations
     :ivar service_fabric_schedules: ServiceFabricSchedulesOperations operations
     :vartype service_fabric_schedules:
      azure.mgmt.devtestlabs.operations.ServiceFabricSchedulesOperations
@@ -76,8 +75,8 @@ class DevTestLabClient:  # pylint: disable=too-many-instance-attributes
     :vartype arm_templates: azure.mgmt.devtestlabs.operations.ArmTemplatesOperations
     :ivar artifacts: ArtifactsOperations operations
     :vartype artifacts: azure.mgmt.devtestlabs.operations.ArtifactsOperations
-    :ivar lab_costs: LabCostsOperations operations
-    :vartype lab_costs: azure.mgmt.devtestlabs.operations.LabCostsOperations
+    :ivar costs: CostsOperations operations
+    :vartype costs: azure.mgmt.devtestlabs.operations.CostsOperations
     :ivar custom_images: CustomImagesOperations operations
     :vartype custom_images: azure.mgmt.devtestlabs.operations.CustomImagesOperations
     :ivar formulas: FormulasOperations operations
@@ -97,19 +96,18 @@ class DevTestLabClient:  # pylint: disable=too-many-instance-attributes
     :vartype users: azure.mgmt.devtestlabs.operations.UsersOperations
     :ivar disks: DisksOperations operations
     :vartype disks: azure.mgmt.devtestlabs.operations.DisksOperations
-    :ivar dtl_environments: DtlEnvironmentsOperations operations
-    :vartype dtl_environments: azure.mgmt.devtestlabs.operations.DtlEnvironmentsOperations
+    :ivar environments: EnvironmentsOperations operations
+    :vartype environments: azure.mgmt.devtestlabs.operations.EnvironmentsOperations
     :ivar secrets: SecretsOperations operations
     :vartype secrets: azure.mgmt.devtestlabs.operations.SecretsOperations
     :ivar service_fabrics: ServiceFabricsOperations operations
     :vartype service_fabrics: azure.mgmt.devtestlabs.operations.ServiceFabricsOperations
-    :ivar lab_virtual_machines: LabVirtualMachinesOperations operations
-    :vartype lab_virtual_machines: azure.mgmt.devtestlabs.operations.LabVirtualMachinesOperations
+    :ivar virtual_machines: VirtualMachinesOperations operations
+    :vartype virtual_machines: azure.mgmt.devtestlabs.operations.VirtualMachinesOperations
     :ivar virtual_networks: VirtualNetworksOperations operations
     :vartype virtual_networks: azure.mgmt.devtestlabs.operations.VirtualNetworksOperations
-    :ivar operations_operation_group: OperationsOperationGroupOperations operations
-    :vartype operations_operation_group:
-     azure.mgmt.devtestlabs.operations.OperationsOperationGroupOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.devtestlabs.operations.Operations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -167,10 +165,10 @@ class DevTestLabClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.labs = LabsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.schedules = SchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.schedule_operation_group = ScheduleOperationGroupOperations(
+        self.global_schedules = GlobalSchedulesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.schedules = SchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.service_fabric_schedules = ServiceFabricSchedulesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -182,7 +180,7 @@ class DevTestLabClient:  # pylint: disable=too-many-instance-attributes
         )
         self.arm_templates = ArmTemplatesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.artifacts = ArtifactsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.lab_costs = LabCostsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.costs = CostsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.custom_images = CustomImagesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.formulas = FormulasOperations(self._client, self._config, self._serialize, self._deserialize)
         self.gallery_images = GalleryImagesOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -194,20 +192,16 @@ class DevTestLabClient:  # pylint: disable=too-many-instance-attributes
         self.service_runners = ServiceRunnersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.users = UsersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.disks = DisksOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.dtl_environments = DtlEnvironmentsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.environments = EnvironmentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.secrets = SecretsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.service_fabrics = ServiceFabricsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.lab_virtual_machines = LabVirtualMachinesOperations(
+        self.virtual_machines = VirtualMachinesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.virtual_networks = VirtualNetworksOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.operations_operation_group = OperationsOperationGroupOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

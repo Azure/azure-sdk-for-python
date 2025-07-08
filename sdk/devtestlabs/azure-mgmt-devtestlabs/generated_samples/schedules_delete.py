@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.schedule_operation_group.delete(
+    client.schedules.delete(
         resource_group_name="resourceGroupName",
         lab_name="{labName}",
         name="{scheduleName}",

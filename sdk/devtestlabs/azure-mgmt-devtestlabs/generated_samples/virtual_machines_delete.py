@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.lab_virtual_machines.begin_delete(
+    client.virtual_machines.begin_delete(
         resource_group_name="resourceGroupName",
         lab_name="{labName}",
         name="{vmName}",

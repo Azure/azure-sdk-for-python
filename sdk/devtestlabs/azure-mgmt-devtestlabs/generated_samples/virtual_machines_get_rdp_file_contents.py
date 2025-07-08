@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.lab_virtual_machines.get_rdp_file_contents(
+    response = client.virtual_machines.get_rdp_file_contents(
         resource_group_name="resourceGroupName",
         lab_name="{labName}",
         name="{vmName}",

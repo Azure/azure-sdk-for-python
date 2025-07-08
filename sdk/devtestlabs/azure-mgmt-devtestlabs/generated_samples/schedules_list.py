@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.schedule_operation_group.list(
+    response = client.schedules.list(
         resource_group_name="resourceGroupName",
         lab_name="{labName}",
     )

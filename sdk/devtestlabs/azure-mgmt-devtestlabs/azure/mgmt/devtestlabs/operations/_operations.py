@@ -450,7 +450,7 @@ def build_labs_list_vhds_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_schedules_get_request(
+def build_global_schedules_get_request(
     resource_group_name: str, name: str, subscription_id: str, *, expand: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -480,7 +480,7 @@ def build_schedules_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_schedules_create_or_update_request(
+def build_global_schedules_create_or_update_request(  # pylint: disable=name-too-long
     resource_group_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -511,7 +511,7 @@ def build_schedules_create_or_update_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_schedules_update_request(
+def build_global_schedules_update_request(
     resource_group_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -542,7 +542,7 @@ def build_schedules_update_request(
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_schedules_delete_request(
+def build_global_schedules_delete_request(
     resource_group_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -570,7 +570,7 @@ def build_schedules_delete_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_schedules_list_by_resource_group_request(  # pylint: disable=name-too-long
+def build_global_schedules_list_by_resource_group_request(  # pylint: disable=name-too-long
     resource_group_name: str,
     subscription_id: str,
     *,
@@ -612,7 +612,7 @@ def build_schedules_list_by_resource_group_request(  # pylint: disable=name-too-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_schedules_list_by_subscription_request(  # pylint: disable=name-too-long
+def build_global_schedules_list_by_subscription_request(  # pylint: disable=name-too-long
     subscription_id: str,
     *,
     expand: Optional[str] = None,
@@ -652,7 +652,7 @@ def build_schedules_list_by_subscription_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_schedules_execute_request(
+def build_global_schedules_execute_request(
     resource_group_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -680,7 +680,7 @@ def build_schedules_execute_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_schedules_retarget_request(
+def build_global_schedules_retarget_request(
     resource_group_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -711,7 +711,7 @@ def build_schedules_retarget_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_schedule_operation_group_get_request(  # pylint: disable=name-too-long
+def build_schedules_get_request(
     resource_group_name: str,
     lab_name: str,
     name: str,
@@ -748,7 +748,7 @@ def build_schedule_operation_group_get_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_schedule_operation_group_create_or_update_request(  # pylint: disable=name-too-long
+def build_schedules_create_or_update_request(
     resource_group_name: str, lab_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -780,7 +780,7 @@ def build_schedule_operation_group_create_or_update_request(  # pylint: disable=
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_schedule_operation_group_update_request(  # pylint: disable=name-too-long
+def build_schedules_update_request(
     resource_group_name: str, lab_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -812,7 +812,7 @@ def build_schedule_operation_group_update_request(  # pylint: disable=name-too-l
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_schedule_operation_group_delete_request(  # pylint: disable=name-too-long
+def build_schedules_delete_request(
     resource_group_name: str, lab_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -841,7 +841,7 @@ def build_schedule_operation_group_delete_request(  # pylint: disable=name-too-l
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_schedule_operation_group_list_request(  # pylint: disable=name-too-long
+def build_schedules_list_request(
     resource_group_name: str,
     lab_name: str,
     subscription_id: str,
@@ -885,7 +885,7 @@ def build_schedule_operation_group_list_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_schedule_operation_group_execute_request(  # pylint: disable=name-too-long
+def build_schedules_execute_request(
     resource_group_name: str, lab_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -914,7 +914,7 @@ def build_schedule_operation_group_execute_request(  # pylint: disable=name-too-
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_schedule_operation_group_list_applicable_request(  # pylint: disable=name-too-long
+def build_schedules_list_applicable_request(
     resource_group_name: str, lab_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1774,7 +1774,7 @@ def build_artifacts_generate_arm_template_request(  # pylint: disable=name-too-l
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_lab_costs_get_request(
+def build_costs_get_request(
     resource_group_name: str,
     lab_name: str,
     name: str,
@@ -1811,7 +1811,7 @@ def build_lab_costs_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_lab_costs_create_or_update_request(
+def build_costs_create_or_update_request(
     resource_group_name: str, lab_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3165,7 +3165,7 @@ def build_disks_detach_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dtl_environments_get_request(
+def build_environments_get_request(
     resource_group_name: str,
     lab_name: str,
     user_name: str,
@@ -3204,7 +3204,7 @@ def build_dtl_environments_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dtl_environments_create_or_update_request(  # pylint: disable=name-too-long
+def build_environments_create_or_update_request(  # pylint: disable=name-too-long
     resource_group_name: str, lab_name: str, user_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3237,7 +3237,7 @@ def build_dtl_environments_create_or_update_request(  # pylint: disable=name-too
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dtl_environments_update_request(
+def build_environments_update_request(
     resource_group_name: str, lab_name: str, user_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3270,7 +3270,7 @@ def build_dtl_environments_update_request(
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dtl_environments_delete_request(
+def build_environments_delete_request(
     resource_group_name: str, lab_name: str, user_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3300,7 +3300,7 @@ def build_dtl_environments_delete_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dtl_environments_list_request(
+def build_environments_list_request(
     resource_group_name: str,
     lab_name: str,
     user_name: str,
@@ -3798,7 +3798,7 @@ def build_service_fabrics_stop_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_lab_virtual_machines_get_request(
+def build_virtual_machines_get_request(
     resource_group_name: str,
     lab_name: str,
     name: str,
@@ -3835,7 +3835,7 @@ def build_lab_virtual_machines_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_lab_virtual_machines_create_or_update_request(  # pylint: disable=name-too-long
+def build_virtual_machines_create_or_update_request(  # pylint: disable=name-too-long
     resource_group_name: str, lab_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3867,7 +3867,7 @@ def build_lab_virtual_machines_create_or_update_request(  # pylint: disable=name
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_lab_virtual_machines_update_request(  # pylint: disable=name-too-long
+def build_virtual_machines_update_request(
     resource_group_name: str, lab_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3899,7 +3899,7 @@ def build_lab_virtual_machines_update_request(  # pylint: disable=name-too-long
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_lab_virtual_machines_delete_request(  # pylint: disable=name-too-long
+def build_virtual_machines_delete_request(
     resource_group_name: str, lab_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3928,7 +3928,7 @@ def build_lab_virtual_machines_delete_request(  # pylint: disable=name-too-long
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_lab_virtual_machines_list_request(
+def build_virtual_machines_list_request(
     resource_group_name: str,
     lab_name: str,
     subscription_id: str,
@@ -3972,7 +3972,7 @@ def build_lab_virtual_machines_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_lab_virtual_machines_add_data_disk_request(  # pylint: disable=name-too-long
+def build_virtual_machines_add_data_disk_request(  # pylint: disable=name-too-long
     resource_group_name: str, lab_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4004,7 +4004,7 @@ def build_lab_virtual_machines_add_data_disk_request(  # pylint: disable=name-to
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_lab_virtual_machines_apply_artifacts_request(  # pylint: disable=name-too-long
+def build_virtual_machines_apply_artifacts_request(  # pylint: disable=name-too-long
     resource_group_name: str, lab_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4036,7 +4036,7 @@ def build_lab_virtual_machines_apply_artifacts_request(  # pylint: disable=name-
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_lab_virtual_machines_claim_request(
+def build_virtual_machines_claim_request(
     resource_group_name: str, lab_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4065,7 +4065,7 @@ def build_lab_virtual_machines_claim_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_lab_virtual_machines_detach_data_disk_request(  # pylint: disable=name-too-long
+def build_virtual_machines_detach_data_disk_request(  # pylint: disable=name-too-long
     resource_group_name: str, lab_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4097,7 +4097,7 @@ def build_lab_virtual_machines_detach_data_disk_request(  # pylint: disable=name
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_lab_virtual_machines_get_rdp_file_contents_request(  # pylint: disable=name-too-long
+def build_virtual_machines_get_rdp_file_contents_request(  # pylint: disable=name-too-long
     resource_group_name: str, lab_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4126,7 +4126,7 @@ def build_lab_virtual_machines_get_rdp_file_contents_request(  # pylint: disable
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_lab_virtual_machines_list_applicable_schedules_request(  # pylint: disable=name-too-long
+def build_virtual_machines_list_applicable_schedules_request(  # pylint: disable=name-too-long
     resource_group_name: str, lab_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4155,7 +4155,7 @@ def build_lab_virtual_machines_list_applicable_schedules_request(  # pylint: dis
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_lab_virtual_machines_redeploy_request(  # pylint: disable=name-too-long
+def build_virtual_machines_redeploy_request(
     resource_group_name: str, lab_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4184,7 +4184,7 @@ def build_lab_virtual_machines_redeploy_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_lab_virtual_machines_resize_request(  # pylint: disable=name-too-long
+def build_virtual_machines_resize_request(
     resource_group_name: str, lab_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4216,7 +4216,7 @@ def build_lab_virtual_machines_resize_request(  # pylint: disable=name-too-long
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_lab_virtual_machines_restart_request(  # pylint: disable=name-too-long
+def build_virtual_machines_restart_request(
     resource_group_name: str, lab_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4245,7 +4245,7 @@ def build_lab_virtual_machines_restart_request(  # pylint: disable=name-too-long
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_lab_virtual_machines_start_request(
+def build_virtual_machines_start_request(
     resource_group_name: str, lab_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4274,7 +4274,7 @@ def build_lab_virtual_machines_start_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_lab_virtual_machines_stop_request(
+def build_virtual_machines_stop_request(
     resource_group_name: str, lab_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4303,7 +4303,7 @@ def build_lab_virtual_machines_stop_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_lab_virtual_machines_transfer_disks_request(  # pylint: disable=name-too-long
+def build_virtual_machines_transfer_disks_request(  # pylint: disable=name-too-long
     resource_group_name: str, lab_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4332,7 +4332,7 @@ def build_lab_virtual_machines_transfer_disks_request(  # pylint: disable=name-t
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_lab_virtual_machines_un_claim_request(  # pylint: disable=name-too-long
+def build_virtual_machines_un_claim_request(
     resource_group_name: str, lab_name: str, name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4535,9 +4535,7 @@ def build_virtual_networks_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_operations_operation_group_get_request(  # pylint: disable=name-too-long
-    location_name: str, name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_operations_get_request(location_name: str, name: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -6550,14 +6548,14 @@ class LabsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SchedulesOperations:
+class GlobalSchedulesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.devtestlabs.DevTestLabClient`'s
-        :attr:`schedules` attribute.
+        :attr:`global_schedules` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -6598,7 +6596,7 @@ class SchedulesOperations:
 
         cls: ClsType[_models.Schedule] = kwargs.pop("cls", None)
 
-        _request = build_schedules_get_request(
+        _request = build_global_schedules_get_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
@@ -6758,7 +6756,7 @@ class SchedulesOperations:
         else:
             _content = json.dumps(schedule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_schedules_create_or_update_request(
+        _request = build_global_schedules_create_or_update_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
@@ -6924,7 +6922,7 @@ class SchedulesOperations:
         else:
             _content = json.dumps(schedule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_schedules_update_request(
+        _request = build_global_schedules_update_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
@@ -6994,7 +6992,7 @@ class SchedulesOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_schedules_delete_request(
+        _request = build_global_schedules_delete_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
@@ -7070,7 +7068,7 @@ class SchedulesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_schedules_list_by_resource_group_request(
+                _request = build_global_schedules_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     expand=expand,
@@ -7179,7 +7177,7 @@ class SchedulesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_schedules_list_by_subscription_request(
+                _request = build_global_schedules_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     expand=expand,
                     filter=filter,
@@ -7257,7 +7255,7 @@ class SchedulesOperations:
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_schedules_execute_request(
+        _request = build_global_schedules_execute_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
@@ -7393,7 +7391,7 @@ class SchedulesOperations:
         else:
             _content = json.dumps(retarget_schedule_properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_schedules_retarget_request(
+        _request = build_global_schedules_retarget_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
@@ -7604,14 +7602,14 @@ class SchedulesOperations:
         )
 
 
-class ScheduleOperationGroupOperations:
+class SchedulesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.devtestlabs.DevTestLabClient`'s
-        :attr:`schedule_operation_group` attribute.
+        :attr:`schedules` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -7654,7 +7652,7 @@ class ScheduleOperationGroupOperations:
 
         cls: ClsType[_models.Schedule] = kwargs.pop("cls", None)
 
-        _request = build_schedule_operation_group_get_request(
+        _request = build_schedules_get_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -7831,7 +7829,7 @@ class ScheduleOperationGroupOperations:
         else:
             _content = json.dumps(schedule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_schedule_operation_group_create_or_update_request(
+        _request = build_schedules_create_or_update_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -8010,7 +8008,7 @@ class ScheduleOperationGroupOperations:
         else:
             _content = json.dumps(schedule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_schedule_operation_group_update_request(
+        _request = build_schedules_update_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -8083,7 +8081,7 @@ class ScheduleOperationGroupOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_schedule_operation_group_delete_request(
+        _request = build_schedules_delete_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -8163,7 +8161,7 @@ class ScheduleOperationGroupOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_schedule_operation_group_list_request(
+                _request = build_schedules_list_request(
                     resource_group_name=resource_group_name,
                     lab_name=lab_name,
                     subscription_id=self._config.subscription_id,
@@ -8243,7 +8241,7 @@ class ScheduleOperationGroupOperations:
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_schedule_operation_group_execute_request(
+        _request = build_schedules_execute_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -8390,7 +8388,7 @@ class ScheduleOperationGroupOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_schedule_operation_group_list_applicable_request(
+                _request = build_schedules_list_applicable_request(
                     resource_group_name=resource_group_name,
                     lab_name=lab_name,
                     name=name,
@@ -11395,14 +11393,14 @@ class ArtifactsOperations:
         return deserialized  # type: ignore
 
 
-class LabCostsOperations:
+class CostsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.devtestlabs.DevTestLabClient`'s
-        :attr:`lab_costs` attribute.
+        :attr:`costs` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -11445,7 +11443,7 @@ class LabCostsOperations:
 
         cls: ClsType[_models.LabCost] = kwargs.pop("cls", None)
 
-        _request = build_lab_costs_get_request(
+        _request = build_costs_get_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -11622,7 +11620,7 @@ class LabCostsOperations:
         else:
             _content = json.dumps(lab_cost, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_lab_costs_create_or_update_request(
+        _request = build_costs_create_or_update_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -17295,14 +17293,14 @@ class DisksOperations:
         )
 
 
-class DtlEnvironmentsOperations:
+class EnvironmentsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.devtestlabs.DevTestLabClient`'s
-        :attr:`dtl_environments` attribute.
+        :attr:`environments` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -17354,7 +17352,7 @@ class DtlEnvironmentsOperations:
 
         cls: ClsType[_models.DtlEnvironment] = kwargs.pop("cls", None)
 
-        _request = build_dtl_environments_get_request(
+        _request = build_environments_get_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             user_name=user_name,
@@ -17427,7 +17425,7 @@ class DtlEnvironmentsOperations:
         else:
             _content = json.dumps(dtl_environment, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_dtl_environments_create_or_update_request(
+        _request = build_environments_create_or_update_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             user_name=user_name,
@@ -17803,7 +17801,7 @@ class DtlEnvironmentsOperations:
         else:
             _content = json.dumps(dtl_environment, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_dtl_environments_update_request(
+        _request = build_environments_update_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             user_name=user_name,
@@ -17863,7 +17861,7 @@ class DtlEnvironmentsOperations:
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_dtl_environments_delete_request(
+        _request = build_environments_delete_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             user_name=user_name,
@@ -18025,7 +18023,7 @@ class DtlEnvironmentsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dtl_environments_list_request(
+                _request = build_environments_list_request(
                     resource_group_name=resource_group_name,
                     lab_name=lab_name,
                     user_name=user_name,
@@ -19954,14 +19952,14 @@ class ServiceFabricsOperations:
         )
 
 
-class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
+class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.devtestlabs.DevTestLabClient`'s
-        :attr:`lab_virtual_machines` attribute.
+        :attr:`virtual_machines` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -20005,7 +20003,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.LabVirtualMachine] = kwargs.pop("cls", None)
 
-        _request = build_lab_virtual_machines_get_request(
+        _request = build_virtual_machines_get_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -20076,7 +20074,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(lab_virtual_machine, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_lab_virtual_machines_create_or_update_request(
+        _request = build_virtual_machines_create_or_update_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -20421,7 +20419,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(lab_virtual_machine, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_lab_virtual_machines_update_request(
+        _request = build_virtual_machines_update_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -20478,7 +20476,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_lab_virtual_machines_delete_request(
+        _request = build_virtual_machines_delete_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -20632,7 +20630,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_lab_virtual_machines_list_request(
+                _request = build_virtual_machines_list_request(
                     resource_group_name=resource_group_name,
                     lab_name=lab_name,
                     subscription_id=self._config.subscription_id,
@@ -20727,7 +20725,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(data_disk_properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_lab_virtual_machines_add_data_disk_request(
+        _request = build_virtual_machines_add_data_disk_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -20984,7 +20982,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(apply_artifacts_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_lab_virtual_machines_apply_artifacts_request(
+        _request = build_virtual_machines_apply_artifacts_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -21222,7 +21220,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_lab_virtual_machines_claim_request(
+        _request = build_virtual_machines_claim_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -21365,7 +21363,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(detach_data_disk_properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_lab_virtual_machines_detach_data_disk_request(
+        _request = build_virtual_machines_detach_data_disk_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -21623,7 +21621,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.RdpConnection] = kwargs.pop("cls", None)
 
-        _request = build_lab_virtual_machines_get_rdp_file_contents_request(
+        _request = build_virtual_machines_get_rdp_file_contents_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -21694,7 +21692,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.ApplicableSchedule] = kwargs.pop("cls", None)
 
-        _request = build_lab_virtual_machines_list_applicable_schedules_request(
+        _request = build_virtual_machines_list_applicable_schedules_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -21749,7 +21747,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_lab_virtual_machines_redeploy_request(
+        _request = build_virtual_machines_redeploy_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -21892,7 +21890,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(resize_lab_virtual_machine_properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_lab_virtual_machines_resize_request(
+        _request = build_virtual_machines_resize_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -22131,7 +22129,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_lab_virtual_machines_restart_request(
+        _request = build_virtual_machines_restart_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -22259,7 +22257,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_lab_virtual_machines_start_request(
+        _request = build_virtual_machines_start_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -22387,7 +22385,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_lab_virtual_machines_stop_request(
+        _request = build_virtual_machines_stop_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -22517,7 +22515,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_lab_virtual_machines_transfer_disks_request(
+        _request = build_virtual_machines_transfer_disks_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -22646,7 +22644,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_lab_virtual_machines_un_claim_request(
+        _request = build_virtual_machines_un_claim_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -23503,14 +23501,14 @@ class VirtualNetworksOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class OperationsOperationGroupOperations:
+class Operations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.devtestlabs.DevTestLabClient`'s
-        :attr:`operations_operation_group` attribute.
+        :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -23545,7 +23543,7 @@ class OperationsOperationGroupOperations:
 
         cls: ClsType[_models.OperationResult] = kwargs.pop("cls", None)
 
-        _request = build_operations_operation_group_get_request(
+        _request = build_operations_get_request(
             location_name=location_name,
             name=name,
             subscription_id=self._config.subscription_id,

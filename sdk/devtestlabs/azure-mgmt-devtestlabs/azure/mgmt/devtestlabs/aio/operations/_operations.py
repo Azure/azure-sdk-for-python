@@ -47,6 +47,8 @@ from ...operations._operations import (
     build_artifacts_generate_arm_template_request,
     build_artifacts_get_request,
     build_artifacts_list_request,
+    build_costs_create_or_update_request,
+    build_costs_get_request,
     build_custom_images_create_or_update_request,
     build_custom_images_delete_request,
     build_custom_images_get_request,
@@ -59,37 +61,25 @@ from ...operations._operations import (
     build_disks_get_request,
     build_disks_list_request,
     build_disks_update_request,
-    build_dtl_environments_create_or_update_request,
-    build_dtl_environments_delete_request,
-    build_dtl_environments_get_request,
-    build_dtl_environments_list_request,
-    build_dtl_environments_update_request,
+    build_environments_create_or_update_request,
+    build_environments_delete_request,
+    build_environments_get_request,
+    build_environments_list_request,
+    build_environments_update_request,
     build_formulas_create_or_update_request,
     build_formulas_delete_request,
     build_formulas_get_request,
     build_formulas_list_request,
     build_formulas_update_request,
     build_gallery_images_list_request,
-    build_lab_costs_create_or_update_request,
-    build_lab_costs_get_request,
-    build_lab_virtual_machines_add_data_disk_request,
-    build_lab_virtual_machines_apply_artifacts_request,
-    build_lab_virtual_machines_claim_request,
-    build_lab_virtual_machines_create_or_update_request,
-    build_lab_virtual_machines_delete_request,
-    build_lab_virtual_machines_detach_data_disk_request,
-    build_lab_virtual_machines_get_rdp_file_contents_request,
-    build_lab_virtual_machines_get_request,
-    build_lab_virtual_machines_list_applicable_schedules_request,
-    build_lab_virtual_machines_list_request,
-    build_lab_virtual_machines_redeploy_request,
-    build_lab_virtual_machines_resize_request,
-    build_lab_virtual_machines_restart_request,
-    build_lab_virtual_machines_start_request,
-    build_lab_virtual_machines_stop_request,
-    build_lab_virtual_machines_transfer_disks_request,
-    build_lab_virtual_machines_un_claim_request,
-    build_lab_virtual_machines_update_request,
+    build_global_schedules_create_or_update_request,
+    build_global_schedules_delete_request,
+    build_global_schedules_execute_request,
+    build_global_schedules_get_request,
+    build_global_schedules_list_by_resource_group_request,
+    build_global_schedules_list_by_subscription_request,
+    build_global_schedules_retarget_request,
+    build_global_schedules_update_request,
     build_labs_claim_any_vm_request,
     build_labs_create_environment_request,
     build_labs_create_or_update_request,
@@ -108,7 +98,7 @@ from ...operations._operations import (
     build_notification_channels_list_request,
     build_notification_channels_notify_request,
     build_notification_channels_update_request,
-    build_operations_operation_group_get_request,
+    build_operations_get_request,
     build_policies_create_or_update_request,
     build_policies_delete_request,
     build_policies_get_request,
@@ -116,20 +106,12 @@ from ...operations._operations import (
     build_policies_update_request,
     build_policy_sets_evaluate_policies_request,
     build_provider_operations_list_request,
-    build_schedule_operation_group_create_or_update_request,
-    build_schedule_operation_group_delete_request,
-    build_schedule_operation_group_execute_request,
-    build_schedule_operation_group_get_request,
-    build_schedule_operation_group_list_applicable_request,
-    build_schedule_operation_group_list_request,
-    build_schedule_operation_group_update_request,
     build_schedules_create_or_update_request,
     build_schedules_delete_request,
     build_schedules_execute_request,
     build_schedules_get_request,
-    build_schedules_list_by_resource_group_request,
-    build_schedules_list_by_subscription_request,
-    build_schedules_retarget_request,
+    build_schedules_list_applicable_request,
+    build_schedules_list_request,
     build_schedules_update_request,
     build_secrets_create_or_update_request,
     build_secrets_delete_request,
@@ -164,6 +146,24 @@ from ...operations._operations import (
     build_virtual_machine_schedules_get_request,
     build_virtual_machine_schedules_list_request,
     build_virtual_machine_schedules_update_request,
+    build_virtual_machines_add_data_disk_request,
+    build_virtual_machines_apply_artifacts_request,
+    build_virtual_machines_claim_request,
+    build_virtual_machines_create_or_update_request,
+    build_virtual_machines_delete_request,
+    build_virtual_machines_detach_data_disk_request,
+    build_virtual_machines_get_rdp_file_contents_request,
+    build_virtual_machines_get_request,
+    build_virtual_machines_list_applicable_schedules_request,
+    build_virtual_machines_list_request,
+    build_virtual_machines_redeploy_request,
+    build_virtual_machines_resize_request,
+    build_virtual_machines_restart_request,
+    build_virtual_machines_start_request,
+    build_virtual_machines_stop_request,
+    build_virtual_machines_transfer_disks_request,
+    build_virtual_machines_un_claim_request,
+    build_virtual_machines_update_request,
     build_virtual_networks_create_or_update_request,
     build_virtual_networks_delete_request,
     build_virtual_networks_get_request,
@@ -2168,14 +2168,14 @@ class LabsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SchedulesOperations:
+class GlobalSchedulesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.devtestlabs.aio.DevTestLabClient`'s
-        :attr:`schedules` attribute.
+        :attr:`global_schedules` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -2216,7 +2216,7 @@ class SchedulesOperations:
 
         cls: ClsType[_models.Schedule] = kwargs.pop("cls", None)
 
-        _request = build_schedules_get_request(
+        _request = build_global_schedules_get_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
@@ -2376,7 +2376,7 @@ class SchedulesOperations:
         else:
             _content = json.dumps(schedule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_schedules_create_or_update_request(
+        _request = build_global_schedules_create_or_update_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
@@ -2542,7 +2542,7 @@ class SchedulesOperations:
         else:
             _content = json.dumps(schedule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_schedules_update_request(
+        _request = build_global_schedules_update_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
@@ -2610,7 +2610,7 @@ class SchedulesOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_schedules_delete_request(
+        _request = build_global_schedules_delete_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
@@ -2686,7 +2686,7 @@ class SchedulesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_schedules_list_by_resource_group_request(
+                _request = build_global_schedules_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     expand=expand,
@@ -2795,7 +2795,7 @@ class SchedulesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_schedules_list_by_subscription_request(
+                _request = build_global_schedules_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     expand=expand,
                     filter=filter,
@@ -2873,7 +2873,7 @@ class SchedulesOperations:
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_schedules_execute_request(
+        _request = build_global_schedules_execute_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
@@ -3011,7 +3011,7 @@ class SchedulesOperations:
         else:
             _content = json.dumps(retarget_schedule_properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_schedules_retarget_request(
+        _request = build_global_schedules_retarget_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
@@ -3222,14 +3222,14 @@ class SchedulesOperations:
         )
 
 
-class ScheduleOperationGroupOperations:
+class SchedulesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.devtestlabs.aio.DevTestLabClient`'s
-        :attr:`schedule_operation_group` attribute.
+        :attr:`schedules` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -3272,7 +3272,7 @@ class ScheduleOperationGroupOperations:
 
         cls: ClsType[_models.Schedule] = kwargs.pop("cls", None)
 
-        _request = build_schedule_operation_group_get_request(
+        _request = build_schedules_get_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -3449,7 +3449,7 @@ class ScheduleOperationGroupOperations:
         else:
             _content = json.dumps(schedule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_schedule_operation_group_create_or_update_request(
+        _request = build_schedules_create_or_update_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -3628,7 +3628,7 @@ class ScheduleOperationGroupOperations:
         else:
             _content = json.dumps(schedule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_schedule_operation_group_update_request(
+        _request = build_schedules_update_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -3699,7 +3699,7 @@ class ScheduleOperationGroupOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_schedule_operation_group_delete_request(
+        _request = build_schedules_delete_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -3779,7 +3779,7 @@ class ScheduleOperationGroupOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_schedule_operation_group_list_request(
+                _request = build_schedules_list_request(
                     resource_group_name=resource_group_name,
                     lab_name=lab_name,
                     subscription_id=self._config.subscription_id,
@@ -3861,7 +3861,7 @@ class ScheduleOperationGroupOperations:
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_schedule_operation_group_execute_request(
+        _request = build_schedules_execute_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -4008,7 +4008,7 @@ class ScheduleOperationGroupOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_schedule_operation_group_list_applicable_request(
+                _request = build_schedules_list_applicable_request(
                     resource_group_name=resource_group_name,
                     lab_name=lab_name,
                     name=name,
@@ -7011,14 +7011,14 @@ class ArtifactsOperations:
         return deserialized  # type: ignore
 
 
-class LabCostsOperations:
+class CostsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.devtestlabs.aio.DevTestLabClient`'s
-        :attr:`lab_costs` attribute.
+        :attr:`costs` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -7061,7 +7061,7 @@ class LabCostsOperations:
 
         cls: ClsType[_models.LabCost] = kwargs.pop("cls", None)
 
-        _request = build_lab_costs_get_request(
+        _request = build_costs_get_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -7238,7 +7238,7 @@ class LabCostsOperations:
         else:
             _content = json.dumps(lab_cost, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_lab_costs_create_or_update_request(
+        _request = build_costs_create_or_update_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -12914,14 +12914,14 @@ class DisksOperations:
         )
 
 
-class DtlEnvironmentsOperations:
+class EnvironmentsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.devtestlabs.aio.DevTestLabClient`'s
-        :attr:`dtl_environments` attribute.
+        :attr:`environments` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -12973,7 +12973,7 @@ class DtlEnvironmentsOperations:
 
         cls: ClsType[_models.DtlEnvironment] = kwargs.pop("cls", None)
 
-        _request = build_dtl_environments_get_request(
+        _request = build_environments_get_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             user_name=user_name,
@@ -13046,7 +13046,7 @@ class DtlEnvironmentsOperations:
         else:
             _content = json.dumps(dtl_environment, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_dtl_environments_create_or_update_request(
+        _request = build_environments_create_or_update_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             user_name=user_name,
@@ -13422,7 +13422,7 @@ class DtlEnvironmentsOperations:
         else:
             _content = json.dumps(dtl_environment, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_dtl_environments_update_request(
+        _request = build_environments_update_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             user_name=user_name,
@@ -13482,7 +13482,7 @@ class DtlEnvironmentsOperations:
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_dtl_environments_delete_request(
+        _request = build_environments_delete_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             user_name=user_name,
@@ -13644,7 +13644,7 @@ class DtlEnvironmentsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dtl_environments_list_request(
+                _request = build_environments_list_request(
                     resource_group_name=resource_group_name,
                     lab_name=lab_name,
                     user_name=user_name,
@@ -15571,14 +15571,14 @@ class ServiceFabricsOperations:
         )
 
 
-class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
+class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.devtestlabs.aio.DevTestLabClient`'s
-        :attr:`lab_virtual_machines` attribute.
+        :attr:`virtual_machines` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -15622,7 +15622,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.LabVirtualMachine] = kwargs.pop("cls", None)
 
-        _request = build_lab_virtual_machines_get_request(
+        _request = build_virtual_machines_get_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -15693,7 +15693,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(lab_virtual_machine, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_lab_virtual_machines_create_or_update_request(
+        _request = build_virtual_machines_create_or_update_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -16038,7 +16038,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(lab_virtual_machine, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_lab_virtual_machines_update_request(
+        _request = build_virtual_machines_update_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -16097,7 +16097,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_lab_virtual_machines_delete_request(
+        _request = build_virtual_machines_delete_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -16254,7 +16254,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_lab_virtual_machines_list_request(
+                _request = build_virtual_machines_list_request(
                     resource_group_name=resource_group_name,
                     lab_name=lab_name,
                     subscription_id=self._config.subscription_id,
@@ -16349,7 +16349,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(data_disk_properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_lab_virtual_machines_add_data_disk_request(
+        _request = build_virtual_machines_add_data_disk_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -16606,7 +16606,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(apply_artifacts_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_lab_virtual_machines_apply_artifacts_request(
+        _request = build_virtual_machines_apply_artifacts_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -16846,7 +16846,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_lab_virtual_machines_claim_request(
+        _request = build_virtual_machines_claim_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -16989,7 +16989,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(detach_data_disk_properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_lab_virtual_machines_detach_data_disk_request(
+        _request = build_virtual_machines_detach_data_disk_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -17247,7 +17247,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.RdpConnection] = kwargs.pop("cls", None)
 
-        _request = build_lab_virtual_machines_get_rdp_file_contents_request(
+        _request = build_virtual_machines_get_rdp_file_contents_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -17318,7 +17318,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.ApplicableSchedule] = kwargs.pop("cls", None)
 
-        _request = build_lab_virtual_machines_list_applicable_schedules_request(
+        _request = build_virtual_machines_list_applicable_schedules_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -17375,7 +17375,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_lab_virtual_machines_redeploy_request(
+        _request = build_virtual_machines_redeploy_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -17518,7 +17518,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(resize_lab_virtual_machine_properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_lab_virtual_machines_resize_request(
+        _request = build_virtual_machines_resize_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -17759,7 +17759,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_lab_virtual_machines_restart_request(
+        _request = build_virtual_machines_restart_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -17889,7 +17889,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_lab_virtual_machines_start_request(
+        _request = build_virtual_machines_start_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -18019,7 +18019,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_lab_virtual_machines_stop_request(
+        _request = build_virtual_machines_stop_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -18149,7 +18149,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_lab_virtual_machines_transfer_disks_request(
+        _request = build_virtual_machines_transfer_disks_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -18280,7 +18280,7 @@ class LabVirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_lab_virtual_machines_un_claim_request(
+        _request = build_virtual_machines_un_claim_request(
             resource_group_name=resource_group_name,
             lab_name=lab_name,
             name=name,
@@ -19141,14 +19141,14 @@ class VirtualNetworksOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class OperationsOperationGroupOperations:
+class Operations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.devtestlabs.aio.DevTestLabClient`'s
-        :attr:`operations_operation_group` attribute.
+        :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -19183,7 +19183,7 @@ class OperationsOperationGroupOperations:
 
         cls: ClsType[_models.OperationResult] = kwargs.pop("cls", None)
 
-        _request = build_operations_operation_group_get_request(
+        _request = build_operations_get_request(
             location_name=location_name,
             name=name,
             subscription_id=self._config.subscription_id,

@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.dtl_environments.get(
+    response = client.environments.get(
         resource_group_name="resourceGroupName",
         lab_name="{labName}",
         user_name="@me",

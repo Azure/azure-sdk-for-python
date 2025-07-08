@@ -31,7 +31,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.dtl_environments.begin_create_or_update(
+    client.environments.begin_create_or_update(
         resource_group_name="resourceGroupName",
         lab_name="{labName}",
         user_name="@me",

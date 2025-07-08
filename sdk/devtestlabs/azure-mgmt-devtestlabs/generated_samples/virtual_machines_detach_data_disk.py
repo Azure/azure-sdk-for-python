@@ -31,7 +31,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.lab_virtual_machines.begin_detach_data_disk(
+    response = client.virtual_machines.begin_detach_data_disk(
         resource_group_name="resourceGroupName",
         lab_name="{labName}",
         name="{virtualMachineName}",

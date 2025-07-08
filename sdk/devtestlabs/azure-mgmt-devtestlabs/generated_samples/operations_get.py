@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.operations_operation_group.get(
+    response = client.operations.get(
         location_name="{locationName}",
         name="{operationName}",
     )

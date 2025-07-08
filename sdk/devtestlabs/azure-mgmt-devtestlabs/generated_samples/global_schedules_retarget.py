@@ -31,7 +31,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.schedules.begin_retarget(
+    response = client.global_schedules.begin_retarget(
         resource_group_name="resourceGroupName",
         name="{scheduleName}",
         retarget_schedule_properties={

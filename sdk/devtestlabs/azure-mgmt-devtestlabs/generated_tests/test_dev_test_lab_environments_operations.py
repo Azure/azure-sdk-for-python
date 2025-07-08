@@ -14,16 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestDevTestLabSchedulesOperations(AzureMgmtRecordedTestCase):
+class TestDevTestLabEnvironmentsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(DevTestLabClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_schedules_get(self, resource_group):
-        response = self.client.schedules.get(
+    def test_environments_get(self, resource_group):
+        response = self.client.environments.get(
             resource_group_name=resource_group.name,
             lab_name="str",
+            user_name="str",
             name="str",
         )
 
@@ -32,30 +33,20 @@ class TestDevTestLabSchedulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_schedules_create_or_update(self, resource_group):
-        response = self.client.schedules.create_or_update(
+    def test_environments_begin_create_or_update(self, resource_group):
+        response = self.client.environments.begin_create_or_update(
             resource_group_name=resource_group.name,
             lab_name="str",
+            user_name="str",
             name="str",
-            schedule={
+            dtl_environment={
                 "properties": {
-                    "createdDate": "2020-02-20 00:00:00",
-                    "dailyRecurrence": {"time": "str"},
-                    "hourlyRecurrence": {"minute": 0},
-                    "notificationSettings": {
-                        "emailRecipient": "str",
-                        "notificationLocale": "str",
-                        "status": "str",
-                        "timeInMinutes": 0,
-                        "webhookUrl": "str",
-                    },
+                    "armTemplateDisplayName": "str",
+                    "createdByUser": "str",
+                    "deploymentProperties": {"armTemplateId": "str", "parameters": [{"name": "str", "value": "str"}]},
                     "provisioningState": "str",
-                    "status": "str",
-                    "targetResourceId": "str",
-                    "taskType": "str",
-                    "timeZoneId": "str",
+                    "resourceGroupId": "str",
                     "uniqueIdentifier": "str",
-                    "weeklyRecurrence": {"time": "str", "weekdays": ["str"]},
                 },
                 "id": "str",
                 "location": "str",
@@ -63,19 +54,20 @@ class TestDevTestLabSchedulesOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-        )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_schedules_update(self, resource_group):
-        response = self.client.schedules.update(
+    def test_environments_update(self, resource_group):
+        response = self.client.environments.update(
             resource_group_name=resource_group.name,
             lab_name="str",
+            user_name="str",
             name="str",
-            schedule={"tags": {"str": "str"}},
+            dtl_environment={"tags": {"str": "str"}},
         )
 
         # please add some check logic here by yourself
@@ -83,33 +75,11 @@ class TestDevTestLabSchedulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_schedules_delete(self, resource_group):
-        response = self.client.schedules.delete(
+    def test_environments_begin_delete(self, resource_group):
+        response = self.client.environments.begin_delete(
             resource_group_name=resource_group.name,
             lab_name="str",
-            name="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_schedules_list(self, resource_group):
-        response = self.client.schedules.list(
-            resource_group_name=resource_group.name,
-            lab_name="str",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_schedules_begin_execute(self, resource_group):
-        response = self.client.schedules.begin_execute(
-            resource_group_name=resource_group.name,
-            lab_name="str",
+            user_name="str",
             name="str",
         ).result()  # call '.result()' to poll until service return final result
 
@@ -118,11 +88,11 @@ class TestDevTestLabSchedulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_schedules_list_applicable(self, resource_group):
-        response = self.client.schedules.list_applicable(
+    def test_environments_list(self, resource_group):
+        response = self.client.environments.list(
             resource_group_name=resource_group.name,
             lab_name="str",
-            name="str",
+            user_name="str",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

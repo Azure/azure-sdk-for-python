@@ -31,7 +31,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.lab_virtual_machines.begin_create_or_update(
+    client.virtual_machines.begin_create_or_update(
         resource_group_name="resourceGroupName",
         lab_name="{labName}",
         name="{vmName}",

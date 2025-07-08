@@ -15,16 +15,15 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestDevTestLabSchedulesOperationsAsync(AzureMgmtRecordedTestCase):
+class TestDevTestLabGlobalSchedulesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(DevTestLabClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_schedules_get(self, resource_group):
-        response = await self.client.schedules.get(
+    async def test_global_schedules_get(self, resource_group):
+        response = await self.client.global_schedules.get(
             resource_group_name=resource_group.name,
-            lab_name="str",
             name="str",
         )
 
@@ -33,10 +32,9 @@ class TestDevTestLabSchedulesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_schedules_create_or_update(self, resource_group):
-        response = await self.client.schedules.create_or_update(
+    async def test_global_schedules_create_or_update(self, resource_group):
+        response = await self.client.global_schedules.create_or_update(
             resource_group_name=resource_group.name,
-            lab_name="str",
             name="str",
             schedule={
                 "properties": {
@@ -71,10 +69,9 @@ class TestDevTestLabSchedulesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_schedules_update(self, resource_group):
-        response = await self.client.schedules.update(
+    async def test_global_schedules_update(self, resource_group):
+        response = await self.client.global_schedules.update(
             resource_group_name=resource_group.name,
-            lab_name="str",
             name="str",
             schedule={"tags": {"str": "str"}},
         )
@@ -84,10 +81,9 @@ class TestDevTestLabSchedulesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_schedules_delete(self, resource_group):
-        response = await self.client.schedules.delete(
+    async def test_global_schedules_delete(self, resource_group):
+        response = await self.client.global_schedules.delete(
             resource_group_name=resource_group.name,
-            lab_name="str",
             name="str",
         )
 
@@ -96,10 +92,9 @@ class TestDevTestLabSchedulesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_schedules_list(self, resource_group):
-        response = self.client.schedules.list(
+    async def test_global_schedules_list_by_resource_group(self, resource_group):
+        response = self.client.global_schedules.list_by_resource_group(
             resource_group_name=resource_group.name,
-            lab_name="str",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -107,11 +102,18 @@ class TestDevTestLabSchedulesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_schedules_begin_execute(self, resource_group):
+    async def test_global_schedules_list_by_subscription(self, resource_group):
+        response = self.client.global_schedules.list_by_subscription()
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_global_schedules_begin_execute(self, resource_group):
         response = await (
-            await self.client.schedules.begin_execute(
+            await self.client.global_schedules.begin_execute(
                 resource_group_name=resource_group.name,
-                lab_name="str",
                 name="str",
             )
         ).result()  # call '.result()' to poll until service return final result
@@ -121,12 +123,14 @@ class TestDevTestLabSchedulesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_schedules_list_applicable(self, resource_group):
-        response = self.client.schedules.list_applicable(
-            resource_group_name=resource_group.name,
-            lab_name="str",
-            name="str",
-        )
-        result = [r async for r in response]
+    async def test_global_schedules_begin_retarget(self, resource_group):
+        response = await (
+            await self.client.global_schedules.begin_retarget(
+                resource_group_name=resource_group.name,
+                name="str",
+                retarget_schedule_properties={"currentResourceId": "str", "targetResourceId": "str"},
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
         # please add some check logic here by yourself
         # ...

@@ -14,14 +14,14 @@ if TYPE_CHECKING:
 
 from ._operations import ProviderOperationsOperations  # type: ignore
 from ._operations import LabsOperations  # type: ignore
+from ._operations import GlobalSchedulesOperations  # type: ignore
 from ._operations import SchedulesOperations  # type: ignore
-from ._operations import ScheduleOperationGroupOperations  # type: ignore
 from ._operations import ServiceFabricSchedulesOperations  # type: ignore
 from ._operations import VirtualMachineSchedulesOperations  # type: ignore
 from ._operations import ArtifactSourcesOperations  # type: ignore
 from ._operations import ArmTemplatesOperations  # type: ignore
 from ._operations import ArtifactsOperations  # type: ignore
-from ._operations import LabCostsOperations  # type: ignore
+from ._operations import CostsOperations  # type: ignore
 from ._operations import CustomImagesOperations  # type: ignore
 from ._operations import FormulasOperations  # type: ignore
 from ._operations import GalleryImagesOperations  # type: ignore
@@ -31,12 +31,12 @@ from ._operations import PolicySetsOperations  # type: ignore
 from ._operations import ServiceRunnersOperations  # type: ignore
 from ._operations import UsersOperations  # type: ignore
 from ._operations import DisksOperations  # type: ignore
-from ._operations import DtlEnvironmentsOperations  # type: ignore
+from ._operations import EnvironmentsOperations  # type: ignore
 from ._operations import SecretsOperations  # type: ignore
 from ._operations import ServiceFabricsOperations  # type: ignore
-from ._operations import LabVirtualMachinesOperations  # type: ignore
+from ._operations import VirtualMachinesOperations  # type: ignore
 from ._operations import VirtualNetworksOperations  # type: ignore
-from ._operations import OperationsOperationGroupOperations  # type: ignore
+from ._operations import Operations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -45,14 +45,14 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "ProviderOperationsOperations",
     "LabsOperations",
+    "GlobalSchedulesOperations",
     "SchedulesOperations",
-    "ScheduleOperationGroupOperations",
     "ServiceFabricSchedulesOperations",
     "VirtualMachineSchedulesOperations",
     "ArtifactSourcesOperations",
     "ArmTemplatesOperations",
     "ArtifactsOperations",
-    "LabCostsOperations",
+    "CostsOperations",
     "CustomImagesOperations",
     "FormulasOperations",
     "GalleryImagesOperations",
@@ -62,12 +62,12 @@ __all__ = [
     "ServiceRunnersOperations",
     "UsersOperations",
     "DisksOperations",
-    "DtlEnvironmentsOperations",
+    "EnvironmentsOperations",
     "SecretsOperations",
     "ServiceFabricsOperations",
-    "LabVirtualMachinesOperations",
+    "VirtualMachinesOperations",
     "VirtualNetworksOperations",
-    "OperationsOperationGroupOperations",
+    "Operations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

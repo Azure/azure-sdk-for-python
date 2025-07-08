@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.schedules.delete(
+    client.global_schedules.delete(
         resource_group_name="resourceGroupName",
         name="labvmautostart",
     )

@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.schedules.update(
+    response = client.global_schedules.update(
         resource_group_name="resourceGroupName",
         name="labvmautostart",
         schedule={"tags": {"tagName1": "tagValue1"}},

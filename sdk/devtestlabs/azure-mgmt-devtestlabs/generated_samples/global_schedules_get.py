@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.schedules.get(
+    response = client.global_schedules.get(
         resource_group_name="resourceGroupName",
         name="labvmautostart",
     )

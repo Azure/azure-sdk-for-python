@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.schedules.list_by_subscription()
+    response = client.global_schedules.list_by_subscription()
     for item in response:
         print(item)
 

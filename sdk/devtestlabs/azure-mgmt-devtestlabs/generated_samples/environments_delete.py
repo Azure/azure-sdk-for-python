@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.dtl_environments.begin_delete(
+    client.environments.begin_delete(
         resource_group_name="resourceGroupName",
         lab_name="{labName}",
         user_name="@me",

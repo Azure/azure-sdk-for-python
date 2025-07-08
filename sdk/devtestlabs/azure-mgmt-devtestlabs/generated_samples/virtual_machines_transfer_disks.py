@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.lab_virtual_machines.begin_transfer_disks(
+    response = client.virtual_machines.begin_transfer_disks(
         resource_group_name="resourceGroupName",
         lab_name="{labName}",
         name="{virtualmachineName}",

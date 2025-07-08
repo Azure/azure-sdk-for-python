@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.lab_costs.create_or_update(
+    response = client.costs.create_or_update(
         resource_group_name="resourceGroupName",
         lab_name="{labName}",
         name="targetCost",
