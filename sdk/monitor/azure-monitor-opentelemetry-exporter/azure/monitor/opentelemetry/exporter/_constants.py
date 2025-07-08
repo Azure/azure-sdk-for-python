@@ -10,6 +10,7 @@ from opentelemetry.semconv.metrics.http_metrics import (
 )
 from azure.core import CaseInsensitiveEnumMeta
 
+
 # Environment variables
 
 _APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL = "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"
@@ -64,7 +65,6 @@ _EXCEPTION_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Exception"
 _MESSAGE_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Message"
 _REQUEST_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Request"
 _REMOTE_DEPENDENCY_ENVELOPE_NAME = "Microsoft.ApplicationInsights.RemoteDependency"
-_REMOTE_DEPENDENCY_ENVELOPE_DATA = "Microsoft.ApplicationInsights.RemoteDependencyData"
 _EVENT_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Event"
 _PAGE_VIEW_ENVELOPE_NAME = "Microsoft.ApplicationInsights.PageView"
 _PERFORMANCE_COUNTER_ENVELOPE_NAME = "Microsoft.ApplicationInsights.PerformanceCounter"
@@ -167,7 +167,7 @@ class CustomerStatsbeatProperties:
 _TYPE_MAP = {
                 _EVENT_ENVELOPE_NAME: _CUSTOM_EVENT,
                 _METRIC_ENVELOPE_NAME: _CUSTOM_METRIC,
-                _REMOTE_DEPENDENCY_ENVELOPE_DATA: _DEPENDENCY,
+                _REMOTE_DEPENDENCY_ENVELOPE_NAME: _DEPENDENCY,
                 _EXCEPTION_ENVELOPE_NAME: _EXCEPTION,
                 _PAGE_VIEW_ENVELOPE_NAME: _PAGE_VIEW,
                 _MESSAGE_ENVELOPE_NAME: _TRACE,
