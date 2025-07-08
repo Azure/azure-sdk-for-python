@@ -20,7 +20,7 @@ class TestDevTestLabsCustomImagesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_custom_images_list(self, resource_group):
         response = self.client.custom_images.list(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -32,7 +32,7 @@ class TestDevTestLabsCustomImagesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_custom_images_get(self, resource_group):
         response = self.client.custom_images.get(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -45,7 +45,7 @@ class TestDevTestLabsCustomImagesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_custom_images_begin_create_or_update(self, resource_group):
         response = self.client.custom_images.begin_create_or_update(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -81,7 +81,7 @@ class TestDevTestLabsCustomImagesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_custom_images_begin_delete(self, resource_group):
         response = self.client.custom_images.begin_delete(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -94,7 +94,7 @@ class TestDevTestLabsCustomImagesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_custom_images_update(self, resource_group):
         response = self.client.custom_images.update(
             resource_group_name=resource_group.name,
             lab_name="str",

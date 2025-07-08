@@ -20,7 +20,7 @@ class TestDevTestLabsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_operations_get(self, resource_group):
         response = self.client.operations.get(
             location_name="str",
             name="str",

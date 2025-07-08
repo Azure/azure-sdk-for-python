@@ -21,7 +21,7 @@ class TestDevTestLabsSecretsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_secrets_list(self, resource_group):
         response = self.client.secrets.list(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -34,7 +34,7 @@ class TestDevTestLabsSecretsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_secrets_get(self, resource_group):
         response = await self.client.secrets.get(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -48,7 +48,7 @@ class TestDevTestLabsSecretsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_secrets_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.secrets.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -74,7 +74,7 @@ class TestDevTestLabsSecretsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_secrets_delete(self, resource_group):
         response = await self.client.secrets.delete(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -88,7 +88,7 @@ class TestDevTestLabsSecretsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_secrets_update(self, resource_group):
         response = await self.client.secrets.update(
             resource_group_name=resource_group.name,
             lab_name="str",

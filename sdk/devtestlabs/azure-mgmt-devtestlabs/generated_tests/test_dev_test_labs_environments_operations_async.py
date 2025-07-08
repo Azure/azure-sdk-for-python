@@ -21,7 +21,7 @@ class TestDevTestLabsEnvironmentsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_environments_list(self, resource_group):
         response = self.client.environments.list(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -34,7 +34,7 @@ class TestDevTestLabsEnvironmentsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_environments_get(self, resource_group):
         response = await self.client.environments.get(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -48,7 +48,7 @@ class TestDevTestLabsEnvironmentsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_environments_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.environments.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -77,7 +77,7 @@ class TestDevTestLabsEnvironmentsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_environments_begin_delete(self, resource_group):
         response = await (
             await self.client.environments.begin_delete(
                 resource_group_name=resource_group.name,
@@ -93,7 +93,7 @@ class TestDevTestLabsEnvironmentsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_environments_update(self, resource_group):
         response = await self.client.environments.update(
             resource_group_name=resource_group.name,
             lab_name="str",

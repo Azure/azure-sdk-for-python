@@ -21,7 +21,7 @@ class TestDevTestLabsNotificationChannelsOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_notification_channels_list(self, resource_group):
         response = self.client.notification_channels.list(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -33,7 +33,7 @@ class TestDevTestLabsNotificationChannelsOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_notification_channels_get(self, resource_group):
         response = await self.client.notification_channels.get(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -46,7 +46,7 @@ class TestDevTestLabsNotificationChannelsOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_notification_channels_create_or_update(self, resource_group):
         response = await self.client.notification_channels.create_or_update(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -74,7 +74,7 @@ class TestDevTestLabsNotificationChannelsOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_notification_channels_delete(self, resource_group):
         response = await self.client.notification_channels.delete(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -87,7 +87,7 @@ class TestDevTestLabsNotificationChannelsOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_notification_channels_update(self, resource_group):
         response = await self.client.notification_channels.update(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -100,7 +100,7 @@ class TestDevTestLabsNotificationChannelsOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_notify(self, resource_group):
+    async def test_notification_channels_notify(self, resource_group):
         response = await self.client.notification_channels.notify(
             resource_group_name=resource_group.name,
             lab_name="str",

@@ -20,7 +20,7 @@ class TestDevTestLabsLabsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_subscription(self, resource_group):
+    def test_labs_list_by_subscription(self, resource_group):
         response = self.client.labs.list_by_subscription(
             api_version="2018-09-15",
         )
@@ -30,7 +30,7 @@ class TestDevTestLabsLabsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_labs_list_by_resource_group(self, resource_group):
         response = self.client.labs.list_by_resource_group(
             resource_group_name=resource_group.name,
             api_version="2018-09-15",
@@ -41,7 +41,7 @@ class TestDevTestLabsLabsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_labs_get(self, resource_group):
         response = self.client.labs.get(
             resource_group_name=resource_group.name,
             name="str",
@@ -53,7 +53,7 @@ class TestDevTestLabsLabsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_labs_begin_create_or_update(self, resource_group):
         response = self.client.labs.begin_create_or_update(
             resource_group_name=resource_group.name,
             name="str",
@@ -100,7 +100,7 @@ class TestDevTestLabsLabsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_labs_begin_delete(self, resource_group):
         response = self.client.labs.begin_delete(
             resource_group_name=resource_group.name,
             name="str",
@@ -112,7 +112,7 @@ class TestDevTestLabsLabsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_labs_update(self, resource_group):
         response = self.client.labs.update(
             resource_group_name=resource_group.name,
             name="str",
@@ -124,7 +124,7 @@ class TestDevTestLabsLabsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_claim_any_vm(self, resource_group):
+    def test_labs_begin_claim_any_vm(self, resource_group):
         response = self.client.labs.begin_claim_any_vm(
             resource_group_name=resource_group.name,
             name="str",
@@ -136,7 +136,7 @@ class TestDevTestLabsLabsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_environment(self, resource_group):
+    def test_labs_begin_create_environment(self, resource_group):
         response = self.client.labs.begin_create_environment(
             resource_group_name=resource_group.name,
             name="str",
@@ -231,7 +231,7 @@ class TestDevTestLabsLabsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_export_resource_usage(self, resource_group):
+    def test_labs_begin_export_resource_usage(self, resource_group):
         response = self.client.labs.begin_export_resource_usage(
             resource_group_name=resource_group.name,
             name="str",
@@ -243,7 +243,7 @@ class TestDevTestLabsLabsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_generate_upload_uri(self, resource_group):
+    def test_labs_generate_upload_uri(self, resource_group):
         response = self.client.labs.generate_upload_uri(
             resource_group_name=resource_group.name,
             name="str",
@@ -255,7 +255,7 @@ class TestDevTestLabsLabsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_import_virtual_machine(self, resource_group):
+    def test_labs_begin_import_virtual_machine(self, resource_group):
         response = self.client.labs.begin_import_virtual_machine(
             resource_group_name=resource_group.name,
             name="str",
@@ -267,7 +267,7 @@ class TestDevTestLabsLabsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_vhds(self, resource_group):
+    def test_labs_list_vhds(self, resource_group):
         response = self.client.labs.list_vhds(
             resource_group_name=resource_group.name,
             name="str",
