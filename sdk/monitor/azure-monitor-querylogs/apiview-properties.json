@@ -1,0 +1,23 @@
+{
+    "CrossLanguagePackageId": "MonitorQueryLogs",
+    "CrossLanguageDefinitionId": {
+        "azure.monitor.querylogs._generated.models.BatchQueryRequest": "MonitorQueryLogs.BatchQueryRequest",
+        "azure.monitor.querylogs._generated.models.BatchQueryResponse": "MonitorQueryLogs.BatchQueryResponse",
+        "azure.monitor.querylogs._generated.models.BatchQueryResults": "MonitorQueryLogs.BatchQueryResults",
+        "azure.monitor.querylogs._generated.models.BatchRequest": "MonitorQueryLogs.BatchRequest",
+        "azure.monitor.querylogs._generated.models.BatchResponse": "MonitorQueryLogs.BatchResponse",
+        "azure.monitor.querylogs._generated.models.Column": "MonitorQueryLogs.Column",
+        "azure.monitor.querylogs._generated.models.ErrorDetail": "MonitorQueryLogs.ErrorDetail",
+        "azure.monitor.querylogs._generated.models.ErrorInfo": "MonitorQueryLogs.ErrorInfo",
+        "azure.monitor.querylogs._generated.models.QueryBody": "MonitorQueryLogs.QueryBody",
+        "azure.monitor.querylogs._generated.models.QueryResults": "MonitorQueryLogs.QueryResults",
+        "azure.monitor.querylogs._generated.models.Table": "MonitorQueryLogs.Table",
+        "azure.monitor.querylogs._generated.models.ColumnDataType": "MonitorQueryLogs.ColumnDataType",
+        "azure.monitor.querylogs._generated.MonitorQueryLogsClient.execute": "ClientCustomizations.MonitorQueryLogsClient.execute",
+        "azure.monitor.querylogs._generated.aio.MonitorQueryLogsClient.execute": "ClientCustomizations.MonitorQueryLogsClient.execute",
+        "azure.monitor.querylogs._generated.MonitorQueryLogsClient.execute_with_resource_id": "ClientCustomizations.MonitorQueryLogsClient.executeWithResourceId",
+        "azure.monitor.querylogs._generated.aio.MonitorQueryLogsClient.execute_with_resource_id": "ClientCustomizations.MonitorQueryLogsClient.executeWithResourceId",
+        "azure.monitor.querylogs._generated.MonitorQueryLogsClient.batch": "ClientCustomizations.MonitorQueryLogsClient.batch",
+        "azure.monitor.querylogs._generated.aio.MonitorQueryLogsClient.batch": "ClientCustomizations.MonitorQueryLogsClient.batch"
+    }
+}
