@@ -1,6 +1,5 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-import os
 import unittest
 import uuid
 
@@ -17,7 +16,7 @@ from test_per_partition_circuit_breaker_mm import (REGION_1, REGION_2, PK_VALUE,
 
 def create_errors():
     errors = []
-    error_codes = [403, 408, 500, 502, 503]
+    error_codes = [403, 503]
     for error_code in error_codes:
         if error_code == 403:
             errors.append(CosmosHttpResponseError(

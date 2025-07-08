@@ -150,7 +150,7 @@ class TestLocationCache:
         assert read_resolved == write_resolved
         assert read_resolved == default_endpoint
 
-    @pytest.mark.parametrize("test_type",["OnClient"])
+    @pytest.mark.parametrize("test_type",["OnClient", "OnRequest", "OnBoth"])
     def test_get_applicable_regional_endpoints_excluded_regions(self, test_type):
         # Init test data
         if test_type == "OnClient":

@@ -73,7 +73,6 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover(_GlobalPar
                 or _OperationType.IsReadOnlyOperation(request.operation_type)):
             return False
 
-        # TODO: This check here needs to be verified once we test against a live account with the config enabled.
         if not self._database_account_cache or not self._database_account_cache._EnablePerPartitionFailoverBehavior:
             return False
 
@@ -110,7 +109,7 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover(_GlobalPar
                             # main write region in the account configurations
                             self.partition_range_to_failover_info[pk_range_wrapper] = PartitionLevelFailoverInfo()
                             request.clear_route_to_location()
-                            return self._resolve_service_endpoint(request)
+                            return self._resolve_service_endpoint_for_partition_circuit_breaker(request, pk_range_wrapper)
                     else:
                         # Update the current regional endpoint to whatever the request is routing to
                         partition_failover_info.current_regional_endpoint = request.location_endpoint_to_route
@@ -118,7 +117,7 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover(_GlobalPar
                 partition_failover_info = PartitionLevelFailoverInfo()
                 partition_failover_info.current_regional_endpoint = request.location_endpoint_to_route
                 self.partition_range_to_failover_info[pk_range_wrapper] = partition_failover_info
-            return self._resolve_service_endpoint(request)
+            return self._resolve_service_endpoint_for_partition_circuit_breaker(request, pk_range_wrapper)
         return self._resolve_service_endpoint_for_partition_circuit_breaker(request, pk_range_wrapper)
 
     def compute_available_preferred_regions(
@@ -131,7 +130,10 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover(_GlobalPar
         :return: A set of available regional endpoints.
         :rtype: Set[str]
         """
-        excluded_locations = request.excluded_locations + self.location_cache.connection_policy.ExcludedLocations
+        if request.excluded_locations:
+            excluded_locations = request.excluded_locations + self.location_cache.connection_policy.ExcludedLocations
+        else:
+            excluded_locations = self.location_cache.connection_policy.ExcludedLocations
         preferred_locations = self.PreferredLocations
         available_regions = [item for item in preferred_locations if item not in excluded_locations]
         available_regional_endpoints = {

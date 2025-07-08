@@ -1,13 +1,11 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-"""Internal class for timeout failover retry policy implementation in the Azure
+"""Internal class for service unavailable retry policy implementation in the Azure
 Cosmos database service.
 """
-from azure.cosmos.documents import _OperationType
 
-
-class _TimeoutFailoverRetryPolicy(object):
+class _ServiceUnavailableRetryPolicy(object):
 
     def __init__(self, connection_policy, global_endpoint_manager, pk_range_wrapper, *args):
         self.retry_after_in_milliseconds = 500
@@ -27,9 +25,7 @@ class _TimeoutFailoverRetryPolicy(object):
         :returns: a boolean stating whether the request should be retried
         :rtype: bool
         """
-        if self.request and not _OperationType.IsReadOnlyOperation(self.request.operation_type):
-            return False
-
+        # writes are retried for 503s
         if not self.connection_policy.EnableEndpointDiscovery:
             return False
 
@@ -45,6 +41,13 @@ class _TimeoutFailoverRetryPolicy(object):
 
     # This function prepares the request to go to the next region
     def resolve_next_region_service_endpoint(self):
+        if self.global_endpoint_manager.is_per_partition_automatic_failover_applicable(self.request):
+            # If per partition automatic failover is applicable, we mark the current endpoint as unavailable
+            # and resolve the service endpoint for the partition range - otherwise, continue with default retry logic
+            partition_level_info = self.global_endpoint_manager.partition_range_to_failover_info[self.pk_range_wrapper]
+            partition_level_info.unavailable_regional_endpoints.add(self.request.location_endpoint_to_route)
+            return self.global_endpoint_manager.resolve_service_endpoint_for_partition(self.request,
+                                                                                       self.pk_range_wrapper)
 
         # clear previous location-based routing directive
         self.request.clear_route_to_location()

@@ -453,7 +453,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 self.connection_policy.UseMultipleWriteLocations and database_account._EnableMultipleWritableLocations
         )
 
-        # TODO: Verify that this is the correct variable from the service
         if Constants.EnablePerPartitionFailoverBehavior in result:
             database_account._EnablePerPartitionFailoverBehavior = result[Constants.EnablePerPartitionFailoverBehavior]
 

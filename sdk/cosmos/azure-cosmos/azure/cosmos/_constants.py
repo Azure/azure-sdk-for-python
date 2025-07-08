@@ -25,6 +25,7 @@
 
 from typing import Dict
 from typing_extensions import Literal
+# cspell:disable-line
 
 
 class _Constants:
@@ -61,6 +62,10 @@ class _Constants:
     CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE_DEFAULT: int = 5
     FAILURE_PERCENTAGE_TOLERATED = "AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"
     FAILURE_PERCENTAGE_TOLERATED_DEFAULT: int = 90
+    # -------------------------------------------------------------------------
+    # Only applicable when per partition automatic failover is enabled --------
+    TIMEOUT_ERROR_THRESHOLD_PPAF = "AZURE_COSMOS_TIMEOUT_ERROR_THRESHOLD_FOR_PPAF"
+    TIMEOUT_ERROR_THRESHOLD_PPAF_DEFAULT: int = 10
     # -------------------------------------------------------------------------
 
     # Error code translations
