@@ -44,7 +44,7 @@ Locally:<br/>
 Update a given PR (needs GH_TOKEN env variable set):<br/>
 `python -m packaging_tools.update_pr -v -p 3979`
 
-Edit `sdk_packaging.toml` if necesseray and restart the tool.
+Edit `sdk_packaging.toml` if necessary and restart the tool.
 
 Available options:
 
@@ -55,7 +55,7 @@ Available options:
 | package_nspkg | str | namespace package name | azure-mgmt-nspkg |
 | package_pprint_name | str | The nice name to show on PyPI | MyService Management |
 | package_doc_id | str | the moniker on docs.microsoft.com (could be empty) | my-service |
-| is_stable | bool | Should have discriminer as stable | false |
+| is_stable | bool | Should have discriminator as stable | false |
 | is_arm | bool | needs a dependency on msrestazure | true |
 
 ## ChangeLog
