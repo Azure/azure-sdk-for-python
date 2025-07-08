@@ -16,14 +16,14 @@ from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import RadiologyInsightsClientConfiguration
-from ._operations import RadiologyInsightsClientOperationsMixin
+from ._operations._operations import _RadiologyInsightsClientOperationsMixin
 from ._utils.serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class RadiologyInsightsClient(RadiologyInsightsClientOperationsMixin):
+class RadiologyInsightsClient(_RadiologyInsightsClientOperationsMixin):
     """RadiologyInsightsClient.
 
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
