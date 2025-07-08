@@ -6,6 +6,8 @@
 
 - Detect synthetically created telemetry based on the user-agent header
   ([#41733](https://github.com/Azure/azure-sdk-for-python/pull/41733))
+- Added RateLimited Sampler 
+  ([#41925](https://github.com/Azure/azure-sdk-for-python/pull/41925))
 
 ### Breaking Changes
 

@@ -3,6 +3,8 @@
 ## 1.6.11 (Unreleased)
 
 ### Features Added
+- Added RateLimited Sampler 
+    ([#41925](https://github.com/Azure/azure-sdk-for-python/pull/41925))
 
 ### Breaking Changes
 
