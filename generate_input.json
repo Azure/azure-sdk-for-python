@@ -1,0 +1,7 @@
+{
+  "headSha": "220aa608045b4094d376e4a7ed10e5e2002d6e27",
+  "repoHttpsUrl": "https://github.com/Azure/azure-rest-api-specs",
+  "relatedTypeSpecProjectFolder": [
+    "specification/devtestlabs/Microsoft.DevTestLab.Management"
+  ]
+}
