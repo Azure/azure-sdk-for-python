@@ -20,6 +20,7 @@ _SYSTEM = "system"
 _USER = "user"
 _AGENT = "assistant"
 _TOOL = "tool"
+_DEVELOPER = "developer"  # part of the semantic kernel
 
 # Constant definitions for what tool details include.
 _TOOL_CALL = "tool_call"
@@ -124,6 +125,17 @@ class UserMessage(Message):
     role: str = _USER
 
 
+class SKDeveloperMessage(Message):
+    """Represents a developer message in a conversation with agents, assistants, and tools.
+    This is used in the context of Semantic Kernel (SK) agents.
+
+    :param role: The role of the message sender, which is always 'developer'.
+    :type role: str
+    """
+
+    role: str = _DEVELOPER
+
+
 class ToolMessage(Message):
     """Represents a tool message in a conversation with agents, assistants, and tools.
 
@@ -140,6 +152,19 @@ class ToolMessage(Message):
     tool_call_id: Optional[str] = None
 
 
+class SKToolMessage(Message):
+    """Represents a tool message in the context of a Semantic Kernel (SK) agent.
+
+    :param role: The role of the message sender, which is always 'tool'.
+    :type role: str
+    :param tool_call_id: The ID of the tool call associated with the message. Optional.
+    :type tool_call_id: Optional[str]
+    """
+
+    role: str = _TOOL
+    tool_call_id: Optional[str] = None
+
+
 class AssistantMessage(Message):
     """Represents an assistant message.
 
@@ -150,6 +175,26 @@ class AssistantMessage(Message):
     """
 
     run_id: str
+    role: str = _AGENT
+
+
+class SKAssistantMessage(Message):
+    """Represents an assistant message in the context of a Semantic Kernel (SK) agent.
+
+    :param role: The role of the message sender, which is always 'assistant'.
+    :type role: str
+    """
+
+    role: str = _AGENT
+
+
+class SKAssistantMessage(Message):
+    """Represents an assistant message in the context of a Semantic Kernel (SK) agent.
+
+    :param role: The role of the message sender, which is always 'assistant'.
+    :type role: str
+    """
+
     role: str = _AGENT
 
 
