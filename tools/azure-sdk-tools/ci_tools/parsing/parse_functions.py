@@ -371,17 +371,13 @@ def parse_setup_py(
 
     version = kwargs.get("version")
     name = kwargs.get("name")
+    name_space = name.replace("-", ".")
     packages = kwargs.get("packages", [])
 
     if packages:
-        # If packages are explicitly defined, use the first one as namespace
         name_space = packages[0]
         metapackage = False
     else:
-        # Try to discover the namespace from the package directory structure
-        package_directory = os.path.dirname(setup_filename)
-        discovered_namespace = discover_namespace(package_directory)
-        name_space = discovered_namespace if discovered_namespace else name.replace("-", ".")
         metapackage = True
 
     requires = kwargs.get("install_requires", [])
@@ -479,7 +475,6 @@ def parse_pyproject(
     package_directory = os.path.dirname(pyproject_filename)
     discovered_namespace = discover_namespace(package_directory)
     name_space = discovered_namespace if discovered_namespace else name.replace("-", ".")
-    
     package_data = get_value_from_dict(toml_dict, "tool.setuptools.package-data", None)
     include_package_data = get_value_from_dict(toml_dict, "tool.setuptools.include-package-data", True)
     classifiers = project_config.get("classifiers", [])
