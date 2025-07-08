@@ -100,7 +100,7 @@ def _set_root_namespace(init_file_path: str, module_name: str) -> Optional[str]:
                 return module_name
                 
     except Exception as e:
-        logging.debug(f"Error reading {init_file_path}: {e}")
+        logging.error(f"Error reading {init_file_path}: {e}")
         
     return None
 
