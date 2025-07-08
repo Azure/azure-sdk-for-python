@@ -230,7 +230,7 @@ def init_tool(tsp_config_path: str, repo_path: str, is_local: bool = False) -> D
     
 @mcp.tool("update")
 def update_tool(package_path: str, commit_hash: Optional[str] = None, repo: Optional[str] = None, 
-                tsp_config: Optional[str] = None, local_spec_repo: Optional[str] = None) -> Dict[str, Any]:
+                tsp_config: Optional[str] = None, local_spec: Optional[str] = None) -> Dict[str, Any]:
     """Updates an existing client library with local or remote TypeSpec changes.
 
     This command is used to update an existing client library.
@@ -240,7 +240,7 @@ def update_tool(package_path: str, commit_hash: Optional[str] = None, repo: Opti
         :param Optional[str] commit_hash: Optional. The commit hash to update to.
         :param Optional[str] repo: Optional. Repository where the project is defined.
         :param Optional[str] tsp_config: Optional. Path to tspconfig.yaml.
-        :param Optional[str] local_spec_repo: Optional. Path to local spec repo.
+        :param Optional[str] local_spec: Optional. Path to the local TypeSpec project (../azure-rest-api-specs/specification/eventgrid/Azure.Messaging.EventGrid/).
 
     Returns:
         A dictionary containing the result of the command.
@@ -257,8 +257,8 @@ def update_tool(package_path: str, commit_hash: Optional[str] = None, repo: Opti
             typespec_args["repo"] = repo
         if tsp_config:
             typespec_args["tsp-config"] = tsp_config
-        if local_spec_repo:
-            typespec_args["local-spec-repo"] = local_spec_repo
+        if local_spec:
+            typespec_args["local-spec-repo"] = local_spec
         
         # Run the update command
         return run_command(["update"], cwd=package_path, is_typespec=True,
