@@ -30,6 +30,25 @@ NEW_REQ_PACKAGES = ["azure-core", "azure-mgmt-core"]
 INIT_PY_FILE = "__init__.py"
 INIT_EXTENSION_SUBSTRING = ".extend_path(__path__, __name__)"
 
+# Directories to exclude from searches to avoid finding files in wrong places
+EXCLUDE = {
+    "venv",
+    "__pycache__",
+    "tests",
+    "test",
+    "generated_samples",
+    "generated_tests",
+    "samples",
+    "swagger",
+    "stress",
+    "docs",
+    "doc",
+    "local",
+    "scripts",
+    "images",
+    ".tox"
+}
+
 
 def discover_namespace(package_root_path: str) -> Optional[str]:
     """
@@ -50,7 +69,7 @@ def discover_namespace(package_root_path: str) -> Optional[str]:
         # For e.g. _generated, _shared etc
         # Ignore build, which is created when installing a package from source.
         # Ignore tests, which may have an __init__.py but is not part of the package.
-        dirs_to_skip = [x for x in subdirs if x.startswith(("_", ".", "test", "build"))]
+        dirs_to_skip = [x for x in subdirs if x.startswith(("_", ".", "test", "build")) or x in EXCLUDE]
         for d in dirs_to_skip:
             logging.debug("Dirs to skip: {}".format(dirs_to_skip))
             subdirs.remove(d)
@@ -510,27 +529,6 @@ def get_version_py(setup_path: str) -> Optional[str]:
     """
     Given the path to pyproject.toml or setup.py, attempts to find a (_)version.py file and return its location.
     """
-    # this list of directories will be excluded from the search for _version.py
-    # this is to avoid finding _version.py in the wrong place, such as in tests
-    # or in the venv directory or ANYWHERE ELSE that may mess with the parsing.
-    EXCLUDE = {
-        "venv",
-        "__pycache__",
-        "tests",
-        "test",
-        "generated_samples",
-        "generated_tests",
-        "samples",
-        "swagger",
-        "stress",
-        "docs",
-        "doc",
-        "local",
-        "scripts",
-        "images",
-        ".tox"
-    }
-
     file_path, _ = os.path.split(setup_path)
 
     # Find path to _version.py recursively
