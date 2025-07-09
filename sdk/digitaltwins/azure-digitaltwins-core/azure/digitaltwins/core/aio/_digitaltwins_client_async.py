@@ -40,7 +40,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
     :param ~azure.core.credentials_async.AsyncTokenCredential credential:
         A credential to authenticate requests to the service.
     """
-    def __init__(self, endpoint: Optional[str], credential: "AsyncTokenCredential", **kwargs) -> None:
+    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs) -> None:
         if not endpoint:
             raise ValueError("Parameter 'endpoint' must not be None or empty.")
     
@@ -283,9 +283,9 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         self,
         digital_twin_id: str,
         relationship_id: str,
-        relationship: Dict[str, object],
+        relationship: dict[str, object],
         **kwargs
-    ) -> Dict[str, object]:
+    ) -> dict[str, object]:
         """Create or update a relationship on a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
@@ -445,7 +445,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
     async def publish_telemetry(
         self,
         digital_twin_id: str,
-        telemetry: Dict[str, object],
+        telemetry: dict[str, object],
         **kwargs
     ) -> None:
         """Publish telemetry from a digital twin. The result is then
@@ -454,7 +454,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         a telemetry message, in order for the telemetry message to be consumed.
 
         :param str digital_twin_id: The ID of the digital twin
-        :param Dict[str, object] telemetry: The telemetry data to be sent
+        :param dict[str, object] telemetry: The telemetry data to be sent
         :keyword str message_id: The message ID. If not specified, a UUID will be generated.
         :return: None
         :rtype: None
@@ -477,7 +477,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         self,
         digital_twin_id: str,
         component_name: str,
-        telemetry: Dict[str, object],
+        telemetry: dict[str, object],
         **kwargs
     ) -> None:
         """Publish telemetry from a digital twin. The result is then
@@ -487,7 +487,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
 
         :param str digital_twin_id: The ID of the digital twin.
         :param str component_name: The name of the DTDL component.
-        :param Dict[str, object] telemetry: The telemetry data to be sent.
+        :param dict[str, object] telemetry: The telemetry data to be sent.
         :keyword str message_id: The message ID. If not specified, a UUID will be generated.
         :return: None
         :rtype: None

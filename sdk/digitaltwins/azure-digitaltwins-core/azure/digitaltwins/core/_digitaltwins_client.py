@@ -241,7 +241,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         return dict(result)
 
     @distributed_trace
-    def upsert_relationship(self, digital_twin_id: str, relationship_id: str, relationship: dict[str, object], **kwargs: Any) -> Dict[str, object]:
+    def upsert_relationship(self, digital_twin_id: str, relationship_id: str, relationship: dict[str, object], **kwargs: Any) -> dict[str, object]:
         """Create or update a relationship on a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
