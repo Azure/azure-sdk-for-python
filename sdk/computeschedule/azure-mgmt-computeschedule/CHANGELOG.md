@@ -1,5 +1,17 @@
 # Release History
 
+## 1.1.0 (2025-06-05)
+
+### Features Added
+
+  - Added model `CreateResourceOperationResponse`
+  - Added model `DeleteResourceOperationResponse`
+  - Added model `ExecuteCreateRequest`
+  - Added model `ExecuteDeleteRequest`
+  - Added model `ResourceProvisionPayload`
+  - Model `ScheduledActionsOperations` added method `virtual_machines_execute_create`
+  - Model `ScheduledActionsOperations` added method `virtual_machines_execute_delete`
+
 ## 1.0.0 (2025-01-20)
 
 ### Features Added

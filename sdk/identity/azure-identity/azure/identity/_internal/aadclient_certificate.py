@@ -53,7 +53,9 @@ class AadClientCertificate:
         :return: The signature.
         :rtype: bytes
         """
-        return self._private_key.sign(plaintext, padding.PKCS1v15(), hashes.SHA256())
+        return self._private_key.sign(
+            plaintext, padding.PKCS1v15(), hashes.SHA256()  # CodeQL [SM04457] need this for backwards compatibility
+        )
 
     def sign_ps256(self, plaintext: bytes) -> bytes:
         """Sign bytes using PS256.

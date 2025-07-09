@@ -1,14 +1,24 @@
 # Release History
 
-## 1.0.1 (Unreleased)
+## 1.1.0 (2025-06-10)
+
+Extending scope with inferences for scoring and assessment, quality measure and guidance.
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- 3 new inferences added:
+  - ScoringAndAssessmentInference
+    - AssessmentValueRange
+    - ScoringAndAssessmentCategoryType
+  - GuidanceInference
+    - GuidanceOptions
+    - PresentGuidanceInformation
+    - GuidanceRankingType
+  - QualityMeasureInference
+    - QualityMeasureOptions
+    - QualityMeasureType
+    - QualityMeasureComplianceType
+- Added samples for scoring and assessment, Quality Measure and Guidance
 
 ## 1.0.0 (2024-09-10)
 

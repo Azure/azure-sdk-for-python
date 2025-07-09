@@ -9,11 +9,13 @@ from azure.cosmos.documents import _OperationType
 
 class _TimeoutFailoverRetryPolicy(object):
 
-    def __init__(self, connection_policy, global_endpoint_manager, *args):
+    def __init__(self, connection_policy, global_endpoint_manager, pk_range_wrapper, *args):
         self.retry_after_in_milliseconds = 500
         self.args = args
         self.request = args[0] if args else None
+
         self.global_endpoint_manager = global_endpoint_manager
+        self.pk_range_wrapper = pk_range_wrapper
         # If an account only has 1 region, then we still want to retry once on the same region
         if self.request:
             if _OperationType.IsReadOnlyOperation(self.request.operation_type):
@@ -62,7 +64,7 @@ class _TimeoutFailoverRetryPolicy(object):
         self.request.route_to_location_with_preferred_location_flag(self.retry_count, True)
         # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
         # This enables marking the endpoint unavailability on endpoint failover/unreachability
-        return self.global_endpoint_manager.resolve_service_endpoint(self.request)
+        return self.global_endpoint_manager.resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper)
 
     def is_operation_retryable(self):
         if _OperationType.IsReadOnlyOperation(self.request.operation_type):

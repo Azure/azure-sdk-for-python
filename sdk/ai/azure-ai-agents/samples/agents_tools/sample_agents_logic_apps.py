@@ -20,7 +20,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-agents azure-identity azure-mgmt-logic
+    pip install azure-ai-projects azure-ai-agents azure-identity azure-mgmt-logic
 
     Set this environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -40,7 +40,7 @@ import os
 import sys
 from typing import Set
 
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import ToolSet, FunctionTool
 from azure.identity import DefaultAzureCredential
 
@@ -57,7 +57,7 @@ from utils.user_logic_apps import AzureLogicAppTool, create_send_email_function
 # [START register_logic_app]
 
 # Create the agents client
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
@@ -85,7 +85,9 @@ functions_to_use: Set = {
 }
 # [END register_logic_app]
 
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
+
     # Create an agent
     functions = FunctionTool(functions=functions_to_use)
     toolset = ToolSet()

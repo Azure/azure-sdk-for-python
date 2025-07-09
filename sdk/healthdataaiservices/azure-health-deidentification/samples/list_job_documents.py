@@ -18,6 +18,8 @@ USAGE:
     2) AZURE_STORAGE_ACCOUNT_LOCATION - an Azure Storage container endpoint, like "https://<storageaccount>.blob.core.windows.net/<container>".
     3) INPUT_PREFIX - the prefix of the input document name(s) in the container.
         For example, providing "folder1" would create a job that would process documents like "https://<storageaccount>.blob.core.windows.net/<container>/folder1/document1.txt".
+    4) OUTPUT_PREFIX - the prefix of the output document name(s) in the container. This will appear as a folder which will be created if it does not exist, and defaults to "_output" if not provided.
+        For example, providing "_output1" would output documents like "https://<storageaccount>.blob.core.windows.net/<container>/_output1/document1.txt".
 """
 
 
@@ -36,7 +38,7 @@ def list_job_documents():
     endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
     storage_location = os.environ["AZURE_STORAGE_ACCOUNT_LOCATION"]
     inputPrefix = os.environ["INPUT_PREFIX"]
-    outputPrefix = "_output"
+    outputPrefix = os.environ.get("OUTPUT_PREFIX", "_output")
 
     credential = DefaultAzureCredential()
 

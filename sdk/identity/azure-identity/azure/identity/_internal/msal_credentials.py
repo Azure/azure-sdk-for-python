@@ -68,6 +68,7 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
         self._client.__exit__(*args)
 
     def close(self) -> None:
+        """Close the credential's underlying HTTP client and release resources."""
         self.__exit__()
 
     def _initialize_cache(self, is_cae: bool = False) -> msal.TokenCache:

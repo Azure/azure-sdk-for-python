@@ -174,7 +174,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             properties.
         :paramtype select: list[str]
         :return: List of all the SearchIndexers.
-        :rtype: `list[~azure.search.documents.indexes.models.SearchIndexer]`
+        :rtype: list[~azure.search.documents.indexes.models.SearchIndexer]
 
         .. admonition:: Example:
 
@@ -474,6 +474,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :type name: str
         :return: The SearchIndexerDataSourceConnection that is fetched.
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
+
+        .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_data_source_operations_async.py
                 :start-after: [START get_data_source_connection_async]

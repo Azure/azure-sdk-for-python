@@ -5,7 +5,7 @@
 from __future__ import annotations
 from contextlib import contextmanager
 from contextvars import Token
-from typing import Optional, Dict, Sequence, cast, Callable, Iterator, TYPE_CHECKING
+from typing import Any, Optional, Dict, Sequence, cast, Callable, Iterator, TYPE_CHECKING
 
 from opentelemetry import context as otel_context_module, trace
 from opentelemetry.trace import (
@@ -81,6 +81,8 @@ class OpenTelemetryTracer:
         kind: SpanKind = _SpanKind.INTERNAL,
         attributes: Optional[Attributes] = None,
         links: Optional[Sequence[Link]] = None,
+        start_time: Optional[int] = None,
+        context: Optional[Dict[str, Any]] = None,
     ) -> Span:
         """Starts a span without setting it as the current span in the context.
 
@@ -92,17 +94,28 @@ class OpenTelemetryTracer:
         :paramtype attributes: Mapping[str, AttributeValue]
         :keyword links: Links to add to the span.
         :paramtype links: list[~azure.core.tracing.Link]
+        :keyword start_time: The start time of the span in nanoseconds since the epoch.
+        :paramtype start_time: Optional[int]
+        :keyword context: A dictionary of context values corresponding to the parent span. If not provided,
+          the current global context will be used.
+        :paramtype context: Optional[Dict[str, any]]
         :return: The span that was started
         :rtype: ~opentelemetry.trace.Span
         """
         otel_kind = _KIND_MAPPINGS.get(kind, OpenTelemetrySpanKind.INTERNAL)
         otel_links = self._parse_links(links)
 
+        otel_context = None
+        if context:
+            otel_context = extract(context)
+
         otel_span = self._tracer.start_span(
             name,
+            context=otel_context,
             kind=otel_kind,
             attributes=attributes,
             links=otel_links,
+            start_time=start_time,
             record_exception=False,
         )
 
@@ -116,6 +129,8 @@ class OpenTelemetryTracer:
         kind: SpanKind = _SpanKind.INTERNAL,
         attributes: Optional[Attributes] = None,
         links: Optional[Sequence[Link]] = None,
+        start_time: Optional[int] = None,
+        context: Optional[Dict[str, Any]] = None,
         end_on_exit: bool = True,
     ) -> Iterator[Span]:
         """Context manager that starts a span and sets it as the current span in the context.
@@ -134,12 +149,19 @@ class OpenTelemetryTracer:
         :paramtype attributes: Optional[Attributes]
         :keyword links: Links to add to the span.
         :paramtype links: Optional[Sequence[Link]]
+        :keyword start_time: The start time of the span in nanoseconds since the epoch.
+        :paramtype start_time: Optional[int]
+        :keyword context: A dictionary of context values corresponding to the parent span. If not provided,
+          the current global context will be used.
+        :paramtype context: Optional[Dict[str, any]]
         :keyword end_on_exit: Whether to end the span when exiting the context manager. Defaults to True.
         :paramtype end_on_exit: bool
         :return: The span that was started
         :rtype: Iterator[~opentelemetry.trace.Span]
         """
-        span = self.start_span(name, kind=kind, attributes=attributes, links=links)
+        span = self.start_span(
+            name, kind=kind, attributes=attributes, links=links, start_time=start_time, context=context
+        )
         with trace.use_span(  # pylint: disable=not-context-manager
             span, record_exception=False, end_on_exit=end_on_exit
         ) as span:

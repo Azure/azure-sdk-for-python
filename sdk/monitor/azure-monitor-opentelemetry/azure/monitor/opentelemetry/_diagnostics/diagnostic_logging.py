@@ -11,10 +11,10 @@ from os.path import exists, join
 
 from azure.monitor.opentelemetry._utils import (
     _EXTENSION_VERSION,
-    _IS_DIAGNOSTICS_ENABLED,
     _env_var_or_default,
     _get_customer_ikey_from_env_var,
     _get_log_path,
+    _is_diagnostics_enabled,
 )
 from azure.monitor.opentelemetry._version import VERSION
 
@@ -51,7 +51,7 @@ class AzureDiagnosticLogging:
     def _initialize(cls):
         with AzureDiagnosticLogging._lock:
             if not AzureDiagnosticLogging._initialized:
-                if _IS_DIAGNOSTICS_ENABLED and _DIAGNOSTIC_LOG_PATH:
+                if _is_diagnostics_enabled() and _DIAGNOSTIC_LOG_PATH:
                     log_format = (
                         "{"
                         + '"time":"%(asctime)s.%(msecs)03d", '

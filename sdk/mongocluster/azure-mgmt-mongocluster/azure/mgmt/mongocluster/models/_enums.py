@@ -19,6 +19,17 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Actions are for internal-only APIs."""
 
 
+class AuthenticationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The authentication modes supporting on the Mongo cluster."""
+
+    NATIVE_AUTH = "NativeAuth"
+    """Native mongo authentication mode using username and password with auth mechanism
+    'SCRAM-SHA-256'."""
+    MICROSOFT_ENTRA_ID = "MicrosoftEntraID"
+    """Microsoft Entra ID authentication mode using Entra users assigned to the cluster and auth
+    mechanism 'MONGODB-OIDC'."""
+
+
 class CheckNameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Possible reasons for a name not being available."""
 
@@ -54,6 +65,24 @@ class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Create a replica cluster in the same geographic region as the source cluster."""
 
 
+class DataApiMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The mode to apply to the Mongo Data API."""
+
+    ENABLED = "Enabled"
+    """Mongo Data API is enabled for the cluster."""
+    DISABLED = "Disabled"
+    """Mongo Data API is disabled for the cluster."""
+
+
+class EntraPrincipalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Microsoft Entra ID principal types available for a Mongo user."""
+
+    USER = "user"
+    """Entra user type."""
+    SERVICE_PRINCIPAL = "servicePrincipal"
+    """Entra service principal type."""
+
+
 class HighAvailabilityMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The high availability modes for a cluster."""
 
@@ -66,6 +95,13 @@ class HighAvailabilityMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ZONE_REDUNDANT_PREFERRED = "ZoneRedundantPreferred"
     """High availability mode is enabled and preferences ZoneRedundant if availability zones capacity
     is available in the region, otherwise falls-back to provisioning with SameZone."""
+
+
+class IdentityProviderType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Identity provider types that a a user identity can belong to."""
+
+    MICROSOFT_ENTRA_ID = "MicrosoftEntraID"
+    """Microsoft Entra ID provider."""
 
 
 class MongoClusterStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -125,7 +161,7 @@ class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiv
     """The private endpoint connection status."""
 
     PENDING = "Pending"
-    """Connectionaiting for approval or rejection"""
+    """Connection waiting for approval or rejection"""
     APPROVED = "Approved"
     """Connection approved"""
     REJECTED = "Rejected"
@@ -204,3 +240,20 @@ class ReplicationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Replication link is broken and the replica may need to be recreated."""
     RECONFIGURING = "Reconfiguring"
     """Replication link is re-configuring due to a promotion event."""
+
+
+class StorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of storage that a mongo cluster can be provisioned with."""
+
+    PREMIUM_SSD = "PremiumSSD"
+    """Premium SSD for high performance workloads."""
+    PREMIUM_SS_DV2 = "PremiumSSDv2"
+    """Premium SSD v2 for very IO-intensive workloads. This is a preview option and has additional
+    limitations."""
+
+
+class UserRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Built-in database role that can be assigned to a user."""
+
+    DATABASE_OWNER = "dbOwner"
+    """Datbase owner role permissions on the target scope."""

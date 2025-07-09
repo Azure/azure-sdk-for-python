@@ -65,6 +65,9 @@ from ._models import (
     RequiredFunctionToolCall,
     RunStep,
     RunStepDeltaChunk,
+    DeepResearchToolDefinition,
+    DeepResearchDetails,
+    DeepResearchBingGroundingConnection,
     BingGroundingSearchConfiguration,
     BingGroundingSearchToolParameters,
     BingCustomSearchToolDefinition,
@@ -612,7 +615,7 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
         query_type: AzureAISearchQueryType = AzureAISearchQueryType.SIMPLE,
         filter: str = "",
         top_k: int = 5,
-        index_asset_id: str = "",
+        index_asset_id: Optional[str] = None,
     ):
         """
         Initialize AzureAISearch with an index_connection_id and index_name, with optional params.
@@ -629,7 +632,7 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
         :param top_k: Number of documents to retrieve from search and present to the model.
         :type top_k: int
         :param index_asset_id: Index asset ID to be used by tool.
-        :type filter: str
+        :type filter: Optional[str]
         """
         self.index_list = [
             AISearchIndexResource(
@@ -852,7 +855,7 @@ class AzureFunctionTool(Tool[AzureFunctionToolDefinition]):
 class ConnectionTool(Tool[ToolDefinitionT]):
     """
     A tool that requires connection ids.
-    Used as base class for Bing Grounding, Sharepoint, and Microsoft Fabric
+    Used as base class for Sharepoint and Microsoft Fabric
     """
 
     def __init__(self, connection_id: str):
@@ -860,13 +863,75 @@ class ConnectionTool(Tool[ToolDefinitionT]):
         Initialize ConnectionTool with a connection_id.
 
         :param connection_id: Connection ID used by tool. All connection tools allow only one connection.
+        :raises ValueError: If the connection ID is invalid.
         """
+        if not _is_valid_connection_id(connection_id):
+            raise ValueError(
+                "Connection ID '"
+                + connection_id
+                + "' does not fit the format:"
+                + "'/subscriptions/<subscription_id>/resourceGroups/<resource_group_name>/"
+                + "providers/<provider_name>/accounts/<account_name>/projects/<project_name>/connections/<connection_name>'"
+            )
+
         self.connection_ids = [ToolConnection(connection_id=connection_id)]
 
     @property
     def resources(self) -> ToolResources:
         """
         Get the connection tool resources.
+
+        :rtype: ToolResources
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
+
+
+class DeepResearchTool(Tool[DeepResearchToolDefinition]):
+    """
+    A tool that uses a Deep Research AI model, together with Bing Grounding, to answer user queries.
+    """
+
+    def __init__(self, bing_grounding_connection_id: str, deep_research_model: str):
+        """
+        Initialize a Deep Research tool with a Bing Grounding Connection ID and Deep Research model deployment name.
+
+        :param bing_grounding_connection_id: Connection ID used by tool. Bing Grounding tools allow only one connection.
+        :param deep_research_model: The Deep Research model deployment name.
+        :raises ValueError: If the connection ID is invalid.
+        """
+
+        if not _is_valid_connection_id(bing_grounding_connection_id):
+            raise ValueError(
+                "Connection ID '"
+                + bing_grounding_connection_id
+                + "' does not fit the format:"
+                + "'/subscriptions/<subscription_id>/resourceGroups/<resource_group_name>/"
+                + "providers/<provider_name>/accounts/<account_name>/projects/<project_name>/connections/<connection_name>'"
+            )
+
+        self._deep_research_details = DeepResearchDetails(
+            deep_research_model=deep_research_model,
+            deep_research_bing_grounding_connections=[
+                DeepResearchBingGroundingConnection(connection_id=bing_grounding_connection_id)
+            ],
+        )
+
+    @property
+    def definitions(self) -> List[DeepResearchToolDefinition]:
+        """
+        Get the Deep Research tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [DeepResearchToolDefinition(deep_research=self._deep_research_details)]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the tool resources.
 
         :rtype: ToolResources
         """
@@ -890,10 +955,21 @@ class BingGroundingTool(Tool[BingGroundingToolDefinition]):
         :param set_lang: The language to use for user interface strings when calling Bing API.
         :param count: The number of search results to return in the Bing API response.
         :param freshness: Filter search results by a specific time range.
-        
-        .. seealso:: 
+        :raises ValueError: If the connection ID is invalid.
+
+        .. seealso::
            `Bing Web Search API Query Parameters <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters>`_
         """
+
+        if not _is_valid_connection_id(connection_id):
+            raise ValueError(
+                "Connection ID '"
+                + connection_id
+                + "' does not fit the format:"
+                + "'/subscriptions/<subscription_id>/resourceGroups/<resource_group_name>/"
+                + "providers/<provider_name>/accounts/<account_name>/projects/<project_name>/connections/<connection_name>'"
+            )
+
         self._search_configurations = [
             BingGroundingSearchConfiguration(
                 connection_id=connection_id, market=market, set_lang=set_lang, count=count, freshness=freshness
@@ -1263,7 +1339,7 @@ class BaseToolSet:
         try:
             return ToolResources(**resources)
         except TypeError as e:
-            logger.error("Error creating ToolResources: %s", e)
+            logger.error("Error creating ToolResources: %s", e)  # pylint: disable=do-not-log-exceptions-if-not-debug
             raise ValueError("Invalid resources for ToolResources.") from e
 
     def get_definitions_and_resources(self) -> Dict[str, Any]:
@@ -1356,29 +1432,27 @@ class AsyncToolSet(BaseToolSet):
                 + "Please use AsyncFunctionTool instead and provide sync and/or async function(s)."
             )
 
+    async def _execute_single_tool_call(self, tool_call: Any):
+        try:
+            tool = self.get_tool(AsyncFunctionTool)
+            output = await tool.execute(tool_call)
+            return {"tool_call_id": tool_call.id, "output": str(output)}
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            return {"tool_call_id": tool_call.id, "output": str(e)}
+
     async def execute_tool_calls(self, tool_calls: List[Any]) -> Any:
         """
-        Execute a tool of the specified type with the provided tool calls.
+        Execute a tool of the specified type with the provided tool calls concurrently.
 
         :param List[Any] tool_calls: A list of tool calls to execute.
         :return: The output of the tool operations.
         :rtype: Any
         """
-        tool_outputs = []
 
-        for tool_call in tool_calls:
-            try:
-                if tool_call.type == "function":
-                    tool = self.get_tool(AsyncFunctionTool)
-                    output = await tool.execute(tool_call)
-                    tool_output = {
-                        "tool_call_id": tool_call.id,
-                        "output": str(output),
-                    }
-                    tool_outputs.append(tool_output)
-            except Exception as e:  # pylint: disable=broad-exception-caught
-                tool_output = {"tool_call_id": tool_call.id, "output": str(e)}
-                tool_outputs.append(tool_output)
+        # Execute all tool calls concurrently
+        tool_outputs = await asyncio.gather(
+            *[self._execute_single_tool_call(tc) for tc in tool_calls if tc.type == "function"]
+        )
 
         return tool_outputs
 
@@ -1571,8 +1645,8 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
                 func_rt = await self.on_unhandled_event(
                     event_type, event_data_obj
                 )  # pylint: disable=assignment-from-none
-        except Exception as e:  # pylint: disable=broad-exception-caught
-            logger.error("Error in event handler for event '%s': %s", event_type, e)
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.error("Error in event handler for event '%s'", event_type)
         return event_type, event_data_obj, func_rt
 
     async def on_message_delta(
@@ -1698,8 +1772,8 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
                 func_rt = self.on_done()  # pylint: disable=assignment-from-none
             else:
                 func_rt = self.on_unhandled_event(event_type, event_data_obj)  # pylint: disable=assignment-from-none
-        except Exception as e:  # pylint: disable=broad-exception-caught
-            logger.error("Error in event handler for event '%s': %s", event_type, e)
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.debug("Error in event handler for event '%s'", event_type)
         return event_type, event_data_obj, func_rt
 
     def on_message_delta(
@@ -1823,6 +1897,30 @@ class AgentRunStream(Generic[BaseAgentEventHandlerT]):
             close_method()
 
 
+def _is_valid_connection_id(connection_id: str) -> bool:
+    """
+    Validates if a string matches the Azure connection resource ID format.
+
+    The expected format is:
+    "/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP>/
+    providers/<AZURE_PROVIDER>/accounts/<ACCOUNT_NAME>/projects/<PROJECT_NAME>/
+    connections/<CONNECTION_NAME>"
+
+    :param connection_id: The connection ID string to validate
+    :type connection_id: str
+    :return: True if the string matches the expected format, False otherwise
+    :rtype: bool
+    """
+    pattern = (
+        r"^/subscriptions/[^/]+/resourceGroups/[^/]+/providers/[^/]+/accounts/[^/]+/projects/[^/]+/connections/[^/]+$"
+    )
+
+    # Check if the string matches the pattern
+    if re.match(pattern, connection_id):
+        return True
+    return False
+
+
 __all__: List[str] = [
     "AgentEventHandler",
     "AgentRunStream",
@@ -1835,6 +1933,7 @@ __all__: List[str] = [
     "BaseAgentEventHandler",
     "CodeInterpreterTool",
     "ConnectedAgentTool",
+    "DeepResearchTool",
     "AsyncAgentEventHandler",
     "FileSearchTool",
     "FunctionTool",

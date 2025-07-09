@@ -45,6 +45,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/resources/resource-manager/Microsoft.Resources/stable/2022-09-01/examples/PostDeploymentWhatIfOnSubscription.json
+# x-ms-original-file: specification/resources/resource-manager/Microsoft.Resources/deployments/stable/2022-09-01/examples/PostDeploymentWhatIfOnSubscription.json
 if __name__ == "__main__":
     main()

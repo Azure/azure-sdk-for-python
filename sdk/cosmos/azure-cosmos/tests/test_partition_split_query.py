@@ -88,7 +88,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
         offer = self.database.get_throughput()
         while True:
             if time.time() - start_time > 60 * 25:  # timeout test at 25 minutes
-                unittest.skip("Partition split didn't complete in time.")
+                raise unittest.SkipTest("Partition split didn't complete in time")
             if offer.properties['content'].get('isOfferReplacePending', False):
                 time.sleep(10)
                 offer = self.database.get_throughput()

@@ -31,6 +31,8 @@ class AgentsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tool type ``bing_custom_search``"""
     CONNECTED_AGENT = "connected_agent"
     """Tool type ``connected_agent``"""
+    DEEP_RESEARCH = "deep_research"
+    """Tool type ``deep_research``"""
 
 
 class AgentsResponseFormatMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):

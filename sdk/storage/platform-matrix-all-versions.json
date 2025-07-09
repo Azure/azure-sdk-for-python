@@ -6,7 +6,7 @@
     },
     "matrix": {
         "Agent": {
-          "Ubuntu-20.04": { "OSVmImage": "env:LINUXVMIMAGE", "Pool": "env:LINUXPOOL" },
+          "Ubuntu-24.04": { "OSVmImage": "env:LINUXVMIMAGE", "Pool": "env:LINUXPOOL" },
           "windows-2022": { "OSVmImage": "env:WINDOWSVMIMAGE", "Pool": "env:WINDOWSPOOL" }
         },
         "PythonVersion": [ "3.9", "3.10"],
@@ -36,7 +36,7 @@
       },
       {
         "CoverageConfig": {
-          "ubuntu2004_pypy39": {
+          "ubuntu2404_pypy39": {
             "OSVmImage": "env:LINUXVMIMAGE",
             "Pool": "env:LINUXPOOL",
             "PythonVersion": "pypy3.9",
