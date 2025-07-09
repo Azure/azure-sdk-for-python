@@ -96,6 +96,36 @@ class TestRetryableWrites(unittest.TestCase):
                                                partition_key=test_item_create['partitionKey'])
         assert read_item_create['id'] == test_item_create['id'], "Item was not created successfully after retries"
 
+        # Mock retry_utility.execute to track retries
+        original_execute = _retry_utility.ExecuteFunction
+        me = self.MockExecuteFunction(original_execute)
+        _retry_utility.ExecuteFunction = me
+        # Test without retry_write for patch_item
+        test_patch_operations = [
+            {"op": "add", "path": "/data", "value": "patched retryable write test"}
+        ]
+        try:
+            container.patch_item(item=test_item['id'], partition_key=test_item['partitionKey'],
+                                 patch_operations=test_patch_operations)
+            pytest.fail("Expected an exception without retry_write")
+        except exceptions.CosmosHttpResponseError:
+            assert me.counter == 1, "Expected no retries without retry_write"
+
+        # Test with retry_write for patch_item
+        me.counter = 0  # Reset counter
+        try:
+            container.patch_item(item=test_item['id'], partition_key=test_item['partitionKey'],
+                                 patch_operations=test_patch_operations, retry_write=True)
+        except exceptions.CosmosHttpResponseError as e:
+            assert me.counter > 1, "Expected multiple retries due to simulated errors"
+        finally:
+            # Restore the original retry_utility.execute function
+            _retry_utility.ExecuteFunction = original_execute
+
+        # Verify the item was patched
+        patched_item = container.read_item(item=test_item['id'], partition_key=test_item['partitionKey'])
+        assert patched_item['data'] == "patched retryable write test", "Item was not patched successfully after retries"
+
     def test_retryable_writes_hpk(self):
         """Test retryable writes for a container with hierarchical partition keys."""
         container = self.container_hpk
@@ -154,6 +184,39 @@ class TestRetryableWrites(unittest.TestCase):
         read_item_create = container.read_item(item=test_item_create['id'],
                                                partition_key=[test_item_create['state'], test_item_create['city']])
         assert read_item_create['id'] == test_item_create['id'], "Item was not created successfully after retries"
+
+        # Mock retry_utility.execute to track retries
+        original_execute = _retry_utility.ExecuteFunction
+        me = self.MockExecuteFunction(original_execute)
+        _retry_utility.ExecuteFunction = me
+
+        # Test without retry_write for patch_item
+        test_patch_operations_hpk = [
+            {"op": "add", "path": "/data", "value": "patched retryable write test"}
+        ]
+        try:
+            container.patch_item(item=test_item['id'], partition_key=[test_item['state'], test_item['city']],
+                                 patch_operations=test_patch_operations_hpk)
+            pytest.fail("Expected an exception without retry_write")
+        except exceptions.CosmosHttpResponseError:
+            assert me.counter == 1, "Expected no retries without retry_write"
+
+        # Test with retry_write for patch_item
+        me.counter = 0  # Reset counter
+        try:
+            container.patch_item(item=test_item['id'], partition_key=[test_item['state'], test_item['city']],
+                                 patch_operations=test_patch_operations_hpk, retry_write=True)
+        except exceptions.CosmosHttpResponseError as e:
+            assert me.counter > 1, "Expected multiple retries due to simulated errors"
+        finally:
+            # Restore the original retry_utility.execute function
+            _retry_utility.ExecuteFunction = original_execute
+
+        # Verify the item was patched
+        patched_item_hpk = container.read_item(item=test_item['id'],
+                                               partition_key=[test_item['state'], test_item['city']])
+        assert patched_item_hpk[
+                   'data'] == "patched retryable write test", "Item was not patched successfully after retries"
 
     class MockExecuteFunction(object):
         def __init__(self, org_func):
