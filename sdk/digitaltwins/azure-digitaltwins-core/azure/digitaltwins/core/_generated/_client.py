@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 from typing_extensions import Self
 
 from azure.core import PipelineClient
@@ -17,7 +17,14 @@ from azure.core.rest import HttpRequest, HttpResponse
 from . import models as _models
 from ._configuration import AzureDigitalTwinsAPIConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .operations import DigitalTwinModelsOperations, DigitalTwinsOperations, EventRoutesOperations, QueryOperations
+from .operations import (
+    DeleteJobsOperations,
+    DigitalTwinModelsOperations,
+    DigitalTwinsOperations,
+    EventRoutesOperations,
+    ImportJobsOperations,
+    QueryOperations,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -34,19 +41,41 @@ class AzureDigitalTwinsAPI:
     :vartype digital_twins: azure.digitaltwins.core.operations.DigitalTwinsOperations
     :ivar event_routes: EventRoutesOperations operations
     :vartype event_routes: azure.digitaltwins.core.operations.EventRoutesOperations
+    :ivar import_jobs: ImportJobsOperations operations
+    :vartype import_jobs: azure.digitaltwins.core.operations.ImportJobsOperations
+    :ivar delete_jobs: DeleteJobsOperations operations
+    :vartype delete_jobs: azure.digitaltwins.core.operations.DeleteJobsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
+    :param operation_id: ID for the operation's status monitor. The ID is generated if header was
+     not passed by the client. Default value is None.
+    :type operation_id: str
+    :param timeout_in_minutes: Desired timeout for the delete job. Once the specified timeout is
+     reached, service will stop any delete operations triggered by the current delete job that are
+     in progress, and go to a failed state. Please note that this will leave your instance in an
+     unknown state as there won't be any rollback operation. Default value is None.
+    :type timeout_in_minutes: int
     :keyword endpoint: Service URL. Default value is "https://digitaltwins-hostname".
     :paramtype endpoint: str
-    :keyword api_version: Api Version. Default value is "2022-05-31". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2023-10-31". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
-        self, credential: "TokenCredential", *, endpoint: str = "https://digitaltwins-hostname", **kwargs: Any
+        self,
+        credential: "TokenCredential",
+        operation_id: Optional[str] = None,
+        timeout_in_minutes: Optional[int] = None,
+        *,
+        endpoint: str = "https://digitaltwins-hostname",
+        **kwargs: Any
     ) -> None:
-        self._config = AzureDigitalTwinsAPIConfiguration(credential=credential, **kwargs)
+        self._config = AzureDigitalTwinsAPIConfiguration(
+            credential=credential, operation_id=operation_id, timeout_in_minutes=timeout_in_minutes, **kwargs
+        )
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:
@@ -78,6 +107,8 @@ class AzureDigitalTwinsAPI:
         self.query = QueryOperations(self._client, self._config, self._serialize, self._deserialize)
         self.digital_twins = DigitalTwinsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.event_routes = EventRoutesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.import_jobs = ImportJobsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.delete_jobs = DeleteJobsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

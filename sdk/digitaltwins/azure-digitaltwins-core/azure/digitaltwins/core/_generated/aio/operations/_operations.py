@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient, MatchConditions
@@ -20,9 +20,13 @@ from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
+from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -31,6 +35,9 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
+    build_delete_jobs_add_request,
+    build_delete_jobs_get_by_id_request,
+    build_delete_jobs_list_request,
     build_digital_twin_models_add_request,
     build_digital_twin_models_delete_request,
     build_digital_twin_models_get_by_id_request,
@@ -54,6 +61,11 @@ from ...operations._operations import (
     build_event_routes_delete_request,
     build_event_routes_get_by_id_request,
     build_event_routes_list_request,
+    build_import_jobs_add_request,
+    build_import_jobs_cancel_request,
+    build_import_jobs_delete_request,
+    build_import_jobs_get_by_id_request,
+    build_import_jobs_list_request,
     build_query_query_twins_request,
 )
 from .._configuration import AzureDigitalTwinsAPIConfiguration
@@ -292,8 +304,8 @@ class DigitalTwinModelsOperations:
         :keyword tracestate: Provides vendor-specific trace identification information and is a
          companion to traceparent. Default value is None.
         :paramtype tracestate: str
-        :keyword dependencies_for: The set of the models which will have their dependencies retrieved.
-         If omitted, all models are retrieved. Default value is None.
+        :keyword dependencies_for: If specified, only return the set of the specified models along with
+         their dependencies. If omitted, all models are retrieved. Default value is None.
         :paramtype dependencies_for: list[str]
         :keyword include_model_definition: When true the model definition will be returned as part of
          the result. Default value is False.
@@ -953,7 +965,7 @@ class DigitalTwinsOperations:
     @distributed_trace_async
     async def get_by_id(
         self, id: str, *, traceparent: Optional[str] = None, tracestate: Optional[str] = None, **kwargs: Any
-    ) -> JSON:
+    ) -> Dict[str, Any]:
         """Retrieves a digital twin.
         Status codes:
 
@@ -976,8 +988,8 @@ class DigitalTwinsOperations:
         :keyword tracestate: Provides vendor-specific trace identification information and is a
          companion to traceparent. Default value is None.
         :paramtype tracestate: str
-        :return: JSON
-        :rtype: JSON
+        :return: dict mapping str to any
+        :rtype: dict[str, any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -991,7 +1003,7 @@ class DigitalTwinsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[Dict[str, Any]] = kwargs.pop("cls", None)
 
         _request = build_digital_twins_get_by_id_request(
             id=id,
@@ -1018,7 +1030,7 @@ class DigitalTwinsOperations:
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-        deserialized = self._deserialize("object", pipeline_response.http_response)
+        deserialized = self._deserialize("{object}", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1036,7 +1048,7 @@ class DigitalTwinsOperations:
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> JSON:
+    ) -> Dict[str, Any]:
         """Adds or replaces a digital twin.
         Status codes:
 
@@ -1070,8 +1082,8 @@ class DigitalTwinsOperations:
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :return: JSON
-        :rtype: JSON
+        :return: dict mapping str to any
+        :rtype: dict[str, any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1092,7 +1104,7 @@ class DigitalTwinsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[Dict[str, Any]] = kwargs.pop("cls", None)
 
         _json = self._serialize.body(twin, "object")
 
@@ -1125,7 +1137,7 @@ class DigitalTwinsOperations:
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-        deserialized = self._deserialize("object", pipeline_response.http_response)
+        deserialized = self._deserialize("{object}", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1464,7 +1476,7 @@ class DigitalTwinsOperations:
         traceparent: Optional[str] = None,
         tracestate: Optional[str] = None,
         **kwargs: Any
-    ) -> JSON:
+    ) -> Dict[str, Any]:
         """Retrieves a relationship between two digital twins.
         Status codes:
 
@@ -1491,8 +1503,8 @@ class DigitalTwinsOperations:
         :keyword tracestate: Provides vendor-specific trace identification information and is a
          companion to traceparent. Default value is None.
         :paramtype tracestate: str
-        :return: JSON
-        :rtype: JSON
+        :return: dict mapping str to any
+        :rtype: dict[str, any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1506,7 +1518,7 @@ class DigitalTwinsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[Dict[str, Any]] = kwargs.pop("cls", None)
 
         _request = build_digital_twins_get_relationship_by_id_request(
             id=id,
@@ -1534,7 +1546,7 @@ class DigitalTwinsOperations:
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-        deserialized = self._deserialize("object", pipeline_response.http_response)
+        deserialized = self._deserialize("{object}", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1553,7 +1565,7 @@ class DigitalTwinsOperations:
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> JSON:
+    ) -> Dict[str, Any]:
         """Adds a relationship between two digital twins.
         Status codes:
 
@@ -1594,8 +1606,8 @@ class DigitalTwinsOperations:
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :return: JSON
-        :rtype: JSON
+        :return: dict mapping str to any
+        :rtype: dict[str, any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1616,7 +1628,7 @@ class DigitalTwinsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[Dict[str, Any]] = kwargs.pop("cls", None)
 
         _json = self._serialize.body(relationship, "object")
 
@@ -1650,7 +1662,7 @@ class DigitalTwinsOperations:
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-        deserialized = self._deserialize("object", pipeline_response.http_response)
+        deserialized = self._deserialize("{object}", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2422,7 +2434,7 @@ class DigitalTwinsOperations:
         traceparent: Optional[str] = None,
         tracestate: Optional[str] = None,
         **kwargs: Any
-    ) -> JSON:
+    ) -> Dict[str, Any]:
         """Retrieves a component from a digital twin.
         Status codes:
 
@@ -2448,8 +2460,8 @@ class DigitalTwinsOperations:
         :keyword tracestate: Provides vendor-specific trace identification information and is a
          companion to traceparent. Default value is None.
         :paramtype tracestate: str
-        :return: JSON
-        :rtype: JSON
+        :return: dict mapping str to any
+        :rtype: dict[str, any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2463,7 +2475,7 @@ class DigitalTwinsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[Dict[str, Any]] = kwargs.pop("cls", None)
 
         _request = build_digital_twins_get_component_request(
             id=id,
@@ -2491,7 +2503,7 @@ class DigitalTwinsOperations:
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-        deserialized = self._deserialize("object", pipeline_response.http_response)
+        deserialized = self._deserialize("{object}", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3160,3 +3172,809 @@ class EventRoutesOperations:
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
+
+
+class ImportJobsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.digitaltwins.core.aio.AzureDigitalTwinsAPI`'s
+        :attr:`import_jobs` attribute.
+    """
+
+    models = _models
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AzureDigitalTwinsAPIConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list(
+        self,
+        *,
+        traceparent: Optional[str] = None,
+        tracestate: Optional[str] = None,
+        max_items_per_page: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.ImportJob"]:
+        """Retrieves all import jobs.
+        Status codes:
+
+
+        * 200 OK.
+
+        :keyword traceparent: Identifies the request in a distributed tracing system. Default value is
+         None.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent. Default value is None.
+        :paramtype tracestate: str
+        :keyword max_items_per_page: The maximum number of items to retrieve per request. The server
+         may choose to return less than the requested number. Default value is None.
+        :paramtype max_items_per_page: int
+        :return: An iterator like instance of ImportJob
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.digitaltwins.core.models.ImportJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.ImportJobCollection] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_import_jobs_list_request(
+                    traceparent=traceparent,
+                    tracestate=tracestate,
+                    max_items_per_page=max_items_per_page,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize(
+                _models._models.ImportJobCollection, pipeline_response  # pylint: disable=protected-access
+            )
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @overload
+    async def add(
+        self,
+        id: str,
+        import_job: _models.ImportJob,
+        *,
+        traceparent: Optional[str] = None,
+        tracestate: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ImportJob:
+        """Creates an import job.
+        Status codes:
+
+
+        * 201 Created
+        * 400 Bad Request
+
+          * JobLimitReached - The maximum number of import jobs allowed has been reached.
+          * ValidationFailed - The import job request is not valid.
+
+        :param id: The id for the import job. The id is unique within the service and case sensitive.
+         Required.
+        :type id: str
+        :param import_job: The import job being added. Required.
+        :type import_job: ~azure.digitaltwins.core.models.ImportJob
+        :keyword traceparent: Identifies the request in a distributed tracing system. Default value is
+         None.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent. Default value is None.
+        :paramtype tracestate: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ImportJob
+        :rtype: ~azure.digitaltwins.core.models.ImportJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def add(
+        self,
+        id: str,
+        import_job: IO[bytes],
+        *,
+        traceparent: Optional[str] = None,
+        tracestate: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ImportJob:
+        """Creates an import job.
+        Status codes:
+
+
+        * 201 Created
+        * 400 Bad Request
+
+          * JobLimitReached - The maximum number of import jobs allowed has been reached.
+          * ValidationFailed - The import job request is not valid.
+
+        :param id: The id for the import job. The id is unique within the service and case sensitive.
+         Required.
+        :type id: str
+        :param import_job: The import job being added. Required.
+        :type import_job: IO[bytes]
+        :keyword traceparent: Identifies the request in a distributed tracing system. Default value is
+         None.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent. Default value is None.
+        :paramtype tracestate: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ImportJob
+        :rtype: ~azure.digitaltwins.core.models.ImportJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def add(
+        self,
+        id: str,
+        import_job: Union[_models.ImportJob, IO[bytes]],
+        *,
+        traceparent: Optional[str] = None,
+        tracestate: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.ImportJob:
+        """Creates an import job.
+        Status codes:
+
+
+        * 201 Created
+        * 400 Bad Request
+
+          * JobLimitReached - The maximum number of import jobs allowed has been reached.
+          * ValidationFailed - The import job request is not valid.
+
+        :param id: The id for the import job. The id is unique within the service and case sensitive.
+         Required.
+        :type id: str
+        :param import_job: The import job being added. Is either a ImportJob type or a IO[bytes] type.
+         Required.
+        :type import_job: ~azure.digitaltwins.core.models.ImportJob or IO[bytes]
+        :keyword traceparent: Identifies the request in a distributed tracing system. Default value is
+         None.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent. Default value is None.
+        :paramtype tracestate: str
+        :return: ImportJob
+        :rtype: ~azure.digitaltwins.core.models.ImportJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ImportJob] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(import_job, (IOBase, bytes)):
+            _content = import_job
+        else:
+            _json = self._serialize.body(import_job, "ImportJob")
+
+        _request = build_import_jobs_add_request(
+            id=id,
+            traceparent=traceparent,
+            tracestate=tracestate,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize("ImportJob", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_by_id(
+        self, id: str, *, traceparent: Optional[str] = None, tracestate: Optional[str] = None, **kwargs: Any
+    ) -> _models.ImportJob:
+        """Retrieves an import job.
+        Status codes:
+
+
+        * 200 OK
+        * 404 Not Found
+
+          * ImportJobNotFound - The import job was not found.
+
+        :param id: The id for the import job. The id is unique within the service and case sensitive.
+         Required.
+        :type id: str
+        :keyword traceparent: Identifies the request in a distributed tracing system. Default value is
+         None.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent. Default value is None.
+        :paramtype tracestate: str
+        :return: ImportJob
+        :rtype: ~azure.digitaltwins.core.models.ImportJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ImportJob] = kwargs.pop("cls", None)
+
+        _request = build_import_jobs_get_by_id_request(
+            id=id,
+            traceparent=traceparent,
+            tracestate=tracestate,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize("ImportJob", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete(
+        self, id: str, *, traceparent: Optional[str] = None, tracestate: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """Deletes an import job. This is simply used to remove a job id, so it may be reused later. It
+        can not be used to stop entities from being imported.
+        Status codes:
+
+
+        * 204 No Content
+        * 400 Bad Request
+
+          * ValidationFailed - The import job request is not valid.
+
+        :param id: The id for the import job. The id is unique within the service and case sensitive.
+         Required.
+        :type id: str
+        :keyword traceparent: Identifies the request in a distributed tracing system. Default value is
+         None.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent. Default value is None.
+        :paramtype tracestate: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_import_jobs_delete_request(
+            id=id,
+            traceparent=traceparent,
+            tracestate=tracestate,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    async def cancel(
+        self, id: str, *, traceparent: Optional[str] = None, tracestate: Optional[str] = None, **kwargs: Any
+    ) -> _models.ImportJob:
+        """Cancels an import job that is currently running. Service will stop any import operations
+        triggered by the current import job that are in progress, and go to a cancelled state. Please
+        note that this will leave your instance in an unknown state as there won't be any rollback
+        operation.
+        Status codes:
+
+
+        * 200 Request Accepted
+        * 400 Bad Request
+
+          * ValidationFailed - The import job request is not valid.
+
+        :param id: The id for the import job. The id is unique within the service and case sensitive.
+         Required.
+        :type id: str
+        :keyword traceparent: Identifies the request in a distributed tracing system. Default value is
+         None.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent. Default value is None.
+        :paramtype tracestate: str
+        :return: ImportJob
+        :rtype: ~azure.digitaltwins.core.models.ImportJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ImportJob] = kwargs.pop("cls", None)
+
+        _request = build_import_jobs_cancel_request(
+            id=id,
+            traceparent=traceparent,
+            tracestate=tracestate,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize("ImportJob", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class DeleteJobsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.digitaltwins.core.aio.AzureDigitalTwinsAPI`'s
+        :attr:`delete_jobs` attribute.
+    """
+
+    models = _models
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AzureDigitalTwinsAPIConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    async def _add_initial(
+        self, *, traceparent: Optional[str] = None, tracestate: Optional[str] = None, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_delete_jobs_add_request(
+            traceparent=traceparent,
+            tracestate=tracestate,
+            operation_id=self._config.operation_id,
+            timeout_in_minutes=self._config.timeout_in_minutes,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def begin_add(
+        self, *, traceparent: Optional[str] = None, tracestate: Optional[str] = None, **kwargs: Any
+    ) -> AsyncLROPoller[_models.DeleteJob]:
+        """Initiates a job which deletes all models, twins, and relationships on the instance. Does not
+        delete any other types of entities.
+        Status codes:
+
+
+        * 202 Created
+        * 400 Bad Request
+
+          * JobLimitReached - The maximum number of delete jobs allowed has been reached.
+          * ValidationFailed - Operation-Id already exists.
+
+        :keyword traceparent: Identifies the request in a distributed tracing system. Default value is
+         None.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent. Default value is None.
+        :paramtype tracestate: str
+        :return: An instance of AsyncLROPoller that returns DeleteJob
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.digitaltwins.core.models.DeleteJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.DeleteJob] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._add_initial(
+                traceparent=traceparent,
+                tracestate=tracestate,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+
+            deserialized = self._deserialize("DeleteJob", pipeline_response.http_response)
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncLROBasePolling(lro_delay, **kwargs))
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.DeleteJob].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.DeleteJob](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace
+    def list(
+        self,
+        *,
+        traceparent: Optional[str] = None,
+        tracestate: Optional[str] = None,
+        max_items_per_page: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.DeleteJob"]:
+        """Retrieves all deletion jobs. This may be useful to find a delete job that was previously
+        requested, or to view a history of delete jobs that have run or are currently running on the
+        instance.
+        Status codes:
+
+
+        * 200 OK.
+
+        :keyword traceparent: Identifies the request in a distributed tracing system. Default value is
+         None.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent. Default value is None.
+        :paramtype tracestate: str
+        :keyword max_items_per_page: The maximum number of items to retrieve per request. The server
+         may choose to return less than the requested number. Default value is None.
+        :paramtype max_items_per_page: int
+        :return: An iterator like instance of DeleteJob
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.digitaltwins.core.models.DeleteJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.DeleteJobCollection] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_delete_jobs_list_request(
+                    traceparent=traceparent,
+                    tracestate=tracestate,
+                    max_items_per_page=max_items_per_page,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize(
+                _models._models.DeleteJobCollection, pipeline_response  # pylint: disable=protected-access
+            )
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get_by_id(
+        self, id: str, *, traceparent: Optional[str] = None, tracestate: Optional[str] = None, **kwargs: Any
+    ) -> _models.DeleteJob:
+        """Retrieves a delete job.
+        Status codes:
+
+
+        * 200 OK
+        * 404 Not Found
+
+          * DeleteJobNotFound - The delete job was not found.
+
+        :param id: The id for the delete job. The id is unique within the service and case sensitive.
+         Required.
+        :type id: str
+        :keyword traceparent: Identifies the request in a distributed tracing system. Default value is
+         None.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent. Default value is None.
+        :paramtype tracestate: str
+        :return: DeleteJob
+        :rtype: ~azure.digitaltwins.core.models.DeleteJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.DeleteJob] = kwargs.pop("cls", None)
+
+        _request = build_delete_jobs_get_by_id_request(
+            id=id,
+            traceparent=traceparent,
+            tracestate=tracestate,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize("DeleteJob", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore

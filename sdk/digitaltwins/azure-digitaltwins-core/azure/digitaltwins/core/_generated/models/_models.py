@@ -17,6 +17,92 @@ if TYPE_CHECKING:
 JSON = MutableMapping[str, Any]
 
 
+class DeleteJob(_serialization.Model):
+    """A job which contains a reference to the operations to perform, results, and execution metadata.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The identifier of the delete job.
+    :vartype id: str
+    :ivar status: Status of the job. Known values are: "notstarted", "running", "failed", and
+     "succeeded".
+    :vartype status: str or ~azure.digitaltwins.core.models.DeleteJobStatus
+    :ivar created_date_time: Start time of the job. The timestamp is in RFC3339 format:
+     ``yyyy-MM-ddTHH:mm:ssZ``.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar finished_date_time: End time of the job. The timestamp is in RFC3339 format:
+     ``yyyy-MM-ddTHH:mm:ssZ``.
+    :vartype finished_date_time: ~datetime.datetime
+    :ivar purge_date_time: Time at which job will be purged by the service from the system. The
+     timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
+    :vartype purge_date_time: ~datetime.datetime
+    :ivar error: Details of the error(s) that occurred executing the import job.
+    :vartype error: ~azure.digitaltwins.core.models.Error
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "status": {"readonly": True},
+        "created_date_time": {"readonly": True},
+        "finished_date_time": {"readonly": True},
+        "purge_date_time": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "created_date_time": {"key": "createdDateTime", "type": "iso-8601"},
+        "finished_date_time": {"key": "finishedDateTime", "type": "iso-8601"},
+        "purge_date_time": {"key": "purgeDateTime", "type": "iso-8601"},
+        "error": {"key": "error", "type": "Error"},
+    }
+
+    def __init__(self, *, error: Optional["_models.Error"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: Details of the error(s) that occurred executing the import job.
+        :paramtype error: ~azure.digitaltwins.core.models.Error
+        """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.status: Optional[Union[str, "_models.DeleteJobStatus"]] = None
+        self.created_date_time: Optional[datetime.datetime] = None
+        self.finished_date_time: Optional[datetime.datetime] = None
+        self.purge_date_time: Optional[datetime.datetime] = None
+        self.error = error
+
+
+class DeleteJobCollection(_serialization.Model):
+    """A collection of delete job objects.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The list of delete job objects. Required.
+    :vartype value: list[~azure.digitaltwins.core.models.DeleteJob]
+    :ivar next_link: A URI to retrieve the next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[DeleteJob]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: List["_models.DeleteJob"], next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: The list of delete job objects. Required.
+        :paramtype value: list[~azure.digitaltwins.core.models.DeleteJob]
+        :keyword next_link: A URI to retrieve the next page of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
 class DigitalTwinsEventRoute(_serialization.Model):
     """A route which directs notification and telemetry events to an endpoint. Endpoints are a
     destination outside of Azure Digital Twins such as an EventHub.
@@ -226,6 +312,120 @@ class EventRouteCollection(_serialization.Model):
         """
         :keyword value: The EventRoute objects. Required.
         :paramtype value: list[~azure.digitaltwins.core.models.DigitalTwinsEventRoute]
+        :keyword next_link: A URI to retrieve the next page of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class ImportJob(_serialization.Model):
+    """A job which contains a reference to the operations to perform, results, and execution metadata.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: The identifier of the import job.
+    :vartype id: str
+    :ivar input_blob_uri: The path to the input Azure storage blob that contains file(s) describing
+     the operations to perform in the job. Required.
+    :vartype input_blob_uri: str
+    :ivar output_blob_uri: The path to the output Azure storage blob that will contain the errors
+     and progress logs of import job. Required.
+    :vartype output_blob_uri: str
+    :ivar status: Status of the job. Known values are: "notstarted", "running", "failed",
+     "succeeded", "cancelling", and "cancelled".
+    :vartype status: str or ~azure.digitaltwins.core.models.Status
+    :ivar created_date_time: Start time of the job. The timestamp is in RFC3339 format:
+     ``yyyy-MM-ddTHH:mm:ssZ``.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_action_date_time: Last time service performed any action from the job. The timestamp
+     is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
+    :vartype last_action_date_time: ~datetime.datetime
+    :ivar finished_date_time: End time of the job. The timestamp is in RFC3339 format:
+     ``yyyy-MM-ddTHH:mm:ssZ``.
+    :vartype finished_date_time: ~datetime.datetime
+    :ivar purge_date_time: Time at which job will be purged by the service from the system. The
+     timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
+    :vartype purge_date_time: ~datetime.datetime
+    :ivar error: Details of the error(s) that occurred executing the import job.
+    :vartype error: ~azure.digitaltwins.core.models.Error
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "input_blob_uri": {"required": True},
+        "output_blob_uri": {"required": True},
+        "status": {"readonly": True},
+        "created_date_time": {"readonly": True},
+        "last_action_date_time": {"readonly": True},
+        "finished_date_time": {"readonly": True},
+        "purge_date_time": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "input_blob_uri": {"key": "inputBlobUri", "type": "str"},
+        "output_blob_uri": {"key": "outputBlobUri", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "created_date_time": {"key": "createdDateTime", "type": "iso-8601"},
+        "last_action_date_time": {"key": "lastActionDateTime", "type": "iso-8601"},
+        "finished_date_time": {"key": "finishedDateTime", "type": "iso-8601"},
+        "purge_date_time": {"key": "purgeDateTime", "type": "iso-8601"},
+        "error": {"key": "error", "type": "Error"},
+    }
+
+    def __init__(
+        self, *, input_blob_uri: str, output_blob_uri: str, error: Optional["_models.Error"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword input_blob_uri: The path to the input Azure storage blob that contains file(s)
+         describing the operations to perform in the job. Required.
+        :paramtype input_blob_uri: str
+        :keyword output_blob_uri: The path to the output Azure storage blob that will contain the
+         errors and progress logs of import job. Required.
+        :paramtype output_blob_uri: str
+        :keyword error: Details of the error(s) that occurred executing the import job.
+        :paramtype error: ~azure.digitaltwins.core.models.Error
+        """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.input_blob_uri = input_blob_uri
+        self.output_blob_uri = output_blob_uri
+        self.status: Optional[Union[str, "_models.Status"]] = None
+        self.created_date_time: Optional[datetime.datetime] = None
+        self.last_action_date_time: Optional[datetime.datetime] = None
+        self.finished_date_time: Optional[datetime.datetime] = None
+        self.purge_date_time: Optional[datetime.datetime] = None
+        self.error = error
+
+
+class ImportJobCollection(_serialization.Model):
+    """A collection of import job objects.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The list of import job objects. Required.
+    :vartype value: list[~azure.digitaltwins.core.models.ImportJob]
+    :ivar next_link: A URI to retrieve the next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ImportJob]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: List["_models.ImportJob"], next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: The list of import job objects. Required.
+        :paramtype value: list[~azure.digitaltwins.core.models.ImportJob]
         :keyword next_link: A URI to retrieve the next page of results.
         :paramtype next_link: str
         """
