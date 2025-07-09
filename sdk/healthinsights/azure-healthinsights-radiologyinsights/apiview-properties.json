@@ -83,6 +83,8 @@
         "azure.healthinsights.radiologyinsights.models.ScoringAndAssessmentCategoryType": "AzureHealthInsights.ScoringAndAssessmentCategoryType",
         "azure.healthinsights.radiologyinsights.models.JobStatus": "AzureHealthInsights.JobStatus",
         "azure.healthinsights.radiologyinsights.RadiologyInsightsClient.begin_infer_radiology_insights": "ClientForAzureHealthInsights.RadiologyInsightsClient.inferRadiologyInsights",
-        "azure.healthinsights.radiologyinsights.aio.RadiologyInsightsClient.begin_infer_radiology_insights": "ClientForAzureHealthInsights.RadiologyInsightsClient.inferRadiologyInsights"
+        "azure.healthinsights.radiologyinsights.aio.RadiologyInsightsClient.begin_infer_radiology_insights": "ClientForAzureHealthInsights.RadiologyInsightsClient.inferRadiologyInsights",
+        "azure.healthinsights.radiologyinsights.RadiologyInsightsClient.begin_infer_from_custom_model_id": "ClientForAzureHealthInsights.RadiologyInsightsClient.inferFromCustomModelId",
+        "azure.healthinsights.radiologyinsights.aio.RadiologyInsightsClient.begin_infer_from_custom_model_id": "ClientForAzureHealthInsights.RadiologyInsightsClient.inferFromCustomModelId"
     }
 }
