@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+from typing import Any, Dict, List
 import uuid
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
@@ -236,7 +237,7 @@ try:
         }
     }
 
-    hospital_relationships = [
+    hospital_relationships: List[Dict[str, Any]] = [
         {
             "$relationshipId": "BuildingHasFloor",
             "$sourceId": building_twin_id,
@@ -270,9 +271,15 @@ try:
 
     event_hub_endpoint_name = os.getenv("AZURE_EVENT_HUB_ENDPOINT_NAME")
 
+    if not event_hub_endpoint_name:
+        raise ValueError("AZURE_EVENT_HUB_ENDPOINT_NAME environment variable is required")
+    
     # - AZURE_URL: The tenant ID in Azure Active Directory
     url = os.getenv("AZURE_URL")
 
+    if not url:
+        raise ValueError("AZURE_URL environment variable is required")
+    
     # DefaultAzureCredential expects the following three environment variables:
     # - AZURE_TENANT_ID: The tenant ID in Azure Active Directory
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
@@ -281,7 +288,7 @@ try:
     service_client = DigitalTwinsClient(url, credential)
 
     # Create models
-    new_model_list = [building_model, floor_model, hvac_model, room_model, wifi_model]
+    new_model_list: List[Dict[str, Any]] = [building_model, floor_model, hvac_model, room_model, wifi_model]
     models = service_client.create_models(new_model_list)
     print('Created Models:')
     print(models)
