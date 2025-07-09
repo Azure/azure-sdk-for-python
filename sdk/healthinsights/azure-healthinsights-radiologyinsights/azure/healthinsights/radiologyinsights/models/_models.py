@@ -2671,6 +2671,45 @@ class RadiologyCodeWithTypes(_Model):
         super().__init__(*args, **kwargs)
 
 
+class RadiologyInsightsCustomInferenceResponse(_Model):
+    """The inference results for the Radiology Insights request. If field 'status' has value
+    'succeeded', then field 'result' will contain an instance of RadiologyInsightsInferenceResult.
+
+    :ivar patient_results: Results for the patients given in the request. Required.
+    :vartype patient_results:
+     list[~azure.healthinsights.radiologyinsights.models.RadiologyInsightsPatientResult]
+    :ivar id: Models to be used for inference. If this is not specified, the model will use the
+     default model for inference. Required.
+    :vartype id: list[str]
+    """
+
+    patient_results: List["_models.RadiologyInsightsPatientResult"] = rest_field(
+        name="patientResults", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Results for the patients given in the request. Required."""
+    id: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Models to be used for inference. If this is not specified, the model will use the default model
+     for inference. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        patient_results: List["_models.RadiologyInsightsPatientResult"],
+        id: List[str],  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class RadiologyInsightsData(_Model):
     """Contains the list of patients, and configuration data.
 

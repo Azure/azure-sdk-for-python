@@ -48,6 +48,7 @@
         "azure.healthinsights.radiologyinsights.models.QualityMeasureOptions": "AzureHealthInsights.QualityMeasureOptions",
         "azure.healthinsights.radiologyinsights.models.Quantity": "Fhir.R4.Quantity",
         "azure.healthinsights.radiologyinsights.models.RadiologyCodeWithTypes": "AzureHealthInsights.RadiologyCodeWithTypes",
+        "azure.healthinsights.radiologyinsights.models.RadiologyInsightsCustomInferenceResponse": "AzureHealthInsights.RadiologyInsightsCustomInferenceResponse",
         "azure.healthinsights.radiologyinsights.models.RadiologyInsightsData": "AzureHealthInsights.RadiologyInsightsData",
         "azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceOptions": "AzureHealthInsights.RadiologyInsightsInferenceOptions",
         "azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceResult": "AzureHealthInsights.RadiologyInsightsInferenceResult",
