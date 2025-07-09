@@ -1,7 +1,5 @@
 # Azure Digitaltwins for Python
 
-> see https://aka.ms/autorest
-
 ### Settings
 ``` yaml
 input-file: https://github.com/Azure/azure-rest-api-specs/blob/9135e2063fba5479098437a9261e1f2b281fb624/specification/digitaltwins/data-plane/Microsoft.DigitalTwins/stable/2022-05-31/digitaltwins.json
