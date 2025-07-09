@@ -52,10 +52,10 @@ class TestRateLimitedSampler(unittest.TestCase):
         self.nano_time = [1_000_000_000_000] 
         self.nano_time_supplier = lambda: self.nano_time[0]
     
-    def advance_time(self, nanos_increment: int):
-        self.nano_time[0] += nanos_increment
+    def advance_time(self, nanoseconds_increment: int):
+        self.nano_time[0] += nanoseconds_increment
     
-    def get_current_time_nanos(self) -> int:
+    def get_current_time_nanoseconds(self) -> int:
         return self.nano_time[0]
     
     def test_constant_rate_sampling(self):
@@ -68,12 +68,12 @@ class TestRateLimitedSampler(unittest.TestCase):
         sampler._sampling_percentage_generator._state = _State(0.0, 0.0, initial_time)
         sampler._sampling_percentage_generator._round_to_nearest = False
 
-        nanos_between_spans = 10_000_000
+        nanoseconds_between_spans = 10_000_000
         num_spans = 10
         sampled_count = 0
 
         for i in range(num_spans):
-            self.advance_time(nanos_between_spans)
+            self.advance_time(nanoseconds_between_spans)
 
             result = sampler.should_sample(
                 parent_context=None,
@@ -99,7 +99,7 @@ class TestRateLimitedSampler(unittest.TestCase):
         initial_time = self.nano_time_supplier()
         sampler._sampling_percentage_generator._state = _State(0.0, 0.0, initial_time)
 
-        nanos_between_spans = 1_000_000
+        nanoseconds_between_spans = 1_000_000
         num_spans = 500
         sampled_count = 0
 
@@ -108,7 +108,7 @@ class TestRateLimitedSampler(unittest.TestCase):
         trace_ids = [random.getrandbits(128) for _ in range(num_spans)]
 
         for i in range(num_spans):
-            self.advance_time(nanos_between_spans)
+            self.advance_time(nanoseconds_between_spans)
 
             result = sampler.should_sample(
                 parent_context=None,
