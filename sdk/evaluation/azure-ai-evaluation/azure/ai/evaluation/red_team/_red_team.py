@@ -1642,7 +1642,6 @@ class RedTeam:
         :return: Path to the output file
         :rtype: str
         """
-        import pdb; pdb.set_trace()
         output_path = self.red_team_info[strategy_name][risk_category]["data_file"]
         self.logger.debug(f"Writing PyRIT outputs to file: {output_path}")
         memory = CentralMemory.get_memory_instance()
