@@ -18,6 +18,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
     CustomerStatsbeatProperties,
     DropCode,
+    DropCodeType,
     #RetryCode,
     CustomerStatsbeatMetricName,
     _CUSTOMER_STATSBEAT_LANGUAGE,
@@ -27,16 +28,17 @@ from azure.monitor.opentelemetry.exporter.statsbeat._exporter import AzureMonito
 from azure.monitor.opentelemetry.exporter._utils import (
     Singleton,
     get_compute_type,
-    categorize_status_code,
-    categorize_exception_message,
 )
 
+from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
+    categorize_status_code,
+)
 from azure.monitor.opentelemetry.exporter import VERSION
 
 class _CustomerStatsbeatTelemetryCounters:
     def __init__(self):
         self.total_item_success_count: Dict[str, Any] = {}
-        self.total_item_drop_count: Dict[str, Dict[str, Dict[str, int]]] = {}
+        self.total_item_drop_count: Dict[str, Dict[DropCodeType, Dict[str, int]]] = {}
 
 class CustomerStatsbeatMetrics(metaclass=Singleton):
     def __init__(self, options):
@@ -85,7 +87,7 @@ class CustomerStatsbeatMetrics(metaclass=Singleton):
             self._counters.total_item_success_count[telemetry_type] = count
 
     def count_dropped_items(
-        self, count: int, telemetry_type: str, drop_code: DropCode,
+        self, count: int, telemetry_type: str, drop_code: DropCodeType,
         exception_message: Optional[str] = None
     ) -> None:
         if not self._is_enabled or count <= 0:
@@ -106,7 +108,7 @@ class CustomerStatsbeatMetrics(metaclass=Singleton):
 
         # Update the count for this reason
         current_count = reason_map.get(reason, 0)
-        reason_map[reason] = current_count + 1
+        reason_map[reason] = current_count + count
 
     def _item_success_callback(self, options: CallbackOptions) -> Iterable[Observation]: # pylint: disable=unused-argument
         if not getattr(self, "_is_enabled", False):
@@ -136,7 +138,7 @@ class CustomerStatsbeatMetrics(metaclass=Singleton):
                         "language": self._customer_properties.language,
                         "version": self._customer_properties.version,
                         "compute_type": self._customer_properties.compute_type,
-                        "drop.code": str(drop_code),
+                        "drop.code": drop_code,
                         "drop.reason": reason,
                         "telemetry_type": telemetry_type
                     }
@@ -144,12 +146,12 @@ class CustomerStatsbeatMetrics(metaclass=Singleton):
 
         return observations
 
-    def _get_drop_reason(self, drop_code: DropCode, exception_message: Optional[str] = None) -> str:
+    def _get_drop_reason(self, drop_code: DropCodeType, exception_message: Optional[str] = None) -> str:
         if isinstance(drop_code, int):
             return categorize_status_code(drop_code)
 
         if drop_code == DropCode.CLIENT_EXCEPTION:
-            return categorize_exception_message(exception_message) if exception_message else "unknown_exception"
+            return exception_message if exception_message else "unknown_exception"
 
         drop_code_reasons = {
             DropCode.CLIENT_READONLY: "readonly_mode",

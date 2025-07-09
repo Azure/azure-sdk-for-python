@@ -3,13 +3,13 @@
 # cSpell:disable
 
 from enum import Enum
+from typing import Union
 from opentelemetry.semconv.metrics import MetricInstruments
 from opentelemetry.semconv.metrics.http_metrics import (
     HTTP_CLIENT_REQUEST_DURATION,
     HTTP_SERVER_REQUEST_DURATION,
 )
 from azure.core import CaseInsensitiveEnumMeta
-
 
 # Environment variables
 
@@ -144,6 +144,8 @@ class DropCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLIENT_STALE_DATA = "CLIENT_STALE_DATA"
     CLIENT_PERSISTENCE_CAPACITY = "CLIENT_PERSISTENCE_CAPACITY"
     UNKNOWN = "UNKNOWN"
+
+DropCodeType = Union[DropCode, int]
 
 class RetryCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLIENT_TIMEOUT = "CLIENT_TIMEOUT"

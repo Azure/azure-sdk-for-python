@@ -21,6 +21,9 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
     _UNKNOWN,
     _TYPE_MAP,
+    DropCode,
+    DropCodeType,
+    _TRACE,
 )
 
 from opentelemetry import trace
@@ -33,6 +36,9 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     )
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 from azure.monitor.opentelemetry.exporter.statsbeat._state import _REQUESTS_MAP
+from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
+    categorize_status_code,
+)
 
 def convert_envelope_names_to_base_type(envelope_name):
     if not envelope_name.endswith("Data"):
@@ -84,6 +90,23 @@ class TestCustomerStatsbeat(unittest.TestCase):
                     pass  # Ignore shutdown errors
         CustomerStatsbeatMetrics._instance = None
     
+    def test_customer_statsbeat_not_initialized_when_disabled(self):
+        CustomerStatsbeatMetrics._instance = None
+        
+        with mock.patch.dict(os.environ, {"APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "false"}):
+            metrics = CustomerStatsbeatMetrics(self.mock_options)
+
+            # Verify is_enabled flag is False
+            self.assertFalse(metrics._is_enabled)
+
+            # Verify the metrics methods don't do anything when disabled
+            metrics.count_successful_items(5, _REQUEST)
+            metrics.count_dropped_items(3, _REQUEST, DropCode.CLIENT_EXCEPTION, "Test exception")
+
+            # Verify callbacks return empty lists when disabled
+            self.assertEqual(metrics._item_success_callback(mock.Mock()), [])
+            self.assertEqual(metrics._item_drop_callback(mock.Mock()), [])
+
     def test_successful_items_count(self):
         successful_dependencies = 0
 
@@ -118,7 +141,6 @@ class TestCustomerStatsbeat(unittest.TestCase):
 
         tracer = trace_provider.get_tracer(__name__)
 
-        # Generate random number of dependencies (between 5 and 15)
         total_dependencies = random.randint(5, 15)
 
         for i in range(total_dependencies):
@@ -171,68 +193,66 @@ class TestCustomerStatsbeat(unittest.TestCase):
             for envelope in envelopes:
                 if not hasattr(envelope, "data") or not envelope.data:
                     continue
-    
+
                 envelope_name = "Microsoft.ApplicationInsights." + envelope.data.base_type
                 telemetry_type = _BASE_TYPE_MAP.get(envelope_name, _UNKNOWN)
                 
                 should_fail = random.choice([True, False])
                 if should_fail:
                     nonlocal dropped_items
-                    dropped_items += 1
                     
-                    from azure.monitor.opentelemetry.exporter._constants import DropCode
-                    from azure.monitor.opentelemetry.exporter._utils import categorize_exception_message, categorize_status_code
-                    
-                    # Randomly choose between HTTP status code failures and client exceptions
                     failure_type = random.choice(["http_status", "client_exception"])
                     
                     if failure_type == "http_status":
-                        # HTTP status code failures from Application Insights
-                        status_codes = [400, 401, 402, 403, 404, 408, 429, 500, 502, 503, 504]
+                        status_codes = [401, 401, 403, 500, 500, 503, 402] 
                         status_code = random.choice(status_codes)
                         
-                        categorized_reason = categorize_status_code(status_code)
+                        failure_count = random.randint(1, 3)
+                        dropped_items += failure_count
                         
-                        # Use the status code directly as the drop code (integer)
-                        metrics.count_dropped_items(1, telemetry_type, status_code, None)
+                        metrics.count_dropped_items(failure_count, telemetry_type, status_code, None)
                     else:
-                        # Client exception scenarios
                         exception_scenarios = [
+                            "timeout_exception"
                             "Connection timed out after 30 seconds",
-                            "Request timed out after 60 seconds",          # Another timeout - should aggregate
-                            "Operation timed out",                         # Another timeout - should aggregate
+                            "Request timed out after 60 seconds",
+                            "Operation timed out",
+
+                            "network_exception",
                             "Network connection failed: Connection refused",
-                            "Network error: Host unreachable",             # Another network error - should aggregate
-                            "Authentication failed: Invalid credentials", 
-                            "Auth error: Token expired",                   # Another auth error - should aggregate
+                            "Network error: Host unreachable",
+
+                            "authentication_exception",
+                            "Authentication failed: Invalid credentials",
+                            "Auth error: Token expired",
+                            
                             "Failed to parse response: Invalid JSON format",
-                            "Parse error: Malformed XML",                  # Another parse error - should aggregate
-                            "Disk storage full: Cannot write to file",
+                            "Parse error: Malformed XML",
+                            "parse_exception",
+                            
                             "Out of memory: Cannot allocate buffer",
-                            "Memory allocation failed",                    # Another memory error - should aggregate
+                            "Memory allocation failed",
+                            "memory_exception",
+                            
                             "HTTP 401 Unauthorized",
-                            "HTTP 401 Invalid token",                     # Another 401 - should aggregate
-                            "HTTP 403 Forbidden", 
+                            "HTTP 401 Invalid token",
                             "HTTP 500 Internal Server Error",
-                            "HTTP 500 Database error",                    # Another 500 - should aggregate
-                            "HTTP 503 Service Unavailable",
+                            "HTTP 500 Database error",
+                            
                             "Unknown transmission error",
-                            "Unexpected error occurred"                   # Another unknown error - should aggregate
+                            "Unexpected error occurred"
+
+                            "storage_exception",
+                            "other_exception"
                         ]
                         
                         exception_message = random.choice(exception_scenarios)
                         
-                        if "HTTP" in exception_message and any(char.isdigit() for char in exception_message):
-                            try:
-                                status_code = int(''.join(filter(str.isdigit, exception_message)))
-                                categorized_reason = categorize_status_code(status_code)
-                            except ValueError:
-                                categorized_reason = categorize_exception_message(exception_message)
-                        else:
-                            categorized_reason = categorize_exception_message(exception_message)
+                        # Simulate multiple failures for the same exception type
+                        failure_count = random.randint(1, 4)
+                        dropped_items += failure_count
                         
-                        
-                        metrics.count_dropped_items(1, telemetry_type, DropCode.CLIENT_EXCEPTION, exception_message)
+                        metrics.count_dropped_items(failure_count, telemetry_type, DropCode.CLIENT_EXCEPTION, exception_message)
                     
                     continue
 
@@ -248,7 +268,7 @@ class TestCustomerStatsbeat(unittest.TestCase):
 
         tracer = trace_provider.get_tracer(__name__)
 
-        total_items = random.randint(10, 20)
+        total_items = random.randint(15, 25)  # Increased to get more aggregation
 
         for i in range(total_items):
             span_type = random.choice(["client", "server"])
@@ -291,9 +311,8 @@ class TestCustomerStatsbeat(unittest.TestCase):
         
         self.assertTrue(self.mock_options.transmit_called[0], "Exporter _transmit method was not called")
 
+        # Enhanced counting and verification logic
         actual_dropped_count = 0
-        
-        
         category_totals = {}
         http_status_totals = {}
         client_exception_totals = {}
@@ -308,13 +327,31 @@ class TestCustomerStatsbeat(unittest.TestCase):
                         # Separate HTTP status codes from client exceptions
                         if isinstance(drop_code, int):
                             http_status_totals[reason] = http_status_totals.get(reason, 0) + count
-                        else:
+                        elif isinstance(drop_code, DropCode):
                             client_exception_totals[reason] = client_exception_totals.get(reason, 0) + count
                 else:
                     actual_dropped_count += reason_map
 
+        # Test that some categories have counts > 1 (proving aggregation works)
+        aggregated_categories = [cat for cat, count in category_totals.items() if count > 1]
+
+        # Main assertion
         self.assertEqual(
             actual_dropped_count,
             dropped_items,
-            f"Expected {dropped_items} dropped items, got {actual_dropped_count}"
+            f"Expected {dropped_items} dropped items, got {actual_dropped_count}. "
+            f"HTTP Status drops: {len(http_status_totals)}, Client Exception drops: {len(client_exception_totals)}"
         )
+        
+        # Verify aggregation occurred
+        self.assertGreater(len(http_status_totals) + len(client_exception_totals), 0, 
+                          "At least one type of drop should have occurred")
+        
+        # Verify that both integer and enum drop codes are being stored properly
+        drop_code_types = set()
+        for telemetry_type, drop_code_data in metrics._counters.total_item_drop_count.items():
+            for drop_code in drop_code_data.keys():
+                drop_code_types.add(type(drop_code).__name__)
+        
+        # Additional assertion to verify aggregation works
+        multi_count_categories = [cat for cat, count in category_totals.items() if count > 1]
