@@ -13,7 +13,7 @@
 - Customer Facing Statsbeat: Added logic for retry item count
   ([#41971](https://github.com/Azure/azure-sdk-for-python/pull/41971))
 - Added RateLimited Sampler 
-  ([#41925](https://github.com/Azure/azure-sdk-for-python/pull/41925))
+  ([#41954](https://github.com/Azure/azure-sdk-for-python/pull/41954))
 
 ### Breaking Changes
 
