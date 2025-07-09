@@ -9,7 +9,7 @@ from azure.cosmos import exceptions, documents
 from azure.cosmos.partition_key import PartitionKey
 import test_config  # Import test_config for configuration details
 
-
+pytest.mark.cosmosEmulator
 class TestRetryableWritesAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
@@ -141,6 +141,47 @@ class TestRetryableWritesAsync(unittest.IsolatedAsyncioTestCase):
                                                     partition_key=test_item_patch['partitionKey'])
         assert read_item_patch['data'] == "patched data", "Item was not patched successfully after retries"
 
+    async def test_retryable_writes_client_retry_write(self):
+        """Test retryable writes for a container with retry_write set at the client level."""
+
+        # Create a client with retry_write enabled
+        client_with_retry = CosmosClient(self.host, credential=self.masterKey, retry_write=True)
+        await client_with_retry.__aenter__()
+
+
+        try:
+            container = client_with_retry.get_database_client(self.TEST_DATABASE_ID).get_container_client(
+                self.container.id)
+
+            # Mock retry_utility.execute to track retries
+            original_execute = _retry_utility_async.ExecuteFunctionAsync
+            me = self.MockExecuteFunction(original_execute)
+            _retry_utility_async.ExecuteFunctionAsync = me
+
+            # Test upsert_item
+            test_item = {"id": "4", "partitionKey": "test", "data": "retryable write test"}
+            try:
+                await container.upsert_item(test_item)
+            except exceptions.CosmosHttpResponseError as e:
+                assert me.counter > 1, "Expected multiple retries due to simulated errors"
+            finally:
+                # Restore the original retry_utility.execute function
+                _retry_utility_async.ExecuteFunctionAsync = original_execute
+
+            # Test create_item
+            me.counter = 0  # Reset counter
+            test_item_create = {"id": "5", "partitionKey": "test", "data": "retryable create test"}
+            try:
+                await container.create_item(test_item_create)
+            except exceptions.CosmosHttpResponseError as e:
+                assert me.counter > 1, "Expected multiple retries due to simulated errors"
+            finally:
+                # Restore the original retry_utility.execute function
+                _retry_utility_async.ExecuteFunctionAsync = original_execute
+        finally:
+            if client_with_retry:
+                await client_with_retry.close()
+
     async def test_retryable_writes_hpk(self):
         """Test retryable writes for a container with hierarchical partition keys."""
         container = self.container_hpk
@@ -240,6 +281,44 @@ class TestRetryableWritesAsync(unittest.IsolatedAsyncioTestCase):
                                                         partition_key=[test_item_patch_hpk['state'],
                                                                        test_item_patch_hpk['city']])
         assert read_item_patch_hpk['data'] == "patched data", "Item was not patched successfully after retries"
+
+    async def test_retryable_writes_hpk_client_retry_write(self):
+        """Test retryable writes for a container with hierarchical partition keys and retry_write
+        set at the client level."""
+        # Create a client with retry_write enabled
+        client_with_retry = CosmosClient(self.host, credential=self.masterKey, retry_write=True)
+        await client_with_retry.__aenter__()
+        try:
+            container = client_with_retry.get_database_client(self.TEST_DATABASE_ID).get_container_client(
+                self.container_hpk.id)
+
+            # Mock retry_utility.execute to track retries
+            original_execute = _retry_utility_async.ExecuteFunctionAsync
+            me = self.MockExecuteFunction(original_execute)
+            _retry_utility_async.ExecuteFunctionAsync = me
+
+            # Test upsert_item
+            test_item = {"id": "6", "state": "CA", "city": "San Francisco", "data": "retryable write test"}
+            try:
+                await container.upsert_item(test_item)
+            except exceptions.CosmosHttpResponseError as e:
+                assert me.counter > 1, "Expected multiple retries due to simulated errors"
+            finally:
+                # Restore the original retry_utility.execute function
+                _retry_utility_async.ExecuteFunctionAsync = original_execute
+
+            # Test create_item
+            me.counter = 0  # Reset counter
+            test_item_create = {"id": "7", "state": "NY", "city": "New York", "data": "retryable create test"}
+            try:
+                await container.create_item(test_item_create)
+            except exceptions.CosmosHttpResponseError as e:
+                assert me.counter > 1, "Expected multiple retries due to simulated errors"
+            finally:
+                # Restore the original retry_utility.execute function
+                _retry_utility_async.ExecuteFunctionAsync = original_execute
+        finally:
+            await client_with_retry.close()
 
     class MockExecuteFunction(object):
         def __init__(self, org_func):
