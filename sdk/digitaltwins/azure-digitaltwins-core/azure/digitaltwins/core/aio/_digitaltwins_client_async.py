@@ -40,7 +40,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
     :param ~azure.core.credentials_async.AsyncTokenCredential credential:
         A credential to authenticate requests to the service.
     """
-    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs) -> None:
+    def __init__(self, endpoint: Optional[str], credential: "AsyncTokenCredential", **kwargs) -> None:
+        if not endpoint:
+            raise ValueError("Parameter 'endpoint' must not be None or empty.")
+    
         if not endpoint.startswith('http'):
             endpoint = 'https://' + endpoint
 
