@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 import hashlib
 import os
 import time
@@ -43,9 +44,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             ledger_certificate_path=self.network_certificate_path,  # type: ignore
         )
 
-        certificate_credential = ConfidentialLedgerCertificateCredential(
-            certificate_path=self.user_certificate_path
-        )
+        certificate_credential = ConfidentialLedgerCertificateCredential(certificate_path=self.user_certificate_path)
         certificate_based_client = self.create_client_from_credential(
             ConfidentialLedgerClient,
             credential=certificate_credential,
@@ -74,15 +73,12 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             # the logic for overriding the default certificate verification) is still tested when
             # the test-proxy is involved.
             #
-            # Note the combined bundle should be created *after* any os.remove calls so we don't 
+            # Note the combined bundle should be created *after* any os.remove calls so we don't
             # interfere with auto-magic certificate retrieval tests.
-            create_combined_bundle(
-                [self.network_certificate_path, TEST_PROXY_CERT],
-                self.network_certificate_path
-            )
+            create_combined_bundle([self.network_certificate_path, TEST_PROXY_CERT], self.network_certificate_path)
 
         if not use_aad_auth:
-            # We need to add the certificate-based user as an Administrator. 
+            # We need to add the certificate-based user as an Administrator.
             aad_based_client.create_or_update_ledger_user(
                 USER_CERTIFICATE_THUMBPRINT, {"assignedRoles": ["Administrator"]}
             )
@@ -152,14 +148,10 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         append_result_sub_ledger_id = append_result["collectionId"]
         append_result_transaction_id = append_result["transactionId"]
 
-        poller = client.begin_wait_for_commit(
-            transaction_id=append_result_transaction_id
-        )
+        poller = client.begin_wait_for_commit(transaction_id=append_result_transaction_id)
         poller.wait()
 
-        transaction_status = client.get_transaction_status(
-            transaction_id=append_result_transaction_id
-        )
+        transaction_status = client.get_transaction_status(transaction_id=append_result_transaction_id)
         assert transaction_status["transactionId"] == append_result_transaction_id
         assert transaction_status["state"] == "Committed"
 
@@ -180,9 +172,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         assert latest_entry["contents"] == entry_contents
         assert latest_entry["collectionId"] == append_result_sub_ledger_id
 
-        poller = client.begin_create_ledger_entry(
-            {"contents": "Test entry 2 from Python SDK"}
-        )
+        poller = client.begin_create_ledger_entry({"contents": "Test entry 2 from Python SDK"})
         poller.wait()
 
         latest_entry = client.get_current_ledger_entry()
@@ -190,9 +180,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         assert latest_entry["contents"] != entry_contents
         assert latest_entry["collectionId"] == append_result_sub_ledger_id
 
-        poller = client.begin_get_ledger_entry(
-            transaction_id=append_result_transaction_id
-        )
+        poller = client.begin_get_ledger_entry(transaction_id=append_result_transaction_id)
         original_entry = poller.result()
         assert original_entry["entry"]["transactionId"] == append_result_transaction_id
         assert original_entry["entry"]["contents"] == entry_contents
@@ -201,7 +189,8 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy
     def test_append_entry_flow_with_collection_id_aad_user(
-        self, **kwargs,
+        self,
+        **kwargs,
     ):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
@@ -213,7 +202,8 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy
     def test_append_entry_flow_with_collection_id_cert_user(
-        self, **kwargs,
+        self,
+        **kwargs,
     ):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
@@ -235,14 +225,10 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         append_result_sub_ledger_id = append_result["collectionId"]
         append_result_transaction_id = append_result["transactionId"]
 
-        poller = client.begin_wait_for_commit(
-            transaction_id=append_result_transaction_id
-        )
+        poller = client.begin_wait_for_commit(transaction_id=append_result_transaction_id)
         poller.wait()
 
-        transaction_status = client.get_transaction_status(
-            transaction_id=append_result_transaction_id
-        )
+        transaction_status = client.get_transaction_status(transaction_id=append_result_transaction_id)
         assert transaction_status
         assert transaction_status["state"] == "Committed"
 
@@ -323,9 +309,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         messages = {m: [] for m in range(num_collections)}
         for i in range(num_messages_sent):
             message = "message-{0}".format(i)
-            kwargs = (
-                {} if num_collections == 0 else {"collection_id": "{0}".format(i % num_collections)}
-            )
+            kwargs = {} if num_collections == 0 else {"collection_id": "{0}".format(i % num_collections)}
 
             if i != num_messages_sent - 1:
                 append_result = client.create_ledger_entry({"contents": message}, **kwargs)
@@ -333,9 +317,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
                 append_poller = client.begin_create_ledger_entry({"contents": message}, **kwargs)
                 append_result = append_poller.result()
 
-            messages[i % num_collections].append(
-                (append_result["transactionId"], message, kwargs)
-            )
+            messages[i % num_collections].append((append_result["transactionId"], message, kwargs))
 
         num_matched = 0
         for i in range(num_collections):
@@ -365,11 +347,10 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         client = self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
-    
+
         aad_user_id = "0" * 36  # AAD Object Ids have length 36
         cert_user_id = (
-            "7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4"
-            ":77:30:1F"
+            "7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4" ":77:30:1F"
         )
 
         for user_id in [aad_user_id, cert_user_id]:
@@ -401,11 +382,10 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         )
         self.user_management_actions(client)
 
-    def user_management_actions(self, client):    
+    def user_management_actions(self, client):
         aad_user_id = "0" * 36  # AAD Object Ids have length 36
         cert_user_id = (
-            "7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4"
-            ":77:30:1F"
+            "7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4" ":77:30:1F"
         )
 
         for user_id in [aad_user_id, cert_user_id]:
@@ -431,7 +411,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
             user = client.get_ledger_user(user_id)
             assert user["userId"] == user_id
-            assert user["assignedRoles"] == ["Contributor","Reader"]
+            assert user["assignedRoles"] == ["Contributor", "Reader"]
 
             client.delete_ledger_user(user_id)
 
@@ -469,10 +449,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         constitution = client.get_constitution()
         assert constitution["script"]
         assert constitution["digest"]
-        assert (
-            constitution["digest"].lower() == 
-            hashlib.sha256(constitution["script"].encode()).hexdigest().lower()
-        )
+        assert constitution["digest"].lower() == hashlib.sha256(constitution["script"].encode()).hexdigest().lower()
 
         ledger_enclaves = client.get_enclave_quotes()
         assert len(ledger_enclaves["enclaveQuotes"]) == 3
@@ -518,9 +495,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
         # Create the client directly instead of going through the create_confidentialledger_client
         # as we don't need any additional setup.
-        certificate_credential = ConfidentialLedgerCertificateCredential(
-            certificate_path=self.user_certificate_path
-        )
+        certificate_credential = ConfidentialLedgerCertificateCredential(certificate_path=self.user_certificate_path)
         self.create_client_from_credential(
             ConfidentialLedgerClient,
             credential=certificate_credential,
@@ -544,7 +519,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
 
-        # We need to add the certificate-based user as an Administrator. 
+        # We need to add the certificate-based user as an Administrator.
         user_endpoint = client.create_user_defined_endpoint(
             {
                 "metadata": {
@@ -614,11 +589,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         assert roles[0]["role_name"] == role_name
         assert roles[0]["role_actions"] == ["/content/read"]
 
-        client.update_user_defined_role(
-            [
-                {"role_name": role_name, "role_actions": ["/content/write", "/content/read"]}
-            ]
-        )
+        client.update_user_defined_role([{"role_name": role_name, "role_actions": ["/content/write", "/content/read"]}])
         time.sleep(3)
 
         roles = client.get_user_defined_role(role_name=role_name)
@@ -638,8 +609,8 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         client.create_user_defined_endpoint({"metadata": {"endpoints": {}}, "modules": []})
         functionId = "myFunction"
 
-        client.create_user_defined_function(functionId, {"code":"export function main() { return true }"} )
-        time.sleep(3)                
+        client.create_user_defined_function(functionId, {"code": "export function main() { return true }"})
+        time.sleep(3)
 
         userFunction = client.get_user_defined_function(functionId)
         assert userFunction["code"] == "export function main() { return true }"
