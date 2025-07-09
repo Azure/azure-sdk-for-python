@@ -9,7 +9,7 @@
 - Added customer-facing statsbeat preview.
   ([#41669](https://github.com/Azure/azure-sdk-for-python/pull/41669))
 - Added RateLimited Sampler 
-  ([#41925](https://github.com/Azure/azure-sdk-for-python/pull/41925))
+  ([#41954](https://github.com/Azure/azure-sdk-for-python/pull/41954))
 
 ### Breaking Changes
 
