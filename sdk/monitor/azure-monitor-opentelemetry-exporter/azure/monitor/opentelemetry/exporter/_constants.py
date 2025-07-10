@@ -148,8 +148,11 @@ class DropCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 DropCodeType = Union[DropCode, int]
 
 class RetryCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    CLIENT_EXCEPTION = "CLIENT_EXCEPTION"
     CLIENT_TIMEOUT = "CLIENT_TIMEOUT"
     UNKNOWN = "UNKNOWN"
+
+RetryCodeType = Union[RetryCode, int]
 
 class CustomerStatsbeatMetricName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ITEM_SUCCESS_COUNT = "preview.item.success.count"
