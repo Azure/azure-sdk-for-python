@@ -36,7 +36,7 @@ class TestRetryableWrites(unittest.TestCase):
         cls.database.delete_container(cls.TEST_CONTAINER_SINGLE_PARTITION_ID)
         cls.database.delete_container(cls.TEST_CONTAINER_MULTI_PARTITION_ID)
 
-    def test_retryable_writes(self):
+    def test_retryable_writes_request_level(self):
         # Create a container for testing
         container = self.container
 
@@ -126,7 +126,7 @@ class TestRetryableWrites(unittest.TestCase):
         patched_item = container.read_item(item=test_item['id'], partition_key=test_item['partitionKey'])
         assert patched_item['data'] == "patched retryable write test", "Item was not patched successfully after retries"
 
-    def test_retryable_writes_client_retry_write(self):
+    def test_retryable_writes_client_level(self):
         """Test retryable writes for a container with retry_write set at the client level."""
         # Create a client with retry_write enabled
         client_with_retry = CosmosClient(self.url, credential=self.key, retry_write=True)
@@ -158,7 +158,7 @@ class TestRetryableWrites(unittest.TestCase):
             # Restore the original retry_utility.execute function
             _retry_utility.ExecuteFunction = original_execute
 
-    def test_retryable_writes_hpk(self):
+    def test_retryable_writes_hpk_request_level(self):
         """Test retryable writes for a container with hierarchical partition keys."""
         container = self.container_hpk
 
@@ -250,7 +250,7 @@ class TestRetryableWrites(unittest.TestCase):
         assert patched_item_hpk[
                    'data'] == "patched retryable write test", "Item was not patched successfully after retries"
 
-    def test_retryable_writes_hpk_client_retry_write(self):
+    def test_retryable_writes_hpk_client_level(self):
         """Test retryable writes for a container with hierarchical partition keys and
         retry_write set at the client level."""
         # Create a client with retry_write enabled

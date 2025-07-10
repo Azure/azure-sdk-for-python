@@ -28,26 +28,26 @@ class TestRetryableWritesAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     @classmethod
-    async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, credential=self.masterKey)
-        self.client.__aenter__()  # Ensure the client is properly initialized
-        self.database = await self.client.create_database_if_not_exists(id=self.TEST_DATABASE_ID)
-        self.container = await self.database.create_container_if_not_exists(
-            id=self.TEST_CONTAINER_SINGLE_PARTITION_ID,
+    async def asyncSetUp(cls):
+        cls.client = CosmosClient(cls.host, credential=cls.masterKey)
+        await cls.client.__aenter__()  # Ensure the client is properly initialized
+        cls.database = await cls.client.create_database_if_not_exists(id=cls.TEST_DATABASE_ID)
+        cls.container = await cls.database.create_container_if_not_exists(
+            id=cls.TEST_CONTAINER_SINGLE_PARTITION_ID,
             partition_key=PartitionKey(path="/partitionKey", kind="Hash")
         )
-        self.container_hpk = await self.database.create_container_if_not_exists(
-            id=self.TEST_CONTAINER_MULTI_PARTITION_ID,
+        cls.container_hpk = await cls.database.create_container_if_not_exists(
+            id=cls.TEST_CONTAINER_MULTI_PARTITION_ID,
             partition_key=PartitionKey(path=["/state", "/city"], kind="MultiHash")
         )
 
     @classmethod
-    async def asyncTearDown(self):
-        await self.database.delete_container(self.TEST_CONTAINER_SINGLE_PARTITION_ID)
-        await self.database.delete_container(self.TEST_CONTAINER_MULTI_PARTITION_ID)
-        await self.client.close()
+    async def asyncTearDown(cls):
+        await cls.database.delete_container(cls.TEST_CONTAINER_SINGLE_PARTITION_ID)
+        await cls.database.delete_container(cls.TEST_CONTAINER_MULTI_PARTITION_ID)
+        await cls.client.close()
 
-    async def test_retryable_writes(self):
+    async def test_retryable_writes_request_level_async(self):
         container = self.container
 
         # Mock retry_utility.execute to track retries
@@ -141,7 +141,7 @@ class TestRetryableWritesAsync(unittest.IsolatedAsyncioTestCase):
                                                     partition_key=test_item_patch['partitionKey'])
         assert read_item_patch['data'] == "patched data", "Item was not patched successfully after retries"
 
-    async def test_retryable_writes_client_retry_write(self):
+    async def test_retryable_writes_client_level_async(self):
         """Test retryable writes for a container with retry_write set at the client level."""
 
         # Create a client with retry_write enabled
@@ -182,7 +182,7 @@ class TestRetryableWritesAsync(unittest.IsolatedAsyncioTestCase):
             if client_with_retry:
                 await client_with_retry.close()
 
-    async def test_retryable_writes_hpk(self):
+    async def test_retryable_writes_hpk_request_level_async(self):
         """Test retryable writes for a container with hierarchical partition keys."""
         container = self.container_hpk
 
@@ -282,7 +282,7 @@ class TestRetryableWritesAsync(unittest.IsolatedAsyncioTestCase):
                                                                        test_item_patch_hpk['city']])
         assert read_item_patch_hpk['data'] == "patched data", "Item was not patched successfully after retries"
 
-    async def test_retryable_writes_hpk_client_retry_write(self):
+    async def test_retryable_writes_hpk_client_level_async(self):
         """Test retryable writes for a container with hierarchical partition keys and retry_write
         set at the client level."""
         # Create a client with retry_write enabled
