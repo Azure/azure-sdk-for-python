@@ -34,14 +34,12 @@ project_client = AIProjectClient(
 with project_client:
     agents_client = project_client.agents
 
-    # [START create_agent_with_text_response_format]
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
         instructions="You are helpful agent.",
         response_format=AgentsResponseFormat(type="text")
     )
-    # [END create_agent_with_text_response_format]
     print(f"Created agent, agent ID: {agent.id}")
 
     thread = agents_client.threads.create()

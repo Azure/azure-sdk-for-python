@@ -38,12 +38,10 @@ from azure.ai.agents.models import (
 
 
 # Create the pydantic model to represent the planet names and there masses.
-# [START create_pydantic_model_for_planets]
 class Planets(str, Enum):
     Earth = "Earth"
     Mars = "Mars"
     Mercury = "Mercury"
-# [END create_pydantic_model_for_planets]
 
 class Planet(BaseModel):
     planet: Planets
@@ -58,7 +56,6 @@ project_client = AIProjectClient(
 with project_client:
     agents_client = project_client.agents
 
-    # [START create_agent_with_json_schema_response_format]
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
@@ -71,7 +68,6 @@ with project_client:
             )
         ),
     )
-    # [END create_agent_with_json_schema_response_format]
     print(f"Created agent, agent ID: {agent.id}")
 
     thread = agents_client.threads.create()
