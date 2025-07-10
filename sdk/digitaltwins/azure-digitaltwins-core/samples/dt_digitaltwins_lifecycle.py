@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+from typing import Any, Dict, List
 import uuid
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
@@ -54,6 +55,9 @@ try:
     # - AZURE_URL: The tenant ID in Azure Active Directory
     url = os.getenv("AZURE_URL")
 
+    if not url:
+        raise ValueError("AZURE_URL environment variable is required")
+    
     # DefaultAzureCredential expects the following three environment variables:
     # - AZURE_TENANT_ID: The tenant ID in Azure Active Directory
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
@@ -62,7 +66,7 @@ try:
     service_client = DigitalTwinsClient(url, credential)
 
     # Create model first from sample dtdl
-    new_model_list = [temporary_model]
+    new_model_list: List[Dict[str, Any]] = [temporary_model]
     model = service_client.create_models(new_model_list)
     print('Created Model:')
     print(model)

@@ -27,6 +27,9 @@ async def create_digitaltwins_service_client():
     # - AZURE_URL: The tenant ID in Azure Active Directory
     url = os.getenv("AZURE_URL")
 
+    if not url:
+        raise ValueError("AZURE_URL environment variable is required")
+    
     # DefaultAzureCredential expects the following three environment variables:
     # - AZURE_TENANT_ID: The tenant ID in Azure Active Directory
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
@@ -40,6 +43,10 @@ async def digitaltwins_get():
     # service_client = await create_digitaltwins_service_client()
 
     url = os.getenv("AZURE_URL")
+
+    if not url:
+        raise ValueError("AZURE_URL environment variable is required")
+
     credential = DefaultAzureCredential()
 
     digital_twint_id = "BuildingTwin" # from the samples: BuildingTwin, FloorTwin, HVACTwin, RoomTwin
