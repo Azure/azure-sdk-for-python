@@ -79,16 +79,26 @@ jobs:
       value: ${{ parameters.InjectedPackages }}
 
     steps:
-    - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
-
-    - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
-      parameters:
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
-
     - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
       parameters:
         AgentImage: ${{ parameters.OSName }}
+
+    # if the service directory is auto, we need to build the packages in the TargetingString
+    - ${{ if eq(parameters.ServiceDirectory, 'auto') }}:
+      - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
+        parameters:
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          TestPipeline: ${{ parameters.TestPipeline }}
+          Artifacts: ${{ parameters.Artifacts }}
+          ArtifactSuffix: linux
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+          ExcludePaths: ${{parameters.ExcludePaths}}
+    - ${{ else }}:
+      - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
+      - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
+        parameters:
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+          PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
 
     - task: UsePythonVersion@0
       inputs:

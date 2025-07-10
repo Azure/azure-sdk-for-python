@@ -123,9 +123,10 @@ jobs:
   - job: 'Build_Extended'
     displayName: Build Extended
     dependsOn:
-      - 'Build_Linux'
-      - 'Build_Windows'
-      - 'Build_MacOS'
+      - ${{ if ne(parameters.ServiceDirectory, 'auto') }}:
+        - 'Build_Linux'
+        - 'Build_Windows'
+        - 'Build_MacOS'
 
     timeoutInMinutes: 90
 
@@ -155,9 +156,10 @@ jobs:
   - job: 'Build_Documentation'
     displayName: Build Docs
     dependsOn:
-      - 'Build_Linux'
-      - 'Build_Windows'
-      - 'Build_MacOS'
+      - ${{ if ne(parameters.ServiceDirectory, 'auto') }}:
+        - 'Build_Linux'
+        - 'Build_Windows'
+        - 'Build_MacOS'
 
     timeoutInMinutes: 90
 
@@ -240,9 +242,10 @@ jobs:
       OsVmImage: ubuntu-24.04
       Pool: azsdk-pool
       DependsOn:
-        - 'Build_Linux'
-        - 'Build_Windows'
-        - 'Build_MacOS'
+        - ${{ if ne(parameters.ServiceDirectory, 'auto') }}:
+          - 'Build_Linux'
+          - 'Build_Windows'
+          - 'Build_MacOS'
       MatrixConfigs: ${{ parameters.MatrixConfigs }}
       MatrixFilters: ${{ parameters.MatrixFilters }}
       MatrixReplace: ${{ parameters.MatrixReplace }}
