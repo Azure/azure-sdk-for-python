@@ -71,7 +71,7 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
     id = "content_safety"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
     _OPTIONAL_PARAMS = ["query"]
-    
+
     def __init__(
         self,
         credential,
@@ -95,10 +95,16 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
                 raise TypeError(f"{name} must be an int, got {type(value)}")
 
         evaluators = [
-            ViolenceEvaluator(credential, azure_ai_project, threshold=violence_threshold, _evaluate_query=_evaluate_query),
+            ViolenceEvaluator(
+                credential, azure_ai_project, threshold=violence_threshold, _evaluate_query=_evaluate_query
+            ),
             SexualEvaluator(credential, azure_ai_project, threshold=sexual_threshold, _evaluate_query=_evaluate_query),
-            SelfHarmEvaluator(credential, azure_ai_project, threshold=self_harm_threshold, _evaluate_query=_evaluate_query),
-            HateUnfairnessEvaluator(credential, azure_ai_project, threshold=hate_unfairness_threshold, _evaluate_query=_evaluate_query),
+            SelfHarmEvaluator(
+                credential, azure_ai_project, threshold=self_harm_threshold, _evaluate_query=_evaluate_query
+            ),
+            HateUnfairnessEvaluator(
+                credential, azure_ai_project, threshold=hate_unfairness_threshold, _evaluate_query=_evaluate_query
+            ),
         ]
         super().__init__(evaluators=evaluators, **kwargs)
 

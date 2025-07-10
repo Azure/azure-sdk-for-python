@@ -92,8 +92,8 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :rtype: Union[Dict[str, T], Dict[str, Union[float, Dict[str, List[T]]]]]
         """
-        return super().__call__(*args, **kwargs)    
-    
+        return super().__call__(*args, **kwargs)
+
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, T]:
         """Perform the evaluation using the Azure AI RAI service.
@@ -146,7 +146,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                 ),
             )
         input_data = {"response": str(response)}
-        
+
         if query is not None and self._evaluate_query:
             input_data["query"] = str(query)
 
