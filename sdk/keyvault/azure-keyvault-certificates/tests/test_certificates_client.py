@@ -847,5 +847,5 @@ def test_certificate_operation_empty_inner_error():
     error = KeyVaultErrorError(code="500", message="Bad Request", inner_error=None)
     generated_operation = _CertificateOperation(error=error)
     operation = CertificateOperation._from_certificate_operation_bundle(generated_operation)
-    assert operation._error
-    assert operation._error._inner_error is None
+    assert operation.error
+    assert operation.error.inner_error is None
