@@ -547,16 +547,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         include_model_definition = kwargs.pop('include_model_definition', False)
         results_per_page = kwargs.pop('results_per_page', None)
 
-        def cls(response):
-            return response
-
-        if results_per_page is not None:
-            kwargs['max_item_count'] = results_per_page
-
         return self._client.digital_twin_models.list(
             dependencies_for=dependencies_for,
             include_model_definition=include_model_definition,
-            cls=cls,
+            max_items_per_page=results_per_page,
             **kwargs
         )
 
@@ -651,14 +645,8 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         """
         results_per_page = kwargs.pop('results_per_page', None)
 
-        def cls(response):
-            return response
-
-        if results_per_page is not None:
-            kwargs['max_item_count'] = results_per_page
-
         return self._client.event_routes.list(
-            cls=cls,
+            max_items_per_page=results_per_page,
             **kwargs
         )
 
