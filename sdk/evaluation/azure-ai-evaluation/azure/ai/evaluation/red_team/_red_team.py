@@ -1276,6 +1276,19 @@ class RedTeam:
         else:
             self.logger.debug("No converters specified")
 
+        # Initialize output path for memory labelling
+        base_path = str(uuid.uuid4())
+
+        # If scan output directory exists, place the file there
+        if hasattr(self, "scan_output_dir") and self.scan_output_dir:
+            # Ensure the directory exists
+            os.makedirs(self.scan_output_dir, exist_ok=True)
+            output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
+        else:
+            output_path = f"{base_path}{DATA_EXT}"
+
+        self.red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
+
         for prompt_idx, prompt in enumerate(all_prompts):
             prompt_start_time = datetime.now()
             self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}")
@@ -1314,17 +1327,6 @@ class RedTeam:
                 # Debug log the first few characters of the current prompt
                 self.logger.debug(f"Current prompt (truncated): {prompt[:50]}...")
 
-                # Initialize output path for memory labelling
-                base_path = str(uuid.uuid4())
-
-                # If scan output directory exists, place the file there
-                if hasattr(self, "scan_output_dir") and self.scan_output_dir:
-                    output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
-                else:
-                    output_path = f"{base_path}{DATA_EXT}"
-
-                self.red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
-
                 try:  # Create retry decorator for this specific call with enhanced retry strategy
 
                     @retry(**self._create_retry_config()["network_retry"])
@@ -1361,6 +1363,12 @@ class RedTeam:
                     self.logger.debug(
                         f"Successfully processed prompt {prompt_idx+1} for {strategy_name}/{risk_category_name} in {prompt_duration:.2f} seconds"
                     )
+                    self._write_pyrit_outputs_to_file(
+                        orchestrator=orchestrator,
+                        strategy_name=strategy_name,
+                        risk_category=risk_category_name,
+                        batch_idx=prompt_idx + 1,
+                    )
 
                     # Print progress to console
                     if prompt_idx < len(all_prompts) - 1:  # Don't print for the last prompt
@@ -1385,7 +1393,7 @@ class RedTeam:
                         orchestrator=orchestrator,
                         strategy_name=strategy_name,
                         risk_category=risk_category_name,
-                        batch_idx=1,
+                        batch_idx=prompt_idx + 1,
                     )
                     # Continue with partial results rather than failing completely
                     continue
@@ -1404,7 +1412,7 @@ class RedTeam:
                         orchestrator=orchestrator,
                         strategy_name=strategy_name,
                         risk_category=risk_category_name,
-                        batch_idx=1,
+                        batch_idx=prompt_idx + 1,
                     )
                     # Continue with other batches even if one fails
                     continue
