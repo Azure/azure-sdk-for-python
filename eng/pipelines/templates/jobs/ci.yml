@@ -72,6 +72,23 @@ jobs:
       os: linux
 
     steps:
+    # Install uv tool globally
+    - task: Bash@3
+      displayName: 'Install uv (Linux/macOS)'
+      inputs:
+        targetType: inline
+        script: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+      condition: or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin'))
+
+    - task: PowerShell@2
+      displayName: 'Install uv (Windows)'
+      inputs:
+        targetType: inline
+        script: |
+          iex (irm https://astral.sh/uv/install.ps1)
+      condition: eq(variables['Agent.OS'], 'Windows_NT')
+
     - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -91,6 +108,23 @@ jobs:
       os: windows
 
     steps:
+    # Install uv tool globally
+    - task: Bash@3
+      displayName: 'Install uv (Linux/macOS)'
+      inputs:
+        targetType: inline
+        script: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+      condition: or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin'))
+
+    - task: PowerShell@2
+      displayName: 'Install uv (Windows)'
+      inputs:
+        targetType: inline
+        script: |
+          iex (irm https://astral.sh/uv/install.ps1)
+      condition: eq(variables['Agent.OS'], 'Windows_NT')
+
     - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -110,6 +144,23 @@ jobs:
       os: macOS
 
     steps:
+    # Install uv tool globally
+    - task: Bash@3
+      displayName: 'Install uv (Linux/macOS)'
+      inputs:
+        targetType: inline
+        script: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+      condition: or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin'))
+
+    - task: PowerShell@2
+      displayName: 'Install uv (Windows)'
+      inputs:
+        targetType: inline
+        script: |
+          iex (irm https://astral.sh/uv/install.ps1)
+      condition: eq(variables['Agent.OS'], 'Windows_NT')
+
     - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -135,6 +186,23 @@ jobs:
       os: linux
 
     steps:
+    # Install uv tool globally
+    - task: Bash@3
+      displayName: 'Install uv (Linux/macOS)'
+      inputs:
+        targetType: inline
+        script: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+      condition: or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin'))
+
+    - task: PowerShell@2
+      displayName: 'Install uv (Windows)'
+      inputs:
+        targetType: inline
+        script: |
+          iex (irm https://astral.sh/uv/install.ps1)
+      condition: eq(variables['Agent.OS'], 'Windows_NT')
+
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
     - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
@@ -167,6 +235,23 @@ jobs:
       os: linux
 
     steps:
+    # Install uv tool globally
+    - task: Bash@3
+      displayName: 'Install uv (Linux/macOS)'
+      inputs:
+        targetType: inline
+        script: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+      condition: or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin'))
+
+    - task: PowerShell@2
+      displayName: 'Install uv (Windows)'
+      inputs:
+        targetType: inline
+        script: |
+          iex (irm https://astral.sh/uv/install.ps1)
+      condition: eq(variables['Agent.OS'], 'Windows_NT')
+
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
     - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
@@ -198,6 +283,23 @@ jobs:
       os: linux
 
     steps:
+    # Install uv tool globally
+    - task: Bash@3
+      displayName: 'Install uv (Linux/macOS)'
+      inputs:
+        targetType: inline
+        script: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+      condition: or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin'))
+
+    - task: PowerShell@2
+      displayName: 'Install uv (Windows)'
+      inputs:
+        targetType: inline
+        script: |
+          iex (irm https://astral.sh/uv/install.ps1)
+      condition: eq(variables['Agent.OS'], 'Windows_NT')
+
     - template: /eng/common/pipelines/templates/steps/check-spelling.yml
       parameters:
         ContinueOnError: false

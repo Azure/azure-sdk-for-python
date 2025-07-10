@@ -11,16 +11,39 @@ parameters:
 
 steps:
   - pwsh: |
-      $(Build.SourcesDirectory)/eng/scripts/create-venv.ps1 `
-        -VenvName "${{ parameters.VirtualEnvironmentName }}" `
-        -RepoRoot "$(Build.SourcesDirectory)"
-    displayName: Create virtual environment
+      uv venv "${{ parameters.VirtualEnvironmentName }}"
+      $venvPath = Join-Path "$(Build.SourcesDirectory)" "${{ parameters.VirtualEnvironmentName }}"
+      Write-Host "##vso[task.setvariable variable=${{ parameters.VirtualEnvironmentName }}_LOCATION]$venvPath"
+      
+      if ($IsWindows) {
+        $activationScript = Join-Path $venvPath "Scripts/Activate.ps1"
+        $venvBinPath = Join-Path $venvPath "Scripts"
+      }
+      else {
+        $activationScript = Join-Path $venvPath "bin/Activate.ps1"
+        $venvBinPath = Join-Path $venvPath "bin"
+      }
+      
+      Write-Host "##vso[task.setvariable variable=${{ parameters.VirtualEnvironmentName }}_ACTIVATION_SCRIPT]if(`$IsWindows){. $activationScript;}else {. $activationScript}"
+      Write-Host "##vso[task.setvariable variable=VENV_ACTIVATION_SCRIPT]if(`$IsWindows){. $activationScript;}else {. $activationScript}"
+    displayName: Create virtual environment with uv
     condition: ${{ parameters.Condition }}
 
   - ${{ if eq(parameters.Activate, true) }}:
     - pwsh: |
-        $(Build.SourcesDirectory)/eng/scripts/activate-venv.ps1 `
-          -VenvName "${{ parameters.VirtualEnvironmentName }}" `
-          -RepoRoot "$(Build.SourcesDirectory)"
-      displayName: Use ${{ parameters.VirtualEnvironmentName }} Virtual Environment
+        $venvPath = Join-Path "$(Build.SourcesDirectory)" "${{ parameters.VirtualEnvironmentName }}"
+        
+        if ($IsWindows) {
+          $venvBinPath = Join-Path $venvPath "Scripts"
+        }
+        else {
+          $venvBinPath = Join-Path $venvPath "bin"
+        }
+        
+        $env:VIRTUAL_ENV = $venvPath
+        $env:PATH = "$venvBinPath$([System.IO.Path]::PathSeparator)$($env:PATH)"
+        
+        Write-Host "##vso[task.setvariable variable=VIRTUAL_ENV]$($env:VIRTUAL_ENV)"
+        Write-Host "##vso[task.prependpath]$venvBinPath"
+      displayName: Activate ${{ parameters.VirtualEnvironmentName }} Virtual Environment with uv
       condition: ${{ parameters.Condition }}
