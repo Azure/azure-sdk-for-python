@@ -9,8 +9,8 @@
 
 """
 DESCRIPTION:
-    These samples demonstrate usage of various classes and methods used to perform evaluation in the azure-ai-evaluation library.
-    
+    These samples demonstrate usage of various classes and methods used to perform evaluation in the
+    azure-ai-evaluation library.
 USAGE:
     python evaluation_samples_evaluate.py
 
