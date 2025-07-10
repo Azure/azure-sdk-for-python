@@ -63,7 +63,7 @@ class TestBuiltInEvaluators:
         return AzureOpenAIModelConfiguration(
             **{**model_config, "azure_endpoint": "https://Sanitized.openai.azure.com/"},
         )
-    
+
     def test_math_evaluator_bleu_score(self):
         eval_fn = BleuScoreEvaluator()
         score = eval_fn(
