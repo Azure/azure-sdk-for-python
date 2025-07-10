@@ -64,6 +64,7 @@ print(json_model["myName"])  # Now returns camelCase key (matches REST API)
 If you need `snake_case` keys and can't easily update your code:
 
 ```python
+# Requires azure-core >= 1.35.0
 from azure.core.serialization import as_attribute_dict
 
 # Returns snake_case keys like the old models
@@ -114,6 +115,7 @@ print(model["properties"]["properties"]["name"])  # ✅ Mirrors actual API struc
 For complex flattened property access where direct migration is difficult:
 
 ```python
+# Requires azure-core >= 1.35.0
 from azure.core.serialization import as_attribute_dict
 
 # Handles flattened properties automatically
@@ -262,6 +264,7 @@ model = Model(name="example", value=42)  # Still works as before
 If you need the exact same serialization format as the old `serialize()` method:
 
 ```python
+# Requires azure-core >= 1.35.0
 from azure.core.serialization import as_attribute_dict
 
 # Returns the same format as old serialize() method with snake_case keys
@@ -274,7 +277,7 @@ serialized_dict = as_attribute_dict(model, exclude_readonly=True)
 
 ## Additional Helper Methods
 
-For edge cases and generic code that works with models, Azure Core provides these utility methods in `azure.core.serialization`:
+For edge cases and generic code that works with models, Azure Core (version 1.35.0 or later) provides these utility methods in `azure.core.serialization`:
 
 - **`is_generated_model(obj)`**: Check if an object is an SDK-generated model
 - **`attribute_list(model)`**: Get list of model attribute names (excluding additional properties)
