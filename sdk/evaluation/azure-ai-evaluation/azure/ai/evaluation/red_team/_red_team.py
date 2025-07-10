@@ -1281,6 +1281,8 @@ class RedTeam:
 
         # If scan output directory exists, place the file there
         if hasattr(self, "scan_output_dir") and self.scan_output_dir:
+            # Ensure the directory exists
+            os.makedirs(self.scan_output_dir, exist_ok=True)
             output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
         else:
             output_path = f"{base_path}{DATA_EXT}"
