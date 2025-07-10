@@ -81,7 +81,7 @@ class ThreadsOperations(ThreadsOperationsGenerated):
     def delete(self, thread_id: str, **kwargs: Any) -> None:
         """Deletes an existing thread.
 
-        :param thread_id: Identifier of the thread. Required.
+        :param thread_id: Identifier of the thread.
         :type thread_id: str
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -128,14 +128,14 @@ class RunsOperations(RunsOperationsGenerated):
     ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
 
-        :param thread_id: Required.
+        :param thread_id: The ID of the thread to run.
         :type thread_id: str
-        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :keyword agent_id: The ID of the agents to use to execute this run.
         :paramtype agent_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
-         content. Default value is None.
+         content.
         :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -223,9 +223,9 @@ class RunsOperations(RunsOperationsGenerated):
     ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
 
-        :param thread_id: Required.
+        :param thread_id: The ID of the thread to run.
         :type thread_id: str
-        :param body: Required.
+        :param body: The run configuration data as a JSON object.
         :type body: JSON
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
@@ -252,9 +252,9 @@ class RunsOperations(RunsOperationsGenerated):
     ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
 
-        :param thread_id: Required.
+        :param thread_id: The ID of the thread to run.
         :type thread_id: str
-        :param body: Required.
+        :param body: The run configuration data as binary content.
         :type body: IO[bytes]
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
@@ -296,16 +296,16 @@ class RunsOperations(RunsOperationsGenerated):
     ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
 
-        :param thread_id: Required.
+        :param thread_id: The ID of the thread to run.
         :type thread_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :param body: The run configuration data, either as JSON or binary content.
         :type body: JSON or IO[bytes]
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
         :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
-        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :keyword agent_id: The ID of the agent that should run the thread.
         :paramtype agent_id: str
         :keyword model: The overridden model name that the agent should use to run the thread. Default
          value is None.
@@ -440,11 +440,11 @@ class RunsOperations(RunsOperationsGenerated):
         polling_interval: int = 1,
         **kwargs: Any,
     ) -> _models.ThreadRun:
-        """Creates a new run for an agent thread and processes the run.
+        """Create a run and process it to completion.
 
-        :param thread_id: Required.
+        :param thread_id: The ID of the thread to run.
         :type thread_id: str
-        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :keyword agent_id: The ID of the agents to use to execute this run.
         :paramtype agent_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
@@ -617,14 +617,14 @@ class RunsOperations(RunsOperationsGenerated):
     ) -> _models.AgentRunStream[_models.AgentEventHandler]:
         """Creates a new stream for an agent thread.
 
-        :param thread_id: Required.
+        :param thread_id: The ID of the thread to create a run stream for.
         :type thread_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
         :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
-        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :keyword agent_id: The ID of the agent that should run the thread.
         :paramtype agent_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -730,9 +730,9 @@ class RunsOperations(RunsOperationsGenerated):
     ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:
         """Creates a new stream for an agent thread.
 
-        :param thread_id: Required.
+        :param thread_id: The ID of the thread to create a run stream for.
         :type thread_id: str
-        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :keyword agent_id: The ID of the agent that should run the thread.
         :paramtype agent_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
@@ -831,9 +831,9 @@ class RunsOperations(RunsOperationsGenerated):
 
         Terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
-        :param thread_id: Required.
+        :param thread_id: The ID of the thread to create a run for.
         :type thread_id: str
-        :param body: Required.
+        :param body: The run configuration data as binary content.
         :type body: IO[bytes]
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
@@ -865,9 +865,9 @@ class RunsOperations(RunsOperationsGenerated):
 
         Terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
-        :param thread_id: Required.
+        :param thread_id: The ID of the thread to create a run for.
         :type thread_id: str
-        :param body: Required.
+        :param body: The run configuration data as binary content.
         :type body: IO[bytes]
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
@@ -915,16 +915,16 @@ class RunsOperations(RunsOperationsGenerated):
 
         Terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
-        :param thread_id: Required.
+        :param thread_id: The ID of the thread to create a run for.
         :type thread_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :param body: The run configuration data, either as JSON or binary content.
         :type body: JSON or IO[bytes]
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
         :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
-        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :keyword agent_id: The ID of the agent that should run the thread.
         :paramtype agent_id: str
         :keyword model: The overridden model name that the agent should use to run the thread. Default
          value is None.
@@ -1061,9 +1061,9 @@ class RunsOperations(RunsOperationsGenerated):
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.
 
-        :param thread_id: Required.
+        :param thread_id: The ID of the thread that contains the run requiring tool outputs.
         :type thread_id: str
-        :param run_id: Required.
+        :param run_id: The ID of the run requiring tool outputs to be submitted.
         :type run_id: str
         :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
          is None.
@@ -1090,11 +1090,11 @@ class RunsOperations(RunsOperationsGenerated):
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.
 
-        :param thread_id: Required.
+        :param thread_id: The ID of the thread that contains the run requiring tool outputs.
         :type thread_id: str
-        :param run_id: Required.
+        :param run_id: The ID of the run that is requesting tool outputs.
         :type run_id: str
-        :param body: Required.
+        :param body: The tool outputs to submit as a JSON object containing tool call results.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1112,11 +1112,11 @@ class RunsOperations(RunsOperationsGenerated):
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.
 
-        :param thread_id: Required.
+        :param thread_id: The ID of the thread that contains the run requiring tool outputs.
         :type thread_id: str
-        :param run_id: Required.
+        :param run_id: The ID of the run that is requesting tool outputs.
         :type run_id: str
-        :param body: Required.
+        :param body: The tool outputs to submit as binary data containing tool call results.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1141,11 +1141,11 @@ class RunsOperations(RunsOperationsGenerated):
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.
 
-        :param thread_id: Required.
+        :param thread_id: The ID of the thread that contains the run requiring tool outputs.
         :type thread_id: str
-        :param run_id: Required.
+        :param run_id: The ID of the run that is requesting tool outputs.
         :type run_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :param body: The tool outputs to submit, either as JSON or binary content.
         :type body: JSON or IO[bytes]
         :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
          is None.
@@ -1206,11 +1206,11 @@ class RunsOperations(RunsOperationsGenerated):
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
-        :param thread_id: Required.
+        :param thread_id: The ID of the thread that contains the run requiring tool outputs.
         :type thread_id: str
-        :param run_id: Required.
+        :param run_id: The ID of the run requiring tool outputs to be submitted.
         :type run_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :param body: The tool outputs to submit as a JSON object containing tool call results or as binary data.
         :type body: JSON or IO[bytes]
         :keyword event_handler: The event handler to use for processing events during the run.
         :paramtype event_handler: ~azure.ai.agents.models.BaseAgentEventHandler
@@ -1236,9 +1236,9 @@ class RunsOperations(RunsOperationsGenerated):
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
-        :param thread_id: Required.
+        :param thread_id: The ID of the thread that contains the run requiring tool outputs.
         :type thread_id: str
-        :param run_id: Required.
+        :param run_id: The ID of the run requiring tool outputs to be submitted.
         :type run_id: str
         :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
          is None.
@@ -1270,11 +1270,11 @@ class RunsOperations(RunsOperationsGenerated):
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
-        :param thread_id: Required.
+        :param thread_id: The ID of the thread that contains the run requiring tool outputs.
         :type thread_id: str
-        :param run_id: Required.
+        :param run_id: The ID of the run requiring tool outputs to be submitted.
         :type run_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :param body: The tool outputs to submit as a JSON object containing tool call results or as binary data.
         :type body: JSON or IO[bytes]
         :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
          is None.
@@ -1371,9 +1371,9 @@ class FilesOperations(FilesOperationsGenerated):
     ) -> _models.FileInfo:
         """Uploads a file for use by other operations.
 
-        :keyword file_path: Required.
+        :keyword file_path: The path to the file to upload.
         :type file_path: str
-        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision". Required.
+        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision".
         :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :return: FileInfo. The FileInfo is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.FileInfo
@@ -1387,11 +1387,11 @@ class FilesOperations(FilesOperationsGenerated):
     ) -> _models.FileInfo:
         """Uploads a file for use by other operations.
 
-        :keyword file: Required.
+        :keyword file: The file to upload, can be a file path string, file-like object, or binary data.
         :paramtype file: ~azure.ai.agents._vendor.FileType
-        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision". Required.
+        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision".
         :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
-        :keyword filename: Default value is None.
+        :keyword filename: The name of the file. If not provided, the file name will be extracted from the file object.
         :paramtype filename: str
         :return: FileInfo. The FileInfo is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.FileInfo
@@ -1402,7 +1402,7 @@ class FilesOperations(FilesOperationsGenerated):
     def upload(self, body: JSON, **kwargs: Any) -> _models.FileInfo:
         """Uploads a file for use by other operations.
 
-        :param body: Required.
+        :param body: The file upload request data as a JSON object containing file information and purpose.
         :type body: JSON
         :return: FileInfo. The FileInfo is compatible with MutableMapping
         :rtype: ~azure.ai.agents.models.FileInfo
@@ -1477,7 +1477,7 @@ class FilesOperations(FilesOperationsGenerated):
     ) -> _models.FileInfo:
         """Uploads a file for use by other operations.
 
-        :param body: Required.
+        :param body: The file upload request data as a JSON object containing file information and purpose.
         :type body: JSON
         :keyword polling_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
@@ -1503,9 +1503,9 @@ class FilesOperations(FilesOperationsGenerated):
     ) -> _models.FileInfo:
         """Uploads a file for use by other operations.
 
-        :keyword file: Required.
+        :keyword file: The file to upload, can be a file path string, file-like object, or binary data.
         :paramtype file: ~azure.ai.agents._vendor.FileType
-        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision". Required.
+        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision".
         :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :keyword filename: Default value is None.
         :paramtype filename: str
@@ -1532,9 +1532,9 @@ class FilesOperations(FilesOperationsGenerated):
     ) -> _models.FileInfo:
         """Uploads a file for use by other operations.
 
-        :keyword file_path: Required.
+        :keyword file_path: The path to the file on the local filesystem to upload.
         :type file_path: str
-        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision". Required.
+        :keyword purpose: Known values are: "assistants", "assistants_output", and "vision".
         :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :keyword polling_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
@@ -1615,7 +1615,7 @@ class FilesOperations(FilesOperationsGenerated):
         """
         Returns file content as byte stream for given file_id.
 
-        :param file_id: The ID of the file to retrieve. Required.
+        :param file_id: The ID of the file to retrieve.
         :type file_id: str
         :return: An iterator that yields bytes from the file content.
         :rtype: Iterator[bytes]
@@ -1680,7 +1680,7 @@ class FilesOperations(FilesOperationsGenerated):
     def delete(self, file_id: str, **kwargs: Any) -> None:
         """Delete a previously uploaded file.
 
-        :param file_id: The ID of the file to delete. Required.
+        :param file_id: The ID of the file to delete.
         :type file_id: str
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1700,9 +1700,9 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
         timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> _models.VectorStore:
-        """Creates a vector store and poll.
+        """Create a vector store and poll until processing is complete.
 
-        :param body: Required.
+        :param body: The vector store configuration as a JSON object.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1778,7 +1778,7 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
     ) -> _models.VectorStore:
         """Creates a vector store and poll.
 
-        :param body: Required.
+        :param body: The vector store configuration data as binary content.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1812,7 +1812,7 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
     ) -> _models.VectorStore:
         """Creates a vector store and poll.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :param body: The vector store configuration data as either a JSON object or binary content.
         :type body: JSON or IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1883,7 +1883,7 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
     def delete(self, vector_store_id: str, **kwargs: Any) -> None:
         """Deletes the vector store object matching the specified ID.
 
-        :param vector_store_id: Identifier of the vector store. Required.
+        :param vector_store_id: Identifier of the vector store.
         :type vector_store_id: str
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1906,9 +1906,9 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
     ) -> _models.VectorStoreFileBatch:
         """Create a vector store file batch and poll.
 
-        :param vector_store_id: Identifier of the vector store. Required.
+        :param vector_store_id: Identifier of the vector store.
         :type vector_store_id: str
-        :param body: Required.
+        :param body: The file batch configuration data as a JSON object containing file IDs and other settings.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1939,9 +1939,9 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
     ) -> _models.VectorStoreFileBatch:
         """Create a vector store file batch and poll.
 
-        :param vector_store_id: Identifier of the vector store. Required.
+        :param vector_store_id: Identifier of the vector store.
         :type vector_store_id: str
-        :keyword file_ids: List of file identifiers. Required.
+        :keyword file_ids: List of file identifiers.
         :paramtype file_ids: list[str]
         :keyword data_sources: List of Azure assets. Default value is None.
         :paramtype data_sources: list[~azure.ai.agents.models.VectorStoreDataSource]
@@ -1975,9 +1975,9 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
     ) -> _models.VectorStoreFileBatch:
         """Create a vector store file batch and poll.
 
-        :param vector_store_id: Identifier of the vector store. Required.
+        :param vector_store_id: Identifier of the vector store.
         :type vector_store_id: str
-        :param body: Required.
+        :param body: The file batch configuration data as binary content.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -2009,11 +2009,11 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
     ) -> _models.VectorStoreFileBatch:
         """Create a vector store file batch and poll.
 
-        :param vector_store_id: Identifier of the vector store. Required.
+        :param vector_store_id: Identifier of the vector store.
         :type vector_store_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :param body: The file batch configuration data as either a JSON object or binary content.
         :type body: JSON or IO[bytes]
-        :keyword file_ids: List of file identifiers. Required.
+        :keyword file_ids: List of file identifiers.
         :paramtype file_ids: list[str]
         :keyword data_sources: List of Azure assets. Default value is None.
         :paramtype data_sources: list[~azure.ai.client.models.VectorStoreDataSource]
@@ -2087,9 +2087,9 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
     ) -> _models.VectorStoreFile:
         """Create a vector store file by attaching a file to a vector store.
 
-        :param vector_store_id: Identifier of the vector store. Required.
+        :param vector_store_id: Identifier of the vector store.
         :type vector_store_id: str
-        :param body: Required.
+        :param body: The file attachment configuration data as a JSON object containing file ID and settings.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2120,7 +2120,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
     ) -> _models.VectorStoreFile:
         """Create a vector store file by attaching a file to a vector store.
 
-        :param vector_store_id: Identifier of the vector store. Required.
+        :param vector_store_id: Identifier of the vector store.
         :type vector_store_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2156,9 +2156,9 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
     ) -> _models.VectorStoreFile:
         """Create a vector store file by attaching a file to a vector store.
 
-        :param vector_store_id: Identifier of the vector store. Required.
+        :param vector_store_id: Identifier of the vector store.
         :type vector_store_id: str
-        :param body: Required.
+        :param body: The file attachment configuration data as binary content.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -2190,9 +2190,9 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
     ) -> _models.VectorStoreFile:
         """Create a vector store file by attaching a file to a vector store.
 
-        :param vector_store_id: Identifier of the vector store. Required.
+        :param vector_store_id: Identifier of the vector store.
         :type vector_store_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :param body: The file attachment configuration data as either a JSON object or binary content.
         :type body: JSON or IO[bytes]
         :keyword content_type: Body Parameter content-type. Defaults to 'application/json'.
         :paramtype content_type: str
@@ -2256,9 +2256,9 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
         """Deletes a vector store file. This removes the file‐to‐store link (does not delete the file
         itself).
 
-        :param vector_store_id: Identifier of the vector store. Required.
+        :param vector_store_id: Identifier of the vector store.
         :type vector_store_id: str
-        :param file_id: Identifier of the file. Required.
+        :param file_id: Identifier of the file.
         :type file_id: str
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
