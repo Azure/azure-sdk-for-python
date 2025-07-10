@@ -40,8 +40,10 @@ class ServiceResponseRetryPolicy(object):
 
         if self.request:
             if not _OperationType.IsReadOnlyOperation(self.request.operation_type):
-                return False
-
+                if not self.args[0].retry_write:
+                    return False
+                else:
+                    self.total_retries = 1  # only retry once for non-idempotent writes
             self.location_endpoint = self.resolve_next_region_service_endpoint()
             self.request.route_to_location(self.location_endpoint)
         return True

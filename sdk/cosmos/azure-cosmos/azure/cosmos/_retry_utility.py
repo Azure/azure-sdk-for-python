@@ -263,7 +263,7 @@ def _handle_service_request_retries(
         raise exception
 
 def _handle_service_response_retries(request, client, response_retry_policy, exception, *args):
-    if request and _has_read_retryable_headers(request.headers):
+    if request and (_has_read_retryable_headers(request.headers) or (args and args[0].retry_write)):
         # we resolve the request endpoint to the next preferred region
         # once we are out of preferred regions we stop retrying
         retry_policy = response_retry_policy
