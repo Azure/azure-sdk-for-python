@@ -254,7 +254,7 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
     async def test_service_response_error_with_status_async(self: "TestFaultInjectionTransportAsync"):
         custom_transport = FaultInjectionTransportAsync()
 
-        is_request_to_read_region: Callable[[HttpRequest], bool] = lambda \
+        is_request_to_write_region: Callable[[HttpRequest], bool] = lambda \
                 r: (FaultInjectionTransportAsync.predicate_targets_region(r, WRITE_REGION) and
                     (FaultInjectionTransportAsync.predicate_is_operation_type(r, _OperationType.Read) and
                     FaultInjectionTransportAsync.predicate_is_document_operation(r)))
@@ -267,7 +267,7 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
         error = ServiceResponseError(status_code=404, message="Not Found", error=inner_error)
 
         custom_transport.add_fault(
-            is_request_to_read_region,
+            is_request_to_write_region,
             lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(0, error)))
 
         id_value: str = str(uuid.uuid4())
@@ -292,17 +292,14 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
     @pytest.mark.cosmosMultiRegion
     async def test_service_response_error_with_status_async(self):
         custom_transport = FaultInjectionTransportAsync()
-        # Inject rule to disallow writes in the read-only region
 
-        # Inject rule to simulate regional outage in "Read Region"
-        is_request_to_read_region: Callable[[HttpRequest], bool] = lambda \
+        # Inject rule to simulate regional outage in "write region" for reads
+        is_request_to_write_region: Callable[[HttpRequest], bool] = lambda \
                 r: (FaultInjectionTransportAsync.predicate_targets_region(r, WRITE_LOCATIONAL_ENDPOINT) and
                     (FaultInjectionTransportAsync.predicate_is_operation_type(r, _OperationType.Read) and
                      FaultInjectionTransportAsync.predicate_is_document_operation(r)))
-        # error =
-        # error = FaultInjectionTransportAsync.error_after_delay(0, asyncio.TimeoutError())
         custom_transport.add_fault(
-            is_request_to_read_region,
+            is_request_to_write_region,
             lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_service_response()))
 
         id_value: str = str(uuid.uuid4())
