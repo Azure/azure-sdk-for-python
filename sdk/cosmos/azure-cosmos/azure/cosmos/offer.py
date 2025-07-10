@@ -45,5 +45,4 @@ class ThroughputProperties:
         self.auto_scale_max_throughput: Optional[int] = kwargs.get('auto_scale_max_throughput')
         self.auto_scale_increment_percent: Optional[int] = kwargs.get('auto_scale_increment_percent')
 
-
 Offer = ThroughputProperties

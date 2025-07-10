@@ -39,6 +39,7 @@ from ..exceptions import CosmosResourceNotFoundError
 from ._user import UserProxy
 from ..documents import IndexingMode
 from ..partition_key import PartitionKey
+from .._cosmos_responses import CosmosDict
 
 
 __all__ = ("DatabaseProxy",)
@@ -89,7 +90,8 @@ class DatabaseProxy(object):
         self,
         client_connection: CosmosClientConnection,
         id: str,
-        properties: Optional[Dict[str, Any]] = None
+        properties: Optional[Dict[str, Any]] = None,
+        header: Optional[CosmosDict] = None
     ) -> None:
         """
         :param client_connection: Client from which this database was retrieved.
@@ -100,6 +102,7 @@ class DatabaseProxy(object):
         self.id = id
         self.database_link = "dbs/{}".format(self.id)
         self._properties = properties
+        self._response_headers = header
 
     def __repr__(self) -> str:
         return "<DatabaseProxy [{}]>".format(self.database_link)[:1024]
@@ -126,13 +129,21 @@ class DatabaseProxy(object):
             self._properties = await self.read()
         return self._properties
 
+    def get_response_headers(self) -> CosmosDict:
+        """Returns a copy of the response headers associated to this response
+
+        :return: Dict of response headers
+        :rtype: dict[str, Any]
+        """
+        return self._response_headers
+
     @distributed_trace_async
     async def read(
         self,
         *,
         initial_headers: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Read the database properties.
 
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
@@ -285,7 +296,8 @@ class DatabaseProxy(object):
         data = await self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
         )
-        return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data)
+        return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data,
+                              header=data.get_response_headers())
 
     @distributed_trace_async
     async def create_container_if_not_exists(
@@ -605,7 +617,8 @@ class DatabaseProxy(object):
             container_link, collection=parameters, options=request_options, **kwargs
         )
         return ContainerProxy(
-            self.client_connection, self.database_link, container_properties["id"], properties=container_properties
+            self.client_connection, self.database_link, container_properties["id"], properties=container_properties,
+            header=container_properties.get_response_headers()
         )
 
     @distributed_trace_async

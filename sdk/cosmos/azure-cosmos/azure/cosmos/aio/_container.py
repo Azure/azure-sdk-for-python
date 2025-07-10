@@ -47,6 +47,7 @@ from .._cosmos_responses import CosmosDict, CosmosList
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
 from ..offer import ThroughputProperties
+from .._cosmos_responses import CosmosDict, CosmosList
 from ..partition_key import (
     NonePartitionKeyValue,
     _return_undefined_or_empty_partition_key,
@@ -85,7 +86,8 @@ class ContainerProxy:
         client_connection: CosmosClientConnection,
         database_link: str,
         id: str,
-        properties: Optional[Dict[str, Any]] = None
+        properties: Optional[Dict[str, Any]] = None,
+        header: Optional[CosmosDict] = None
     ) -> None:
         self.client_connection = client_connection
         self.id = id
@@ -93,6 +95,7 @@ class ContainerProxy:
         self.container_link = "{}/colls/{}".format(database_link, self.id)
         self._is_system_key: Optional[bool] = None
         self._scripts: Optional[ScriptsProxy] = None
+        self._response_headers = header
         if properties:
             self.client_connection._set_container_properties_cache(self.container_link,
                                                                    _build_properties_cache(properties,
@@ -111,6 +114,14 @@ class ContainerProxy:
         if self.container_link not in self.client_connection._container_properties_cache:
             await self.read(**kwargs)
         return self.client_connection._container_properties_cache[self.container_link]
+
+    def get_response_headers(self) -> CosmosDict:
+        """Returns a copy of the response headers associated to this response
+
+        :return: Dict of response headers
+        :rtype: dict[str, Any]
+        """
+        return self._response_headers
 
     @property
     async def is_system_key(self) -> bool:
@@ -167,7 +178,7 @@ class ContainerProxy:
         priority: Optional[Literal["High", "Low"]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Read the container properties.
 
         :keyword bool populate_partition_key_range_statistics: Enable returning partition key
