@@ -35,6 +35,7 @@ from azure.monitor.opentelemetry._constants import (
     LOGGING_FORMATTER_ARG,
     RESOURCE_ARG,
     SAMPLING_RATIO_ARG,
+    SAMPLING_TRACES_PER_SECOND_ARG,
     SPAN_PROCESSORS_ARG,
     VIEWS_ARG,
 )
@@ -50,6 +51,7 @@ from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-err
     ApplicationInsightsSampler,
     AzureMonitorMetricExporter,
     AzureMonitorTraceExporter,
+    RateLimitedSampler,
 )
 from azure.monitor.opentelemetry.exporter._utils import (  # pylint: disable=import-error,no-name-in-module
     _is_attach_enabled,
@@ -133,10 +135,18 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
 
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
     resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
-    sampling_ratio = configurations[SAMPLING_RATIO_ARG]
-    tracer_provider = TracerProvider(
-        sampler=ApplicationInsightsSampler(sampling_ratio=cast(float, sampling_ratio)), resource=resource
-    )
+    if SAMPLING_TRACES_PER_SECOND_ARG in configurations:
+        sampling_traces_per_second = configurations[SAMPLING_TRACES_PER_SECOND_ARG]
+        tracer_provider = TracerProvider(
+            sampler=RateLimitedSampler(sampling_ratio=cast(float, sampling_traces_per_second), resource=resource)
+        )
+    else:
+        sampling_ratio = configurations[SAMPLING_RATIO_ARG]
+        tracer_provider = TracerProvider(
+            sampler=ApplicationInsightsSampler(sampling_ratio=cast(float, sampling_ratio)), resource=resource
+        )
+
+
     for span_processor in configurations[SPAN_PROCESSORS_ARG]:  # type: ignore
         tracer_provider.add_span_processor(span_processor)  # type: ignore
     if configurations.get(ENABLE_LIVE_METRICS_ARG):

@@ -19,6 +19,7 @@ from opentelemetry.instrumentation.environment_variables import (
 from opentelemetry.sdk.environment_variables import (
     OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
     OTEL_TRACES_SAMPLER_ARG,
+    OTEL_TRACES_SAMPLER
 )
 from opentelemetry.sdk.resources import Resource
 
@@ -37,24 +38,24 @@ from azure.monitor.opentelemetry._constants import (
     LOGGING_FORMATTER_ARG,
     RESOURCE_ARG,
     SAMPLING_RATIO_ARG,
+    SAMPLING_TRACES_PER_SECOND_ARG,
     SPAN_PROCESSORS_ARG,
     VIEWS_ARG,
+    RATE_LIMITED_SAMPLER,
+    FIXED_PERCENTAGE_SAMPLER,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry._version import VERSION
 
 
 _INVALID_FLOAT_MESSAGE = "Value of %s must be a float. Defaulting to %s: %s"
+_INVALID_TRACES_PER_SECOND_MESSAGE = "Value of %s must be a positive number for traces per second. Defaulting to %s: %s"
 _SUPPORTED_RESOURCE_DETECTORS = (
     _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME,
     _AZURE_VM_RESOURCE_DETECTOR_NAME,
 )
-# TODO: remove when sampler uses env var instead
-SAMPLING_RATIO_ENV_VAR = OTEL_TRACES_SAMPLER_ARG
-
 
 _logger = getLogger(__name__)
-
 
 def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     configurations = {}
@@ -120,21 +121,54 @@ def _default_resource(configurations):
         configurations[RESOURCE_ARG] = Resource.create(configurations[RESOURCE_ARG].attributes)
 
 
-# TODO: remove when sampler uses env var instead
 def _default_sampling_ratio(configurations):
     default = 1.0
-    if SAMPLING_RATIO_ENV_VAR in environ:
+
+    if environ.get(OTEL_TRACES_SAMPLER_ARG) is not None:
         try:
-            default = float(environ[SAMPLING_RATIO_ENV_VAR])
+            if float(environ[OTEL_TRACES_SAMPLER_ARG]) < 0:
+                _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a non-negative number.")
+        except ValueError:
+            pass
+    else:
+        _logger.error("OTEL_TRACES_SAMPLER_ARG is not set.")
+
+    # Check if rate-limited sampler is configured
+    if environ.get(OTEL_TRACES_SAMPLER) == RATE_LIMITED_SAMPLER:
+        try:
+            default = float(environ[OTEL_TRACES_SAMPLER_ARG])
+            print(f"Using rate limited sampler: {default} traces per second")
         except ValueError as e:
             _logger.error(  # pylint: disable=C
-                _INVALID_FLOAT_MESSAGE,
-                SAMPLING_RATIO_ENV_VAR,
+                _INVALID_TRACES_PER_SECOND_MESSAGE,
+                OTEL_TRACES_SAMPLER_ARG,
                 default,
                 e,
             )
-    configurations[SAMPLING_RATIO_ARG] = default
-
+        configurations[SAMPLING_TRACES_PER_SECOND_ARG] = default
+    elif environ.get(OTEL_TRACES_SAMPLER) == FIXED_PERCENTAGE_SAMPLER:
+        try:
+            default = float(environ[OTEL_TRACES_SAMPLER_ARG])
+            print(f"Using sampling ratio: {default}")
+        except ValueError as e:
+            _logger.error(  # pylint: disable=C
+                _INVALID_FLOAT_MESSAGE,
+                OTEL_TRACES_SAMPLER_ARG,
+                default,
+                e,
+            )
+        configurations[SAMPLING_RATIO_ARG] = default
+    else:
+        # Default behavior - always set sampling_ratio
+        configurations[SAMPLING_RATIO_ARG] = default
+        _logger.error(  # pylint: disable=C
+            "Invalid argument for the sampler to be used for tracing. "
+            "Supported values are %s and %s. Defaulting to %s: %s",
+            RATE_LIMITED_SAMPLER,
+            FIXED_PERCENTAGE_SAMPLER,
+            OTEL_TRACES_SAMPLER,
+            OTEL_TRACES_SAMPLER_ARG,
+        )
 
 def _default_instrumentation_options(configurations):
     otel_disabled_instrumentations = _get_otel_disabled_instrumentations()
