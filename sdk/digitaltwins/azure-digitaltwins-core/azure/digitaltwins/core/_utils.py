@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
+from typing import Optional
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceExistsError,

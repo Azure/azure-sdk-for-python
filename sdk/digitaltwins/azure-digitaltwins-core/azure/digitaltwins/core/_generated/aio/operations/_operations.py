@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient, MatchConditions
@@ -28,6 +28,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
+from ... import models as _models
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
     build_digital_twin_models_add_request,
@@ -72,6 +73,8 @@ class DigitalTwinModelsOperations:
         :attr:`digital_twin_models` attribute.
     """
 
+    models = _models
+
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
@@ -88,7 +91,7 @@ class DigitalTwinModelsOperations:
         tracestate: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> List[JSON]:
+    ) -> List[_models.DigitalTwinsModelData]:
         """Uploads one or more models. When any error occurs, no models are uploaded.
         Status codes:
 
@@ -117,33 +120,9 @@ class DigitalTwinModelsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: list of JSON object
-        :rtype: list[JSON]
+        :return: list of DigitalTwinsModelData
+        :rtype: list[~azure.digitaltwins.core.models.DigitalTwinsModelData]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                models = [
-                    {}
-                ]
-
-                # response body for status code(s): 201
-                response == [
-                    {
-                        "id": "str",
-                        "decommissioned": False,
-                        "description": {
-                            "str": "str"
-                        },
-                        "displayName": {
-                            "str": "str"
-                        },
-                        "model": {},
-                        "uploadTime": "2020-02-20 00:00:00"
-                    }
-                ]
         """
 
     @overload
@@ -155,7 +134,7 @@ class DigitalTwinModelsOperations:
         tracestate: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> List[JSON]:
+    ) -> List[_models.DigitalTwinsModelData]:
         """Uploads one or more models. When any error occurs, no models are uploaded.
         Status codes:
 
@@ -184,28 +163,9 @@ class DigitalTwinModelsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: list of JSON object
-        :rtype: list[JSON]
+        :return: list of DigitalTwinsModelData
+        :rtype: list[~azure.digitaltwins.core.models.DigitalTwinsModelData]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 201
-                response == [
-                    {
-                        "id": "str",
-                        "decommissioned": False,
-                        "description": {
-                            "str": "str"
-                        },
-                        "displayName": {
-                            "str": "str"
-                        },
-                        "model": {},
-                        "uploadTime": "2020-02-20 00:00:00"
-                    }
-                ]
         """
 
     @distributed_trace_async
@@ -216,7 +176,7 @@ class DigitalTwinModelsOperations:
         traceparent: Optional[str] = None,
         tracestate: Optional[str] = None,
         **kwargs: Any
-    ) -> List[JSON]:
+    ) -> List[_models.DigitalTwinsModelData]:
         """Uploads one or more models. When any error occurs, no models are uploaded.
         Status codes:
 
@@ -243,28 +203,9 @@ class DigitalTwinModelsOperations:
         :keyword tracestate: Provides vendor-specific trace identification information and is a
          companion to traceparent. Default value is None.
         :paramtype tracestate: str
-        :return: list of JSON object
-        :rtype: list[JSON]
+        :return: list of DigitalTwinsModelData
+        :rtype: list[~azure.digitaltwins.core.models.DigitalTwinsModelData]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 201
-                response == [
-                    {
-                        "id": "str",
-                        "decommissioned": False,
-                        "description": {
-                            "str": "str"
-                        },
-                        "displayName": {
-                            "str": "str"
-                        },
-                        "model": {},
-                        "uploadTime": "2020-02-20 00:00:00"
-                    }
-                ]
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -278,7 +219,7 @@ class DigitalTwinModelsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[List[JSON]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.DigitalTwinsModelData]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -286,7 +227,7 @@ class DigitalTwinModelsOperations:
         if isinstance(models, (IOBase, bytes)):
             _content = models
         else:
-            _json = models
+            _json = self._serialize.body(models, "[object]")
 
         _request = build_digital_twin_models_add_request(
             traceparent=traceparent,
@@ -309,17 +250,15 @@ class DigitalTwinModelsOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+        deserialized = self._deserialize("[DigitalTwinsModelData]", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, cast(List[JSON], deserialized), {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return cast(List[JSON], deserialized)  # type: ignore
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list(
@@ -331,7 +270,7 @@ class DigitalTwinModelsOperations:
         include_model_definition: bool = False,
         max_items_per_page: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged[JSON]:
+    ) -> AsyncItemPaged["_models.DigitalTwinsModelData"]:
         """Retrieves model metadata and, optionally, model definitions.
         Status codes:
 
@@ -362,31 +301,15 @@ class DigitalTwinModelsOperations:
         :keyword max_items_per_page: The maximum number of items to retrieve per request. The server
          may choose to return less than the requested number. Default value is None.
         :paramtype max_items_per_page: int
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
+        :return: An iterator like instance of DigitalTwinsModelData
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.digitaltwins.core.models.DigitalTwinsModelData]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "id": "str",
-                    "decommissioned": False,
-                    "description": {
-                        "str": "str"
-                    },
-                    "displayName": {
-                        "str": "str"
-                    },
-                    "model": {},
-                    "uploadTime": "2020-02-20 00:00:00"
-                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.PagedDigitalTwinsModelDataCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -429,11 +352,14 @@ class DigitalTwinModelsOperations:
             return _request
 
         async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized.get("value", [])
+            deserialized = self._deserialize(
+                _models._models.PagedDigitalTwinsModelDataCollection,  # pylint: disable=protected-access
+                pipeline_response,
+            )
+            list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             _request = prepare_request(next_link)
@@ -446,7 +372,8 @@ class DigitalTwinModelsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -461,7 +388,7 @@ class DigitalTwinModelsOperations:
         tracestate: Optional[str] = None,
         include_model_definition: bool = False,
         **kwargs: Any
-    ) -> JSON:
+    ) -> _models.DigitalTwinsModelData:
         """Retrieves model metadata and optionally the model definition.
         Status codes:
 
@@ -487,26 +414,9 @@ class DigitalTwinModelsOperations:
         :keyword include_model_definition: When true the model definition will be returned as part of
          the result. Default value is False.
         :paramtype include_model_definition: bool
-        :return: JSON object
-        :rtype: JSON
+        :return: DigitalTwinsModelData
+        :rtype: ~azure.digitaltwins.core.models.DigitalTwinsModelData
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "id": "str",
-                    "decommissioned": False,
-                    "description": {
-                        "str": "str"
-                    },
-                    "displayName": {
-                        "str": "str"
-                    },
-                    "model": {},
-                    "uploadTime": "2020-02-20 00:00:00"
-                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -519,7 +429,7 @@ class DigitalTwinModelsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DigitalTwinsModelData] = kwargs.pop("cls", None)
 
         _request = build_digital_twin_models_get_by_id_request(
             id=id,
@@ -541,17 +451,15 @@ class DigitalTwinModelsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+        deserialized = self._deserialize("DigitalTwinsModelData", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return cast(JSON, deserialized)  # type: ignore
+        return deserialized  # type: ignore
 
     @overload
     async def update(
@@ -600,14 +508,6 @@ class DigitalTwinModelsOperations:
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                update_model = [
-                    {}
-                ]
         """
 
     @overload
@@ -723,7 +623,7 @@ class DigitalTwinModelsOperations:
         if isinstance(update_model, (IOBase, bytes)):
             _content = update_model
         else:
-            _json = update_model
+            _json = self._serialize.body(update_model, "[object]")
 
         _request = build_digital_twin_models_update_request(
             id=id,
@@ -747,7 +647,8 @@ class DigitalTwinModelsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -818,7 +719,8 @@ class DigitalTwinModelsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -834,6 +736,8 @@ class QueryOperations:
         :attr:`query` attribute.
     """
 
+    models = _models
+
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
@@ -844,14 +748,14 @@ class QueryOperations:
     @overload
     async def query_twins(
         self,
-        query_specification: JSON,
+        query_specification: _models.QuerySpecification,
         *,
         traceparent: Optional[str] = None,
         tracestate: Optional[str] = None,
         max_items_per_page: Optional[int] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> JSON:
+    ) -> _models.QueryResult:
         """Executes a query that allows traversing relationships and filtering by property values.
         Status codes:
 
@@ -867,7 +771,7 @@ class QueryOperations:
           * QuotaReachedError - The maximum query rate limit has been reached.
 
         :param query_specification: The query specification to execute. Required.
-        :type query_specification: JSON
+        :type query_specification: ~azure.digitaltwins.core.models.QuerySpecification
         :keyword traceparent: Identifies the request in a distributed tracing system. Default value is
          None.
         :paramtype traceparent: str
@@ -880,26 +784,9 @@ class QueryOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: JSON object
-        :rtype: JSON
+        :return: QueryResult
+        :rtype: ~azure.digitaltwins.core.models.QueryResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                query_specification = {
-                    "continuationToken": "str",
-                    "query": "str"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "value": [
-                        {}
-                    ],
-                    "continuationToken": "str"
-                }
         """
 
     @overload
@@ -912,7 +799,7 @@ class QueryOperations:
         max_items_per_page: Optional[int] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> JSON:
+    ) -> _models.QueryResult:
         """Executes a query that allows traversing relationships and filtering by property values.
         Status codes:
 
@@ -941,32 +828,21 @@ class QueryOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: JSON object
-        :rtype: JSON
+        :return: QueryResult
+        :rtype: ~azure.digitaltwins.core.models.QueryResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "value": [
-                        {}
-                    ],
-                    "continuationToken": "str"
-                }
         """
 
     @distributed_trace_async
     async def query_twins(
         self,
-        query_specification: Union[JSON, IO[bytes]],
+        query_specification: Union[_models.QuerySpecification, IO[bytes]],
         *,
         traceparent: Optional[str] = None,
         tracestate: Optional[str] = None,
         max_items_per_page: Optional[int] = None,
         **kwargs: Any
-    ) -> JSON:
+    ) -> _models.QueryResult:
         """Executes a query that allows traversing relationships and filtering by property values.
         Status codes:
 
@@ -981,9 +857,9 @@ class QueryOperations:
           * 429 Too Many Requests
           * QuotaReachedError - The maximum query rate limit has been reached.
 
-        :param query_specification: The query specification to execute. Is either a JSON type or a
-         IO[bytes] type. Required.
-        :type query_specification: JSON or IO[bytes]
+        :param query_specification: The query specification to execute. Is either a QuerySpecification
+         type or a IO[bytes] type. Required.
+        :type query_specification: ~azure.digitaltwins.core.models.QuerySpecification or IO[bytes]
         :keyword traceparent: Identifies the request in a distributed tracing system. Default value is
          None.
         :paramtype traceparent: str
@@ -993,26 +869,9 @@ class QueryOperations:
         :keyword max_items_per_page: The maximum number of items to retrieve per request. The server
          may choose to return less than the requested number. Default value is None.
         :paramtype max_items_per_page: int
-        :return: JSON object
-        :rtype: JSON
+        :return: QueryResult
+        :rtype: ~azure.digitaltwins.core.models.QueryResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                query_specification = {
-                    "continuationToken": "str",
-                    "query": "str"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "value": [
-                        {}
-                    ],
-                    "continuationToken": "str"
-                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1026,7 +885,7 @@ class QueryOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[_models.QueryResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1034,7 +893,7 @@ class QueryOperations:
         if isinstance(query_specification, (IOBase, bytes)):
             _content = query_specification
         else:
-            _json = query_specification
+            _json = self._serialize.body(query_specification, "QuerySpecification")
 
         _request = build_query_query_twins_request(
             traceparent=traceparent,
@@ -1058,20 +917,18 @@ class QueryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["query-charge"] = self._deserialize("float", response.headers.get("query-charge"))
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+        deserialized = self._deserialize("QueryResult", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return cast(JSON, deserialized)  # type: ignore
+        return deserialized  # type: ignore
 
 
 class DigitalTwinsOperations:
@@ -1083,6 +940,8 @@ class DigitalTwinsOperations:
         :class:`~azure.digitaltwins.core.aio.AzureDigitalTwinsAPI`'s
         :attr:`digital_twins` attribute.
     """
+
+    models = _models
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
@@ -1153,20 +1012,18 @@ class DigitalTwinsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+        deserialized = self._deserialize("object", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return cast(JSON, deserialized)  # type: ignore
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def add(
@@ -1237,7 +1094,7 @@ class DigitalTwinsOperations:
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _json = twin
+        _json = self._serialize.body(twin, "object")
 
         _request = build_digital_twins_add_request(
             id=id,
@@ -1262,20 +1119,18 @@ class DigitalTwinsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+        deserialized = self._deserialize("object", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return cast(JSON, deserialized)  # type: ignore
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def delete(
@@ -1364,7 +1219,8 @@ class DigitalTwinsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1425,14 +1281,6 @@ class DigitalTwinsOperations:
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                patch_document = [
-                    {}
-                ]
         """
 
     @overload
@@ -1572,7 +1420,7 @@ class DigitalTwinsOperations:
         if isinstance(patch_document, (IOBase, bytes)):
             _content = patch_document
         else:
-            _json = patch_document
+            _json = self._serialize.body(patch_document, "[object]")
 
         _request = build_digital_twins_update_request(
             id=id,
@@ -1598,7 +1446,8 @@ class DigitalTwinsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
@@ -1679,20 +1528,18 @@ class DigitalTwinsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+        deserialized = self._deserialize("object", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return cast(JSON, deserialized)  # type: ignore
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def add_relationship(
@@ -1771,7 +1618,7 @@ class DigitalTwinsOperations:
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _json = relationship
+        _json = self._serialize.body(relationship, "object")
 
         _request = build_digital_twins_add_relationship_request(
             id=id,
@@ -1797,20 +1644,18 @@ class DigitalTwinsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+        deserialized = self._deserialize("object", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return cast(JSON, deserialized)  # type: ignore
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def delete_relationship(
@@ -1904,7 +1749,8 @@ class DigitalTwinsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1974,14 +1820,6 @@ class DigitalTwinsOperations:
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                patch_document = [
-                    {}
-                ]
         """
 
     @overload
@@ -2139,7 +1977,7 @@ class DigitalTwinsOperations:
         if isinstance(patch_document, (IOBase, bytes)):
             _content = patch_document
         else:
-            _json = patch_document
+            _json = self._serialize.body(patch_document, "[object]")
 
         _request = build_digital_twins_update_relationship_request(
             id=id,
@@ -2166,7 +2004,8 @@ class DigitalTwinsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
@@ -2211,17 +2050,11 @@ class DigitalTwinsOperations:
         :return: An iterator like instance of JSON
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {}
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.RelationshipCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2263,11 +2096,13 @@ class DigitalTwinsOperations:
             return _request
 
         async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized.get("value", [])
+            deserialized = self._deserialize(
+                _models._models.RelationshipCollection, pipeline_response  # pylint: disable=protected-access
+            )
+            list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             _request = prepare_request(next_link)
@@ -2280,7 +2115,8 @@ class DigitalTwinsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -2289,7 +2125,7 @@ class DigitalTwinsOperations:
     @distributed_trace
     def list_incoming_relationships(
         self, id: str, *, traceparent: Optional[str] = None, tracestate: Optional[str] = None, **kwargs: Any
-    ) -> AsyncItemPaged[JSON]:
+    ) -> AsyncItemPaged["_models.IncomingRelationship"]:
         """Retrieves all incoming relationship for a digital twin.
         Status codes:
 
@@ -2312,25 +2148,15 @@ class DigitalTwinsOperations:
         :keyword tracestate: Provides vendor-specific trace identification information and is a
          companion to traceparent. Default value is None.
         :paramtype tracestate: str
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
+        :return: An iterator like instance of IncomingRelationship
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.digitaltwins.core.models.IncomingRelationship]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "$relationshipId": "str",
-                    "$relationshipLink": "str",
-                    "$relationshipName": "str",
-                    "$sourceId": "str"
-                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.IncomingRelationshipCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2371,11 +2197,13 @@ class DigitalTwinsOperations:
             return _request
 
         async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized.get("value", [])
+            deserialized = self._deserialize(
+                _models._models.IncomingRelationshipCollection, pipeline_response  # pylint: disable=protected-access
+            )
+            list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             _request = prepare_request(next_link)
@@ -2388,7 +2216,8 @@ class DigitalTwinsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -2455,7 +2284,7 @@ class DigitalTwinsOperations:
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _json = telemetry
+        _json = self._serialize.body(telemetry, "object")
 
         _request = build_digital_twins_send_telemetry_request(
             id=id,
@@ -2480,7 +2309,8 @@ class DigitalTwinsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -2551,7 +2381,7 @@ class DigitalTwinsOperations:
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _json = telemetry
+        _json = self._serialize.body(telemetry, "object")
 
         _request = build_digital_twins_send_component_telemetry_request(
             id=id,
@@ -2577,7 +2407,8 @@ class DigitalTwinsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -2654,20 +2485,18 @@ class DigitalTwinsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+        deserialized = self._deserialize("object", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return cast(JSON, deserialized)  # type: ignore
+        return deserialized  # type: ignore
 
     @overload
     async def update_component(
@@ -2728,14 +2557,6 @@ class DigitalTwinsOperations:
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                patch_document = [
-                    {}
-                ]
         """
 
     @overload
@@ -2881,7 +2702,7 @@ class DigitalTwinsOperations:
         if isinstance(patch_document, (IOBase, bytes)):
             _content = patch_document
         else:
-            _json = patch_document
+            _json = self._serialize.body(patch_document, "[object]")
 
         _request = build_digital_twins_update_component_request(
             id=id,
@@ -2908,7 +2729,8 @@ class DigitalTwinsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
@@ -2927,6 +2749,8 @@ class EventRoutesOperations:
         :attr:`event_routes` attribute.
     """
 
+    models = _models
+
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
@@ -2942,7 +2766,7 @@ class EventRoutesOperations:
         tracestate: Optional[str] = None,
         max_items_per_page: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged[JSON]:
+    ) -> AsyncItemPaged["_models.DigitalTwinsEventRoute"]:
         """Retrieves all event routes.
         Status codes:
 
@@ -2958,24 +2782,15 @@ class EventRoutesOperations:
         :keyword max_items_per_page: The maximum number of items to retrieve per request. The server
          may choose to return less than the requested number. Default value is None.
         :paramtype max_items_per_page: int
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
+        :return: An iterator like instance of DigitalTwinsEventRoute
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.digitaltwins.core.models.DigitalTwinsEventRoute]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "endpointName": "str",
-                    "filter": "str",
-                    "id": "str"
-                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.EventRouteCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3016,11 +2831,13 @@ class EventRoutesOperations:
             return _request
 
         async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized.get("value", [])
+            deserialized = self._deserialize(
+                _models._models.EventRouteCollection, pipeline_response  # pylint: disable=protected-access
+            )
+            list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             _request = prepare_request(next_link)
@@ -3033,7 +2850,8 @@ class EventRoutesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -3042,7 +2860,7 @@ class EventRoutesOperations:
     @distributed_trace_async
     async def get_by_id(
         self, id: str, *, traceparent: Optional[str] = None, tracestate: Optional[str] = None, **kwargs: Any
-    ) -> JSON:
+    ) -> _models.DigitalTwinsEventRoute:
         """Retrieves an event route.
         Status codes:
 
@@ -3061,19 +2879,9 @@ class EventRoutesOperations:
         :keyword tracestate: Provides vendor-specific trace identification information and is a
          companion to traceparent. Default value is None.
         :paramtype tracestate: str
-        :return: JSON object
-        :rtype: JSON
+        :return: DigitalTwinsEventRoute
+        :rtype: ~azure.digitaltwins.core.models.DigitalTwinsEventRoute
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "endpointName": "str",
-                    "filter": "str",
-                    "id": "str"
-                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3086,7 +2894,7 @@ class EventRoutesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DigitalTwinsEventRoute] = kwargs.pop("cls", None)
 
         _request = build_event_routes_get_by_id_request(
             id=id,
@@ -3107,23 +2915,21 @@ class EventRoutesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+        deserialized = self._deserialize("DigitalTwinsEventRoute", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return cast(JSON, deserialized)  # type: ignore
+        return deserialized  # type: ignore
 
     @overload
     async def add(
         self,
         id: str,
-        event_route: JSON,
+        event_route: _models.DigitalTwinsEventRoute,
         *,
         traceparent: Optional[str] = None,
         tracestate: Optional[str] = None,
@@ -3146,7 +2952,7 @@ class EventRoutesOperations:
          Required.
         :type id: str
         :param event_route: The event route data. Required.
-        :type event_route: JSON
+        :type event_route: ~azure.digitaltwins.core.models.DigitalTwinsEventRoute
         :keyword traceparent: Identifies the request in a distributed tracing system. Default value is
          None.
         :paramtype traceparent: str
@@ -3159,16 +2965,6 @@ class EventRoutesOperations:
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                event_route = {
-                    "endpointName": "str",
-                    "filter": "str",
-                    "id": "str"
-                }
         """
 
     @overload
@@ -3217,7 +3013,7 @@ class EventRoutesOperations:
     async def add(
         self,
         id: str,
-        event_route: Union[JSON, IO[bytes]],
+        event_route: Union[_models.DigitalTwinsEventRoute, IO[bytes]],
         *,
         traceparent: Optional[str] = None,
         tracestate: Optional[str] = None,
@@ -3238,8 +3034,9 @@ class EventRoutesOperations:
         :param id: The id for an event route. The id is unique within event routes and case sensitive.
          Required.
         :type id: str
-        :param event_route: The event route data. Is either a JSON type or a IO[bytes] type. Required.
-        :type event_route: JSON or IO[bytes]
+        :param event_route: The event route data. Is either a DigitalTwinsEventRoute type or a
+         IO[bytes] type. Required.
+        :type event_route: ~azure.digitaltwins.core.models.DigitalTwinsEventRoute or IO[bytes]
         :keyword traceparent: Identifies the request in a distributed tracing system. Default value is
          None.
         :paramtype traceparent: str
@@ -3249,16 +3046,6 @@ class EventRoutesOperations:
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                event_route = {
-                    "endpointName": "str",
-                    "filter": "str",
-                    "id": "str"
-                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3280,7 +3067,7 @@ class EventRoutesOperations:
         if isinstance(event_route, (IOBase, bytes)):
             _content = event_route
         else:
-            _json = event_route
+            _json = self._serialize.body(event_route, "DigitalTwinsEventRoute")
 
         _request = build_event_routes_add_request(
             id=id,
@@ -3304,7 +3091,8 @@ class EventRoutesOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -3367,7 +3155,8 @@ class EventRoutesOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore

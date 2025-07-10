@@ -111,12 +111,12 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_none_match, error_map = prep_if_none_match(etag, match_condition)
-        if if_none_match:
-            options = DigitalTwinsAddOptions(if_none_match=if_none_match)
+        if if_none_match is not None:
+            kwargs['headers'] = kwargs.get('headers', {})
+            kwargs['headers']['If-None-Match'] = if_none_match
         return await self._client.digital_twins.add(
             digital_twin_id,
             digital_twin,
-            digital_twins_add_options=options,
             error_map=error_map,
             **kwargs
         )
@@ -149,12 +149,12 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_match, error_map = prep_if_match(etag, match_condition)
-        if if_match:
-            options = DigitalTwinsUpdateOptions(if_match=if_match)
+        if if_match is not None:
+            kwargs['headers'] = kwargs.get('headers', {})
+            kwargs['headers']['If-Match'] = if_match
         return await self._client.digital_twins.update(
             digital_twin_id,
             json_patch,
-            digital_twins_update_options=options,
             error_map=error_map,
             **kwargs
         )
@@ -183,11 +183,11 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_match, error_map = prep_if_match(etag, match_condition)
-        if if_match:
-            options = DigitalTwinsDeleteOptions(if_match=if_match)
+        if if_match is not None:
+            kwargs['headers'] = kwargs.get('headers', {})
+            kwargs['headers']['If-Match'] = if_match
         return await self._client.digital_twins.delete(
             digital_twin_id,
-            digital_twins_delete_options=options,
             error_map=error_map,
             **kwargs
         )
@@ -238,13 +238,13 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_match, error_map = prep_if_match(etag, match_condition)
-        if if_match:
-            options = DigitalTwinsUpdateComponentOptions(if_match=if_match)
+        if if_match is not None:
+            kwargs['headers'] = kwargs.get('headers', {})
+            kwargs['headers']['If-Match'] = if_match
         return await self._client.digital_twins.update_component(
             digital_twin_id,
             component_name,
             patch_document=json_patch,
-            digital_twins_update_component_options=options,
             error_map=error_map,
             **kwargs
         )
@@ -296,17 +296,16 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is either no
             digital twin, target digital twin or relationship with the provided ID.
         """
-        options = None
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_none_match, error_map = prep_if_none_match(etag, match_condition)
-        if if_none_match:
-            options = DigitalTwinsAddRelationshipOptions(if_none_match=if_none_match)
+        if if_none_match is not None:
+            kwargs['headers'] = kwargs.get('headers', {})
+            kwargs['headers']['If-None-Match'] = if_none_match
         return await self._client.digital_twins.add_relationship(
             id=digital_twin_id,
             relationship_id=relationship_id,
             relationship=relationship,
-            digital_twins_add_relationship_options=options,
             error_map=error_map,
             **kwargs
         )
@@ -336,17 +335,16 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is either no
             digital twin or relationship with the provided ID.
         """
-        options = None
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_match, error_map = prep_if_match(etag, match_condition)
-        if if_match:
-            options = DigitalTwinsUpdateRelationshipOptions(if_match=if_match)
+        if if_match is not None:
+            kwargs['headers'] = kwargs.get('headers', {})
+            kwargs['headers']['If-Match'] = if_match
         return await self._client.digital_twins.update_relationship(
             id=digital_twin_id,
             relationship_id=relationship_id,
             patch_document=json_patch,
-            digital_twins_update_relationship_options=options,
             error_map=error_map,
             **kwargs
         )
@@ -373,16 +371,15 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is either no
             digital twin or relationship with the provided ID.
         """
-        options = None
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_match, error_map = prep_if_match(etag, match_condition)
-        if if_match:
-            options = DigitalTwinsDeleteRelationshipOptions(if_match=if_match)
+        if if_match is not None:
+            kwargs['headers'] = kwargs.get('headers', {})
+            kwargs['headers']['If-Match'] = if_match
         return await self._client.digital_twins.delete_relationship(
             digital_twin_id,
             relationship_id,
-            digital_twins_delete_relationship_options=options,
             error_map=error_map,
             **kwargs
         )
@@ -536,14 +533,12 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         """
         include_model_definition = kwargs.pop('include_model_definition', False)
         results_per_page = kwargs.pop('results_per_page', None)
-        digital_twin_models_list_options = None
         if results_per_page is not None:
-            digital_twin_models_list_options = {'max_item_count': results_per_page}
+            kwargs['max_item_count'] = results_per_page
 
         return self._client.digital_twin_models.list(
             dependencies_for=dependencies_for,
             include_model_definition=include_model_definition,
-            digital_twin_models_list_options=digital_twin_models_list_options,
             **kwargs
         )
 
@@ -629,10 +624,9 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         event_routes_list_options = None
         results_per_page = kwargs.pop('results_per_page', None)
         if results_per_page is not None:
-            event_routes_list_options = {'max_item_count': results_per_page}
+            kwargs['max_item_count'] = results_per_page
 
         return self._client.event_routes.list(
-            event_routes_list_options=event_routes_list_options,
             **kwargs
         )
 
