@@ -56,17 +56,19 @@ _patch_all = []
 # We use lazy loading to avoid printing messages during import unless the classes are actually used.
 _lazy_imports = {}
 
+
 def _create_lazy_import(class_name, module_path, dependency_name):
     """Create a lazy import function for optional dependencies.
-    
+
     Args:
         class_name: Name of the class to import
         module_path: Module path to import from
         dependency_name: Name of the dependency package for error message
-    
+
     Returns:
         A function that performs the lazy import when called
     """
+
     def lazy_import():
         try:
             module = __import__(module_path, fromlist=[class_name])
@@ -77,10 +79,20 @@ def _create_lazy_import(class_name, module_path, dependency_name):
             raise ImportError(
                 f"Could not import {class_name}. Please install the dependency with `pip install {dependency_name}`."
             )
+
     return lazy_import
 
-_lazy_imports["AIAgentConverter"] = _create_lazy_import("AIAgentConverter", "azure.ai.evaluation._converters._ai_services", "azure-ai-projects")
-_lazy_imports["SKAgentConverter"] = _create_lazy_import("SKAgentConverter", "azure.ai.evaluation._converters._sk_services", "semantic-kernel")
+
+_lazy_imports["AIAgentConverter"] = _create_lazy_import(
+    "AIAgentConverter",
+    "azure.ai.evaluation._converters._ai_services",
+    "azure-ai-projects",
+)
+_lazy_imports["SKAgentConverter"] = _create_lazy_import(
+    "SKAgentConverter",
+    "azure.ai.evaluation._converters._sk_services",
+    "semantic-kernel",
+)
 
 __all__ = [
     "evaluate",

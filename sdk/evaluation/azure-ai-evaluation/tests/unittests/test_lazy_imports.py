@@ -27,6 +27,7 @@ class TestLazyImports(unittest.TestCase):
 
             def _create_lazy_import(class_name, module_path, dependency_name):
                 """Create a lazy import function for optional dependencies."""
+
                 def lazy_import():
                     try:
                         module = __import__(module_path, fromlist=[class_name])
@@ -37,15 +38,28 @@ class TestLazyImports(unittest.TestCase):
                         raise ImportError(
                             f"Could not import {class_name}. Please install the dependency with `pip install {dependency_name}`."
                         )
+
                 return lazy_import
 
             # Setting up lazy imports should not print any messages
-            _lazy_imports["AIAgentConverter"] = _create_lazy_import("AIAgentConverter", "azure.ai.evaluation._converters._ai_services", "azure-ai-projects")
-            _lazy_imports["SKAgentConverter"] = _create_lazy_import("SKAgentConverter", "azure.ai.evaluation._converters._sk_services", "semantic-kernel")
+            _lazy_imports["AIAgentConverter"] = _create_lazy_import(
+                "AIAgentConverter",
+                "azure.ai.evaluation._converters._ai_services",
+                "azure-ai-projects",
+            )
+            _lazy_imports["SKAgentConverter"] = _create_lazy_import(
+                "SKAgentConverter",
+                "azure.ai.evaluation._converters._sk_services",
+                "semantic-kernel",
+            )
 
             # Check that no messages were printed during setup
             stderr_output = captured_stderr.getvalue()
-            self.assertEqual(stderr_output, "", "No messages should be printed during lazy import setup")
+            self.assertEqual(
+                stderr_output,
+                "",
+                "No messages should be printed during lazy import setup",
+            )
 
         finally:
             sys.stderr = original_stderr
@@ -57,6 +71,7 @@ class TestLazyImports(unittest.TestCase):
 
         def _create_lazy_import(class_name, module_path, dependency_name):
             """Create a lazy import function for optional dependencies."""
+
             def lazy_import():
                 try:
                     # This should fail in most test environments
@@ -67,9 +82,14 @@ class TestLazyImports(unittest.TestCase):
                     raise ImportError(
                         f"Could not import {class_name}. Please install the dependency with `pip install {dependency_name}`."
                     )
+
             return lazy_import
 
-        _lazy_imports["AIAgentConverter"] = _create_lazy_import("AIAgentConverter", "azure.ai.evaluation._converters._ai_services", "azure-ai-projects")
+        _lazy_imports["AIAgentConverter"] = _create_lazy_import(
+            "AIAgentConverter",
+            "azure.ai.evaluation._converters._ai_services",
+            "azure-ai-projects",
+        )
 
         def mock_getattr(name):
             """Mock __getattr__ function like the one in __init__.py"""
@@ -101,8 +121,6 @@ class TestLazyImports(unittest.TestCase):
             mock_getattr("NonExistentClass")
 
         self.assertIn("has no attribute 'NonExistentClass'", str(cm.exception))
-
-
 
 
 if __name__ == "__main__":
