@@ -22,6 +22,7 @@ from ci_tools.parsing import ParsedSetup, parse_require
 from ci_tools.functions import compare_python_version, handle_incompatible_minimum_dev_reqs, get_pip_command
 
 from typing import List
+from subprocess import run, PIPE, CalledProcessError
 
 DEV_REQ_FILE = "dev_requirements.txt"
 NEW_DEV_REQ_FILE = "new_dev_requirements.txt"
@@ -376,7 +377,14 @@ def install_packages(packages, req_file):
         commands.extend(["-r", req_file])
 
     logging.info("Installing packages. Command: %s", commands)
-    check_call(commands)
+    try:
+        completed = run(commands, stdout=PIPE, stderr=PIPE, text=True, check=True)
+        logging.info("Command stdout:\n%s", completed.stdout)
+        if completed.stderr:
+            logging.warning("Command stderr:\n%s", completed.stderr)
+    except CalledProcessError as e:
+        logging.error("Command %r failed (exit code %d):\n%s", commands, e.returncode, e.stderr)
+        raise
 
 
 if __name__ == "__main__":

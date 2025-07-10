@@ -40,7 +40,7 @@ def create_package_and_install(
     force_create: bool,
     package_type: str,
     pre_download_disabled: bool,
-    python_executable: str = None,
+    python_executable: Optional[str] = None,
 ) -> None:
     """
     Workhorse for singular package installation given a package and a possible prebuilt wheel directory. Handles installation of both package AND dependencies, handling compatibility
