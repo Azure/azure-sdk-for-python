@@ -28,7 +28,7 @@ import time
 from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
-from .. import _default_retry_policy, _database_account_retry_policy
+from .. import _default_retry_policy, _database_account_retry_policy, _service_unavailable_retry_policy
 from .. import _endpoint_discovery_retry_policy
 from .. import _gone_retry_policy
 from .. import _resource_throttle_retry_policy
@@ -64,11 +64,12 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
     :rtype: tuple of (dict, dict)
     """
     pk_range_wrapper = None
-    if args and global_endpoint_manager.is_circuit_breaker_applicable(args[0]):
+    if args and (global_endpoint_manager.is_per_partition_automatic_failover_applicable(args[0]) or
+                 global_endpoint_manager.is_circuit_breaker_applicable(args[0])):
         pk_range_wrapper = await global_endpoint_manager.create_pk_range_wrapper(args[0])
     # instantiate all retry policies here to be applied for each request execution
     endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(
-        client.connection_policy, global_endpoint_manager, *args
+        client.connection_policy, global_endpoint_manager, pk_range_wrapper, *args
     )
     database_account_retry_policy = _database_account_retry_policy.DatabaseAccountRetryPolicy(
         client.connection_policy
@@ -93,6 +94,8 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
     service_request_retry_policy = _service_request_retry_policy.ServiceRequestRetryPolicy(
         client.connection_policy, global_endpoint_manager, pk_range_wrapper, *args,
     )
+    service_unavailable_retry_policy = _service_unavailable_retry_policy._ServiceUnavailableRetryPolicy(
+        client.connection_policy, global_endpoint_manager, pk_range_wrapper, *args)
     # HttpRequest we would need to modify for Container Recreate Retry Policy
     request = None
     if args and len(args) > 3:
@@ -179,10 +182,13 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
 
                     retry_policy.container_rid = cached_container["_rid"]
                     request.headers[retry_policy._intended_headers] = retry_policy.container_rid
+            elif e.status_code == StatusCodes.SERVICE_UNAVAILABLE:
+                retry_policy = service_unavailable_retry_policy
             elif e.status_code == StatusCodes.REQUEST_TIMEOUT or e.status_code >= StatusCodes.INTERNAL_SERVER_ERROR:
                 # record the failure for circuit breaker tracking
                 if args:
                     await global_endpoint_manager.record_failure(args[0])
+                # TODO: change this to track errors for ppaf
                 retry_policy = timeout_failover_retry_policy
             else:
                 retry_policy = defaultRetry_policy

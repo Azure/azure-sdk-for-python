@@ -401,6 +401,7 @@ class StatusCodes:
     RETRY_WITH = 449
 
     INTERNAL_SERVER_ERROR = 500
+    SERVICE_UNAVAILABLE = 503
 
     # Operation pause and cancel. These are FAKE status codes for QOS logging purpose only.
     OPERATION_PAUSED = 1200

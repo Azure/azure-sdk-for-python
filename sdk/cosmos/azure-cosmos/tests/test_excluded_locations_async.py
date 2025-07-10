@@ -10,7 +10,6 @@ import pytest
 import pytest_asyncio
 
 from azure.cosmos.aio import CosmosClient
-from azure.cosmos.partition_key import PartitionKey
 from test_excluded_locations import (TestDataType, set_test_data_type,
                                      read_item_test_data, write_item_test_data, read_and_write_item_test_data,
                                      verify_endpoint)
