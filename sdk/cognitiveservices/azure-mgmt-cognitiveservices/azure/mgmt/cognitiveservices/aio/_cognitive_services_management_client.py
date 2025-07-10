@@ -22,7 +22,7 @@ from .._utils.serialization import Deserializer, Serializer
 from ._configuration import CognitiveServicesManagementClientConfiguration
 from .operations import (
     AccountCapabilityHostsOperations,
-    AccountConnectionOperations,
+    AccountConnectionsOperations,
     AccountsOperations,
     CognitiveServicesManagementClientOperationsMixin,
     CommitmentPlansOperations,
@@ -39,7 +39,7 @@ from .operations import (
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
     ProjectCapabilityHostsOperations,
-    ProjectConnectionOperations,
+    ProjectConnectionsOperations,
     ProjectsOperations,
     RaiBlocklistItemsOperations,
     RaiBlocklistsOperations,
@@ -113,12 +113,12 @@ class CognitiveServicesManagementClient(
      azure.mgmt.cognitiveservices.aio.operations.DefenderForAISettingsOperations
     :ivar projects: ProjectsOperations operations
     :vartype projects: azure.mgmt.cognitiveservices.aio.operations.ProjectsOperations
-    :ivar account_connection: AccountConnectionOperations operations
-    :vartype account_connection:
-     azure.mgmt.cognitiveservices.aio.operations.AccountConnectionOperations
-    :ivar project_connection: ProjectConnectionOperations operations
-    :vartype project_connection:
-     azure.mgmt.cognitiveservices.aio.operations.ProjectConnectionOperations
+    :ivar account_connections: AccountConnectionsOperations operations
+    :vartype account_connections:
+     azure.mgmt.cognitiveservices.aio.operations.AccountConnectionsOperations
+    :ivar project_connections: ProjectConnectionsOperations operations
+    :vartype project_connections:
+     azure.mgmt.cognitiveservices.aio.operations.ProjectConnectionsOperations
     :ivar account_capability_hosts: AccountCapabilityHostsOperations operations
     :vartype account_capability_hosts:
      azure.mgmt.cognitiveservices.aio.operations.AccountCapabilityHostsOperations
@@ -131,8 +131,8 @@ class CognitiveServicesManagementClient(
     :type subscription_id: str
     :param base_url: Service URL. Default value is None.
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2025-04-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2025-06-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -221,10 +221,10 @@ class CognitiveServicesManagementClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.projects = ProjectsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.account_connection = AccountConnectionOperations(
+        self.account_connections = AccountConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.project_connection = ProjectConnectionOperations(
+        self.project_connections = ProjectConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.account_capability_hosts = AccountCapabilityHostsOperations(

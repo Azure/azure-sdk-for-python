@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -30,7 +30,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._utils.serialization import Deserializer, Serializer
-from ...operations._project_connection_operations import (
+from ...operations._account_connections_operations import (
     build_create_request,
     build_delete_request,
     build_get_request,
@@ -43,14 +43,14 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class ProjectConnectionOperations:
+class AccountConnectionsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.cognitiveservices.aio.CognitiveServicesManagementClient`'s
-        :attr:`project_connection` attribute.
+        :attr:`account_connections` attribute.
     """
 
     models = _models
@@ -65,20 +65,16 @@ class ProjectConnectionOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def delete(
-        self, resource_group_name: str, account_name: str, project_name: str, connection_name: str, **kwargs: Any
-    ) -> None:
-        """Delete Cognitive Services project connection by name.
+    async def delete(self, resource_group_name: str, account_name: str, connection_name: str, **kwargs: Any) -> None:
+        """Delete Cognitive Services account connection by name.
 
-        Delete Cognitive Services project connection by name.
+        Delete Cognitive Services account connection by name.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param project_name: The name of Cognitive Services account's project. Required.
-        :type project_name: str
         :param connection_name: Friendly name of the connection. Required.
         :type connection_name: str
         :return: None or the result of cls(response)
@@ -102,7 +98,6 @@ class ProjectConnectionOperations:
         _request = build_delete_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            project_name=project_name,
             connection_name=connection_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
@@ -128,19 +123,17 @@ class ProjectConnectionOperations:
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, account_name: str, project_name: str, connection_name: str, **kwargs: Any
+        self, resource_group_name: str, account_name: str, connection_name: str, **kwargs: Any
     ) -> _models.ConnectionPropertiesV2BasicResource:
-        """Lists Cognitive Services project connection by name.
+        """Lists Cognitive Services account connection by name.
 
-        Lists Cognitive Services project connection by name.
+        Lists Cognitive Services account connection by name.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param project_name: The name of Cognitive Services account's project. Required.
-        :type project_name: str
         :param connection_name: Friendly name of the connection. Required.
         :type connection_name: str
         :return: ConnectionPropertiesV2BasicResource or the result of cls(response)
@@ -164,7 +157,6 @@ class ProjectConnectionOperations:
         _request = build_get_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            project_name=project_name,
             connection_name=connection_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
@@ -197,28 +189,25 @@ class ProjectConnectionOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        project_name: str,
         connection_name: str,
-        body: Optional[_models.ConnectionUpdateContent] = None,
+        connection: Optional[_models.ConnectionUpdateContent] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ConnectionPropertiesV2BasicResource:
-        """Update Cognitive Services project connection under the specified project.
+        """Update Cognitive Services account connection under the specified account.
 
-        Update Cognitive Services project connection under the specified project.
+        Update Cognitive Services account connection under the specified account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param project_name: The name of Cognitive Services account's project. Required.
-        :type project_name: str
         :param connection_name: Friendly name of the connection. Required.
         :type connection_name: str
-        :param body: Parameters for account connection update. Default value is None.
-        :type body: ~azure.mgmt.cognitiveservices.models.ConnectionUpdateContent
+        :param connection: Parameters for account connection update. Default value is None.
+        :type connection: ~azure.mgmt.cognitiveservices.models.ConnectionUpdateContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -232,28 +221,25 @@ class ProjectConnectionOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        project_name: str,
         connection_name: str,
-        body: Optional[IO[bytes]] = None,
+        connection: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ConnectionPropertiesV2BasicResource:
-        """Update Cognitive Services project connection under the specified project.
+        """Update Cognitive Services account connection under the specified account.
 
-        Update Cognitive Services project connection under the specified project.
+        Update Cognitive Services account connection under the specified account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param project_name: The name of Cognitive Services account's project. Required.
-        :type project_name: str
         :param connection_name: Friendly name of the connection. Required.
         :type connection_name: str
-        :param body: Parameters for account connection update. Default value is None.
-        :type body: IO[bytes]
+        :param connection: Parameters for account connection update. Default value is None.
+        :type connection: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -267,27 +253,24 @@ class ProjectConnectionOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        project_name: str,
         connection_name: str,
-        body: Optional[Union[_models.ConnectionUpdateContent, IO[bytes]]] = None,
+        connection: Optional[Union[_models.ConnectionUpdateContent, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.ConnectionPropertiesV2BasicResource:
-        """Update Cognitive Services project connection under the specified project.
+        """Update Cognitive Services account connection under the specified account.
 
-        Update Cognitive Services project connection under the specified project.
+        Update Cognitive Services account connection under the specified account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param project_name: The name of Cognitive Services account's project. Required.
-        :type project_name: str
         :param connection_name: Friendly name of the connection. Required.
         :type connection_name: str
-        :param body: Parameters for account connection update. Is either a ConnectionUpdateContent type
-         or a IO[bytes] type. Default value is None.
-        :type body: ~azure.mgmt.cognitiveservices.models.ConnectionUpdateContent or IO[bytes]
+        :param connection: Parameters for account connection update. Is either a
+         ConnectionUpdateContent type or a IO[bytes] type. Default value is None.
+        :type connection: ~azure.mgmt.cognitiveservices.models.ConnectionUpdateContent or IO[bytes]
         :return: ConnectionPropertiesV2BasicResource or the result of cls(response)
         :rtype: ~azure.mgmt.cognitiveservices.models.ConnectionPropertiesV2BasicResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -310,18 +293,17 @@ class ProjectConnectionOperations:
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(connection, (IOBase, bytes)):
+            _content = connection
         else:
-            if body is not None:
-                _json = self._serialize.body(body, "ConnectionUpdateContent")
+            if connection is not None:
+                _json = self._serialize.body(connection, "ConnectionUpdateContent")
             else:
                 _json = None
 
         _request = build_update_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            project_name=project_name,
             connection_name=connection_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
@@ -357,29 +339,26 @@ class ProjectConnectionOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        project_name: str,
         connection_name: str,
-        body: Optional[_models.ConnectionPropertiesV2BasicResource] = None,
+        connection: Optional[_models.ConnectionPropertiesV2BasicResource] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ConnectionPropertiesV2BasicResource:
-        """Create or update Cognitive Services project connection under the specified project.
+        """Create or update Cognitive Services account connection under the specified account.
 
-        Create or update Cognitive Services project connection under the specified project.
+        Create or update Cognitive Services account connection under the specified account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param project_name: The name of Cognitive Services account's project. Required.
-        :type project_name: str
         :param connection_name: Friendly name of the connection. Required.
         :type connection_name: str
-        :param body: The object for creating or updating a new account connection. Default value is
-         None.
-        :type body: ~azure.mgmt.cognitiveservices.models.ConnectionPropertiesV2BasicResource
+        :param connection: The object for creating or updating a new account connection. Default value
+         is None.
+        :type connection: ~azure.mgmt.cognitiveservices.models.ConnectionPropertiesV2BasicResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -393,29 +372,26 @@ class ProjectConnectionOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        project_name: str,
         connection_name: str,
-        body: Optional[IO[bytes]] = None,
+        connection: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ConnectionPropertiesV2BasicResource:
-        """Create or update Cognitive Services project connection under the specified project.
+        """Create or update Cognitive Services account connection under the specified account.
 
-        Create or update Cognitive Services project connection under the specified project.
+        Create or update Cognitive Services account connection under the specified account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param project_name: The name of Cognitive Services account's project. Required.
-        :type project_name: str
         :param connection_name: Friendly name of the connection. Required.
         :type connection_name: str
-        :param body: The object for creating or updating a new account connection. Default value is
-         None.
-        :type body: IO[bytes]
+        :param connection: The object for creating or updating a new account connection. Default value
+         is None.
+        :type connection: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -429,27 +405,24 @@ class ProjectConnectionOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        project_name: str,
         connection_name: str,
-        body: Optional[Union[_models.ConnectionPropertiesV2BasicResource, IO[bytes]]] = None,
+        connection: Optional[Union[_models.ConnectionPropertiesV2BasicResource, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.ConnectionPropertiesV2BasicResource:
-        """Create or update Cognitive Services project connection under the specified project.
+        """Create or update Cognitive Services account connection under the specified account.
 
-        Create or update Cognitive Services project connection under the specified project.
+        Create or update Cognitive Services account connection under the specified account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param project_name: The name of Cognitive Services account's project. Required.
-        :type project_name: str
         :param connection_name: Friendly name of the connection. Required.
         :type connection_name: str
-        :param body: The object for creating or updating a new account connection. Is either a
+        :param connection: The object for creating or updating a new account connection. Is either a
          ConnectionPropertiesV2BasicResource type or a IO[bytes] type. Default value is None.
-        :type body: ~azure.mgmt.cognitiveservices.models.ConnectionPropertiesV2BasicResource or
+        :type connection: ~azure.mgmt.cognitiveservices.models.ConnectionPropertiesV2BasicResource or
          IO[bytes]
         :return: ConnectionPropertiesV2BasicResource or the result of cls(response)
         :rtype: ~azure.mgmt.cognitiveservices.models.ConnectionPropertiesV2BasicResource
@@ -473,18 +446,17 @@ class ProjectConnectionOperations:
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(connection, (IOBase, bytes)):
+            _content = connection
         else:
-            if body is not None:
-                _json = self._serialize.body(body, "ConnectionPropertiesV2BasicResource")
+            if connection is not None:
+                _json = self._serialize.body(connection, "ConnectionPropertiesV2BasicResource")
             else:
                 _json = None
 
         _request = build_create_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            project_name=project_name,
             connection_name=connection_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
@@ -520,23 +492,20 @@ class ProjectConnectionOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        project_name: str,
         target: Optional[str] = None,
         category: Optional[str] = None,
         include_all: bool = False,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ConnectionPropertiesV2BasicResource"]:
-        """Lists all the available Cognitive Services project connections under the specified project.
+    ) -> AsyncItemPaged["_models.ConnectionPropertiesV2BasicResource"]:
+        """Lists all the available  Cognitive Services account connections under the specified account.
 
-        Lists all the available Cognitive Services project connections under the specified project.
+        Lists all the available  Cognitive Services account connections under the specified account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param project_name: The name of Cognitive Services account's project. Required.
-        :type project_name: str
         :param target: Target of the connection. Default value is None.
         :type target: str
         :param category: Category of the connection. Default value is None.
@@ -570,7 +539,6 @@ class ProjectConnectionOperations:
                 _request = build_list_request(
                     resource_group_name=resource_group_name,
                     account_name=account_name,
-                    project_name=project_name,
                     subscription_id=self._config.subscription_id,
                     target=target,
                     category=category,
