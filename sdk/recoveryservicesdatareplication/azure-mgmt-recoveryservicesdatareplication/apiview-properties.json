@@ -1,6 +1,7 @@
 {
     "CrossLanguagePackageId": "Microsoft.DataReplication",
     "CrossLanguageDefinitionId": {
+        "azure.mgmt.recoveryservicesdatareplication.models.AffectedObjectDetails": "Microsoft.DataReplication.AffectedObjectDetails",
         "azure.mgmt.recoveryservicesdatareplication.models.AzStackHCIClusterProperties": "Microsoft.DataReplication.AzStackHCIClusterProperties",
         "azure.mgmt.recoveryservicesdatareplication.models.FabricModelCustomProperties": "Microsoft.DataReplication.FabricModelCustomProperties",
         "azure.mgmt.recoveryservicesdatareplication.models.AzStackHCIFabricModelCustomProperties": "Microsoft.DataReplication.AzStackHCIFabricModelCustomProperties",
@@ -54,7 +55,6 @@
         "azure.mgmt.recoveryservicesdatareplication.models.IdentityModel": "Microsoft.DataReplication.IdentityModel",
         "azure.mgmt.recoveryservicesdatareplication.models.InnerHealthErrorModel": "Microsoft.DataReplication.InnerHealthErrorModel",
         "azure.mgmt.recoveryservicesdatareplication.models.JobModel": "Microsoft.DataReplication.JobModel",
-        "azure.mgmt.recoveryservicesdatareplication.models.JobModelCustomPropertiesAffectedObjectDetails": "Microsoft.DataReplication.JobModelCustomProperties.affectedObjectDetails.anonymous",
         "azure.mgmt.recoveryservicesdatareplication.models.JobModelProperties": "Microsoft.DataReplication.JobModelProperties",
         "azure.mgmt.recoveryservicesdatareplication.models.ManagedServiceIdentity": "Azure.ResourceManager.CommonTypes.ManagedServiceIdentity",
         "azure.mgmt.recoveryservicesdatareplication.models.Operation": "Azure.ResourceManager.CommonTypes.Operation",

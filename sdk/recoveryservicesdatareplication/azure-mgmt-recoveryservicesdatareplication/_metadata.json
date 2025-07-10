@@ -1,6 +1,7 @@
 {
-  "commit": "121c5e84647a9cdb1767d5146affdfe2af91d776",
+  "apiVersion": "2024-09-01",
+  "commit": "7c95bced9fac5fbbee8e2cacd8629c69b2f0a584",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/recoveryservicesdatareplication/DataReplication.Management",
-  "@azure-tools/typespec-python": "0.44.1"
+  "emitterVersion": "0.45.0"
 }
