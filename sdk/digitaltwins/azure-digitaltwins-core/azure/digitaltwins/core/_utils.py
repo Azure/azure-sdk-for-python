@@ -12,8 +12,7 @@ from azure.core.exceptions import (
     ResourceNotModifiedError)
 
 
-def prep_if_match(etag, match_condition):
-    # type: (str, MatchConditions) -> Optional[str]
+def prep_if_match(etag: str, match_condition: MatchConditions) -> tuple[Optional[str], dict]:
     error_map = {}
     if match_condition == MatchConditions.IfNotModified:
         if not etag:
@@ -28,8 +27,7 @@ def prep_if_match(etag, match_condition):
         raise ValueError("Unsupported match condition: {}".format(match_condition))
     return None, error_map
 
-def prep_if_none_match(etag, match_condition):
-    # type: (str, MatchConditions) -> Optional[str]
+def prep_if_none_match(etag: str, match_condition: MatchConditions) -> tuple[Optional[str], dict]:
     error_map = {}
     if match_condition == MatchConditions.IfModified:
         error_map[412] = ResourceNotModifiedError
@@ -37,7 +35,7 @@ def prep_if_none_match(etag, match_condition):
             raise ValueError("The 'IfModified' match condition must be paired with an etag.")
         return etag, error_map
     if match_condition == MatchConditions.IfMissing:
-        error_map[412] = ResourceExistsError
+        error_map = {412: ResourceExistsError}
         if etag:
             raise ValueError("An etag value cannot be paired with the 'IfMissing' match condition.")
         return "*", error_map

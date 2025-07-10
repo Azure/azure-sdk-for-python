@@ -8,7 +8,7 @@ import uuid
 from datetime import datetime
 from typing import Dict, List, Any, TYPE_CHECKING, Optional
 
-from msrest import Serializer
+from ._generated._utils.serialization import Serializer
 
 import azure
 from azure.core.paging import ItemPaged
