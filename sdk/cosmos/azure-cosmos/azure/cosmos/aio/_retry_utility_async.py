@@ -291,7 +291,6 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 timeout_error.history = retry_settings['history']
                 raise
             except ServiceRequestError as err:
-                retry_error = err
                 # the request ran into a socket timeout or failed to establish a new connection
                 # since request wasn't sent, raise exception immediately to be dealt with in client retry policies
                 if (not _has_database_account_header(request.http_request.headers)
@@ -303,7 +302,6 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                             continue
                 raise err
             except ServiceResponseError as err:
-                retry_error = err
                 if (_has_database_account_header(request.http_request.headers) or
                         request_params.healthy_tentative_location):
                     raise err
@@ -329,7 +327,6 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
             except CosmosHttpResponseError as err:
                 raise err
             except AzureError as err:
-                retry_error = err
                 if (_has_database_account_header(request.http_request.headers) or
                         request_params.healthy_tentative_location):
                     raise err

@@ -28,7 +28,7 @@ import logging
 import sys
 from typing import Callable, Optional, Any, Dict, List, Awaitable, MutableMapping
 import aiohttp
-from aiohttp import ClientConnectionError, ConnectionTimeoutError
+from aiohttp import ConnectionTimeoutError
 from azure.core.pipeline.transport import AioHttpTransport, AioHttpTransportResponse
 from azure.core.rest import HttpRequest, AsyncHttpResponse
 from azure.cosmos import documents

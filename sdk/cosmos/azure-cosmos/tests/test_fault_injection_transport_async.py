@@ -11,8 +11,8 @@ import uuid
 from typing import Any, Callable, Awaitable, Dict
 from unittest import IsolatedAsyncioTestCase
 
-import aiohttp
 import pytest
+from aiohttp import ClientResponseError, RequestInfo
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.pipeline.transport._aiohttp import AioHttpTransportResponse
 from azure.core.rest import HttpRequest, AsyncHttpResponse
@@ -23,8 +23,9 @@ from azure.cosmos import PartitionKey
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.aio._container import ContainerProxy
 from azure.cosmos.aio._database import DatabaseProxy
+from azure.cosmos.documents import _OperationType
 from azure.cosmos.exceptions import CosmosHttpResponseError
-from azure.core.exceptions import ServiceRequestError
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 MGMT_TIMEOUT = 5.0
 logger = logging.getLogger('azure.cosmos')
@@ -35,8 +36,11 @@ host = test_config.TestConfig.host
 master_key = test_config.TestConfig.masterKey
 TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
 SINGLE_PARTITION_CONTAINER_NAME = os.path.basename(__file__) + str(uuid.uuid4())
+WRITE_LOCATIONAL_ENDPOINT = test_config.TestConfig.WRITE_LOCATIONAL_ENDPOINT
+READ_LOCATIONAL_ENDPOINT = test_config.TestConfig.READ_LOCATIONAL_ENDPOINT
+WRITE_REGION = test_config.TestConfig.WRITE_REGION
+READ_REGION = test_config.TestConfig.READ_REGION
 
-@pytest.mark.cosmosEmulator
 @pytest.mark.asyncio
 class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
     @classmethod
@@ -102,6 +106,7 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
         except Exception as close_error:
             logger.warning(f"Exception trying to close method client. {close_error}")
 
+    @pytest.mark.cosmosEmulator
     async def test_throws_injected_error_async(self: "TestFaultInjectionTransportAsync"):
         id_value: str = str(uuid.uuid4())
         document_definition = {'id': id_value,
@@ -132,6 +137,7 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
         finally:
             await TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
+    @pytest.mark.cosmosEmulator
     async def test_swr_mrr_succeeds_async(self: "TestFaultInjectionTransportAsync"):
         expected_read_region_uri: str = test_config.TestConfig.local_host
         expected_write_region_uri: str = expected_read_region_uri.replace("localhost", "127.0.0.1")
@@ -183,6 +189,7 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
         finally:
             await TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
+    @pytest.mark.cosmosEmulator
     async def test_swr_mrr_region_down_read_succeeds_async(self: "TestFaultInjectionTransportAsync"):
         expected_read_region_uri: str = test_config.TestConfig.local_host
         expected_write_region_uri: str = expected_read_region_uri.replace("localhost", "127.0.0.1")
@@ -243,27 +250,25 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
         finally:
             await TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
-    async def test_swr_mrr_region_down_read_succeeds_session_async(self: "TestFaultInjectionTransportAsync"):
-        session = aiohttp.ClientSession(raise_for_status=True)
-        custom_transport = FaultInjectionTransportAsync(session=session)
-        # custom_transport = FaultInjectionTransportAsync()
+    @pytest.mark.cosmosMultiRegion
+    async def test_service_response_error_with_status_async(self: "TestFaultInjectionTransportAsync"):
+        custom_transport = FaultInjectionTransportAsync()
 
-        # Inject rule to simulate regional outage in "Read Region"
         is_request_to_read_region: Callable[[HttpRequest], bool] = lambda \
-                r: (FaultInjectionTransportAsync.predicate_targets_region(r, "https://tomasvaron-full-fidelity-westus3.documents.azure.com:443/") and
-                    (FaultInjectionTransportAsync.predicate_is_operation_type(r, "Read") and
+                r: (FaultInjectionTransportAsync.predicate_targets_region(r, WRITE_REGION) and
+                    (FaultInjectionTransportAsync.predicate_is_operation_type(r, _OperationType.Read) and
                     FaultInjectionTransportAsync.predicate_is_document_operation(r)))
 
-        change_status_code = \
-            lambda r, inner: FaultInjectionTransportAsync.change_status_code(inner)
+        inner_error = ClientResponseError(
+            RequestInfo(url=host, method="GET", headers={}),
+            (),
+            status=404,
+        )
+        error = ServiceResponseError(status_code=404, message="Not Found", error=inner_error)
 
-        custom_transport.add_response_transformation(is_request_to_read_region, change_status_code)
-
-
-
-        # custom_transport.add_fault(
-        #     is_request_to_read_region,
-        #     lambda r: asyncio.create_task(FaultInjectionTransportAsync.connection_refused()))
+        custom_transport.add_fault(
+            is_request_to_read_region,
+            lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(0, error)))
 
         id_value: str = str(uuid.uuid4())
         document_definition = {'id': id_value,
@@ -272,21 +277,53 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
                                'key': 'value'}
         initialized_objects = await TestFaultInjectionTransportAsync.setup_method_with_custom_transport(
             custom_transport,
-            default_endpoint="https://tomasvaron-full-fidelity-westus.documents.azure.com:443/",
-            preferred_locations=["West US 3", "West US"])
+            preferred_locations=[WRITE_REGION, READ_REGION])
         container: ContainerProxy = initialized_objects["col"]
         await container.create_item(body=document_definition)
 
         try:
-
-            created_document = await container.read_item(document_definition["id"], document_definition["pk"])
-            request: HttpRequest = created_document.get_response_headers()["_request"]
-            # Validate the response comes from "South Central US" (the write region)
-            assert request.url.startswith("https://tomasvaron-full-fidelity-westus.documents.azure.com:443/")
+            # the status code should dictate the retry policy even if error is raised
+            with pytest.raises(CosmosHttpResponseError):
+                await container.read_item(document_definition["id"], document_definition["pk"])
 
         finally:
             await TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
+    @pytest.mark.cosmosMultiRegion
+    async def test_service_response_error_with_status_async(self):
+        custom_transport = FaultInjectionTransportAsync()
+        # Inject rule to disallow writes in the read-only region
+
+        # Inject rule to simulate regional outage in "Read Region"
+        is_request_to_read_region: Callable[[HttpRequest], bool] = lambda \
+                r: (FaultInjectionTransportAsync.predicate_targets_region(r, WRITE_LOCATIONAL_ENDPOINT) and
+                    (FaultInjectionTransportAsync.predicate_is_operation_type(r, _OperationType.Read) and
+                     FaultInjectionTransportAsync.predicate_is_document_operation(r)))
+        # error =
+        # error = FaultInjectionTransportAsync.error_after_delay(0, asyncio.TimeoutError())
+        custom_transport.add_fault(
+            is_request_to_read_region,
+            lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_service_response()))
+
+        id_value: str = str(uuid.uuid4())
+        document_definition = {'id': id_value,
+                               'pk': id_value,
+                               'name': 'sample document',
+                               'key': 'value'}
+
+        initialized_objects = await TestFaultInjectionTransportAsync.setup_method_with_custom_transport(
+            custom_transport,
+            preferred_locations=["West US 3", "West US"])
+        container: ContainerProxy = initialized_objects["col"]
+        await container.create_item(body=document_definition)
+        try:
+            read_document = await container.read_item(document_definition["id"], document_definition["pk"])
+            request: HttpRequest = read_document.get_response_headers()["_request"]
+            assert request.url.startswith(READ_LOCATIONAL_ENDPOINT)
+        finally:
+            await TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
+
+    @pytest.mark.cosmosEmulator
     async def test_swr_mrr_region_down_envoy_read_succeeds_async(self: "TestFaultInjectionTransportAsync"):
         expected_read_region_uri: str = test_config.TestConfig.local_host
         expected_write_region_uri: str = expected_read_region_uri.replace("localhost", "127.0.0.1")
@@ -353,6 +390,7 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
             await TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
 
+    @pytest.mark.cosmosEmulator
     async def test_mwr_succeeds_async(self: "TestFaultInjectionTransportAsync"):
         first_region_uri: str = test_config.TestConfig.local_host.replace("localhost", "127.0.0.1")
         custom_transport = FaultInjectionTransportAsync()
@@ -398,6 +436,7 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
         finally:
             await TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
+    @pytest.mark.cosmosEmulator
     async def test_mwr_region_down_succeeds_async(self: "TestFaultInjectionTransportAsync"):
         first_region_uri: str = test_config.TestConfig.local_host.replace("localhost", "127.0.0.1")
         second_region_uri: str = test_config.TestConfig.local_host
@@ -452,6 +491,7 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
         finally:
             await TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
+    @pytest.mark.cosmosEmulator
     async def test_swr_mrr_all_regions_down_for_read_async(self: "TestFaultInjectionTransportAsync"):
         expected_read_region_uri: str = test_config.TestConfig.local_host
         expected_write_region_uri: str = expected_read_region_uri.replace("localhost", "127.0.0.1")
@@ -515,6 +555,7 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
         finally:
             await TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
+    @pytest.mark.cosmosEmulator
     async def test_mwr_all_regions_down_async(self: "TestFaultInjectionTransportAsync"):
 
         first_region_uri: str = test_config.TestConfig.local_host.replace("localhost", "127.0.0.1")

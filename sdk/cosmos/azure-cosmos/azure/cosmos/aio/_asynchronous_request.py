@@ -26,13 +26,27 @@ import json
 import time
 
 from urllib.parse import urlparse
-from azure.core.exceptions import DecodeError  # type: ignore
+
+from aiohttp import ClientResponseError
+from azure.core.exceptions import AzureError, DecodeError  # type: ignore
 
 from .. import exceptions
 from .. import http_constants
 from . import _retry_utility_async
 from .._synchronized_request import _request_body_from_data, _replace_url_prefix
 
+
+def _check_status_code_for_retry(err: AzureError):
+    if isinstance(err.inner_exception, ClientResponseError) and err.inner_exception and err.inner_exception.code:
+        status_code = err.inner_exception.code
+        if status_code == 404:
+            raise exceptions.CosmosResourceNotFoundError(error=err)
+        if status_code == 409:
+            raise exceptions.CosmosResourceExistsError(error=err)
+        if status_code == 412:
+            raise exceptions.CosmosAccessConditionFailedError(error=err)
+        if status_code >= 400:
+            raise exceptions.CosmosHttpResponseError(error=err, status_code=status_code)
 
 async def _Request(global_endpoint_manager, request_params, connection_policy, pipeline_client, request, **kwargs): # pylint: disable=too-many-statements
     """Makes one http request using the requests module.
@@ -97,32 +111,37 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
         and not connection_policy.DisableSSLVerification
     )
 
-    if connection_policy.SSLConfiguration or "connection_cert" in kwargs:
-        ca_certs = connection_policy.SSLConfiguration.SSLCaCerts
-        cert_files = (connection_policy.SSLConfiguration.SSLCertFile, connection_policy.SSLConfiguration.SSLKeyFile)
-        response = await _PipelineRunFunction(
-            pipeline_client,
-            request,
-            connection_timeout=connection_timeout,
-            read_timeout=read_timeout,
-            connection_verify=kwargs.pop("connection_verify", ca_certs),
-            connection_cert=kwargs.pop("connection_cert", cert_files),
-            request_params=request_params,
-            global_endpoint_manager=global_endpoint_manager,
-            **kwargs
-        )
-    else:
-        response = await _PipelineRunFunction(
-            pipeline_client,
-            request,
-            connection_timeout=connection_timeout,
-            read_timeout=read_timeout,
-            # If SSL is disabled, verify = false
-            connection_verify=kwargs.pop("connection_verify", is_ssl_enabled),
-            request_params=request_params,
-            global_endpoint_manager=global_endpoint_manager,
-            **kwargs
-        )
+    try:
+        if connection_policy.SSLConfiguration or "connection_cert" in kwargs:
+            ca_certs = connection_policy.SSLConfiguration.SSLCaCerts
+            cert_files = (connection_policy.SSLConfiguration.SSLCertFile, connection_policy.SSLConfiguration.SSLKeyFile)
+            response = await _PipelineRunFunction(
+                pipeline_client,
+                request,
+                connection_timeout=connection_timeout,
+                read_timeout=read_timeout,
+                connection_verify=kwargs.pop("connection_verify", ca_certs),
+                connection_cert=kwargs.pop("connection_cert", cert_files),
+                request_params=request_params,
+                global_endpoint_manager=global_endpoint_manager,
+                **kwargs
+            )
+        else:
+            response = await _PipelineRunFunction(
+                pipeline_client,
+                request,
+                connection_timeout=connection_timeout,
+                read_timeout=read_timeout,
+                # If SSL is disabled, verify = false
+                connection_verify=kwargs.pop("connection_verify", is_ssl_enabled),
+                request_params=request_params,
+                global_endpoint_manager=global_endpoint_manager,
+                **kwargs
+            )
+    except AzureError as err:
+        # If the error is an AzureError, we need to check the status code and raise the appropriate Cosmos exception.
+        _check_status_code_for_retry(err)
+        raise err
 
     response = response.http_response
     headers = copy.copy(response.headers)
