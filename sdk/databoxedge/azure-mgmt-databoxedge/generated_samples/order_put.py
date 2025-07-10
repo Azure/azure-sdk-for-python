@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -56,6 +57,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/databoxedge/resource-manager/Microsoft.DataBoxEdge/stable/2019-08-01/examples/OrderPut.json
+# x-ms-original-file: specification/databoxedge/resource-manager/Microsoft.DataBoxEdge/preview/2021-02-01-preview/examples/OrderPut.json
 if __name__ == "__main__":
     main()

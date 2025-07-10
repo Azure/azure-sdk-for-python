@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.databoxedge import DataBoxEdgeManagementClient
 
 """
@@ -34,6 +36,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/databoxedge/resource-manager/Microsoft.DataBoxEdge/stable/2022-03-01/examples/AvailableSkusList.json
+# x-ms-original-file: specification/databoxedge/resource-manager/Microsoft.DataBoxEdge/preview/2021-02-01-preview/examples/AvailableSkusList.json
 if __name__ == "__main__":
     main()
