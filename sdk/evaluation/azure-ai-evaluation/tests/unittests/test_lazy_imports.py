@@ -42,11 +42,6 @@ class TestLazyImports(unittest.TestCase):
                 return lazy_import
 
             # Setting up lazy imports should not print any messages
-            _lazy_imports["AIAgentConverter"] = _create_lazy_import(
-                "AIAgentConverter",
-                "azure.ai.evaluation._converters._ai_services",
-                "azure-ai-projects",
-            )
             _lazy_imports["SKAgentConverter"] = _create_lazy_import(
                 "SKAgentConverter",
                 "azure.ai.evaluation._converters._sk_services",
@@ -85,10 +80,10 @@ class TestLazyImports(unittest.TestCase):
 
             return lazy_import
 
-        _lazy_imports["AIAgentConverter"] = _create_lazy_import(
-            "AIAgentConverter",
-            "azure.ai.evaluation._converters._ai_services",
-            "azure-ai-projects",
+        _lazy_imports["SKAgentConverter"] = _create_lazy_import(
+            "SKAgentConverter",
+            "azure.ai.evaluation._converters._sk_services",
+            "semantic-kernel",
         )
 
         def mock_getattr(name):
@@ -99,12 +94,12 @@ class TestLazyImports(unittest.TestCase):
 
         # This should raise ImportError directly
         with self.assertRaises(ImportError) as cm:
-            mock_getattr("AIAgentConverter")
+            mock_getattr("SKAgentConverter")
 
         # Check that the ImportError message contains the expected information
         error_message = str(cm.exception)
-        self.assertIn("Could not import AIAgentConverter", error_message)
-        self.assertIn("pip install azure-ai-projects", error_message)
+        self.assertIn("Could not import SKAgentConverter", error_message)
+        self.assertIn("pip install semantic-kernel", error_message)
 
     def test_getattr_with_non_existent_attribute(self):
         """Test __getattr__ behavior with non-existent attributes."""
