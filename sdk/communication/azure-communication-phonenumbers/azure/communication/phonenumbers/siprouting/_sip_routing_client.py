@@ -390,6 +390,7 @@ class SipRoutingClient(object):
         trunks: List[SipTrunk],
         **kwargs: Any
     ) -> List[SipTrunk]:
+        trunks_internal = {x.fqdn: sip_trunk_to_generated(x) for x in trunks}
         modified_config = SipConfiguration(trunks=trunks_internal)
 
         new_config = self._rest_service.sip_routing.update(body=modified_config, **kwargs)
