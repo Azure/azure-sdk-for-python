@@ -308,8 +308,8 @@ try:
     # Create digital relationships
     for relationship in hospital_relationships:
         service_client.upsert_relationship(
-            relationship["$sourceId"],
-            relationship["$relationshipId"],
+            relationship["$sourceId"], # type: ignore
+            relationship["$relationshipId"], # type: ignore
             relationship
         )
 
@@ -332,8 +332,8 @@ try:
 
     for relationship in hospital_relationships:
         service_client.delete_relationship(
-        relationship["$sourceId"],
-        relationship["$relationshipId"]
+        relationship["$sourceId"], # type: ignore
+        relationship["$relationshipId"] # type: ignore
     )
 
     service_client.delete_digital_twin(building_twin_id)

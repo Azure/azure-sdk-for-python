@@ -27,7 +27,7 @@ try:
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
     # - AZURE_CLIENT_SECRET: The client secret for the registered application
     credential = DefaultAzureCredential()
-    service_client = DigitalTwinsClient(url, credential)
+    service_client = DigitalTwinsClient(url, credential) # type: ignore
 
     # Publish telemetry message
     digita_twin_id = "<DIGITAL TWIN ID>"
@@ -36,7 +36,7 @@ try:
     service_client.publish_component_telemetry(
         digita_twin_id,
         component_name,
-        telemetry_payload
+        telemetry_payload # type: ignore
     )
 
 except HttpResponseError as e:

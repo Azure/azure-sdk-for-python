@@ -32,7 +32,7 @@ async def create_digitaltwins_service_client():
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
     # - AZURE_CLIENT_SECRET: The client secret for the registered application
     credential = DefaultAzureCredential()
-    service_client = DigitalTwinsClient(url, credential)
+    service_client = DigitalTwinsClient(url, credential) # type: ignore
 
     return service_client
 
@@ -44,7 +44,7 @@ async def digitaltwins_get():
 
     digital_twint_id = "BuildingTwin" # from the samples: BuildingTwin, FloorTwin, HVACTwin, RoomTwin
     try:
-        async with DigitalTwinsClient(url, credential) as service_client:
+        async with DigitalTwinsClient(url, credential) as service_client: # type: ignore
             digital_twin = await service_client.get_digital_twin(digital_twint_id)
             print(digital_twin)
 

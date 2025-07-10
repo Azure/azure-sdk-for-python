@@ -521,7 +521,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
     def create_models(self, dtdl_models: List[Any], **kwargs: Any) -> List["DigitalTwinsModelData"]:
         """Create one or more models. When any error occurs, no models are uploaded.
 
-        :param List[Dict[str,object]] model_list: The set of models to create.
+        :param List[Dict[str, object]] dtdl_models: The set of models to create.
             Each dict corresponds to exactly one model.
         :return: The list of created models.
         :rtype: List[~azure.digitaltwins.core.DigitalTwinsModelData]
