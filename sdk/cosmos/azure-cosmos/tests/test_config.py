@@ -13,7 +13,7 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
 from azure.cosmos import (ContainerProxy, DatabaseProxy, documents, exceptions,
-                          http_constants, _retry_utility)
+                          http_constants, _location_cache)
 from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError, ClientAuthenticationError
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryPolicy
 from devtools_testutils.azure_recorded_testcase import get_credential
@@ -68,6 +68,10 @@ class TestConfig(object):
     TEST_CONTAINER_PARTITION_KEY = "pk"
     TEST_CONTAINER_PREFIX_PARTITION_KEY = ["pk1", "pk2"]
     TEST_CONTAINER_PREFIX_PARTITION_KEY_PATH = ['/pk1', '/pk2']
+    WRITE_REGION = "West US 3"
+    READ_REGION = "West US"
+    WRITE_LOCATIONAL_ENDPOINT = _location_cache.LocationCache.GetLocationalEndpoint(host, WRITE_REGION)
+    READ_LOCATIONAL_ENDPOINT = _location_cache.LocationCache.GetLocationalEndpoint(host, READ_REGION)
 
     @classmethod
     def create_database_if_not_exist(cls, client):

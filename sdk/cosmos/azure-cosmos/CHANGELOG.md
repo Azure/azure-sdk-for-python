@@ -10,6 +10,7 @@
 #### Bugs Fixed
 * Fixed bug where replacing manual throughput using `ThroughputProperties` would not work. See [PR 41564](https://github.com/Azure/azure-sdk-for-python/pull/41564)
 * Fixed bug where constantly raising Service Request Error Exceptions would cause the Service Request Retry Policy to indefinitely retry the request during a query or when a request was sent without a request object. See [PR 41804](https://github.com/Azure/azure-sdk-for-python/pull/41804)
+* Fixed retry logic if `raise_for_status` is set to `True` in the transport. See [PR 41940](https://github.com/Azure/azure-sdk-for-python/pull/41940).
 
 #### Other Changes
 
