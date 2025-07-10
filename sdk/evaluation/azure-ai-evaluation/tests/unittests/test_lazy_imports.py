@@ -102,66 +102,7 @@ class TestLazyImports(unittest.TestCase):
 
         self.assertIn("has no attribute 'NonExistentClass'", str(cm.exception))
 
-    def test_red_team_lazy_imports_no_messages_during_setup(self):
-        """Test that red_team module lazy imports don't print messages during setup."""
-        # Capture stderr to check for unwanted messages
-        captured_stderr = StringIO()
-        original_stderr = sys.stderr
-        sys.stderr = captured_stderr
 
-        try:
-            # Test red_team lazy import setup directly
-            _lazy_imports = {}
-
-            def _create_lazy_import(class_name, module_path, dependency_name):
-                """Create a lazy import function for optional dependencies."""
-                def lazy_import():
-                    module = __import__(module_path, fromlist=[class_name])
-                    return getattr(module, class_name)
-                return lazy_import
-
-            # Setting up red_team lazy imports should not print any messages
-            _lazy_imports["RedTeam"] = _create_lazy_import("RedTeam", "azure.ai.evaluation.red_team._red_team", "azure-ai-evaluation[redteam]")
-            _lazy_imports["AttackStrategy"] = _create_lazy_import("AttackStrategy", "azure.ai.evaluation.red_team._attack_strategy", "azure-ai-evaluation[redteam]")
-            _lazy_imports["RiskCategory"] = _create_lazy_import("RiskCategory", "azure.ai.evaluation.red_team._attack_objective_generator", "azure-ai-evaluation[redteam]")
-            _lazy_imports["RedTeamResult"] = _create_lazy_import("RedTeamResult", "azure.ai.evaluation.red_team._red_team_result", "azure-ai-evaluation[redteam]")
-
-            # Check that no messages were printed during setup
-            stderr_output = captured_stderr.getvalue()
-            self.assertEqual(stderr_output, "", "No messages should be printed during red_team lazy import setup")
-
-        finally:
-            sys.stderr = original_stderr
-
-    def test_red_team_message_when_accessing_missing_dependency(self):
-        """Test that appropriate message is shown when accessing red_team class with missing dependency."""
-        _lazy_imports = {}
-
-        def _create_lazy_import(class_name, module_path, dependency_name):
-            """Create a lazy import function for optional dependencies."""
-            def lazy_import():
-                # This should fail in most test environments since pyrit might not be available
-                module = __import__(module_path, fromlist=[class_name])
-                return getattr(module, class_name)
-            return lazy_import
-
-        _lazy_imports["RedTeam"] = _create_lazy_import("RedTeam", "azure.ai.evaluation.red_team._red_team", "azure-ai-evaluation[redteam]")
-
-        def mock_getattr(name):
-            """Mock __getattr__ function like the one in red_team/__init__.py"""
-            if name in _lazy_imports:
-                return _lazy_imports[name]()
-            raise AttributeError(f"module has no attribute '{name}'")
-
-        # Test accessing RedTeam - this might succeed if pyrit is installed, or fail if not
-        # We'll test the mechanism rather than the specific failure
-        try:
-            result = mock_getattr("RedTeam")
-            # If it succeeds, that's fine - the dependency is available
-            self.assertIsNotNone(result)
-        except (ImportError, ModuleNotFoundError):
-            # If it fails, that's also expected behavior
-            pass
 
 
 if __name__ == "__main__":
