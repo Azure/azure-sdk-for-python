@@ -4,6 +4,7 @@
 # ------------------------------------
 import os
 import uuid
+from typing import Dict, List
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 from azure.digitaltwins.core import DigitalTwinsClient, DigitalTwinsEventRoute
@@ -36,7 +37,7 @@ from azure.digitaltwins.core import DigitalTwinsClient, DigitalTwinsEventRoute
 # - create a DigitalTwins Service Client using the DigitalTwinsClient constructor
 # - create models from file
 # - get created models by modelIds one by one
-# - get all models by listing them using the pagianted API
+# - get all models by listing them using the pagiated API
 # - delete the created eventRoutes
 # - delete the created relationships
 # - delete the created digital twins
@@ -236,7 +237,8 @@ try:
         }
     }
 
-    hospital_relationships = [
+    # These must be dictionaries with string keys and values that can be serialized to JSON
+    hospital_relationships: List[Dict[str, object]] = [
         {
             "$relationshipId": "BuildingHasFloor",
             "$sourceId": building_twin_id,
@@ -278,7 +280,7 @@ try:
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
     # - AZURE_CLIENT_SECRET: The client secret for the registered application
     credential = DefaultAzureCredential()
-    service_client = DigitalTwinsClient(url, credential)
+    service_client = DigitalTwinsClient(url, credential) # type: ignore
 
     # Create models
     new_model_list = [building_model, floor_model, hvac_model, room_model, wifi_model]

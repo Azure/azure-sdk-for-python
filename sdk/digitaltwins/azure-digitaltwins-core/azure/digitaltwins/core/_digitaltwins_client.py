@@ -6,7 +6,7 @@
 
 import uuid
 from datetime import datetime
-from typing import Dict, List, Any, Optional, Union, IO, TYPE_CHECKING
+from typing import Dict, List, Any, Optional, TYPE_CHECKING
 
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
@@ -38,7 +38,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
     def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
         if not endpoint.startswith('http'):
             endpoint = 'https://' + endpoint
-        
+
         self._client = AzureDigitalTwinsAPI(
             credential=credential,
             endpoint=endpoint,
@@ -54,8 +54,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :return: Dictionary containing the twin.
         :rtype: Dict[str, object]
         :raises ~azure.core.exceptions.HttpResponseError:
-        :raises ~azure.core.exceptions.ResourceNotFoundError:
-            If the digital twin doesn't exist.
+        :raises ~azure.core.exceptions.ResourceNotFoundError: If the digital twin doesn't exist.
         """
         result = self._client.digital_twins.get_by_id(
             digital_twin_id,
@@ -65,7 +64,12 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         return dict(result)
 
     @distributed_trace
-    def upsert_digital_twin(self, digital_twin_id: str, digital_twin: Dict[str, object], **kwargs: Any) -> Dict[str, object]:
+    def upsert_digital_twin(
+        self,
+        digital_twin_id: str,
+        digital_twin: Dict[str, object],
+        **kwargs: Any
+    ) -> Dict[str, object]:
         """Create or update a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
@@ -119,9 +123,9 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_match, error_map = prep_if_match(etag, match_condition)
-        
+
         patch_content = BytesIO(json.dumps(json_patch).encode('utf-8'))
-        
+
         return self._client.digital_twins.update(
             digital_twin_id,
             patch_document=patch_content,
@@ -207,9 +211,9 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_match, error_map = prep_if_match(etag, match_condition)
-        
+
         patch_content = BytesIO(json.dumps(json_patch).encode('utf-8'))
-        
+
         return self._client.digital_twins.update_component(
             digital_twin_id,
             component_name,
@@ -241,7 +245,13 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         return dict(result)
 
     @distributed_trace
-    def upsert_relationship(self, digital_twin_id: str, relationship_id: str, relationship: Dict[str, object], **kwargs: Any) -> Dict[str, object]:
+    def upsert_relationship(
+        self,
+        digital_twin_id: str,
+        relationship_id: str,
+        relationship: Dict[str, object],
+        **kwargs: Any
+    ) -> Dict[str, object]:
         """Create or update a relationship on a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
@@ -303,9 +313,9 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_match, error_map = prep_if_match(etag, match_condition)
-        
+
         patch_content = BytesIO(json.dumps(json_patch).encode('utf-8'))
-        
+
         return self._client.digital_twins.update_relationship(
             id=digital_twin_id,
             relationship_id=relationship_id,
@@ -351,7 +361,12 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def list_relationships(self, digital_twin_id: str, relationship_id: Optional[str] = None, **kwargs: Any) -> ItemPaged[Dict[str, object]]:
+    def list_relationships(
+        self,
+        digital_twin_id: str,
+        relationship_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged[Dict[str, object]]:
         """Retrieve relationships for a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
@@ -369,7 +384,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
             relationship_name=relationship_id,
             **kwargs
         )
-        
+
         return relationships  # type: ignore
 
     @distributed_trace
@@ -469,7 +484,11 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def list_models(self, dependencies_for: Optional[List[str]] = None, **kwargs: Any) -> ItemPaged["DigitalTwinsModelData"]:
+    def list_models(
+        self,
+        dependencies_for: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> ItemPaged["DigitalTwinsModelData"]:
         """Get the list of models.
 
         :param List[str] dependencies_for: The model IDs to have dependencies retrieved.
@@ -484,10 +503,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         """
         include_model_definition = kwargs.pop('include_model_definition', False)
         results_per_page = kwargs.pop('results_per_page', None)
-        
+
         def cls(response):
             return response
-            
+
         if results_per_page is not None:
             kwargs['max_item_count'] = results_per_page
 
@@ -512,9 +531,9 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         """
         import json
         from io import BytesIO
-        
+
         models_content = BytesIO(json.dumps(dtdl_models).encode('utf-8'))
-        
+
         return self._client.digital_twin_models.add(
             models=models_content,
             **kwargs
@@ -533,11 +552,11 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         """
         import json
         from io import BytesIO
-        
+
         json_patch = [{'op': 'replace', 'path': '/decommissioned', 'value': True}]
-        
+
         patch_content = BytesIO(json.dumps(json_patch).encode('utf-8'))
-        
+
         return self._client.digital_twin_models.update(
             model_id,
             update_model=patch_content,
@@ -589,10 +608,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         results_per_page = kwargs.pop('results_per_page', None)
-        
+
         def cls(response):
             return response
-            
+
         if results_per_page is not None:
             kwargs['max_item_count'] = results_per_page
 

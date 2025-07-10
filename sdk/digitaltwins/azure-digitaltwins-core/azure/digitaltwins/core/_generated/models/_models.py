@@ -46,7 +46,7 @@ class DigitalTwinsEventRoute(_serialization.Model):
         "filter": {"key": "filter", "type": "str"},
     }
 
-    def __init__(self, *, endpoint_name: str, filter: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+    def __init__(self, *, endpoint_name: Optional[str], filter: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword endpoint_name: The name of the endpoint this event route is bound to. Required.
         :paramtype endpoint_name: str

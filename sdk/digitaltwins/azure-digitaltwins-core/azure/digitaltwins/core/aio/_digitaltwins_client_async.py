@@ -145,9 +145,9 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_match, error_map = prep_if_match(etag, match_condition)
-        
+
         patch_content = BytesIO(json.dumps(json_patch).encode('utf-8'))
-        
+
         return await self._client.digital_twins.update(
             digital_twin_id,
             patch_document=patch_content,
@@ -237,9 +237,9 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_match, error_map = prep_if_match(etag, match_condition)
-        
+
         patch_content = BytesIO(json.dumps(json_patch).encode('utf-8'))
-        
+
         return await self._client.digital_twins.update_component(
             digital_twin_id,
             component_name,
@@ -344,9 +344,9 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_match, error_map = prep_if_match(etag, match_condition)
-        
+
         patch_content = BytesIO(json.dumps(json_patch).encode('utf-8'))
-        
+
         return await self._client.digital_twins.update_relationship(
             id=digital_twin_id,
             relationship_id=relationship_id,
@@ -379,7 +379,6 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is either no
             digital twin or relationship with the provided ID.
         """
-        options = None
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_match, error_map = prep_if_match(etag, match_condition)
@@ -543,10 +542,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         """
         include_model_definition = kwargs.pop('include_model_definition', False)
         results_per_page = kwargs.pop('results_per_page', None)
-        
+
         def cls(response):
             return response
-            
+
         if results_per_page is not None:
             kwargs['max_item_count'] = results_per_page
 
@@ -571,9 +570,8 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         """
         import json
         from io import BytesIO
-        
+
         models_content = BytesIO(json.dumps(dtdl_models).encode('utf-8'))
-        
         return await self._client.digital_twin_models.add(
             models=models_content,
             **kwargs
@@ -592,11 +590,11 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         """
         import json
         from io import BytesIO
-        
+
         json_patch = [{'op': 'replace', 'path': '/decommissioned', 'value': True}]
-        
+
         patch_content = BytesIO(json.dumps(json_patch).encode('utf-8'))
-        
+
         return await self._client.digital_twin_models.update(
             model_id,
             update_model=patch_content,
@@ -648,10 +646,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         results_per_page = kwargs.pop('results_per_page', None)
-        
+
         def cls(response):
             return response
-            
+
         if results_per_page is not None:
             kwargs['max_item_count'] = results_per_page
 
