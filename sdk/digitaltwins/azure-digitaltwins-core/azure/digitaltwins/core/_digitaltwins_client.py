@@ -225,7 +225,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def get_relationship(self, digital_twin_id: str, relationship_id: str, **kwargs: Any) -> Dict[str, object]:
+    def get_relationship(self, digital_twin_id: str, relationship_id: str, **kwargs: Any) -> Dict[str, Any]:
         """Get a relationship on a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
@@ -288,7 +288,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         self,
         digital_twin_id: str,
         relationship_id: str,
-        json_patch: List[Dict[str, object]],
+        json_patch: List[dict[str, object]],
         **kwargs: Any
     ) -> None:
         """Updates the properties of a relationship on a digital twin using a JSON patch.
@@ -404,7 +404,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def publish_telemetry(self, digital_twin_id: str, telemetry: Dict[str, Any], **kwargs: Any) -> None:
+    def publish_telemetry(self, digital_twin_id: str, telemetry: dict[str, Any], **kwargs: Any) -> None:
         """Publish telemetry from a digital twin. The result is then
         consumed by one or many destination endpoints (subscribers) defined under
         DigitalTwinsEventRoute. These event routes need to be set before publishing
@@ -434,7 +434,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         self,
         digital_twin_id: str,
         component_name: str,
-        telemetry: Dict[str, Any],
+        telemetry: dict[str, Any],
         **kwargs: Any
     ) -> None:
         """Publish telemetry from a digital twin. The result is then
@@ -518,7 +518,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def create_models(self, dtdl_models: List[Dict[str, object]], **kwargs: Any) -> List["DigitalTwinsModelData"]:
+    def create_models(self, dtdl_models: List[Any], **kwargs: Any) -> List["DigitalTwinsModelData"]:
         """Create one or more models. When any error occurs, no models are uploaded.
 
         :param List[Dict[str,object]] model_list: The set of models to create.
@@ -653,7 +653,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def query_twins(self, query_expression: str, **kwargs: Any) -> ItemPaged[Dict[str, object]]:
+    def query_twins(self, query_expression: str, **kwargs: Any) -> ItemPaged[dict[str, object]]:
         """Query for digital twins.
 
         Note: that there may be a delay between before changes in your instance are reflected in queries.
