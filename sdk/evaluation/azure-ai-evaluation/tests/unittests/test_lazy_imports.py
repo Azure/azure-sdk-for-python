@@ -4,11 +4,21 @@ import sys
 import unittest
 from io import StringIO
 import importlib
+import pytest
+
+try:
+    import semantic_kernel
+
+    has_semantic_kernel = True
+except ImportError:
+    has_semantic_kernel = False
 
 
 class TestLazyImports(unittest.TestCase):
     """Test lazy import behavior for optional dependencies."""
 
+    @pytest.mark.unittest
+    @pytest.mark.skipif(has_semantic_kernel, reason="semantic-kernel is installed")
     def test_no_messages_during_module_import(self):
         """Test that no messages are printed when importing the main module."""
         # Capture stderr to check for unwanted messages
@@ -59,6 +69,8 @@ class TestLazyImports(unittest.TestCase):
         finally:
             sys.stderr = original_stderr
 
+    @pytest.mark.unittest
+    @pytest.mark.skipif(has_semantic_kernel, reason="semantic-kernel is installed")
     def test_message_shown_when_accessing_missing_dependency(self):
         """Test that appropriate message is shown when accessing a class with missing dependency."""
         # Test the __getattr__ functionality
@@ -101,6 +113,7 @@ class TestLazyImports(unittest.TestCase):
         self.assertIn("Could not import SKAgentConverter", error_message)
         self.assertIn("pip install semantic-kernel", error_message)
 
+    @pytest.mark.unittest
     def test_getattr_with_non_existent_attribute(self):
         """Test __getattr__ behavior with non-existent attributes."""
         _lazy_imports = {}
