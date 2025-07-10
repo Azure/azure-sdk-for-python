@@ -31,6 +31,10 @@ from azure.keyvault.certificates import (
     WellKnownIssuerNames,
 )
 from azure.keyvault.certificates._client import NO_SAN_OR_SUBJECT
+from azure.keyvault.certificates._generated.models import (
+    CertificateOperation as _CertificateOperation,
+    KeyVaultErrorError,
+)
 from azure.keyvault.certificates._shared.client_base import DEFAULT_VERSION
 import pytest
 
@@ -834,3 +838,14 @@ def test_thumbprint_hex():
         x509_thumbprint=b"v\xe1\x81\x9f\xad\xf0jU\xefK\x12j.\xf7C\xc2\xba\xe8\xa1Q",
     )
     assert "76E1819FADF06A55EF4B126A2EF743C2BAE8A151" in str(properties)
+
+
+def test_certificate_operation_empty_inner_error():
+    """Ensure a CertificateOperation can be serialized when the generated model has no inner error.
+    See https://github.com/Azure/azure-cli/issues/31764.
+    """
+    error = KeyVaultErrorError(code="500", message="Bad Request", inner_error=None)
+    generated_operation = _CertificateOperation(error=error)
+    operation = CertificateOperation._from_certificate_operation_bundle(generated_operation)
+    assert operation._error
+    assert operation._error._inner_error is None
