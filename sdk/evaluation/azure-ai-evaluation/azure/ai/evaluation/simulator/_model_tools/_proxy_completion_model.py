@@ -233,11 +233,13 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
                 retry_backoff_max=180,
                 retry_mode=RetryMode.Exponential,
             )
-            
+
             response = None
             async with get_async_http_client().with_policies(retry_policy=service_call_retry_policy) as retry_client:
                 try:
-                    response = await retry_client.post(url=self.endpoint_url, headers=proxy_headers, json=sim_request_dto.to_dict())
+                    response = await retry_client.post(
+                        url=self.endpoint_url, headers=proxy_headers, json=sim_request_dto.to_dict()
+                    )
                 except ServiceResponseError as e:
                     self.logger.error("ServiceResponseError during POST request to rai svc after retries: %s", str(e))
                     raise
