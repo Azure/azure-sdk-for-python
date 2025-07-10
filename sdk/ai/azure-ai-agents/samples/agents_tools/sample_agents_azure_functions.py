@@ -21,7 +21,7 @@ USAGE:
                           page of your Azure AI Foundry portal.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
-    3) STORAGE_SERVICE_ENDPONT - the storage service queue endpoint, triggering Azure function.
+    3) STORAGE_SERVICE_ENDPOINT - the storage service queue endpoint, triggering Azure function.
 
     Please see Getting Started with Azure Functions page for more information on Azure Functions:
     https://learn.microsoft.com/azure/azure-functions/functions-get-started
