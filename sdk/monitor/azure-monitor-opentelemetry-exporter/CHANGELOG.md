@@ -10,6 +10,9 @@
   ([#41669](https://github.com/Azure/azure-sdk-for-python/pull/41669))
 - Customer Facing Statsbeat: Added logic for dropped item count
   ([#41950](https://github.com/Azure/azure-sdk-for-python/pull/41950))
+- Customer Facing Statsbeat: Added logic for retry item count
+  ([#41971](https://github.com/Azure/azure-sdk-for-python/pull/41971))
+
 
 ### Breaking Changes
 
