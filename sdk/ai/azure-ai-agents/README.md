@@ -53,7 +53,9 @@ To report an issue with the client library, or request additional features, plea
   - [Tracing](#tracing)
     - [Installation](#installation)
     - [How to enable tracing](#how-to-enable-tracing)
+    - [Enabling content recording](#enabling-content-recording)
     - [How to trace your own functions](#how-to-trace-your-own-functions)
+    - [Adding custom attributes to spans](#adding-custom-attributes-to-spans)
 - [Troubleshooting](#troubleshooting)
   - [Logging](#logging)
   - [Reporting issues](#reporting-issues)
@@ -1564,6 +1566,14 @@ from azure.ai.agents.telemetry import enable_telemetry
 
 enable_telemetry(destination=sys.stdout)
 ```
+
+### Enabling content recording
+Content recording controles whether message contents and tool call related details, such as parameters and return values, are captured with the traces.
+To enable content recording set the `AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED` environment variable value to `true`. If the environment variable is not set, then the value will default to `false`.
+
+
+**Important:** The `AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED` environment variable only controls content recording for built-in agent traces. When you use the `@trace_function` decorator on your own functions, all parameters and return values are always traced.
+
 ### How to trace your own functions
 
 The decorator `trace_function` is provided for tracing your own function calls using OpenTelemetry. By default the function name is used as the name for the span. Alternatively you can provide the name for the span as a parameter to the decorator.
@@ -1578,6 +1588,44 @@ This decorator handles various data types for function parameters and return val
 Object types are omitted, and the corresponding parameter is not traced.
 
 The parameters are recorded in attributes `code.function.parameter.<parameter_name>` and the return value is recorder in attribute `code.function.return.value`
+
+### Adding custom attributes to spans
+
+Define your own span processor which adds your custom attributes:
+
+<!-- SNIPPET:sample_agents_basics_with_console_tracing_custom_attributes.custom_attribute_span_processor -->
+
+```python
+class CustomAttributeSpanProcessor(SpanProcessor):
+    def __init__(self):
+        pass
+
+    def on_start(self, span: Span, parent_context=None):
+        # Add this attribute to all spans
+        span.set_attribute("trace_sample.sessionid", "123")
+
+        # Add another attribute only to create_message spans
+        if span.name == "create_message":
+            span.set_attribute("trace_sample.message.context", "abc")
+
+    def on_end(self, span: ReadableSpan):
+        # Clean-up logic can be added here if necessary
+        pass
+```
+
+<!-- END SNIPPET -->
+
+Add the span processor to trace provider:
+
+<!-- SNIPPET:sample_agents_basics_with_console_tracing_custom_attributes.add_custom_span_processor_to_tracer_provider -->
+
+```python
+provider = cast(TracerProvider, trace.get_tracer_provider())
+provider.add_span_processor(CustomAttributeSpanProcessor())
+```
+
+<!-- END SNIPPET -->
+
 
 ## Troubleshooting
 
