@@ -4,9 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from collections.abc import Sequence
 import uuid
 from datetime import datetime
-from typing import Dict, List, Any, TYPE_CHECKING, Optional
+from typing import Dict, List, Any, TYPE_CHECKING, MutableMapping, Optional
 
 from ._generated._utils.serialization import Serializer
 
@@ -58,12 +59,12 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
 
     @distributed_trace
     def get_digital_twin(self, digital_twin_id, **kwargs):
-        # type: (str, **Any) -> Dict[str, object]
+        # type: (str, **Any) -> MutableMapping[str, Any]
         """Get a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
         :return: Dictionary containing the twin.
-        :rtype: Dict[str, object]
+        :rtype: MutableMapping[str, Any]
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceNotFoundError:
             If the digital twin doesn't exist.
@@ -75,7 +76,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
 
     @distributed_trace
     def upsert_digital_twin(self, digital_twin_id, digital_twin, **kwargs):
-        # type: (str, Dict[str, object], **Any) -> Dict[str, object]
+        # type: (str, Dict[str, object], **Any) -> MutableMapping[str, Any]
         """Create or update a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
@@ -87,7 +88,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
             Only perform the operation if the entity's etag matches the value provided
             according to the `match_condition`.
         :return: Dictionary containing the created or updated twin.
-        :rtype: Dict[str, object]
+        :rtype: MutableMapping[str, Any]
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceExistsError: If the digital twin already exists.
         """
@@ -108,11 +109,11 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
 
     @distributed_trace
     def update_digital_twin(self, digital_twin_id, json_patch, **kwargs):
-        # type: (str, List[Dict[str, object]], **Any) -> None
+        # type: (str, Sequence[MutableMapping[str, Any]], **Any) -> None
         """Update a digital twin using a JSON patch.
 
         :param str digital_twin_id: The ID of the digital twin.
-        :param List[Dict[str,object]] json_patch: An update specification described by JSON Patch.
+        :param Sequence[MutableMapping[str, Any]] json_patch: An update specification described by JSON Patch.
             Updates to property values and $model elements may happen in the same request.
             Operations are limited to `add`, `replace` and `remove`.
         :keyword ~azure.core.MatchConditions match_condition:
@@ -170,13 +171,13 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
 
     @distributed_trace
     def get_component(self, digital_twin_id, component_name, **kwargs):
-        # type: (str, str, **Any) -> Dict[str, object]
+        # type: (str, str, **Any) -> MutableMapping[str, Any]
         """Get a component on a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
         :param str component_name: The component being retrieved.
         :return: Dictionary containing the component.
-        :rtype: Dict[str, object]
+        :rtype: MutableMapping[str, Any]
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is either no
             digital twin with the provided ID or the component name is invalid.
@@ -195,12 +196,12 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         json_patch,
         **kwargs
     ):
-        # type: (str, str, List[Dict[str, object]], **Any) -> None
+        # type: (str, str, Sequence[MutableMapping[str, Any]], **Any) -> None
         """Update properties of a component on a digital twin using a JSON patch.
 
         :param str digital_twin_id: The ID of the digital twin.
         :param str component_name: The component being updated.
-        :param List[Dict[str,object]] json_patch: An update specification described by JSON Patch.
+        :param Sequence[MutableMapping[str, Any]] json_patch: An update specification described by JSON Patch.
         :keyword ~azure.core.MatchConditions match_condition:
             The condition under which to perform the operation.
         :keyword str etag:
@@ -229,13 +230,13 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
 
     @distributed_trace
     def get_relationship(self, digital_twin_id, relationship_id, **kwargs):
-        # type: (str, str, **Any) -> Dict[str, object]
+        # type: (str, str, **Any) -> MutableMapping[str, Any]
         """Get a relationship on a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
         :param str relationship_id: The ID of the relationship to retrieve.
         :return: Dictionary containing the relationship.
-        :rtype: Dict[str, object]
+        :rtype: MutableMapping[str, Any]
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is either no
             digital twin or relationship with the provided ID.
@@ -248,7 +249,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
 
     @distributed_trace
     def upsert_relationship(self, digital_twin_id, relationship_id, relationship, **kwargs):
-        # type: (str, str, Dict[str, object], **Any) -> Dict[str, object]
+        # type: (str, str, Dict[str, object], **Any) -> MutableMapping[str, Any]
         """Create or update a relationship on a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
@@ -260,7 +261,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
             Only perform the operation if the entity's etag matches the value provided
             according to the `match_condition`.
         :return: The created or updated relationship.
-        :rtype: Dict[str, object]
+        :rtype: MutableMapping[str, Any]
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is either no
             digital twin, target digital twin or relationship with the provided ID.
@@ -287,12 +288,12 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         json_patch,
         **kwargs
     ):
-        # type: (str, str, List[Dict[str, object]], **Any) -> None
+        # type: (str, str, Sequence[MutableMapping[str, Any]], **Any) -> None
         """Updates the properties of a relationship on a digital twin using a JSON patch.
 
         :param str digital_twin_id: The ID of the digital twin.
         :param str relationship_id: The ID of the relationship to retrieve.
-        :param List[Dict[str,object]] json_patch: JSON Patch description of the update
+        :param Sequence[MutableMapping[str, Any]] json_patch: JSON Patch description of the update
             to the relationship properties.
         :keyword ~azure.core.MatchConditions match_condition:
             The condition under which to perform the operation.
@@ -506,10 +507,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
 
     @distributed_trace
     def create_models(self, dtdl_models, **kwargs):
-        # type: (List[Dict[str, object]], **Any) -> List[DigitalTwinsModelData]
+        # type: (Sequence[MutableMapping[str, Any]], **Any) -> List[DigitalTwinsModelData]
         """Create one or more models. When any error occurs, no models are uploaded.
 
-        :param List[Dict[str,object]] model_list: The set of models to create.
+        :param Sequence[MutableMapping[str, Any]] model_list: The set of models to create.
             Each dict corresponds to exactly one model.
         :return: The list of created models.
         :rtype: List[~azure.digitaltwins.core.DigitalTwinsModelData]

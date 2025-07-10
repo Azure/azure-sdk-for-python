@@ -298,19 +298,6 @@ class DigitalTwinsGetRelationshipByIdOptions(_serialization.Model):
         self.traceparent = traceparent
         self.tracestate = tracestate
 
-class DigitalTwinsGetRelationshipByIdOptions(_serialization.Model):
-    """Parameter group for retrieving a relationship by ID from a digital twin."""
-
-    _attribute_map = {
-        "traceparent": {"key": "traceparent", "type": "str"},
-        "tracestate": {"key": "tracestate", "type": "str"},
-    }
-
-    def __init__(self, *, traceparent: Optional[str] = None, tracestate: Optional[str] = None, **kwargs: Any) -> None:
-        super().__init__(**kwargs)
-        self.traceparent = traceparent
-        self.tracestate = tracestate
-
 class DigitalTwinsListIncomingRelationshipsOptions(_serialization.Model):
     """Parameter group for listing incoming relationships to a digital twin."""
 
