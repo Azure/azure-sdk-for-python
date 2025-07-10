@@ -4,6 +4,12 @@
 
 ## 1.1.0b4 (Unreleased)
 
+### Features Added
+
+- Added support for MCP tool. For more information, see https://aka.ms/FoundryAgentMCPDoc.
+- New tool_resources parameter added to runs.create method. This parameter represents overridden enabled tool resources that the agent should use to run
+the thread. Default value is None.
+
 ### Bugs Fixed
 
 - `_AgentsClientOperationsMixin` now it is private.
