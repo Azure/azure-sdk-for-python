@@ -1482,7 +1482,7 @@ enable_telemetry(destination=sys.stdout)
 
 ### Enabling content recording
 Content recording controles whether message contents and tool call related details, such as parameters and return values, are captured with the traces.
-To enable content recording set the `AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED` environment variable value to `true`. If the environment variable is not found, then the value will default to `false`.
+To enable content recording set the `AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED` environment variable value to `true`. If the environment variable is not set, then the value will default to `false`.
 
 
 **Important:** The `AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED` environment variable only controls content recording for built-in agent traces. When you use the `@trace_function` decorator on your own functions, all parameters and return values are always traced.
