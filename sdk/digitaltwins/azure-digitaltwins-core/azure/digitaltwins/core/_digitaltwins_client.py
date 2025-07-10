@@ -450,7 +450,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         timestamp = Serializer.serialize_iso(datetime.utcnow())
         return self._client.digital_twins.send_component_telemetry(
             id=digital_twin_id,
-            component_name=component_name,
+            component_path=component_name,
             message_id=message_id,
             telemetry=telemetry,
             telemetry_source_time=timestamp,

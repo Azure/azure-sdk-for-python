@@ -4,9 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from collections.abc import Sequence
 import uuid
 from datetime import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING
+from typing import Any, Dict, List, MutableMapping, Optional, TYPE_CHECKING
 
 from .._generated._utils.serialization import Serializer
 
@@ -69,12 +70,12 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         await self._client.__aexit__(*exc_details)
 
     @distributed_trace_async
-    async def get_digital_twin(self, digital_twin_id: str, **kwargs) -> Dict[str, object]:
+    async def get_digital_twin(self, digital_twin_id: str, **kwargs) -> MutableMapping[str, Any]:
         """Get a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
         :return: Dictionary containing the twin.
-        :rtype: Dict[str, object]
+        :rtype: MutableMapping[str, Any]
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceNotFoundError:
             If the digital twin doesn't exist.
@@ -90,7 +91,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         digital_twin_id: str,
         digital_twin: Dict[str, object],
         **kwargs
-    ) -> Dict[str, object]:
+    ) -> MutableMapping[str, Any]:
         """Create or update a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
@@ -125,13 +126,13 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
     async def update_digital_twin(
         self,
         digital_twin_id: str,
-        json_patch: List[Dict[str, object]],
+        json_patch: Sequence[MutableMapping[str, Any]],
         **kwargs
     ) -> None:
         """Update a digital twin using a JSON patch.
 
         :param str digital_twin_id: The ID of the digital twin.
-        :param List[Dict[str,object]] json_patch: An update specification described by JSON Patch.
+        :param Sequence[MutableMapping[str, Any]] json_patch: An update specification described by JSON Patch.
             Updates to property values and $model elements may happen in the same request.
             Operations are limited to add, replace and remove.
         :keyword ~azure.core.MatchConditions match_condition:
@@ -193,13 +194,13 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace_async
-    async def get_component(self, digital_twin_id: str, component_name: str, **kwargs) -> Dict[str, object]:
+    async def get_component(self, digital_twin_id: str, component_name: str, **kwargs) -> MutableMapping[str, Any]:
         """Get a component on a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
         :param str component_name: The component being retrieved.
         :return: Dictionary containing the component.
-        :rtype: Dict[str, object]
+        :rtype: MutableMapping[str, Any]
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is either no
             digital twin with the provided ID or the component name is invalid.
@@ -215,14 +216,14 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         self,
         digital_twin_id: str,
         component_name: str,
-        json_patch: List[Dict[str, object]],
+        json_patch: Sequence[MutableMapping[str, Any]],
         **kwargs
     ) -> None:
         """Update properties of a component on a digital twin using a JSON patch.
 
         :param str digital_twin_id: The ID of the digital twin.
         :param str component_name: The component being updated.
-        :param List[Dict[str,object]] json_patch: An update specification described by JSON Patch.
+        :param Sequence[MutableMapping[str, Any]] json_patch: An update specification described by JSON Patch.
         :keyword ~azure.core.MatchConditions match_condition:
             The condition under which to perform the operation.
         :keyword str etag:
@@ -255,13 +256,13 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         digital_twin_id: str,
         relationship_id: str,
         **kwargs
-    ) -> Dict[str, object]:
+    ) -> MutableMapping[str, Any]:
         """Get a relationship on a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
         :param str relationship_id: The ID of the relationship to retrieve.
         :return: Dictionary containing the relationship.
-        :rtype: Dict[str, object]
+        :rtype: MutableMapping[str, Any]
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is either no
             digital twin or relationship with the provided ID.
@@ -279,12 +280,12 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         relationship_id: str,
         relationship: Dict[str, object],
         **kwargs
-    ) -> Dict[str, object]:
+    ) -> MutableMapping[str, Any]:
         """Create or update a relationship on a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
         :param str relationship_id: The ID of the relationship to retrieve.
-        :param Dict[str,object] relationship: Dictionary containing the relationship.
+        :param MutableMapping[str, Any] relationship: Dictionary containing the relationship.
         :keyword ~azure.core.MatchConditions match_condition:
             The condition under which to perform the operation.
         :keyword str etag:
@@ -315,14 +316,14 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         self,
         digital_twin_id: str,
         relationship_id: str,
-        json_patch: List[Dict[str, object]],
+        json_patch: Sequence[MutableMapping[str, Any]],
         **kwargs
     ) -> None:
         """Updates the properties of a relationship on a digital twin using a JSON patch.
 
         :param str digital_twin_id: The ID of the digital twin.
         :param str relationship_id: The ID of the relationship to retrieve.
-        :param List[Dict[str,object]] json_patch: JSON Patch description of the update
+        :param Sequence[MutableMapping[str, Any]] json_patch: JSON Patch description of the update
             to the relationship properties.
         :keyword ~azure.core.MatchConditions match_condition:
             The condition under which to perform the operation.
@@ -390,14 +391,14 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         digital_twin_id: str,
         relationship_id: Optional[str] = None,
         **kwargs
-    ) -> AsyncItemPaged[Dict[str, object]]:
+    ) -> AsyncItemPaged[MutableMapping[str, Any]]:
         """Retrieve relationships for a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
         :param str relationship_id: The ID of the relationship to
             get (if None all the relationship will be retrieved).
         :return: An iterator instance of list of relationships.
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[Dict[str,object]]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[MutableMapping[str, Any]]
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is no
             digital twin with the provided ID.
@@ -432,7 +433,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
     async def publish_telemetry(
         self,
         digital_twin_id: str,
-        telemetry: object,
+        telemetry: MutableMapping[str, Any],
         **kwargs
     ) -> None:
         """Publish telemetry from a digital twin. The result is then
@@ -441,7 +442,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         a telemetry message, in order for the telemetry message to be consumed.
 
         :param str digital_twin_id: The ID of the digital twin
-        :param object telemetry: The telemetry data to be sent
+        :param MutableMapping[str, Any] telemetry: The telemetry data to be sent
         :keyword str message_id: The message ID. If not specified, a UUID will be generated.
         :return: None
         :rtype: None
@@ -464,7 +465,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         self,
         digital_twin_id: str,
         component_name: str,
-        telemetry: object,
+        telemetry: MutableMapping[str, Any],
         **kwargs
     ) -> None:
         """Publish telemetry from a digital twin. The result is then
@@ -474,7 +475,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
 
         :param str digital_twin_id: The ID of the digital twin.
         :param str component_name: The name of the DTDL component.
-        :param object telemetry: The telemetry data to be sent.
+        :param MutableMapping[str, Any] telemetry: The telemetry data to be sent.
         :keyword str message_id: The message ID. If not specified, a UUID will be generated.
         :return: None
         :rtype: None
@@ -485,8 +486,8 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         message_id = kwargs.pop('message_id', None) or str(uuid.uuid4())
         timestamp = Serializer.serialize_iso(datetime.utcnow())
         return await self._client.digital_twins.send_component_telemetry(
-            digital_twin_id,
-            component_name,
+            id=digital_twin_id,
+            component_path=component_name,
             message_id=message_id,
             telemetry=telemetry,
             telemetry_source_time=timestamp,
@@ -543,19 +544,19 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace_async
-    async def create_models(self, dtdl_models: List[object], **kwargs) -> List[DigitalTwinsModelData]:
+    async def create_models(self, dtdl_models: Sequence[MutableMapping[str, Any]], **kwargs) -> Sequence[MutableMapping[str, Any]]:
         """Create one or more models. When any error occurs, no models are uploaded.
 
-        :param List[object] model_list: The set of models to create.
+        :param Sequence[MutableMapping[str, Any]] dtdl_models: The set of models to create.
             Each dict corresponds to exactly one model.
         :return: The list of created models
-        :rtype: List[~azure.digitaltwins.core.DigitalTwinsModelData]
+        :rtype: Sequence[MutableMapping[str, Any]]
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceExistsError: One or more of
             the provided models already exist.
         """
         return await self._client.digital_twin_models.add(
-            dtdl_models,
+            models=dtdl_models,
             **kwargs
         )
 
