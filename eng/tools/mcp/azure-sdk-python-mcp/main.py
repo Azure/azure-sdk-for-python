@@ -11,6 +11,9 @@ import httpx
 from github import Github
 from mcp.server.fastmcp import FastMCP
 
+# Set default pip implementation for tox to use uv
+os.environ.setdefault('TOX_PIP_IMPL', 'uv pip')
+
 # Create FastMCP instance
 mcp = FastMCP("azure-sdk-python-mcp")
 
@@ -24,6 +27,7 @@ logger.addHandler(handler)
 logger.info(f"Running with Python executable: {sys.executable}")
 logger.info(f"Virtual environment path: {os.environ.get('VIRTUAL_ENV', 'Not running in a virtual environment')}")
 logger.info(f"Working directory: {os.getcwd()}")
+logger.info(f"TOX_PIP_IMPL set to: {os.environ.get('TOX_PIP_IMPL', 'not set')}")
 
 def get_latest_commit(tspurl: str) -> str:
     """Get the latest commit hash for a given TypeSpec config URL.
@@ -192,22 +196,28 @@ def tox_tool(package_path: str, environment: str, repo_path: str, tox_ini_path: 
     return run_command(command, cwd=repo_path)
 
 @mcp.tool("init")
-def init_tool(tsp_config_url: str, repo_path: str) -> Dict[str, Any]:
-    """Initializes and generates a typespec client library directory given the url.
+def init_tool(tsp_config_path: str, repo_path: str, is_local: bool = False) -> Dict[str, Any]:
+    """Initializes a new typespec client library directory.
     
     Args:
-        tsp_config_url: The URL to the tspconfig.yaml file.
-        repo_path: The path to the repository root (i.e. ./azure-sdk-for-python/).
+        :param str tsp_config_path: Either the URL to the tspconfig.yaml file or the path to a local tspconfig.yaml file.
+        :param str repo_path: The path to the repository root (i.e. ./azure-sdk-for-python/).
+        :param bool is_local: Whether the tsp_config_path is a local file path (True) or a URL (False).
+
     Returns:
         A dictionary containing the result of the command.
     """
     try:
-        # Get updated URL with latest commit hash
-        updated_url = get_latest_commit(tsp_config_url)
+        config_path = tsp_config_path
+        
+        # If not a local path, get updated URL with latest commit hash
+        if not is_local and tsp_config_path.startswith("http"):
+            config_path = get_latest_commit(tsp_config_path)
+            logger.info(f"Using updated TypeSpec config URL with latest commit: {config_path}")
         
         # Run the init command using the combined function
         return run_command(["init"], cwd=repo_path, is_typespec=True,
-                          typespec_args={"tsp-config": updated_url})
+                          typespec_args={"tsp-config": config_path})
                           
     except RuntimeError as e:
         return {
@@ -217,25 +227,42 @@ def init_tool(tsp_config_url: str, repo_path: str) -> Dict[str, Any]:
             "stderr": "",
             "code": 1
         }
+    
+@mcp.tool("update")
+def update_tool(package_path: str, commit_hash: Optional[str] = None, repo: Optional[str] = None, 
+                tsp_config: Optional[str] = None, local_spec: Optional[str] = None) -> Dict[str, Any]:
+    """Updates an existing client library with local or remote TypeSpec changes.
 
-@mcp.tool("init_local")
-def init_local_tool(tsp_config_path: str, repo_path:str) -> Dict[str, Any]:
-    """Initializes and subsequently generates a typespec client library directory from a local azure-rest-api-specs repo.
-
-    This command is used to generate a client library from a local azure-rest-api-specs repository. No additional
-    commands are needed to generate the client library.
+    This command is used to update an existing client library.
 
     Args:
-        tsp_config_path: The path to the local tspconfig.yaml file.
-        repo_path: The path to the repository root (i.e. ./azure-sdk-for-python/).
+        :param str package_path: The path to the directory of the tsp-location.yaml (i.e. ./azure-sdk-for-python/sdk/eventgrid/azure-eventgrid).
+        :param Optional[str] commit_hash: Optional. The commit hash to update to.
+        :param Optional[str] repo: Optional. Repository where the project is defined.
+        :param Optional[str] tsp_config: Optional. Path to tspconfig.yaml.
+        :param Optional[str] local_spec: Optional. Path to the local TypeSpec project (../azure-rest-api-specs/specification/eventgrid/Azure.Messaging.EventGrid/).
 
     Returns:
-        A dictionary containing the result of the command.    """
+        A dictionary containing the result of the command.
+    """
     try:
+        # Build TypeSpec arguments
+        typespec_args = {
+            "output-dir": package_path
+        }
         
-        # Run the init command with local path using the combined function
-        return run_command(["init"], cwd=repo_path, is_typespec=True,
-                          typespec_args={"tsp-config": tsp_config_path})
+        if commit_hash:
+            typespec_args["commit"] = commit_hash
+        if repo:
+            typespec_args["repo"] = repo
+        if tsp_config:
+            typespec_args["tsp-config"] = tsp_config
+        if local_spec:
+            typespec_args["local-spec-repo"] = local_spec
+        
+        # Run the update command
+        return run_command(["update"], cwd=package_path, is_typespec=True,
+                          typespec_args=typespec_args)
                           
     except RuntimeError as e:
         return {
@@ -245,7 +272,6 @@ def init_local_tool(tsp_config_path: str, repo_path:str) -> Dict[str, Any]:
             "stderr": "",
             "code": 1
         }
-
 
 @mcp.tool("check_library_health")
 def check_library_health(library_name: str) -> Dict[str, Any]:

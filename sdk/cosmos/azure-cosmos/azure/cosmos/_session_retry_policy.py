@@ -23,16 +23,7 @@
 in the Azure Cosmos database service.
 """
 
-import logging
 from azure.cosmos.documents import _OperationType
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-log_formatter = logging.Formatter("%(levelname)s:%(message)s")
-log_handler = logging.StreamHandler()
-log_handler.setFormatter(log_formatter)
-logger.addHandler(log_handler)
-
 
 class _SessionRetryPolicy(object):
     """The session retry policy used to handle read/write session unavailability.

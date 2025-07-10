@@ -501,6 +501,83 @@ class OrganizationResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
+class OrganizationResourceUpdate(_Model):
+    """The type used for update operations of the OrganizationResource.
+
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.mongodbatlas.models.ManagedServiceIdentity
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.mongodbatlas.models.OrganizationResourceUpdateProperties
+    """
+
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.OrganizationResourceUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional["_models.OrganizationResourceUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OrganizationResourceUpdateProperties(_Model):
+    """The updatable properties of the OrganizationResource.
+
+    :ivar user: Details of the user.
+    :vartype user: ~azure.mgmt.mongodbatlas.models.UserDetails
+    :ivar partner_properties: MongoDB properties.
+    :vartype partner_properties: ~azure.mgmt.mongodbatlas.models.PartnerProperties
+    """
+
+    user: Optional["_models.UserDetails"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Details of the user."""
+    partner_properties: Optional["_models.PartnerProperties"] = rest_field(
+        name="partnerProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """MongoDB properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        user: Optional["_models.UserDetails"] = None,
+        partner_properties: Optional["_models.PartnerProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class PartnerProperties(_Model):
     """MongoDB specific Properties.
 

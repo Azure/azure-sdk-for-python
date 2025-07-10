@@ -1,5 +1,34 @@
 # Release History
 
+## 1.0.0b40 (Unreleased)
+
+### Features Added
+
+- Detect synthetically created telemetry based on the user-agent header
+  ([#41733](https://github.com/Azure/azure-sdk-for-python/pull/41733))
+- Added customer-facing statsbeat preview.
+  ([#41669](https://github.com/Azure/azure-sdk-for-python/pull/41669))
+- Customer Facing Statsbeat: Added logic for dropped item count
+  ([#41950](https://github.com/Azure/azure-sdk-for-python/pull/41950))
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b39 (2025-06-25)
+
+### Bugs Fixed
+
+- Suppress stdout side effect of add permissions to file for local storage on Windows
+  ([#41727](https://github.com/Azure/azure-sdk-for-python/pull/41727))
+
+### Other Changes
+
+- Add logging errors for `401: Unauthorized` and `403: Forbidden` to assist in customer troubleshooting
+  ([#41767](https://github.com/Azure/azure-sdk-for-python/pull/41767))
+
 ## 1.0.0b38 (2025-06-17)
 
 ### Features Added
@@ -36,6 +65,8 @@
 
 - Extend version range for `psutil` to include 7.x
   ([#40459](https://github.com/Azure/azure-sdk-for-python/pull/40459))
+- Add folder permissions for local files
+  ([#41384](https://github.com/Azure/azure-sdk-for-python/pull/41384))
 
 ## 1.0.0b36 (2025-04-07)
 

@@ -10,7 +10,7 @@ import sys
 from typing import Any, Dict, List, Optional
 from io import BytesIO
 
-from azure.core.serialization import AzureJSONEncoder, NULL, as_attribute_dict, is_generated_model
+from azure.core.serialization import AzureJSONEncoder, NULL, as_attribute_dict, is_generated_model, attribute_list
 import pytest
 from modeltypes._utils.model_base import Model as HybridModel, rest_field
 from modeltypes._utils.serialization import Model as MsrestModel
@@ -545,6 +545,75 @@ def test_is_generated_model_with_non_models():
             self.attr = "value"
 
     assert not is_generated_model(Model())
+
+
+def test_attribute_list_non_model():
+    with pytest.raises(TypeError):
+        attribute_list({})
+
+    with pytest.raises(TypeError):
+        attribute_list([])
+
+    with pytest.raises(TypeError):
+        attribute_list("string")
+
+    with pytest.raises(TypeError):
+        attribute_list(42)
+
+    with pytest.raises(TypeError):
+        attribute_list(None)
+
+    with pytest.raises(TypeError):
+        attribute_list(object)
+
+    class RandomModel:
+        def __init__(self):
+            self.attr = "value"
+
+    with pytest.raises(TypeError):
+        attribute_list(RandomModel())
+
+
+def test_attribute_list_scratch_model():
+    model = models.HybridPet(name="wall-e", species="dog")
+    assert attribute_list(model) == ["name", "species"]
+    msrest_model = models.MsrestPet(name="wall-e", species="dog")
+    assert attribute_list(msrest_model) == ["name", "species"]
+
+
+def test_attribute_list_client_named_property_model():
+    model = models.ClientNameAndJsonEncodedNameModel(client_name="wall-e")
+    assert attribute_list(model) == ["client_name"]
+    msrest_model = models.MsrestClientNameAndJsonEncodedNameModel(client_name="wall-e")
+    assert attribute_list(msrest_model) == ["client_name"]
+
+
+def test_attribute_list_flattened_model():
+    model = models.FlattenModel(name="wall-e", description="a dog", age=2)
+    assert attribute_list(model) == ["name", "description", "age"]
+    msrest_model = models.MsrestFlattenModel(name="wall-e", description="a dog", age=2)
+    assert attribute_list(msrest_model) == ["name", "description", "age"]
+
+
+def test_attribute_list_readonly_model():
+    model = models.ReadonlyModel({"id": 1})
+    assert attribute_list(model) == ["id"]
+    msrest_model = models.MsrestReadonlyModel(id=1)
+    assert attribute_list(msrest_model) == ["id"]
+
+
+def test_attribute_list_additional_properties_hybrid():
+    hybrid_model = models.HybridPetAPTrue(
+        {"birthdate": "2017-12-13T02:29:51Z", "complexProperty": {"color": "Red"}, "name": "Buddy"}
+    )
+    assert attribute_list(hybrid_model) == ["name"]
+
+
+def test_attribute_list_additional_properties_msrest():
+    msrest_model = models.MsrestPetAPTrue(
+        additional_properties={"birthdate": "2017-12-13T02:29:51Z", "complexProperty": {"color": "Red"}}, name="Buddy"
+    )
+    assert attribute_list(msrest_model) == ["additional_properties", "name"]
 
 
 def test_as_attribute_dict_client_name():

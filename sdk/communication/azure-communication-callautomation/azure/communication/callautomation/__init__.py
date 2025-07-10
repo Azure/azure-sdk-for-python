@@ -18,7 +18,6 @@ from ._models import (
     RecordingProperties,
     AddParticipantResult,
     RemoveParticipantResult,
-    MoveParticipantsResult,
     TransferCallResult,
     MediaStreamingOptions,
     TranscriptionOptions,
@@ -44,12 +43,12 @@ from ._generated.models._enums import (
     RecordingContent,
     RecordingChannel,
     RecordingFormat,
+    RecordingKind,
     RecordingStorageKind,
     RecognizeInputType,
     MediaStreamingAudioChannelType,
     MediaStreamingContentType,
-    MediaStreamingTransportType,
-    TranscriptionTransportType,
+    StreamingTransportType,
     DtmfTone,
     CallConnectionState,
     RecordingState,
@@ -79,7 +78,6 @@ __all__ = [
     "RecordingProperties",
     "AddParticipantResult",
     "RemoveParticipantResult",
-    "MoveParticipantsResult",
     "TransferCallResult",
     "MuteParticipantResult",
     "SendDtmfTonesResult",
@@ -99,12 +97,12 @@ __all__ = [
     "RecordingContent",
     "RecordingChannel",
     "RecordingFormat",
+    "RecordingKind",
     "RecordingStorageKind",
     "RecognizeInputType",
     "MediaStreamingAudioChannelType",
     "MediaStreamingContentType",
-    "MediaStreamingTransportType",
-    "TranscriptionTransportType",
+    "StreamingTransportType",
     "DtmfTone",
     "CallConnectionState",
     "RecordingState",
@@ -139,6 +137,14 @@ def __getattr__(name):
         from ._models import ServerCallLocator
 
         return ServerCallLocator
+    if name == "RoomCallLocator":
+        warnings.warn(
+            "RoomCallLocator is deprecated and should not be used. Please pass in 'room_id' directly.",
+            DeprecationWarning,
+        )
+        from ._models import RoomCallLocator
+
+        return RoomCallLocator
     if name == "MicrosoftBotIdentifier":
         warnings.warn(
             f"{name} is deprecated and should not be used. Please use 'MicrosoftTeamsAppIdentifier' instead.",
