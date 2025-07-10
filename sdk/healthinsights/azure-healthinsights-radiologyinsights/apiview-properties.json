@@ -48,7 +48,7 @@
         "azure.healthinsights.radiologyinsights.models.QualityMeasureOptions": "AzureHealthInsights.QualityMeasureOptions",
         "azure.healthinsights.radiologyinsights.models.Quantity": "Fhir.R4.Quantity",
         "azure.healthinsights.radiologyinsights.models.RadiologyCodeWithTypes": "AzureHealthInsights.RadiologyCodeWithTypes",
-        "azure.healthinsights.radiologyinsights.models.RadiologyInsightsCustomInferenceResponse": "AzureHealthInsights.RadiologyInsightsCustomInferenceResponse",
+        "azure.healthinsights.radiologyinsights.models.RadiologyInsightsCustomInferenceResult": "AzureHealthInsights.RadiologyInsightsCustomInferenceResponse",
         "azure.healthinsights.radiologyinsights.models.RadiologyInsightsData": "AzureHealthInsights.RadiologyInsightsData",
         "azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceOptions": "AzureHealthInsights.RadiologyInsightsInferenceOptions",
         "azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceResult": "AzureHealthInsights.RadiologyInsightsInferenceResult",
@@ -85,7 +85,7 @@
         "azure.healthinsights.radiologyinsights.models.JobStatus": "AzureHealthInsights.JobStatus",
         "azure.healthinsights.radiologyinsights.RadiologyInsightsClient.begin_infer_radiology_insights": "ClientForAzureHealthInsights.RadiologyInsightsClient.inferRadiologyInsights",
         "azure.healthinsights.radiologyinsights.aio.RadiologyInsightsClient.begin_infer_radiology_insights": "ClientForAzureHealthInsights.RadiologyInsightsClient.inferRadiologyInsights",
-        "azure.healthinsights.radiologyinsights.RadiologyInsightsClient.begin_infer_from_custom_model_id": "ClientForAzureHealthInsights.RadiologyInsightsClient.inferFromCustomModelId",
-        "azure.healthinsights.radiologyinsights.aio.RadiologyInsightsClient.begin_infer_from_custom_model_id": "ClientForAzureHealthInsights.RadiologyInsightsClient.inferFromCustomModelId"
+        "azure.healthinsights.radiologyinsights.RadiologyInsightsClient.begin_custom_inference": "ClientForAzureHealthInsights.RadiologyInsightsClient.inferFromCustomModelId",
+        "azure.healthinsights.radiologyinsights.aio.RadiologyInsightsClient.begin_custom_inference": "ClientForAzureHealthInsights.RadiologyInsightsClient.inferFromCustomModelId"
     }
 }

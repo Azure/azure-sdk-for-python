@@ -2671,23 +2671,23 @@ class RadiologyCodeWithTypes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RadiologyInsightsCustomInferenceResponse(_Model):
+class RadiologyInsightsCustomInferenceResult(_Model):
     """The inference results for the Radiology Insights request. If field 'status' has value
     'succeeded', then field 'result' will contain an instance of RadiologyInsightsInferenceResult.
 
     :ivar patient_results: Results for the patients given in the request. Required.
     :vartype patient_results:
      list[~azure.healthinsights.radiologyinsights.models.RadiologyInsightsPatientResult]
-    :ivar id: Models to be used for inference. If this is not specified, the model will use the
-     default model for inference. Required.
-    :vartype id: list[str]
+    :ivar custom_inference_ids: Models to be used for inference. If this is not specified, the
+     model will use the default model for inference. Required.
+    :vartype custom_inference_ids: list[str]
     """
 
     patient_results: List["_models.RadiologyInsightsPatientResult"] = rest_field(
         name="patientResults", visibility=["read", "create", "update", "delete", "query"]
     )
     """Results for the patients given in the request. Required."""
-    id: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    custom_inference_ids: List[str] = rest_field(name="id", visibility=["read", "create", "update", "delete", "query"])
     """Models to be used for inference. If this is not specified, the model will use the default model
      for inference. Required."""
 
@@ -2696,7 +2696,7 @@ class RadiologyInsightsCustomInferenceResponse(_Model):
         self,
         *,
         patient_results: List["_models.RadiologyInsightsPatientResult"],
-        id: List[str],  # pylint: disable=redefined-builtin
+        custom_inference_ids: List[str],
     ) -> None: ...
 
     @overload
