@@ -67,3 +67,26 @@ def _update_requests_map(type_name, value):
             else:
                 _REQUESTS_MAP[type_name] = {}
             _REQUESTS_MAP[type_name][value] = prev + 1
+
+def categorize_status_code(status_code: int) -> str:
+    status_map = {
+        400: "bad_request",
+        401: "unauthorized",
+        402: "daily quota exceeded",
+        403: "forbidden",
+        404: "not_found",
+        408: "request_timeout",
+        413: "payload_too_large",
+        429: "too_many_requests",
+        500: "internal_server_error",
+        502: "bad_gateway",
+        503: "service_unavailable",
+        504: "gateway_timeout",
+    }
+    if status_code in status_map:
+        return status_map[status_code]
+    if 400 <= status_code < 500:
+        return "client_error_4xx"
+    if 500 <= status_code < 600:
+        return "server_error_5xx"
+    return f"status_{status_code}"

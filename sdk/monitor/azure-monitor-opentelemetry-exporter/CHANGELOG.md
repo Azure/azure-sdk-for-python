@@ -10,6 +10,8 @@
   ([#41669](https://github.com/Azure/azure-sdk-for-python/pull/41669))
 - Added RateLimited Sampler 
   ([#41954](https://github.com/Azure/azure-sdk-for-python/pull/41954))
+- Customer Facing Statsbeat: Added logic for dropped item count
+  ([#41950](https://github.com/Azure/azure-sdk-for-python/pull/41950))
 
 ### Breaking Changes
 
