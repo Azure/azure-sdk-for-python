@@ -39,6 +39,7 @@ To report an issue with the client library, or request additional features, plea
     - [Fabric data](#create-an-agent-with-fabric)
     - [Connected agents](#create-an-agent-using-another-agents)
     - [Deep Research](#create-agent-with-deep-research)
+    - [MCP](#create-agent-with-mcp)
   - [Create thread](#create-thread) with
     - [Tool resource](#create-thread-with-tool-resource)
   - [Create message](#create-message) with:
@@ -374,7 +375,7 @@ with project_client:
 
 ### Create Agent with Deep Research
 
-To enable your Agent to do a detailed research of a topic, use the `DeepResearchTool` along with a connection to a Bing Grounding resource.
+To enable your Agent to do detailed research of a topic, use the `DeepResearchTool` along with a connection to a Bing Grounding resource.
 This scenarios requires you to specify two model deployments. One is the generic chat model that does arbitration, and is
 specified as usual when you call the `create_agent` method. The other is the Deep Research model, which is specified
 when you define the `DeepResearchTool`.
@@ -412,6 +413,92 @@ with project_client:
 
 > **Limitation**: The Deep Research tool is currently recommended **only** in non-streaming scenarios.
 > Using it with streaming can work, but it may occasionally time-out and is therefore not yet recommended.
+
+### Create Agent with MCP
+
+To enable your Agent to connect to a MCP server, use the `McpTool` along with a server URI to a MCP server and a label for that server.
+Note that approval to send data to that server is required by default (but can be set to not required for each run).
+
+Here is an example:
+
+<!-- SNIPPET:sample_agents_mcp.create_agent_with_mcp_tool -->
+
+```python
+# Initialize agent MCP tool
+mcp_tool = McpTool(
+    server_label=mcp_server_label,
+    server_url=mcp_server_url,
+    allowed_tools=[],  # Optional: specify allowed tools
+)
+
+# You can also add or remove allowed tools dynamically
+search_api_code = "search_azure_rest_api_code"
+mcp_tool.allow_tool(search_api_code)
+print(f"Allowed tools: {mcp_tool.allowed_tools}")
+
+# Create agent with MCP tool and process agent run
+with project_client:
+    agents_client = project_client.agents
+
+    # Create a new agent.
+    # NOTE: To reuse existing agent, fetch it with get_agent(agent_id)
+    agent = agents_client.create_agent(
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
+        name="my-mcp-agent",
+        instructions="You are a helpful agent that can use MCP tools to assist users. Use the available MCP tools to answer questions and perform tasks.",
+        tools=mcp_tool.definitions,
+    )
+```
+
+<!-- END SNIPPET -->
+
+The tool approval flow looks like this:
+
+<!-- SNIPPET:sample_agents_mcp.handle_tool_approvals -->
+
+```python
+# Create and process agent run in thread with MCP tools
+mcp_tool.update_headers("SuperSecret", "123456")
+# mcp_tool.set_approval_mode("never")  # Uncomment to disable approval requirement
+run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id, tool_resources=mcp_tool.resources)
+print(f"Created run, ID: {run.id}")
+
+while run.status in ["queued", "in_progress", "requires_action"]:
+    time.sleep(1)
+    run = agents_client.runs.get(thread_id=thread.id, run_id=run.id)
+
+    if run.status == "requires_action" and isinstance(run.required_action, SubmitToolApprovalAction):
+        tool_calls = run.required_action.submit_tool_approval.tool_calls
+        if not tool_calls:
+            print("No tool calls provided - cancelling run")
+            agents_client.runs.cancel(thread_id=thread.id, run_id=run.id)
+            break
+
+        tool_approvals = []
+        for tool_call in tool_calls:
+            if isinstance(tool_call, RequiredMcpToolCall):
+                try:
+                    print(f"Approving tool call: {tool_call}")
+                    tool_approvals.append(
+                        ToolApproval(
+                            tool_call_id=tool_call.id,
+                            approve=True,
+                            headers=mcp_tool.headers,
+                        )
+                    )
+                except Exception as e:
+                    print(f"Error approving tool_call {tool_call.id}: {e}")
+
+        print(f"tool_approvals: {tool_approvals}")
+        if tool_approvals:
+            agents_client.runs.submit_tool_outputs(
+                thread_id=thread.id, run_id=run.id, tool_approvals=tool_approvals
+            )
+
+    print(f"Current run status: {run.status}")
+```
+
+<!-- END SNIPPET -->
 
 ### Create Agent with Azure AI Search
 

@@ -40,7 +40,7 @@ project_client = AIProjectClient(
     credential=DefaultAzureCredential(),
 )
 
-# [START create_agent_with_mcp]
+# [START create_agent_with_mcp_tool]
 # Initialize agent MCP tool
 mcp_tool = McpTool(
     server_label=mcp_server_label,
@@ -65,7 +65,7 @@ with project_client:
         instructions="You are a helpful agent that can use MCP tools to assist users. Use the available MCP tools to answer questions and perform tasks.",
         tools=mcp_tool.definitions,
     )
-    # [END create_agent_with_mcp]
+    # [END create_agent_with_mcp_tool]
 
     print(f"Created agent, ID: {agent.id}")
     print(f"MCP Server: {mcp_tool.server_label} at {mcp_tool.server_url}")
@@ -82,6 +82,7 @@ with project_client:
     )
     print(f"Created message, ID: {message.id}")
 
+    # [START handle_tool_approvals]
     # Create and process agent run in thread with MCP tools
     mcp_tool.update_headers("SuperSecret", "123456")
     # mcp_tool.set_approval_mode("never")  # Uncomment to disable approval requirement
@@ -121,6 +122,7 @@ with project_client:
                 )
 
         print(f"Current run status: {run.status}")
+        # [END handle_tool_approvals]
 
     print(f"Run completed with status: {run.status}")
     if run.status == "failed":
