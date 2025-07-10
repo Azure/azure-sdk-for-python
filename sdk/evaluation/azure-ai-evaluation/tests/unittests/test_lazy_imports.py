@@ -35,7 +35,7 @@ class TestLazyImports(unittest.TestCase):
                         return cls
                     except ImportError:
                         raise ImportError(
-                            f"[INFO] Could not import {class_name}. Please install the dependency with `pip install {dependency_name}`."
+                            f"Could not import {class_name}. Please install the dependency with `pip install {dependency_name}`."
                         )
                 return lazy_import
 
@@ -65,7 +65,7 @@ class TestLazyImports(unittest.TestCase):
                     return cls
                 except ImportError:
                     raise ImportError(
-                        f"[INFO] Could not import {class_name}. Please install the dependency with `pip install {dependency_name}`."
+                        f"Could not import {class_name}. Please install the dependency with `pip install {dependency_name}`."
                     )
             return lazy_import
 

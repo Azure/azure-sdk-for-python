@@ -75,7 +75,7 @@ def _create_lazy_import(class_name, module_path, dependency_name):
             return cls
         except ImportError:
             raise ImportError(
-                f"[INFO] Could not import {class_name}. Please install the dependency with `pip install {dependency_name}`."
+                f"Could not import {class_name}. Please install the dependency with `pip install {dependency_name}`."
             )
     return lazy_import
 

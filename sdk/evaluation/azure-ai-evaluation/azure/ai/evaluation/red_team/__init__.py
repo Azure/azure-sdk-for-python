@@ -9,7 +9,7 @@ try:
     from ._red_team_result import RedTeamResult
 except ImportError:
     print(
-        "[INFO] Could not import Pyrit. Please install the dependency with `pip install azure-ai-evaluation[redteam]`."
+        "Could not import Pyrit. Please install the dependency with `pip install azure-ai-evaluation[redteam]`."
     )
 
 
