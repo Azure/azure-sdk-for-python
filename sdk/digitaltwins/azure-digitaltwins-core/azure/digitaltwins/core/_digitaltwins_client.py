@@ -134,8 +134,8 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
             kwargs['headers'] = kwargs.get('headers', {})
             kwargs['headers']['If-Match'] = if_match
         return self._client.digital_twins.update(
-            digital_twin_id,
-            json_patch,
+            id=digital_twin_id,
+            patch_document=json_patch,
             error_map=error_map,
             **kwargs
         )
@@ -221,8 +221,8 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
             kwargs['headers'] = kwargs.get('headers', {})
             kwargs['headers']['If-Match'] = if_match
         return self._client.digital_twins.update_component(
-            digital_twin_id,
-            component_name,
+            id=digital_twin_id,
+            component_path=component_name,
             patch_document=json_patch,
             error_map=error_map,
             **kwargs
@@ -360,14 +360,14 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
 
     @distributed_trace
     def list_relationships(self, digital_twin_id, relationship_id=None, **kwargs):
-        # type: (str, Optional[str], **Any) -> azure.core.paging.ItemPaged[Dict[str, object]]
+        # type: (str, Optional[str], **Any) -> ItemPaged[MutableMapping[str, Any]]
         """Retrieve relationships for a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
         :param str relationship_id: The ID of the relationship to
             get (if None all the relationship will be retrieved).
         :return: An iterator instance of list of relationships
-        :rtype: ~azure.core.paging.ItemPaged[Dict[str,object]]
+        :rtype: ItemPaged[MutableMapping[str, Any]]
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is no
             digital twin with the provided ID.
@@ -397,14 +397,14 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
 
     @distributed_trace
     def publish_telemetry(self, digital_twin_id, telemetry, **kwargs):
-        # type: (str, object, **Any) -> None
+        # type: (str, MutableMapping[str, Any], **Any) -> None
         """Publish telemetry from a digital twin. The result is then
         consumed by one or many destination endpoints (subscribers) defined under
         DigitalTwinsEventRoute. These event routes need to be set before publishing
         a telemetry message, in order for the telemetry message to be consumed.
 
         :param str digital_twin_id: The ID of the digital twin
-        :param object telemetry: The telemetry data to be sent
+        :param MutableMapping[str, Any] telemetry: The telemetry data to be sent
         :keyword str message_id: The message ID. If not specified, a UUID will be generated.
         :return: None
         :rtype: None
@@ -415,7 +415,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         message_id = kwargs.pop('message_id', None) or str(uuid.uuid4())
         timestamp = Serializer.serialize_iso(datetime.utcnow())
         return self._client.digital_twins.send_telemetry(
-            digital_twin_id,
+            id=digital_twin_id,
             message_id=message_id,
             telemetry=telemetry,
             telemetry_source_time=timestamp,
@@ -430,7 +430,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         telemetry,
         **kwargs
     ):
-        # type: (str, str, object, **Any) -> None
+        # type: (str, str, MutableMapping[str, Any], **Any) -> None
         """Publish telemetry from a digital twin. The result is then
         consumed by one or many destination endpoints (subscribers) defined under
         DigitalTwinsEventRoute. These event routes need to be set before publishing
@@ -438,7 +438,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
 
         :param str digital_twin_id: The ID of the digital twin.
         :param str component_name: The name of the DTDL component.
-        :param object telemetry: The telemetry data to be sent.
+        :param MutableMapping[str, Any] telemetry: The telemetry data to be sent.
         :keyword str message_id: The message ID. If not specified, a UUID will be generated.
         :return: None
         :rtype: None
@@ -449,8 +449,8 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         message_id = kwargs.pop('message_id', None) or str(uuid.uuid4())
         timestamp = Serializer.serialize_iso(datetime.utcnow())
         return self._client.digital_twins.send_component_telemetry(
-            digital_twin_id,
-            component_name,
+            id=digital_twin_id,
+            component_name=component_name,
             message_id=message_id,
             telemetry=telemetry,
             telemetry_source_time=timestamp,
@@ -507,19 +507,19 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
 
     @distributed_trace
     def create_models(self, dtdl_models, **kwargs):
-        # type: (Sequence[MutableMapping[str, Any]], **Any) -> List[DigitalTwinsModelData]
+        # type: (Sequence[MutableMapping[str, Any]], **Any) -> Sequence[MutableMapping[str, Any]]
         """Create one or more models. When any error occurs, no models are uploaded.
 
-        :param Sequence[MutableMapping[str, Any]] model_list: The set of models to create.
+        :param Sequence[MutableMapping[str, Any]] dtdl_models: The set of models to create.
             Each dict corresponds to exactly one model.
         :return: The list of created models.
-        :rtype: List[~azure.digitaltwins.core.DigitalTwinsModelData]
+        :rtype: Sequence[MutableMapping[str, Any]]
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceExistsError: One or more of
             the provided models already exist.
         """
         return self._client.digital_twin_models.add(
-            dtdl_models,
+            models=dtdl_models,
             **kwargs
         )
 

@@ -35,7 +35,7 @@ def prep_if_none_match(etag: str, match_condition: MatchConditions) -> tuple[Opt
             raise ValueError("The 'IfModified' match condition must be paired with an etag.")
         return etag, error_map
     if match_condition == MatchConditions.IfMissing:
-        error_map = {412: ResourceExistsError}
+        error_map[412] = ResourceExistsError
         if etag:
             raise ValueError("An etag value cannot be paired with the 'IfMissing' match condition.")
         return "*", error_map
