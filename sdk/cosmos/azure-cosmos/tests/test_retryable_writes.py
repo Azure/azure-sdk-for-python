@@ -8,7 +8,7 @@ from azure.cosmos import CosmosClient, exceptions, documents, _retry_utility
 from azure.cosmos.partition_key import PartitionKey
 import test_config  # Import test_config for configuration details
 
-pytest.mark.cosmosEmulator
+@pytest.mark.cosmosEmulator
 class TestRetryableWrites(unittest.TestCase):
     url = test_config.TestConfig.host
     key = test_config.TestConfig.masterKey

@@ -9,7 +9,7 @@ from azure.cosmos import exceptions, documents
 from azure.cosmos.partition_key import PartitionKey
 import test_config  # Import test_config for configuration details
 
-pytest.mark.cosmosEmulator
+@pytest.mark.cosmosEmulator
 class TestRetryableWritesAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
