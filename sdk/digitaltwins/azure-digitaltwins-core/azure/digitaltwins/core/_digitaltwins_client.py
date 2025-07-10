@@ -63,6 +63,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
 
         return dict(result)
 
+    # pylint: disable=docstring-keyword-should-match-keyword-only
     @distributed_trace
     def upsert_digital_twin(
         self,
@@ -99,6 +100,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
 
         return dict(result) if result else {}
 
+    # pylint: disable=docstring-keyword-should-match-keyword-only
     @distributed_trace
     def update_digital_twin(self, digital_twin_id: str, json_patch: List[Dict[str, object]], **kwargs: Any) -> None:
         """Update a digital twin using a JSON patch.
@@ -135,6 +137,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
             **kwargs
         )
 
+    # pylint: disable=docstring-keyword-should-match-keyword-only
     @distributed_trace
     def delete_digital_twin(self, digital_twin_id: str, **kwargs: Any) -> None:
         """Delete a digital twin.

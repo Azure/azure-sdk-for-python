@@ -79,6 +79,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
 
         return dict(result)
 
+    # pylint: disable=docstring-keyword-should-match-keyword-only
     @distributed_trace_async
     async def upsert_digital_twin(
         self,
@@ -116,6 +117,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
 
         return dict(result) if result else {}
 
+    # pylint: disable=docstring-keyword-should-match-keyword-only
     @distributed_trace_async
     async def update_digital_twin(
         self,
@@ -157,6 +159,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
             **kwargs
         )
 
+    # pylint: disable=docstring-keyword-should-match-keyword-only
     @distributed_trace_async
     async def delete_digital_twin(
         self,
@@ -208,6 +211,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
 
         return dict(result)
 
+    # pylint: disable=docstring-keyword-should-match-keyword-only
     @distributed_trace_async
     async def update_component(
         self,
