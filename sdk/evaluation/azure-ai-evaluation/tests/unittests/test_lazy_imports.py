@@ -74,30 +74,17 @@ class TestLazyImports(unittest.TestCase):
         def mock_getattr(name):
             """Mock __getattr__ function like the one in __init__.py"""
             if name in _lazy_imports:
-                try:
-                    return _lazy_imports[name]()
-                except ImportError as e:
-                    import sys
-                    print(str(e), file=sys.stderr)
-                    raise AttributeError(f"module has no attribute '{name}'") from e
+                return _lazy_imports[name]()
             raise AttributeError(f"module has no attribute '{name}'")
 
-        # Capture stderr to check the message
-        captured_stderr = StringIO()
-        original_stderr = sys.stderr
-        sys.stderr = captured_stderr
+        # This should raise ImportError directly
+        with self.assertRaises(ImportError) as cm:
+            mock_getattr("AIAgentConverter")
 
-        try:
-            # This should print the message and raise AttributeError
-            with self.assertRaises(AttributeError):
-                mock_getattr("AIAgentConverter")
-
-            stderr_output = captured_stderr.getvalue()
-            self.assertIn("Could not import AIAgentConverter", stderr_output)
-            self.assertIn("pip install azure-ai-projects", stderr_output)
-
-        finally:
-            sys.stderr = original_stderr
+        # Check that the ImportError message contains the expected information
+        error_message = str(cm.exception)
+        self.assertIn("Could not import AIAgentConverter", error_message)
+        self.assertIn("pip install azure-ai-projects", error_message)
 
     def test_getattr_with_non_existent_attribute(self):
         """Test __getattr__ behavior with non-existent attributes."""
@@ -106,12 +93,7 @@ class TestLazyImports(unittest.TestCase):
         def mock_getattr(name):
             """Mock __getattr__ function like the one in __init__.py"""
             if name in _lazy_imports:
-                try:
-                    return _lazy_imports[name]()
-                except ImportError as e:
-                    import sys
-                    print(str(e), file=sys.stderr)
-                    raise AttributeError(f"module has no attribute '{name}'") from e
+                return _lazy_imports[name]()
             raise AttributeError(f"module has no attribute '{name}'")
 
         # Test with a non-existent attribute

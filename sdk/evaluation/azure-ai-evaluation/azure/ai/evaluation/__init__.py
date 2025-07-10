@@ -134,12 +134,5 @@ __all__.extend([p for p in _patch_all if p not in __all__])
 def __getattr__(name):
     """Handle lazy imports for optional dependencies."""
     if name in _lazy_imports:
-        try:
-            return _lazy_imports[name]()
-        except ImportError as e:
-            # Convert ImportError to a more user-friendly message  
-            # The message is already formatted in the lazy import functions
-            import sys
-            print(str(e), file=sys.stderr)
-            raise AttributeError(f"module '{__name__}' has no attribute '{name}'") from e
+        return _lazy_imports[name]()
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
