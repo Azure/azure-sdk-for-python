@@ -1,5 +1,4 @@
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,12 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -21,7 +19,7 @@ class CommunicationError(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: The error code. Required.
     :vartype code: str
@@ -61,15 +59,15 @@ class CommunicationError(_serialization.Model):
         super().__init__(**kwargs)
         self.code = code
         self.message = message
-        self.target = None
-        self.details = None
-        self.inner_error = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.CommunicationError"]] = None
+        self.inner_error: Optional["_models.CommunicationError"] = None
 
 
 class CommunicationErrorResponse(_serialization.Model):
     """The Communication Services error.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar error: The Communication Services error. Required.
     :vartype error: ~azure.communication.phonenumbers.siprouting.models.CommunicationError
@@ -92,13 +90,140 @@ class CommunicationErrorResponse(_serialization.Model):
         self.error = error
 
 
+class DomainPatch(_serialization.Model):
+    """Represents Domain that will be used.
+    Map key is domain.
+
+    :ivar enabled: Enabled flag.
+    :vartype enabled: bool
+    """
+
+    _attribute_map = {
+        "enabled": {"key": "enabled", "type": "bool"},
+    }
+
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword enabled: Enabled flag.
+        :paramtype enabled: bool
+        """
+        super().__init__(**kwargs)
+        self.enabled = enabled
+
+
+class OverallHealth(_serialization.Model):
+    """The overall health status of Trunk.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar status: The overall health status of Trunk. Required. Known values are: "unknown",
+     "active", and "inactive".
+    :vartype status: str or ~azure.communication.phonenumbers.siprouting.models.OverallHealthStatus
+    :ivar reason: The reason overall status of Trunk is inactive. Known values are:
+     "noRecentCalls", "noRecentPings", and "noRecentCallsAndPings".
+    :vartype reason: str or ~azure.communication.phonenumbers.siprouting.models.HealthStatusReason
+    """
+
+    _validation = {
+        "status": {"required": True},
+    }
+
+    _attribute_map = {
+        "status": {"key": "status", "type": "str"},
+        "reason": {"key": "reason", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: Union[str, "_models.OverallHealthStatus"],
+        reason: Optional[Union[str, "_models.HealthStatusReason"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword status: The overall health status of Trunk. Required. Known values are: "unknown",
+         "active", and "inactive".
+        :paramtype status: str or
+         ~azure.communication.phonenumbers.siprouting.models.OverallHealthStatus
+        :keyword reason: The reason overall status of Trunk is inactive. Known values are:
+         "noRecentCalls", "noRecentPings", and "noRecentCallsAndPings".
+        :paramtype reason: str or
+         ~azure.communication.phonenumbers.siprouting.models.HealthStatusReason
+        """
+        super().__init__(**kwargs)
+        self.status = status
+        self.reason = reason
+
+
+class PingHealth(_serialization.Model):
+    """The status of SIP OPTIONS message sent by Trunk.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar status: The status of SIP OPTIONS message sent by Trunk. Required. Known values are:
+     "unknown", "ok", "expired", and "error".
+    :vartype status: str or ~azure.communication.phonenumbers.siprouting.models.PingStatus
+    """
+
+    _validation = {
+        "status": {"required": True},
+    }
+
+    _attribute_map = {
+        "status": {"key": "status", "type": "str"},
+    }
+
+    def __init__(self, *, status: Union[str, "_models.PingStatus"], **kwargs: Any) -> None:
+        """
+        :keyword status: The status of SIP OPTIONS message sent by Trunk. Required. Known values are:
+         "unknown", "ok", "expired", and "error".
+        :paramtype status: str or ~azure.communication.phonenumbers.siprouting.models.PingStatus
+        """
+        super().__init__(**kwargs)
+        self.status = status
+
+
+class RoutesForNumber(_serialization.Model):
+    """Represents number routing validation details.
+
+    :ivar matching_routes: The list of routes whose number patterns are matched by the target
+     number. The routes are displayed and apply in the same order as in SipConfiguration.
+    :vartype matching_routes:
+     list[~azure.communication.phonenumbers.siprouting.models.SipTrunkRouteInternal]
+    """
+
+    _validation = {
+        "matching_routes": {"max_items": 250, "min_items": 0},
+    }
+
+    _attribute_map = {
+        "matching_routes": {"key": "matchingRoutes", "type": "[SipTrunkRouteInternal]"},
+    }
+
+    def __init__(
+        self, *, matching_routes: Optional[List["_models.SipTrunkRouteInternal"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword matching_routes: The list of routes whose number patterns are matched by the target
+         number. The routes are displayed and apply in the same order as in SipConfiguration.
+        :paramtype matching_routes:
+         list[~azure.communication.phonenumbers.siprouting.models.SipTrunkRouteInternal]
+        """
+        super().__init__(**kwargs)
+        self.matching_routes = matching_routes
+
+
 class SipConfiguration(_serialization.Model):
     """Represents a SIP configuration.
     When a call is being routed the routes are applied in the same order as in the routes list.
     A route is matched by its number pattern.
     Call is then directed into route's first available trunk, based on the order in the route's
-    trunks list.
+    trunks list. The configuration can be expanded with additional data.
 
+    :ivar domains: Validated Domains.
+     Map key is domain.
+    :vartype domains: dict[str,
+     ~azure.communication.phonenumbers.siprouting.models.SipDomainInternal]
     :ivar trunks: SIP trunks for routing calls.
      Map key is trunk's FQDN (1-249 characters).
     :vartype trunks: dict[str,
@@ -113,6 +238,7 @@ class SipConfiguration(_serialization.Model):
     }
 
     _attribute_map = {
+        "domains": {"key": "domains", "type": "{SipDomainInternal}"},
         "trunks": {"key": "trunks", "type": "{SipTrunkInternal}"},
         "routes": {"key": "routes", "type": "[SipTrunkRouteInternal]"},
     }
@@ -120,11 +246,16 @@ class SipConfiguration(_serialization.Model):
     def __init__(
         self,
         *,
+        domains: Optional[Dict[str, "_models.SipDomainInternal"]] = None,
         trunks: Optional[Dict[str, "_models.SipTrunkInternal"]] = None,
         routes: Optional[List["_models.SipTrunkRouteInternal"]] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword domains: Validated Domains.
+         Map key is domain.
+        :paramtype domains: dict[str,
+         ~azure.communication.phonenumbers.siprouting.models.SipDomainInternal]
         :keyword trunks: SIP trunks for routing calls.
          Map key is trunk's FQDN (1-249 characters).
         :paramtype trunks: dict[str,
@@ -134,40 +265,118 @@ class SipConfiguration(_serialization.Model):
          list[~azure.communication.phonenumbers.siprouting.models.SipTrunkRouteInternal]
         """
         super().__init__(**kwargs)
+        self.domains = domains
         self.trunks = trunks
         self.routes = routes
 
 
-class SipTrunkInternal(_serialization.Model):
-    """Represents a SIP trunk for routing calls. See RFC 4904.
+class SipDomainInternal(_serialization.Model):
+    """Represents Domain object as response of validation api.
+    Map key is domain.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
+
+    :ivar enabled: Enabled flag. Required.
+    :vartype enabled: bool
+    """
+
+    _validation = {
+        "enabled": {"required": True},
+    }
+
+    _attribute_map = {
+        "enabled": {"key": "enabled", "type": "bool"},
+    }
+
+    def __init__(self, *, enabled: bool, **kwargs: Any) -> None:
+        """
+        :keyword enabled: Enabled flag. Required.
+        :paramtype enabled: bool
+        """
+        super().__init__(**kwargs)
+        self.enabled = enabled
+
+
+class SipTrunkInternal(_serialization.Model):
+    """Represents a SIP trunk for routing calls. See RFC 4904. Can be expanded with additional data.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
 
     :ivar sip_signaling_port: Gets or sets SIP signaling port of the trunk. Required.
     :vartype sip_signaling_port: int
+    :ivar enabled: Enabled flag.
+    :vartype enabled: bool
+    :ivar health: Represents health state of a SIP trunk for routing calls.
+    :vartype health: ~azure.communication.phonenumbers.siprouting.models.TrunkHealth
+    :ivar direct_transfer: When enabled, removes Azure Communication Services from the signaling
+     path on call transfer and sets the SIP Refer-To header to the trunk's FQDN. By default false.
+    :vartype direct_transfer: bool
+    :ivar privacy_header: SIP Privacy header. Default value is id. Known values are: "id" and
+     "none".
+    :vartype privacy_header: str or
+     ~azure.communication.phonenumbers.siprouting.models.PrivacyHeader
+    :ivar ip_address_version: IP address version used by the trunk. Default value is ipv4. Known
+     values are: "ipv4" and "ipv6".
+    :vartype ip_address_version: str or
+     ~azure.communication.phonenumbers.siprouting.models.IpAddressVersion
     """
 
     _validation = {
         "sip_signaling_port": {"required": True},
+        "health": {"readonly": True},
     }
 
     _attribute_map = {
         "sip_signaling_port": {"key": "sipSignalingPort", "type": "int"},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "health": {"key": "health", "type": "TrunkHealth"},
+        "direct_transfer": {"key": "directTransfer", "type": "bool"},
+        "privacy_header": {"key": "privacyHeader", "type": "str"},
+        "ip_address_version": {"key": "ipAddressVersion", "type": "str"},
     }
 
-    def __init__(self, *, sip_signaling_port: int, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        sip_signaling_port: int,
+        enabled: Optional[bool] = None,
+        direct_transfer: Optional[bool] = None,
+        privacy_header: Optional[Union[str, "_models.PrivacyHeader"]] = None,
+        ip_address_version: Optional[Union[str, "_models.IpAddressVersion"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sip_signaling_port: Gets or sets SIP signaling port of the trunk. Required.
         :paramtype sip_signaling_port: int
+        :keyword enabled: Enabled flag.
+        :paramtype enabled: bool
+        :keyword direct_transfer: When enabled, removes Azure Communication Services from the signaling
+         path on call transfer and sets the SIP Refer-To header to the trunk's FQDN. By default false.
+        :paramtype direct_transfer: bool
+        :keyword privacy_header: SIP Privacy header. Default value is id. Known values are: "id" and
+         "none".
+        :paramtype privacy_header: str or
+         ~azure.communication.phonenumbers.siprouting.models.PrivacyHeader
+        :keyword ip_address_version: IP address version used by the trunk. Default value is ipv4. Known
+         values are: "ipv4" and "ipv6".
+        :paramtype ip_address_version: str or
+         ~azure.communication.phonenumbers.siprouting.models.IpAddressVersion
         """
         super().__init__(**kwargs)
         self.sip_signaling_port = sip_signaling_port
+        self.enabled = enabled
+        self.health: Optional["_models.TrunkHealth"] = None
+        self.direct_transfer = direct_transfer
+        self.privacy_header = privacy_header
+        self.ip_address_version = ip_address_version
 
 
 class SipTrunkRouteInternal(_serialization.Model):
     """Represents a trunk route for routing calls.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar description: Gets or sets description of the route.
     :vartype description: str
@@ -181,6 +390,9 @@ class SipTrunkRouteInternal(_serialization.Model):
     :ivar trunks: Gets or sets list of SIP trunks for routing calls. Trunks are represented as
      FQDN.
     :vartype trunks: list[str]
+    :ivar caller_id_override: Gets or sets caller ID override. This value will override caller ID
+     of outgoing call specified at runtime.
+    :vartype caller_id_override: str
     """
 
     _validation = {
@@ -195,6 +407,7 @@ class SipTrunkRouteInternal(_serialization.Model):
         "name": {"key": "name", "type": "str"},
         "number_pattern": {"key": "numberPattern", "type": "str"},
         "trunks": {"key": "trunks", "type": "[str]"},
+        "caller_id_override": {"key": "callerIdOverride", "type": "str"},
     }
 
     def __init__(
@@ -204,6 +417,7 @@ class SipTrunkRouteInternal(_serialization.Model):
         number_pattern: str,
         description: Optional[str] = None,
         trunks: Optional[List[str]] = None,
+        caller_id_override: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -219,9 +433,83 @@ class SipTrunkRouteInternal(_serialization.Model):
         :keyword trunks: Gets or sets list of SIP trunks for routing calls. Trunks are represented as
          FQDN.
         :paramtype trunks: list[str]
+        :keyword caller_id_override: Gets or sets caller ID override. This value will override caller
+         ID of outgoing call specified at runtime.
+        :paramtype caller_id_override: str
         """
         super().__init__(**kwargs)
         self.description = description
         self.name = name
         self.number_pattern = number_pattern
         self.trunks = trunks
+        self.caller_id_override = caller_id_override
+
+
+class TlsHealth(_serialization.Model):
+    """The status of the TLS connections of the Trunk.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar status: The status of the TLS connections of the Trunk. Required. Known values are:
+     "unknown", "ok", "certExpiring", and "certExpired".
+    :vartype status: str or ~azure.communication.phonenumbers.siprouting.models.TlsStatus
+    """
+
+    _validation = {
+        "status": {"required": True},
+    }
+
+    _attribute_map = {
+        "status": {"key": "status", "type": "str"},
+    }
+
+    def __init__(self, *, status: Union[str, "_models.TlsStatus"], **kwargs: Any) -> None:
+        """
+        :keyword status: The status of the TLS connections of the Trunk. Required. Known values are:
+         "unknown", "ok", "certExpiring", and "certExpired".
+        :paramtype status: str or ~azure.communication.phonenumbers.siprouting.models.TlsStatus
+        """
+        super().__init__(**kwargs)
+        self.status = status
+
+
+class TrunkHealth(_serialization.Model):
+    """Represents health state of a SIP trunk for routing calls.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar tls: The status of the TLS connections of the Trunk. Required.
+    :vartype tls: ~azure.communication.phonenumbers.siprouting.models.TlsHealth
+    :ivar ping: The status of SIP OPTIONS message sent by Trunk. Required.
+    :vartype ping: ~azure.communication.phonenumbers.siprouting.models.PingHealth
+    :ivar overall: The overall health status of Trunk. Required.
+    :vartype overall: ~azure.communication.phonenumbers.siprouting.models.OverallHealth
+    """
+
+    _validation = {
+        "tls": {"required": True},
+        "ping": {"required": True},
+        "overall": {"required": True},
+    }
+
+    _attribute_map = {
+        "tls": {"key": "tls", "type": "TlsHealth"},
+        "ping": {"key": "ping", "type": "PingHealth"},
+        "overall": {"key": "overall", "type": "OverallHealth"},
+    }
+
+    def __init__(
+        self, *, tls: "_models.TlsHealth", ping: "_models.PingHealth", overall: "_models.OverallHealth", **kwargs: Any
+    ) -> None:
+        """
+        :keyword tls: The status of the TLS connections of the Trunk. Required.
+        :paramtype tls: ~azure.communication.phonenumbers.siprouting.models.TlsHealth
+        :keyword ping: The status of SIP OPTIONS message sent by Trunk. Required.
+        :paramtype ping: ~azure.communication.phonenumbers.siprouting.models.PingHealth
+        :keyword overall: The overall health status of Trunk. Required.
+        :paramtype overall: ~azure.communication.phonenumbers.siprouting.models.OverallHealth
+        """
+        super().__init__(**kwargs)
+        self.tls = tls
+        self.ping = ping
+        self.overall = overall

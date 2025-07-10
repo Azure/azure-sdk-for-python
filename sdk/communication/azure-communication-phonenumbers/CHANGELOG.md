@@ -1,5 +1,10 @@
 # Release History
 
+## 1.4.0b1 (2025-06-27)
+
+### Features Added
+- Added API version `2024-11-15-preview` for SIP routing client
+
 ## 1.3.0 (2025-06-20)
 
 ### Features Added
