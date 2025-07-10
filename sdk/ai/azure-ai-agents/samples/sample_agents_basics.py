@@ -40,6 +40,7 @@ with project_client:
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
         instructions="You are helpful agent",
+        description="This is a sample agent created from the Azure AI Agents SDK",
     )
     # [END create_agent]
     print(f"Created agent, agent ID: {agent.id}")

@@ -24,7 +24,7 @@ USAGE:
 import os, time
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.agents.models import ListSortOrder, AgentsResponseFormat
+from azure.ai.agents.models import ListSortOrder, AgentsResponseFormat, RunStatus
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
@@ -51,17 +51,10 @@ with project_client:
     message = agents_client.messages.create(thread_id=thread.id, role="user", content="Hello, give me a list of planets in our solar system.")
     print(f"Created message, message ID: {message.id}")
 
-    run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
+    run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
 
-    # Poll the run as long as run status is queued or in progress
-    while run.status in ["queued", "in_progress", "requires_action"]:
-        # Wait for a second
-        time.sleep(1)
-        run = agents_client.runs.get(thread_id=thread.id, run_id=run.id)
-        print(f"Run status: {run.status}")
-
-    if run.status == "failed":
-        print(f"Run error: {run.last_error}")
+    if run.status != RunStatus.COMPLETED:
+        print(f"The run did not succeed: {run.status=}.")
 
     agents_client.delete_agent(agent.id)
     print("Deleted agent")
