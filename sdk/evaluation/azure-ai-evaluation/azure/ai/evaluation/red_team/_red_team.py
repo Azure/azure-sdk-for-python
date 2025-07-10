@@ -1275,7 +1275,7 @@ class RedTeam:
                 self.logger.debug(f"Using converter: {converter.__class__.__name__}")
         else:
             self.logger.debug("No converters specified")
-        
+
         # Initialize output path for memory labelling
         base_path = str(uuid.uuid4())
 
