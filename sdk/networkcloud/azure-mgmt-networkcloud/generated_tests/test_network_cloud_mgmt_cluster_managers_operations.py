@@ -22,7 +22,7 @@ class TestNetworkCloudMgmtClusterManagersOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_cluster_managers_list_by_subscription(self, resource_group):
         response = self.client.cluster_managers.list_by_subscription(
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestNetworkCloudMgmtClusterManagersOperations(AzureMgmtRecordedTestCase):
     def test_cluster_managers_list_by_resource_group(self, resource_group):
         response = self.client.cluster_managers.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestNetworkCloudMgmtClusterManagersOperations(AzureMgmtRecordedTestCase):
         response = self.client.cluster_managers.get(
             resource_group_name=resource_group.name,
             cluster_manager_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -65,6 +65,7 @@ class TestNetworkCloudMgmtClusterManagersOperations(AzureMgmtRecordedTestCase):
                 "clusterVersions": [{"supportExpiryDate": "str", "targetClusterVersion": "str"}],
                 "detailedStatus": "str",
                 "detailedStatusMessage": "str",
+                "etag": "str",
                 "id": "str",
                 "identity": {
                     "type": "str",
@@ -88,7 +89,7 @@ class TestNetworkCloudMgmtClusterManagersOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "vmSize": "str",
             },
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -100,7 +101,7 @@ class TestNetworkCloudMgmtClusterManagersOperations(AzureMgmtRecordedTestCase):
         response = self.client.cluster_managers.begin_delete(
             resource_group_name=resource_group.name,
             cluster_manager_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -112,7 +113,7 @@ class TestNetworkCloudMgmtClusterManagersOperations(AzureMgmtRecordedTestCase):
         response = self.client.cluster_managers.update(
             resource_group_name=resource_group.name,
             cluster_manager_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself

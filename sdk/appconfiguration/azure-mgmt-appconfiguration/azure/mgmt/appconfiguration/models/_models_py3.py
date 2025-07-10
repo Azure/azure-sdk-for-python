@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -10,10 +10,9 @@
 import datetime
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -58,12 +57,12 @@ class ApiKey(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.value = None
-        self.connection_string = None
-        self.last_modified = None
-        self.read_only = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.value: Optional[str] = None
+        self.connection_string: Optional[str] = None
+        self.last_modified: Optional[datetime.datetime] = None
+        self.read_only: Optional[bool] = None
 
 
 class ApiKeyListResult(_serialization.Model):
@@ -135,7 +134,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -159,9 +158,9 @@ class Resource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
 
 
 class TrackedResource(Resource):
@@ -173,7 +172,7 @@ class TrackedResource(Resource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -213,7 +212,7 @@ class TrackedResource(Resource):
         self.location = location
 
 
-class ConfigurationStore(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class ConfigurationStore(TrackedResource):
     """The configuration store along with all resource properties. The Configuration Store will have
     all information to begin utilizing it.
 
@@ -222,7 +221,7 @@ class ConfigurationStore(TrackedResource):  # pylint: disable=too-many-instance-
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -260,6 +259,10 @@ class ConfigurationStore(TrackedResource):  # pylint: disable=too-many-instance-
     :ivar soft_delete_retention_in_days: The amount of time in days that the configuration store
      will be retained when it is soft deleted.
     :vartype soft_delete_retention_in_days: int
+    :ivar default_key_value_revision_retention_period_in_seconds: The duration in seconds to retain
+     new key value revisions. Defaults to 604800 (7 days) for Free SKU stores and 2592000 (30 days)
+     for Standard SKU stores and Premium SKU stores.
+    :vartype default_key_value_revision_retention_period_in_seconds: int
     :ivar enable_purge_protection: Property specifying whether protection against purge is enabled
      for this configuration store.
     :vartype enable_purge_protection: bool
@@ -304,6 +307,10 @@ class ConfigurationStore(TrackedResource):  # pylint: disable=too-many-instance-
         "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
         "disable_local_auth": {"key": "properties.disableLocalAuth", "type": "bool"},
         "soft_delete_retention_in_days": {"key": "properties.softDeleteRetentionInDays", "type": "int"},
+        "default_key_value_revision_retention_period_in_seconds": {
+            "key": "properties.defaultKeyValueRevisionRetentionPeriodInSeconds",
+            "type": "int",
+        },
         "enable_purge_protection": {"key": "properties.enablePurgeProtection", "type": "bool"},
         "data_plane_proxy": {"key": "properties.dataPlaneProxy", "type": "DataPlaneProxyProperties"},
         "create_mode": {"key": "properties.createMode", "type": "str"},
@@ -320,6 +327,7 @@ class ConfigurationStore(TrackedResource):  # pylint: disable=too-many-instance-
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         disable_local_auth: bool = False,
         soft_delete_retention_in_days: int = 7,
+        default_key_value_revision_retention_period_in_seconds: Optional[int] = None,
         enable_purge_protection: bool = False,
         data_plane_proxy: Optional["_models.DataPlaneProxyProperties"] = None,
         create_mode: Optional[Union[str, "_models.CreateMode"]] = None,
@@ -345,6 +353,10 @@ class ConfigurationStore(TrackedResource):  # pylint: disable=too-many-instance-
         :keyword soft_delete_retention_in_days: The amount of time in days that the configuration store
          will be retained when it is soft deleted.
         :paramtype soft_delete_retention_in_days: int
+        :keyword default_key_value_revision_retention_period_in_seconds: The duration in seconds to
+         retain new key value revisions. Defaults to 604800 (7 days) for Free SKU stores and 2592000 (30
+         days) for Standard SKU stores and Premium SKU stores.
+        :paramtype default_key_value_revision_retention_period_in_seconds: int
         :keyword enable_purge_protection: Property specifying whether protection against purge is
          enabled for this configuration store.
         :paramtype enable_purge_protection: bool
@@ -358,15 +370,18 @@ class ConfigurationStore(TrackedResource):  # pylint: disable=too-many-instance-
         super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.sku = sku
-        self.system_data = None
-        self.provisioning_state = None
-        self.creation_date = None
-        self.endpoint = None
+        self.system_data: Optional["_models.SystemData"] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.creation_date: Optional[datetime.datetime] = None
+        self.endpoint: Optional[str] = None
         self.encryption = encryption
-        self.private_endpoint_connections = None
+        self.private_endpoint_connections: Optional[List["_models.PrivateEndpointConnectionReference"]] = None
         self.public_network_access = public_network_access
         self.disable_local_auth = disable_local_auth
         self.soft_delete_retention_in_days = soft_delete_retention_in_days
+        self.default_key_value_revision_retention_period_in_seconds = (
+            default_key_value_revision_retention_period_in_seconds
+        )
         self.enable_purge_protection = enable_purge_protection
         self.data_plane_proxy = data_plane_proxy
         self.create_mode = create_mode
@@ -426,6 +441,10 @@ class ConfigurationStoreUpdateParameters(_serialization.Model):
     :ivar data_plane_proxy: Property specifying the configuration of data plane proxy for Azure
      Resource Manager (ARM).
     :vartype data_plane_proxy: ~azure.mgmt.appconfiguration.models.DataPlaneProxyProperties
+    :ivar default_key_value_revision_retention_period_in_seconds: The duration in seconds to retain
+     new key value revisions. Defaults to 604800 (7 days) for Free SKU stores and 2592000 (30 days)
+     for Standard SKU stores and Premium SKU stores.
+    :vartype default_key_value_revision_retention_period_in_seconds: int
     """
 
     _attribute_map = {
@@ -437,6 +456,10 @@ class ConfigurationStoreUpdateParameters(_serialization.Model):
         "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
         "enable_purge_protection": {"key": "properties.enablePurgeProtection", "type": "bool"},
         "data_plane_proxy": {"key": "properties.dataPlaneProxy", "type": "DataPlaneProxyProperties"},
+        "default_key_value_revision_retention_period_in_seconds": {
+            "key": "properties.defaultKeyValueRevisionRetentionPeriodInSeconds",
+            "type": "int",
+        },
     }
 
     def __init__(
@@ -450,6 +473,7 @@ class ConfigurationStoreUpdateParameters(_serialization.Model):
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         enable_purge_protection: Optional[bool] = None,
         data_plane_proxy: Optional["_models.DataPlaneProxyProperties"] = None,
+        default_key_value_revision_retention_period_in_seconds: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -473,6 +497,10 @@ class ConfigurationStoreUpdateParameters(_serialization.Model):
         :keyword data_plane_proxy: Property specifying the configuration of data plane proxy for Azure
          Resource Manager (ARM).
         :paramtype data_plane_proxy: ~azure.mgmt.appconfiguration.models.DataPlaneProxyProperties
+        :keyword default_key_value_revision_retention_period_in_seconds: The duration in seconds to
+         retain new key value revisions. Defaults to 604800 (7 days) for Free SKU stores and 2592000 (30
+         days) for Standard SKU stores and Premium SKU stores.
+        :paramtype default_key_value_revision_retention_period_in_seconds: int
         """
         super().__init__(**kwargs)
         self.identity = identity
@@ -483,6 +511,9 @@ class ConfigurationStoreUpdateParameters(_serialization.Model):
         self.public_network_access = public_network_access
         self.enable_purge_protection = enable_purge_protection
         self.data_plane_proxy = data_plane_proxy
+        self.default_key_value_revision_retention_period_in_seconds = (
+            default_key_value_revision_retention_period_in_seconds
+        )
 
 
 class DataPlaneProxyProperties(_serialization.Model):
@@ -579,15 +610,15 @@ class DeletedConfigurationStore(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.configuration_store_id = None
-        self.location = None
-        self.deletion_date = None
-        self.scheduled_purge_date = None
-        self.tags = None
-        self.purge_protection_enabled = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.configuration_store_id: Optional[str] = None
+        self.location: Optional[str] = None
+        self.deletion_date: Optional[datetime.datetime] = None
+        self.scheduled_purge_date: Optional[datetime.datetime] = None
+        self.tags: Optional[Dict[str, str]] = None
+        self.purge_protection_enabled: Optional[bool] = None
 
 
 class DeletedConfigurationStoreListResult(_serialization.Model):
@@ -666,8 +697,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorDetail(_serialization.Model):
@@ -706,11 +737,11 @@ class ErrorDetail(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorDetails(_serialization.Model):
@@ -741,9 +772,9 @@ class ErrorDetails(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -788,7 +819,7 @@ class ErrorResponseAutoGenerated(_serialization.Model):
         self.error = error
 
 
-class KeyValue(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class KeyValue(_serialization.Model):
     """The key-value resource along with all resource properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -808,8 +839,8 @@ class KeyValue(_serialization.Model):  # pylint: disable=too-many-instance-attri
     :ivar value: The value of the key-value.
     :vartype value: str
     :ivar content_type: The content type of the key-value's value.
-     Providing a proper content-type can enable transformations of values when they are retrieved
-     by applications.
+     Providing a proper content-type can enable transformations of values when they are retrieved by
+     applications.
     :vartype content_type: str
     :ivar e_tag: An ETag indicating the state of a key-value within a configuration store.
     :vartype e_tag: str
@@ -859,24 +890,24 @@ class KeyValue(_serialization.Model):  # pylint: disable=too-many-instance-attri
         :keyword value: The value of the key-value.
         :paramtype value: str
         :keyword content_type: The content type of the key-value's value.
-         Providing a proper content-type can enable transformations of values when they are retrieved
-         by applications.
+         Providing a proper content-type can enable transformations of values when they are retrieved by
+         applications.
         :paramtype content_type: str
         :keyword tags: A dictionary of tags that can help identify what a key-value may be applicable
          for.
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.key = None
-        self.label = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.key: Optional[str] = None
+        self.label: Optional[str] = None
         self.value = value
         self.content_type = content_type
-        self.e_tag = None
-        self.last_modified = None
-        self.locked = None
+        self.e_tag: Optional[str] = None
+        self.last_modified: Optional[datetime.datetime] = None
+        self.locked: Optional[bool] = None
         self.tags = tags
 
 
@@ -1154,9 +1185,9 @@ class NameAvailabilityStatus(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name_available = None
-        self.message = None
-        self.reason = None
+        self.name_available: Optional[bool] = None
+        self.message: Optional[str] = None
+        self.reason: Optional[str] = None
 
 
 class OperationDefinition(_serialization.Model):
@@ -1255,7 +1286,7 @@ class OperationDefinitionDisplay(_serialization.Model):
         :paramtype description: str
         """
         super().__init__(**kwargs)
-        self.provider = None
+        self.provider: Optional[str] = None
         self.resource = resource
         self.operation = operation
         self.description = description
@@ -1392,10 +1423,10 @@ class PrivateEndpointConnection(_serialization.Model):
          ~azure.mgmt.appconfiguration.models.PrivateLinkServiceConnectionState
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.provisioning_state = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
 
@@ -1489,10 +1520,10 @@ class PrivateEndpointConnectionReference(_serialization.Model):
          ~azure.mgmt.appconfiguration.models.PrivateLinkServiceConnectionState
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.provisioning_state = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
 
@@ -1537,12 +1568,12 @@ class PrivateLinkResource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.group_id = None
-        self.required_members = None
-        self.required_zone_names = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.group_id: Optional[str] = None
+        self.required_members: Optional[List[str]] = None
+        self.required_zone_names: Optional[List[str]] = None
 
 
 class PrivateLinkResourceListResult(_serialization.Model):
@@ -1619,7 +1650,7 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
         super().__init__(**kwargs)
         self.status = status
         self.description = description
-        self.actions_required = None
+        self.actions_required: Optional[Union[str, "_models.ActionsRequired"]] = None
 
 
 class RegenerateKeyParameters(_serialization.Model):
@@ -1690,13 +1721,13 @@ class Replica(_serialization.Model):
         :paramtype location: str
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
-        self.system_data = None
-        self.endpoint = None
-        self.provisioning_state = None
+        self.system_data: Optional["_models.SystemData"] = None
+        self.endpoint: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.ReplicaProvisioningState"]] = None
 
 
 class ReplicaListResult(_serialization.Model):
@@ -1739,7 +1770,7 @@ class ResourceIdentity(_serialization.Model):
     :vartype type: str or ~azure.mgmt.appconfiguration.models.IdentityType
     :ivar user_assigned_identities: The list of user-assigned identities associated with the
      resource. The user-assigned identity dictionary keys will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :vartype user_assigned_identities: dict[str, ~azure.mgmt.appconfiguration.models.UserIdentity]
     :ivar principal_id: The principal id of the identity. This property will only be provided for a
      system-assigned identity.
@@ -1776,15 +1807,15 @@ class ResourceIdentity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.appconfiguration.models.IdentityType
         :keyword user_assigned_identities: The list of user-assigned identities associated with the
          resource. The user-assigned identity dictionary keys will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.appconfiguration.models.UserIdentity]
         """
         super().__init__(**kwargs)
         self.type = type
         self.user_assigned_identities = user_assigned_identities
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
 
 
 class ServiceSpecification(_serialization.Model):
@@ -1845,7 +1876,7 @@ class Sku(_serialization.Model):
         self.name = name
 
 
-class Snapshot(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class Snapshot(_serialization.Model):
     """The snapshot resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1946,20 +1977,20 @@ class Snapshot(_serialization.Model):  # pylint: disable=too-many-instance-attri
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.provisioning_state = None
-        self.status = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.status: Optional[Union[str, "_models.SnapshotStatus"]] = None
         self.filters = filters
         self.composition_type = composition_type
-        self.created = None
-        self.expires = None
+        self.created: Optional[datetime.datetime] = None
+        self.expires: Optional[datetime.datetime] = None
         self.retention_period = retention_period
-        self.size = None
-        self.items_count = None
+        self.size: Optional[int] = None
+        self.items_count: Optional[int] = None
         self.tags = tags
-        self.etag = None
+        self.etag: Optional[str] = None
 
 
 class SystemData(_serialization.Model):
@@ -2050,5 +2081,5 @@ class UserIdentity(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None

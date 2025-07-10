@@ -26,7 +26,7 @@ class AuthenticationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Native mongo authentication mode using username and password with auth mechanism
     'SCRAM-SHA-256'."""
     MICROSOFT_ENTRA_ID = "MicrosoftEntraID"
-    """Microsot Entra ID authentication mode using Entra users assigned to the cluster and auth
+    """Microsoft Entra ID authentication mode using Entra users assigned to the cluster and auth
     mechanism 'MONGODB-OIDC'."""
 
 
@@ -77,9 +77,9 @@ class DataApiMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class EntraPrincipalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Microsoft Entra ID principal types available for a Mongo user."""
 
-    USER = "User"
+    USER = "user"
     """Entra user type."""
-    SERVIE_PRINCIPAL = "ServicePrincipal"
+    SERVICE_PRINCIPAL = "servicePrincipal"
     """Entra service principal type."""
 
 

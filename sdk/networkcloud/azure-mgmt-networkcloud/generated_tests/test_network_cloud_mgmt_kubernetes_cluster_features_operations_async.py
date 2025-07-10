@@ -25,7 +25,7 @@ class TestNetworkCloudMgmtKubernetesClusterFeaturesOperationsAsync(AzureMgmtReco
         response = self.client.kubernetes_cluster_features.list_by_kubernetes_cluster(
             resource_group_name=resource_group.name,
             kubernetes_cluster_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestNetworkCloudMgmtKubernetesClusterFeaturesOperationsAsync(AzureMgmtReco
             resource_group_name=resource_group.name,
             kubernetes_cluster_name="str",
             feature_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -57,6 +57,7 @@ class TestNetworkCloudMgmtKubernetesClusterFeaturesOperationsAsync(AzureMgmtReco
                     "availabilityLifecycle": "str",
                     "detailedStatus": "str",
                     "detailedStatusMessage": "str",
+                    "etag": "str",
                     "id": "str",
                     "name": "str",
                     "options": [{"key": "str", "value": "str"}],
@@ -74,7 +75,7 @@ class TestNetworkCloudMgmtKubernetesClusterFeaturesOperationsAsync(AzureMgmtReco
                     "type": "str",
                     "version": "str",
                 },
-                api_version="2024-10-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -89,7 +90,7 @@ class TestNetworkCloudMgmtKubernetesClusterFeaturesOperationsAsync(AzureMgmtReco
                 resource_group_name=resource_group.name,
                 kubernetes_cluster_name="str",
                 feature_name="str",
-                api_version="2024-10-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -104,7 +105,7 @@ class TestNetworkCloudMgmtKubernetesClusterFeaturesOperationsAsync(AzureMgmtReco
                 resource_group_name=resource_group.name,
                 kubernetes_cluster_name="str",
                 feature_name="str",
-                api_version="2024-10-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

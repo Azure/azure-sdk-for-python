@@ -6,7 +6,7 @@ reports=no
 ignore-paths=
     azure\\mixedreality\\remoterendering\\_api_version.py,
     azure/mixedreality/remoterendering/_api_version.py,
-    (?:.*[/\\]|^)projects/(models/_models.py|_model_base.py|operations/_operations.py|aio/operations/_operations.py)$,
+    (?:.*[/\\]|^).*[/\\](projects|agents)[/\\](models/_models.py|_model_base.py|operations/_operations.py|aio/operations/_operations.py)$,
     # Exclude any path that contains the following directory names
     (?:.*[/\\]|^)(?:_vendor|_generated|_restclient|samples|examples|test|tests|doc|\.tox)(?:[/\\]|$)
 

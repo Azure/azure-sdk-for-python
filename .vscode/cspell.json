@@ -11,6 +11,7 @@
     "en-gb"
   ],
   "ignorePaths": [
+    ".devcontainer/**",
     "eng/**",
     ".github/CODEOWNERS",
     "scripts/**",
@@ -1972,7 +1973,27 @@
         "pericholecystic",
         "craniocaudally",
         "angiomyolipomas",
-        "Omnipaque"
+        "Omnipaque",
+        "acrad",
+        "MEDNAX",
+        "BIRADS",
+        "FRAX",
+        "ASCVD",
+        "TYRER",
+        "CUSICK",
+        "AGATSTON",
+        "CEUS",
+        "HNPCC",
+        "KELLGREN",
+        "TONNIS",
+        "Fleischner",
+        "CTCHWO",
+        "hilar",
+        "docid",
+        "encounterid",
+        "authorid",
+        "USTHY",
+        "assesment"
       ]
     },
     {

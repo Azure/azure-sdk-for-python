@@ -10,7 +10,8 @@ from azure.monitor.opentelemetry.exporter._connection_string_parser import Conne
 # pylint: disable=too-many-public-methods
 class TestConnectionStringParser(unittest.TestCase):
     def setUp(self):
-        os.environ.clear()
+        os.environ.pop("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
+        os.environ.pop("APPINSIGHTS_INSTRUMENTATIONKEY", None)
         self._valid_connection_string = "InstrumentationKey=1234abcd-5678-4efa-8abc-1234567890ab"
         self._valid_instrumentation_key = "1234abcd-5678-4efa-8abc-1234567890ab"
 

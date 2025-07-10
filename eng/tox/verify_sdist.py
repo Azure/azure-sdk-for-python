@@ -20,12 +20,15 @@ from verify_whl import cleanup, should_verify_package
 from typing import List, Mapping, Any
 
 from ci_tools.parsing import ParsedSetup
+from ci_tools.functions import verify_package_classifiers
 
 logging.getLogger().setLevel(logging.INFO)
 
 ALLOWED_ROOT_DIRECTORIES = ["azure", "tests", "samples", "examples"]
 
 EXCLUDED_PYTYPE_PACKAGES = ["azure-keyvault", "azure", "azure-common"]
+
+EXCLUDED_CLASSIFICATION_PACKAGES = []
 
 
 def get_root_directories_in_source(package_dir: str) -> List[str]:
@@ -42,7 +45,7 @@ def get_root_directories_in_sdist(dist_dir: str, version: str) -> List[str]:
     """
     # find sdist zip file
     # extract sdist and find list of directories in sdist
-    path_to_zip = glob.glob(os.path.join(dist_dir, "*{}*.tar.gz".format(version)))[0]
+    path_to_zip = glob.glob(os.path.join(dist_dir, "**", "*{}*.tar.gz".format(version)), recursive=True)[0]
     extract_location = os.path.join(dist_dir, "unzipped")
     # Cleanup any files in unzipped
     cleanup(extract_location)
@@ -138,18 +141,34 @@ if __name__ == "__main__":
     pkg_dir = os.path.abspath(args.target_package)
     pkg_details = ParsedSetup.from_path(pkg_dir)
 
+    error_occurred = False
+
     if should_verify_package(pkg_details.name):
-        logging.info("Verifying sdist for package [%s]", pkg_details.name)
+        logging.info(f"Verifying sdist for package {pkg_details.name}")
         if verify_sdist(pkg_dir, args.dist_dir, pkg_details.version):
-            logging.info("Verified sdist for package [%s]", pkg_details.name)
+            logging.info(f"Verified sdist for package {pkg_details.name}")
         else:
-            logging.info("Failed to verify sdist for package [%s]", pkg_details.name)
-            exit(1)
+            logging.error(f"Failed to verify sdist for package {pkg_details.name}")
+            error_occurred = True
 
     if pkg_details.name not in EXCLUDED_PYTYPE_PACKAGES and "-nspkg" not in pkg_details.name and "-mgmt" not in pkg_details.name:
-        logging.info("Verifying presence of py.typed: [%s]", pkg_details.name)
+        logging.info(f"Verifying presence of py.typed: {pkg_details.name}")
         if verify_sdist_pytyped(pkg_dir, pkg_details.namespace, pkg_details.package_data, pkg_details.include_package_data):
-            logging.info("Py.typed setup.py kwargs are set properly: [%s]", pkg_details.name)
+            logging.info(f"Py.typed setup.py kwargs are set properly: {pkg_details.name}")
         else:
-            logging.info("Verified py.typed [%s]. Check messages above.", pkg_details.name)
-            exit(1)
+            logging.error(f"Py.typed verification failed for package {pkg_details.name}. Check messages above.")
+            error_occurred = True
+
+    if pkg_details.name not in EXCLUDED_CLASSIFICATION_PACKAGES and "-nspkg" not in pkg_details.name:
+        logging.info(f"Verifying package classifiers: {pkg_details.name}")
+
+        status, message = verify_package_classifiers(pkg_details.name, pkg_details.version, pkg_details.classifiers)
+        if status:
+            logging.info(f"Package classifiers are set properly: {pkg_details.name}")
+        else:
+            logging.error(f"{message}")
+            error_occurred = True
+
+    if error_occurred:
+        logging.error(f"{pkg_details.name} failed sdist verification. Check outputs above.")
+        exit(1)

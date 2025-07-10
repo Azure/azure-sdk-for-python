@@ -20,7 +20,7 @@ class TestHybridComputeManagementLicensesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_validate_license(self, resource_group):
+    def test_licenses_begin_validate_license(self, resource_group):
         response = self.client.licenses.begin_validate_license(
             parameters={
                 "location": "str",
@@ -50,7 +50,7 @@ class TestHybridComputeManagementLicensesOperations(AzureMgmtRecordedTestCase):
                 "tenantId": "str",
                 "type": "str",
             },
-            api_version="2024-07-31-preview",
+            api_version="2025-02-19-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -58,7 +58,7 @@ class TestHybridComputeManagementLicensesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_licenses_begin_create_or_update(self, resource_group):
         response = self.client.licenses.begin_create_or_update(
             resource_group_name=resource_group.name,
             license_name="str",
@@ -90,7 +90,7 @@ class TestHybridComputeManagementLicensesOperations(AzureMgmtRecordedTestCase):
                 "tenantId": "str",
                 "type": "str",
             },
-            api_version="2024-07-31-preview",
+            api_version="2025-02-19-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -98,7 +98,7 @@ class TestHybridComputeManagementLicensesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_licenses_begin_update(self, resource_group):
         response = self.client.licenses.begin_update(
             resource_group_name=resource_group.name,
             license_name="str",
@@ -111,7 +111,7 @@ class TestHybridComputeManagementLicensesOperations(AzureMgmtRecordedTestCase):
                 "target": "str",
                 "type": "str",
             },
-            api_version="2024-07-31-preview",
+            api_version="2025-02-19-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -119,11 +119,11 @@ class TestHybridComputeManagementLicensesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_licenses_get(self, resource_group):
         response = self.client.licenses.get(
             resource_group_name=resource_group.name,
             license_name="str",
-            api_version="2024-07-31-preview",
+            api_version="2025-02-19-preview",
         )
 
         # please add some check logic here by yourself
@@ -131,11 +131,11 @@ class TestHybridComputeManagementLicensesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_licenses_begin_delete(self, resource_group):
         response = self.client.licenses.begin_delete(
             resource_group_name=resource_group.name,
             license_name="str",
-            api_version="2024-07-31-preview",
+            api_version="2025-02-19-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -143,10 +143,10 @@ class TestHybridComputeManagementLicensesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_licenses_list_by_resource_group(self, resource_group):
         response = self.client.licenses.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-07-31-preview",
+            api_version="2025-02-19-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -154,9 +154,9 @@ class TestHybridComputeManagementLicensesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_subscription(self, resource_group):
+    def test_licenses_list_by_subscription(self, resource_group):
         response = self.client.licenses.list_by_subscription(
-            api_version="2024-07-31-preview",
+            api_version="2025-02-19-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -1,5 +1,4 @@
 pydantic
 Flask
-azure-projects
 azure-data-tables
 azure-monitor-opentelemetry

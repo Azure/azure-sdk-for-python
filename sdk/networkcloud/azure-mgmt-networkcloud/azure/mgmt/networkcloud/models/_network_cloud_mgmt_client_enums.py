@@ -802,7 +802,8 @@ class VirtualMachineDeviceModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta
     T2 = "T2"
     """Modern and enhanced device virtualization interface."""
     T3 = "T3"
-    """Improved security and functionality (including TPM and secure boot support)."""
+    """Improved security and functionality (including TPM and secure boot support). Required for
+    windows 11 and server 2025."""
 
 
 class VirtualMachineIPAllocationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
