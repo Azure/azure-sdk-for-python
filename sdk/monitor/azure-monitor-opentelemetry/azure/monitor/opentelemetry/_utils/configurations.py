@@ -137,7 +137,7 @@ def _default_sampling_ratio(configurations):
     if environ.get(OTEL_TRACES_SAMPLER) == RATE_LIMITED_SAMPLER:
         try:
             default = float(environ[OTEL_TRACES_SAMPLER_ARG])
-            print(f"Using rate limited sampler: {default} traces per second")
+            _logger.info(f"Using rate limited sampler: {default} traces per second")
         except ValueError as e:
             _logger.error(  # pylint: disable=C
                 _INVALID_TRACES_PER_SECOND_MESSAGE,
@@ -149,7 +149,7 @@ def _default_sampling_ratio(configurations):
     elif environ.get(OTEL_TRACES_SAMPLER) == FIXED_PERCENTAGE_SAMPLER:
         try:
             default = float(environ[OTEL_TRACES_SAMPLER_ARG])
-            print(f"Using sampling ratio: {default}")
+            _logger.info(f"Using sampling ratio: {default}")
         except ValueError as e:
             _logger.error(  # pylint: disable=C
                 _INVALID_FLOAT_MESSAGE,

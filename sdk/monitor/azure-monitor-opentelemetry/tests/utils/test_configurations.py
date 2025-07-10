@@ -189,7 +189,6 @@ class TestConfigurations(TestCase):
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
     def test_get_configurations_env_vars_validation(self, resource_create_mock):
         configurations = _get_configurations()
-        print(configurations)
         self.assertTrue("connection_string" not in configurations)
         self.assertEqual(configurations["disable_logging"], False)
         self.assertEqual(configurations["disable_metrics"], False)
