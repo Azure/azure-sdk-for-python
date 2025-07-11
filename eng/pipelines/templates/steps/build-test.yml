@@ -40,7 +40,7 @@ steps:
       }
       $ErrorActionPreference = 'Stop'
       $PSNativeCommandUseErrorActionPreference = $true
-      uv pip install --force -r eng/ci_tools.txt
+      uv pip install -r eng/ci_tools.txt
       uv pip freeze
       Write-Host (Get-Command python).Source
     displayName: 'Prep Environment'
