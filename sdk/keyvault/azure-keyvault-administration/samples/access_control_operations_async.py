@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -16,7 +17,7 @@ from azure.identity.aio import DefaultAzureCredential
 # 2. azure-keyvault-administration and azure-identity libraries (pip install these)
 #
 # 3. Set environment variable MANAGED_HSM_URL with the URL of your managed HSM
-#    
+#
 # 4. Set up your environment to use azure-identity's DefaultAzureCredential. For more information about how to configure
 #    the DefaultAzureCredential, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 #
@@ -34,6 +35,7 @@ from azure.identity.aio import DefaultAzureCredential
 # 5. Delete a role definition (delete_role_definition)
 # ----------------------------------------------------------------------------------------------------------
 
+
 async def run_sample():
     MANAGED_HSM_URL = os.environ["MANAGED_HSM_URL"]
 
@@ -41,7 +43,7 @@ async def run_sample():
     # Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
     credential = DefaultAzureCredential()
     client = KeyVaultAccessControlClient(vault_url=MANAGED_HSM_URL, credential=credential)
-    
+
     # Let's first create a custom role definition. This role permits creating keys in a Managed HSM.
     # We'll provide a friendly role name, and let a unique role definition name (a GUID) be generated for us.
     print("\n.. Create a role definition")
@@ -57,8 +59,7 @@ async def run_sample():
     print("\n.. Update a role definition")
     new_permissions = [
         KeyVaultPermission(
-            data_actions=[KeyVaultDataAction.READ_HSM_KEY],
-            not_data_actions=[KeyVaultDataAction.CREATE_HSM_KEY]
+            data_actions=[KeyVaultDataAction.READ_HSM_KEY], not_data_actions=[KeyVaultDataAction.CREATE_HSM_KEY]
         )
     ]
     unique_definition_name = role_definition.name

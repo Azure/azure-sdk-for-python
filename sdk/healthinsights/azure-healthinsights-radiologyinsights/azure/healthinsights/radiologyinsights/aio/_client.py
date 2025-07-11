@@ -17,13 +17,13 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import RadiologyInsightsClientConfiguration
-from ._operations import RadiologyInsightsClientOperationsMixin
+from ._operations._operations import _RadiologyInsightsClientOperationsMixin
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class RadiologyInsightsClient(RadiologyInsightsClientOperationsMixin):
+class RadiologyInsightsClient(_RadiologyInsightsClientOperationsMixin):
     """RadiologyInsightsClient.
 
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:

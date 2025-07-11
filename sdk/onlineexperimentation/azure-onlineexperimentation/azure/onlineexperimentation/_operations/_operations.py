@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -223,7 +222,7 @@ def build_online_experimentation_list_metrics_request(  # pylint: disable=name-t
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class OnlineExperimentationClientOperationsMixin(  # pylint: disable=name-too-long
+class _OnlineExperimentationClientOperationsMixin(
     ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], OnlineExperimentationClientConfiguration]
 ):
 
