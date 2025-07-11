@@ -51,179 +51,259 @@
 ### Breaking Changes
 
   - Deleted or renamed client `DevTestLabsClient`
-  - Model `ArtifactSourceFragment` deleted or renamed its instance variable `display_name`
-  - Model `ArtifactSourceFragment` deleted or renamed its instance variable `uri`
-  - Model `ArtifactSourceFragment` deleted or renamed its instance variable `source_type`
-  - Model `ArtifactSourceFragment` deleted or renamed its instance variable `folder_path`
-  - Model `ArtifactSourceFragment` deleted or renamed its instance variable `arm_template_folder_path`
-  - Model `ArtifactSourceFragment` deleted or renamed its instance variable `branch_ref`
-  - Model `ArtifactSourceFragment` deleted or renamed its instance variable `security_token`
-  - Model `ArtifactSourceFragment` deleted or renamed its instance variable `status`
-  - Model `CustomImageFragment` deleted or renamed its instance variable `vm`
-  - Model `CustomImageFragment` deleted or renamed its instance variable `vhd`
-  - Model `CustomImageFragment` deleted or renamed its instance variable `description`
-  - Model `CustomImageFragment` deleted or renamed its instance variable `author`
-  - Model `CustomImageFragment` deleted or renamed its instance variable `managed_image_id`
-  - Model `CustomImageFragment` deleted or renamed its instance variable `managed_snapshot_id`
-  - Model `CustomImageFragment` deleted or renamed its instance variable `data_disk_storage_info`
-  - Model `CustomImageFragment` deleted or renamed its instance variable `custom_image_plan`
-  - Model `CustomImageFragment` deleted or renamed its instance variable `is_plan_authorized`
-  - Model `DiskFragment` deleted or renamed its instance variable `disk_type`
-  - Model `DiskFragment` deleted or renamed its instance variable `disk_size_gi_b`
-  - Model `DiskFragment` deleted or renamed its instance variable `leased_by_lab_vm_id`
-  - Model `DiskFragment` deleted or renamed its instance variable `disk_blob_name`
-  - Model `DiskFragment` deleted or renamed its instance variable `disk_uri`
-  - Model `DiskFragment` deleted or renamed its instance variable `host_caching`
-  - Model `DiskFragment` deleted or renamed its instance variable `managed_disk_id`
+  - Model `ApplicableSchedule` deleted or renamed its instance variable `lab_vms_shutdown`
+  - Model `ApplicableSchedule` deleted or renamed its instance variable `lab_vms_startup`
+  - Model `ArmTemplate` deleted or renamed its instance variable `display_name`
+  - Model `ArmTemplate` deleted or renamed its instance variable `description`
+  - Model `ArmTemplate` deleted or renamed its instance variable `publisher`
+  - Model `ArmTemplate` deleted or renamed its instance variable `icon`
+  - Model `ArmTemplate` deleted or renamed its instance variable `contents`
+  - Model `ArmTemplate` deleted or renamed its instance variable `created_date`
+  - Model `ArmTemplate` deleted or renamed its instance variable `parameters_value_files_info`
+  - Model `ArmTemplate` deleted or renamed its instance variable `enabled`
+  - Model `Artifact` deleted or renamed its instance variable `title`
+  - Model `Artifact` deleted or renamed its instance variable `description`
+  - Model `Artifact` deleted or renamed its instance variable `publisher`
+  - Model `Artifact` deleted or renamed its instance variable `file_path`
+  - Model `Artifact` deleted or renamed its instance variable `icon`
+  - Model `Artifact` deleted or renamed its instance variable `target_os_type`
+  - Model `Artifact` deleted or renamed its instance variable `parameters`
+  - Model `Artifact` deleted or renamed its instance variable `created_date`
+  - Model `ArtifactSource` deleted or renamed its instance variable `display_name`
+  - Model `ArtifactSource` deleted or renamed its instance variable `uri`
+  - Model `ArtifactSource` deleted or renamed its instance variable `source_type`
+  - Model `ArtifactSource` deleted or renamed its instance variable `folder_path`
+  - Model `ArtifactSource` deleted or renamed its instance variable `arm_template_folder_path`
+  - Model `ArtifactSource` deleted or renamed its instance variable `branch_ref`
+  - Model `ArtifactSource` deleted or renamed its instance variable `security_token`
+  - Model `ArtifactSource` deleted or renamed its instance variable `status`
+  - Model `ArtifactSource` deleted or renamed its instance variable `created_date`
+  - Model `ArtifactSource` deleted or renamed its instance variable `provisioning_state`
+  - Model `ArtifactSource` deleted or renamed its instance variable `unique_identifier`
+  - Model `CustomImage` deleted or renamed its instance variable `vm`
+  - Model `CustomImage` deleted or renamed its instance variable `vhd`
+  - Model `CustomImage` deleted or renamed its instance variable `description`
+  - Model `CustomImage` deleted or renamed its instance variable `author`
+  - Model `CustomImage` deleted or renamed its instance variable `creation_date`
+  - Model `CustomImage` deleted or renamed its instance variable `managed_image_id`
+  - Model `CustomImage` deleted or renamed its instance variable `managed_snapshot_id`
+  - Model `CustomImage` deleted or renamed its instance variable `data_disk_storage_info`
+  - Model `CustomImage` deleted or renamed its instance variable `custom_image_plan`
+  - Model `CustomImage` deleted or renamed its instance variable `is_plan_authorized`
+  - Model `CustomImage` deleted or renamed its instance variable `provisioning_state`
+  - Model `CustomImage` deleted or renamed its instance variable `unique_identifier`
+  - Model `Disk` deleted or renamed its instance variable `disk_type`
+  - Model `Disk` deleted or renamed its instance variable `disk_size_gi_b`
+  - Model `Disk` deleted or renamed its instance variable `leased_by_lab_vm_id`
+  - Model `Disk` deleted or renamed its instance variable `disk_blob_name`
+  - Model `Disk` deleted or renamed its instance variable `disk_uri`
+  - Model `Disk` deleted or renamed its instance variable `storage_account_id`
+  - Model `Disk` deleted or renamed its instance variable `created_date`
+  - Model `Disk` deleted or renamed its instance variable `host_caching`
+  - Model `Disk` deleted or renamed its instance variable `managed_disk_id`
+  - Model `Disk` deleted or renamed its instance variable `provisioning_state`
+  - Model `Disk` deleted or renamed its instance variable `unique_identifier`
   - Model `DtlEnvironment` deleted or renamed its instance variable `deployment_properties`
   - Model `DtlEnvironment` deleted or renamed its instance variable `arm_template_display_name`
   - Model `DtlEnvironment` deleted or renamed its instance variable `resource_group_id`
   - Model `DtlEnvironment` deleted or renamed its instance variable `created_by_user`
   - Model `DtlEnvironment` deleted or renamed its instance variable `provisioning_state`
   - Model `DtlEnvironment` deleted or renamed its instance variable `unique_identifier`
-  - Model `DtlEnvironmentFragment` deleted or renamed its instance variable `deployment_properties`
-  - Model `DtlEnvironmentFragment` deleted or renamed its instance variable `arm_template_display_name`
-  - Model `FormulaFragment` deleted or renamed its instance variable `description`
-  - Model `FormulaFragment` deleted or renamed its instance variable `author`
-  - Model `FormulaFragment` deleted or renamed its instance variable `os_type`
-  - Model `FormulaFragment` deleted or renamed its instance variable `formula_content`
-  - Model `FormulaFragment` deleted or renamed its instance variable `vm`
-  - Deleted or renamed enum value `HttpStatusCode.CONTINUE_ENUM`
-  - Model `LabFragment` deleted or renamed its instance variable `lab_storage_type`
-  - Model `LabFragment` deleted or renamed its instance variable `mandatory_artifacts_resource_ids_linux`
-  - Model `LabFragment` deleted or renamed its instance variable `mandatory_artifacts_resource_ids_windows`
-  - Model `LabFragment` deleted or renamed its instance variable `premium_data_disks`
-  - Model `LabFragment` deleted or renamed its instance variable `environment_permission`
-  - Model `LabFragment` deleted or renamed its instance variable `announcement`
-  - Model `LabFragment` deleted or renamed its instance variable `support`
-  - Model `LabFragment` deleted or renamed its instance variable `extended_properties`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `notes`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `owner_object_id`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `owner_user_principal_name`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `created_by_user_id`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `created_by_user`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `created_date`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `compute_id`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `custom_image_id`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `os_type`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `size`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `user_name`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `password`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `ssh_key`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `is_authentication_with_ssh_key`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `fqdn`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `lab_subnet_name`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `lab_virtual_network_id`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `disallow_public_ip_address`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `artifacts`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `artifact_deployment_status`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `gallery_image_reference`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `plan_id`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `network_interface`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `expiration_date`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `allow_claim`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `storage_type`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `virtual_machine_creation_source`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `environment_id`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `data_disk_parameters`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `schedule_parameters`
-  - Model `LabVirtualMachineFragment` deleted or renamed its instance variable `last_known_power_state`
-  - Model `NotificationChannelFragment` deleted or renamed its instance variable `web_hook_url`
-  - Model `NotificationChannelFragment` deleted or renamed its instance variable `email_recipient`
-  - Model `NotificationChannelFragment` deleted or renamed its instance variable `notification_locale`
-  - Model `NotificationChannelFragment` deleted or renamed its instance variable `description`
-  - Model `NotificationChannelFragment` deleted or renamed its instance variable `events`
-  - Model `PolicyFragment` deleted or renamed its instance variable `description`
-  - Model `PolicyFragment` deleted or renamed its instance variable `status`
-  - Model `PolicyFragment` deleted or renamed its instance variable `fact_name`
-  - Model `PolicyFragment` deleted or renamed its instance variable `fact_data`
-  - Model `PolicyFragment` deleted or renamed its instance variable `threshold`
-  - Model `PolicyFragment` deleted or renamed its instance variable `evaluator_type`
-  - Model `ScheduleFragment` deleted or renamed its instance variable `status`
-  - Model `ScheduleFragment` deleted or renamed its instance variable `task_type`
-  - Model `ScheduleFragment` deleted or renamed its instance variable `weekly_recurrence`
-  - Model `ScheduleFragment` deleted or renamed its instance variable `daily_recurrence`
-  - Model `ScheduleFragment` deleted or renamed its instance variable `hourly_recurrence`
-  - Model `ScheduleFragment` deleted or renamed its instance variable `time_zone_id`
-  - Model `ScheduleFragment` deleted or renamed its instance variable `notification_settings`
-  - Model `ScheduleFragment` deleted or renamed its instance variable `target_resource_id`
-  - Model `SecretFragment` deleted or renamed its instance variable `value`
-  - Model `ServiceFabricFragment` deleted or renamed its instance variable `external_service_fabric_id`
-  - Model `ServiceFabricFragment` deleted or renamed its instance variable `environment_id`
-  - Model `UserFragment` deleted or renamed its instance variable `identity`
-  - Model `UserFragment` deleted or renamed its instance variable `secret_store`
-  - Model `VirtualNetworkFragment` deleted or renamed its instance variable `allowed_subnets`
-  - Model `VirtualNetworkFragment` deleted or renamed its instance variable `description`
-  - Model `VirtualNetworkFragment` deleted or renamed its instance variable `external_provider_resource_id`
-  - Model `VirtualNetworkFragment` deleted or renamed its instance variable `subnet_overrides`
+  - Model `Formula` deleted or renamed its instance variable `description`
+  - Model `Formula` deleted or renamed its instance variable `author`
+  - Model `Formula` deleted or renamed its instance variable `os_type`
+  - Model `Formula` deleted or renamed its instance variable `creation_date`
+  - Model `Formula` deleted or renamed its instance variable `formula_content`
+  - Model `Formula` deleted or renamed its instance variable `vm`
+  - Model `Formula` deleted or renamed its instance variable `provisioning_state`
+  - Model `Formula` deleted or renamed its instance variable `unique_identifier`
+  - Model `GalleryImage` deleted or renamed its instance variable `author`
+  - Model `GalleryImage` deleted or renamed its instance variable `created_date`
+  - Model `GalleryImage` deleted or renamed its instance variable `description`
+  - Model `GalleryImage` deleted or renamed its instance variable `image_reference`
+  - Model `GalleryImage` deleted or renamed its instance variable `icon`
+  - Model `GalleryImage` deleted or renamed its instance variable `enabled`
+  - Model `GalleryImage` deleted or renamed its instance variable `plan_id`
+  - Model `GalleryImage` deleted or renamed its instance variable `is_plan_authorized`
+  - Model `Lab` deleted or renamed its instance variable `default_storage_account`
+  - Model `Lab` deleted or renamed its instance variable `default_premium_storage_account`
+  - Model `Lab` deleted or renamed its instance variable `artifacts_storage_account`
+  - Model `Lab` deleted or renamed its instance variable `premium_data_disk_storage_account`
+  - Model `Lab` deleted or renamed its instance variable `vault_name`
+  - Model `Lab` deleted or renamed its instance variable `lab_storage_type`
+  - Model `Lab` deleted or renamed its instance variable `mandatory_artifacts_resource_ids_linux`
+  - Model `Lab` deleted or renamed its instance variable `mandatory_artifacts_resource_ids_windows`
+  - Model `Lab` deleted or renamed its instance variable `created_date`
+  - Model `Lab` deleted or renamed its instance variable `premium_data_disks`
+  - Model `Lab` deleted or renamed its instance variable `environment_permission`
+  - Model `Lab` deleted or renamed its instance variable `announcement`
+  - Model `Lab` deleted or renamed its instance variable `support`
+  - Model `Lab` deleted or renamed its instance variable `vm_creation_resource_group`
+  - Model `Lab` deleted or renamed its instance variable `public_ip_id`
+  - Model `Lab` deleted or renamed its instance variable `load_balancer_id`
+  - Model `Lab` deleted or renamed its instance variable `network_security_group_id`
+  - Model `Lab` deleted or renamed its instance variable `extended_properties`
+  - Model `Lab` deleted or renamed its instance variable `provisioning_state`
+  - Model `Lab` deleted or renamed its instance variable `unique_identifier`
+  - Model `LabCost` deleted or renamed its instance variable `target_cost`
+  - Model `LabCost` deleted or renamed its instance variable `lab_cost_summary`
+  - Model `LabCost` deleted or renamed its instance variable `lab_cost_details`
+  - Model `LabCost` deleted or renamed its instance variable `resource_costs`
+  - Model `LabCost` deleted or renamed its instance variable `currency_code`
+  - Model `LabCost` deleted or renamed its instance variable `start_date_time`
+  - Model `LabCost` deleted or renamed its instance variable `end_date_time`
+  - Model `LabCost` deleted or renamed its instance variable `created_date`
+  - Model `LabCost` deleted or renamed its instance variable `provisioning_state`
+  - Model `LabCost` deleted or renamed its instance variable `unique_identifier`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `notes`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `owner_object_id`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `owner_user_principal_name`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `created_by_user_id`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `created_by_user`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `created_date`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `compute_id`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `custom_image_id`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `os_type`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `size`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `user_name`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `password`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `ssh_key`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `is_authentication_with_ssh_key`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `fqdn`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `lab_subnet_name`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `lab_virtual_network_id`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `disallow_public_ip_address`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `artifacts`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `artifact_deployment_status`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `gallery_image_reference`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `plan_id`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `compute_vm`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `network_interface`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `applicable_schedule`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `expiration_date`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `allow_claim`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `storage_type`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `virtual_machine_creation_source`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `environment_id`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `data_disk_parameters`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `schedule_parameters`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `last_known_power_state`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `provisioning_state`
+  - Model `LabVirtualMachine` deleted or renamed its instance variable `unique_identifier`
+  - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `bulk_creation_parameters`
+  - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `notes`
+  - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `owner_object_id`
+  - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `owner_user_principal_name`
+  - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `created_date`
+  - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `custom_image_id`
+  - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `size`
+  - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `user_name`
+  - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `password`
+  - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `ssh_key`
+  - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `is_authentication_with_ssh_key`
+  - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `lab_subnet_name`
+  - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `lab_virtual_network_id`
+  - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `disallow_public_ip_address`
+  - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `artifacts`
+  - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `gallery_image_reference`
+  - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `plan_id`
+  - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `network_interface`
+  - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `expiration_date`
+  - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `allow_claim`
+  - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `storage_type`
+  - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `environment_id`
+  - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `data_disk_parameters`
+  - Model `LabVirtualMachineCreationParameter` deleted or renamed its instance variable `schedule_parameters`
+  - Model `NotificationChannel` deleted or renamed its instance variable `web_hook_url`
+  - Model `NotificationChannel` deleted or renamed its instance variable `email_recipient`
+  - Model `NotificationChannel` deleted or renamed its instance variable `notification_locale`
+  - Model `NotificationChannel` deleted or renamed its instance variable `description`
+  - Model `NotificationChannel` deleted or renamed its instance variable `events`
+  - Model `NotificationChannel` deleted or renamed its instance variable `created_date`
+  - Model `NotificationChannel` deleted or renamed its instance variable `provisioning_state`
+  - Model `NotificationChannel` deleted or renamed its instance variable `unique_identifier`
+  - Model `Policy` deleted or renamed its instance variable `description`
+  - Model `Policy` deleted or renamed its instance variable `status`
+  - Model `Policy` deleted or renamed its instance variable `fact_name`
+  - Model `Policy` deleted or renamed its instance variable `fact_data`
+  - Model `Policy` deleted or renamed its instance variable `threshold`
+  - Model `Policy` deleted or renamed its instance variable `evaluator_type`
+  - Model `Policy` deleted or renamed its instance variable `created_date`
+  - Model `Policy` deleted or renamed its instance variable `provisioning_state`
+  - Model `Policy` deleted or renamed its instance variable `unique_identifier`
+  - Model `Schedule` deleted or renamed its instance variable `status`
+  - Model `Schedule` deleted or renamed its instance variable `task_type`
+  - Model `Schedule` deleted or renamed its instance variable `weekly_recurrence`
+  - Model `Schedule` deleted or renamed its instance variable `daily_recurrence`
+  - Model `Schedule` deleted or renamed its instance variable `hourly_recurrence`
+  - Model `Schedule` deleted or renamed its instance variable `time_zone_id`
+  - Model `Schedule` deleted or renamed its instance variable `notification_settings`
+  - Model `Schedule` deleted or renamed its instance variable `created_date`
+  - Model `Schedule` deleted or renamed its instance variable `target_resource_id`
+  - Model `Schedule` deleted or renamed its instance variable `provisioning_state`
+  - Model `Schedule` deleted or renamed its instance variable `unique_identifier`
+  - Model `ScheduleCreationParameter` deleted or renamed its instance variable `status`
+  - Model `ScheduleCreationParameter` deleted or renamed its instance variable `task_type`
+  - Model `ScheduleCreationParameter` deleted or renamed its instance variable `weekly_recurrence`
+  - Model `ScheduleCreationParameter` deleted or renamed its instance variable `daily_recurrence`
+  - Model `ScheduleCreationParameter` deleted or renamed its instance variable `hourly_recurrence`
+  - Model `ScheduleCreationParameter` deleted or renamed its instance variable `time_zone_id`
+  - Model `ScheduleCreationParameter` deleted or renamed its instance variable `notification_settings`
+  - Model `ScheduleCreationParameter` deleted or renamed its instance variable `target_resource_id`
+  - Model `Secret` deleted or renamed its instance variable `value`
+  - Model `Secret` deleted or renamed its instance variable `provisioning_state`
+  - Model `Secret` deleted or renamed its instance variable `unique_identifier`
+  - Model `ServiceFabric` deleted or renamed its instance variable `external_service_fabric_id`
+  - Model `ServiceFabric` deleted or renamed its instance variable `environment_id`
+  - Model `ServiceFabric` deleted or renamed its instance variable `applicable_schedule`
+  - Model `ServiceFabric` deleted or renamed its instance variable `provisioning_state`
+  - Model `ServiceFabric` deleted or renamed its instance variable `unique_identifier`
+  - Model `User` deleted or renamed its instance variable `identity`
+  - Model `User` deleted or renamed its instance variable `secret_store`
+  - Model `User` deleted or renamed its instance variable `created_date`
+  - Model `User` deleted or renamed its instance variable `provisioning_state`
+  - Model `User` deleted or renamed its instance variable `unique_identifier`
+  - Model `VirtualNetwork` deleted or renamed its instance variable `allowed_subnets`
+  - Model `VirtualNetwork` deleted or renamed its instance variable `description`
+  - Model `VirtualNetwork` deleted or renamed its instance variable `external_provider_resource_id`
+  - Model `VirtualNetwork` deleted or renamed its instance variable `external_subnets`
+  - Model `VirtualNetwork` deleted or renamed its instance variable `subnet_overrides`
+  - Model `VirtualNetwork` deleted or renamed its instance variable `created_date`
+  - Model `VirtualNetwork` deleted or renamed its instance variable `provisioning_state`
+  - Model `VirtualNetwork` deleted or renamed its instance variable `unique_identifier`
   - Deleted or renamed model `ApplicableScheduleFragment`
   - Deleted or renamed model `ArmTemplateList`
-  - Deleted or renamed model `ArmTemplateParameterPropertiesFragment`
-  - Deleted or renamed model `ArtifactDeploymentStatusPropertiesFragment`
-  - Deleted or renamed model `ArtifactInstallPropertiesFragment`
   - Deleted or renamed model `ArtifactList`
-  - Deleted or renamed model `ArtifactParameterPropertiesFragment`
   - Deleted or renamed model `ArtifactSourceList`
-  - Deleted or renamed model `AttachNewDataDiskOptionsFragment`
-  - Deleted or renamed model `BulkCreationParametersFragment`
   - Deleted or renamed model `CloudErrorBody`
-  - Deleted or renamed model `ComputeDataDiskFragment`
-  - Deleted or renamed model `ComputeVmInstanceViewStatusFragment`
-  - Deleted or renamed model `ComputeVmPropertiesFragment`
   - Deleted or renamed model `CustomImageList`
-  - Deleted or renamed model `CustomImagePropertiesCustomFragment`
-  - Deleted or renamed model `CustomImagePropertiesFromPlanFragment`
-  - Deleted or renamed model `CustomImagePropertiesFromVmFragment`
-  - Deleted or renamed model `DataDiskPropertiesFragment`
-  - Deleted or renamed model `DataDiskStorageTypeInfoFragment`
-  - Deleted or renamed model `DayDetailsFragment`
   - Deleted or renamed model `DiskList`
   - Deleted or renamed model `DtlEnvironmentList`
-  - Deleted or renamed model `EnvironmentDeploymentPropertiesFragment`
-  - Deleted or renamed model `EventFragment`
-  - Deleted or renamed model `ExternalSubnetFragment`
   - Deleted or renamed model `FormulaList`
-  - Deleted or renamed model `FormulaPropertiesFromVmFragment`
   - Deleted or renamed model `GalleryImageList`
-  - Deleted or renamed model `GalleryImageReferenceFragment`
-  - Deleted or renamed model `HourDetailsFragment`
-  - Deleted or renamed model `InboundNatRuleFragment`
-  - Deleted or renamed model `LabAnnouncementPropertiesFragment`
   - Deleted or renamed model `LabList`
-  - Deleted or renamed model `LabSupportPropertiesFragment`
   - Deleted or renamed model `LabVhdList`
-  - Deleted or renamed model `LabVirtualMachineCreationParameterFragment`
   - Deleted or renamed model `LabVirtualMachineList`
-  - Deleted or renamed model `LinuxOsInfoFragment`
-  - Deleted or renamed model `NetworkInterfacePropertiesFragment`
   - Deleted or renamed model `NotificationChannelList`
-  - Deleted or renamed model `NotificationSettingsFragment`
   - Deleted or renamed model `OperationMetadata`
   - Deleted or renamed model `OperationMetadataDisplay`
   - Deleted or renamed model `PolicyList`
-  - Deleted or renamed model `PortFragment`
   - Deleted or renamed model `ProviderOperationResult`
-  - Deleted or renamed model `ScheduleCreationParameterFragment`
   - Deleted or renamed model `ScheduleList`
   - Deleted or renamed model `SecretList`
   - Deleted or renamed model `ServiceFabricList`
-  - Deleted or renamed model `SharedPublicIpAddressConfigurationFragment`
+  - Deleted or renamed model `ServiceRunnerList`
   - Deleted or renamed model `ShutdownNotificationContent`
-  - Deleted or renamed model `SubnetFragment`
-  - Deleted or renamed model `SubnetOverrideFragment`
-  - Deleted or renamed model `SubnetSharedPublicIpAddressConfigurationFragment`
-  - Deleted or renamed model `UserIdentityFragment`
   - Deleted or renamed model `UserList`
-  - Deleted or renamed model `UserSecretStoreFragment`
   - Deleted or renamed model `VirtualNetworkList`
-  - Deleted or renamed model `WeekDetailsFragment`
-  - Deleted or renamed model `WindowsOsInfoFragment`
   - Method `ArmTemplatesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `ArmTemplatesOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `ArmTemplatesOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
   - Method `ArtifactSourcesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `ArtifactSourcesOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `ArtifactSourcesOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `ArtifactSourcesOperations.update` inserted a `positional_or_keyword` parameter `artifact_source`
+  - Method `ArtifactSourcesOperations.update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
   - Method `ArtifactsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `ArtifactsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `ArtifactsOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
@@ -231,6 +311,8 @@
   - Method `CustomImagesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `CustomImagesOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `CustomImagesOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `CustomImagesOperations.update` inserted a `positional_or_keyword` parameter `custom_image`
+  - Method `CustomImagesOperations.update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
   - Method `DisksOperations.begin_attach` inserted a `positional_or_keyword` parameter `attach_disk_properties`
   - Method `DisksOperations.begin_attach` deleted or renamed its parameter `leased_by_lab_vm_id` of kind `positional_or_keyword`
   - Method `DisksOperations.begin_detach` inserted a `positional_or_keyword` parameter `detach_disk_properties`
@@ -238,12 +320,18 @@
   - Method `DisksOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `DisksOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `DisksOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `DisksOperations.update` inserted a `positional_or_keyword` parameter `disk`
+  - Method `DisksOperations.update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
   - Method `EnvironmentsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `EnvironmentsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `EnvironmentsOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `EnvironmentsOperations.update` inserted a `positional_or_keyword` parameter `dtl_environment`
+  - Method `EnvironmentsOperations.update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
   - Method `FormulasOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `FormulasOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `FormulasOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `FormulasOperations.update` inserted a `positional_or_keyword` parameter `formula`
+  - Method `FormulasOperations.update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
   - Method `GalleryImagesOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `GalleryImagesOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
   - Method `GlobalSchedulesOperations.begin_retarget` inserted a `positional_or_keyword` parameter `retarget_schedule_properties`
@@ -254,6 +342,8 @@
   - Method `GlobalSchedulesOperations.list_by_resource_group` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
   - Method `GlobalSchedulesOperations.list_by_subscription` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `GlobalSchedulesOperations.list_by_subscription` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `GlobalSchedulesOperations.update` inserted a `positional_or_keyword` parameter `schedule`
+  - Method `GlobalSchedulesOperations.update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
   - Method `LabsOperations.begin_export_resource_usage` inserted a `positional_or_keyword` parameter `export_resource_usage_parameters`
   - Method `LabsOperations.begin_export_resource_usage` deleted or renamed its parameter `blob_storage_absolute_sas_uri` of kind `positional_or_keyword`
   - Method `LabsOperations.begin_export_resource_usage` deleted or renamed its parameter `usage_start_date` of kind `positional_or_keyword`
@@ -267,38 +357,53 @@
   - Method `LabsOperations.list_by_resource_group` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
   - Method `LabsOperations.list_by_subscription` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `LabsOperations.list_by_subscription` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `LabsOperations.update` inserted a `positional_or_keyword` parameter `lab`
+  - Method `LabsOperations.update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
   - Method `NotificationChannelsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `NotificationChannelsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `NotificationChannelsOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
   - Method `NotificationChannelsOperations.notify` inserted a `positional_or_keyword` parameter `notify_parameters`
   - Method `NotificationChannelsOperations.notify` deleted or renamed its parameter `event_name` of kind `positional_or_keyword`
   - Method `NotificationChannelsOperations.notify` deleted or renamed its parameter `json_payload` of kind `positional_or_keyword`
+  - Method `NotificationChannelsOperations.update` inserted a `positional_or_keyword` parameter `notification_channel`
+  - Method `NotificationChannelsOperations.update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
   - Method `PoliciesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `PoliciesOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `PoliciesOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `PoliciesOperations.update` inserted a `positional_or_keyword` parameter `policy`
+  - Method `PoliciesOperations.update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
   - Method `PolicySetsOperations.evaluate_policies` inserted a `positional_or_keyword` parameter `evaluate_policies_request`
   - Method `PolicySetsOperations.evaluate_policies` deleted or renamed its parameter `policies` of kind `positional_or_keyword`
   - Method `SchedulesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `SchedulesOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `SchedulesOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `SchedulesOperations.update` inserted a `positional_or_keyword` parameter `schedule`
+  - Method `SchedulesOperations.update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
   - Method `SecretsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `SecretsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `SecretsOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
   - Method `SecretsOperations.update` inserted a `positional_or_keyword` parameter `secret`
   - Method `SecretsOperations.update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
-  - Method `SecretsOperations.update` deleted or renamed its parameter `value` of kind `positional_or_keyword`
   - Method `ServiceFabricSchedulesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `ServiceFabricSchedulesOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `ServiceFabricSchedulesOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `ServiceFabricSchedulesOperations.update` inserted a `positional_or_keyword` parameter `schedule`
+  - Method `ServiceFabricSchedulesOperations.update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
   - Method `ServiceFabricsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `ServiceFabricsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `ServiceFabricsOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `ServiceFabricsOperations.update` inserted a `positional_or_keyword` parameter `service_fabric`
+  - Method `ServiceFabricsOperations.update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
   - Method `UsersOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `UsersOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `UsersOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `UsersOperations.update` inserted a `positional_or_keyword` parameter `user`
+  - Method `UsersOperations.update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
   - Method `VirtualMachineSchedulesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `VirtualMachineSchedulesOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `VirtualMachineSchedulesOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineSchedulesOperations.update` inserted a `positional_or_keyword` parameter `schedule`
+  - Method `VirtualMachineSchedulesOperations.update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
   - Method `VirtualMachinesOperations.begin_apply_artifacts` inserted a `positional_or_keyword` parameter `apply_artifacts_request`
   - Method `VirtualMachinesOperations.begin_apply_artifacts` deleted or renamed its parameter `artifacts` of kind `positional_or_keyword`
   - Method `VirtualMachinesOperations.begin_detach_data_disk` inserted a `positional_or_keyword` parameter `detach_data_disk_properties`
@@ -308,16 +413,38 @@
   - Method `VirtualMachinesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `VirtualMachinesOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `VirtualMachinesOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachinesOperations.update` inserted a `positional_or_keyword` parameter `lab_virtual_machine`
+  - Method `VirtualMachinesOperations.update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
   - Method `VirtualNetworksOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `VirtualNetworksOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `VirtualNetworksOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
-  - Method `PolicySetsOperations.evaluate_policies` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'name', 'policies', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'name', 'evaluate_policies_request', 'kwargs']`
-  - Method `DisksOperations.begin_attach` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'user_name', 'name', 'leased_by_lab_vm_id', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'user_name', 'name', 'attach_disk_properties', 'kwargs']`
-  - Method `DisksOperations.begin_detach` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'user_name', 'name', 'leased_by_lab_vm_id', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'user_name', 'name', 'detach_disk_properties', 'kwargs']`
-  - Method `VirtualMachinesOperations.begin_resize` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'name', 'size', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'name', 'resize_lab_virtual_machine_properties', 'kwargs']`
-  - Method `VirtualMachinesOperations.begin_detach_data_disk` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'name', 'existing_lab_disk_id', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'name', 'detach_data_disk_properties', 'kwargs']`
+  - Method `VirtualNetworksOperations.update` inserted a `positional_or_keyword` parameter `virtual_network`
+  - Method `VirtualNetworksOperations.update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
+  - Method `GlobalSchedulesOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'name', 'tags', 'kwargs']` to `['self', 'resource_group_name', 'name', 'schedule', 'kwargs']`
+  - Method `SecretsOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'user_name', 'name', 'tags', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'user_name', 'name', 'secret', 'kwargs']`
+  - Method `VirtualNetworksOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'name', 'tags', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'name', 'virtual_network', 'kwargs']`
+  - Method `EnvironmentsOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'user_name', 'name', 'tags', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'user_name', 'name', 'dtl_environment', 'kwargs']`
+  - Method `ArtifactSourcesOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'name', 'tags', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'name', 'artifact_source', 'kwargs']`
+  - Method `ServiceFabricsOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'user_name', 'name', 'tags', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'user_name', 'name', 'service_fabric', 'kwargs']`
+  - Method `NotificationChannelsOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'name', 'tags', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'name', 'notification_channel', 'kwargs']`
+  - Method `CustomImagesOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'name', 'tags', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'name', 'custom_image', 'kwargs']`
+  - Method `ServiceFabricSchedulesOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'user_name', 'service_fabric_name', 'name', 'tags', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'user_name', 'service_fabric_name', 'name', 'schedule', 'kwargs']`
   - Method `VirtualMachinesOperations.begin_apply_artifacts` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'name', 'artifacts', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'name', 'apply_artifacts_request', 'kwargs']`
+  - Method `VirtualMachinesOperations.begin_detach_data_disk` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'name', 'existing_lab_disk_id', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'name', 'detach_data_disk_properties', 'kwargs']`
+  - Method `VirtualMachinesOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'name', 'tags', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'name', 'lab_virtual_machine', 'kwargs']`
+  - Method `VirtualMachinesOperations.begin_resize` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'name', 'size', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'name', 'resize_lab_virtual_machine_properties', 'kwargs']`
+  - Method `PolicySetsOperations.evaluate_policies` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'name', 'policies', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'name', 'evaluate_policies_request', 'kwargs']`
+  - Method `UsersOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'name', 'tags', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'name', 'user', 'kwargs']`
+  - Method `VirtualMachineSchedulesOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'virtual_machine_name', 'name', 'tags', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'virtual_machine_name', 'name', 'schedule', 'kwargs']`
+  - Method `DisksOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'user_name', 'name', 'tags', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'user_name', 'name', 'disk', 'kwargs']`
+  - Method `DisksOperations.begin_detach` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'user_name', 'name', 'leased_by_lab_vm_id', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'user_name', 'name', 'detach_disk_properties', 'kwargs']`
+  - Method `DisksOperations.begin_attach` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'user_name', 'name', 'leased_by_lab_vm_id', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'user_name', 'name', 'attach_disk_properties', 'kwargs']`
+  - Method `FormulasOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'name', 'tags', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'name', 'formula', 'kwargs']`
+  - Method `SchedulesOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'name', 'tags', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'name', 'schedule', 'kwargs']`
+  - Method `LabsOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'name', 'tags', 'kwargs']` to `['self', 'resource_group_name', 'name', 'lab', 'kwargs']`
   - Method `LabsOperations.generate_upload_uri` re-ordered its parameters from `['self', 'resource_group_name', 'name', 'blob_name', 'kwargs']` to `['self', 'resource_group_name', 'name', 'generate_upload_uri_parameter', 'kwargs']`
+  - Method `PoliciesOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'lab_name', 'policy_set_name', 'name', 'tags', 'kwargs']` to `['self', 'resource_group_name', 'lab_name', 'policy_set_name', 'name', 'policy', 'kwargs']`
+
 
 
 ## 10.0.0b2 (2024-11-04)
