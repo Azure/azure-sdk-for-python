@@ -252,4 +252,3 @@ def get_installed_packages(paths=None):
     # if paths is set then find installed packages from given paths
     ws = WorkingSet(paths) if paths else working_set
     return ["{0}=={1}".format(p.project_name, p.version) for p in ws]
-
