@@ -25,7 +25,8 @@ USAGE:
 
 import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.agents.models import FileSearchTool, ListSortOrder, VectorStoreDataSource, VectorStoreDataSourceAssetType
+from azure.ai.agents.models import FileSearchTool, ListSortOrder, VectorStoreDataSource, VectorStoreDataSourceAssetType, \
+    RunStatus
 from azure.identity import DefaultAzureCredential
 
 project_client = AIProjectClient(
@@ -70,12 +71,15 @@ with project_client:
     print(f"Created thread, thread ID: {thread.id}")
 
     message = agents_client.messages.create(
-        thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?"
+        thread_id=thread.id, role="user", content="What is the content of the files you have access to?"
     )
     print(f"Created message, message ID: {message.id}")
 
     run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
     print(f"Created run, run ID: {run.id}")
+
+    if run.status == RunStatus.FAILED:
+        print(f"Run failed with: |{run.last_error}|")
 
     agents_client.vector_stores.delete(vector_store.id)
     print("Deleted vector store")
