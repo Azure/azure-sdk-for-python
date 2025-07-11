@@ -1,13 +1,13 @@
+from datetime import timedelta
 from typing import List, Union
 
 import pytest
 import yaml
 from msrest import Serializer
-
-from azure.ai.ml._restclient.v2023_04_01_preview.models import DataFactory
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_compute
+from azure.ai.ml._restclient.v2023_04_01_preview.models import DataFactory
 from azure.ai.ml._restclient.v2023_08_01_preview.models import ComputeResource, ImageMetadata
 from azure.ai.ml.constants._compute import CustomApplicationDefaults
 from azure.ai.ml.entities import (
@@ -17,8 +17,8 @@ from azure.ai.ml.entities import (
     KubernetesCompute,
     ManagedIdentityConfiguration,
     SynapseSparkCompute,
-    VirtualMachineCompute,
     UnsupportedCompute,
+    VirtualMachineCompute,
 )
 
 
@@ -66,6 +66,9 @@ class TestComputeEntity:
         )[0]
         assert compute.ssh_settings.admin_username == "azureuser"
         assert compute.identity.type == "user_assigned"
+        assert compute.idle_time_before_scale_down == 100
+        assert compute.min_instances == 0
+        assert compute.max_instances == 2
 
         rest_intermediate = compute._to_rest_object()
         assert rest_intermediate.properties.compute_type == "AmlCompute"
@@ -76,7 +79,9 @@ class TestComputeEntity:
         assert rest_intermediate.tags is not None
         assert rest_intermediate.tags["test"] == "true"
         assert rest_intermediate.properties.disable_local_auth is False
-        assert rest_intermediate.properties.properties.remote_login_port_public_access == "Enabled"
+        assert rest_intermediate.properties.properties.scale_settings.max_node_count == 2
+        assert rest_intermediate.properties.properties.scale_settings.min_node_count == 0
+        assert rest_intermediate.properties.properties.scale_settings.node_idle_time_before_scale_down == "PT1M40S"
 
         serializer = Serializer({"ComputeResource": ComputeResource})
         body = serializer.body(rest_intermediate, "ComputeResource")
@@ -101,6 +106,9 @@ class TestComputeEntity:
         assert rest_intermediate.properties.disable_local_auth is True
         assert rest_intermediate.location == compute.location
         assert rest_intermediate.properties.properties.remote_login_port_public_access == "NotSpecified"
+        assert rest_intermediate.properties.properties.scale_settings.max_node_count == 4
+        assert rest_intermediate.properties.properties.scale_settings.min_node_count == 0
+        assert rest_intermediate.properties.properties.scale_settings.node_idle_time_before_scale_down == "PT2M"
 
     def test_aml_compute_from_yaml_with_creds_and_disable_public_access(self):
         compute: AmlCompute = load_compute("tests/test_configs/compute/compute-aml-no-identity.yaml")
@@ -345,6 +353,11 @@ class TestComputeEntity:
             assert compute.enable_node_public_ip == False
             compute_resource = compute._to_rest_object()
             assert compute_resource.properties.properties.enable_node_public_ip == False
+            # AmlCompute _from_rest_object expects a timedelta object for node_idle_time_before_scale_down
+            if compute_resource.properties.compute_type == "AmlCompute":
+                compute_resource.properties.properties.scale_settings.node_idle_time_before_scale_down = timedelta(
+                    seconds=120
+                )
             compute_from_rest = Compute._from_rest_object(compute_resource)
             assert compute_from_rest.enable_node_public_ip == False
 

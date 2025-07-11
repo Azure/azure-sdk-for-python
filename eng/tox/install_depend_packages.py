@@ -13,10 +13,10 @@ import re
 
 from subprocess import check_call
 from typing import TYPE_CHECKING, Callable, Optional
-from pkg_resources import parse_version, Requirement
 from pypi_tools.pypi import PyPIClient
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version
+from packaging.requirements import Requirement
 
 from ci_tools.parsing import ParsedSetup, parse_require
 from ci_tools.functions import compare_python_version, handle_incompatible_minimum_dev_reqs, get_pip_command
@@ -186,7 +186,7 @@ def process_bounded_versions(originating_pkg_name: str, pkg_name: str, versions:
     # lower bound general
     if pkg_name in MINIMUM_VERSION_GENERIC_OVERRIDES:
         versions = [
-            v for v in versions if parse_version(v) >= parse_version(MINIMUM_VERSION_GENERIC_OVERRIDES[pkg_name])
+            v for v in versions if Version(v) >= Version(MINIMUM_VERSION_GENERIC_OVERRIDES[pkg_name])
         ]
 
     # lower bound platform-specific
@@ -195,7 +195,7 @@ def process_bounded_versions(originating_pkg_name: str, pkg_name: str, versions:
             restrictions = PLATFORM_SPECIFIC_MINIMUM_OVERRIDES[platform_bound]
 
             if pkg_name in restrictions:
-                versions = [v for v in versions if parse_version(v) >= parse_version(restrictions[pkg_name])]
+                versions = [v for v in versions if Version(v) >= Version(restrictions[pkg_name])]
 
     # lower bound package-specific
     if (
@@ -205,13 +205,13 @@ def process_bounded_versions(originating_pkg_name: str, pkg_name: str, versions:
         versions = [
             v
             for v in versions
-            if parse_version(v) >= parse_version(MINIMUM_VERSION_SPECIFIC_OVERRIDES[originating_pkg_name][pkg_name])
+            if Version(v) >= Version(MINIMUM_VERSION_SPECIFIC_OVERRIDES[originating_pkg_name][pkg_name])
         ]
 
     # upper bound general
     if pkg_name in MAXIMUM_VERSION_GENERIC_OVERRIDES:
         versions = [
-            v for v in versions if parse_version(v) <= parse_version(MAXIMUM_VERSION_GENERIC_OVERRIDES[pkg_name])
+            v for v in versions if Version(v) <= Version(MAXIMUM_VERSION_GENERIC_OVERRIDES[pkg_name])
         ]
 
     # upper bound platform
@@ -220,7 +220,7 @@ def process_bounded_versions(originating_pkg_name: str, pkg_name: str, versions:
             restrictions = PLATFORM_SPECIFIC_MAXIMUM_OVERRIDES[platform_bound]
 
             if pkg_name in restrictions:
-                versions = [v for v in versions if parse_version(v) <= parse_version(restrictions[pkg_name])]
+                versions = [v for v in versions if Version(v) <= Version(restrictions[pkg_name])]
 
     # upper bound package-specific
     if (
@@ -230,7 +230,7 @@ def process_bounded_versions(originating_pkg_name: str, pkg_name: str, versions:
         versions = [
             v
             for v in versions
-            if parse_version(v) <= parse_version(MAXIMUM_VERSION_SPECIFIC_OVERRIDES[originating_pkg_name][pkg_name])
+            if Version(v) <= Version(MAXIMUM_VERSION_SPECIFIC_OVERRIDES[originating_pkg_name][pkg_name])
         ]
 
     return versions
@@ -241,7 +241,7 @@ def process_requirement(req, dependency_type, orig_pkg_name):
 
     # find package name and requirement specifier from requires
     requirement = parse_require(req)
-    pkg_name = requirement.key
+    pkg_name = requirement.name
     spec = requirement.specifier if len(requirement.specifier) else None
 
     # Filter out requirements with environment markers that don't match the current environment
@@ -334,7 +334,7 @@ def filter_dev_requirements(
     # filter out any package available on PyPI (released_packages)
     # include packages without relative reference and packages not available on PyPI
     released_packages = [parse_require(p) for p in released_packages]
-    released_package_names = [p.key for p in released_packages]
+    released_package_names = [p.name for p in released_packages]
     # find prebuilt whl paths in dev requiremente
     prebuilt_dev_reqs = [os.path.basename(req.replace("\n", "")) for req in requirements if os.path.sep in req]
     # filter any req if wheel is for a released package
