@@ -73,8 +73,8 @@ from .partition_key import (
     _Undefined,
     _Empty,
     PartitionKeyKind,
-    PartitionKeyType,
-    SequentialPartitionKeyType,
+    _PartitionKeyType,
+    _SequentialPartitionKeyType,
     _return_undefined_or_empty_partition_key,
 )
 
@@ -1060,7 +1060,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         database_or_container_link: str,
         query: Optional[Union[str, Dict[str, Any]]],
         options: Optional[Mapping[str, Any]] = None,
-        partition_key: Optional[PartitionKeyType] = None,
+        partition_key: Optional[_PartitionKeyType] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
@@ -3165,7 +3165,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             feed_range_epk = FeedRangeInternalEpk.from_json(feed_range).get_normalized_range()
         elif "prefix_partition_key_object" in kwargs and "prefix_partition_key_value" in kwargs:
             prefix_partition_key_obj = kwargs.pop("prefix_partition_key_object")
-            prefix_partition_key_value: SequentialPartitionKeyType = kwargs.pop("prefix_partition_key_value")
+            prefix_partition_key_value: _SequentialPartitionKeyType = kwargs.pop("prefix_partition_key_value")
             feed_range_epk = prefix_partition_key_obj._get_epk_range_for_prefix_partition_key(prefix_partition_key_value)
 
         # If feed_range_epk exist, query with the range

@@ -73,7 +73,7 @@ from .. import _utils
 from ..partition_key import (
     _Undefined,
     PartitionKeyKind,
-    SequentialPartitionKeyType,
+    _SequentialPartitionKeyType,
     _return_undefined_or_empty_partition_key,
     NonePartitionKeyValue, _Empty,
     _build_partition_key_from_properties,
@@ -2964,7 +2964,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             partition_key_obj = _build_partition_key_from_properties(container_property)
             if partition_key_obj.is_prefix_partition_key(partition_key_value):
                 req_headers.pop(http_constants.HttpHeaders.PartitionKey, None)
-                partition_key_value = cast(SequentialPartitionKeyType, partition_key_value)
+                partition_key_value = cast(_SequentialPartitionKeyType, partition_key_value)
                 feed_range_epk = partition_key_obj._get_epk_range_for_prefix_partition_key(partition_key_value)
 
         if feed_range_epk is not None:
