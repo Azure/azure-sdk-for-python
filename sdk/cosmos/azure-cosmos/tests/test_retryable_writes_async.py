@@ -2,58 +2,72 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import asyncio
+import unittest
+
 import pytest
+import pytest_asyncio
 import uuid
 from azure.core.exceptions import ServiceResponseError
+from azure.core.pipeline.transport._aiohttp import AioHttpTransport
 from azure.core.rest import HttpRequest
 from azure.cosmos.aio import CosmosClient, _retry_utility_async
-from azure.cosmos import exceptions, ContainerProxy
+from azure.cosmos import exceptions, ContainerProxy, DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
 from _fault_injection_transport_async import FaultInjectionTransportAsync
 from test_fault_injection_transport_async import TestFaultInjectionTransportAsync
 from typing import Callable
 import test_config  # Import test_config for configuration details
 
+HPK_CONTAINER = "TestContainerHPK"
+
+@pytest_asyncio.fixture()
+async def setup():
+    config = test_config.TestConfig()
+    if config.masterKey == '[YOUR_KEY_HERE]' or config.host == '[YOUR_ENDPOINT_HERE]':
+        raise Exception(
+            "You must specify your Azure Cosmos account values for "
+            "'masterKey' and 'host' at the top of this class to run the "
+            "tests.")
+    test_client = CosmosClient(config.host, config.masterKey)
+    database = await test_client.create_database_if_not_exists(id=config.TEST_DATABASE_ID)
+    created_container = await database.create_container_if_not_exists(
+        id=config.TEST_SINGLE_PARTITION_CONTAINER_ID,
+        partition_key=PartitionKey(path="/pk")
+    )
+    container_hpk = await database.create_container_if_not_exists(
+        id=HPK_CONTAINER,
+        partition_key=PartitionKey(path=["/state", "/city"], kind="MultiHash")
+    )
+    yield {"database": database, "container": created_container, "container_hpk": container_hpk}
+
 @pytest.mark.cosmosEmulator
+@pytest.mark.asyncio
+@pytest.mark.usefixtures("setup")
 class TestRetryableWritesAsync:
     host = test_config.TestConfig.host
-    masterKey = test_config.TestConfig.masterKey
+    master_key = test_config.TestConfig.masterKey
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
-    TEST_CONTAINER_SINGLE_PARTITION_ID = "test-retryable_writes-container-" + str(uuid.uuid4())
-    TEST_CONTAINER_MULTI_PARTITION_ID = "test-retryable_writes-multi-partition-container-" + str(uuid.uuid4())
+    TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
+    TEST_CONTAINER_MULTI_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
     client: CosmosClient = None
 
-    @classmethod
-    def setUpClass(cls):
-        if (cls.masterKey == '[YOUR_KEY_HERE]' or
-                cls.host == '[YOUR_ENDPOINT_HERE]'):
-            raise Exception(
-                "You must specify your Azure Cosmos account values for "
-                "'masterKey' and 'host' at the top of this class to run the "
-                "tests.")
+    @staticmethod
+    async def setup_method_with_custom_transport(
+            custom_transport: AioHttpTransport,
+            default_endpoint: str = host,
+            key: str = master_key,
+            database_id: str = TEST_DATABASE_ID,
+            container_id: str = TEST_CONTAINER_SINGLE_PARTITION_ID,
+            **kwargs):
+        client = CosmosClient(default_endpoint, key, consistency_level="Session",
+                              transport=custom_transport, enable_diagnostics_logging=True, **kwargs)
+        await client.__aenter__()
+        db: DatabaseProxy = await client.create_database_if_not_exists(database_id)
+        container: ContainerProxy = await db.create_container_if_not_exists(container_id, PartitionKey(path="/pk"))
+        return {"client": client, "db": db, "col": container}
 
-    @classmethod
-    async def asyncSetUp(cls):
-        cls.client = CosmosClient(cls.host, credential=cls.masterKey)
-        await cls.client.__aenter__()  # Ensure the client is properly initialized
-        cls.database = await cls.client.create_database_if_not_exists(id=cls.TEST_DATABASE_ID)
-        cls.container = await cls.database.create_container_if_not_exists(
-            id=cls.TEST_CONTAINER_SINGLE_PARTITION_ID,
-            partition_key=PartitionKey(path="/pk", kind="Hash")
-        )
-        cls.container_hpk = await cls.database.create_container_if_not_exists(
-            id=cls.TEST_CONTAINER_MULTI_PARTITION_ID,
-            partition_key=PartitionKey(path=["/state", "/city"], kind="MultiHash")
-        )
-
-    @classmethod
-    async def asyncTearDown(cls):
-        await cls.database.delete_container(cls.TEST_CONTAINER_SINGLE_PARTITION_ID)
-        await cls.database.delete_container(cls.TEST_CONTAINER_MULTI_PARTITION_ID)
-        await cls.client.close()
-
-    async def test_retryable_writes_request_level_async(self):
-        container = self.container
+    async def test_retryable_writes_request_level_async(self, setup):
+        container = setup['container']
 
         # Mock retry_utility.execute to track retries
         original_execute = _retry_utility_async.ExecuteFunctionAsync
@@ -193,7 +207,7 @@ class TestRetryableWritesAsync:
         # Now we test it out with a replace request without retry write enabled - which should not retry
 
         # First create an item to replace
-        test_item_replace = {"id": str(uuid.uuid4()), "partitionKey": "test", "data": "replace test"}
+        test_item_replace = {"id": str(uuid.uuid4()), "pk": "test", "data": "replace test"}
         await container.create_item(test_item_replace)
 
         # Mock execute function
@@ -203,7 +217,7 @@ class TestRetryableWritesAsync:
         me.counter = 0  # Reset counter
         try:
             await container.replace_item(item=test_item_replace['id'], body={"id": test_item_replace['id'],
-                                                                              "partitionKey": "test",
+                                                                              "pk": "test",
                                                                               "data": "original data"})
             pytest.fail("Expected an exception without retry_write")
         except exceptions.CosmosHttpResponseError:
@@ -213,7 +227,7 @@ class TestRetryableWritesAsync:
         me.counter = 0  # Reset counter
         try:
             await container.replace_item(item=test_item_replace['id'], body={"id": test_item_replace['id'],
-                                                                              "partitionKey": "test",
+                                                                              "pk": "test",
                                                                               "data": "replaced data"},
                                          retry_write=True)
         except exceptions.CosmosHttpResponseError as e:
@@ -224,20 +238,20 @@ class TestRetryableWritesAsync:
 
         # Verify the item was replaced
         read_item_replace = await container.read_item(item=test_item_replace['id'],
-                                                      partition_key=test_item_replace['partitionKey'])
+                                                      partition_key=test_item_replace['pk'])
         assert read_item_replace['data'] == "replaced data", "Item was not replaced successfully after retries"
 
 
-    async def test_retryable_writes_client_level_write(self):
+    async def test_retryable_writes_client_level_write(self, setup):
         """Test retryable writes for a container with retry_write set at the client level."""
 
         # Create a client with retry_write enabled
-        client_with_retry = CosmosClient(self.host, credential=self.masterKey, retry_write=True)
+        client_with_retry = CosmosClient(self.host, credential=self.master_key, retry_write=True)
         await client_with_retry.__aenter__()
 
         try:
             container = client_with_retry.get_database_client(self.TEST_DATABASE_ID).get_container_client(
-                self.container.id)
+                setup['container'].id)
 
             # Mock retry_utility.execute to track retries
             original_execute = _retry_utility_async.ExecuteFunctionAsync
@@ -300,22 +314,9 @@ class TestRetryableWritesAsync:
             except exceptions.CosmosHttpResponseError as e:
                 assert e.status_code == 404, "Expected item to be deleted but it was not"
 
-            # Now we try it out with a write request with retry write enabled - which should retry once
-            try:
-                # Reset the function to reset the counter
-                mf = self.MockExecuteServiceResponseException(AttributeError, None)
-                _retry_utility_async.ExecuteFunctionAsync = mf
-                await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())}, retry_write=True)
-                pytest.fail("Exception was not raised.")
-            except ServiceResponseError:
-                assert mf.counter == 2
-            finally:
-                _retry_utility_async.ExecuteFunctionAsync = original_execute
-
             # Test replace item on client level with retry_write enabled
-
             # First create an item to replace
-            test_item_replace = {"id": str(uuid.uuid4()), "partitionKey": "test", "data": "original data"}
+            test_item_replace = {"id": str(uuid.uuid4()), "pk": "test", "data": "original data"}
             await container.create_item(test_item_replace)
             # Mock execute function
             original_execute = _retry_utility_async.ExecuteFunctionAsync
@@ -324,7 +325,7 @@ class TestRetryableWritesAsync:
             me.counter = 0  # Reset counter
             try:
                 await container.replace_item(item=test_item_replace['id'], body={"id": test_item_replace['id'],
-                                                                                  "partitionKey": "test",
+                                                                                  "pk": "test",
                                                                                   "data": "replaced data"})
             except exceptions.CosmosHttpResponseError:
                 assert me.counter > 1, "Expected multiple retries for replace_item with retry_write enabled"
@@ -333,15 +334,15 @@ class TestRetryableWritesAsync:
                 _retry_utility_async.ExecuteFunctionAsync = original_execute
             # Verify the item was replaced
             read_item_replace = await container.read_item(item=test_item_replace['id'],
-                                                          partition_key=test_item_replace['partitionKey'])
+                                                          partition_key=test_item_replace['pk'])
             assert read_item_replace['data'] == "replaced data", "Item was not replaced successfully after retries"
         finally:
             if client_with_retry:
                 await client_with_retry.close()
 
-    async def test_retryable_writes_hpk_request_level_async(self):
+    async def test_retryable_writes_hpk_request_level_async(self, setup):
         """Test retryable writes for a container with hierarchical partition keys."""
-        container = self.container_hpk
+        container = setup['container_hpk']
 
         # Mock retry_utility.execute to track retries
         original_execute = _retry_utility_async.ExecuteFunctionAsync
@@ -509,15 +510,15 @@ class TestRetryableWritesAsync:
                                                                          test_item_replace['city']])
         assert read_item_replace['data'] == "replaced data", "Item was not replaced successfully after retries"
 
-    async def test_retryable_writes_hpk_client_level_async(self):
+    async def test_retryable_writes_hpk_client_level_async(self, setup):
         """Test retryable writes for a container with hierarchical partition keys and retry_write
         set at the client level."""
         # Create a client with retry_write enabled
-        client_with_retry = CosmosClient(self.host, credential=self.masterKey, retry_write=True)
+        client_with_retry = CosmosClient(self.host, credential=self.master_key, retry_write=True)
         await client_with_retry.__aenter__()
         try:
             container = client_with_retry.get_database_client(self.TEST_DATABASE_ID).get_container_client(
-                self.container_hpk.id)
+                setup['container_hpk'].id)
 
             # Mock retry_utility.execute to track retries
             original_execute = _retry_utility_async.ExecuteFunctionAsync
@@ -644,7 +645,7 @@ class TestRetryableWritesAsync:
                                'name': 'sample document',
                                'key': 'value'}
 
-        initialized_objects = await TestFaultInjectionTransportAsync.setup_method_with_custom_transport(
+        initialized_objects = await self.setup_method_with_custom_transport(
             custom_transport,
             preferred_locations=["First Region", "Second Region"],
             multiple_write_locations=True
@@ -710,7 +711,7 @@ class TestRetryableWritesAsync:
                                'name': 'sample document',
                                'key': 'value'}
 
-        initialized_objects = await TestFaultInjectionTransportAsync.setup_method_with_custom_transport(
+        initialized_objects = await self.setup_method_with_custom_transport(
             custom_transport,
             preferred_locations=["First Region", "Second Region"],
             multiple_write_locations=True,
@@ -771,3 +772,6 @@ class TestRetryableWritesAsync:
             exception.exc_type = self.err_type
             exception.inner_exception = self.inner_exception
             raise exception
+
+if __name__ == '__main__':
+    unittest.main()

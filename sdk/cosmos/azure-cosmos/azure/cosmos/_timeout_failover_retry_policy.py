@@ -51,7 +51,7 @@ class _TimeoutFailoverRetryPolicy(object):
             return False
 
         # second check here ensures we only do cross-regional retries for read requests
-        # non-idempotent write retries should be retried in the same region
+        # non-idempotent write retries should only be retried once, using preferred locations if available (MM)
         if self.request and (_OperationType.IsReadOnlyOperation(self.request.operation_type)
                              or self.global_endpoint_manager.can_use_multiple_write_locations(self.request)):
             location_endpoint = self.resolve_next_region_service_endpoint()
@@ -74,9 +74,4 @@ class _TimeoutFailoverRetryPolicy(object):
     def is_operation_retryable(self):
         if _OperationType.IsReadOnlyOperation(self.request.operation_type):
             return True
-        if _OperationType.IsWriteOperation(self.request.operation_type):
-            if self.request.operation_type == _OperationType.Patch and not self.request.retry_write:
-                return False
-            if self.connection_policy.RetryNonIdempotentWrites or self.request.retry_write:
-                return True
-        return False
+        return self.request.retry_write

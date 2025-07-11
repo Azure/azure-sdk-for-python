@@ -790,6 +790,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_params.set_excluded_location_from_options(options)
         if Constants.KwargsConstants.RETRY_WRITE in options:
             request_params.set_retry_write(options[Constants.KwargsConstants.RETRY_WRITE])
+        elif (self.connection_policy.RetryNonIdempotentWrites and
+              request_params.resource_type == http_constants.ResourceType.Document):
+            request_params.set_retry_write(True)
         result, last_response_headers = await self.__Post(path, request_params, body, headers, **kwargs)
         self.last_response_headers = last_response_headers
 
@@ -933,6 +936,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_params.set_excluded_location_from_options(options)
         if Constants.KwargsConstants.RETRY_WRITE in options:
             request_params.set_retry_write(options[Constants.KwargsConstants.RETRY_WRITE])
+        elif (self.connection_policy.RetryNonIdempotentWrites and
+              request_params.resource_type == http_constants.ResourceType.Document):
+            request_params.set_retry_write(True)
         result, last_response_headers = await self.__Post(path, request_params, body, headers, **kwargs)
         self.last_response_headers = last_response_headers
         # update session for write request
@@ -1608,6 +1614,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_params.set_excluded_location_from_options(options)
         if Constants.KwargsConstants.RETRY_WRITE in options:
             request_params.set_retry_write(options[Constants.KwargsConstants.RETRY_WRITE])
+        elif (self.connection_policy.RetryNonIdempotentWrites and
+              request_params.resource_type == http_constants.ResourceType.Document):
+            request_params.set_retry_write(True)
         result, last_response_headers = await self.__Put(path, request_params, resource, headers, **kwargs)
         self.last_response_headers = last_response_headers
 
@@ -1935,6 +1944,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_params.set_excluded_location_from_options(options)
         if Constants.KwargsConstants.RETRY_WRITE in options:
             request_params.set_retry_write(options[Constants.KwargsConstants.RETRY_WRITE])
+        elif (self.connection_policy.RetryNonIdempotentWrites and
+              request_params.resource_type == http_constants.ResourceType.Document):
+            request_params.set_retry_write(True)
         result, last_response_headers = await self.__Delete(path, request_params, headers, **kwargs)
         self.last_response_headers = last_response_headers
 

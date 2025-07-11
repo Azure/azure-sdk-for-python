@@ -2,49 +2,66 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import pytest
-import time
 import unittest
 import uuid
 from azure.core.exceptions import ServiceResponseError
 from azure.core.rest import HttpRequest
-from azure.cosmos import CosmosClient, ContainerProxy, _retry_utility, exceptions
+from azure.core.pipeline.transport._requests_basic import RequestsTransport
+from azure.cosmos import CosmosClient, ContainerProxy, DatabaseProxy, _retry_utility, exceptions
 from azure.cosmos.partition_key import PartitionKey
 from _fault_injection_transport import FaultInjectionTransport
-from test_fault_injection_transport import TestFaultInjectionTransport
 from typing import Callable
 import test_config  # Import test_config for configuration details
 
+HPK_CONTAINER = "TestContainerHPK"
+
+@pytest.fixture(scope="class")
+def setup():
+    config = test_config.TestConfig()
+    if config.masterKey == '[YOUR_KEY_HERE]' or config.host == '[YOUR_ENDPOINT_HERE]':
+        raise Exception(
+            "You must specify your Azure Cosmos account values for "
+            "'masterKey' and 'host' at the top of this class to run the "
+            "tests.")
+    test_client = CosmosClient(config.host, config.masterKey)
+    database = test_client.create_database_if_not_exists(id=config.TEST_DATABASE_ID)
+    created_container = database.create_container_if_not_exists(
+        id=config.TEST_SINGLE_PARTITION_CONTAINER_ID,
+        partition_key=PartitionKey(path="/pk")
+    )
+    container_hpk = database.create_container_if_not_exists(
+        id=HPK_CONTAINER,
+        partition_key=PartitionKey(path=["/state", "/city"], kind="MultiHash")
+    )
+    yield {"database": database, "container": created_container, "container_hpk": container_hpk}
+
 @pytest.mark.cosmosEmulator
+@pytest.mark.usefixtures("setup")
 class TestRetryableWrites:
-    url = test_config.TestConfig.host
-    key = test_config.TestConfig.masterKey
+    host = test_config.TestConfig.host
+    master_key = test_config.TestConfig.masterKey
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
-    TEST_CONTAINER_SINGLE_PARTITION_ID = "test-retryable_writes-container-" + str(uuid.uuid4())
-    TEST_CONTAINER_MULTI_PARTITION_ID = "test-retryable_writes-multi-partition-container-" + str(uuid.uuid4())
+    TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
+    TEST_CONTAINER_MULTI_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
     client: CosmosClient = None
 
-    @classmethod
-    def setUpClass(cls):
-        cls.client = CosmosClient(cls.url, credential=cls.key)
-        cls.database = cls.client.create_database_if_not_exists(id=cls.TEST_DATABASE_ID)
-        cls.container = cls.database.create_container_if_not_exists(
-            id=cls.TEST_CONTAINER_SINGLE_PARTITION_ID,
-            partition_key=PartitionKey(path="/pk", kind="Hash")
-        )
-        cls.container_hpk = cls.database.create_container_if_not_exists(
-            id=cls.TEST_CONTAINER_MULTI_PARTITION_ID,
-            partition_key=PartitionKey(path=["/state", "/city"], kind="MultiHash")
-        )
+    @staticmethod
+    def setup_method_with_custom_transport(
+            custom_transport: RequestsTransport,
+            default_endpoint: str = host,
+            key: str = master_key,
+            database_id: str = TEST_DATABASE_ID,
+            container_id: str = TEST_CONTAINER_SINGLE_PARTITION_ID,
+            **kwargs):
+        client = CosmosClient(default_endpoint, key, consistency_level="Session",
+                              transport=custom_transport, **kwargs)
+        db: DatabaseProxy = client.create_database_if_not_exists(database_id)
+        container: ContainerProxy = db.create_container_if_not_exists(container_id, PartitionKey(path="/pk"))
+        return {"client": client, "db": db, "col": container}
 
-    @classmethod
-    def tearDownClass(cls):
-        # Clean up the created containers
-        cls.database.delete_container(cls.TEST_CONTAINER_SINGLE_PARTITION_ID)
-        cls.database.delete_container(cls.TEST_CONTAINER_MULTI_PARTITION_ID)
-
-    def test_retryable_writes_request_level(self):
+    def test_retryable_writes_request_level(self, setup):
         # Create a container for testing
-        container = self.container
+        container = setup["container"]
 
         # Mock retry_utility.execute to track retries
         original_execute = _retry_utility.ExecuteFunction
@@ -170,7 +187,7 @@ class TestRetryableWrites:
 
         # Test replace item with retry_write
 
-        test_item_replace = {"id": "3", "partitionKey": "test", "data": "original data"}
+        test_item_replace = {"id": "3", "pk": "test", "data": "original data"}
         container.create_item(test_item_replace)
         # Mock retry_utility.execute to track retries
         original_execute = _retry_utility.ExecuteFunction
@@ -178,14 +195,14 @@ class TestRetryableWrites:
         _retry_utility.ExecuteFunction = me
         # Test without retry_write for replace_item
         try:
-            container.replace_item(item=test_item_replace['id'], body={"id": "3", "partitionKey": "test", "data": "updated data"})
+            container.replace_item(item=test_item_replace['id'], body={"id": "3", "pk": "test", "data": "updated data"})
             pytest.fail("Expected an exception without retry_write")
         except exceptions.CosmosHttpResponseError:
             assert me.counter == 1, "Expected no retries without retry_write"
         # Test with retry_write for replace_item
         me.counter = 0  # Reset counter
         try:
-            container.replace_item(item=test_item_replace['id'], body={"id": "3", "partitionKey": "test",
+            container.replace_item(item=test_item_replace['id'], body={"id": "3", "pk": "test",
                                                                        "data": "updated data"}, retry_write=True)
         except exceptions.CosmosHttpResponseError as e:
             assert me.counter > 1, "Expected multiple retries due to simulated errors"
@@ -194,14 +211,14 @@ class TestRetryableWrites:
             _retry_utility.ExecuteFunction = original_execute
         # Verify the item was replaced
         replaced_item = container.read_item(item=test_item_replace['id'],
-                                            partition_key=test_item_replace['partitionKey'])
+                                            partition_key=test_item_replace['pk'])
         assert replaced_item['data'] == "updated data", "Item was not replaced successfully after retries"
 
-    def test_retryable_writes_client_level(self):
+    def test_retryable_writes_client_level(self, setup):
         """Test retryable writes for a container with retry_write set at the client level."""
         # Create a client with retry_write enabled
-        client_with_retry = CosmosClient(self.url, credential=self.key, retry_write=True)
-        container = client_with_retry.get_database_client(self.TEST_DATABASE_ID).get_container_client(self.container.id)
+        client_with_retry = CosmosClient(self.host, credential=self.master_key, retry_write=True)
+        container = client_with_retry.get_database_client(self.TEST_DATABASE_ID).get_container_client(setup['container'].id)
 
         # Mock retry_utility.execute to track retries
         original_execute = _retry_utility.ExecuteFunction
@@ -277,7 +294,7 @@ class TestRetryableWrites:
             _retry_utility.ExecuteFunction = original_execute
 
         # Test with replace item
-        test_item_replace = {"id": "8", "partitionKey": "test", "data": "original data"}
+        test_item_replace = {"id": "8", "pk": "test", "data": "original data"}
         container.create_item(test_item_replace)
         # Mock retry_utility.execute to track retries
         original_execute = _retry_utility.ExecuteFunction
@@ -285,7 +302,7 @@ class TestRetryableWrites:
         _retry_utility.ExecuteFunction = me
         # Test replace item, writes will retry by default with client level retry_write
         try:
-            container.replace_item(item=test_item_replace['id'], body={"id": "8", "partitionKey": "test",
+            container.replace_item(item=test_item_replace['id'], body={"id": "8", "pk": "test",
                                                                        "data": "updated data"})
         except exceptions.CosmosHttpResponseError as e:
             assert me.counter > 1, "Expected multiple retries due to simulated errors"
@@ -294,12 +311,12 @@ class TestRetryableWrites:
             _retry_utility.ExecuteFunction = original_execute
         # Verify the item was replaced
         replaced_item = container.read_item(item=test_item_replace['id'],
-                                            partition_key=test_item_replace['partitionKey'])
+                                            partition_key=test_item_replace['pk'])
         assert replaced_item['data'] == "updated data", "Item was not replaced successfully after retries"
 
-    def test_retryable_writes_hpk_request_level(self):
+    def test_retryable_writes_hpk_request_level(self, setup):
         """Test retryable writes for a container with hierarchical partition keys."""
-        container = self.container_hpk
+        container = setup["container_hpk"]
 
         # Mock retry_utility.execute to track retries
         original_execute = _retry_utility.ExecuteFunction
@@ -452,13 +469,13 @@ class TestRetryableWrites:
                                                 partition_key=[test_item_replace['state'], test_item_replace['city']])
         assert replaced_item_hpk['data'] == "updated data", "Item was not replaced successfully after retries"
 
-    def test_retryable_writes_hpk_client_level(self):
+    def test_retryable_writes_hpk_client_level(self, setup):
         """Test retryable writes for a container with hierarchical partition keys and
         retry_write set at the client level."""
         # Create a client with retry_write enabled
-        client_with_retry = CosmosClient(self.url, credential=self.key, retry_write=True)
+        client_with_retry = CosmosClient(self.host, credential=self.master_key, retry_write=True)
         container = client_with_retry.get_database_client(self.TEST_DATABASE_ID).get_container_client(
-            self.container_hpk.id)
+            setup['container_hpk'].id)
 
         # Mock retry_utility.execute to track retries
         original_execute = _retry_utility.ExecuteFunction
@@ -581,7 +598,7 @@ class TestRetryableWrites:
                                'name': 'sample document',
                                'key': 'value'}
 
-        initialized_objects = TestFaultInjectionTransport.setup_method_with_custom_transport(
+        initialized_objects = self.setup_method_with_custom_transport(
             custom_transport,
             preferred_locations=["First Region", "Second Region"],
             multiple_write_locations=True
@@ -643,7 +660,7 @@ class TestRetryableWrites:
                                'name': 'sample document',
                                'key': 'value'}
 
-        initialized_objects = TestFaultInjectionTransport.setup_method_with_custom_transport(
+        initialized_objects = self.setup_method_with_custom_transport(
             custom_transport,
             preferred_locations=["First Region", "Second Region"],
             multiple_write_locations=True,
@@ -698,3 +715,6 @@ class TestRetryableWrites:
             exception = ServiceResponseError("mock exception")
             exception.exc_type = self.err_type
             raise exception
+
+if __name__ == "__main__":
+    unittest.main()
