@@ -18,6 +18,7 @@ class ServiceResponseRetryPolicy(object):
         self.pk_range_wrapper = pk_range_wrapper
         self.total_retries = len(self.global_endpoint_manager.location_cache.read_regional_routing_contexts)
         self.failover_retry_count = 0
+        self.max_write_retry_count = 1
         self.connection_policy = connection_policy
         self.request = args[0] if args else None
         if self.request:
@@ -35,13 +36,14 @@ class ServiceResponseRetryPolicy(object):
             return False
 
         # Check if the next retry about to be done is safe
-        if (self.failover_retry_count + 1) >= self.total_retries:
-            return False
-
-        if self.request:
-            if not _OperationType.IsReadOnlyOperation(self.request.operation_type):
+        if (self.failover_retry_count + 1) >= self.total_retries and not self.args[0].retry_write:
                 return False
 
+        if self.request:
+            if not _OperationType.IsReadOnlyOperation(self.request.operation_type) and not self.args[0].retry_write:
+                    return False
+            if self.args[0].retry_write and self.failover_retry_count >= self.max_write_retry_count:
+                return False
             self.location_endpoint = self.resolve_next_region_service_endpoint()
             self.request.route_to_location(self.location_endpoint)
         return True

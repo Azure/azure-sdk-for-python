@@ -4,12 +4,13 @@
 import pytest
 import unittest
 import uuid
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.cosmos.aio import CosmosClient, _retry_utility_async
 from azure.cosmos import exceptions, documents
 from azure.cosmos.partition_key import PartitionKey
 import test_config  # Import test_config for configuration details
 
-pytest.mark.cosmosEmulator
+@pytest.mark.cosmosEmulator
 class TestRetryableWritesAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
@@ -28,26 +29,26 @@ class TestRetryableWritesAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     @classmethod
-    async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, credential=self.masterKey)
-        self.client.__aenter__()  # Ensure the client is properly initialized
-        self.database = await self.client.create_database_if_not_exists(id=self.TEST_DATABASE_ID)
-        self.container = await self.database.create_container_if_not_exists(
-            id=self.TEST_CONTAINER_SINGLE_PARTITION_ID,
+    async def asyncSetUp(cls):
+        cls.client = CosmosClient(cls.host, credential=cls.masterKey)
+        await cls.client.__aenter__()  # Ensure the client is properly initialized
+        cls.database = await cls.client.create_database_if_not_exists(id=cls.TEST_DATABASE_ID)
+        cls.container = await cls.database.create_container_if_not_exists(
+            id=cls.TEST_CONTAINER_SINGLE_PARTITION_ID,
             partition_key=PartitionKey(path="/partitionKey", kind="Hash")
         )
-        self.container_hpk = await self.database.create_container_if_not_exists(
-            id=self.TEST_CONTAINER_MULTI_PARTITION_ID,
+        cls.container_hpk = await cls.database.create_container_if_not_exists(
+            id=cls.TEST_CONTAINER_MULTI_PARTITION_ID,
             partition_key=PartitionKey(path=["/state", "/city"], kind="MultiHash")
         )
 
     @classmethod
-    async def asyncTearDown(self):
-        await self.database.delete_container(self.TEST_CONTAINER_SINGLE_PARTITION_ID)
-        await self.database.delete_container(self.TEST_CONTAINER_MULTI_PARTITION_ID)
-        await self.client.close()
+    async def asyncTearDown(cls):
+        await cls.database.delete_container(cls.TEST_CONTAINER_SINGLE_PARTITION_ID)
+        await cls.database.delete_container(cls.TEST_CONTAINER_MULTI_PARTITION_ID)
+        await cls.client.close()
 
-    async def test_retryable_writes(self):
+    async def test_retryable_writes_request_level_async(self):
         container = self.container
 
         # Mock retry_utility.execute to track retries
@@ -185,13 +186,12 @@ class TestRetryableWritesAsync(unittest.IsolatedAsyncioTestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 404, "Expected item to be deleted but it was not"
 
-    async def test_retryable_writes_client_retry_write(self):
+    async def test_retryable_writes_client_level_write(self):
         """Test retryable writes for a container with retry_write set at the client level."""
 
         # Create a client with retry_write enabled
         client_with_retry = CosmosClient(self.host, credential=self.masterKey, retry_write=True)
         await client_with_retry.__aenter__()
-
 
         try:
             container = client_with_retry.get_database_client(self.TEST_DATABASE_ID).get_container_client(
@@ -257,11 +257,23 @@ class TestRetryableWritesAsync(unittest.IsolatedAsyncioTestCase):
                 pytest.fail("Expected an exception for item that should have been deleted")
             except exceptions.CosmosHttpResponseError as e:
                 assert e.status_code == 404, "Expected item to be deleted but it was not"
+
+            # Now we try it out with a write request with retry write enabled - which should retry once
+            try:
+                # Reset the function to reset the counter
+                mf = self.MockExecuteServiceResponseException(AttributeError, None)
+                _retry_utility_async.ExecuteFunctionAsync = mf
+                await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())}, retry_write=True)
+                pytest.fail("Exception was not raised.")
+            except ServiceResponseError:
+                assert mf.counter == 2
+            finally:
+                _retry_utility_async.ExecuteFunctionAsync = original_execute
         finally:
             if client_with_retry:
                 await client_with_retry.close()
 
-    async def test_retryable_writes_hpk(self):
+    async def test_retryable_writes_hpk_request_level_async(self):
         """Test retryable writes for a container with hierarchical partition keys."""
         container = self.container_hpk
 
@@ -394,7 +406,7 @@ class TestRetryableWritesAsync(unittest.IsolatedAsyncioTestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 404, "Expected item to be deleted but it was not"
 
-    async def test_retryable_writes_hpk_client_retry_write(self):
+    async def test_retryable_writes_hpk_client_level_async(self):
         """Test retryable writes for a container with hierarchical partition keys and retry_write
         set at the client level."""
         # Create a client with retry_write enabled
@@ -481,3 +493,16 @@ class TestRetryableWritesAsync(unittest.IsolatedAsyncioTestCase):
                 )
             else:
                 return await self.org_func(func, *args, **kwargs)
+
+    class MockExecuteServiceResponseException(object):
+        def __init__(self, err_type, inner_exception):
+            self.err_type = err_type
+            self.inner_exception = inner_exception
+            self.counter = 0
+
+        def __call__(self, func, *args, **kwargs):
+            self.counter = self.counter + 1
+            exception = ServiceResponseError("mock exception")
+            exception.exc_type = self.err_type
+            exception.inner_exception = self.inner_exception
+            raise exception

@@ -4,11 +4,12 @@
 import pytest
 import unittest
 import uuid
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.cosmos import CosmosClient, exceptions, documents, _retry_utility
 from azure.cosmos.partition_key import PartitionKey
 import test_config  # Import test_config for configuration details
 
-pytest.mark.cosmosEmulator
+@pytest.mark.cosmosEmulator
 class TestRetryableWrites(unittest.TestCase):
     url = test_config.TestConfig.host
     key = test_config.TestConfig.masterKey
@@ -36,7 +37,7 @@ class TestRetryableWrites(unittest.TestCase):
         cls.database.delete_container(cls.TEST_CONTAINER_SINGLE_PARTITION_ID)
         cls.database.delete_container(cls.TEST_CONTAINER_MULTI_PARTITION_ID)
 
-    def test_retryable_writes(self):
+    def test_retryable_writes_request_level(self):
         # Create a container for testing
         container = self.container
 
@@ -162,9 +163,7 @@ class TestRetryableWrites(unittest.TestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 404, "Expected item to be deleted but it was not"
 
-
-
-    def test_retryable_writes_client_retry_write(self):
+    def test_retryable_writes_client_level(self):
         """Test retryable writes for a container with retry_write set at the client level."""
         # Create a client with retry_write enabled
         client_with_retry = CosmosClient(self.url, credential=self.key, retry_write=True)
@@ -231,7 +230,19 @@ class TestRetryableWrites(unittest.TestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 404, "Expected item to be deleted but it was not"
 
-    def test_retryable_writes_hpk(self):
+        # Test client level retry for service response error
+        mf = self.MockExecuteServiceResponseException(Exception)
+        try:
+            # Reset the function to reset the counter
+            _retry_utility.ExecuteFunction = mf
+            container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
+            pytest.fail("Exception was not raised.")
+        except ServiceResponseError:
+            assert mf.counter == 2
+        finally:
+            _retry_utility.ExecuteFunction = original_execute
+
+    def test_retryable_writes_hpk_request_level(self):
         """Test retryable writes for a container with hierarchical partition keys."""
         container = self.container_hpk
 
@@ -356,7 +367,7 @@ class TestRetryableWrites(unittest.TestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 404, "Expected item to be deleted but it was not"
 
-    def test_retryable_writes_hpk_client_retry_write(self):
+    def test_retryable_writes_hpk_client_level(self):
         """Test retryable writes for a container with hierarchical partition keys and
         retry_write set at the client level."""
         # Create a client with retry_write enabled
@@ -425,6 +436,9 @@ class TestRetryableWrites(unittest.TestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 404, "Expected item to be deleted but it was not"
 
+    def test_retryable_writes_multiple_write_locations(self):
+        return
+
     class MockExecuteFunction(object):
         def __init__(self, org_func):
             self.org_func = org_func
@@ -441,3 +455,13 @@ class TestRetryableWrites(unittest.TestCase):
             else:
                 return self.org_func(func, *args, **kwargs)
 
+    class MockExecuteServiceResponseException(object):
+        def __init__(self, err_type):
+            self.err_type = err_type
+            self.counter = 0
+
+        def __call__(self, func, *args, **kwargs):
+            self.counter = self.counter + 1
+            exception = ServiceResponseError("mock exception")
+            exception.exc_type = self.err_type
+            raise exception
