@@ -5,6 +5,8 @@
 # --------------------------------------------------------------------------
 
 from collections.abc import Sequence
+from io import BytesIO
+import json
 import uuid
 from datetime import datetime
 from typing import Dict, List, Any, TYPE_CHECKING, MutableMapping, Optional
@@ -133,9 +135,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         if if_match is not None:
             kwargs['headers'] = kwargs.get('headers', {})
             kwargs['headers']['If-Match'] = if_match
+        patch_document = BytesIO(json.dumps(json_patch).encode('utf-8'))
         return self._client.digital_twins.update(
             id=digital_twin_id,
-            patch_document=json_patch,
+            patch_document=patch_document,
             error_map=error_map,
             **kwargs
         )
