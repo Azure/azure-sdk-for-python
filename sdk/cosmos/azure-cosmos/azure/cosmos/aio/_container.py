@@ -44,6 +44,7 @@ from .._base import (
 )
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 from .._cosmos_responses import CosmosDict, CosmosList
+from .._constants import _Constants as Constants
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
 from ..offer import ThroughputProperties
@@ -283,7 +284,7 @@ class ContainerProxy:
         if no_response is not None:
             kwargs['no_response'] = no_response
         if retry_write is not None:
-            kwargs['retry_write'] = retry_write
+            kwargs[Constants.KwargsConstants.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
@@ -858,7 +859,7 @@ class ContainerProxy:
         if no_response is not None:
             kwargs['no_response'] = no_response
         if retry_write is not None:
-            kwargs['retry_write'] = retry_write
+            kwargs[Constants.KwargsConstants.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
@@ -947,7 +948,7 @@ class ContainerProxy:
         if no_response is not None:
             kwargs['no_response'] = no_response
         if retry_write is not None:
-            kwargs['retry_write'] = retry_write
+            kwargs[Constants.KwargsConstants.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
@@ -1034,7 +1035,7 @@ class ContainerProxy:
         if no_response is not None:
             kwargs['no_response'] = no_response
         if retry_write is not None:
-            kwargs['retry_write'] = retry_write
+            kwargs[Constants.KwargsConstants.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
@@ -1115,7 +1116,7 @@ class ContainerProxy:
         if priority is not None:
             kwargs['priority'] = priority
         if retry_write is not None:
-            kwargs['retry_write'] = retry_write
+            kwargs[Constants.KwargsConstants.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)

@@ -17,13 +17,17 @@ class _TimeoutFailoverRetryPolicy(object):
         self.global_endpoint_manager = global_endpoint_manager
         self.pk_range_wrapper = pk_range_wrapper
         # If an account only has 1 region, then we still want to retry once on the same region
-        if self.request:
-            if _OperationType.IsReadOnlyOperation(self.request.operation_type):
-                self._max_retry_attempt_count = len(self.global_endpoint_manager.location_cache
-                                                    .read_regional_routing_contexts) + 1
-            else:
-                # we only want to retry once on non-idempotent writes
-                self._max_retry_attempt_count = 2
+        # We want this to be the default retry attempts as paging through a query means there are requests without
+        # a request object
+        self._max_retry_attempt_count = len(self.global_endpoint_manager.location_cache
+                                            .read_regional_routing_contexts) + 1
+       # If the request is a write operation, we only want to retry once if retry write is enabled
+        if self.request and not _OperationType.IsReadOnlyOperation(
+                self.request.operation_type
+        ):
+            self._max_retry_attempt_count = len(
+                self.global_endpoint_manager.location_cache.write_regional_routing_contexts
+            ) + 1
         self.retry_count = 0
         self.connection_policy = connection_policy
 
@@ -48,7 +52,8 @@ class _TimeoutFailoverRetryPolicy(object):
 
         # second check here ensures we only do cross-regional retries for read requests
         # non-idempotent write retries should be retried in the same region
-        if self.request and _OperationType.IsReadOnlyOperation(self.request.operation_type):
+        if self.request and (_OperationType.IsReadOnlyOperation(self.request.operation_type)
+                             or self.global_endpoint_manager.can_use_multiple_write_locations(self.request)):
             location_endpoint = self.resolve_next_region_service_endpoint()
             self.request.route_to_location(location_endpoint)
         return True
