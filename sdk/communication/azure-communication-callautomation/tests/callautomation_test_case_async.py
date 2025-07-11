@@ -19,15 +19,17 @@ from devtools_testutils.helpers import get_test_id
 
 from azure.communication.callautomation import (
     CommunicationIdentifierKind,
+    CommunicationIdentifier
+)
+from azure.communication.callautomation.aio import (
     CallAutomationClient,
-    CallConnectionClient,
-    CommunicationIdentifier,
+    CallConnectionClient
 )
 from azure.communication.callautomation._shared.models import identifier_from_raw_id
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.phonenumbers import PhoneNumbersClient
 
-class CallAutomationRecordedTestCase(AzureRecordedTestCase):
+class CallAutomationRecordedTestCaseAsync(AzureRecordedTestCase):
     @classmethod
     def setup_class(cls):
         if is_live():
@@ -91,7 +93,7 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
         if identifier is None:
             raise ValueError("Identifier cannot be None")
         elif identifier.kind == CommunicationIdentifierKind.COMMUNICATION_USER:
-            return CallAutomationRecordedTestCase._format_string("".join(filter(str.isalnum, identifier.raw_id)))
+            return CallAutomationRecordedTestCaseAsync._format_string("".join(filter(str.isalnum, identifier.raw_id)))
         elif identifier.kind == CommunicationIdentifierKind.PHONE_NUMBER:
             return identifier.raw_id
         else:
@@ -105,9 +107,9 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
     def _unique_key_gen(
         caller_identifier: CommunicationIdentifier, receiver_identifier: CommunicationIdentifier
     ) -> str:
-        return CallAutomationRecordedTestCase._parse_ids_from_identifier(
+        return CallAutomationRecordedTestCaseAsync._parse_ids_from_identifier(
             caller_identifier
-        ) + CallAutomationRecordedTestCase._parse_ids_from_identifier(receiver_identifier)
+        ) + CallAutomationRecordedTestCaseAsync._parse_ids_from_identifier(receiver_identifier)
 
     def _get_test_event_file_name(self):
         script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -175,26 +177,26 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
             time.sleep(1)
         return None
 
-    def establish_callconnection_voip(self, caller, target, *, cognitive_service_enabled: Optional[bool] = False) -> tuple:
-        return self._establish_callconnection(
+    async def establish_callconnection_voip(self, caller, target, *, cognitive_service_enabled: Optional[bool] = False) -> tuple:
+        return await self._establish_callconnection(
             caller, target, cognitive_service_enabled=cognitive_service_enabled
         )
 
-    def establish_callconnection_pstn(self, caller, target) -> tuple:
-        return self._establish_callconnection(caller, target, is_pstn=True)
+    async def establish_callconnection_pstn(self, caller, target) -> tuple:
+        return await self._establish_callconnection(caller, target, is_pstn=True)
 
-    def establish_callconnection_voip_answercall_withcustomcontext(self, caller, target) -> tuple:
-        return self._establish_callconnection(caller, target, custom_context=True)
+    async def establish_callconnection_voip_answercall_withcustomcontext(self, caller, target) -> tuple:
+        return await self._establish_callconnection(caller, target, custom_context=True)
 
-    def establish_callconnection_voip_with_streaming_options(self, caller, target, options, is_transcription) -> tuple:
-        return self._establish_callconnection(
+    async def establish_callconnection_voip_with_streaming_options(self, caller, target, options, is_transcription) -> tuple:
+        return await self._establish_callconnection(
             caller, target, options=options, is_transcription=is_transcription
         )
 
-    def establish_callconnection_voip_connect_call(self, caller, target) -> tuple:
-        return self._establish_callconnection(caller, target, connect_call=True)
+    async def establish_callconnection_voip_connect_call(self, caller, target) -> tuple:
+        return await self._establish_callconnection(caller, target, connect_call=True)
 
-    def _establish_callconnection(self, caller, target, cognitive_service_enabled: Optional[bool] = False, is_pstn: bool = False, custom_context: bool = False, options=None, is_transcription: bool = False, connect_call: bool = False) -> tuple:
+    async def _establish_callconnection(self, caller, target, cognitive_service_enabled: Optional[bool] = False, is_pstn: bool = False, custom_context: bool = False, options=None, is_transcription: bool = False, connect_call: bool = False) -> tuple:
         call_automation_client_caller = self._create_call_automation_client(caller)
         call_automation_client_target = self._create_call_automation_client(target)
 
@@ -203,13 +205,13 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
             self._subscribe_to_dispatcher(unique_id)
 
         callback_url = f"{self.dispatcher_callback}?q={unique_id}"
-        create_call_result = self._create_call(
+        create_call_result = await self._create_call(
             call_automation_client_caller, caller, target, unique_id, cognitive_service_enabled, is_pstn, options, is_transcription
         )
         caller_connection_id = self._validate_create_call_result(create_call_result)
 
         incoming_call_context = self._wait_for_incoming_call(unique_id)
-        answer_call_result = self._answer_call(call_automation_client_target, incoming_call_context, custom_context)
+        answer_call_result = await self._answer_call(call_automation_client_target, incoming_call_context, custom_context)
 
         call_connection_caller = self._create_call_connection_client(caller_connection_id)
         call_connection_target = self._create_call_connection_client(answer_call_result.call_connection_id)
@@ -236,15 +238,15 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
         thread = threading.Thread(target=self._message_awaiter, args=(unique_id,))
         thread.start()
 
-    def _create_call(self, client, caller, target, unique_id, cognitive_service_enabled, is_pstn, options, is_transcription):
+    async def _create_call(self, client, caller, target, unique_id, cognitive_service_enabled, is_pstn, options, is_transcription):
         if is_pstn:
-            return client.create_call(
+            return await client.create_call(
                 target_participant=target,
                 source_caller_id_number=caller,
                 callback_url=f"{self.dispatcher_callback}?q={unique_id}",
             )
         elif options:
-            return client.create_call(
+            return await client.create_call(
                 target_participant=target,
                 callback_url=f"{self.dispatcher_callback}?q={unique_id}",
                 media_streaming=options if not is_transcription else None,
@@ -252,7 +254,7 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
                 cognitive_services_endpoint=self.cognitive_service_endpoint if is_transcription else None
             )
         else:
-            return client.create_call(
+            return await client.create_call(
                 target_participant=target,
                 callback_url=f"{self.dispatcher_callback}?q={unique_id}",
                 cognitive_services_endpoint=self.cognitive_service_endpoint if cognitive_service_enabled else None
@@ -274,13 +276,13 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
             raise ValueError("incoming_call_event is None")
         return incoming_call_event["incomingCallContext"]
 
-    def _answer_call(self, client, context, custom_context):
+    async def _answer_call(self, client, context, custom_context):
         if custom_context:
-            result = client.answer_call(
+            result = await client.answer_call(
                 incoming_call_context=context, callback_url=self.dispatcher_callback, voip_headers={"foo": "bar"}
             )
         else:
-            result = client.answer_call(
+            result = await client.answer_call(
                 incoming_call_context=context, callback_url=self.dispatcher_callback
             )
         if result is None:
@@ -290,11 +292,11 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
     def _create_call_connection_client(self, connection_id):
         return CallConnectionClient.from_connection_string(self.connection_str, connection_id)
 
-    def terminate_call(self, unique_id) -> None:
+    async def terminate_call(self, unique_id) -> None:
         try:
             call_connection = self.open_call_connections.pop(unique_id, None)
             if call_connection is not None:
-                call_connection.hang_up(is_for_everyone=True)
+                await call_connection.hang_up(is_for_everyone=True)
                 disconnected_event = self.check_for_event(
                     "CallDisconnected", call_connection._call_connection_id, timedelta(seconds=15)
                 )
