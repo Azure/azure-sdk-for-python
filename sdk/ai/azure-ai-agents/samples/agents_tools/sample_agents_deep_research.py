@@ -18,7 +18,8 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-ai-agents azure-identity
+    pip install azure-identity
+    pip install --pre azure-ai-projects
 
     Set this environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -27,8 +28,8 @@ USAGE:
        the "Models + endpoints" tab in your Azure AI Foundry project.
     3) DEEP_RESEARCH_MODEL_DEPLOYMENT_NAME - The deployment name of the Deep Research AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
-    4) AZURE_BING_CONNECTION_ID - The ID of the Bing connection, in the format of:
-       /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace-name}/connections/{connection-name}
+    4) BING_RESOURCE_NAME - The resource name of the Bing connection, you can find it in the "Connected resources" tab
+       in the Management Center of your AI Foundry project.
 """
 
 import os, time
@@ -60,10 +61,7 @@ def fetch_and_print_new_agent_response(
     return response.id
 
 
-def create_research_summary(
-        message : ThreadMessage,
-        filepath: str = "research_summary.md"
-) -> None:
+def create_research_summary(message: ThreadMessage, filepath: str = "research_summary.md") -> None:
     if not message:
         print("No message content provided, cannot create research summary.")
         return
@@ -93,7 +91,7 @@ project_client = AIProjectClient(
 )
 
 # [START create_agent_with_deep_research_tool]
-conn_id = os.environ["AZURE_BING_CONNECTION_ID"]
+conn_id = project_client.connections.get(name=os.environ["BING_RESOURCE_NAME"]).id
 
 # Initialize a Deep Research tool with Bing Connection ID and Deep Research model deployment name
 deep_research_tool = DeepResearchTool(
@@ -154,9 +152,7 @@ with project_client:
             print(f"Run failed: {run.last_error}")
 
         # Fetch the final message from the agent in the thread and create a research summary
-        final_message = agents_client.messages.get_last_message_by_role(
-            thread_id=thread.id, role=MessageRole.AGENT
-        )
+        final_message = agents_client.messages.get_last_message_by_role(thread_id=thread.id, role=MessageRole.AGENT)
         if final_message:
             create_research_summary(final_message)
 
