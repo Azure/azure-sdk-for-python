@@ -38,13 +38,6 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-
-
-
-
-
-
-
 class KeyVaultManagementClient:  # pylint: disable=too-many-instance-attributes
     """The Azure management API provides a RESTful set of web services that interact with Azure Key
     Vault.
