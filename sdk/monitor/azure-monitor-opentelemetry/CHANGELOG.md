@@ -3,6 +3,7 @@
 ## 1.6.11 (Unreleased)
 
 ### Features Added
+- Added RateLimited Sampler Config changes
 
 ### Breaking Changes
 
