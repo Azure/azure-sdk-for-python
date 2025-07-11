@@ -512,13 +512,13 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
 
     @distributed_trace
     def create_models(self, dtdl_models, **kwargs):
-        # type: (Sequence[MutableMapping[str, Any]], **Any) -> Sequence[MutableMapping[str, Any]]
+        # type: (Sequence[MutableMapping[str, Any]], **Any) -> List[DigitalTwinsModelData]
         """Create one or more models. When any error occurs, no models are uploaded.
 
         :param Sequence[MutableMapping[str, Any]] dtdl_models: The set of models to create.
             Each dict corresponds to exactly one model.
         :return: The list of created models.
-        :rtype: Sequence[MutableMapping[str, Any]]
+        :rtype: List[DigitalTwinsModelData]
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceExistsError: One or more of
             the provided models already exist.
