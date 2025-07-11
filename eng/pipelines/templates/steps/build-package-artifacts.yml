@@ -99,7 +99,7 @@ steps:
         Write-Host "Installing release reqs"
         uv pip install -r eng/release_requirements.txt
       }
-      uv pip freeze --all
+      uv pip freeze
     displayName: 'Prep Environment'
     condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
 
