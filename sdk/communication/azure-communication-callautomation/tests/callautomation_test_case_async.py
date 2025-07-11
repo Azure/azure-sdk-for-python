@@ -210,7 +210,7 @@ class CallAutomationRecordedTestCaseAsync(AzureRecordedTestCase):
         )
         caller_connection_id = self._validate_create_call_result(create_call_result)
 
-        incoming_call_context = await self._wait_for_incoming_call(unique_id)
+        incoming_call_context = self._wait_for_incoming_call(unique_id)
         answer_call_result = await self._answer_call(call_automation_client_target, incoming_call_context, custom_context)
 
         call_connection_caller = self._create_call_connection_client(caller_connection_id)

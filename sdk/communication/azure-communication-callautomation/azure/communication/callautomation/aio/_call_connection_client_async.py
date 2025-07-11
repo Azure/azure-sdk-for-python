@@ -1124,7 +1124,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             operation_callback_uri=operation_callback_url,
             operation_context=operation_context
         )
-        self._call_media_client.start_media_streaming(
+        await self._call_media_client.start_media_streaming(
             self._call_connection_id,
             start_media_streaming_request,
             **kwargs)
@@ -1154,7 +1154,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             operation_callback_uri=operation_callback_url,
             operation_context=operation_context
             )
-        self._call_media_client.stop_media_streaming(
+        await self._call_media_client.stop_media_streaming(
             self._call_connection_id,
             stop_media_streaming_request,
             **kwargs
@@ -1190,7 +1190,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             kwargs=kwargs,
         )
 
-        self._call_media_client.interrupt_audio_and_announce(
+        await self._call_media_client.interrupt_audio_and_announce(
             self._call_connection_id,
             interrupt_audio_announce_request,
             **kwargs
