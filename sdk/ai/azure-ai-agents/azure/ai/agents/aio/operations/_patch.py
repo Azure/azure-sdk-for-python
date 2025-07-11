@@ -222,7 +222,7 @@ class RunsOperations(RunsOperationsGenerated):
 
         :param thread_id: The identifier of the thread to run.
         :type thread_id: str
-        :param body: The run creation request data containing agent configuration and options.
+        :param body: The run configuration data as a JSON object.
         :type body: JSON
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
@@ -251,7 +251,7 @@ class RunsOperations(RunsOperationsGenerated):
 
         :param thread_id: The identifier of the thread to run.
         :type thread_id: str
-        :param body: The run creation request data containing agent configuration and options.
+        :param body: The run configuration data as binary content.
         :type body: IO[bytes]
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
@@ -294,7 +294,7 @@ class RunsOperations(RunsOperationsGenerated):
 
         :param thread_id: The identifier of the thread to run.
         :type thread_id: str
-        :param body: The run creation request data containing agent configuration and options.
+        :param body: The run configuration data as JSON or binary content.
         :type body: JSON or IO[bytes]
         :keyword agent_id: The ID of the agent that should run the thread.
         :paramtype agent_id: str
@@ -608,7 +608,7 @@ class RunsOperations(RunsOperationsGenerated):
     ) -> _models.AsyncAgentRunStream[_models.AsyncAgentEventHandler]:
         """Creates a new stream for an agent thread.
 
-        :param thread_id: The identifier of the thread to stream.
+        :param thread_id: The ID of the thread to create a run stream for.
         :type thread_id: str
         :keyword agent_id: The ID of the agent that should run the thread.
         :paramtype agent_id: str
@@ -717,7 +717,7 @@ class RunsOperations(RunsOperationsGenerated):
     ) -> _models.AsyncAgentRunStream[_models.BaseAsyncAgentEventHandlerT]:
         """Creates a new stream for an agent thread.
 
-        :param thread_id: The identifier of the thread to stream.
+        :param thread_id: The ID of the thread to create a run stream for.
         :type thread_id: str
         :keyword agent_id: The ID of the agent that should run the thread.
         :paramtype agent_id: str
@@ -814,9 +814,9 @@ class RunsOperations(RunsOperationsGenerated):
 
         Terminating when the Run enters a terminal state with a `data: [DONE]` message.
 
-        :param thread_id: The identifier of the thread to stream.
+        :param thread_id: The ID of the thread to create a run stream for.
         :type thread_id: str
-        :param body: The run creation request data containing agent configuration and options.
+        :param body: The run configuration data as JSON or binary content.
         :type body: IO[bytes]
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
@@ -848,9 +848,9 @@ class RunsOperations(RunsOperationsGenerated):
 
         Terminating when the Run enters a terminal state with a `data: [DONE]` message.
 
-        :param thread_id: The identifier of the thread to stream.
+        :param thread_id: The ID of the thread to create a run stream for.
         :type thread_id: str
-        :param body: The run creation request data containing agent configuration and options.
+        :param body: The run configuration data as JSON or binary content.
         :type body: IO[bytes]
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
@@ -897,9 +897,9 @@ class RunsOperations(RunsOperationsGenerated):
 
         Terminating when the Run enters a terminal state with a `data: [DONE]` message.
 
-        :param thread_id: The identifier of the thread to stream.
+        :param thread_id: The ID of the thread to create a run stream for.
         :type thread_id: str
-        :param body: The run creation request data containing agent configuration and options.
+        :param body: The run configuration data as a JSON or binary content.
         :type body: JSON or IO[bytes]
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
@@ -1039,9 +1039,9 @@ class RunsOperations(RunsOperationsGenerated):
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.
 
-        :param thread_id: The identifier of the thread containing the run.
+        :param thread_id: The ID of the thread that contains the run waiting for tool outputs to be submitted.
         :type thread_id: str
-        :param run_id: The identifier of the run requiring tool outputs.
+        :param run_id: The ID of the run waiting for tool outputs to be submitted.
         :type run_id: str
         :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
          is None.
@@ -1066,11 +1066,11 @@ class RunsOperations(RunsOperationsGenerated):
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.
 
-        :param thread_id: The identifier of the thread containing the run.
+        :param thread_id: The ID of the thread that contains the run waiting for tool outputs to be submitted.
         :type thread_id: str
-        :param run_id: The identifier of the run requiring tool outputs.
+        :param run_id: The ID of the run waiting for tool outputs to be submitted.
         :type run_id: str
-        :param body: The tool outputs submission data.
+        :param body: The tool call results serialized to a JSON object.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1088,11 +1088,11 @@ class RunsOperations(RunsOperationsGenerated):
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.
 
-        :param thread_id: The identifier of the thread containing the run.
+        :param thread_id: The ID of the thread that contains the run waiting for tool outputs to be submitted.
         :type thread_id: str
-        :param run_id: The identifier of the run requiring tool outputs.
+        :param run_id: The ID of the run waiting for tool outputs to be submitted.
         :type run_id: str
-        :param body: The tool outputs submission data.
+        :param body: The tool call results serialized to binary data.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1117,11 +1117,11 @@ class RunsOperations(RunsOperationsGenerated):
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.
 
-        :param thread_id: The identifier of the thread containing the run.
+        :param thread_id: The ID of the thread that contains the run waiting for tool outputs to be submitted.
         :type thread_id: str
-        :param run_id: The identifier of the run requiring tool outputs.
+        :param run_id: The ID of the run waiting for tool outputs to be submitted.
         :type run_id: str
-        :param body: The tool outputs submission data.
+        :param body: The tool call results serialized to JSON or binary data.
         :type body: JSON or IO[bytes]
         :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
          is None.
@@ -1173,11 +1173,11 @@ class RunsOperations(RunsOperationsGenerated):
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
-        :param thread_id: The identifier of the thread containing the run.
+        :param thread_id: The ID of the thread that contains the run waiting for tool outputs to be submitted.
         :type thread_id: str
-        :param run_id: The identifier of the run requiring tool outputs.
+        :param run_id: The ID of the run waiting for tool outputs to be submitted.
         :type run_id: str
-        :param body: The tool outputs submission data.
+        :param body: The tool call results serialized to JSON or binary data.
         :type body: JSON or IO[bytes]
         :keyword event_handler: The event handler to use for processing events during the run. Default
             value is None.
@@ -1204,9 +1204,9 @@ class RunsOperations(RunsOperationsGenerated):
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
-        :param thread_id: The identifier of the thread containing the run.
+        :param thread_id: The ID of the thread that contains the run waiting for tool outputs to be submitted.
         :type thread_id: str
-        :param run_id: The identifier of the run requiring tool outputs.
+        :param run_id: The ID of the run waiting for tool outputs to be submitted.
         :type run_id: str
         :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
          is None.
@@ -1239,11 +1239,11 @@ class RunsOperations(RunsOperationsGenerated):
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
-        :param thread_id: The identifier of the thread containing the run.
+        :param thread_id: The ID of the thread that contains the run waiting for tool outputs to be submitted.
         :type thread_id: str
-        :param run_id: The identifier of the run requiring tool outputs.
+        :param run_id: The ID of the run waiting for tool outputs to be submitted.
         :type run_id: str
-        :param body: The tool outputs submission data.
+        :param body: The tool call results serialized to JSON or binary data.
         :type body: JSON or IO[bytes]
         :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
          is None.
@@ -1680,7 +1680,7 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
     ) -> _models.VectorStore:
         """Creates a vector store and poll.
 
-        :param body: The vector store creation request data.
+        :param body: The vector store configuration as a JSON object.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1756,7 +1756,7 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
     ) -> _models.VectorStore:
         """Creates a vector store and poll.
 
-        :param body: The vector store creation request data.
+        :param body: The vector store configuration data as binary content.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1790,7 +1790,7 @@ class VectorStoresOperations(VectorStoresOperationsGenerated):
     ) -> _models.VectorStore:
         """Creates a vector store and poll.
 
-        :param body: Is either a JSON type or a IO[bytes] type.
+        :param body: The vector store configuration serialized to JSON or binary object.
         :type body: JSON or IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1885,7 +1885,7 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
 
         :param vector_store_id: Identifier of the vector store.
         :type vector_store_id: str
-        :param body: The file batch creation request data.
+        :param body: The file batch configuration data as a JSON object containing file IDs and other settings.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1954,7 +1954,7 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
 
         :param vector_store_id: Identifier of the vector store.
         :type vector_store_id: str
-        :param body: The file batch creation request data.
+        :param body: The file batch configuration data as binary content.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1988,7 +1988,7 @@ class VectorStoreFileBatchesOperations(VectorStoreFileBatchesOperationsGenerated
 
         :param vector_store_id: Identifier of the vector store.
         :type vector_store_id: str
-        :param body: Is either a JSON type or a IO[bytes] type.
+        :param body: The file batch configuration serialized to JSON or binary object.
         :type body: JSON or IO[bytes]
         :keyword file_ids: List of file identifiers.
         :paramtype file_ids: list[str]
@@ -2067,7 +2067,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
 
         :param vector_store_id: Identifier of the vector store.
         :type vector_store_id: str
-        :param body: The file creation request data.
+        :param body: The file attachment configuration data as a JSON object containing file ID and settings.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2136,7 +2136,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
 
         :param vector_store_id: Identifier of the vector store.
         :type vector_store_id: str
-        :param body: The file creation request data.
+        :param body: The file attachment configuration data as binary content.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -2170,7 +2170,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
 
         :param vector_store_id: Identifier of the vector store.
         :type vector_store_id: str
-        :param body: Is either a JSON type or a IO[bytes] type.
+        :param body: The file attachment configuration data serialized to JSON or binary object.
         :type body: JSON or IO[bytes]
         :keyword content_type: Body Parameter content-type. Defaults to 'application/json'.
         :paramtype content_type: str
