@@ -68,11 +68,11 @@ class _PartitionKeyComponentType:
     Float = 0x14
     Infinity = 0xFF
 
-class PartitionKeyKind:
+class _PartitionKeyKind:
     HASH: str = "Hash"
     MULTI_HASH: str = "MultiHash"
 
-class PartitionKeyVersion:
+class _PartitionKeyVersion:
     V1: int = 1
     V2: int = 2
 
@@ -135,21 +135,21 @@ class PartitionKey(dict):
 
     @overload
     def __init__(self, path: List[str], *, kind: Literal["MultiHash"] = "MultiHash",
-                 version: int = PartitionKeyVersion.V2
+                 version: int = _PartitionKeyVersion.V2
     ) -> None:
         ...
 
     @overload
     def __init__(self, path: str, *, kind: Literal["Hash"] = "Hash",
-                 version:int = PartitionKeyVersion.V2
+                 version:int = _PartitionKeyVersion.V2
     ) -> None:
         ...
 
     def __init__(self, *args, **kwargs):
         path = args[0] if args else kwargs['path']
-        kind = args[1] if len(args) > 1 else kwargs.get('kind', PartitionKeyKind.HASH if isinstance(path, str)
-        else PartitionKeyKind.MULTI_HASH)
-        version = args[2] if len(args) > 2 else kwargs.get('version', PartitionKeyVersion.V2)
+        kind = args[1] if len(args) > 1 else kwargs.get('kind', _PartitionKeyKind.HASH if isinstance(path, str)
+        else _PartitionKeyKind.MULTI_HASH)
+        version = args[2] if len(args) > 2 else kwargs.get('version', _PartitionKeyVersion.V2)
         super().__init__(paths=[path] if isinstance(path, str) else path, kind=kind, version=version)
 
     def __repr__(self) -> str:
@@ -165,7 +165,7 @@ class PartitionKey(dict):
 
     @property
     def path(self) -> str:
-        if self.kind == PartitionKeyKind.MULTI_HASH:
+        if self.kind == _PartitionKeyKind.MULTI_HASH:
             return ''.join(self["paths"])
         return self["paths"][0]
 
@@ -188,7 +188,7 @@ class PartitionKey(dict):
         self,
         pk_value: _SequentialPartitionKeyType
     ) -> _Range:
-        if self.kind != PartitionKeyKind.MULTI_HASH:
+        if self.kind != _PartitionKeyKind.MULTI_HASH:
             raise ValueError(
                 "Effective Partition Key Range for Prefix Partition Keys is only supported for Hierarchical Partition Keys.")  # pylint: disable=line-too-long
         len_pk_value = len(pk_value)
@@ -263,17 +263,17 @@ class PartitionKey(dict):
     def _get_hashed_partition_key_string(
             pk_value: _SequentialPartitionKeyType,
             kind: str,
-            version: int = PartitionKeyVersion.V2,
+            version: int = _PartitionKeyVersion.V2,
     ) -> Union[int, str]:
         if not pk_value:
             return _MinimumInclusiveEffectivePartitionKey
 
-        if kind == PartitionKeyKind.HASH:
-            if version == PartitionKeyVersion.V1:
+        if kind == _PartitionKeyKind.HASH:
+            if version == _PartitionKeyVersion.V1:
                 return PartitionKey._get_effective_partition_key_for_hash_partitioning(pk_value)
-            if version == PartitionKeyVersion.V2:
+            if version == _PartitionKeyVersion.V2:
                 return PartitionKey._get_effective_partition_key_for_hash_partitioning_v2(pk_value)
-        elif kind == PartitionKeyKind.MULTI_HASH:
+        elif kind == _PartitionKeyKind.MULTI_HASH:
             return PartitionKey._get_effective_partition_key_for_multi_hash_partitioning_v2(pk_value)
         return _to_hex_encoded_binary_string(pk_value)
 
@@ -372,7 +372,7 @@ class PartitionKey(dict):
     def is_prefix_partition_key(
             self,
             partition_key: _PartitionKeyType) -> bool:  # pylint: disable=line-too-long
-        if self.kind != PartitionKeyKind.MULTI_HASH:
+        if self.kind != _PartitionKeyKind.MULTI_HASH:
             return False
         ret = ((isinstance(partition_key, Sequence) and
                 not isinstance(partition_key, str)) and len(self['paths']) != len(partition_key))

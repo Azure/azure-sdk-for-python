@@ -72,7 +72,7 @@ from .documents import ConnectionPolicy, DatabaseAccount
 from .partition_key import (
     _Undefined,
     _Empty,
-    PartitionKeyKind,
+    _PartitionKeyKind,
     _PartitionKeyType,
     _SequentialPartitionKeyType,
     _return_undefined_or_empty_partition_key,
@@ -3334,7 +3334,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         partitionKeyDefinition: Mapping[str, Any],
         document: Mapping[str, Any]
     ) -> Union[List[Optional[Union[str, float, bool]]], str, float, bool, _Empty, _Undefined]:
-        if partitionKeyDefinition["kind"] == PartitionKeyKind.MULTI_HASH:
+        if partitionKeyDefinition["kind"] == _PartitionKeyKind.MULTI_HASH:
             ret: List[Optional[Union[str, float, bool]]] = []
             for partition_key_level in partitionKeyDefinition["paths"]:
                 # Parses the paths into a list of token each representing a property
