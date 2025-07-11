@@ -86,6 +86,9 @@ def evaluate_test_data_alphanumeric():
 def questions_file():
     return _get_file("questions.jsonl")
 
+@pytest.fixture
+def quotation_fix_test_data():
+    return _get_file("quotation_fix_test_data.jsonl")
 
 @pytest.fixture
 def questions_wrong_file():
@@ -687,7 +690,17 @@ class TestEvaluate:
         assert "bad_thing.boolean_with_nan" not in aggregation
         assert "bad_thing.boolean_with_none" not in aggregation
 
-    @pytest.mark.skip(reason="Breaking CI by crashing pytest somehow")
+    def test_quotation_fix_test_data(self, quotation_fix_test_data):
+        from test_evaluators.test_inputs_evaluators import QuotationFixEval
+        result = evaluate(
+                data=quotation_fix_test_data,
+                evaluators={
+                    "test_evaluator": QuotationFixEval,
+                }
+            )
+        print(result)
+        assert result is not None
+        
     def test_optional_inputs_with_data(self, questions_file, questions_answers_basic_file):
         from test_evaluators.test_inputs_evaluators import HalfOptionalEval, NoInputEval, NonOptionalEval, OptionalEval
 
