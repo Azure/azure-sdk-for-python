@@ -12,7 +12,6 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._operations import AzureCommunicationCallAutomationServiceOperationsMixin  # type: ignore
 from ._operations import CallConnectionOperations  # type: ignore
 from ._operations import CallMediaOperations  # type: ignore
 from ._operations import CallRecordingOperations  # type: ignore
@@ -22,7 +21,6 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "AzureCommunicationCallAutomationServiceOperationsMixin",
     "CallConnectionOperations",
     "CallMediaOperations",
     "CallRecordingOperations",
