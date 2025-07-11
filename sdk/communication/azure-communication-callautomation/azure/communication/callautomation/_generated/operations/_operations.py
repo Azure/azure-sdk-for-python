@@ -1000,7 +1000,7 @@ def build_call_recording_resume_recording_request(  # pylint: disable=name-too-l
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable=name-too-long
+class _AzureCommunicationCallAutomationServiceOperationsMixin(
     ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], AzureCommunicationCallAutomationServiceConfiguration]
 ):
 
