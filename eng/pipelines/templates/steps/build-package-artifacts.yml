@@ -94,7 +94,7 @@ steps:
   - pwsh: |
       $(VENV_ACTIVATION_SCRIPT)
       which python
-      uv pip install --force -r eng/ci_tools.txt
+      uv pip install -r eng/ci_tools.txt
       if ($env:AGENT_OS -eq "Linux") {
         Write-Host "Installing release reqs"
         uv pip install -r eng/release_requirements.txt
