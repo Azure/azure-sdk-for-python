@@ -1,0 +1,16 @@
+steps:
+  - task: Bash@3
+    displayName: 'Install uv (Linux/macOS)'
+    inputs:
+      targetType: inline
+      script: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+    condition: or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin'))
+
+  - task: PowerShell@2
+    displayName: 'Install uv (Windows)'
+    inputs:
+      targetType: inline
+      script: |
+        iex (irm https://astral.sh/uv/install.ps1)
+    condition: eq(variables['Agent.OS'], 'Windows_NT')
