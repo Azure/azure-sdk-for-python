@@ -188,6 +188,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
 
   foreach ($line in $allPkgPropLines)
   {
+    Write-Host "processing $line"
     $pkgInfo = ($line -Split " ")
     $packageName = $pkgInfo[0]
     $packageVersion = $pkgInfo[1]
