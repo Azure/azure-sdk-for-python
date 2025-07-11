@@ -78,7 +78,7 @@ jobs:
         echo $PATH
         uv --version
       displayName: 'Dump call to uv'
-      ContinueOnError: true
+      continueOnError: true
 
     - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
       parameters:
