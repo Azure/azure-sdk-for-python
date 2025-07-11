@@ -142,7 +142,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             evaluation,
             headers={
                 "model-endpoint": model_endpoint,
-                "api-key": model_api_key,
+                "model-api-key": model_api_key,
             },
         )
         print(evaluation_response)
