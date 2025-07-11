@@ -35,7 +35,6 @@ from azure.ai.agents.models import (
     ListSortOrder,
     MessageRole,
     RunStepToolCallDetails,
-    
 )
 from azure.identity import DefaultAzureCredential
 
@@ -146,14 +145,16 @@ with project_client:
     # Delete the connected Agent when done
     agents_client.delete_agent(weather_agent.id)
     print("Deleted weather agent")
-    
+
     # [START list_tool_calls]
     for run_step in agents_client.run_steps.list(thread_id=thread.id, run_id=run.id, order=ListSortOrder.ASCENDING):
         if isinstance(run_step.step_details, RunStepToolCallDetails):
             for tool_call in run_step.step_details.tool_calls:
-                print(f"\tAgent: {tool_call._data['connected_agent']['name']} "
-                      f"query: {tool_call._data['connected_agent']['arguments']} ",
-                      f"output: {tool_call._data['connected_agent']['output']}")
+                print(
+                    f"\tAgent: {tool_call._data['connected_agent']['name']} "
+                    f"query: {tool_call._data['connected_agent']['arguments']} ",
+                    f"output: {tool_call._data['connected_agent']['output']}",
+                )
     # [END list_tool_calls]
 
     # [START list_messages]
@@ -162,7 +163,7 @@ with project_client:
     for msg in messages:
         if msg.text_messages:
             last_text = msg.text_messages[-1]
-            text = last_text.text.value.replace('\u3010', '[').replace('\u3011', ']')
+            text = last_text.text.value.replace("\u3010", "[").replace("\u3011", "]")
             print(f"{msg.role}: {text}")
     # [END list_messages]
 

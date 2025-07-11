@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -746,14 +746,14 @@ def build_key_vault_recover_deleted_certificate_request(  # pylint: disable=name
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
+class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], KeyVaultClientConfiguration]
 ):
 
     @distributed_trace
     def get_certificates(
         self, *, maxresults: Optional[int] = None, include_pending: Optional[bool] = None, **kwargs: Any
-    ) -> Iterable["_models.CertificateItem"]:
+    ) -> ItemPaged["_models.CertificateItem"]:
         """List certificates in a specified key vault.
 
         The GetCertificates operation returns the set of certificates resources in the specified key
@@ -1179,7 +1179,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @distributed_trace
     def get_certificate_issuers(
         self, *, maxresults: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.CertificateIssuerItem"]:
+    ) -> ItemPaged["_models.CertificateIssuerItem"]:
         """List certificate issuers for a specified key vault.
 
         The GetCertificateIssuers operation returns the set of certificate issuer resources in the
@@ -2049,7 +2049,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @distributed_trace
     def get_certificate_versions(
         self, certificate_name: str, *, maxresults: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.CertificateItem"]:
+    ) -> ItemPaged["_models.CertificateItem"]:
         """List the versions of a certificate.
 
         The GetCertificateVersions operation returns the versions of a certificate in the specified key
@@ -3279,7 +3279,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @distributed_trace
     def get_deleted_certificates(
         self, *, maxresults: Optional[int] = None, include_pending: Optional[bool] = None, **kwargs: Any
-    ) -> Iterable["_models.DeletedCertificateItem"]:
+    ) -> ItemPaged["_models.DeletedCertificateItem"]:
         """Lists the deleted certificates in the specified vault currently available for recovery.
 
         The GetDeletedCertificates operation retrieves the certificates in the current vault which are

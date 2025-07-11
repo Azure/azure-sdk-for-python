@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -889,6 +889,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+        api_versions_list=["2025-05-15-preview"],
     )
     def get(self, name: str, **kwargs: Any) -> _models.Evaluation:
         """Get an evaluation run by name.
@@ -958,6 +959,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
+        api_versions_list=["2025-05-15-preview"],
     )
     def list(self, **kwargs: Any) -> ItemPaged["_models.Evaluation"]:
         """List evaluation runs.
@@ -1090,6 +1092,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
+        api_versions_list=["2025-05-15-preview"],
     )
     def create(self, evaluation: Union[_models.Evaluation, JSON, IO[bytes]], **kwargs: Any) -> _models.Evaluation:
         """Creates an evaluation run.
@@ -1212,6 +1215,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
+        api_versions_list=["2025-05-15-preview"],
     )
     def create_agent_evaluation(
         self, evaluation: Union[_models.AgentEvaluationRequest, JSON, IO[bytes]], **kwargs: Any
@@ -1576,7 +1580,7 @@ class DatasetsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204, 200]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -2617,6 +2621,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+        api_versions_list=["2025-05-15-preview"],
     )
     def get(self, name: str, **kwargs: Any) -> _models.RedTeam:
         """Get a redteam by name.
@@ -2686,6 +2691,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
+        api_versions_list=["2025-05-15-preview"],
     )
     def list(self, **kwargs: Any) -> ItemPaged["_models.RedTeam"]:
         """List a redteam by name.
@@ -2816,6 +2822,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
+        api_versions_list=["2025-05-15-preview"],
     )
     def create(self, red_team: Union[_models.RedTeam, JSON, IO[bytes]], **kwargs: Any) -> _models.RedTeam:
         """Creates a redteam run.
