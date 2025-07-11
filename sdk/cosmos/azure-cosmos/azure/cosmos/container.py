@@ -51,7 +51,7 @@ from .partition_key import (
     PartitionKey,
     PartitionKeyType,
     SequentialPartitionKeyType,
-    build_partition_key_from_properties,
+    _build_partition_key_from_properties,
     _return_undefined_or_empty_partition_key,
 )
 from .scripts import ScriptsProxy
@@ -65,8 +65,8 @@ __all__ = ("ContainerProxy",)
 def get_epk_range_for_partition_key(
         container_properties: Dict[str, Any],
         partition_key_value: PartitionKeyType) -> Range:
-    partition_key_obj: PartitionKey = build_partition_key_from_properties(container_properties)
-    return partition_key_obj.get_epk_range_for_partition_key(partition_key_value)
+    partition_key_obj: PartitionKey = _build_partition_key_from_properties(container_properties)
+    return partition_key_obj._get_epk_range_for_partition_key(partition_key_value)
 
 class ContainerProxy:  # pylint: disable=too-many-public-methods
     """An interface to interact with a specific DB Container.
@@ -863,7 +863,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         utils.verify_exclusive_arguments(["feed_range", "partition_key"], **kwargs)
         if "feed_range" not in kwargs and "partition_key" in kwargs:
             partition_key_value = self._set_partition_key(kwargs.pop("partition_key"))
-            partition_key_obj = build_partition_key_from_properties(container_properties)
+            partition_key_obj = _build_partition_key_from_properties(container_properties)
             if partition_key_obj.is_prefix_partition_key(partition_key_value):
                 kwargs["prefix_partition_key_object"] = partition_key_obj
                 kwargs["prefix_partition_key_value"] = cast(SequentialPartitionKeyType, partition_key_value)

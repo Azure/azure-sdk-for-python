@@ -67,7 +67,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
         if HttpHeaders.PartitionKey in request.headers:
             partition_key_value = request.headers[HttpHeaders.PartitionKey]
             # get the partition key range for the given partition key
-            epk_range = [partition_key.get_epk_range_for_partition_key(partition_key_value)] # pylint: disable=protected-access
+            epk_range = [partition_key._get_epk_range_for_partition_key(partition_key_value)] # pylint: disable=protected-access
             partition_ranges = (self.client._routing_map_provider # pylint: disable=protected-access
                                       .get_overlapping_ranges(container_link, epk_range))
             partition_range = Range.PartitionKeyRangeToRange(partition_ranges[0])

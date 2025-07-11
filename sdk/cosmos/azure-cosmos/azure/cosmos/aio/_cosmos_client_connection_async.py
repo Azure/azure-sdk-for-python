@@ -76,7 +76,7 @@ from ..partition_key import (
     SequentialPartitionKeyType,
     _return_undefined_or_empty_partition_key,
     NonePartitionKeyValue, _Empty,
-    build_partition_key_from_properties,
+    _build_partition_key_from_properties,
 )
 from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
@@ -2961,11 +2961,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         elif options.get("partitionKey") is not None and container_property is not None:
             # check if query has prefix partition key
             partition_key_value = options["partitionKey"]
-            partition_key_obj = build_partition_key_from_properties(container_property)
+            partition_key_obj = _build_partition_key_from_properties(container_property)
             if partition_key_obj.is_prefix_partition_key(partition_key_value):
                 req_headers.pop(http_constants.HttpHeaders.PartitionKey, None)
                 partition_key_value = cast(SequentialPartitionKeyType, partition_key_value)
-                feed_range_epk = partition_key_obj.get_epk_range_for_prefix_partition_key(partition_key_value)
+                feed_range_epk = partition_key_obj._get_epk_range_for_prefix_partition_key(partition_key_value)
 
         if feed_range_epk is not None:
             over_lapping_ranges = await self._routing_map_provider.get_overlapping_ranges(id_, [feed_range_epk],

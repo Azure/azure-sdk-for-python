@@ -157,7 +157,7 @@ class ContainerProxy:
         partition_key_definition = container_properties["partitionKey"]
         partition_key = get_partition_key_from_definition(partition_key_definition)
 
-        return partition_key.get_epk_range_for_partition_key(partition_key_value)
+        return partition_key._get_epk_range_for_partition_key(partition_key_value)
 
     @distributed_trace_async
     async def read(

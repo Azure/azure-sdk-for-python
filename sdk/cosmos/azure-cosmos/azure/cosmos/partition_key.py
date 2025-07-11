@@ -184,7 +184,7 @@ class PartitionKey(dict):
     def version(self, value: int) -> None:
         self["version"] = value
 
-    def get_epk_range_for_prefix_partition_key(
+    def _get_epk_range_for_prefix_partition_key(
         self,
         pk_value: SequentialPartitionKeyType
     ) -> _Range:
@@ -210,12 +210,12 @@ class PartitionKey(dict):
         max_epk = str(min_epk) + "FF"
         return _Range(min_epk, max_epk, True, False)
 
-    def get_epk_range_for_partition_key(
+    def _get_epk_range_for_partition_key(
             self,
             pk_value: PartitionKeyType
     ) -> _Range:
         if self.is_prefix_partition_key(pk_value):
-            return self.get_epk_range_for_prefix_partition_key(
+            return self._get_epk_range_for_prefix_partition_key(
                 cast(SequentialPartitionKeyType, pk_value))
 
         # else return point range
@@ -260,7 +260,7 @@ class PartitionKey(dict):
         return _to_hex_encoded_binary_string_v1(partition_key_components)
 
     @staticmethod
-    def get_hashed_partition_key_string(
+    def _get_hashed_partition_key_string(
             pk_value: SequentialPartitionKeyType,
             kind: str,
             version: int = PartitionKeyVersion.V2,
@@ -284,7 +284,7 @@ class PartitionKey(dict):
         if isinstance(self, _Infinity):
             return _MaximumExclusiveEffectivePartitionKey
 
-        return PartitionKey.get_hashed_partition_key_string(pk_value=pk_value, kind=self.kind, version=self.version)
+        return PartitionKey._get_hashed_partition_key_string(pk_value=pk_value, kind=self.kind, version=self.version)
 
     @staticmethod
     def _write_for_hashing(
@@ -531,6 +531,6 @@ def get_partition_key_from_definition(
     version: int = partition_key_definition.get("version", 1)  # Default to version 1 if not provided
     return PartitionKey(path=path, kind=kind, version=version)
 
-def build_partition_key_from_properties(container_properties: Dict[str, Any]) -> PartitionKey:
+def _build_partition_key_from_properties(container_properties: Dict[str, Any]) -> PartitionKey:
     partition_key_definition = container_properties["partitionKey"]
     return get_partition_key_from_definition(partition_key_definition)

@@ -65,7 +65,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
         if HttpHeaders.PartitionKey in request.headers:
             partition_key_value = request.headers[HttpHeaders.PartitionKey]
             # get the partition key range for the given partition key
-            epk_range = [partition_key.get_epk_range_for_partition_key(partition_key_value)]
+            epk_range = [partition_key._get_epk_range_for_partition_key(partition_key_value)]
             partition_ranges = await (self.client._routing_map_provider
                                       .get_overlapping_ranges(container_link, epk_range))
             partition_range = Range.PartitionKeyRangeToRange(partition_ranges[0])
