@@ -22,12 +22,8 @@ param(
 
 $venvPath = Join-Path $RepoRoot $VenvName
 if (!(Test-Path $venvPath)) {
-    $invokingPython = (Get-Command "python").Source
-    Write-Host "Creating virtual environment '$VenvName' using python located at '$invokingPython'."
-    python -m pip install virtualenv==20.25.1
-    python -m virtualenv "$venvPath"
-    $pythonVersion = python --version
-    Write-Host "Virtual environment '$VenvName' created at directory path '$venvPath' utilizing python version $pythonVersion."
+    Write-Host "Creating virtual environment '$VenvName' using uv."
+    uv venv $venvPath  --verbose
     Write-Host "##vso[task.setvariable variable=$($VenvName)_LOCATION]$venvPath"
     Write-Host "##vso[task.setvariable variable=$($VenvName)_ACTIVATION_SCRIPT]if(`$IsWindows){. $venvPath/Scripts/Activate.ps1;}else {. $venvPath/bin/activate.ps1}"
 }
