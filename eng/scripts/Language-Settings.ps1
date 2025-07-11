@@ -171,7 +171,8 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
       $null = python -m pip install "./tools/azure-sdk-tools[build]" -q -I
     }
 
-    uv pip freeze
+    $freezeOutput = uv pip freeze
+    Write-Host "Pip freeze output: $freezeOutput"
     Write-Host "Running get_package_properties.py to retrieve package properties"
 
     $allPkgPropLines = python (Join-path eng scripts get_package_properties.py) -s $searchPath
