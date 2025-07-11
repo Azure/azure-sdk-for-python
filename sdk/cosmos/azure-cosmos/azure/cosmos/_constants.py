@@ -79,7 +79,7 @@ class _Constants:
         449: "RETRY_WITH - Conflicting request to resource has been attempted. Retry to avoid conflicts."
     }
 
-    class KwargsConstants:
+    class Kwargs:
         """Keyword arguments used in the azure-cosmos package"""
 
         RETRY_WRITE: Literal["retry_write"] = "retry_write"

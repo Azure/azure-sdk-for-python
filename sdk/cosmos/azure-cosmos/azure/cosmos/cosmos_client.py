@@ -34,6 +34,7 @@ from ._cosmos_client_connection import CosmosClientConnection, CredentialDict
 from ._base import build_options, _set_throughput_options
 from .offer import ThroughputProperties
 from ._retry_utility import ConnectionRetryPolicy
+from ._constants import _Constants as Constants
 from .database import DatabaseProxy, _get_database_link
 from .documents import ConnectionPolicy, DatabaseAccount
 from .exceptions import CosmosResourceNotFoundError
@@ -144,7 +145,7 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
         )
     policy.ConnectionRetryConfiguration = connection_retry
     policy.ResponsePayloadOnWriteDisabled = kwargs.pop('no_response_on_write', False)
-    policy.RetryNonIdempotentWrites = kwargs.pop('retry_write', False)
+    kwargs.pop(Constants.Kwargs.RETRY_WRITE, False)
     return policy
 
 

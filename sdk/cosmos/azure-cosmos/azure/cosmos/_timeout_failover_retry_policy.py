@@ -22,9 +22,7 @@ class _TimeoutFailoverRetryPolicy(object):
         self._max_retry_attempt_count = len(self.global_endpoint_manager.location_cache
                                             .read_regional_routing_contexts) + 1
        # If the request is a write operation, we only want to retry once if retry write is enabled
-        if self.request and not _OperationType.IsReadOnlyOperation(
-                self.request.operation_type
-        ):
+        if self.request and _OperationType.IsWriteOperation(self.request.operation_type):
             self._max_retry_attempt_count = len(
                 self.global_endpoint_manager.location_cache.write_regional_routing_contexts
             ) + 1
@@ -38,7 +36,7 @@ class _TimeoutFailoverRetryPolicy(object):
         :returns: a boolean stating whether the request should be retried
         :rtype: bool
         """
-        # we don't retry on write operations for timeouts or any internal server errors
+        # we retry only if the request is a read operation or if it is a write operation with retry enabled
         if self.request and not self.is_operation_retryable():
             return False
 

@@ -63,7 +63,7 @@ _COMMON_OPTIONS = {
     'query_version': 'queryVersion',
     'priority': 'priorityLevel',
     'no_response': 'responsePayloadOnWriteDisabled',
-    'retry_write': Constants.KwargsConstants.RETRY_WRITE,
+    'retry_write': Constants.Kwargs.RETRY_WRITE,
     'max_item_count': 'maxItemCount',
     'throughput_bucket': 'throughputBucket',
     'excluded_locations': 'excludedLocations'

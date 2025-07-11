@@ -803,7 +803,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if no_response is not None:
             kwargs['no_response'] = no_response
         if retry_write is not None:
-            kwargs[Constants.KwargsConstants.RETRY_WRITE] = retry_write
+            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if response_hook is not None:
@@ -900,7 +900,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         if retry_write is not None:
-            kwargs[Constants.KwargsConstants.RETRY_WRITE] = retry_write
+            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         request_options = build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         if populate_query_metrics is not None:
@@ -1000,7 +1000,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if no_response is not None:
             kwargs['no_response'] = no_response
         if retry_write is not None:
-            kwargs[Constants.KwargsConstants.RETRY_WRITE] = retry_write
+            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if response_hook is not None:
@@ -1096,7 +1096,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if no_response is not None:
             kwargs['no_response'] = no_response
         if retry_write is not None:
-            kwargs[Constants.KwargsConstants.RETRY_WRITE] = retry_write
+            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if response_hook is not None:
@@ -1250,7 +1250,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if priority is not None:
             kwargs['priority'] = priority
         if retry_write is not None:
-            kwargs[Constants.KwargsConstants.RETRY_WRITE] = retry_write
+            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if response_hook is not None:

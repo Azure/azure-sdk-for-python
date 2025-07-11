@@ -36,13 +36,13 @@ class ServiceResponseRetryPolicy(object):
             return False
 
         # Check if the next retry about to be done is safe
-        if (self.failover_retry_count + 1) >= self.total_retries and not self.args[0].retry_write:
+        if (self.failover_retry_count + 1) >= self.total_retries and (self.request and not self.request.retry_write):
             return False
-        if self.args[0].retry_write and self.failover_retry_count > self.max_write_retry_count:
+        if (self.request and self.request.retry_write) and self.failover_retry_count > self.max_write_retry_count:
             return False
 
         if self.request:
-            if not _OperationType.IsReadOnlyOperation(self.request.operation_type) or not self.args[0].retry_write:
+            if not _OperationType.IsReadOnlyOperation(self.request.operation_type) or not self.request.retry_write:
                 return False
             self.location_endpoint = self.resolve_next_region_service_endpoint()
             self.request.route_to_location(self.location_endpoint)

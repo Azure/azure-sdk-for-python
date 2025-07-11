@@ -284,7 +284,7 @@ class ContainerProxy:
         if no_response is not None:
             kwargs['no_response'] = no_response
         if retry_write is not None:
-            kwargs[Constants.KwargsConstants.RETRY_WRITE] = retry_write
+            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
@@ -859,7 +859,7 @@ class ContainerProxy:
         if no_response is not None:
             kwargs['no_response'] = no_response
         if retry_write is not None:
-            kwargs[Constants.KwargsConstants.RETRY_WRITE] = retry_write
+            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
@@ -948,7 +948,7 @@ class ContainerProxy:
         if no_response is not None:
             kwargs['no_response'] = no_response
         if retry_write is not None:
-            kwargs[Constants.KwargsConstants.RETRY_WRITE] = retry_write
+            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
@@ -1035,7 +1035,7 @@ class ContainerProxy:
         if no_response is not None:
             kwargs['no_response'] = no_response
         if retry_write is not None:
-            kwargs[Constants.KwargsConstants.RETRY_WRITE] = retry_write
+            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
@@ -1116,7 +1116,7 @@ class ContainerProxy:
         if priority is not None:
             kwargs['priority'] = priority
         if retry_write is not None:
-            kwargs[Constants.KwargsConstants.RETRY_WRITE] = retry_write
+            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
