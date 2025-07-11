@@ -166,13 +166,13 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
     if (Get-Command uv -ErrorAction SilentlyContinue) {
       Write-Host "Using uv pip install"
       $null = uv pip install "./tools/azure-sdk-tools[build]" --system
+      $freezeOutput = uv pip freeze
+      Write-Host "Pip freeze output: $freezeOutput"
     } else {
       Write-Host "Using python -m pip install"
       $null = python -m pip install "./tools/azure-sdk-tools[build]" -q -I
     }
 
-    $freezeOutput = uv pip freeze
-    Write-Host "Pip freeze output: $freezeOutput"
     Write-Host "Running get_package_properties.py to retrieve package properties"
 
     $allPkgPropLines = python (Join-path eng scripts get_package_properties.py) -s $searchPath

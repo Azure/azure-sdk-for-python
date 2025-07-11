@@ -74,6 +74,12 @@ jobs:
     steps:
     - template: /eng/pipelines/templates/steps/install-uv.yml
 
+    - pwsh: |
+        echo $PATH
+        uv --version
+      displayName: 'Dump call to uv'
+      ContinueOnError: true
+
     - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
