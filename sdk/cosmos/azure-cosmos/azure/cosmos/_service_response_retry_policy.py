@@ -43,7 +43,7 @@ class ServiceResponseRetryPolicy(object):
         if self.request:
             if (not _OperationType.IsReadOnlyOperation(self.request.operation_type) and not self.args[0].retry_write
                     and not self.connection_policy.RetryNonIdempotentWrites):
-                    return False
+                return False
             if (self.args[0].retry_write or self.connection_policy.RetryNonIdempotentWrites
                     and self.failover_retry_count > self.max_write_retry_count):
                 return False
