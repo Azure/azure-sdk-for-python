@@ -34,3 +34,5 @@ extends:
       safeName: azureconfidentialledger
     - name: azure-mgmt-confidentialledger
       safeName: azuremgmtconfidentialledger
+    - name: azure-codetransparency
+      safeName: azurecodetransparency
