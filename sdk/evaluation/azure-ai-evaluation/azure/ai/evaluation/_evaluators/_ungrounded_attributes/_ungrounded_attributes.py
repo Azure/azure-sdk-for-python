@@ -60,17 +60,21 @@ class UngroundedAttributesEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
 
     id = "ungrounded_attributes"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+    _OPTIONAL_PARAMS = ["query"]
 
     @override
     def __init__(
         self,
         credential,
         azure_ai_project,
+        *,
+        _evaluate_query: bool = True,
     ):
         super().__init__(
             eval_metric=EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
             azure_ai_project=azure_ai_project,
             credential=credential,
+            _evaluate_query=_evaluate_query,
         )
 
     @overload

@@ -44,7 +44,6 @@ class RunSubmitterClient:
         # input. Update the inputs so that each entry is a dictionary with a data key
         # that contains the original input data.
         inputs = [{"data": input_data} for input_data in data.to_dict(orient="records")]
-
         # Pass the correct previous run to the evaluator
         run: Optional[BatchClientRun] = kwargs.pop("run", None)
         if run:
@@ -73,6 +72,7 @@ class RunSubmitterClient:
         return run_future
 
     def get_details(self, client_run: BatchClientRun, all_results: bool = False) -> pd.DataFrame:
+
         run = self._get_run(client_run)
 
         data: Dict[str, List[Any]] = defaultdict(list)

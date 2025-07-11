@@ -267,3 +267,70 @@ def test_parse_pyproject_extensions():
     assert parsed_project.is_metapackage == False
     assert len(parsed_project.ext_modules) == 1
     assert str(type(parsed_project.ext_modules[0])) == "<class 'setuptools.extension.Extension'>"
+
+
+def test_namespace_discovery_eventhub_checkpointstoreblob():
+    """Test that namespace discovery works for azure-eventhub-checkpointstoreblob"""
+    eventhub_path = os.path.join(
+        os.path.dirname(__file__), "..", "..", "..", "sdk", "eventhub", "azure-eventhub-checkpointstoreblob"
+    )
+    
+    # Check if the path exists (it should in the Azure SDK repo)
+    if os.path.exists(eventhub_path):
+        parsed_project = ParsedSetup.from_path(eventhub_path)
+        
+        assert parsed_project.name == "azure-eventhub-checkpointstoreblob"
+        assert parsed_project.namespace == "azure.eventhub.extensions.checkpointstoreblob"
+    else:
+        pytest.skip("azure-eventhub-checkpointstoreblob not found in repository")
+
+
+def test_namespace_discovery_fallback():
+    """Test that namespace discovery falls back to simple replacement when no packages found"""
+    # This tests the fallback behavior when no actual package structure is found
+    from ci_tools.parsing.parse_functions import discover_namespace
+    
+    # Test with non-existent path
+    result = discover_namespace("/non/existent/path")
+    assert result is None
+
+
+def test_namespace_discovery_with_extension_only():
+    """Test namespace discovery logic with extension-only __init__.py files"""
+    from ci_tools.parsing.parse_functions import _set_root_namespace
+    import tempfile
+    import os
+    
+    # Create a temporary __init__.py file with only extension content
+    with tempfile.NamedTemporaryFile(mode='w', suffix='__init__.py', delete=False) as f:
+        f.write('# comment\n')
+        f.write('__path__ = __import__("pkgutil").extend_path(__path__, __name__)\n')
+        temp_file = f.name
+    
+    try:
+        result = _set_root_namespace(temp_file, "test.module")
+        # Should return None because it only contains extension logic
+        assert result is None
+    finally:
+        os.unlink(temp_file)
+
+
+def test_namespace_discovery_with_substantial_content():
+    """Test namespace discovery logic with substantial __init__.py content"""
+    from ci_tools.parsing.parse_functions import _set_root_namespace
+    import tempfile
+    import os
+    
+    # Create a temporary __init__.py file with substantial content
+    with tempfile.NamedTemporaryFile(mode='w', suffix='__init__.py', delete=False) as f:
+        f.write('# comment\n')
+        f.write('from ._version import VERSION\n')
+        f.write('__version__ = VERSION\n')
+        temp_file = f.name
+    
+    try:
+        result = _set_root_namespace(temp_file, "test.module")
+        # Should return the module name because it contains substantial content
+        assert result == "test.module"
+    finally:
+        os.unlink(temp_file)

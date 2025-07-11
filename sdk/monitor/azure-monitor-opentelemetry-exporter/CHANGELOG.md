@@ -6,6 +6,13 @@
 
 - Detect synthetically created telemetry based on the user-agent header
   ([#41733](https://github.com/Azure/azure-sdk-for-python/pull/41733))
+- Added customer-facing statsbeat preview.
+  ([#41669](https://github.com/Azure/azure-sdk-for-python/pull/41669))
+- Customer Facing Statsbeat: Added logic for dropped item count
+  ([#41950](https://github.com/Azure/azure-sdk-for-python/pull/41950))
+- Customer Facing Statsbeat: Added logic for retry item count
+  ([#41971](https://github.com/Azure/azure-sdk-for-python/pull/41971))
+
 
 ### Breaking Changes
 

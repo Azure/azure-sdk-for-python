@@ -209,12 +209,12 @@ class TestEvaluate:
             None,
             {"default": {}},
             {"default": {}, "question_ev": {}},
-            {"default": {"column_mapping": {"query": "${target.query}"}}},
+            {"default": {"column_mapping": {"query": "${data.__outputs.query}"}}},
             {"default": {"column_mapping": {"query": "${data.query}"}}},
             {"default": {}, "question_ev": {"column_mapping": {"query": "${data.query}"}}},
-            {"default": {}, "question_ev": {"column_mapping": {"query": "${target.query}"}}},
-            {"default": {}, "question_ev": {"column_mapping": {"another_question": "${target.query}"}}},
-            {"default": {"column_mapping": {"another_question": "${target.query}"}}},
+            {"default": {}, "question_ev": {"column_mapping": {"query": "${data.__outputs.query}"}}},
+            {"default": {}, "question_ev": {"column_mapping": {"another_question": "${data.__outputs.query}"}}},
+            {"default": {"column_mapping": {"another_question": "${data.__outputs.query}"}}},
         ],
     )
     def test_evaluate_another_questions(self, questions_file, evaluation_config, run_from_temp_dir):
@@ -241,7 +241,7 @@ class TestEvaluate:
         if evaluation_config:
             config = evaluation_config.get("question_ev", evaluation_config.get("default", None))
             mapping = config.get("column_mapping", config)
-        if mapping and ("another_question" in mapping or mapping["query"] == "${data.query}"):
+        if mapping and ("another_question" in mapping or mapping.get("query") == "${data.query}"):
             query = "inputs.query"
         expected = list(row_result_df[query].str.len())
         assert expected == list(row_result_df["outputs.question_ev.length"])
@@ -259,7 +259,7 @@ class TestEvaluate:
                     },
                     "answer": {
                         "column_mapping": {
-                            "response": "${target.response}",
+                            "response": "${data.__outputs.response}",
                         }
                     },
                 }
@@ -268,7 +268,7 @@ class TestEvaluate:
                 {
                     "default": {
                         "column_mapping": {
-                            "response": "${target.response}",
+                            "response": "${data.__outputs.response}",
                             "ground_truth": "${data.ground_truth}",
                         }
                     },

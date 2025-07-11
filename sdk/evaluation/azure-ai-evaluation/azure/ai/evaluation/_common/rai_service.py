@@ -290,7 +290,7 @@ async def submit_request_onedp(
     payload = generate_payload(normalized_user_text, metric, annotation_task=annotation_task)
     headers = get_common_headers(token, evaluator_name)
     if scan_session_id:
-        headers["client_request_id"] = scan_session_id
+        headers["x-ms-client-request-id"] = scan_session_id
     response = client.evaluations.submit_annotation(payload, headers=headers)
     result = json.loads(response)
     operation_id = result["location"].split("/")[-1]
