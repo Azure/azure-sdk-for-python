@@ -9,7 +9,7 @@ import platform
 import threading
 import time
 import warnings
-from typing import Callable, Dict, Any
+from typing import Callable, Dict, Any, Optional
 
 from opentelemetry.semconv.resource import ResourceAttributes
 from opentelemetry.sdk.resources import Resource
@@ -28,7 +28,11 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY,
     _WEBSITE_SITE_NAME,
 )
-
+from azure.monitor.opentelemetry.exporter._constants import (
+    _TYPE_MAP,
+    _UNKNOWN,
+    _RP_Names,
+)
 
 opentelemetry_version = ""
 
@@ -292,10 +296,48 @@ def _get_cloud_role_instance(resource: Resource) -> str:
     return platform.node()  # hostname default
 
 
-def _is_synthetic_source(properties: Attributes) -> bool:
+def _is_synthetic_source(properties: Optional[Any]) -> bool:
     # TODO: Use semconv symbol when released in upstream
+    if not properties:
+        return False
     synthetic_type = properties.get("user_agent.synthetic.type")  # type: ignore
     return synthetic_type in ("bot", "test")
+
+
+def _is_synthetic_load(properties: Optional[Any]) -> bool:
+    """
+    Check if the request is from a synthetic load test by examining the HTTP user agent.
+
+    :param properties: The attributes/properties to check for user agent information
+    :type properties: Optional[Any]
+    :return: True if the user agent contains "AlwaysOn", False otherwise
+    :rtype: bool
+    """
+    if not properties:
+        return False
+
+    # Check both old and new semantic convention attributes for HTTP user agent
+    user_agent = (
+        properties.get("user_agent.original") or  # type: ignore  # New semantic convention
+        properties.get("http.user_agent")  # type: ignore  # Legacy semantic convention
+    )
+
+    if user_agent and isinstance(user_agent, str):
+        return "AlwaysOn" in user_agent
+
+    return False
+
+
+def _is_any_synthetic_source(properties: Optional[Any]) -> bool:
+    """
+    Check if the telemetry should be marked as synthetic from any source.
+
+    :param properties: The attributes/properties to check
+    :type properties: Optional[Any]
+    :return: True if any synthetic source is detected, False otherwise
+    :rtype: bool
+    """
+    return _is_synthetic_source(properties) or _is_synthetic_load(properties)
 
 
 # pylint: disable=W0622
@@ -342,3 +384,19 @@ class Singleton(type):
         if not cls._instance:
             cls._instance = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instance
+
+def _get_telemetry_type(item: TelemetryItem):
+    if hasattr(item, "data") and item.data is not None:
+        base_type = getattr(item.data, "base_type", None)
+        if base_type:
+            return _TYPE_MAP.get(base_type, _UNKNOWN)
+    return _UNKNOWN
+
+def get_compute_type():
+    if _is_on_functions():
+        return _RP_Names.FUNCTIONS.value
+    if _is_on_app_service():
+        return _RP_Names.APP_SERVICE.value
+    if _is_on_aks():
+        return _RP_Names.AKS.value
+    return _RP_Names.UNKNOWN.value

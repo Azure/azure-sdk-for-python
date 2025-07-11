@@ -15,29 +15,34 @@ from azure.ai.evaluation import AzureOpenAIModelConfiguration
 @pytest.fixture
 def mock_aoai_model_config():
     return AzureOpenAIModelConfiguration(
-            azure_deployment="...",
-            azure_endpoint="...",
-            api_key="...",
-            api_version="...",
-        )
+        azure_deployment="...",
+        azure_endpoint="...",
+        api_key="...",
+        api_version="...",
+    )
 
 
 @pytest.fixture
 def mock_grader_config():
     return {}
 
+
 def _get_file(name):
     """Get the file from the unittest data folder."""
     import os, pathlib
+
     data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
     return os.path.join(data_path, name)
+
 
 @pytest.fixture
 def questions_file():
     return _get_file("questions.jsonl")
 
+
 def simple_eval_function():
     return "123"
+
 
 @pytest.mark.unittest
 class TestRemoteEvaluationFeatures:
