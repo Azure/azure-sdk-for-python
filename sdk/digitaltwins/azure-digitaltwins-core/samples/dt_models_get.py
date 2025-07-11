@@ -30,7 +30,7 @@ try:
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
     # - AZURE_CLIENT_SECRET: The client secret for the registered application
     credential = DefaultAzureCredential()
-    service_client = DigitalTwinsClient(url, credential)
+    service_client = DigitalTwinsClient(url, credential) # type: ignore
 
     # ModelId from the samples:
     #   dtmi:samples:Room;1
