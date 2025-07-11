@@ -224,8 +224,6 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 # Reset the function to reset the counter
                 mf = self.MockExecuteServiceResponseException(AttributeError, None)
                 _retry_utility_async.ExecuteFunctionAsync = mf
-                # Even though we have 2 preferred write endpoints,
-                # we will only run the exception once due to no retries on write requests
                 await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())}, retry_write=True)
                 pytest.fail("Exception was not raised.")
             except ServiceResponseError:

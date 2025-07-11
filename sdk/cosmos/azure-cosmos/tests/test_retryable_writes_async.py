@@ -4,6 +4,7 @@
 import pytest
 import unittest
 import uuid
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.cosmos.aio import CosmosClient, _retry_utility_async
 from azure.cosmos import exceptions, documents
 from azure.cosmos.partition_key import PartitionKey
@@ -148,7 +149,6 @@ class TestRetryableWritesAsync(unittest.IsolatedAsyncioTestCase):
         client_with_retry = CosmosClient(self.host, credential=self.masterKey, retry_write=True)
         await client_with_retry.__aenter__()
 
-
         try:
             container = client_with_retry.get_database_client(self.TEST_DATABASE_ID).get_container_client(
                 self.container.id)
@@ -178,6 +178,19 @@ class TestRetryableWritesAsync(unittest.IsolatedAsyncioTestCase):
             finally:
                 # Restore the original retry_utility.execute function
                 _retry_utility_async.ExecuteFunctionAsync = original_execute
+
+            # Now we try it out with a write request with retry write enabled - which should retry once
+            try:
+                # Reset the function to reset the counter
+                mf = self.MockExecuteServiceResponseException(AttributeError, None)
+                _retry_utility_async.ExecuteFunctionAsync = mf
+                await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())}, retry_write=True)
+                pytest.fail("Exception was not raised.")
+            except ServiceResponseError:
+                assert mf.counter == 2
+            finally:
+                _retry_utility_async.ExecuteFunctionAsync = original_execute
+
         finally:
             if client_with_retry:
                 await client_with_retry.close()
@@ -335,3 +348,16 @@ class TestRetryableWritesAsync(unittest.IsolatedAsyncioTestCase):
                 )
             else:
                 return await self.org_func(func, *args, **kwargs)
+
+    class MockExecuteServiceResponseException(object):
+        def __init__(self, err_type, inner_exception):
+            self.err_type = err_type
+            self.inner_exception = inner_exception
+            self.counter = 0
+
+        def __call__(self, func, *args, **kwargs):
+            self.counter = self.counter + 1
+            exception = ServiceResponseError("mock exception")
+            exception.exc_type = self.err_type
+            exception.inner_exception = self.inner_exception
+            raise exception
