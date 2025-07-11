@@ -27,5 +27,8 @@
 
 # This file is used for handwritten extensions to the generated code. Example:
 # https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
+
+__all__ = ["patch_sdk"]
+
 def patch_sdk():
     pass
