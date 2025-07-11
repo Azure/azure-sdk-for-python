@@ -41,11 +41,12 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import AzureAISearchQueryType, AzureAISearchTool, ListSortOrder, MessageRole
 
 
-# [START create_agent_with_azure_ai_search_tool]
 with AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 ) as project_client:
+
+    # [START create_agent_with_azure_ai_search_tool]
     conn_id = project_client.connections.get_default(ConnectionType.AZURE_AI_SEARCH).id
 
     print(conn_id)

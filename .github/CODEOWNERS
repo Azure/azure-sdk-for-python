@@ -93,7 +93,7 @@
 
 # ServiceLabel: %Communication - Call Automation
 # PRLabel: %Communication - Call Automation
-/sdk/communication/azure-communication-callautomation/               @minwoolee-msft
+/sdk/communication/azure-communication-callautomation/               @minwoolee-msft @fhaghbin-msft @juntuchen-msft @v-dharmarajv
 
 # ServiceLabel: %Communication - Chat
 # PRLabel: %Communication - Chat
