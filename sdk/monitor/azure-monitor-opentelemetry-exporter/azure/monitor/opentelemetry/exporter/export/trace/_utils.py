@@ -3,6 +3,7 @@
 
 from typing import no_type_check, Optional, Tuple
 from urllib.parse import urlparse
+import math
 
 from opentelemetry.semconv.attributes import (
     client_attributes,
@@ -13,6 +14,11 @@ from opentelemetry.semconv.attributes import (
 from opentelemetry.semconv.trace import DbSystemValues, SpanAttributes
 from opentelemetry.util.types import Attributes
 
+from azure.monitor.opentelemetry.exporter._constants import (
+    _HASH,
+    _INTEGER_MAX,
+    _INTEGER_MIN
+)
 
 # pylint:disable=too-many-return-statements
 def _get_default_port_db(db_system: str) -> int:
@@ -320,3 +326,33 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
                     http_target,
                 )
     return url
+
+def _get_djb2_sample_score(trace_id_hex: str) -> float:
+    # This algorithm uses 32bit integers
+    hash_value = _HASH
+    for char in trace_id_hex:
+        hash_value = ((hash_value << 5) + hash_value) + ord(char)
+        hash_value &= 0xFFFFFFFF  # simulate 32-bit integer overflow
+
+    # Convert to signed 32-bit int
+    if hash_value & 0x80000000:
+        hash_value = -((~hash_value & 0xFFFFFFFF) + 1)
+
+    if hash_value == _INTEGER_MIN:
+        hash_value = int(_INTEGER_MAX)
+    else:
+        hash_value = abs(hash_value)
+
+    return 100.0 * (float(hash_value) / _INTEGER_MAX)
+
+def _round_down_to_nearest(sampling_percentage: float) -> float:
+    if sampling_percentage == 0:
+        return 0
+    # Handle extremely small percentages that would cause overflow
+    if sampling_percentage <= _INTEGER_MIN:  # Extremely small threshold
+        return 0.0
+    item_count = 100.0 / sampling_percentage
+    # Handle case where item_count is infinity or too large for math.ceil
+    if not math.isfinite(item_count) or item_count >= _INTEGER_MAX:
+        return 0.0
+    return 100.0 / math.ceil(item_count)
