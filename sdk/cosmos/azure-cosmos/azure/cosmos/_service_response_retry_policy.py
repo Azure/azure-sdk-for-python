@@ -36,7 +36,8 @@ class ServiceResponseRetryPolicy(object):
             return False
 
         # Check if the next retry about to be done is safe
-        if (self.failover_retry_count + 1) >= self.total_retries and (self.request and not self.request.retry_write):
+        if ((self.failover_retry_count + 1) >= self.total_retries and
+                _OperationType.IsReadOnlyOperation(self.request.operation_type)):
             return False
         if (self.request and self.request.retry_write) and self.failover_retry_count > self.max_write_retry_count:
             return False
