@@ -163,6 +163,35 @@ class TestRetryableWrites(unittest.TestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 404, "Expected item to be deleted but it was not"
 
+        # Test replace item with retry_write
+
+        test_item_replace = {"id": "3", "partitionKey": "test", "data": "original data"}
+        container.create_item(test_item_replace)
+        # Mock retry_utility.execute to track retries
+        original_execute = _retry_utility.ExecuteFunction
+        me = self.MockExecuteFunction(original_execute)
+        _retry_utility.ExecuteFunction = me
+        # Test without retry_write for replace_item
+        try:
+            container.replace_item(item=test_item_replace['id'], body={"id": "3", "partitionKey": "test", "data": "updated data"})
+            pytest.fail("Expected an exception without retry_write")
+        except exceptions.CosmosHttpResponseError:
+            assert me.counter == 1, "Expected no retries without retry_write"
+        # Test with retry_write for replace_item
+        me.counter = 0  # Reset counter
+        try:
+            container.replace_item(item=test_item_replace['id'], body={"id": "3", "partitionKey": "test",
+                                                                       "data": "updated data"}, retry_write=True)
+        except exceptions.CosmosHttpResponseError as e:
+            assert me.counter > 1, "Expected multiple retries due to simulated errors"
+        finally:
+            # Restore the original retry_utility.execute function
+            _retry_utility.ExecuteFunction = original_execute
+        # Verify the item was replaced
+        replaced_item = container.read_item(item=test_item_replace['id'],
+                                            partition_key=test_item_replace['partitionKey'])
+        assert replaced_item['data'] == "updated data", "Item was not replaced successfully after retries"
+
     def test_retryable_writes_client_level(self):
         """Test retryable writes for a container with retry_write set at the client level."""
         # Create a client with retry_write enabled
@@ -241,6 +270,27 @@ class TestRetryableWrites(unittest.TestCase):
             assert mf.counter == 2
         finally:
             _retry_utility.ExecuteFunction = original_execute
+
+        # Test with replace item
+        test_item_replace = {"id": "8", "partitionKey": "test", "data": "original data"}
+        container.create_item(test_item_replace)
+        # Mock retry_utility.execute to track retries
+        original_execute = _retry_utility.ExecuteFunction
+        me = self.MockExecuteFunction(original_execute)
+        _retry_utility.ExecuteFunction = me
+        # Test replace item, writes will retry by default with client level retry_write
+        try:
+            container.replace_item(item=test_item_replace['id'], body={"id": "8", "partitionKey": "test",
+                                                                       "data": "updated data"})
+        except exceptions.CosmosHttpResponseError as e:
+            assert me.counter > 1, "Expected multiple retries due to simulated errors"
+        finally:
+            # Restore the original retry_utility.execute function
+            _retry_utility.ExecuteFunction = original_execute
+        # Verify the item was replaced
+        replaced_item = container.read_item(item=test_item_replace['id'],
+                                            partition_key=test_item_replace['partitionKey'])
+        assert replaced_item['data'] == "updated data", "Item was not replaced successfully after retries"
 
     def test_retryable_writes_hpk_request_level(self):
         """Test retryable writes for a container with hierarchical partition keys."""
@@ -367,6 +417,36 @@ class TestRetryableWrites(unittest.TestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 404, "Expected item to be deleted but it was not"
 
+        # Test with replace item
+        test_item_replace = {"id": "6", "state": "CA", "city": "San Francisco", "data": "original data"}
+        container.create_item(test_item_replace)
+        # Mock retry_utility.execute to track retries
+        original_execute = _retry_utility.ExecuteFunction
+        me = self.MockExecuteFunction(original_execute)
+        _retry_utility.ExecuteFunction = me
+        # Test replace item without retry_write
+        try:
+            container.replace_item(item=test_item_replace['id'], body={"id": "6", "state": "CA", "city": "San Francisco",
+                                                                       "data": "updated data"})
+            pytest.fail("Expected an exception without retry_write")
+        except exceptions.CosmosHttpResponseError:
+            assert me.counter == 1, "Expected no retries without retry_write"
+        # Test replace item with retry_write
+        me.counter = 0  # Reset counter
+        try:
+            container.replace_item(item=test_item_replace['id'], body={"id": "6", "state": "CA",
+                                                                       "city": "San Francisco",
+                                                                       "data": "updated data"}, retry_write=True)
+        except exceptions.CosmosHttpResponseError as e:
+            assert me.counter > 1, "Expected multiple retries due to simulated errors"
+        finally:
+            # Restore the original retry_utility.execute function
+            _retry_utility.ExecuteFunction = original_execute
+        # Verify the item was replaced
+        replaced_item_hpk = container.read_item(item=test_item_replace['id'],
+                                                partition_key=[test_item_replace['state'], test_item_replace['city']])
+        assert replaced_item_hpk['data'] == "updated data", "Item was not replaced successfully after retries"
+
     def test_retryable_writes_hpk_client_level(self):
         """Test retryable writes for a container with hierarchical partition keys and
         retry_write set at the client level."""
@@ -435,6 +515,28 @@ class TestRetryableWrites(unittest.TestCase):
             pytest.fail("Expected an exception for item that should have been deleted")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 404, "Expected item to be deleted but it was not"
+
+        # Test client level retry for replace item
+        test_item_replace = {"id": "8", "state": "CA", "city": "San Francisco", "data": "original data"}
+        container.create_item(test_item_replace)
+        # Mock retry_utility.execute to track retries
+        original_execute = _retry_utility.ExecuteFunction
+        me = self.MockExecuteFunction(original_execute)
+        _retry_utility.ExecuteFunction = me
+        # Test replace item, writes will retry by default with client level retry_write
+        try:
+            container.replace_item(item=test_item_replace['id'], body={"id": "8", "state": "CA",
+                                                                       "city": "San Francisco",
+                                                                       "data": "updated data"})
+        except exceptions.CosmosHttpResponseError as e:
+            assert me.counter > 1, "Expected multiple retries due to simulated errors"
+        finally:
+            # Restore the original retry_utility.execute function
+            _retry_utility.ExecuteFunction = original_execute
+        # Verify the item was replaced
+        replaced_item_hpk = container.read_item(item=test_item_replace['id'],
+                                                partition_key=[test_item_replace['state'], test_item_replace['city']])
+        assert replaced_item_hpk['data'] == "updated data", "Item was not replaced successfully after retries"
 
     def test_retryable_writes_multiple_write_locations(self):
         return

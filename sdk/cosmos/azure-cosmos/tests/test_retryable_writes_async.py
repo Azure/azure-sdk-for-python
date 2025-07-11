@@ -186,6 +186,44 @@ class TestRetryableWritesAsync(unittest.IsolatedAsyncioTestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 404, "Expected item to be deleted but it was not"
 
+        # Now we test it out with a replace request without retry write enabled - which should not retry
+
+        # First create an item to replace
+        test_item_replace = {"id": str(uuid.uuid4()), "partitionKey": "test", "data": "replace test"}
+        await container.create_item(test_item_replace)
+
+        # Mock execute function
+        original_execute = _retry_utility_async.ExecuteFunctionAsync
+        me = self.MockExecuteFunction(original_execute)
+        _retry_utility_async.ExecuteFunctionAsync = me
+        me.counter = 0  # Reset counter
+        try:
+            await container.replace_item(item=test_item_replace['id'], body={"id": test_item_replace['id'],
+                                                                              "partitionKey": "test",
+                                                                              "data": "original data"})
+            pytest.fail("Expected an exception without retry_write")
+        except exceptions.CosmosHttpResponseError:
+            assert me.counter == 1, "Expected no retries for replace_item without retry_write"
+
+        # Test with retry_write for replace_item
+        me.counter = 0  # Reset counter
+        try:
+            await container.replace_item(item=test_item_replace['id'], body={"id": test_item_replace['id'],
+                                                                              "partitionKey": "test",
+                                                                              "data": "replaced data"},
+                                         retry_write=True)
+        except exceptions.CosmosHttpResponseError as e:
+            assert me.counter > 1, "Expected multiple retries due to simulated errors"
+        finally:
+            # Restore the original retry_utility.execute function
+            _retry_utility_async.ExecuteFunctionAsync = original_execute
+
+        # Verify the item was replaced
+        read_item_replace = await container.read_item(item=test_item_replace['id'],
+                                                      partition_key=test_item_replace['partitionKey'])
+        assert read_item_replace['data'] == "replaced data", "Item was not replaced successfully after retries"
+
+
     async def test_retryable_writes_client_level_write(self):
         """Test retryable writes for a container with retry_write set at the client level."""
 
@@ -269,6 +307,30 @@ class TestRetryableWritesAsync(unittest.IsolatedAsyncioTestCase):
                 assert mf.counter == 2
             finally:
                 _retry_utility_async.ExecuteFunctionAsync = original_execute
+
+            # Test replace item on client level with retry_write enabled
+
+            # First create an item to replace
+            test_item_replace = {"id": str(uuid.uuid4()), "partitionKey": "test", "data": "original data"}
+            await container.create_item(test_item_replace)
+            # Mock execute function
+            original_execute = _retry_utility_async.ExecuteFunctionAsync
+            me = self.MockExecuteFunction(original_execute)
+            _retry_utility_async.ExecuteFunctionAsync = me
+            me.counter = 0  # Reset counter
+            try:
+                await container.replace_item(item=test_item_replace['id'], body={"id": test_item_replace['id'],
+                                                                                  "partitionKey": "test",
+                                                                                  "data": "replaced data"})
+            except exceptions.CosmosHttpResponseError:
+                assert me.counter > 1, "Expected multiple retries for replace_item with retry_write enabled"
+            finally:
+                # Restore the original retry_utility.execute function
+                _retry_utility_async.ExecuteFunctionAsync = original_execute
+            # Verify the item was replaced
+            read_item_replace = await container.read_item(item=test_item_replace['id'],
+                                                          partition_key=test_item_replace['partitionKey'])
+            assert read_item_replace['data'] == "replaced data", "Item was not replaced successfully after retries"
         finally:
             if client_with_retry:
                 await client_with_retry.close()
@@ -406,6 +468,43 @@ class TestRetryableWritesAsync(unittest.IsolatedAsyncioTestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 404, "Expected item to be deleted but it was not"
 
+        # Now we test it out with a replace request without retry write enabled - which should not retry
+        # First create an item to replace
+        test_item_replace = {"id": str(uuid.uuid4()), "state": "TX", "city": "Austin", "data": "replace test"}
+        await container.create_item(test_item_replace)
+        # Mock execute function
+        original_execute = _retry_utility_async.ExecuteFunctionAsync
+        me = self.MockExecuteFunction(original_execute)
+        _retry_utility_async.ExecuteFunctionAsync = me
+        me.counter = 0  # Reset counter
+        try:
+            await container.replace_item(item=test_item_replace['id'], body={"id": test_item_replace['id'],
+                                                                              "state": "TX",
+                                                                              "city": "Austin",
+                                                                              "data": "original data"})
+            pytest.fail("Expected an exception without retry_write")
+        except exceptions.CosmosHttpResponseError:
+            assert me.counter == 1, "Expected no retries for replace_item without retry_write"
+        # Test with retry_write for replace_item
+        me.counter = 0  # Reset counter
+        try:
+            await container.replace_item(item=test_item_replace['id'], body={"id": test_item_replace['id'],
+                                                                              "state": "TX",
+                                                                              "city": "Austin",
+                                                                              "data": "replaced data"},
+                                         retry_write=True)
+        except exceptions.CosmosHttpResponseError as e:
+            assert me.counter > 1, "Expected multiple retries due to simulated errors"
+        finally:
+            # Restore the original retry_utility.execute function
+            _retry_utility_async.ExecuteFunctionAsync = original_execute
+
+        # Verify the item was replaced
+        read_item_replace = await container.read_item(item=test_item_replace['id'],
+                                                        partition_key=[test_item_replace['state'],
+                                                                         test_item_replace['city']])
+        assert read_item_replace['data'] == "replaced data", "Item was not replaced successfully after retries"
+
     async def test_retryable_writes_hpk_client_level_async(self):
         """Test retryable writes for a container with hierarchical partition keys and retry_write
         set at the client level."""
@@ -475,6 +574,33 @@ class TestRetryableWritesAsync(unittest.IsolatedAsyncioTestCase):
                 pytest.fail("Expected an exception for item that should have been deleted")
             except exceptions.CosmosHttpResponseError as e:
                 assert e.status_code == 404, "Expected item to be deleted but it was not"
+
+            # Now we try a replace request with retry write enabled - which should retry once
+
+            # Create an item to replace
+            test_item_replace = {"id": str(uuid.uuid4()), "state": "TX", "city": "Austin", "data": "original data"}
+            await container.create_item(test_item_replace)
+            # Mock execute function
+            original_execute = _retry_utility_async.ExecuteFunctionAsync
+            me = self.MockExecuteFunction(original_execute)
+            _retry_utility_async.ExecuteFunctionAsync = me
+            me.counter = 0  # Reset counter
+            try:
+                await container.replace_item(item=test_item_replace['id'], body={"id": test_item_replace['id'],
+                                                                                  "state": "TX",
+                                                                                  "city": "Austin",
+                                                                                  "data": "replaced data"})
+            except exceptions.CosmosHttpResponseError:
+                assert me.counter > 1, "Expected multiple retries for replace_item with retry_write enabled"
+            finally:
+                # Restore the original retry_utility.execute function
+                _retry_utility_async.ExecuteFunctionAsync = original_execute
+            # Verify the item was replaced
+            read_item_replace = await container.read_item(item=test_item_replace['id'],
+                                                          partition_key=[test_item_replace['state'],
+                                                                         test_item_replace['city']])
+            assert read_item_replace['data'] == "replaced data", "Item was not replaced successfully after retries"
+
         finally:
             await client_with_retry.close()
 
