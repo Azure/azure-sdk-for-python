@@ -33,7 +33,7 @@ try:
     # Publish telemetry message
     digita_twin_id = "<DIGITAL TWIN ID>"
     component_name = "<COMPONENT_NAME>"
-    telemetry_payload = '{"Telemetry1": 5}'
+    telemetry_payload = {"Telemetry1": 5}
     service_client.publish_component_telemetry(
         digita_twin_id,
         component_name,

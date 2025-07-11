@@ -32,7 +32,7 @@ try:
 
     # Publish telemetry message
     digita_twin_id = "<DIGITAL TWIN ID>"
-    telemetry_payload = '{"Telemetry1": 5}'
+    telemetry_payload = {"Telemetry1": 5}
     service_client.publish_telemetry(
         digita_twin_id,
         telemetry_payload

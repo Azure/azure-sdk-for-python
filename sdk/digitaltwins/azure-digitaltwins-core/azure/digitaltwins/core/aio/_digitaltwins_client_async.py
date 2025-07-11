@@ -5,6 +5,8 @@
 # --------------------------------------------------------------------------
 
 from collections.abc import Sequence
+from io import BytesIO
+import json
 import uuid
 from datetime import datetime
 from typing import Any, Dict, List, MutableMapping, Optional, TYPE_CHECKING
@@ -153,9 +155,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         if if_match is not None:
             kwargs['headers'] = kwargs.get('headers', {})
             kwargs['headers']['If-Match'] = if_match
+        patch_document = BytesIO(json.dumps(json_patch).encode('utf-8'))
         return await self._client.digital_twins.update(
             digital_twin_id,
-            json_patch,
+            patch_document=patch_document,
             error_map=error_map,
             **kwargs
         )
@@ -242,10 +245,11 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         if if_match is not None:
             kwargs['headers'] = kwargs.get('headers', {})
             kwargs['headers']['If-Match'] = if_match
+        patch_document = BytesIO(json.dumps(json_patch).encode('utf-8'))
         return await self._client.digital_twins.update_component(
             digital_twin_id,
             component_name,
-            patch_document=json_patch,
+            patch_document=patch_document,
             error_map=error_map,
             **kwargs
         )
@@ -342,10 +346,11 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         if if_match is not None:
             kwargs['headers'] = kwargs.get('headers', {})
             kwargs['headers']['If-Match'] = if_match
+        patch_document = BytesIO(json.dumps(json_patch).encode('utf-8'))
         return await self._client.digital_twins.update_relationship(
             id=digital_twin_id,
             relationship_id=relationship_id,
-            patch_document=json_patch,
+            patch_document=patch_document,
             error_map=error_map,
             **kwargs
         )
@@ -453,7 +458,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         message_id = kwargs.pop('message_id', None) or str(uuid.uuid4())
         timestamp = Serializer.serialize_iso(datetime.utcnow())
         return await self._client.digital_twins.send_telemetry(
-            digital_twin_id,
+            id=digital_twin_id,
             message_id=message_id,
             telemetry=telemetry,
             telemetry_source_time=timestamp,
@@ -555,8 +560,9 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :raises ~azure.core.exceptions.ResourceExistsError: One or more of
             the provided models already exist.
         """
+        models_content = BytesIO(json.dumps(dtdl_models).encode('utf-8'))
         return await self._client.digital_twin_models.add(
-            models=dtdl_models,
+            models=models_content,
             **kwargs
         )
 
@@ -572,9 +578,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
             with the provided ID.
         """
         json_patch = [{'op': 'replace', 'path': '/decommissioned', 'value': True}]
+        patch_document = BytesIO(json.dumps(json_patch).encode('utf-8'))
         return await self._client.digital_twin_models.update(
             model_id,
-            json_patch,
+            update_model=patch_document,
             **kwargs
         )
 

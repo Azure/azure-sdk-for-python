@@ -223,10 +223,11 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         if if_match is not None:
             kwargs['headers'] = kwargs.get('headers', {})
             kwargs['headers']['If-Match'] = if_match
+        patch_document = BytesIO(json.dumps(json_patch).encode('utf-8'))
         return self._client.digital_twins.update_component(
             id=digital_twin_id,
             component_path=component_name,
-            patch_document=json_patch,
+            patch_document=patch_document,
             error_map=error_map,
             **kwargs
         )
@@ -316,10 +317,11 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         if if_match is not None:
             kwargs['headers'] = kwargs.get('headers', {})
             kwargs['headers']['If-Match'] = if_match
+        patch_document = BytesIO(json.dumps(json_patch).encode('utf-8'))
         return self._client.digital_twins.update_relationship(
             id=digital_twin_id,
             relationship_id=relationship_id,
-            patch_document=json_patch,
+            patch_document=patch_document,
             error_map=error_map,
             **kwargs
         )
@@ -521,8 +523,9 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :raises ~azure.core.exceptions.ResourceExistsError: One or more of
             the provided models already exist.
         """
+        models_content = BytesIO(json.dumps(dtdl_models).encode('utf-8'))
         return self._client.digital_twin_models.add(
-            models=dtdl_models,
+            models=models_content,
             **kwargs
         )
 
@@ -539,9 +542,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
             with the provided ID.
         """
         json_patch = [{'op': 'replace', 'path': '/decommissioned', 'value': True}]
+        patch_document = BytesIO(json.dumps(json_patch).encode('utf-8'))
         return self._client.digital_twin_models.update(
             model_id,
-            json_patch,
+            update_model=patch_document,
             **kwargs
         )
 
