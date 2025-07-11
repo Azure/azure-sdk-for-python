@@ -14,9 +14,10 @@ from setuptools import setup, find_packages
 
 PACKAGE_NAME = "azure-healthinsights-radiologyinsights"
 PACKAGE_PPRINT_NAME = "Azure Health Insights - Radiology Insights"
+PACKAGE_NAMESPACE = "azure.healthinsights.radiologyinsights"
 
-# a-b-c => a/b/c
-package_folder_path = PACKAGE_NAME.replace("-", "/")
+# a.b.c => a/b/c
+package_folder_path = PACKAGE_NAMESPACE.replace(".", "/")
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:
@@ -38,7 +39,7 @@ setup(
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk",
     keywords="azure, azure sdk",
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 4 - Beta",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",

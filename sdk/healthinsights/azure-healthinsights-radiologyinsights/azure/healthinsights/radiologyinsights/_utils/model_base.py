@@ -22,7 +22,10 @@ import email.utils
 from datetime import datetime, date, time, timedelta, timezone
 from json import JSONEncoder
 import xml.etree.ElementTree as ET
-from collections.abc import MutableMapping
+try:
+    from collections.abc import MutableMapping
+except ImportError:
+    from collections import MutableMapping  # pylint: disable=deprecated-class
 from typing_extensions import Self
 import isodate
 from azure.core.exceptions import DeserializationError
@@ -641,7 +644,7 @@ class Model(_MyMutableMapping):
             cls._attr_to_rest_field: typing.Dict[str, _RestField] = dict(attr_to_rest_field.items())
             cls._calculated.add(f"{cls.__module__}.{cls.__qualname__}")
 
-        return super().__new__(cls)
+        return super().__new__(cls)  # pylint: disable=no-value-for-parameter
 
     def __init_subclass__(cls, discriminator: typing.Optional[str] = None) -> None:
         for base in cls.__bases__:

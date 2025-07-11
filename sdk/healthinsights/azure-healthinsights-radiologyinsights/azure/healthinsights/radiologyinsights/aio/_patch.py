@@ -38,6 +38,7 @@ from .. import models as _models
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
+_Unset: Any = object()
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 if TYPE_CHECKING:
@@ -239,6 +240,114 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
         return AsyncLROPoller[_models.RadiologyInsightsInferenceResult](
             self._client._client, raw_result, get_long_running_output, polling_method  # type: ignore  # pylint: disable=protected-access
         )
+
+    @overload
+    async def begin_custom_inference(
+        self,
+        *,
+        inference_data: _models.RadiologyInsightsData,
+        content_type: str = "application/json",
+        custom_model_ids: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.RadiologyInsightsCustomInferenceResult]:
+        """Infer radiology insights using a custom model.
+
+        :keyword inference_data: Contains the list of patients, and configuration data. Required.
+        :paramtype inference_data: ~azure.healthinsights.radiologyinsights.models.RadiologyInsightsData
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword custom_model_ids: Models to be used for inference. If this is not specified, the model
+         will use the default model for inference. Default value is None.
+        :paramtype custom_model_ids: list[str]
+        :return: An instance of AsyncLROPoller that returns RadiologyInsightsCustomInferenceResult. The
+         RadiologyInsightsCustomInferenceResult is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.healthinsights.radiologyinsights.models.RadiologyInsightsCustomInferenceResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_custom_inference(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[_models.RadiologyInsightsCustomInferenceResult]:
+        """Infer radiology insights using a custom model.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns RadiologyInsightsCustomInferenceResult. The
+         RadiologyInsightsCustomInferenceResult is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.healthinsights.radiologyinsights.models.RadiologyInsightsCustomInferenceResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_custom_inference(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[_models.RadiologyInsightsCustomInferenceResult]:
+        """Infer radiology insights using a custom model.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns RadiologyInsightsCustomInferenceResult. The
+         RadiologyInsightsCustomInferenceResult is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.healthinsights.radiologyinsights.models.RadiologyInsightsCustomInferenceResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_custom_inference(
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        inference_data: _models.RadiologyInsightsData = _Unset,
+        custom_model_ids: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.RadiologyInsightsCustomInferenceResult]:
+        """Infer radiology insights using a custom model.
+
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword inference_data: Contains the list of patients, and configuration data. Required.
+        :paramtype inference_data: ~azure.healthinsights.radiologyinsights.models.RadiologyInsightsData
+        :keyword custom_model_ids: Models to be used for inference. If this is not specified, the model
+         will use the default model for inference. Default value is None.
+        :paramtype custom_model_ids: list[str]
+        :return: An instance of AsyncLROPoller that returns RadiologyInsightsCustomInferenceResult. The
+         RadiologyInsightsCustomInferenceResult is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.healthinsights.radiologyinsights.models.RadiologyInsightsCustomInferenceResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RadiologyInsightsCustomInferenceResult] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._client._begin_custom_inference_initial(
+                body=body,
+                inference_data=inference_data,
+                custom_model_ids=custom_model_ids,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
