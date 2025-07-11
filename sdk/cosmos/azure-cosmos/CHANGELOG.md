@@ -3,6 +3,7 @@
 ### 4.13.0b3 (Unreleased)
 
 #### Features Added
+* Added feed range support in `query_items`. See [PR 41722](https://github.com/Azure/azure-sdk-for-python/pull/41722).
 
 #### Breaking Changes
 * Adds cross region retries when no preferred locations are set. This is only a breaking change for customers using bounded staleness consistency. See [PR 39714](https://github.com/Azure/azure-sdk-for-python/pull/39714)
