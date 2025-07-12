@@ -80,9 +80,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
     :keyword str shared_cache_tenant_id: Preferred tenant for :class:`~azure.identity.SharedTokenCacheCredential`.
         Defaults to the value of environment variable AZURE_TENANT_ID, if any.
     :keyword str visual_studio_code_tenant_id: Tenant ID to use when authenticating with
-        :class:`~azure.identity.VisualStudioCodeCredential`. Defaults to the "Azure: Tenant" setting in VS Code's user
-        settings or, when that setting has no value, the "organizations" tenant, which supports only Azure Active
-        Directory work or school accounts.
+        :class:`~azure.identity.VisualStudioCodeCredential`. Defaults to the tenant specified in the authentication
+        record file used by the Azure Resources extension.
     :keyword int process_timeout: The timeout in seconds to use for developer credentials that run
         subprocesses (e.g. AzureCliCredential, AzurePowerShellCredential). Defaults to **10** seconds.
 
@@ -101,17 +100,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
             raise TypeError("'tenant_id' is not supported in DefaultAzureCredential.")
 
         authority = kwargs.pop("authority", None)
-
-        vscode_tenant_id = kwargs.pop(
-            "visual_studio_code_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
-        )
-        vscode_args = dict(kwargs)
-        if authority:
-            vscode_args["authority"] = authority
-        if vscode_tenant_id:
-            vscode_args["tenant_id"] = vscode_tenant_id
-
         authority = normalize_authority(authority) if authority else get_default_authority()
+
+        vscode_tenant_id = kwargs.pop("visual_studio_code_tenant_id")
 
         interactive_browser_tenant_id = kwargs.pop(
             "interactive_browser_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
@@ -156,7 +147,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
             },
             "visual_studio_code": {
                 "exclude_param": "exclude_visual_studio_code_credential",
-                "default_exclude": True,
+                "default_exclude": False,
             },
             "cli": {
                 "exclude_param": "exclude_cli_credential",
@@ -235,7 +226,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
             except Exception as ex:  # pylint:disable=broad-except
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
         if not exclude_visual_studio_code_credential:
-            credentials.append(VisualStudioCodeCredential(**vscode_args))
+            credentials.append(VisualStudioCodeCredential(tenant_id=vscode_tenant_id))
         if not exclude_cli_credential:
             credentials.append(AzureCliCredential(process_timeout=process_timeout))
         if not exclude_powershell_credential:
