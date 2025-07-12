@@ -48,7 +48,7 @@ else:
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from .. import _types
+    from .. import types as _types
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()
@@ -196,8 +196,11 @@ class RunsOperations(RunsOperationsGenerated):
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
          AgentsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
-         or ~azure.ai.agents.models.AgentsApiResponseFormat
+        :paramtype response_format: Optional[Union[str,
+                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType,
+                               ~azure.ai.agents.models.agentsApiResponseFormat]]
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -363,8 +366,11 @@ class RunsOperations(RunsOperationsGenerated):
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
          AgentsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
-         or ~azure.ai.agents.models.AgentsApiResponseFormat
+        :paramtype response_format: Optional[Union[str,
+                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType,
+                               ~azure.ai.agents.models.agentsApiResponseFormat]]
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -505,9 +511,11 @@ class RunsOperations(RunsOperationsGenerated):
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
          AgentsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or
-         ~azure.ai.agents.models.AgentsApiResponseFormatMode or
-         ~azure.ai.agents.models.AgentsApiResponseFormat
+        :paramtype response_format: Optional[Union[str,
+                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType,
+                               ~azure.ai.agents.models.agentsApiResponseFormat]]
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -685,8 +693,11 @@ class RunsOperations(RunsOperationsGenerated):
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
          AgentsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
-         or ~azure.ai.agents.models.AgentsApiResponseFormat
+        :paramtype response_format: Optional[Union[str,
+                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType,
+                               ~azure.ai.agents.models.agentsApiResponseFormat]]
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -798,8 +809,11 @@ class RunsOperations(RunsOperationsGenerated):
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
          AgentsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
-         or ~azure.ai.agents.models.AgentsApiResponseFormat
+        :paramtype response_format: Optional[Union[str,
+                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType,
+                               ~azure.ai.agents.models.agentsApiResponseFormat]]
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -982,8 +996,11 @@ class RunsOperations(RunsOperationsGenerated):
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
          AgentsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsApiResponseFormatMode
-         or ~azure.ai.agents.models.AgentsApiResponseFormat
+        :paramtype response_format: Optional[Union[str,
+                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType,
+                               ~azure.ai.agents.models.agentsApiResponseFormat]]
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
