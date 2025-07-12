@@ -78,3 +78,9 @@ class _Constants:
         429: "TOO_MANY_REQUESTS",
         449: "RETRY_WITH - Conflicting request to resource has been attempted. Retry to avoid conflicts."
     }
+
+    class Kwargs:
+        """Keyword arguments used in the azure-cosmos package"""
+
+        RETRY_WRITE: Literal["retry_write"] = "retry_write"
+        """Whether to retry write operations if they fail. Used either at client level or request level."""

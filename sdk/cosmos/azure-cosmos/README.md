@@ -668,7 +668,38 @@ as well as containing the list of failed responses for the failed request.
 
 For more information on Transactional Batch, see [Azure Cosmos DB Transactional Batch][cosmos_transactional_batch].
 
-### Public Preview - Vector Embeddings and Vector Indexes
+### Native Retryable Writes
+We have added native retryable writes to the SDK, a feature that can be used by customers who don't mind the
+non-idempotency of these retries and would instead like to ensure that the given operation executed in case of timeouts
+or connectivity issues (status codes 408, 5xx).
+
+This feature can be enabled either at the client level, to retry all write operations under these conditions, 
+or at the per-request level to enable the retries for an individual request.
+
+If enabled at the client level, the one exception to the rule would be patch requests, since the operations can change
+the nature of the overall request - replace, set, and copy for example would be idempotent while add, move or remove would
+not be idempotent unless combined with patch precondition checks. So, for patch we allow opting-in into automatic
+retries only on the request options level.
+
+The snippet below shows how to enable this feature at the client and request level:
+```python
+cosmos_client = CosmosClient(
+    url=URL,
+    credential=KEY,
+    retry_write=True,  # enables native retryable writes at the client level
+)
+
+database = cosmos_client.get_database_client(DATABASE_NAME)
+container = database.get_container_client(CONTAINER_NAME)
+
+container.create_item(
+    item_body,
+    retry_write=True  # enables native retryable writes at the request level
+)
+```
+
+
+### Vector Embeddings and Vector Indexes
 We have added new capabilities to utilize vector embeddings and vector indexing for users to leverage vector
 search utilizing our Cosmos SDK. These two container-level configurations have to be turned on at the account-level
 before you can use them.
@@ -755,7 +786,7 @@ database.create_container(id=container_id, partition_key=PartitionKey(path="/id"
 ```
 ***Note: vector embeddings and vector indexes CANNOT be edited by container replace operations. They are only available directly through creation.***
 
-### Public Preview - Vector Search
+### Vector Search
 
 With the addition of the vector indexing and vector embedding capabilities, the SDK can now perform order by vector search queries.
 These queries specify the VectorDistance to use as a metric within the query text. These must always use a TOP or LIMIT clause within the query though,
