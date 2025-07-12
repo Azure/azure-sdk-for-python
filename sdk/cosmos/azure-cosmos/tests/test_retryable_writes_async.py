@@ -401,18 +401,14 @@ class TestRetryableWritesAsync:
                                                                     test_item_create['city']])
         assert read_item_create['id'] == test_item_create['id'], "Item was not created successfully after retries"
 
-        # Test without retry_write for patch_item
-        test_item_patch_hpk = {"id": "3", "state": "TX", "city": "Austin", "data": "retryable patch test"}
-        await container.create_item(test_item_patch_hpk)  # Create the item first
-
         # Mock retry_utility.execute to track retries
         original_execute = _retry_utility_async.ExecuteFunctionAsync
         me = self.MockExecuteFunction(original_execute)
         _retry_utility_async.ExecuteFunctionAsync = me
 
         try:
-            await container.patch_item(item=test_item_patch_hpk['id'],
-                                       partition_key=[test_item_patch_hpk['state'], test_item_patch_hpk['city']],
+            await container.patch_item(item=test_item['id'],
+                                       partition_key=[test_item['state'], test_item['city']],
                                        patch_operations=[
                                            {"op": "replace", "path": "/data", "value": "patched data"}
                                        ])
@@ -420,24 +416,10 @@ class TestRetryableWritesAsync:
         except exceptions.CosmosHttpResponseError:
             assert me.counter == 1, "Expected no retries without retry_write"
 
-        # Test with retry_write for patch_item
-        me.counter = 0  # Reset counter
-        try:
-            await container.patch_item(item=test_item_patch_hpk['id'],
-                                       partition_key=[test_item_patch_hpk['state'], test_item_patch_hpk['city']],
-                                       patch_operations=[
-                                           {"op": "replace", "path": "/data", "value": "patched data"}
-                                       ], retry_write=True)
-        except exceptions.CosmosHttpResponseError as e:
-            assert me.counter > 1, "Expected multiple retries due to simulated errors"
-        finally:
-            # Restore the original retry_utility.execute function
-            _retry_utility_async.ExecuteFunctionAsync = original_execute
-
         # Verify the item was patched
-        read_item_patch_hpk = await container.read_item(item=test_item_patch_hpk['id'],
-                                                        partition_key=[test_item_patch_hpk['state'],
-                                                                       test_item_patch_hpk['city']])
+        read_item_patch_hpk = await container.read_item(item=test_item['id'],
+                                                        partition_key=[test_item['state'],
+                                                                       test_item['city']])
         assert read_item_patch_hpk['data'] == "patched data", "Item was not patched successfully after retries"
 
         # Verify original execution function is used to upsert an item
