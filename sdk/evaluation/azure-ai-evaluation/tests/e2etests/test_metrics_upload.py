@@ -95,6 +95,8 @@ class TestMetricsUpload(object):
         # as a parent. This logger does not propagate the logs and cannot be
         # captured by caplog. Here we will skip this logger to capture logs.
         logger.parent = logging.root
+        caplog.set_level(logging.DEBUG)
+
         with EvalRun(
             run_name="test",
             tracking_uri=_get_tracking_uri(azure_ml_client, project_scope),
@@ -125,6 +127,8 @@ class TestMetricsUpload(object):
         # as a parent. This logger does not propagate the logs and cannot be
         # captured by caplog. Here we will skip this logger to capture logs.
         logger.parent = logging.root
+
+        caplog.set_level(logging.DEBUG)
 
         project_scope = datastore_project_scopes[config_name]
         azure_ml_client = LiteMLClient(
