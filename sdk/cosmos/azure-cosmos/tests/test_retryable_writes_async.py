@@ -402,8 +402,9 @@ class TestRetryableWritesAsync:
         _retry_utility_async.ExecuteFunctionAsync = me
 
         test_patch_operations = [
-            {"op": "add", "path": "/data", "value": "patched retryable write test"}
+            {"op": "add", "path": "/year", "value": "2025"}
         ]
+        # Test without retry_write for patch_item
         try:
             await container.patch_item(item=test_item['id'],
                                        partition_key=[test_item['state'], test_item['city']],
@@ -412,11 +413,19 @@ class TestRetryableWritesAsync:
         except exceptions.CosmosHttpResponseError:
             assert me.counter == 1, "Expected no retries without retry_write"
 
+        # Now properly replace with retry_write
+        me.counter = 0  # Reset counter
+        await container.patch_item(item=test_item['id'],
+                                    partition_key=[test_item['state'], test_item['city']],
+                                    patch_operations=test_patch_operations,
+                                    retry_write=True)
+        assert me.counter == 2
+
         # Verify the item was patched
         patched_item = await container.read_item(item=test_item['id'],
                                                         partition_key=[test_item['state'],
                                                                        test_item['city']])
-        assert patched_item['data'] == "patched retryable write test", "Item was not patched successfully after retries"
+        assert patched_item['year'] == "2025", "Item was not patched successfully after retries"
 
         # Verify original execution function is used to upsert an item
         test_item = {"id": "1", "state": "CA", "city": "San Francisco", "data": "retryable write test"}
