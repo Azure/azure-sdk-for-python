@@ -556,7 +556,7 @@ class TestRetryableWritesAsync:
                 _retry_utility_async.ExecuteFunction = original_execute
 
             test_item = {"id": "6", "state": "CA", "city": "San Francisco", "data": "retryable write test"}
-            container.upsert_item(test_item)
+            await container.upsert_item(test_item)
 
             # Mock retry_utility.execute to track retries
             original_execute = _retry_utility_async.ExecuteFunctionAsync
