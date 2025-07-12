@@ -199,8 +199,7 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype response_format: Optional[Union[str,
                                ~azure.ai.agents.models.AgentsApiResponseFormatMode,
                                ~azure.ai.agents.models.AgentsApiResponseFormat,
-                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType,
-                               ~azure.ai.agents.models.agentsApiResponseFormat]]
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -369,8 +368,7 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype response_format: Optional[Union[str,
                                ~azure.ai.agents.models.AgentsApiResponseFormatMode,
                                ~azure.ai.agents.models.AgentsApiResponseFormat,
-                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType,
-                               ~azure.ai.agents.models.agentsApiResponseFormat]]
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -514,8 +512,7 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype response_format: Optional[Union[str,
                                ~azure.ai.agents.models.AgentsApiResponseFormatMode,
                                ~azure.ai.agents.models.AgentsApiResponseFormat,
-                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType,
-                               ~azure.ai.agents.models.agentsApiResponseFormat]]
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -696,8 +693,7 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype response_format: Optional[Union[str,
                                ~azure.ai.agents.models.AgentsApiResponseFormatMode,
                                ~azure.ai.agents.models.AgentsApiResponseFormat,
-                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType,
-                               ~azure.ai.agents.models.agentsApiResponseFormat]]
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -812,8 +808,7 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype response_format: Optional[Union[str,
                                ~azure.ai.agents.models.AgentsApiResponseFormatMode,
                                ~azure.ai.agents.models.AgentsApiResponseFormat,
-                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType,
-                               ~azure.ai.agents.models.agentsApiResponseFormat]]
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -999,8 +994,7 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype response_format: Optional[Union[str,
                                ~azure.ai.agents.models.AgentsApiResponseFormatMode,
                                ~azure.ai.agents.models.AgentsApiResponseFormat,
-                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType,
-                               ~azure.ai.agents.models.agentsApiResponseFormat]]
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
