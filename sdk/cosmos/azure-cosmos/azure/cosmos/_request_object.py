@@ -83,7 +83,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         if self._can_set_excluded_location(options):
             self.excluded_locations = options['excludedLocations']
 
-    def set_retry_write(self, request_options: dict, client_retry_write: bool) -> None:
+    def set_retry_write(self, request_options: Mapping[str, Any], client_retry_write: bool) -> None:
         if request_options and request_options.get(Constants.Kwargs.RETRY_WRITE):
             # If request retry write is True, set the option
             self.retry_write = request_options[Constants.Kwargs.RETRY_WRITE]
