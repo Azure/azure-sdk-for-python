@@ -10,13 +10,12 @@ from typing import Any, Dict, Optional, Union
 from typing_extensions import Self
 
 from azure.core import MatchConditions
-from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-from azure.core.paging import ItemPaged
+from azure.core.async_paging import AsyncItemPaged
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator import distributed_trace
-from ._data_lake_directory_client import DataLakeDirectoryClient
-from ._data_lake_file_client import DataLakeFileClient
-from ._data_lake_lease import DataLakeLeaseClient
-from ._models import (
+from azure.core.tracing.decorator_async import distributed_trace_async
+from .._models import (
     AccessPolicy,
     ContentSettings,
     DeletedPathProperties,
@@ -27,39 +26,44 @@ from ._models import (
     PathProperties,
     PublicAccess
 )
-from ._shared.base_client import StorageAccountHostsMixin
+from .._shared.base_client import StorageAccountHostsMixin
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+from ._data_lake_directory_client_async import DataLakeDirectoryClient
+from ._data_lake_file_client_async import DataLakeFileClient
+from ._data_lake_lease_async import DataLakeLeaseClient
 
-class FileSystemClient(StorageAccountHostsMixin):
+
+class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore [misc]
     def __init__(
         self,
         account_url: str,
         file_system_name: str,
         credential: Optional[
-            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]
+            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]
         ] = None,
         *,
         api_version: Optional[str] = None,
         audience: Optional[str] = None,
         **kwargs: Any
     ) -> None: ...
-    def __enter__(self) -> Self: ...
-    def __exit__(self, *args: Any) -> None: ...
-    def close(self) -> None: ...
+    async def __aenter__(self) -> Self: ...
+    async def __aexit__(self, *args: Any) -> None: ...
+    async def close(self) -> None: ...
     @classmethod
     def from_connection_string(
         cls,
         conn_str: str,
         file_system_name: str,
         credential: Optional[
-            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]
+            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]
         ] = None,
         *,
         api_version: Optional[str] = None,
         audience: Optional[str] = None,
         **kwargs: Any
     ) -> Self: ...
-    @distributed_trace
-    def acquire_lease(
+    @distributed_trace_async
+    async def acquire_lease(
         self,
         lease_duration: int = -1,
         lease_id: Optional[str] = None,
@@ -71,8 +75,8 @@ class FileSystemClient(StorageAccountHostsMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> DataLakeLeaseClient: ...
-    @distributed_trace
-    def create_file_system(
+    @distributed_trace_async
+    async def create_file_system(
         self,
         metadata: Optional[Dict[str, str]] = None,
         public_access: Optional[PublicAccess] = None,
@@ -81,18 +85,19 @@ class FileSystemClient(StorageAccountHostsMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]: ...
-    @distributed_trace
-    def exists(self, *, timeout: Optional[int] = None, **kwargs: Any) -> bool: ...
-    def _rename_file_system(
+    @distributed_trace_async
+    async def exists(self, *, timeout: Optional[int] = None, **kwargs: Any) -> bool: ...
+    @distributed_trace_async
+    async def _rename_file_system(
         self,
         new_name: str,
         *,
         lease: Optional[Union[DataLakeLeaseClient, str]] = None,
         timeout: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "FileSystemClient": ...
-    @distributed_trace
-    def delete_file_system(
+    @distributed_trace_async
+    async def delete_file_system(
         self,
         *,
         lease: Optional[Union[DataLakeLeaseClient, str]] = None,
@@ -103,16 +108,16 @@ class FileSystemClient(StorageAccountHostsMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None: ...
-    @distributed_trace
-    def get_file_system_properties(
+    @distributed_trace_async
+    async def get_file_system_properties(
         self,
         *,
         lease: Optional[Union[DataLakeLeaseClient, str]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> FileSystemProperties: ...
-    @distributed_trace
-    def set_file_system_metadata(
+    @distributed_trace_async
+    async def set_file_system_metadata(
         self,
         metadata: Dict[str, str],
         *,
@@ -124,8 +129,8 @@ class FileSystemClient(StorageAccountHostsMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]: ...
-    @distributed_trace
-    def set_file_system_access_policy(
+    @distributed_trace_async
+    async def set_file_system_access_policy(
         self,
         signed_identifiers: Dict[str, AccessPolicy],
         public_access: Optional[Union[str, PublicAccess]] = None,
@@ -136,8 +141,8 @@ class FileSystemClient(StorageAccountHostsMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]: ...
-    @distributed_trace
-    def get_file_system_access_policy(
+    @distributed_trace_async
+    async def get_file_system_access_policy(
         self,
         *,
         lease: Optional[Union[DataLakeLeaseClient, str]] = None,
@@ -154,9 +159,9 @@ class FileSystemClient(StorageAccountHostsMixin):
         upn: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> ItemPaged[PathProperties]: ...
-    @distributed_trace
-    def create_directory(
+    ) -> AsyncItemPaged[PathProperties]: ...
+    @distributed_trace_async
+    async def create_directory(
         self,
         directory: Union[DirectoryProperties, str],
         metadata: Optional[Dict[str, str]] = None,
@@ -177,8 +182,8 @@ class FileSystemClient(StorageAccountHostsMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> DataLakeDirectoryClient: ...
-    @distributed_trace
-    def delete_directory(
+    @distributed_trace_async
+    async def delete_directory(
         self,
         directory: Union[DirectoryProperties, str],
         *,
@@ -190,8 +195,8 @@ class FileSystemClient(StorageAccountHostsMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> DataLakeDirectoryClient: ...
-    @distributed_trace
-    def create_file(
+    @distributed_trace_async
+    async def create_file(
         self,
         file: Union[FileProperties, str],
         *,
@@ -213,8 +218,8 @@ class FileSystemClient(StorageAccountHostsMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> DataLakeFileClient: ...
-    @distributed_trace
-    def delete_file(
+    @distributed_trace_async
+    async def delete_file(
         self,
         file: Union[FileProperties, str],
         *,
@@ -226,13 +231,14 @@ class FileSystemClient(StorageAccountHostsMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> DataLakeFileClient: ...
-    def _undelete_path(
+    @distributed_trace_async
+    async def _undelete_path(
         self,
         deleted_path_name: str,
         deletion_id: str,
         *,
         timeout: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Union[DataLakeDirectoryClient, DataLakeFileClient]: ...
     def _get_root_directory_client(self) -> DataLakeDirectoryClient: ...
     def get_directory_client(self, directory: Union[DirectoryProperties, str]) -> DataLakeDirectoryClient: ...
@@ -245,4 +251,4 @@ class FileSystemClient(StorageAccountHostsMixin):
         results_per_page: Optional[int] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> ItemPaged[DeletedPathProperties]: ...
+    ) -> AsyncItemPaged[DeletedPathProperties]: ...
