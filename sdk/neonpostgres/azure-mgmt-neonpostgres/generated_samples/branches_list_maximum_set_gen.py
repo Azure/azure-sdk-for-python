@@ -32,8 +32,8 @@ def main():
 
     response = client.branches.list(
         resource_group_name="rgneon",
-        organization_name="test-org",
-        project_name="entity-name",
+        organization_name="contoso-org",
+        project_name="sample-resource",
     )
     for item in response:
         print(item)

@@ -32,7 +32,7 @@ def main():
 
     response = client.organizations.get(
         resource_group_name="rgneon",
-        organization_name="test-org",
+        organization_name="contoso-org",
     )
     print(response)
 
