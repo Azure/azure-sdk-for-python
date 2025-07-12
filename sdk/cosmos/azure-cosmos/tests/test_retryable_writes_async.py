@@ -124,20 +124,18 @@ class TestRetryableWritesAsync:
                                                      partition_key=test_item_create['pk'])
         assert read_item_create['id'] == test_item_create['id'], "Item was not created successfully after retries"
 
-        # Test without retry_write for patch_item
-        test_item_patch = {"id": "3", "pk": "test", "data": "retryable patch test"}
-        await container.create_item(test_item_patch)  # Create the item first
-
         # Mock retry_utility.execute to track retries
         original_execute = _retry_utility_async.ExecuteFunctionAsync
         me = self.MockExecuteFunction(original_execute)
         _retry_utility_async.ExecuteFunctionAsync = me
 
+        # Test without retry_write for patch_item
+        test_patch_operations = [
+            {"op": "add", "path": "/data", "value": "patched retryable write test"}
+        ]
         try:
-            await container.patch_item(item=test_item_patch['id'], partition_key=test_item_patch['pk'],
-                                       patch_operations=[
-                                           {"op": "replace", "path": "/data", "value": "patched data"}
-                                       ])
+            await container.patch_item(item=test_item_create['id'], partition_key=test_item_create['pk'],
+                                       patch_operations=test_patch_operations)
             pytest.fail("Expected an exception without retry_write")
         except exceptions.CosmosHttpResponseError:
             assert me.counter == 1, "Expected no retries without retry_write"
@@ -145,10 +143,8 @@ class TestRetryableWritesAsync:
         # Test with retry_write for patch_item
         me.counter = 0  # Reset counter
         try:
-            await container.patch_item(item=test_item_patch['id'], partition_key=test_item_patch['pk'],
-                                       patch_operations=[
-                                           {"op": "replace", "path": "/data", "value": "patched data"}
-                                       ], retry_write=True)
+            await container.patch_item(item=test_item_create['id'], partition_key=test_item_create['pk'],
+                                       patch_operations=test_patch_operations, retry_write=True)
         except exceptions.CosmosHttpResponseError as e:
             assert me.counter > 1, "Expected multiple retries due to simulated errors"
         finally:
@@ -156,9 +152,8 @@ class TestRetryableWritesAsync:
             _retry_utility_async.ExecuteFunctionAsync = original_execute
 
         # Verify the item was patched
-        read_item_patch = await container.read_item(item=test_item_patch['id'],
-                                                    partition_key=test_item_patch['pk'])
-        assert read_item_patch['data'] == "patched data", "Item was not patched successfully after retries"
+        patched_item = await container.read_item(item=test_item_create['id'], partition_key=test_item_create['pk'])
+        assert patched_item['data'] == "patched retryable write test", "Item was not patched successfully after retries"
 
         # Verify original execution function is used to upsert an item
         test_item = {"id": "5", "pk": "test", "data": "retryable write test"}
