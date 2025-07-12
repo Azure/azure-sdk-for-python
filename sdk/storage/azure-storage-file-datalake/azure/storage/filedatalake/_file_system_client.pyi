@@ -83,6 +83,14 @@ class FileSystemClient(StorageAccountHostsMixin):
     ) -> Dict[str, Union[str, datetime]]: ...
     @distributed_trace
     def exists(self, *, timeout: Optional[int] = None, **kwargs: Any) -> bool: ...
+    def _rename_file_system(
+        self,
+        new_name: str,
+        *,
+        lease: Optional[Union[DataLakeLeaseClient, str]] = None,
+        timeout: Optional[int] = None,
+        **kwargs
+    ) -> "FileSystemClient": ...
     @distributed_trace
     def delete_file_system(
         self,
@@ -218,6 +226,15 @@ class FileSystemClient(StorageAccountHostsMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> DataLakeFileClient: ...
+    def _undelete_path(
+        self,
+        deleted_path_name: str,
+        deletion_id: str,
+        *,
+        timeout: Optional[int] = None,
+        **kwargs
+    ) -> Union[DataLakeDirectoryClient, DataLakeFileClient]: ...
+    def _get_root_directory_client(self) -> DataLakeDirectoryClient: ...
     def get_directory_client(self, directory: Union[DirectoryProperties, str]) -> DataLakeDirectoryClient: ...
     def get_file_client(self, file_path: Union[FileProperties, str]) -> DataLakeFileClient: ...
     @distributed_trace
