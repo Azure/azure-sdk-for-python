@@ -2219,8 +2219,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
         )
 
+    @staticmethod
     def _build_read_many_query(
-            self,
             items_by_partition: Dict[str, List[Tuple[str, PartitionKeyType]]],
             partition_key_definition: Dict[str, Any]
     ) -> Dict[str, Any]:
@@ -2335,10 +2335,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """
         if options is None:
             options = {}
-
-            # Early return for empty input
         if not items:
-            return CosmosList([], response_headers=self.last_response_headers)
+            return CosmosList([], response_headers=CaseInsensitiveDict())
+
+        # Internal concurrency parameters (not exposed in public API)
+        max_concurrency = 10  # Optimized for async I/O operations
+        max_items_per_query = 1000  # Maximum items per query chunk
 
         partition_key_definition = await self._get_partition_key_definition(collection_link, options)
         if not partition_key_definition:
@@ -2383,33 +2385,60 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     items_by_partition["error"] = []
                 items_by_partition["error"].append((item_id, partition_key_value))
 
-        semaphore = asyncio.Semaphore(10)  # maxConcurrency = 10
-        max_items_per_query = 1000  # maxItemsPerQuery = 1000
-        tasks = []
+        # Create query chunks for concurrency control
+        query_chunks = []
+        for partition_id, partition_items in items_by_partition.items():
+            # Split large partitions into chunks of max_items_per_query
+            for i in range(0, len(partition_items), max_items_per_query):
+                chunk = partition_items[i:i + max_items_per_query]
+                query_chunks.append({partition_id: chunk})
+
+        # Create semaphore for internal concurrency control
+        semaphore = asyncio.Semaphore(max_concurrency)
+
+        async def execute_chunk_query(chunk_items):
+            async with semaphore:  # Acquire slot, auto-released on exit
+                # Get all items from this chunk
+                chunk_partition_items = list(chunk_items.values())[0]
+
+                # Use _can_use_id_in_query to determine which query building approach to use
+                if self._can_use_id_in_query(chunk_partition_items, partition_key_definition):
+                    query_obj = self._build_id_in_query(chunk_partition_items)
+                else:
+                    query_obj = self._build_read_many_query({list(chunk_items.keys())[0]: chunk_partition_items},
+                                                            partition_key_definition)
+
+                # Execute query using existing QueryItems method
+                query_results = self.QueryItems(collection_link, query_obj, options, **kwargs)
+
+                individual_chunk_results = []
+                last_headers = CaseInsensitiveDict()
+
+                async for item in query_results:
+                    individual_chunk_results.append(item)
+                    # Get headers from the last response if available
+                    if hasattr(self, 'last_response_headers'):
+                        last_headers.update(self.last_response_headers)
+
+                return individual_chunk_results, last_headers
+
+        # Execute all chunks concurrently
+        chunk_tasks = [execute_chunk_query(chunk) for chunk in query_chunks]
+        chunk_results = await asyncio.gather(*chunk_tasks)
+
+        # Aggregate results
+        all_results = []
+        combined_headers = CaseInsensitiveDict()
+
+        for chunk_result, chunk_headers in chunk_results:
+            all_results.extend(chunk_result)
+            combined_headers.update(chunk_headers)
+
+        return CosmosList(all_results, response_headers=combined_headers)
 
 
-        # Check if we can use the optimized ID IN query
-        all_items = []
-        for partition_items in items_by_partition.values():
-            all_items.extend(partition_items)
-
-        if self._can_use_id_in_query(all_items, partition_key_definition):
-            query_obj = self._build_id_in_query(all_items)
-        else:
-            query_obj = self._build_read_many_query(items_by_partition, partition_key_definition)
-
-        # Use existing QueryItems method with the parameterized query
-
-        query_results = self.QueryItems(collection_link, query_obj, options, **kwargs)
-
-        read_results = []
-        async for item in query_results:
-            read_results.append(item)
-
-        return CosmosList(read_results, response_headers=self.last_response_headers)
-
+    @staticmethod
     def _can_use_id_in_query(
-            self,
             items: List[Tuple[str, PartitionKeyType]],
             partition_key_definition: Dict[str, Any]
     ) -> bool:
@@ -2430,7 +2459,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         return True
 
-    def _build_id_in_query(self, items: List[Tuple[str, PartitionKeyType]]) -> Dict[str, Any]:
+    @staticmethod
+    def _build_id_in_query(items: List[Tuple[str, PartitionKeyType]]) -> Dict[str, Any]:
         """Build optimized query using ID IN clause when ID equals partition key."""
         param_names = []
         parameters = []
