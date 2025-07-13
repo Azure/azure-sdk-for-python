@@ -23,6 +23,7 @@
 
 """Document client class for the Azure Cosmos database service.
 """
+import asyncio
 import os
 from urllib.parse import urlparse
 import uuid
@@ -2217,6 +2218,234 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         return AsyncItemPaged(
             self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
         )
+
+    def _build_read_many_query(
+            self,
+            items_by_partition: Dict[str, List[Tuple[str, PartitionKeyType]]],
+            partition_key_definition: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Builds a parameterized SQL query for reading multiple items.
+
+        :param items_by_partition: Dictionary mapping partition range IDs to lists of (item_id, partition_key) tuples
+        :param partition_key_definition: The partition key definition for the container
+        :return: Query object with 'query' and 'parameters' fields
+        """
+        if not items_by_partition:
+            return {"query": "SELECT * FROM c WHERE false", "parameters": []}
+
+        # Get all items from all partitions
+        all_items = []
+        for partition_items in items_by_partition.values():
+            all_items.extend(partition_items)
+
+        if not all_items:
+            return {"query": "SELECT * FROM c WHERE false", "parameters": []}
+
+        # Extract partition key paths for hierarchical partition keys
+        partition_key_paths = partition_key_definition.get("paths", [])
+
+        # Build the query conditions
+        query_parts = []
+        parameters = []
+
+        for i, (item_id, partition_key_value) in enumerate(all_items):
+            # Add item ID parameter
+            id_param_name = f"@param_id{i}"
+            parameters.append({"name": id_param_name, "value": item_id})
+
+            # Start building condition for this item
+            condition_parts = [f"c.id = {id_param_name}"]
+
+            # Handle partition key conditions
+            if partition_key_value is None or isinstance(partition_key_value, type(NonePartitionKeyValue)):
+                # Handle null partition key - all paths should be undefined
+                for path in partition_key_paths:
+                    # Remove leading "/" from path and format for query
+                    field_name = path[1:] if path.startswith("/") else path
+                    if "/" in field_name:
+                        # Handle nested paths like "a/b" -> c["a"]["b"]
+                        field_parts = field_name.split("/")
+                        field_expr = "c" + "".join(f'["{part}"]' for part in field_parts)
+                    else:
+                        # Handle simple paths like "pk" -> c["pk"] or c.pk
+                        field_expr = f'c["{field_name}"]' if not field_name.isidentifier() else f"c.{field_name}"
+
+                    condition_parts.append(f"IS_DEFINED({field_expr}) = false")
+            else:
+                # Handle non-null partition key values
+                if isinstance(partition_key_value, list):
+                    pk_values = partition_key_value
+                else:
+                    pk_values = [partition_key_value]
+
+                # Validate partition key component count
+                if len(pk_values) != len(partition_key_paths):
+                    raise ValueError(
+                        f"Number of components in partition key value ({len(pk_values)}) "
+                        f"does not match definition ({len(partition_key_paths)})"
+                    )
+
+                # Add condition for each partition key component
+                for j, (path, pk_value) in enumerate(zip(partition_key_paths, pk_values)):
+                    # Remove leading "/" from path and format for query
+                    field_name = path[1:] if path.startswith("/") else path
+                    if "/" in field_name:
+                        # Handle nested paths like "a/b" -> c["a"]["b"]
+                        field_parts = field_name.split("/")
+                        field_expr = "c" + "".join(f'["{part}"]' for part in field_parts)
+                    else:
+                        # Handle simple paths like "pk" -> c["pk"] or c.pk
+                        field_expr = f'c["{field_name}"]' if not field_name.isidentifier() else f"c.{field_name}"
+
+                    # Check for undefined values (similar to C# Undefined.Value)
+                    if pk_value is None or isinstance(pk_value, _Undefined) or isinstance(pk_value, _Empty):
+                        condition_parts.append(f"IS_DEFINED({field_expr}) = false")
+                    else:
+                        # Add parameter for this partition key component
+                        pk_param_name = f"@param_pk{i}{j}"
+                        parameters.append({"name": pk_param_name, "value": pk_value})
+                        condition_parts.append(f"{field_expr} = {pk_param_name}")
+
+            # Combine all conditions for this item with AND
+            item_condition = f"( {' AND '.join(condition_parts)} )"
+            query_parts.append(item_condition)
+
+        # Combine all item conditions with OR
+        query_string = f"SELECT * FROM c WHERE ( {' OR '.join(query_parts)} )"
+
+        return {
+            "query": query_string,
+            "parameters": parameters
+        }
+
+    async def ReadManyItems(
+            self,
+            collection_link: str,
+            items: List[Tuple[str, PartitionKeyType]],
+            options: Optional[Mapping[str, Any]] = None,
+            **kwargs: Any
+     ) -> CosmosList:
+        """Reads many items.
+
+        :param str collection_link: The link to the document collection.
+        :param list items: The list of items to read. Each item is a dict containing the item id and partition key.
+        :param dict options: The request options for the request.
+        :return: The list of read items.
+        :rtype: CosmosList
+        """
+        if options is None:
+            options = {}
+
+            # Early return for empty input
+        if not items:
+            return CosmosList([], response_headers=self.last_response_headers)
+
+        partition_key_definition = await self._get_partition_key_definition(collection_link, options)
+        if not partition_key_definition:
+            raise ValueError("Could not find partition key definition for collection.")
+
+        # Get collection resource ID
+        collection_rid = base.GetResourceIdOrFullNameFromLink(collection_link)
+        # Create partition key object from definition
+        partition_key = _get_partition_key_from_partition_key_definition(partition_key_definition)
+        # Dictionary to group items by partition key range ID
+        items_by_partition: Dict[str, List[Tuple[str, PartitionKeyType]]] = {}
+
+        # Process each item and group by physical partition
+        for item_id, partition_key_value in items:
+            try:
+                # Get the EPK range for the given partition key value
+                epk_range = partition_key._get_epk_range_for_partition_key(partition_key_value)
+
+                # Get overlapping ranges for this EPK range
+                overlapping_ranges = await self._routing_map_provider.get_overlapping_ranges(
+                    collection_rid,
+                    [epk_range]
+                )
+
+                # Use the first overlapping range (there should be exactly one for a point lookup)
+                if overlapping_ranges:
+                    range_id = overlapping_ranges[0]["id"]
+
+                    # Group items by the partition key range ID
+                    if range_id not in items_by_partition:
+                        items_by_partition[range_id] = []
+                    items_by_partition[range_id].append((item_id, partition_key_value))
+                else:
+                    # Fallback: create a default group if no ranges found
+                    if "unknown" not in items_by_partition:
+                        items_by_partition["unknown"] = []
+                    items_by_partition["unknown"].append((item_id, partition_key_value))
+
+            except Exception:
+                # Handle any errors in EPK calculation by putting in default group
+                if "error" not in items_by_partition:
+                    items_by_partition["error"] = []
+                items_by_partition["error"].append((item_id, partition_key_value))
+
+        semaphore = asyncio.Semaphore(10)  # maxConcurrency = 10
+        max_items_per_query = 1000  # maxItemsPerQuery = 1000
+        tasks = []
+
+
+        # Check if we can use the optimized ID IN query
+        all_items = []
+        for partition_items in items_by_partition.values():
+            all_items.extend(partition_items)
+
+        if self._can_use_id_in_query(all_items, partition_key_definition):
+            query_obj = self._build_id_in_query(all_items)
+        else:
+            query_obj = self._build_read_many_query(items_by_partition, partition_key_definition)
+
+        # Use existing QueryItems method with the parameterized query
+
+        query_results = self.QueryItems(collection_link, query_obj, options, **kwargs)
+
+        read_results = []
+        async for item in query_results:
+            read_results.append(item)
+
+        return CosmosList(read_results, response_headers=self.last_response_headers)
+
+    def _can_use_id_in_query(
+            self,
+            items: List[Tuple[str, PartitionKeyType]],
+            partition_key_definition: Dict[str, Any]
+    ) -> bool:
+        """Check if we can use the optimized ID IN query."""
+        # Check if partition key path is "/id"
+        partition_key_paths = partition_key_definition.get("paths", [])
+        if len(partition_key_paths) != 1 or partition_key_paths[0] != "/id":
+            return False
+
+        # Check if all items have ID equal to partition key
+        for item_id, partition_key_value in items:
+            # Handle different partition key formats
+            if isinstance(partition_key_value, list):
+                if len(partition_key_value) != 1 or partition_key_value[0] != item_id:
+                    return False
+            elif partition_key_value != item_id:
+                return False
+
+        return True
+
+    def _build_id_in_query(self, items: List[Tuple[str, PartitionKeyType]]) -> Dict[str, Any]:
+        """Build optimized query using ID IN clause when ID equals partition key."""
+        param_names = []
+        parameters = []
+
+        for i, (item_id, _) in enumerate(items):
+            param_name = f"@param_id{i}"
+            param_names.append(param_name)
+            parameters.append({"name": param_name, "value": item_id})
+
+        query_string = f"SELECT * FROM c WHERE c.id IN ( {','.join(param_names)} )"
+
+        return {
+            "query": query_string,
+            "parameters": parameters
+        }
 
     def ReadItems(
         self,

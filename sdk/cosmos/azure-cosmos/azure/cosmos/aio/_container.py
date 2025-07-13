@@ -423,6 +423,49 @@ class ContainerProxy:
         )
         return items
 
+    @distributed_trace_async
+    async def read_many_items(
+            self,
+            items: List[Tuple[str, PartitionKeyType]],
+            *,
+            consistency_level: Optional[str] = None,
+            session_token: Optional[str] = None,
+            custom_headers: Optional[Dict[str, str]] = None,
+            **kwargs: Any
+    ) -> List[Dict[str, Any]]:
+        """
+        Reads multiple items from the container.
+
+        :param items: A list of tuples, where each tuple contains the item id and partition key.
+        :type items: List[Tuple[str, PartitionKeyType]]
+        :keyword str consistency_level: The consistency level to use for the request.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword Dict[str, str] custom_headers: Custom headers to be sent as part of the request.
+        :returns: A list of the requested items.
+        :rtype: List[Dict[str, Any]]
+        """
+        # Implementation to be added
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if custom_headers is not None:
+            kwargs['initial_headers'] = custom_headers
+        if consistency_level is not None:
+            kwargs['consistencyLevel'] = consistency_level
+        kwargs["containerProperties"] = self._get_properties_with_options
+
+        feed_options = _build_options(kwargs)
+        feed_options["enableCrossPartitionQuery"] = True
+        await self._get_properties_with_options(feed_options)
+        feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+
+        item_tuples = [(item_id, await self._set_partition_key(pk)) for item_id, pk in items]
+
+        return await self.client_connection.ReadManyItems(
+            collection_link=self.container_link,
+            items=item_tuples,
+            options=feed_options,
+            **kwargs)
+
     @distributed_trace
     def query_items(
         self,
