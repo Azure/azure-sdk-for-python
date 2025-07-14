@@ -7,6 +7,7 @@ import uuid
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 from azure.digitaltwins.core import DigitalTwinsClient
+from typing import Dict, List
 
 # Scenario example of how to:
 # - create a DigitalTwins Service Client using the DigitalTwinsClient constructor
@@ -85,7 +86,7 @@ try:
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
     # - AZURE_CLIENT_SECRET: The client secret for the registered application
     credential = DefaultAzureCredential()
-    service_client = DigitalTwinsClient(url, credential)
+    service_client = DigitalTwinsClient(url, credential) # type: ignore
 
     # Create models
     new_models = [temporary_component, temporary_model]
@@ -100,7 +101,7 @@ try:
 
     # Update component
     component_name = "Component1"
-    patch = [
+    patch: List[Dict[str, object]] = [
         {
             "op": "replace",
             "path": "/ComponentProp1",

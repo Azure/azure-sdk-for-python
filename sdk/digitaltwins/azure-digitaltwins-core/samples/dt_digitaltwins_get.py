@@ -37,7 +37,7 @@ try:
     logger.addHandler(handler)
 
     # Create service client and enable logging for all operations
-    service_client = DigitalTwinsClient(url, credential, logging_enable=True)
+    service_client = DigitalTwinsClient(url, credential, logging_enable=True) # type: ignore
 
     # DigitalTwinId from the samples: 
     #   BuildingTwin

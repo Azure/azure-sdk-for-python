@@ -8,12 +8,11 @@ import uuid
 from datetime import datetime
 from typing import Dict, List, Optional, TYPE_CHECKING
 
-from msrest import Serializer
-
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 from azure.core import MatchConditions
+from .._generated._utils.serialization import Serializer
 from .._version import SDK_MONIKER
 
 from .._utils import (
@@ -23,13 +22,6 @@ from .._utils import (
 from .._generated.aio import AzureDigitalTwinsAPI
 from .._generated.models import (
     QuerySpecification,
-    DigitalTwinsAddOptions,
-    DigitalTwinsDeleteOptions,
-    DigitalTwinsUpdateOptions,
-    DigitalTwinsUpdateComponentOptions,
-    DigitalTwinsDeleteRelationshipOptions,
-    DigitalTwinsUpdateRelationshipOptions,
-    DigitalTwinsAddRelationshipOptions,
     DigitalTwinsModelData
 )
 
@@ -51,9 +43,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs) -> None:
         if not endpoint.startswith('http'):
             endpoint = 'https://' + endpoint
+
         self._client = AzureDigitalTwinsAPI(
             credential=credential,
-            base_url=endpoint,
+            endpoint=endpoint,
             sdk_moniker=SDK_MONIKER,
             **kwargs
         )
@@ -79,11 +72,14 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :raises ~azure.core.exceptions.ResourceNotFoundError:
             If the digital twin doesn't exist.
         """
-        return await self._client.digital_twins.get_by_id(
+        result = await self._client.digital_twins.get_by_id(
             digital_twin_id,
             **kwargs
         )
 
+        return dict(result)
+
+    # pylint: disable=docstring-keyword-should-match-keyword-only
     @distributed_trace_async
     async def upsert_digital_twin(
         self,
@@ -107,20 +103,21 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :raises ~azure.core.exceptions.ResourceExistsError:
             If the digital twin already exists.
         """
-        options = None
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_none_match, error_map = prep_if_none_match(etag, match_condition)
-        if if_none_match:
-            options = DigitalTwinsAddOptions(if_none_match=if_none_match)
-        return await self._client.digital_twins.add(
+        result = await self._client.digital_twins.add(
             digital_twin_id,
             digital_twin,
-            digital_twins_add_options=options,
+            etag=if_none_match,
+            match_condition=match_condition,
             error_map=error_map,
             **kwargs
         )
 
+        return dict(result) if result else {}
+
+    # pylint: disable=docstring-keyword-should-match-keyword-only
     @distributed_trace_async
     async def update_digital_twin(
         self,
@@ -145,20 +142,24 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :raises ~azure.core.exceptions.ResourceNotFoundError:
             If there is no digital twin with the provided ID.
         """
-        options = None
+        import json
+        from io import BytesIO
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_match, error_map = prep_if_match(etag, match_condition)
-        if if_match:
-            options = DigitalTwinsUpdateOptions(if_match=if_match)
+
+        patch_content = BytesIO(json.dumps(json_patch).encode('utf-8'))
+
         return await self._client.digital_twins.update(
             digital_twin_id,
-            json_patch,
-            digital_twins_update_options=options,
+            patch_document=patch_content,
+            etag=if_match,
+            match_condition=match_condition,
             error_map=error_map,
             **kwargs
         )
 
+    # pylint: disable=docstring-keyword-should-match-keyword-only
     @distributed_trace_async
     async def delete_digital_twin(
         self,
@@ -179,15 +180,13 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :raises ~azure.core.exceptions.ResourceNotFoundError:
             If there is no digital twin with the provided ID.
         """
-        options = None
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_match, error_map = prep_if_match(etag, match_condition)
-        if if_match:
-            options = DigitalTwinsDeleteOptions(if_match=if_match)
         return await self._client.digital_twins.delete(
-            digital_twin_id,
-            digital_twins_delete_options=options,
+            id=digital_twin_id,
+            etag=if_match,
+            match_condition=match_condition,
             error_map=error_map,
             **kwargs
         )
@@ -204,12 +203,15 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is either no
             digital twin with the provided ID or the component name is invalid.
         """
-        return await self._client.digital_twins.get_component(
+        result = await self._client.digital_twins.get_component(
             digital_twin_id,
             component_name,
             **kwargs
         )
 
+        return dict(result)
+
+    # pylint: disable=docstring-keyword-should-match-keyword-only
     @distributed_trace_async
     async def update_component(
         self,
@@ -234,17 +236,20 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is either no
             digital twin with the provided ID or the component name is invalid.
         """
-        options = None
+        import json
+        from io import BytesIO
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_match, error_map = prep_if_match(etag, match_condition)
-        if if_match:
-            options = DigitalTwinsUpdateComponentOptions(if_match=if_match)
+
+        patch_content = BytesIO(json.dumps(json_patch).encode('utf-8'))
+
         return await self._client.digital_twins.update_component(
             digital_twin_id,
             component_name,
-            patch_document=json_patch,
-            digital_twins_update_component_options=options,
+            patch_document=patch_content,
+            etag=if_match,
+            match_condition=match_condition,
             error_map=error_map,
             **kwargs
         )
@@ -266,11 +271,13 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is either no
             digital twin or relationship with the provided ID.
         """
-        return await self._client.digital_twins.get_relationship_by_id(
+        result = await self._client.digital_twins.get_relationship_by_id(
             digital_twin_id,
             relationship_id,
             **kwargs
         )
+
+        return dict(result)
 
     @distributed_trace_async
     async def upsert_relationship(
@@ -296,20 +303,20 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is either no
             digital twin, target digital twin or relationship with the provided ID.
         """
-        options = None
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_none_match, error_map = prep_if_none_match(etag, match_condition)
-        if if_none_match:
-            options = DigitalTwinsAddRelationshipOptions(if_none_match=if_none_match)
-        return await self._client.digital_twins.add_relationship(
+        result = await self._client.digital_twins.add_relationship(
             id=digital_twin_id,
             relationship_id=relationship_id,
             relationship=relationship,
-            digital_twins_add_relationship_options=options,
+            etag=if_none_match,
+            match_condition=match_condition,
             error_map=error_map,
             **kwargs
         )
+
+        return dict(result) if result else {}
 
     @distributed_trace_async
     async def update_relationship(
@@ -336,17 +343,20 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is either no
             digital twin or relationship with the provided ID.
         """
-        options = None
+        import json
+        from io import BytesIO
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_match, error_map = prep_if_match(etag, match_condition)
-        if if_match:
-            options = DigitalTwinsUpdateRelationshipOptions(if_match=if_match)
+
+        patch_content = BytesIO(json.dumps(json_patch).encode('utf-8'))
+
         return await self._client.digital_twins.update_relationship(
             id=digital_twin_id,
             relationship_id=relationship_id,
-            patch_document=json_patch,
-            digital_twins_update_relationship_options=options,
+            patch_document=patch_content,
+            etag=if_match,
+            match_condition=match_condition,
             error_map=error_map,
             **kwargs
         )
@@ -373,16 +383,14 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is either no
             digital twin or relationship with the provided ID.
         """
-        options = None
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_match, error_map = prep_if_match(etag, match_condition)
-        if if_match:
-            options = DigitalTwinsDeleteRelationshipOptions(if_match=if_match)
         return await self._client.digital_twins.delete_relationship(
-            digital_twin_id,
-            relationship_id,
-            digital_twins_delete_relationship_options=options,
+            id=digital_twin_id,
+            relationship_id=relationship_id,
+            etag=if_match,
+            match_condition=match_condition,
             error_map=error_map,
             **kwargs
         )
@@ -405,11 +413,13 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is no
             digital twin with the provided ID.
         """
-        return self._client.digital_twins.list_relationships(
+        relationships = self._client.digital_twins.list_relationships(
             digital_twin_id,
             relationship_name=relationship_id,
             **kwargs
         )
+
+        return relationships  # type: ignore
 
     @distributed_trace
     def list_incoming_relationships(
@@ -435,7 +445,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
     async def publish_telemetry(
         self,
         digital_twin_id: str,
-        telemetry: object,
+        telemetry: Dict[str, object],
         **kwargs
     ) -> None:
         """Publish telemetry from a digital twin. The result is then
@@ -444,7 +454,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         a telemetry message, in order for the telemetry message to be consumed.
 
         :param str digital_twin_id: The ID of the digital twin
-        :param object telemetry: The telemetry data to be sent
+        :param Dict[str, object] telemetry: The telemetry data to be sent
         :keyword str message_id: The message ID. If not specified, a UUID will be generated.
         :return: None
         :rtype: None
@@ -467,7 +477,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         self,
         digital_twin_id: str,
         component_name: str,
-        telemetry: object,
+        telemetry: Dict[str, object],
         **kwargs
     ) -> None:
         """Publish telemetry from a digital twin. The result is then
@@ -477,7 +487,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
 
         :param str digital_twin_id: The ID of the digital twin.
         :param str component_name: The name of the DTDL component.
-        :param object telemetry: The telemetry data to be sent.
+        :param Dict[str, object] telemetry: The telemetry data to be sent.
         :keyword str message_id: The message ID. If not specified, a UUID will be generated.
         :return: None
         :rtype: None
@@ -536,14 +546,11 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         """
         include_model_definition = kwargs.pop('include_model_definition', False)
         results_per_page = kwargs.pop('results_per_page', None)
-        digital_twin_models_list_options = None
-        if results_per_page is not None:
-            digital_twin_models_list_options = {'max_item_count': results_per_page}
 
         return self._client.digital_twin_models.list(
             dependencies_for=dependencies_for,
             include_model_definition=include_model_definition,
-            digital_twin_models_list_options=digital_twin_models_list_options,
+            max_items_per_page=results_per_page,
             **kwargs
         )
 
@@ -551,7 +558,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
     async def create_models(self, dtdl_models: List[object], **kwargs) -> List[DigitalTwinsModelData]:
         """Create one or more models. When any error occurs, no models are uploaded.
 
-        :param List[object] model_list: The set of models to create.
+        :param List[object] dtdl_models: The set of models to create.
             Each dict corresponds to exactly one model.
         :return: The list of created models
         :rtype: List[~azure.digitaltwins.core.DigitalTwinsModelData]
@@ -559,8 +566,12 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :raises ~azure.core.exceptions.ResourceExistsError: One or more of
             the provided models already exist.
         """
+        import json
+        from io import BytesIO
+
+        models_content = BytesIO(json.dumps(dtdl_models).encode('utf-8'))
         return await self._client.digital_twin_models.add(
-            dtdl_models,
+            models=models_content,
             **kwargs
         )
 
@@ -575,10 +586,16 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :raises ~azure.core.exceptions.ResourceNotFoundError: There is no model
             with the provided ID.
         """
+        import json
+        from io import BytesIO
+
         json_patch = [{'op': 'replace', 'path': '/decommissioned', 'value': True}]
+
+        patch_content = BytesIO(json.dumps(json_patch).encode('utf-8'))
+
         return await self._client.digital_twin_models.update(
             model_id,
-            json_patch,
+            update_model=patch_content,
             **kwargs
         )
 
@@ -626,13 +643,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.digitaltwins.core.DigitalTwinsEventRoute]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        event_routes_list_options = None
         results_per_page = kwargs.pop('results_per_page', None)
-        if results_per_page is not None:
-            event_routes_list_options = {'max_item_count': results_per_page}
 
         return self._client.event_routes.list(
-            event_routes_list_options=event_routes_list_options,
+            max_items_per_page=results_per_page,
             **kwargs
         )
 
