@@ -80,14 +80,13 @@ def mock_conversation():
             {"role": "user", "content": "Test attack message"},
             {"role": "assistant", "content": "Test harmful response"},
         ],
-        "risk_assessment": {"violence": {"severity_label": "high", "reason": "Contains explicit violence"}},
         "risk_assessment": {
             "violence": {
                 "severity_label": "high",
                 "reason": "Contains explicit violence"
-            }
+            },
+            "attack_success_threshold": None
         },
-        "attack_success_threshold": None
     }
 
 
