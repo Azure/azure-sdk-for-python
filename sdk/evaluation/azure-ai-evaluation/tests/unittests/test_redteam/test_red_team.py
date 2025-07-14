@@ -1394,13 +1394,8 @@ class TestRedTeamResult:
                 {"role": "user", "content": "Test query"},
                 {"role": "assistant", "content": "Test response"},
             ],
-            "risk_assessment": {
-                "violence": {
-                    "severity_label": "high",
-                    "reason": "Test reason"
-                }
-            },
-            "attack_success_threshold": None
+            "risk_assessment": {"violence": {"severity_label": "high", "reason": "Test reason"}},
+            "attack_success_threshold": None,
         }
 
         result = RedTeamResult(attack_details=[mock_conversation])
@@ -1426,13 +1421,8 @@ class TestRedTeamResult:
                 {"role": "user", "content": "Test query"},
                 {"role": "assistant", "content": "Test response"},
             ],
-            "risk_assessment": {
-                "violence": {
-                    "severity_label": "high",
-                    "reason": "Test reason"
-                }
-            },
-            "attack_success_threshold": None
+            "risk_assessment": {"violence": {"severity_label": "high", "reason": "Test reason"}},
+            "attack_success_threshold": None,
         }
 
         result = RedTeamResult(attack_details=[mock_conversation])
@@ -1497,95 +1487,89 @@ class TestRedTeamAttackSuccessThresholds:
     def test_configure_attack_success_thresholds_with_dict(self, red_team):
         """Test configuring attack success thresholds with a dictionary."""
         # Create a dictionary of thresholds
-        thresholds = {
-            RiskCategory.HateUnfairness: 3,
-            RiskCategory.Violence: 4,
-            RiskCategory.Sexual: 2
-        }
-        
+        thresholds = {RiskCategory.HateUnfairness: 3, RiskCategory.Violence: 4, RiskCategory.Sexual: 2}
+
         # Call the method
         configured_thresholds = red_team._configure_attack_success_thresholds(thresholds)
-        
+
         # Verify the configured thresholds
         assert configured_thresholds[RiskCategory.HateUnfairness.value] == 3
         assert configured_thresholds[RiskCategory.Violence.value] == 4
         assert configured_thresholds[RiskCategory.Sexual.value] == 2
-    
+
     def test_configure_attack_success_thresholds_none(self, red_team):
         """Test configuring attack success thresholds with None."""
         # Call the method with None
         configured_thresholds = red_team._configure_attack_success_thresholds(None)
-        
+
         # Verify the result is an empty dict
         assert configured_thresholds == {}
-    
+
     def test_configure_attack_success_thresholds_invalid_type(self, red_team):
         """Test configuring attack success thresholds with an invalid type."""
         # Call the method with an invalid type (should raise ValueError)
         with pytest.raises(ValueError):
             red_team._configure_attack_success_thresholds(5)
-        
+
         # Also test with a list (should raise ValueError)
         with pytest.raises(ValueError):
             red_team._configure_attack_success_thresholds([1, 2, 3])
-    
+
     def test_configure_attack_success_thresholds_invalid_values(self, red_team):
         """Test configuring attack success thresholds with invalid threshold values."""
         # Test with a value below 0
         with pytest.raises(ValueError):
             red_team._configure_attack_success_thresholds({RiskCategory.Violence: -1})
-        
+
         # Test with a value above 7
         with pytest.raises(ValueError):
             red_team._configure_attack_success_thresholds({RiskCategory.Violence: 8})
-        
+
         # Test with a non-integer value
         with pytest.raises(ValueError):
             red_team._configure_attack_success_thresholds({RiskCategory.Violence: 3.5})
-    
+
     def test_get_attack_success_with_thresholds(self, red_team):
         """Test _get_attack_success with configured thresholds."""
         # Configure thresholds - we store it internally as a mapping of string keys
         red_team.attack_success_thresholds = {"violence": 3}
-        
+
         # Test cases where the result is a number and should be compared to the threshold
         assert red_team._get_attack_success(4, "violence") is True
         assert red_team._get_attack_success(3, "violence") is True
         assert red_team._get_attack_success(2, "violence") is False
-        
+
         # Test with a risk category that doesn't have a threshold
         with patch("azure.ai.evaluation.red_team._utils.formatting_utils.get_attack_success", return_value=True):
             # Should fall back to the formatting utils
             assert red_team._get_attack_success(4, "sexual") is True
-        
+
         # Test with a string result (should fall back to formatting utils)
         with patch("azure.ai.evaluation.red_team._utils.formatting_utils.get_attack_success", return_value=True):
             assert red_team._get_attack_success("pass", "violence") is True
-        
+
         with patch("azure.ai.evaluation.red_team._utils.formatting_utils.get_attack_success", return_value=False):
             assert red_team._get_attack_success("fail", "violence") is False
-    
+
     def test_format_thresholds_for_output(self, red_team):
         """Test _format_thresholds_for_output method."""
         # Configure thresholds - as a dictionary with risk category keys for the test
         # In practice, this dictionary will be created by the _configure_attack_success_thresholds method
         # which converts risk categories to string values
-        red_team.attack_success_thresholds = {
-            "violence": 3,
-            "hate_unfairness": 4,
-            "sexual": 2
-        }
-        
+        red_team.attack_success_thresholds = {"violence": 3, "hate_unfairness": 4, "sexual": 2}
+
         # Call the method
         formatted = red_team._format_thresholds_for_output()
-        
-        # Verify the formatted output
-        assert "per_category" in formatted
-        assert formatted["per_category"]["violence"] == 3
-        assert formatted["per_category"]["hate_unfairness"] == 4
-        assert formatted["per_category"]["sexual"] == 2
-        
+
+        # Verify the formatted output - should be a direct mapping now, not nested under "per_category"
+        assert "violence" in formatted
+        assert formatted["violence"] == 3
+        assert "hate_unfairness" in formatted
+        assert formatted["hate_unfairness"] == 4
+        assert "sexual" in formatted
+        assert formatted["sexual"] == 2
+
         # Test with empty thresholds
         red_team.attack_success_thresholds = {}
         formatted = red_team._format_thresholds_for_output()
-        assert formatted == {"per_category": {}}
+        assert formatted == {}
