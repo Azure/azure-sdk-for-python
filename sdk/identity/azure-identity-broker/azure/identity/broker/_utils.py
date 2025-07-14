@@ -3,9 +3,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import List, Optional
-import os
 import functools
 import logging
+import os
 import platform
 from azure.core.exceptions import ClientAuthenticationError
 
@@ -83,7 +83,7 @@ def resolve_tenant(
     )
 
 
-def is_wsl():
+def is_wsl() -> bool:
     # This is how MSAL checks for WSL.
     uname = platform.uname()
     platform_name = getattr(uname, "system", uname[0]).lower()
