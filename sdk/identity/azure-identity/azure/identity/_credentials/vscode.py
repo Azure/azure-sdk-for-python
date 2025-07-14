@@ -4,7 +4,6 @@
 # ------------------------------------
 import os
 import json
-import logging
 from typing import Any, Optional
 
 import msal
