@@ -547,7 +547,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         NOTE: If the stream has been partially read, some data may be re-downloaded by the iterator.
 
-        :returns: An iterator of the chunks in the download stream.
+        :return: An iterator of the chunks in the download stream.
         :rtype: Iterator[bytes]
 
         .. admonition:: Example:
@@ -621,7 +621,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             The number of chars to download from the stream. Leave unspecified
             or set negative to download all chars. Note, this can only be used
             when encoding is specified on `download_blob`.
-        :returns:
+        :return:
             The requested data as bytes or a string if encoding was specified. If
             the return value is empty, there is no more data to read.
         :rtype: T
@@ -757,7 +757,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         Read the entire contents of this blob.
         This operation is blocking until all data is downloaded.
 
-        :returns: The requested data as bytes or a string if encoding was specified.
+        :return: The requested data as bytes or a string if encoding was specified.
         :rtype: T
         """
         return self.read()
@@ -769,7 +769,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             The stream to download to. This can be an open file-handle,
             or any writable stream. The stream must be seekable if the download
             uses more than one parallel connection.
-        :returns: The number of bytes read.
+        :return: The number of bytes read.
         :rtype: int
         """
         if self._text_mode:
@@ -866,7 +866,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         :param int max_concurrency:
             The number of parallel connections with which to download.
-        :returns: The contents of the file as bytes.
+        :return: The contents of the file as bytes.
         :rtype: bytes
         """
         warnings.warn(
@@ -891,7 +891,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             The number of parallel connections with which to download.
         :param str encoding:
             Test encoding to decode the downloaded bytes. Default is UTF-8.
-        :returns: The content of the file as a str.
+        :return: The content of the file as a str.
         :rtype: str
         """
         warnings.warn(
@@ -917,7 +917,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             uses more than one parallel connection.
         :param int max_concurrency:
             The number of parallel connections with which to download.
-        :returns: The properties of the downloaded blob.
+        :return: The properties of the downloaded blob.
         :rtype: Any
         """
         warnings.warn(

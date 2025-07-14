@@ -12,14 +12,14 @@ HUNDREDS_OF_NANOSECONDS = 10000000
 
 
 def _to_utc_datetime(value: datetime) -> str:
-    return value.strftime('%Y-%m-%dT%H:%M:%SZ')
+    return value.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def _rfc_1123_to_datetime(rfc_1123: str) -> Optional[datetime]:
     """Converts an RFC 1123 date string to a UTC datetime.
 
     :param str rfc_1123: The time and date in RFC 1123 format.
-    :returns: The time and date in UTC datetime format.
+    :return: The time and date in UTC datetime format.
     :rtype: datetime
     """
     if not rfc_1123:
@@ -33,7 +33,7 @@ def _filetime_to_datetime(filetime: str) -> Optional[datetime]:
     If parsing MS Filetime fails, tries RFC 1123 as backup.
 
     :param str filetime: The time and date in MS filetime format.
-    :returns: The time and date in UTC datetime format.
+    :return: The time and date in UTC datetime format.
     :rtype: datetime
     """
     if not filetime:
