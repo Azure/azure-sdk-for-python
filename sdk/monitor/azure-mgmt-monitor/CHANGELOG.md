@@ -112,9 +112,9 @@
   - Added model `UserAssignedIdentity`
   - Added model `WindowsEventLogDataSource`
   - Added model `WindowsFirewallLogsDataSource`
-  - Added model `DataCollectionEndpointsOperations`
-  - Added model `DataCollectionRuleAssociationsOperations`
-  - Added model `DataCollectionRulesOperations`
+  - Added operation group `DataCollectionEndpointsOperations`
+  - Added operation group `DataCollectionRuleAssociationsOperations`
+  - Added operation group `DataCollectionRulesOperations`
 
 ## 7.0.0b2 (2025-06-16)
 
