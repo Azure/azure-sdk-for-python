@@ -19,13 +19,11 @@ from .._internal import within_dac
 from .._internal.decorators import log_get_token
 from .._internal.utils import get_broker_credential, validate_tenant_id
 
-
+MAX_AUTH_RECORD_SIZE = 10 * 1024  # 10KB - more than enough for a small auth record
 VSCODE_AUTH_RECORD_PATHS = [
     "~/.azure/ms-azuretools.vscode-azureresourcegroups/authRecord.json",
     "~/.Azure/ms-azuretools.vscode-azureresourcegroups/authRecord.json",
 ]
-
-_LOGGER = logging.getLogger(__name__)
 
 
 def load_vscode_auth_record() -> Optional[AuthenticationRecord]:
@@ -43,6 +41,13 @@ def load_vscode_auth_record() -> Optional[AuthenticationRecord]:
     for auth_record_path in VSCODE_AUTH_RECORD_PATHS:
         expanded_path = os.path.expanduser(auth_record_path)
         if os.path.exists(expanded_path):
+            file_size = os.path.getsize(expanded_path)
+            if file_size > MAX_AUTH_RECORD_SIZE:
+                error_message = (
+                    "VS Code auth record file is unexpectedly large. "
+                    "Please check the file for corruption or unexpected content."
+                )
+                raise ValueError(error_message)
             with open(expanded_path, "r", encoding="utf-8") as f:
                 deserialized = json.load(f)
 

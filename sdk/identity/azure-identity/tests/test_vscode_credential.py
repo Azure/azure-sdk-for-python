@@ -4,6 +4,7 @@
 # ------------------------------------
 import json
 import os
+import platform
 import tempfile
 from unittest.mock import patch
 
@@ -13,6 +14,11 @@ from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import AuthenticationRecord, CredentialUnavailableError
 from azure.identity._constants import AZURE_VSCODE_CLIENT_ID, KnownAuthorities
 from azure.identity._credentials.vscode import VisualStudioCodeCredential, load_vscode_auth_record
+
+# Skip all tests in this module when running on PyPy
+pytestmark = pytest.mark.skipif(
+    platform.python_implementation() == "PyPy", reason="Broker tests are not supported on PyPy"
+)
 
 
 class TestVisualStudioCodeCredential:
@@ -32,15 +38,15 @@ class TestVisualStudioCodeCredential:
             json.dump(valid_data, tmp_file)
             tmp_file.flush()
 
-            try:
-                with patch("os.path.expanduser", return_value=tmp_file.name):
-                    with patch("msal.PublicClientApplication"):
-                        with patch("msal.PublicClientApplication.acquire_token_interactive"):
-                            credential = VisualStudioCodeCredential()
-                            with pytest.raises(ClientAuthenticationError):
-                                credential.get_token_info("https://management.azure.com/.default")
-            finally:
-                os.unlink(tmp_file.name)
+        try:
+            with patch("os.path.expanduser", return_value=tmp_file.name):
+                with patch("msal.PublicClientApplication"):
+                    with patch("msal.PublicClientApplication.acquire_token_interactive"):
+                        credential = VisualStudioCodeCredential()
+                        with pytest.raises(ClientAuthenticationError):
+                            credential.get_token_info("https://management.azure.com/.default")
+        finally:
+            os.unlink(tmp_file.name)
 
     def test_invalid_auth_record(self):
         """Test that an error is raised if the auth record is nonexistent/invalid."""
@@ -62,12 +68,12 @@ class TestVisualStudioCodeCredential:
             json.dump(invalid_data, tmp_file)
             tmp_file.flush()
 
-            try:
-                with patch("os.path.expanduser", return_value=tmp_file.name):
-                    with pytest.raises(CredentialUnavailableError):
-                        VisualStudioCodeCredential().get_token_info("https://management.azure.com/.default")
-            finally:
-                os.unlink(tmp_file.name)
+        try:
+            with patch("os.path.expanduser", return_value=tmp_file.name):
+                with pytest.raises(CredentialUnavailableError):
+                    VisualStudioCodeCredential().get_token_info("https://management.azure.com/.default")
+        finally:
+            os.unlink(tmp_file.name)
 
     def test_broker_credential_requirements_not_installed(self):
         """Test that the credential w"""
@@ -104,20 +110,20 @@ class TestLoadVSCodeAuthRecord:
             json.dump(valid_data, tmp_file)
             tmp_file.flush()
 
-            try:
-                with patch("os.path.expanduser", return_value=tmp_file.name):
-                    with patch("os.path.exists", return_value=True):
-                        result = load_vscode_auth_record()
+        try:
+            with patch("os.path.expanduser", return_value=tmp_file.name):
+                with patch("os.path.exists", return_value=True):
+                    result = load_vscode_auth_record()
 
-                        assert result is not None
-                        assert isinstance(result, AuthenticationRecord)
-                        assert result.tenant_id == valid_data["tenantId"]
-                        assert result.client_id == valid_data["clientId"]
-                        assert result.username == valid_data["username"]
-                        assert result.home_account_id == valid_data["homeAccountId"]
-                        assert result.authority == valid_data["authority"]
-            finally:
-                os.unlink(tmp_file.name)
+                    assert result is not None
+                    assert isinstance(result, AuthenticationRecord)
+                    assert result.tenant_id == valid_data["tenantId"]
+                    assert result.client_id == valid_data["clientId"]
+                    assert result.username == valid_data["username"]
+                    assert result.home_account_id == valid_data["homeAccountId"]
+                    assert result.authority == valid_data["authority"]
+        finally:
+            os.unlink(tmp_file.name)
 
     def test_load_malformed_json(self):
         """Test loading fails with malformed JSON."""
@@ -127,13 +133,13 @@ class TestLoadVSCodeAuthRecord:
             tmp_file.write(malformed_json)
             tmp_file.flush()
 
-            try:
-                with patch("os.path.expanduser", return_value=tmp_file.name):
-                    with patch("os.path.exists", return_value=True):
-                        with pytest.raises(ValueError):
-                            load_vscode_auth_record()
-            finally:
-                os.unlink(tmp_file.name)
+        try:
+            with patch("os.path.expanduser", return_value=tmp_file.name):
+                with patch("os.path.exists", return_value=True):
+                    with pytest.raises(ValueError):
+                        load_vscode_auth_record()
+        finally:
+            os.unlink(tmp_file.name)
 
     def test_load_invalid_record(self):
         """Test loading fails with invalid authentication record data."""
@@ -149,13 +155,13 @@ class TestLoadVSCodeAuthRecord:
             json.dump(invalid_data, tmp_file)
             tmp_file.flush()
 
-            try:
-                with patch("os.path.expanduser", return_value=tmp_file.name):
-                    with patch("os.path.exists", return_value=True):
-                        with pytest.raises(ValueError, match="Authentication record validation failed"):
-                            load_vscode_auth_record()
-            finally:
-                os.unlink(tmp_file.name)
+        try:
+            with patch("os.path.expanduser", return_value=tmp_file.name):
+                with patch("os.path.exists", return_value=True):
+                    with pytest.raises(ValueError, match="Authentication record validation failed"):
+                        load_vscode_auth_record()
+        finally:
+            os.unlink(tmp_file.name)
 
     def test_load_missing_required_fields(self):
         """Test loading fails when required fields are missing."""
@@ -169,15 +175,15 @@ class TestLoadVSCodeAuthRecord:
             json.dump(incomplete_data, tmp_file)
             tmp_file.flush()
 
-            try:
-                with patch("os.path.expanduser", return_value=tmp_file.name):
-                    with patch("os.path.exists", return_value=True):
-                        with pytest.raises(ValueError) as exc_info:
-                            load_vscode_auth_record()
+        try:
+            with patch("os.path.expanduser", return_value=tmp_file.name):
+                with patch("os.path.exists", return_value=True):
+                    with pytest.raises(ValueError) as exc_info:
+                        load_vscode_auth_record()
 
-                        error_message = str(exc_info.value)
-                        assert "username field is missing" in error_message
-                        assert "homeAccountId field is missing" in error_message
-                        assert "authority field is missing" in error_message
-            finally:
-                os.unlink(tmp_file.name)
+                    error_message = str(exc_info.value)
+                    assert "username field is missing" in error_message
+                    assert "homeAccountId field is missing" in error_message
+                    assert "authority field is missing" in error_message
+        finally:
+            os.unlink(tmp_file.name)

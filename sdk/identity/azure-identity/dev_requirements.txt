@@ -1,5 +1,5 @@
 ../../core/azure-core
-../azure-identity-broker
+../azure-identity-broker ; platform.python_implementation != "PyPy"
 aiohttp>=3.0
 typing_extensions>=3.7.2
 -e ../../../tools/azure-sdk-tools
