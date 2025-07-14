@@ -43,7 +43,7 @@ def add_sanitizers(test_proxy, environment_variables):
         ENV_SUBSCRIPTION_ID: TEST_ID,
         ENV_TENANT_ID: TEST_ID,
         ENV_CLIENT_ID: TEST_ID,
-        ENV_CLIENT_SECRET: TEST_ID
+        ENV_CLIENT_SECRET: TEST_ID,
     }
     environment_variables.sanitize_batch(sanitization_mapping)
     add_oauth_response_sanitizer()
@@ -58,5 +58,5 @@ def conversation_creds(environment_variables):
         "conv_project_name": environment_variables.get(ENV_PROJECT_NAME),
         "conv_deployment_name": environment_variables.get(ENV_DEPLOYMENT_NAME),
         "orch_project_name": environment_variables.get(ENV_WORKFLOW_PROJECT_NAME),
-        "orch_deployment_name": environment_variables.get(ENV_WORKFLOW_DEPLOYMENT_NAME)
+        "orch_deployment_name": environment_variables.get(ENV_WORKFLOW_DEPLOYMENT_NAME),
     }

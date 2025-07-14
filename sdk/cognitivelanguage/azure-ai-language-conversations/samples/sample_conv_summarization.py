@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
@@ -19,6 +20,7 @@ USAGE:
     1) AZURE_CONVERSATIONS_ENDPOINT                       - endpoint for your CLU resource.
     2) AZURE_CONVERSATIONS_KEY                            - API key for your CLU resource.
 """
+
 
 def sample_conv_summarization():
     # [START analyze_conversation_app]
@@ -47,26 +49,26 @@ def sample_conv_summarization():
                                     "modality": "text",
                                     "id": "1",
                                     "role": "Agent",
-                                    "participantId": "Agent"
+                                    "participantId": "Agent",
                                 },
                                 {
                                     "text": "How to upgrade Office? I am getting error messages the whole day.",
                                     "modality": "text",
                                     "id": "2",
                                     "role": "Customer",
-                                    "participantId": "Customer"
+                                    "participantId": "Customer",
                                 },
                                 {
                                     "text": "Press the upgrade button please. Then sign in and follow the instructions.",
                                     "modality": "text",
                                     "id": "3",
                                     "role": "Agent",
-                                    "participantId": "Agent"
-                                }
+                                    "participantId": "Agent",
+                                },
                             ],
                             "modality": "text",
                             "id": "conversation1",
-                            "language": "en"
+                            "language": "en",
                         },
                     ]
                 },
@@ -74,18 +76,14 @@ def sample_conv_summarization():
                     {
                         "taskName": "Issue task",
                         "kind": "ConversationalSummarizationTask",
-                        "parameters": {
-                            "summaryAspects": ["issue"]
-                        }
+                        "parameters": {"summaryAspects": ["issue"]},
                     },
                     {
                         "taskName": "Resolution task",
                         "kind": "ConversationalSummarizationTask",
-                        "parameters": {
-                            "summaryAspects": ["resolution"]
-                        }
+                        "parameters": {"summaryAspects": ["resolution"]},
                     },
-                ]
+                ],
             }
         )
 
@@ -114,5 +112,5 @@ def sample_conv_summarization():
     # [END analyze_conversation_app]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample_conv_summarization()

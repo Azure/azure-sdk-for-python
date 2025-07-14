@@ -23,6 +23,7 @@ USAGE:
     4) AZURE_CONVERSATIONS_DEPLOYMENT_NAME  - deployment name for your CLU conversations project.
 """
 
+
 def sample_analyze_conversation_app():
     # [START analyze_conversation_app]
     # import libraries
@@ -49,15 +50,11 @@ def sample_analyze_conversation_app():
                         "id": "1",
                         "modality": "text",
                         "language": "en",
-                        "text": query
+                        "text": query,
                     },
-                    "isLoggingEnabled": False
+                    "isLoggingEnabled": False,
                 },
-                "parameters": {
-                    "projectName": project_name,
-                    "deploymentName": deployment_name,
-                    "verbose": True
-                }
+                "parameters": {"projectName": project_name, "deploymentName": deployment_name, "verbose": True},
             }
         )
 
@@ -70,26 +67,26 @@ def sample_analyze_conversation_app():
     print(f"confidence score: {result['result']['prediction']['intents'][0]['confidenceScore']}\n")
 
     print("entities:")
-    for entity in result['result']['prediction']['entities']:
+    for entity in result["result"]["prediction"]["entities"]:
         print(f"\ncategory: {entity['category']}")
         print(f"text: {entity['text']}")
         print(f"confidence score: {entity['confidenceScore']}")
         if "resolutions" in entity:
             print("resolutions")
-            for resolution in entity['resolutions']:
+            for resolution in entity["resolutions"]:
                 print(f"kind: {resolution['resolutionKind']}")
                 print(f"value: {resolution['value']}")
         if "extraInformation" in entity:
             print("extra info")
-            for data in entity['extraInformation']:
+            for data in entity["extraInformation"]:
                 print(f"kind: {data['extraInformationKind']}")
-                if data['extraInformationKind'] == "ListKey":
+                if data["extraInformationKind"] == "ListKey":
                     print(f"key: {data['key']}")
-                if data['extraInformationKind'] == "EntitySubtype":
+                if data["extraInformationKind"] == "EntitySubtype":
                     print(f"value: {data['value']}")
 
     # [END analyze_conversation_app]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample_analyze_conversation_app()

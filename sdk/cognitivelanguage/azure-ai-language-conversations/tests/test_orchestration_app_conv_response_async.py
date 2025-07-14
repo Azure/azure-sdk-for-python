@@ -17,8 +17,7 @@ class TestOrchestrationAppConvResponseAsync(AzureRecordedTestCase):
 
         # analyze query
         client = ConversationAnalysisClient(
-            conversation_creds["endpoint"],
-            AzureKeyCredential(conversation_creds["key"])
+            conversation_creds["endpoint"], AzureKeyCredential(conversation_creds["key"])
         )
         async with client:
             query = "Send an email to Carol about the tomorrow's demo"
@@ -31,15 +30,15 @@ class TestOrchestrationAppConvResponseAsync(AzureRecordedTestCase):
                             "id": "1",
                             "modality": "text",
                             "language": "en",
-                            "text": query
+                            "text": query,
                         },
-                        "isLoggingEnabled": False
+                        "isLoggingEnabled": False,
                     },
                     "parameters": {
                         "projectName": conversation_creds["orch_project_name"],
-                        "deploymentName":conversation_creds["orch_deployment_name"],
-                        "verbose": True
-                    }
+                        "deploymentName": conversation_creds["orch_deployment_name"],
+                        "verbose": True,
+                    },
                 }
             )
 
@@ -59,13 +58,13 @@ class TestOrchestrationAppConvResponseAsync(AzureRecordedTestCase):
 
             # assert intent and entities
             conversation_result = top_intent_object["result"]["prediction"]
-            assert conversation_result["topIntent"] == 'Send'
+            assert conversation_result["topIntent"] == "Send"
             assert len(conversation_result["intents"]) > 0
-            assert conversation_result["intents"][0]["category"] == 'Send'
+            assert conversation_result["intents"][0]["category"] == "Send"
             assert conversation_result["intents"][0]["confidenceScore"] > 0
 
             # assert - entities
             assert len(conversation_result["entities"]) > 0
-            assert conversation_result["entities"][0]["category"] == 'Contact'
-            assert conversation_result["entities"][0]["text"] == 'Carol'
+            assert conversation_result["entities"][0]["category"] == "Contact"
+            assert conversation_result["entities"][0]["text"] == "Carol"
             assert conversation_result["entities"][0]["confidenceScore"] > 0
