@@ -30,6 +30,7 @@ from ._models import (
 from ._shared.base_client import StorageAccountHostsMixin
 
 class FileSystemClient(StorageAccountHostsMixin):
+    file_system_name: str
     def __init__(
         self,
         account_url: str,

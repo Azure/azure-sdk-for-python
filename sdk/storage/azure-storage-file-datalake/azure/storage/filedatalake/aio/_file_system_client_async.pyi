@@ -33,6 +33,7 @@ from ._data_lake_file_client_async import DataLakeFileClient
 from ._data_lake_lease_async import DataLakeLeaseClient
 
 class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore [misc]
+    file_system_name: str
     def __init__(
         self,
         account_url: str,
