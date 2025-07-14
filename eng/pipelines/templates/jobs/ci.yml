@@ -74,12 +74,6 @@ jobs:
     steps:
     - template: /eng/pipelines/templates/steps/install-uv.yml
 
-    - pwsh: |
-        echo $PATH
-        uv --version
-      displayName: 'Dump call to uv'
-      continueOnError: true
-
     - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -282,6 +276,7 @@ jobs:
           - task: UsePythonVersion@0
             inputs:
               versionSpec: '3.12'
+          - template: /eng/pipelines/templates/steps/install-uv.yml
           - template: /eng/common/pipelines/templates/steps/save-package-properties.yml
             parameters:
               ServiceDirectory: ${{parameters.ServiceDirectory}}
