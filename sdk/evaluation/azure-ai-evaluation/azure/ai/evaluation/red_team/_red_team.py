@@ -140,11 +140,11 @@ class RedTeam:
     :type custom_attack_seed_prompts: Optional[str]
     :param output_dir: Directory to save output files (optional)
     :type output_dir: Optional[str]
-    :param attack_success_thresholds: Threshold configuration for determining attack success. Can be:
-        - A single float (0.0-1.0) to apply globally across all risk categories
-        - A dictionary mapping risk categories (RiskCategory enum or string) to threshold values
-        - None to use default binary evaluation (evaluation results determine success)
-        When using thresholds, scores >= threshold are considered successful attacks.        :type attack_success_thresholds: Optional[Union[float, Dict[Union[str, RiskCategory], float]]]
+    :param attack_success_thresholds: Threshold configuration for determining attack success.
+        Should be a dictionary mapping risk categories (RiskCategory enum values) to threshold values,
+        or None to use default binary evaluation (evaluation results determine success).
+        When using thresholds, scores >= threshold are considered successful attacks.
+    :type attack_success_thresholds: Optional[Dict[Union[RiskCategory, _InternalRiskCategory], int]]
     """
 
     # Retry configuration constants
@@ -244,8 +244,8 @@ class RedTeam:
         num_objectives: int = 10,
         application_scenario: Optional[str] = None,
         custom_attack_seed_prompts: Optional[str] = None,
-        output_dir=".",,
-            attack_success_thresholds: Optional[Union[int, Dict[Union[str, RiskCategory], int]]] = None
+        output_dir=".",
+        attack_success_thresholds: Optional[Dict[Union[RiskCategory, _InternalRiskCategory], int]] = None
     ):
         """Initialize a new Red Team agent for AI model evaluation.
 
@@ -268,12 +268,11 @@ class RedTeam:
         :type custom_attack_seed_prompts: Optional[str]
         :param output_dir: Directory to save evaluation outputs and logs. Defaults to current working directory.
         :type output_dir: str        
-        :param attack_success_thresholds: Threshold configuration for determining attack success. Can be:
-            - A single integer (0-7) to apply globally across all risk categories
-            - A dictionary mapping risk categories (RiskCategory enum or string) to threshold values
-            - None to use default binary evaluation (evaluation results determine success)
+        :param attack_success_thresholds: Threshold configuration for determining attack success.
+            Should be a dictionary mapping risk categories (RiskCategory enum values) to threshold values,
+            or None to use default binary evaluation (evaluation results determine success).
             When using thresholds, scores >= threshold are considered successful attacks.
-        :type attack_success_thresholds: Optional[Union[int, Dict[Union[str, RiskCategory], int]]]
+        :type attack_success_thresholds: Optional[Dict[Union[RiskCategory, _InternalRiskCategory], int]]
         """
 
         self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
@@ -908,30 +907,20 @@ class RedTeam:
         :rtype: Dict[str, Any]
         """
         if not self.attack_success_thresholds:
-            return {"global": None, "per_category": {}}
+            return {"per_category": {}}
         
-        # Handle global threshold case (integer)
-        if isinstance(self.attack_success_thresholds, int):
-            return {
-                "global": self.attack_success_thresholds,
-                "per_category": {}
-            }
+        # Format per-category thresholds
+        formatted_thresholds = {}
+        for key, value in self.attack_success_thresholds.items():
+            # Skip internal keys
+            if key.startswith("_"):
+                continue
+                
+            # Convert RiskCategory enum to string if needed
+            key_str = key.value if hasattr(key, 'value') else str(key)
+            formatted_thresholds[key_str] = value
         
-        # Handle per-category thresholds case (dict)
-        elif isinstance(self.attack_success_thresholds, dict):
-            formatted_thresholds = {}
-            for key, value in self.attack_success_thresholds.items():
-                # Convert RiskCategory enum to string if needed
-                key_str = key.value if hasattr(key, 'value') else str(key)
-                formatted_thresholds[key_str] = value
-            
-            return {
-                "global": None,
-                "per_category": formatted_thresholds
-            }
-        
-        # Fallback case
-        return {"global": None, "per_category": {}}
+        return {"per_category": formatted_thresholds}
 
     # Replace with utility function
     def _message_to_dict(self, message: ChatMessage):
@@ -1818,16 +1807,16 @@ class RedTeam:
     
     def _configure_attack_success_thresholds(
         self, 
-        attack_success_thresholds: Optional[Union[int, Dict[Union[str, RiskCategory], int]]]
+        attack_success_thresholds: Optional[Dict[Union[RiskCategory, _InternalRiskCategory], int]]
     ) -> Dict[str, int]:
         """Configure attack success thresholds for different risk categories.
         
         Processes the attack success threshold configuration and creates a standardized
-        dictionary mapping risk category strings to threshold values. Handles both
-        global thresholds (single integer) and per-category thresholds (dictionary).
+        dictionary mapping risk category strings to threshold values. Only supports
+        per-category thresholds (dictionary).
         
-        :param attack_success_thresholds: Threshold configuration provided by user
-        :type attack_success_thresholds: Optional[Union[int, Dict[Union[str, RiskCategory], int]]]
+        :param attack_success_thresholds: Dictionary mapping risk categories to threshold values
+        :type attack_success_thresholds: Optional[Dict[Union[RiskCategory, _InternalRiskCategory], int]]
         :return: Dictionary mapping risk category strings to threshold values
         :rtype: Dict[str, int]        
         :raises ValueError: If threshold values are outside valid range [0, 7]
@@ -1843,29 +1832,22 @@ class RedTeam:
         
         configured_thresholds = {}
         
-        if isinstance(attack_success_thresholds, int):
-            # Global threshold - apply to all risk categories
-            validate_threshold(attack_success_thresholds, "threshold")
-            # We'll apply this global threshold to all categories during evaluation
-            configured_thresholds["_global"] = attack_success_thresholds
-        
-        elif isinstance(attack_success_thresholds, dict):
-            # Per-category thresholds
-            for key, value in attack_success_thresholds.items():
-                validate_threshold(value, f"threshold for {key}")
-                
-                # Normalize the key to string format
-                if isinstance(key, RiskCategory):
-                    category_key = key.value
-                else:
-                    category_key = str(key)
-                
-                configured_thresholds[category_key] = value
-        
-        else:
+        if not isinstance(attack_success_thresholds, dict):
             raise ValueError(
-                f"attack_success_thresholds must be an int, dict, or None. Got: {type(attack_success_thresholds)}"
+                f"attack_success_thresholds must be a dictionary mapping RiskCategory instances to thresholds, or None. Got: {type(attack_success_thresholds)}"
             )
+            
+        # Per-category thresholds
+        for key, value in attack_success_thresholds.items():
+            validate_threshold(value, f"threshold for {key}")
+            
+            # Normalize the key to string format - all keys should be RiskCategory or _InternalRiskCategory
+            if hasattr(key, 'value'):
+                category_key = key.value
+            else:
+                raise ValueError(f"attack_success_thresholds keys must be RiskCategory or _InternalRiskCategory instances, got: {type(key)}")
+            
+            configured_thresholds[category_key] = value
         
         return configured_thresholds
 
@@ -1873,31 +1855,39 @@ class RedTeam:
         """Determine if an attack was successful based on evaluation result and configured thresholds.
         
         Supports both traditional binary evaluation (pass/fail strings) and threshold-based evaluation
-        (numeric scores). When thresholds are configured, numeric scores >= threshold indicate success.
-        When no thresholds are configured, falls back to binary string evaluation.
+        (numeric scores). When thresholds are configured for the specific risk category,
+        numeric scores >= threshold indicate success. When no thresholds are configured,
+        falls back to binary string evaluation.
         
         :param result: The evaluation result - either a string (like "fail"/"pass") or numeric score
         :type result: Union[str, float]
-        :param risk_category: The risk category for threshold lookup (optional)
+        :param risk_category: The risk category for threshold lookup (required for threshold-based evaluation)
         :type risk_category: Optional[str]
         :return: Boolean indicating whether the attack was successful
         :rtype: bool
         """
-        # If we have configured thresholds and result is numeric, use threshold-based evaluation
-        if self.attack_success_thresholds and isinstance(result, (int, float)):
-            # Determine which threshold to use
-            threshold = None
-            
-            # First check for category-specific threshold
-            if risk_category and risk_category in self.attack_success_thresholds:
-                threshold = self.attack_success_thresholds[risk_category]
-            # Otherwise, check for global threshold            
-            elif "_global" in self.attack_success_thresholds:
-                threshold = self.attack_success_thresholds["_global"]
-            
-            # If we found a threshold, use it for evaluation
-            if threshold is not None:
-                return int(result) >= threshold
+        # If we have configured thresholds, result is numeric, and a risk category is specified, 
+        # use threshold-based evaluation
+        if (
+            self.attack_success_thresholds and 
+            isinstance(result, (int, float)) and 
+            risk_category and 
+            risk_category in self.attack_success_thresholds
+        ):
+            threshold = self.attack_success_thresholds[risk_category]
+            return int(result) >= threshold
+        
+        # Check if threshold was configured but result is not numeric
+        if (
+            self.attack_success_thresholds and 
+            not isinstance(result, (int, float)) and 
+            risk_category and 
+            risk_category in self.attack_success_thresholds
+        ):
+            self.logger.warning(
+                f"Attack success threshold was configured for risk category '{risk_category}', "
+                f"but received non-numeric result '{result}'. Falling back to binary evaluation."
+            )
         
         # Fall back to binary string evaluation using the formatting utils
         from ._utils.formatting_utils import get_attack_success
@@ -2010,13 +2000,8 @@ class RedTeam:
                                             attack_successes.append(None)
                                           # Determine the threshold used for this attack
                                         attack_threshold = None
-                                        if self.attack_success_thresholds:
-                                            # First check for category-specific threshold
-                                            if risk_category in self.attack_success_thresholds:
-                                                attack_threshold = self.attack_success_thresholds[risk_category]
-                                            # Otherwise, check for global threshold            
-                                            elif "_global" in self.attack_success_thresholds:
-                                                attack_threshold = self.attack_success_thresholds["_global"]
+                                        if self.attack_success_thresholds and risk_category in self.attack_success_thresholds:
+                                            attack_threshold = self.attack_success_thresholds[risk_category]
                                         
                                         # Add conversation object
                                         conversation = {

@@ -6,6 +6,7 @@
 - Added `_evaluate_query` parameter to `RaiServiceEvaluatorBase` class with a default value of `False`. This parameter controls whether queries are included in evaluation data when evaluating query-response pairs. Previously, queries were always included in evaluations. Existing code that relies on queries being evaluated will need to explicitly set `_evaluate_query=True` to maintain the previous behavior.
 
 ### Features Added
+- Added `attack_success_thresholds` parameter to `RedTeam` class for configuring custom thresholds that determine attack success. This allows users to set specific threshold values for each risk category, with scores greater than or equal to the threshold considered successful attacks.
 
 ### Bugs Fixed
 
