@@ -146,6 +146,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         spans = self.exporter.get_spans_by_name("create_agent my-agent")
         assert len(spans) == 1
         span = spans[0]
+        assert span.instrumentation_scope.schema_url == "https://opentelemetry.io/schemas/1.35.0"
         expected_attributes = [
             ("gen_ai.system", "az.ai.agents"),
             ("gen_ai.operation.name", "create_agent"),

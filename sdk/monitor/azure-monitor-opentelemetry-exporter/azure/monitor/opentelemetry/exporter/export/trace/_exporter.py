@@ -23,6 +23,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED,
     _AZURE_SDK_NAMESPACE_NAME,
     _AZURE_SDK_OPENTELEMETRY_NAME,
+    _AZURE_AI_SDK_NAME,
     _INSTRUMENTATION_SUPPORTING_METRICS_LIST,
     _SAMPLE_RATE_KEY,
     _METRIC_ENVELOPE_NAME,
@@ -525,12 +526,17 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
 
 
 def _check_instrumentation_span(span: ReadableSpan) -> None:
-    # Special use-case for spans generated from azure-sdk services
-    # Identified by having az.namespace as a span attribute
-    if span.attributes and _AZURE_SDK_NAMESPACE_NAME in span.attributes:
-        _utils.add_instrumentation(_AZURE_SDK_OPENTELEMETRY_NAME)
-        return
     if span.instrumentation_scope is None:
+        return
+
+    # Special use-case for spans generated from azure-sdk services
+    # `azure-` or `azure.` is a prefix
+    if span.instrumentation_scope.name.startswith("azure"):
+        # spec-case for Azure AI SDKs - identified by `az.namespace` attribute
+        if (span.attributes.get(_AZURE_SDK_NAMESPACE_NAME or None) == "Microsoft.CognitiveServices"):
+            _utils.add_instrumentation(_AZURE_AI_SDK_NAME)
+        else:
+            _utils.add_instrumentation(_AZURE_SDK_OPENTELEMETRY_NAME)
         return
     # All instrumentation scope names from OpenTelemetry instrumentations have
     # `opentelemetry.instrumentation.` as a prefix

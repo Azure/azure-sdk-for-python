@@ -12,8 +12,11 @@ from opentelemetry.sdk.trace import Span
 class GenAiTraceVerifier:
 
     def check_span_attributes(self, span, attributes):
+        assert "https://opentelemetry.io/schemas/1.35.0" == span.instrumentation_scope.schema_url
+
         # Convert the list of tuples to a dictionary for easier lookup
         attribute_dict = dict(attributes)
+        attribute_dict["az.namespace"] = "Microsoft.CognitiveServices"
 
         for attribute_name in span.attributes.keys():
             # Check if the attribute name exists in the input attributes

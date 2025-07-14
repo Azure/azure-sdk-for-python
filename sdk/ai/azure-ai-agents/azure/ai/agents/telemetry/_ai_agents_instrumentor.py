@@ -47,6 +47,8 @@ from azure.core.settings import settings
 from azure.core.tracing import AbstractSpan
 from ._utils import (
     AZ_AI_AGENT_SYSTEM,
+    AZ_NAMESPACE,
+    AZ_NAMESPACE_VALUE,
     ERROR_TYPE,
     GEN_AI_AGENT_DESCRIPTION,
     GEN_AI_AGENT_ID,

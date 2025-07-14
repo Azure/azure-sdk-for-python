@@ -38,6 +38,8 @@ GEN_AI_RESPONSE_MODEL = "gen_ai.response.model"
 GEN_AI_SYSTEM = "gen_ai.system"
 SERVER_ADDRESS = "server.address"
 AZ_AI_AGENT_SYSTEM = "az.ai.agents"
+AZ_NAMESPACE = "az.namespace"
+AZ_NAMESPACE_VALUE = "Microsoft.CognitiveServices"
 GEN_AI_TOOL_NAME = "gen_ai.tool.name"
 GEN_AI_TOOL_CALL_ID = "gen_ai.tool.call.id"
 GEN_AI_REQUEST_RESPONSE_FORMAT = "gen_ai.request.response_format"
@@ -50,7 +52,7 @@ GEN_AI_RUN_STEP_END_TIMESTAMP = "gen_ai.run_step.end.timestamp"
 GEN_AI_RUN_STEP_STATUS = "gen_ai.run_step.status"
 ERROR_TYPE = "error.type"
 ERROR_MESSAGE = "error.message"
-
+GEN_AI_SEMCONV_SCHEMA_VERSION = "1.35.0"
 
 class OperationName(Enum):
     CREATE_AGENT = "create_agent"
@@ -114,9 +116,11 @@ def start_span(
         if _span_impl_type is None:
             return None
 
-    span = _span_impl_type(name=span_name or operation_name.value, kind=kind)
+
+    span = _span_impl_type(name=span_name or operation_name.value, kind=kind, schema_version=GEN_AI_SEMCONV_SCHEMA_VERSION)
 
     if span and span.span_instance.is_recording:
+        span.add_attribute(AZ_NAMESPACE, AZ_NAMESPACE_VALUE)
         if gen_ai_system:
             span.add_attribute(GEN_AI_SYSTEM, AZ_AI_AGENT_SYSTEM)
 
