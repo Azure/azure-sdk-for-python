@@ -6,6 +6,7 @@ from typing import List, Optional
 import os
 import functools
 import logging
+import platform
 from azure.core.exceptions import ClientAuthenticationError
 
 
@@ -80,3 +81,11 @@ def resolve_tenant(
         'when creating the credential, or add "*" to additionally_allowed_tenants to allow '
         "acquiring tokens for any tenant.".format(tenant_id)
     )
+
+
+def is_wsl():
+    # This is how MSAL checks for WSL.
+    uname = platform.uname()
+    platform_name = getattr(uname, "system", uname[0]).lower()
+    release = getattr(uname, "release", uname[2]).lower()
+    return platform_name == "linux" and "microsoft" in release
