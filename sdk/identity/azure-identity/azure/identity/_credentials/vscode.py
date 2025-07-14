@@ -20,7 +20,10 @@ from .._internal.decorators import log_get_token
 from .._internal.utils import get_broker_credential, validate_tenant_id
 
 
-VSCODE_AUTH_RECORD_PATH = "~/.azure/ms-azuretools.vscode-azureresourcegroups/authRecord.json"
+VSCODE_AUTH_RECORD_PATHS = [
+    "~/.azure/ms-azuretools.vscode-azureresourcegroups/authRecord.json",
+    "~/.Azure/ms-azuretools.vscode-azureresourcegroups/authRecord.json",
+]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -29,32 +32,36 @@ def load_vscode_auth_record() -> Optional[AuthenticationRecord]:
     """Load the authentication record corresponding to a known location.
 
     This will load from ~/.azure/ms-azuretools.vscode-azureresourcegroups/authRecord.json
+    or ~/.Azure/ms-azuretools.vscode-azureresourcegroups/authRecord.json
 
     :return: The authentication record if it exists, otherwise None.
     :rtype: Optional[AuthenticationRecord]
     :raises: ValueError if the authentication record is not in the expected format
     """
 
-    auth_record_path = os.path.expanduser(VSCODE_AUTH_RECORD_PATH)
-    if not os.path.exists(auth_record_path):
-        return None
+    # Try each possible auth record path
+    for auth_record_path in VSCODE_AUTH_RECORD_PATHS:
+        expanded_path = os.path.expanduser(auth_record_path)
+        if os.path.exists(expanded_path):
+            with open(expanded_path, "r", encoding="utf-8") as f:
+                deserialized = json.load(f)
 
-    with open(auth_record_path, "r", encoding="utf-8") as f:
-        deserialized = json.load(f)
+            # Validate the authentication record for security and structural integrity
+            _validate_auth_record_json(deserialized)
 
-    # Validate the authentication record for security and structural integrity
-    _validate_auth_record_json(deserialized)
+            # Deserialize the authentication record
+            auth_record = AuthenticationRecord(
+                authority=deserialized["authority"],
+                client_id=deserialized["clientId"],
+                home_account_id=deserialized["homeAccountId"],
+                tenant_id=deserialized["tenantId"],
+                username=deserialized["username"],
+            )
 
-    # Deserialize the authentication record
-    auth_record = AuthenticationRecord(
-        authority=deserialized["authority"],
-        client_id=deserialized["clientId"],
-        home_account_id=deserialized["homeAccountId"],
-        tenant_id=deserialized["tenantId"],
-        username=deserialized["username"],
-    )
+            return auth_record
 
-    return auth_record
+    # No auth record found in any of the expected locations
+    return None
 
 
 def _validate_auth_record_json(data: dict) -> None:

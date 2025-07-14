@@ -102,7 +102,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         authority = kwargs.pop("authority", None)
         authority = normalize_authority(authority) if authority else get_default_authority()
 
-        vscode_tenant_id = kwargs.pop("visual_studio_code_tenant_id")
+        vscode_tenant_id = kwargs.pop("visual_studio_code_tenant_id", None)
 
         interactive_browser_tenant_id = kwargs.pop(
             "interactive_browser_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)

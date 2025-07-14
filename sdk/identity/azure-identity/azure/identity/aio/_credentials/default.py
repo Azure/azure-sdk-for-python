@@ -95,7 +95,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         authority = kwargs.pop("authority", None)
         authority = normalize_authority(authority) if authority else get_default_authority()
 
-        vscode_tenant_id = kwargs.pop("visual_studio_code_tenant_id")
+        vscode_tenant_id = kwargs.pop("visual_studio_code_tenant_id", None)
 
         shared_cache_username = kwargs.pop("shared_cache_username", os.environ.get(EnvironmentVariables.AZURE_USERNAME))
         shared_cache_tenant_id = kwargs.pop(
