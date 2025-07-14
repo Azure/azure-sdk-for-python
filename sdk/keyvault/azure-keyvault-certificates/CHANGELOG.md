@@ -8,6 +8,12 @@
 
 ### Bugs Fixed
 
+- When creating a certificate with an unknown issuer, `CertificateClient.(begin_)create_certificate` now returns a
+  `CertificateOperation` instead of `None`
+- When a certificate operation's error doesn't have an inner error, `CertificateOperationError` will be correctly
+  serialized instead of raising an exception
+  ([Azure/azure-cli #31764](https://github.com/Azure/azure-cli/issues/31764))
+
 ### Other Changes
 
 ## 4.10.0 (2025-06-16)

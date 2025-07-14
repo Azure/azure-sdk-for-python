@@ -16,6 +16,7 @@ from azure.keyvault.certificates import (
     AdministratorContact,
     ApiVersion,
     CertificateContact,
+    CertificateOperation,
     CertificatePolicyAction,
     CertificatePolicy,
     KeyType,
@@ -784,6 +785,32 @@ class TestCertificateClient(KeyVaultTestCase):
             with pytest.raises(ResourceExistsError):
                 await client.create_certificate("...", CertificatePolicy.get_default())
         await client.close()
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version", only_latest)
+    @AsyncCertificatesClientPreparer()
+    @recorded_by_proxy_async
+    async def test_unknown_issuer_response(self, client, **kwargs):
+        """When a certificate is created with an unknown issuer, the poller result should be a CertificateOperation"""
+        cert_name = self.get_resource_name("unknownIssuer")
+
+        # create certificate with unknown issuer
+        cert_policy = CertificatePolicy(
+            issuer_name=WellKnownIssuerNames.unknown,
+            subject="CN=*.microsoft.com",
+            san_dns_names=["sdk.azure-int.net"],
+            exportable=True,
+            key_type="RSA",
+            key_size=2048,
+            reuse_key=False,
+            content_type=CertificateContentType.pkcs12,
+            validity_in_months=24,
+        )
+        result = await client.create_certificate(certificate_name=cert_name, policy=cert_policy)
+        # The operation should indicate that certificate creation is in progress and requires a merge to complete
+        assert isinstance(result, CertificateOperation)
+        assert result.status and result.status.lower() == "inprogress"
+        assert result.status_details and "merge" in result.status_details.lower()
 
 
 @pytest.mark.asyncio

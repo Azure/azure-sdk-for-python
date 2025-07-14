@@ -9,8 +9,8 @@ pr:
       - eng/pipelines/aggregate-reports.yml
 
 pool:
-  name: azsdk-pool-mms-win-2022-general
-  vmImage: MMS2022
+  name: azsdk-pool
+  demands: ImageOverride -equals windows-2022
 
 variables:
   - template: ./templates/variables/globals.yml

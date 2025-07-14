@@ -26,8 +26,8 @@ class RunSubmitterClient:
     def __init__(self, config: Optional[BatchEngineConfig] = None) -> None:
         self._config = config or BatchEngineConfig(LOGGER, use_async=True)
         self._thread_pool = ThreadPoolExecutorWithContext(
-            thread_name_prefix="evaluators_thread",
-            max_workers=self._config.max_concurrency)
+            thread_name_prefix="evaluators_thread", max_workers=self._config.max_concurrency
+        )
 
     def run(
         self,
@@ -44,7 +44,6 @@ class RunSubmitterClient:
         # input. Update the inputs so that each entry is a dictionary with a data key
         # that contains the original input data.
         inputs = [{"data": input_data} for input_data in data.to_dict(orient="records")]
-
         # Pass the correct previous run to the evaluator
         run: Optional[BatchClientRun] = kwargs.pop("run", None)
         if run:
@@ -67,12 +66,13 @@ class RunSubmitterClient:
                 created_on=kwargs.pop("created_on", None),
                 storage_creator=kwargs.pop("storage_creator", None),
                 **kwargs,
-            )
+            ),
         )
 
         return run_future
 
     def get_details(self, client_run: BatchClientRun, all_results: bool = False) -> pd.DataFrame:
+
         run = self._get_run(client_run)
 
         data: Dict[str, List[Any]] = defaultdict(list)
@@ -89,7 +89,7 @@ class RunSubmitterClient:
         # Go from a list of dictionaries (i.e. a row view of the data) to a dictionary of lists
         # (i.e. a column view of the data)
         _update("inputs", run.inputs)
-        _update("inputs", [{ LINE_NUMBER: i } for i in range(len(run.inputs)) ])
+        _update("inputs", [{LINE_NUMBER: i} for i in range(len(run.inputs))])
         _update("outputs", run.outputs)
 
         df = pd.DataFrame(data).reindex(columns=[k for k in data.keys()])
