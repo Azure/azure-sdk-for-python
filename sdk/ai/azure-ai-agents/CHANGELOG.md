@@ -2,7 +2,7 @@
 
 # Release History
 
-## 1.1.0b4 (Unreleased)
+## 1.1.0b5 (Unreleased)
 
 ### Bugs Fixed
 
