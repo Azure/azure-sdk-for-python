@@ -28,6 +28,9 @@ from .operations import (
     AutoscaleSettingsOperations,
     AzureMonitorWorkspacesOperations,
     BaselinesOperations,
+    DataCollectionEndpointsOperations,
+    DataCollectionRuleAssociationsOperations,
+    DataCollectionRulesOperations,
     DiagnosticSettingsCategoryOperations,
     DiagnosticSettingsOperations,
     EventCategoriesOperations,
@@ -133,6 +136,14 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
      azure.mgmt.monitor.operations.AzureMonitorWorkspacesOperations
     :ivar monitor_operations: MonitorOperationsOperations operations
     :vartype monitor_operations: azure.mgmt.monitor.operations.MonitorOperationsOperations
+    :ivar data_collection_endpoints: DataCollectionEndpointsOperations operations
+    :vartype data_collection_endpoints:
+     azure.mgmt.monitor.operations.DataCollectionEndpointsOperations
+    :ivar data_collection_rule_associations: DataCollectionRuleAssociationsOperations operations
+    :vartype data_collection_rule_associations:
+     azure.mgmt.monitor.operations.DataCollectionRuleAssociationsOperations
+    :ivar data_collection_rules: DataCollectionRulesOperations operations
+    :vartype data_collection_rules: azure.mgmt.monitor.operations.DataCollectionRulesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
@@ -254,6 +265,15 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
             self._client, self._config, self._serialize, self._deserialize
         )
         self.monitor_operations = MonitorOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.data_collection_endpoints = DataCollectionEndpointsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.data_collection_rule_associations = DataCollectionRuleAssociationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.data_collection_rules = DataCollectionRulesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 
