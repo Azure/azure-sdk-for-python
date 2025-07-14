@@ -24,14 +24,13 @@ from .._models import (
     FileProperties,
     FileSystemProperties,
     PathProperties,
-    PublicAccess
+    PublicAccess,
 )
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from ._data_lake_directory_client_async import DataLakeDirectoryClient
 from ._data_lake_file_client_async import DataLakeFileClient
 from ._data_lake_lease_async import DataLakeLeaseClient
-
 
 class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore [misc]
     def __init__(
@@ -110,11 +109,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
     ) -> None: ...
     @distributed_trace_async
     async def get_file_system_properties(
-        self,
-        *,
-        lease: Optional[Union[DataLakeLeaseClient, str]] = None,
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, *, lease: Optional[Union[DataLakeLeaseClient, str]] = None, timeout: Optional[int] = None, **kwargs: Any
     ) -> FileSystemProperties: ...
     @distributed_trace_async
     async def set_file_system_metadata(
@@ -143,11 +138,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
     ) -> Dict[str, Union[str, datetime]]: ...
     @distributed_trace_async
     async def get_file_system_access_policy(
-        self,
-        *,
-        lease: Optional[Union[DataLakeLeaseClient, str]] = None,
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, *, lease: Optional[Union[DataLakeLeaseClient, str]] = None, timeout: Optional[int] = None, **kwargs: Any
     ) -> Dict[str, Any]: ...
     @distributed_trace
     def get_paths(
@@ -233,12 +224,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
     ) -> DataLakeFileClient: ...
     @distributed_trace_async
     async def _undelete_path(
-        self,
-        deleted_path_name: str,
-        deletion_id: str,
-        *,
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, deleted_path_name: str, deletion_id: str, *, timeout: Optional[int] = None, **kwargs: Any
     ) -> Union[DataLakeDirectoryClient, DataLakeFileClient]: ...
     def _get_root_directory_client(self) -> DataLakeDirectoryClient: ...
     def get_directory_client(self, directory: Union[DirectoryProperties, str]) -> DataLakeDirectoryClient: ...

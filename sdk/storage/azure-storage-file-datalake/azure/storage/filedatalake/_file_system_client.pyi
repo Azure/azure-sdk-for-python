@@ -25,7 +25,7 @@ from ._models import (
     FileProperties,
     FileSystemProperties,
     PathProperties,
-    PublicAccess
+    PublicAccess,
 )
 from ._shared.base_client import StorageAccountHostsMixin
 
@@ -105,11 +105,7 @@ class FileSystemClient(StorageAccountHostsMixin):
     ) -> None: ...
     @distributed_trace
     def get_file_system_properties(
-        self,
-        *,
-        lease: Optional[Union[DataLakeLeaseClient, str]] = None,
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, *, lease: Optional[Union[DataLakeLeaseClient, str]] = None, timeout: Optional[int] = None, **kwargs: Any
     ) -> FileSystemProperties: ...
     @distributed_trace
     def set_file_system_metadata(
@@ -138,11 +134,7 @@ class FileSystemClient(StorageAccountHostsMixin):
     ) -> Dict[str, Union[str, datetime]]: ...
     @distributed_trace
     def get_file_system_access_policy(
-        self,
-        *,
-        lease: Optional[Union[DataLakeLeaseClient, str]] = None,
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, *, lease: Optional[Union[DataLakeLeaseClient, str]] = None, timeout: Optional[int] = None, **kwargs: Any
     ) -> Dict[str, Any]: ...
     @distributed_trace
     def get_paths(
@@ -227,12 +219,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         **kwargs: Any
     ) -> DataLakeFileClient: ...
     def _undelete_path(
-        self,
-        deleted_path_name: str,
-        deletion_id: str,
-        *,
-        timeout: Optional[int] = None,
-        **kwargs
+        self, deleted_path_name: str, deletion_id: str, *, timeout: Optional[int] = None, **kwargs
     ) -> Union[DataLakeDirectoryClient, DataLakeFileClient]: ...
     def _get_root_directory_client(self) -> DataLakeDirectoryClient: ...
     def get_directory_client(self, directory: Union[DirectoryProperties, str]) -> DataLakeDirectoryClient: ...
