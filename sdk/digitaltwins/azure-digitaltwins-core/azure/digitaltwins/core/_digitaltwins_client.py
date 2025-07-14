@@ -17,7 +17,7 @@ import azure
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core import MatchConditions
-from azure.digitaltwins.core._generated.models._models import DigitalTwinsEventRoute, IncomingRelationship
+from azure.digitaltwins.core._generated.models._models import DigitalTwinsEventRoute, IncomingRelationship, DigitalTwinsModelData
 
 from ._version import SDK_MONIKER
 from ._utils import (
@@ -38,7 +38,6 @@ from ._generated import AzureDigitalTwinsAPI
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from ._generated.models import DigitalTwinsModelData
 
 
 class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,client-accepts-api-version-keyword
@@ -48,8 +47,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
     :param ~azure.core.credentials.TokenCredential credential:
         A credential to authenticate requests to the service
     """
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, TokenCredential, **Any) -> None
+    def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
         if not endpoint.startswith('http'):
             endpoint = 'https://' + endpoint
         self._client = AzureDigitalTwinsAPI(
@@ -60,16 +58,15 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def get_digital_twin(self, digital_twin_id, **kwargs):
-        # type: (str, **Any) -> MutableMapping[str, Any]
+    def get_digital_twin(self, digital_twin_id: str, **kwargs: Any) -> MutableMapping[str, Any]:
         """Get a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
         :return: Dictionary containing the twin.
         :rtype: MutableMapping[str, Any]
         :raises ~azure.core.exceptions.HttpResponseError:
-        :raises ~azure.core.exceptions.ResourceNotFoundError:
-            If the digital twin doesn't exist.
+        :raises ~azure.core.exceptions.ResourceNotFoundError: If there is no
+            digital twin with the provided ID.
         """
         return self._client.digital_twins.get_by_id(
             digital_twin_id,
@@ -77,8 +74,12 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def upsert_digital_twin(self, digital_twin_id, digital_twin, **kwargs):
-        # type: (str, Dict[str, object], **Any) -> MutableMapping[str, Any]
+    def upsert_digital_twin(
+        self, 
+        digital_twin_id: str, 
+        digital_twin: Dict[str, object], 
+        **kwargs: Any
+    ) -> MutableMapping[str, Any]:
         """Create or update a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
@@ -110,8 +111,12 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def update_digital_twin(self, digital_twin_id, json_patch, **kwargs):
-        # type: (str, Sequence[MutableMapping[str, Any]], **Any) -> None
+    def update_digital_twin(
+        self, 
+        digital_twin_id: str, 
+        json_patch: Sequence[MutableMapping[str, Any]], 
+        **kwargs: Any
+    ) -> None:
         """Update a digital twin using a JSON patch.
 
         :param str digital_twin_id: The ID of the digital twin.
@@ -144,8 +149,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def delete_digital_twin(self, digital_twin_id, **kwargs):
-        # type: (str, **Any) -> None
+    def delete_digital_twin(self, digital_twin_id: str, **kwargs: Any) -> None:
         """Delete a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
@@ -173,8 +177,12 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def get_component(self, digital_twin_id, component_name, **kwargs):
-        # type: (str, str, **Any) -> MutableMapping[str, Any]
+    def get_component(
+        self, 
+        digital_twin_id: str, 
+        component_name: str, 
+        **kwargs: Any
+    ) -> MutableMapping[str, Any]:
         """Get a component on a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
@@ -194,12 +202,11 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
     @distributed_trace
     def update_component(
         self,
-        digital_twin_id,
-        component_name,
-        json_patch,
-        **kwargs
-    ):
-        # type: (str, str, Sequence[MutableMapping[str, Any]], **Any) -> None
+        digital_twin_id: str,
+        component_name: str,
+        json_patch: Sequence[MutableMapping[str, Any]],
+        **kwargs: Any
+    ) -> None:
         """Update properties of a component on a digital twin using a JSON patch.
 
         :param str digital_twin_id: The ID of the digital twin.
@@ -233,7 +240,12 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def get_relationship(self, digital_twin_id, relationship_id, **kwargs):
+    def get_relationship(
+        self, 
+        digital_twin_id: str, 
+        relationship_id: str, 
+        **kwargs: Any
+    ) -> MutableMapping[str, Any]:
         # type: (str, str, **Any) -> MutableMapping[str, Any]
         """Get a relationship on a digital twin.
 
@@ -252,8 +264,13 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def upsert_relationship(self, digital_twin_id, relationship_id, relationship, **kwargs):
-        # type: (str, str, Dict[str, object], **Any) -> MutableMapping[str, Any]
+    def upsert_relationship(
+        self, 
+        digital_twin_id: str, 
+        relationship_id: str, 
+        relationship: Dict[str, object], 
+        **kwargs: Any
+    ) -> MutableMapping[str, Any]:
         """Create or update a relationship on a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
@@ -287,12 +304,11 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
     @distributed_trace
     def update_relationship(
         self,
-        digital_twin_id,
-        relationship_id,
-        json_patch,
-        **kwargs
-    ):
-        # type: (str, str, Sequence[MutableMapping[str, Any]], **Any) -> None
+        digital_twin_id: str,
+        relationship_id: str,
+        json_patch: Sequence[MutableMapping[str, Any]],
+        **kwargs: Any
+    ) -> None:
         """Updates the properties of a relationship on a digital twin using a JSON patch.
 
         :param str digital_twin_id: The ID of the digital twin.
@@ -327,13 +343,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def delete_relationship(
-        self,
-        digital_twin_id,
-        relationship_id,
-        **kwargs
-    ):
-        # type: (str, str, **Any) -> None
+    def delete_relationship(self, digital_twin_id: str, relationship_id: str, **kwargs: Any) -> None:
         """Delete a relationship on a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
@@ -364,8 +374,12 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def list_relationships(self, digital_twin_id, relationship_id=None, **kwargs):
-        # type: (str, Optional[str], **Any) -> ItemPaged[MutableMapping[str, Any]]
+    def list_relationships(
+        self, 
+        digital_twin_id: str, 
+        relationship_id: Optional[str] = None, 
+        **kwargs: Any
+    ) -> ItemPaged[MutableMapping[str, Any]]:
         """Retrieve relationships for a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
@@ -384,8 +398,11 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def list_incoming_relationships(self, digital_twin_id, **kwargs):
-        # type: (str, **Any) -> azure.core.paging.ItemPaged[IncomingRelationship]
+    def list_incoming_relationships(
+        self, 
+        digital_twin_id: str, 
+        **kwargs: Any
+    ) -> ItemPaged[IncomingRelationship]:
         """Retrieve all incoming relationships for a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
@@ -401,8 +418,12 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def publish_telemetry(self, digital_twin_id, telemetry, **kwargs):
-        # type: (str, MutableMapping[str, Any], **Any) -> None
+    def publish_telemetry(
+        self, 
+        digital_twin_id: str, 
+        telemetry: MutableMapping[str, Any], 
+        **kwargs: Any
+    ) -> None:
         """Publish telemetry from a digital twin. The result is then
         consumed by one or many destination endpoints (subscribers) defined under
         DigitalTwinsEventRoute. These event routes need to be set before publishing
@@ -430,12 +451,11 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
     @distributed_trace
     def publish_component_telemetry(
         self,
-        digital_twin_id,
-        component_name,
-        telemetry,
-        **kwargs
-    ):
-        # type: (str, str, MutableMapping[str, Any], **Any) -> None
+        digital_twin_id: str,
+        component_name: str,
+        telemetry: MutableMapping[str, Any],
+        **kwargs: Any
+    ) -> None:
         """Publish telemetry from a digital twin. The result is then
         consumed by one or many destination endpoints (subscribers) defined under
         DigitalTwinsEventRoute. These event routes need to be set before publishing
@@ -463,8 +483,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def get_model(self, model_id, **kwargs):
-        # type: (str, **Any) -> DigitalTwinsModelData
+    def get_model(self, model_id: str, **kwargs: Any) -> DigitalTwinsModelData:
         """Get a model, including the model metadata and the model definition.
 
         :param str model_id: The ID of the model.
@@ -484,8 +503,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def list_models(self, dependencies_for=None, **kwargs):
-        # type: (Optional[List[str]], **Any) -> ItemPaged[DigitalTwinsModelData]
+    def list_models(self,  dependencies_for=None, **kwargs: Any) -> ItemPaged[DigitalTwinsModelData]:
         """Get the list of models.
 
         :param List[str] dependencies_for: The model IDs to have dependencies retrieved.
@@ -511,8 +529,11 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def create_models(self, dtdl_models, **kwargs):
-        # type: (Sequence[MutableMapping[str, Any]], **Any) -> List[DigitalTwinsModelData]
+    def create_models(
+        self, 
+        dtdl_models: Sequence[MutableMapping[str, Any]], 
+        **kwargs: Any
+    ) -> List[DigitalTwinsModelData]:
         """Create one or more models. When any error occurs, no models are uploaded.
 
         :param Sequence[MutableMapping[str, Any]] dtdl_models: The set of models to create.
@@ -530,8 +551,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def decommission_model(self, model_id, **kwargs):
-        # type: (str, **Any) -> None
+    def decommission_model(self, model_id: str, **kwargs: Any) -> None:
         """Decommissions a model.
 
         :param str model_id: The ID for the model. The ID is globally unique and case sensitive.
@@ -550,8 +570,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def delete_model(self, model_id, **kwargs):
-        # type: (str, **Any) -> None
+    def delete_model(self, model_id: str, **kwargs: Any) -> None:
         """Delete a model.
 
         :param str model_id: The ID of the model to delete.
@@ -569,8 +588,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def get_event_route(self, event_route_id, **kwargs):
-        # type: (str, **Any) -> DigitalTwinsEventRoute
+    def get_event_route(self, event_route_id: str, **kwargs: Any) -> DigitalTwinsEventRoute:
         """Get an event route.
 
         :param str event_route_id: The ID of the event route.
@@ -586,8 +604,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def list_event_routes(self, **kwargs):
-        # type: (**Any) -> ItemPaged[DigitalTwinsEventRoute]
+    def list_event_routes(self, **kwargs: Any) -> ItemPaged[DigitalTwinsEventRoute]:
         """Retrieves all event routes.
 
         :keyword int results_per_page: The maximum number of items to retrieve per request.
@@ -601,12 +618,17 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
             kwargs['max_item_count'] = results_per_page
 
         return self._client.event_routes.list(
+            max_items_per_page=results_per_page,
             **kwargs
         )
 
     @distributed_trace
-    def upsert_event_route(self, event_route_id, event_route, **kwargs):
-        # type: (str, DigitalTwinsEventRoute, **Any) -> None
+    def upsert_event_route(
+        self, 
+        event_route_id: str, 
+        event_route: DigitalTwinsEventRoute, 
+        **kwargs: Any
+    ) -> None:
         """Create or update an event route.
 
         :param str event_route_id: The ID of the event route to create or update.
@@ -622,8 +644,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def delete_event_route(self, event_route_id, **kwargs):
-        # type: (str, **Any) -> None
+    def delete_event_route(self, event_route_id: str, **kwargs: Any) -> None:
         """Delete an event route.
 
         :param str event_route_id: The ID of the event route to delete.
@@ -639,8 +660,11 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def query_twins(self, query_expression, **kwargs):
-        # type: (str, **Any) -> ItemPaged[Dict[str, object]]
+    def query_twins(
+        self, 
+        query_expression: str, 
+        **kwargs: Any
+    ) -> ItemPaged[MutableMapping[str, Any]]:
         """Query for digital twins.
 
         Note: that there may be a delay between before changes in your instance are reflected in queries.
