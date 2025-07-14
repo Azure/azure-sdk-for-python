@@ -12,7 +12,7 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 from azure.core import MatchConditions
-from ._generated._utils.serialization import Serializer
+from .._generated._utils.serialization import Serializer
 from .._version import SDK_MONIKER
 
 from .._utils import (
