@@ -3,6 +3,7 @@
 ### 4.13.0b3 (Unreleased)
 
 #### Features Added
+* Added option to enable automatic retries for write operations. See [PR 41272](https://github.com/Azure/azure-sdk-for-python/pull/41272).
 
 #### Breaking Changes
 * Adds cross region retries when no preferred locations are set. This is only a breaking change for customers using bounded staleness consistency. See [PR 39714](https://github.com/Azure/azure-sdk-for-python/pull/39714)
