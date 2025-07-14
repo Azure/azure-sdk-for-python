@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.13.0b3 (2025-07-14)
+### 4.14.0b1 (2025-07-14)
 
 #### Features Added
 * Added option to enable automatic retries for write operations. See [PR 41272](https://github.com/Azure/azure-sdk-for-python/pull/41272).
