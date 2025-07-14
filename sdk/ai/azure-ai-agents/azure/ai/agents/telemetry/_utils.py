@@ -52,7 +52,7 @@ GEN_AI_RUN_STEP_END_TIMESTAMP = "gen_ai.run_step.end.timestamp"
 GEN_AI_RUN_STEP_STATUS = "gen_ai.run_step.status"
 ERROR_TYPE = "error.type"
 ERROR_MESSAGE = "error.message"
-GEN_AI_SEMCONV_SCHEMA_VERSION = "1.35.0"
+GEN_AI_SEMCONV_SCHEMA_VERSION = "1.34.0"
 
 class OperationName(Enum):
     CREATE_AGENT = "create_agent"
