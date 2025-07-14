@@ -56,11 +56,11 @@
   - Added enum `ScenarioType`
   - Added model `ServicePrincipalAuthTypeConnectionProperties`
   - Added model `UsernamePasswordAuthTypeConnectionProperties`
-  - Added model `AccountCapabilityHostsOperations`
-  - Added model `AccountConnectionsOperations`
-  - Added model `ProjectCapabilityHostsOperations`
-  - Added model `ProjectConnectionsOperations`
-  - Added model `ProjectsOperations`
+  - Added operation group `AccountCapabilityHostsOperations`
+  - Added operation group `AccountConnectionsOperations`
+  - Added operation group `ProjectCapabilityHostsOperations`
+  - Added operation group `ProjectConnectionsOperations`
+  - Added operation group `ProjectsOperations`
 
 ## 13.7.0b1 (2025-05-15)
 
