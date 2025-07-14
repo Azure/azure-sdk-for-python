@@ -23,9 +23,9 @@
   - Added model `Snapshots`
   - Added model `UnifiedAlertingScreenshots`
   - Added model `Users`
-  - Added model `DashboardsOperations`
-  - Added model `IntegrationFabricsOperations`
-  - Added model `ManagedDashboardsOperations`
+  - Added operation group `DashboardsOperations`
+  - Added operation group `IntegrationFabricsOperations`
+  - Added operation group `ManagedDashboardsOperations`
 
 ## 1.1.0 (2023-11-20)
 
