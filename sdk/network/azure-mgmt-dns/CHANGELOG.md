@@ -23,7 +23,7 @@
   - Deleted or renamed model `SigningKey`
   - Deleted or renamed model `SystemData`
   - Deleted or renamed model `TlsaRecord`
-  - Deleted or renamed model `DnssecConfigsOperations`
+  - Deleted or renamed operation group `DnssecConfigsOperations`
 
 ## 8.2.0 (2024-10-22)
 
