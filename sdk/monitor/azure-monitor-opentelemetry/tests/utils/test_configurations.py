@@ -23,13 +23,14 @@ from azure.monitor.opentelemetry._utils.configurations import (
     SAMPLING_RATIO_ENV_VAR,
     _get_configurations,
 )
+from azure.monitor.opentelemetry._constants import LOGGER_NAME_ENV_ARG
 from opentelemetry.environment_variables import (
     OTEL_LOGS_EXPORTER,
     OTEL_METRICS_EXPORTER,
     OTEL_TRACES_EXPORTER,
 )
 from opentelemetry.sdk.environment_variables import OTEL_EXPERIMENTAL_RESOURCE_DETECTORS
-from opentelemetry.sdk.resources import Resource, Attributes
+from opentelemetry.sdk.resources import Resource
 
 from azure.monitor.opentelemetry._version import VERSION
 
@@ -260,3 +261,27 @@ class TestConfigurations(TestCase):
                 "urllib3": {"enabled": True},
             },
         )
+
+    @patch.dict(
+        "os.environ",
+        {
+            LOGGER_NAME_ENV_ARG: "test_env_logger",
+        },
+        clear=True,
+    )
+    def test_get_configurations_logger_name_env_var(self):
+        configurations = _get_configurations()
+
+        self.assertEqual(configurations["logger_name"], "test_env_logger")
+
+    @patch.dict(
+        "os.environ",
+        {
+            LOGGER_NAME_ENV_ARG: "test_env_logger",
+        },
+        clear=True,
+    )
+    def test_get_configurations_logger_name_param_overrides_env_var(self):
+        configurations = _get_configurations(logger_name="test_param_logger")
+
+        self.assertEqual(configurations["logger_name"], "test_param_logger")

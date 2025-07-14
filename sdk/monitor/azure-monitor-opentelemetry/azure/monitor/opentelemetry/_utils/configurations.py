@@ -34,6 +34,7 @@ from azure.monitor.opentelemetry._constants import (
     ENABLE_LIVE_METRICS_ARG,
     INSTRUMENTATION_OPTIONS_ARG,
     LOGGER_NAME_ARG,
+    LOGGER_NAME_ENV_ARG,
     LOGGING_FORMATTER_ARG,
     RESOURCE_ARG,
     SAMPLING_RATIO_ARG,
@@ -103,8 +104,12 @@ def _default_disable_tracing(configurations):
 
 
 def _default_logger_name(configurations):
-    configurations.setdefault(LOGGER_NAME_ARG, "")
-
+    if LOGGER_NAME_ARG in configurations:
+        return
+    if LOGGER_NAME_ENV_ARG in environ:
+        configurations[LOGGER_NAME_ARG] = environ[LOGGER_NAME_ENV_ARG]
+    else:
+        configurations.setdefault(LOGGER_NAME_ARG, "")
 
 def _default_logging_formatter(configurations):
     formatter = configurations.get(LOGGING_FORMATTER_ARG)
