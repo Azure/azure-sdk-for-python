@@ -77,7 +77,7 @@ class DigitalTwinsOperations:
         id: str,
         digital_twins_get_by_id_options: Optional[_models.DigitalTwinsGetByIdOptions] = None,
         **kwargs: Any
-    ) -> JSON:
+    ) -> Dict[str, Any]:
         """Retrieves a digital twin.
         Status codes:
 
@@ -97,8 +97,8 @@ class DigitalTwinsOperations:
         :param digital_twins_get_by_id_options: Parameter group. Default value is None.
         :type digital_twins_get_by_id_options:
          ~azure.digitaltwins.core.models.DigitalTwinsGetByIdOptions
-        :return: JSON or the result of cls(response)
-        :rtype: JSON
+        :return: dict mapping str to any or the result of cls(response)
+        :rtype: dict[str, any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -113,7 +113,7 @@ class DigitalTwinsOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[Dict[str, Any]] = kwargs.pop("cls", None)
 
         _traceparent = None
         _tracestate = None
@@ -146,7 +146,7 @@ class DigitalTwinsOperations:
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-        deserialized = self._deserialize("object", pipeline_response.http_response)
+        deserialized = self._deserialize("{object}", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -160,7 +160,7 @@ class DigitalTwinsOperations:
         twin: JSON,
         digital_twins_add_options: Optional[_models.DigitalTwinsAddOptions] = None,
         **kwargs: Any
-    ) -> Optional[JSON]:
+    ) -> Dict[str, Any]:
         """Adds or replaces a digital twin.
         Status codes:
 
@@ -185,8 +185,8 @@ class DigitalTwinsOperations:
         :type twin: JSON
         :param digital_twins_add_options: Parameter group. Default value is None.
         :type digital_twins_add_options: ~azure.digitaltwins.core.models.DigitalTwinsAddOptions
-        :return: JSON or None or the result of cls(response)
-        :rtype: JSON or None
+        :return: dict mapping str to any or the result of cls(response)
+        :rtype: dict[str, any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -202,7 +202,7 @@ class DigitalTwinsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
-        cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
+        cls: ClsType[Dict[str, Any]] = kwargs.pop("cls", None)
 
         _traceparent = None
         _tracestate = None
@@ -233,17 +233,15 @@ class DigitalTwinsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = None
         response_headers = {}
-        if response.status_code == 200:
-            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-            deserialized = self._deserialize("object", pipeline_response.http_response)
+        deserialized = self._deserialize("{object}", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -512,14 +510,13 @@ class DigitalTwinsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        if response.status_code == 204:
-            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -531,7 +528,7 @@ class DigitalTwinsOperations:
         relationship_id: str,
         digital_twins_get_relationship_by_id_options: Optional[_models.DigitalTwinsGetRelationshipByIdOptions] = None,
         **kwargs: Any
-    ) -> JSON:
+    ) -> Dict[str, Any]:
         """Retrieves a relationship between two digital twins.
         Status codes:
 
@@ -555,8 +552,8 @@ class DigitalTwinsOperations:
         :param digital_twins_get_relationship_by_id_options: Parameter group. Default value is None.
         :type digital_twins_get_relationship_by_id_options:
          ~azure.digitaltwins.core.models.DigitalTwinsGetRelationshipByIdOptions
-        :return: JSON or the result of cls(response)
-        :rtype: JSON
+        :return: dict mapping str to any or the result of cls(response)
+        :rtype: dict[str, any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -571,7 +568,7 @@ class DigitalTwinsOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[Dict[str, Any]] = kwargs.pop("cls", None)
 
         _traceparent = None
         _tracestate = None
@@ -605,7 +602,7 @@ class DigitalTwinsOperations:
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-        deserialized = self._deserialize("object", pipeline_response.http_response)
+        deserialized = self._deserialize("{object}", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -620,7 +617,7 @@ class DigitalTwinsOperations:
         relationship: JSON,
         digital_twins_add_relationship_options: Optional[_models.DigitalTwinsAddRelationshipOptions] = None,
         **kwargs: Any
-    ) -> JSON:
+    ) -> Dict[str, Any]:
         """Adds a relationship between two digital twins.
         Status codes:
 
@@ -653,8 +650,8 @@ class DigitalTwinsOperations:
         :param digital_twins_add_relationship_options: Parameter group. Default value is None.
         :type digital_twins_add_relationship_options:
          ~azure.digitaltwins.core.models.DigitalTwinsAddRelationshipOptions
-        :return: JSON or the result of cls(response)
-        :rtype: JSON
+        :return: dict mapping str to any or the result of cls(response)
+        :rtype: dict[str, any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -670,7 +667,7 @@ class DigitalTwinsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[Dict[str, Any]] = kwargs.pop("cls", None)
 
         _traceparent = None
         _tracestate = None
@@ -710,7 +707,7 @@ class DigitalTwinsOperations:
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-        deserialized = self._deserialize("object", pipeline_response.http_response)
+        deserialized = self._deserialize("{object}", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1448,7 +1445,7 @@ class DigitalTwinsOperations:
         component_path: str,
         digital_twins_get_component_options: Optional[_models.DigitalTwinsGetComponentOptions] = None,
         **kwargs: Any
-    ) -> JSON:
+    ) -> Dict[str, Any]:
         """Retrieves a component from a digital twin.
         Status codes:
 
@@ -1471,8 +1468,8 @@ class DigitalTwinsOperations:
         :param digital_twins_get_component_options: Parameter group. Default value is None.
         :type digital_twins_get_component_options:
          ~azure.digitaltwins.core.models.DigitalTwinsGetComponentOptions
-        :return: JSON or the result of cls(response)
-        :rtype: JSON
+        :return: dict mapping str to any or the result of cls(response)
+        :rtype: dict[str, any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1487,7 +1484,7 @@ class DigitalTwinsOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[Dict[str, Any]] = kwargs.pop("cls", None)
 
         _traceparent = None
         _tracestate = None
@@ -1521,7 +1518,7 @@ class DigitalTwinsOperations:
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-        deserialized = self._deserialize("object", pipeline_response.http_response)
+        deserialized = self._deserialize("{object}", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1724,14 +1721,13 @@ class DigitalTwinsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        if response.status_code == 204:
-            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore

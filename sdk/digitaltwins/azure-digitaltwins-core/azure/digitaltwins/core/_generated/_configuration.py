@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core.pipeline import policies
 
@@ -24,18 +24,34 @@ class AzureDigitalTwinsAPIConfiguration:  # pylint: disable=too-many-instance-at
 
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Default value is "2021-06-30-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :param operation_id: ID for the operation's status monitor. The ID is generated if header was
+     not passed by the client. Default value is None.
+    :type operation_id: str
+    :param timeout_in_minutes: Desired timeout for the delete job. Once the specified timeout is
+     reached, service will stop any delete operations triggered by the current delete job that are
+     in progress, and go to a failed state. Please note that this will leave your instance in an
+     unknown state as there won't be any rollback operation. Default value is None.
+    :type timeout_in_minutes: int
+    :keyword api_version: Api Version. Default value is "2023-10-31". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, credential: "TokenCredential", **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2021-06-30-preview")
+    def __init__(
+        self,
+        credential: "TokenCredential",
+        operation_id: Optional[str] = None,
+        timeout_in_minutes: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        api_version: str = kwargs.pop("api_version", "2023-10-31")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
 
         self.credential = credential
+        self.operation_id = operation_id
+        self.timeout_in_minutes = timeout_in_minutes
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://digitaltwins.azure.net/.default"])
         kwargs.setdefault("sdk_moniker", "azuredigitaltwinsapi/{}".format(VERSION))

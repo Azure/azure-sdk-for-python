@@ -43,7 +43,7 @@ def build_add_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-31"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -77,7 +77,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -117,7 +117,7 @@ def build_get_by_id_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -151,7 +151,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-31"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -184,7 +184,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-06-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -230,8 +230,8 @@ class DigitalTwinModelsOperations:
     @overload
     def add(
         self,
+        models: List[JSON],
         digital_twin_models_add_options: Optional[_models.DigitalTwinModelsAddOptions] = None,
-        models: Optional[List[JSON]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -253,11 +253,11 @@ class DigitalTwinModelsOperations:
 
           * ModelAlreadyExists - The model provided already exists.
 
+        :param models: An array of models to add. Required.
+        :type models: list[JSON]
         :param digital_twin_models_add_options: Parameter group. Default value is None.
         :type digital_twin_models_add_options:
          ~azure.digitaltwins.core.models.DigitalTwinModelsAddOptions
-        :param models: An array of models to add. Default value is None.
-        :type models: list[JSON]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -269,8 +269,8 @@ class DigitalTwinModelsOperations:
     @overload
     def add(
         self,
+        models: IO[bytes],
         digital_twin_models_add_options: Optional[_models.DigitalTwinModelsAddOptions] = None,
-        models: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -292,11 +292,11 @@ class DigitalTwinModelsOperations:
 
           * ModelAlreadyExists - The model provided already exists.
 
+        :param models: An array of models to add. Required.
+        :type models: IO[bytes]
         :param digital_twin_models_add_options: Parameter group. Default value is None.
         :type digital_twin_models_add_options:
          ~azure.digitaltwins.core.models.DigitalTwinModelsAddOptions
-        :param models: An array of models to add. Default value is None.
-        :type models: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -308,8 +308,8 @@ class DigitalTwinModelsOperations:
     @distributed_trace
     def add(
         self,
+        models: Union[List[JSON], IO[bytes]],
         digital_twin_models_add_options: Optional[_models.DigitalTwinModelsAddOptions] = None,
-        models: Optional[Union[List[JSON], IO[bytes]]] = None,
         **kwargs: Any
     ) -> List[_models.DigitalTwinsModelData]:
         """Uploads one or more models. When any error occurs, no models are uploaded.
@@ -329,12 +329,12 @@ class DigitalTwinModelsOperations:
 
           * ModelAlreadyExists - The model provided already exists.
 
+        :param models: An array of models to add. Is either a [JSON] type or a IO[bytes] type.
+         Required.
+        :type models: list[JSON] or IO[bytes]
         :param digital_twin_models_add_options: Parameter group. Default value is None.
         :type digital_twin_models_add_options:
          ~azure.digitaltwins.core.models.DigitalTwinModelsAddOptions
-        :param models: An array of models to add. Is either a [JSON] type or a IO[bytes] type. Default
-         value is None.
-        :type models: list[JSON] or IO[bytes]
         :return: list of DigitalTwinsModelData or the result of cls(response)
         :rtype: list[~azure.digitaltwins.core.models.DigitalTwinsModelData]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -365,10 +365,7 @@ class DigitalTwinModelsOperations:
         if isinstance(models, (IOBase, bytes)):
             _content = models
         else:
-            if models is not None:
-                _json = self._serialize.body(models, "[object]")
-            else:
-                _json = None
+            _json = self._serialize.body(models, "[object]")
 
         _request = build_add_request(
             traceparent=_traceparent,
@@ -424,8 +421,8 @@ class DigitalTwinModelsOperations:
 
           * ModelNotFound - The model was not found.
 
-        :param dependencies_for: The set of the models which will have their dependencies retrieved. If
-         omitted, all models are retrieved. Default value is None.
+        :param dependencies_for: If specified, only return the set of the specified models along with
+         their dependencies. If omitted, all models are retrieved. Default value is None.
         :type dependencies_for: list[str]
         :param include_model_definition: When true the model definition will be returned as part of the
          result. Default value is False.

@@ -16,6 +16,8 @@ from ._digital_twin_models_operations import DigitalTwinModelsOperations  # type
 from ._query_operations import QueryOperations  # type: ignore
 from ._digital_twins_operations import DigitalTwinsOperations  # type: ignore
 from ._event_routes_operations import EventRoutesOperations  # type: ignore
+from ._import_jobs_operations import ImportJobsOperations  # type: ignore
+from ._delete_jobs_operations import DeleteJobsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -26,6 +28,8 @@ __all__ = [
     "QueryOperations",
     "DigitalTwinsOperations",
     "EventRoutesOperations",
+    "ImportJobsOperations",
+    "DeleteJobsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

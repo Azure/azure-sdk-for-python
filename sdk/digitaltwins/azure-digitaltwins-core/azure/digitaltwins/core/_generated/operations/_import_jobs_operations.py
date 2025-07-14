@@ -50,7 +50,7 @@ def build_list_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/eventroutes")
+    _url = kwargs.pop("template_url", "/jobs/imports")
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -67,36 +67,6 @@ def build_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_by_id_request(
-    id: str, *, traceparent: Optional[str] = None, tracestate: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-31"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "/eventroutes/{id}")
-    path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if traceparent is not None:
-        _headers["traceparent"] = _SERIALIZER.header("traceparent", traceparent, "str")
-    if tracestate is not None:
-        _headers["tracestate"] = _SERIALIZER.header("tracestate", tracestate, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_add_request(
     id: str, *, traceparent: Optional[str] = None, tracestate: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
@@ -108,7 +78,7 @@ def build_add_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/eventroutes/{id}")
+    _url = kwargs.pop("template_url", "/jobs/imports/{id}")
     path_format_arguments = {
         "id": _SERIALIZER.url("id", id, "str"),
     }
@@ -130,6 +100,36 @@ def build_add_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_get_by_id_request(
+    id: str, *, traceparent: Optional[str] = None, tracestate: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-31"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop("template_url", "/jobs/imports/{id}")
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if traceparent is not None:
+        _headers["traceparent"] = _SERIALIZER.header("traceparent", traceparent, "str")
+    if tracestate is not None:
+        _headers["tracestate"] = _SERIALIZER.header("tracestate", tracestate, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_delete_request(
     id: str, *, traceparent: Optional[str] = None, tracestate: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
@@ -140,7 +140,7 @@ def build_delete_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/eventroutes/{id}")
+    _url = kwargs.pop("template_url", "/jobs/imports/{id}")
     path_format_arguments = {
         "id": _SERIALIZER.url("id", id, "str"),
     }
@@ -160,14 +160,44 @@ def build_delete_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class EventRoutesOperations:
+def build_cancel_request(
+    id: str, *, traceparent: Optional[str] = None, tracestate: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-31"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop("template_url", "/jobs/imports/{id}/cancel")
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if traceparent is not None:
+        _headers["traceparent"] = _SERIALIZER.header("traceparent", traceparent, "str")
+    if tracestate is not None:
+        _headers["tracestate"] = _SERIALIZER.header("tracestate", tracestate, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+class ImportJobsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.digitaltwins.core.AzureDigitalTwinsAPI`'s
-        :attr:`event_routes` attribute.
+        :attr:`import_jobs` attribute.
     """
 
     models = _models
@@ -181,26 +211,25 @@ class EventRoutesOperations:
 
     @distributed_trace
     def list(
-        self, event_routes_list_options: Optional[_models.EventRoutesListOptions] = None, **kwargs: Any
-    ) -> ItemPaged["_models.DigitalTwinsEventRoute"]:
-        """Retrieves all event routes.
+        self, import_jobs_list_options: Optional[_models.ImportJobsListOptions] = None, **kwargs: Any
+    ) -> ItemPaged["_models.ImportJob"]:
+        """Retrieves all import jobs.
         Status codes:
 
 
         * 200 OK.
 
-        :param event_routes_list_options: Parameter group. Default value is None.
-        :type event_routes_list_options: ~azure.digitaltwins.core.models.EventRoutesListOptions
-        :return: An iterator like instance of either DigitalTwinsEventRoute or the result of
-         cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.core.models.DigitalTwinsEventRoute]
+        :param import_jobs_list_options: Parameter group. Default value is None.
+        :type import_jobs_list_options: ~azure.digitaltwins.core.models.ImportJobsListOptions
+        :return: An iterator like instance of either ImportJob or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.core.models.ImportJob]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.EventRouteCollection] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ImportJobCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -215,10 +244,10 @@ class EventRoutesOperations:
                 _traceparent = None
                 _tracestate = None
                 _max_items_per_page = None
-                if event_routes_list_options is not None:
-                    _max_items_per_page = event_routes_list_options.max_items_per_page
-                    _traceparent = event_routes_list_options.traceparent
-                    _tracestate = event_routes_list_options.tracestate
+                if import_jobs_list_options is not None:
+                    _max_items_per_page = import_jobs_list_options.max_items_per_page
+                    _traceparent = import_jobs_list_options.traceparent
+                    _tracestate = import_jobs_list_options.tracestate
 
                 _request = build_list_request(
                     traceparent=_traceparent,
@@ -248,7 +277,7 @@ class EventRoutesOperations:
             return _request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("EventRouteCollection", pipeline_response)
+            deserialized = self._deserialize("ImportJobCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -272,26 +301,186 @@ class EventRoutesOperations:
 
         return ItemPaged(get_next, extract_data)
 
+    @overload
+    def add(
+        self,
+        id: str,
+        import_job: _models.ImportJob,
+        import_jobs_add_options: Optional[_models.ImportJobsAddOptions] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ImportJob:
+        """Creates an import job.
+        Status codes:
+
+
+        * 201 Created
+        * 400 Bad Request
+
+          * JobLimitReached - The maximum number of import jobs allowed has been reached.
+          * ValidationFailed - The import job request is not valid.
+
+        :param id: The id for the import job. The id is unique within the service and case sensitive.
+         Required.
+        :type id: str
+        :param import_job: The import job being added. Required.
+        :type import_job: ~azure.digitaltwins.core.models.ImportJob
+        :param import_jobs_add_options: Parameter group. Default value is None.
+        :type import_jobs_add_options: ~azure.digitaltwins.core.models.ImportJobsAddOptions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ImportJob or the result of cls(response)
+        :rtype: ~azure.digitaltwins.core.models.ImportJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def add(
+        self,
+        id: str,
+        import_job: IO[bytes],
+        import_jobs_add_options: Optional[_models.ImportJobsAddOptions] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ImportJob:
+        """Creates an import job.
+        Status codes:
+
+
+        * 201 Created
+        * 400 Bad Request
+
+          * JobLimitReached - The maximum number of import jobs allowed has been reached.
+          * ValidationFailed - The import job request is not valid.
+
+        :param id: The id for the import job. The id is unique within the service and case sensitive.
+         Required.
+        :type id: str
+        :param import_job: The import job being added. Required.
+        :type import_job: IO[bytes]
+        :param import_jobs_add_options: Parameter group. Default value is None.
+        :type import_jobs_add_options: ~azure.digitaltwins.core.models.ImportJobsAddOptions
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ImportJob or the result of cls(response)
+        :rtype: ~azure.digitaltwins.core.models.ImportJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def add(
+        self,
+        id: str,
+        import_job: Union[_models.ImportJob, IO[bytes]],
+        import_jobs_add_options: Optional[_models.ImportJobsAddOptions] = None,
+        **kwargs: Any
+    ) -> _models.ImportJob:
+        """Creates an import job.
+        Status codes:
+
+
+        * 201 Created
+        * 400 Bad Request
+
+          * JobLimitReached - The maximum number of import jobs allowed has been reached.
+          * ValidationFailed - The import job request is not valid.
+
+        :param id: The id for the import job. The id is unique within the service and case sensitive.
+         Required.
+        :type id: str
+        :param import_job: The import job being added. Is either a ImportJob type or a IO[bytes] type.
+         Required.
+        :type import_job: ~azure.digitaltwins.core.models.ImportJob or IO[bytes]
+        :param import_jobs_add_options: Parameter group. Default value is None.
+        :type import_jobs_add_options: ~azure.digitaltwins.core.models.ImportJobsAddOptions
+        :return: ImportJob or the result of cls(response)
+        :rtype: ~azure.digitaltwins.core.models.ImportJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ImportJob] = kwargs.pop("cls", None)
+
+        _traceparent = None
+        _tracestate = None
+        if import_jobs_add_options is not None:
+            _traceparent = import_jobs_add_options.traceparent
+            _tracestate = import_jobs_add_options.tracestate
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(import_job, (IOBase, bytes)):
+            _content = import_job
+        else:
+            _json = self._serialize.body(import_job, "ImportJob")
+
+        _request = build_add_request(
+            id=id,
+            traceparent=_traceparent,
+            tracestate=_tracestate,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize("ImportJob", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
     @distributed_trace
     def get_by_id(
-        self, id: str, event_routes_get_by_id_options: Optional[_models.EventRoutesGetByIdOptions] = None, **kwargs: Any
-    ) -> _models.DigitalTwinsEventRoute:
-        """Retrieves an event route.
+        self, id: str, import_jobs_get_by_id_options: Optional[_models.ImportJobsGetByIdOptions] = None, **kwargs: Any
+    ) -> _models.ImportJob:
+        """Retrieves an import job.
         Status codes:
 
 
         * 200 OK
         * 404 Not Found
 
-          * EventRouteNotFound - The event route was not found.
+          * ImportJobNotFound - The import job was not found.
 
-        :param id: The id for an event route. The id is unique within event routes and case sensitive.
+        :param id: The id for the import job. The id is unique within the service and case sensitive.
          Required.
         :type id: str
-        :param event_routes_get_by_id_options: Parameter group. Default value is None.
-        :type event_routes_get_by_id_options: ~azure.digitaltwins.core.models.EventRoutesGetByIdOptions
-        :return: DigitalTwinsEventRoute or the result of cls(response)
-        :rtype: ~azure.digitaltwins.core.models.DigitalTwinsEventRoute
+        :param import_jobs_get_by_id_options: Parameter group. Default value is None.
+        :type import_jobs_get_by_id_options: ~azure.digitaltwins.core.models.ImportJobsGetByIdOptions
+        :return: ImportJob or the result of cls(response)
+        :rtype: ~azure.digitaltwins.core.models.ImportJob
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -306,13 +495,13 @@ class EventRoutesOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.DigitalTwinsEventRoute] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ImportJob] = kwargs.pop("cls", None)
 
         _traceparent = None
         _tracestate = None
-        if event_routes_get_by_id_options is not None:
-            _traceparent = event_routes_get_by_id_options.traceparent
-            _tracestate = event_routes_get_by_id_options.tracestate
+        if import_jobs_get_by_id_options is not None:
+            _traceparent = import_jobs_get_by_id_options.traceparent
+            _tracestate = import_jobs_get_by_id_options.tracestate
 
         _request = build_get_by_id_request(
             id=id,
@@ -336,193 +525,32 @@ class EventRoutesOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("DigitalTwinsEventRoute", pipeline_response.http_response)
+        deserialized = self._deserialize("ImportJob", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    @overload
-    def add(
-        self,
-        id: str,
-        event_route: _models.DigitalTwinsEventRoute,
-        event_routes_add_options: Optional[_models.EventRoutesAddOptions] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Adds or replaces an event route.
-        Status codes:
-
-
-        * 204 No Content
-        * 400 Bad Request
-
-          * EventRouteEndpointInvalid - The endpoint provided does not exist or is not active.
-          * EventRouteFilterInvalid - The event route filter is invalid.
-          * EventRouteIdInvalid - The event route id is invalid.
-          * LimitExceeded - The maximum number of event routes allowed has been reached.
-
-        :param id: The id for an event route. The id is unique within event routes and case sensitive.
-         Required.
-        :type id: str
-        :param event_route: The event route data. Required.
-        :type event_route: ~azure.digitaltwins.core.models.DigitalTwinsEventRoute
-        :param event_routes_add_options: Parameter group. Default value is None.
-        :type event_routes_add_options: ~azure.digitaltwins.core.models.EventRoutesAddOptions
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def add(
-        self,
-        id: str,
-        event_route: IO[bytes],
-        event_routes_add_options: Optional[_models.EventRoutesAddOptions] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Adds or replaces an event route.
-        Status codes:
-
-
-        * 204 No Content
-        * 400 Bad Request
-
-          * EventRouteEndpointInvalid - The endpoint provided does not exist or is not active.
-          * EventRouteFilterInvalid - The event route filter is invalid.
-          * EventRouteIdInvalid - The event route id is invalid.
-          * LimitExceeded - The maximum number of event routes allowed has been reached.
-
-        :param id: The id for an event route. The id is unique within event routes and case sensitive.
-         Required.
-        :type id: str
-        :param event_route: The event route data. Required.
-        :type event_route: IO[bytes]
-        :param event_routes_add_options: Parameter group. Default value is None.
-        :type event_routes_add_options: ~azure.digitaltwins.core.models.EventRoutesAddOptions
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def add(  # pylint: disable=inconsistent-return-statements
-        self,
-        id: str,
-        event_route: Union[_models.DigitalTwinsEventRoute, IO[bytes]],
-        event_routes_add_options: Optional[_models.EventRoutesAddOptions] = None,
-        **kwargs: Any
-    ) -> None:
-        """Adds or replaces an event route.
-        Status codes:
-
-
-        * 204 No Content
-        * 400 Bad Request
-
-          * EventRouteEndpointInvalid - The endpoint provided does not exist or is not active.
-          * EventRouteFilterInvalid - The event route filter is invalid.
-          * EventRouteIdInvalid - The event route id is invalid.
-          * LimitExceeded - The maximum number of event routes allowed has been reached.
-
-        :param id: The id for an event route. The id is unique within event routes and case sensitive.
-         Required.
-        :type id: str
-        :param event_route: The event route data. Is either a DigitalTwinsEventRoute type or a
-         IO[bytes] type. Required.
-        :type event_route: ~azure.digitaltwins.core.models.DigitalTwinsEventRoute or IO[bytes]
-        :param event_routes_add_options: Parameter group. Default value is None.
-        :type event_routes_add_options: ~azure.digitaltwins.core.models.EventRoutesAddOptions
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _traceparent = None
-        _tracestate = None
-        if event_routes_add_options is not None:
-            _traceparent = event_routes_add_options.traceparent
-            _tracestate = event_routes_add_options.tracestate
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(event_route, (IOBase, bytes)):
-            _content = event_route
-        else:
-            _json = self._serialize.body(event_route, "DigitalTwinsEventRoute")
-
-        _request = build_add_request(
-            id=id,
-            traceparent=_traceparent,
-            tracestate=_tracestate,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
-        self, id: str, event_routes_delete_options: Optional[_models.EventRoutesDeleteOptions] = None, **kwargs: Any
+        self, id: str, import_jobs_delete_options: Optional[_models.ImportJobsDeleteOptions] = None, **kwargs: Any
     ) -> None:
-        """Deletes an event route.
+        """Deletes an import job. This is simply used to remove a job id, so it may be reused later. It
+        can not be used to stop entities from being imported.
         Status codes:
 
 
         * 204 No Content
-        * 404 Not Found
+        * 400 Bad Request
 
-          * EventRouteNotFound - The event route was not found.
+          * ValidationFailed - The import job request is not valid.
 
-        :param id: The id for an event route. The id is unique within event routes and case sensitive.
+        :param id: The id for the import job. The id is unique within the service and case sensitive.
          Required.
         :type id: str
-        :param event_routes_delete_options: Parameter group. Default value is None.
-        :type event_routes_delete_options: ~azure.digitaltwins.core.models.EventRoutesDeleteOptions
+        :param import_jobs_delete_options: Parameter group. Default value is None.
+        :type import_jobs_delete_options: ~azure.digitaltwins.core.models.ImportJobsDeleteOptions
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -543,9 +571,9 @@ class EventRoutesOperations:
 
         _traceparent = None
         _tracestate = None
-        if event_routes_delete_options is not None:
-            _traceparent = event_routes_delete_options.traceparent
-            _tracestate = event_routes_delete_options.tracestate
+        if import_jobs_delete_options is not None:
+            _traceparent = import_jobs_delete_options.traceparent
+            _tracestate = import_jobs_delete_options.tracestate
 
         _request = build_delete_request(
             id=id,
@@ -571,3 +599,77 @@ class EventRoutesOperations:
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def cancel(
+        self, id: str, import_jobs_cancel_options: Optional[_models.ImportJobsCancelOptions] = None, **kwargs: Any
+    ) -> _models.ImportJob:
+        """Cancels an import job that is currently running. Service will stop any import operations
+        triggered by the current import job that are in progress, and go to a cancelled state. Please
+        note that this will leave your instance in an unknown state as there won't be any rollback
+        operation.
+        Status codes:
+
+
+        * 200 Request Accepted
+        * 400 Bad Request
+
+          * ValidationFailed - The import job request is not valid.
+
+        :param id: The id for the import job. The id is unique within the service and case sensitive.
+         Required.
+        :type id: str
+        :param import_jobs_cancel_options: Parameter group. Default value is None.
+        :type import_jobs_cancel_options: ~azure.digitaltwins.core.models.ImportJobsCancelOptions
+        :return: ImportJob or the result of cls(response)
+        :rtype: ~azure.digitaltwins.core.models.ImportJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.ImportJob] = kwargs.pop("cls", None)
+
+        _traceparent = None
+        _tracestate = None
+        if import_jobs_cancel_options is not None:
+            _traceparent = import_jobs_cancel_options.traceparent
+            _tracestate = import_jobs_cancel_options.tracestate
+
+        _request = build_cancel_request(
+            id=id,
+            traceparent=_traceparent,
+            tracestate=_tracestate,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize("ImportJob", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore

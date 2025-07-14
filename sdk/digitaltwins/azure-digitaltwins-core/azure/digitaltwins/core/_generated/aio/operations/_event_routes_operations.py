@@ -228,8 +228,8 @@ class EventRoutesOperations:
     async def add(
         self,
         id: str,
+        event_route: _models.DigitalTwinsEventRoute,
         event_routes_add_options: Optional[_models.EventRoutesAddOptions] = None,
-        event_route: Optional[_models.DigitalTwinsEventRoute] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -249,10 +249,10 @@ class EventRoutesOperations:
         :param id: The id for an event route. The id is unique within event routes and case sensitive.
          Required.
         :type id: str
+        :param event_route: The event route data. Required.
+        :type event_route: ~azure.digitaltwins.core.models.DigitalTwinsEventRoute
         :param event_routes_add_options: Parameter group. Default value is None.
         :type event_routes_add_options: ~azure.digitaltwins.core.models.EventRoutesAddOptions
-        :param event_route: The event route data. Default value is None.
-        :type event_route: ~azure.digitaltwins.core.models.DigitalTwinsEventRoute
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -265,8 +265,8 @@ class EventRoutesOperations:
     async def add(
         self,
         id: str,
+        event_route: IO[bytes],
         event_routes_add_options: Optional[_models.EventRoutesAddOptions] = None,
-        event_route: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -286,10 +286,10 @@ class EventRoutesOperations:
         :param id: The id for an event route. The id is unique within event routes and case sensitive.
          Required.
         :type id: str
+        :param event_route: The event route data. Required.
+        :type event_route: IO[bytes]
         :param event_routes_add_options: Parameter group. Default value is None.
         :type event_routes_add_options: ~azure.digitaltwins.core.models.EventRoutesAddOptions
-        :param event_route: The event route data. Default value is None.
-        :type event_route: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -302,8 +302,8 @@ class EventRoutesOperations:
     async def add(
         self,
         id: str,
+        event_route: Union[_models.DigitalTwinsEventRoute, IO[bytes]],
         event_routes_add_options: Optional[_models.EventRoutesAddOptions] = None,
-        event_route: Optional[Union[_models.DigitalTwinsEventRoute, IO[bytes]]] = None,
         **kwargs: Any
     ) -> None:
         """Adds or replaces an event route.
@@ -321,11 +321,11 @@ class EventRoutesOperations:
         :param id: The id for an event route. The id is unique within event routes and case sensitive.
          Required.
         :type id: str
+        :param event_route: The event route data. Is either a DigitalTwinsEventRoute type or a
+         IO[bytes] type. Required.
+        :type event_route: ~azure.digitaltwins.core.models.DigitalTwinsEventRoute or IO[bytes]
         :param event_routes_add_options: Parameter group. Default value is None.
         :type event_routes_add_options: ~azure.digitaltwins.core.models.EventRoutesAddOptions
-        :param event_route: The event route data. Is either a DigitalTwinsEventRoute type or a
-         IO[bytes] type. Default value is None.
-        :type event_route: ~azure.digitaltwins.core.models.DigitalTwinsEventRoute or IO[bytes]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -356,10 +356,7 @@ class EventRoutesOperations:
         if isinstance(event_route, (IOBase, bytes)):
             _content = event_route
         else:
-            if event_route is not None:
-                _json = self._serialize.body(event_route, "DigitalTwinsEventRoute")
-            else:
-                _json = None
+            _json = self._serialize.body(event_route, "DigitalTwinsEventRoute")
 
         _request = build_add_request(
             id=id,

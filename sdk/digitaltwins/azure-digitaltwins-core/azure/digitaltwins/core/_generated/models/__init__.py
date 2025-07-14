@@ -14,6 +14,11 @@ if TYPE_CHECKING:
 
 
 from ._models_py3 import (  # type: ignore
+    DeleteJob,
+    DeleteJobCollection,
+    DeleteJobsAddOptions,
+    DeleteJobsGetByIdOptions,
+    DeleteJobsListOptions,
     DigitalTwinModelsAddOptions,
     DigitalTwinModelsDeleteOptions,
     DigitalTwinModelsGetByIdOptions,
@@ -42,6 +47,13 @@ from ._models_py3 import (  # type: ignore
     EventRoutesDeleteOptions,
     EventRoutesGetByIdOptions,
     EventRoutesListOptions,
+    ImportJob,
+    ImportJobCollection,
+    ImportJobsAddOptions,
+    ImportJobsCancelOptions,
+    ImportJobsDeleteOptions,
+    ImportJobsGetByIdOptions,
+    ImportJobsListOptions,
     IncomingRelationship,
     IncomingRelationshipCollection,
     InnerError,
@@ -51,11 +63,21 @@ from ._models_py3 import (  # type: ignore
     QueryTwinsOptions,
     RelationshipCollection,
 )
+
+from ._azure_digital_twins_api_enums import (  # type: ignore
+    DeleteJobStatus,
+    Status,
+)
 from ._patch import __all__ as _patch_all
 from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "DeleteJob",
+    "DeleteJobCollection",
+    "DeleteJobsAddOptions",
+    "DeleteJobsGetByIdOptions",
+    "DeleteJobsListOptions",
     "DigitalTwinModelsAddOptions",
     "DigitalTwinModelsDeleteOptions",
     "DigitalTwinModelsGetByIdOptions",
@@ -84,6 +106,13 @@ __all__ = [
     "EventRoutesDeleteOptions",
     "EventRoutesGetByIdOptions",
     "EventRoutesListOptions",
+    "ImportJob",
+    "ImportJobCollection",
+    "ImportJobsAddOptions",
+    "ImportJobsCancelOptions",
+    "ImportJobsDeleteOptions",
+    "ImportJobsGetByIdOptions",
+    "ImportJobsListOptions",
     "IncomingRelationship",
     "IncomingRelationshipCollection",
     "InnerError",
@@ -92,6 +121,8 @@ __all__ = [
     "QuerySpecification",
     "QueryTwinsOptions",
     "RelationshipCollection",
+    "DeleteJobStatus",
+    "Status",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()
