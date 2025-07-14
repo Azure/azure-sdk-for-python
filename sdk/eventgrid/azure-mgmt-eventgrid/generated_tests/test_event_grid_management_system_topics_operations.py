@@ -24,7 +24,7 @@ class TestEventGridManagementSystemTopicsOperations(AzureMgmtRecordedTestCase):
         response = self.client.system_topics.get(
             resource_group_name=resource_group.name,
             system_topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -61,7 +61,7 @@ class TestEventGridManagementSystemTopicsOperations(AzureMgmtRecordedTestCase):
                 "topicType": "str",
                 "type": "str",
             },
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -73,7 +73,7 @@ class TestEventGridManagementSystemTopicsOperations(AzureMgmtRecordedTestCase):
         response = self.client.system_topics.begin_delete(
             resource_group_name=resource_group.name,
             system_topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -94,7 +94,7 @@ class TestEventGridManagementSystemTopicsOperations(AzureMgmtRecordedTestCase):
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -104,7 +104,7 @@ class TestEventGridManagementSystemTopicsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_system_topics_list_by_subscription(self, resource_group):
         response = self.client.system_topics.list_by_subscription(
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -115,7 +115,7 @@ class TestEventGridManagementSystemTopicsOperations(AzureMgmtRecordedTestCase):
     def test_system_topics_list_by_resource_group(self, resource_group):
         response = self.client.system_topics.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

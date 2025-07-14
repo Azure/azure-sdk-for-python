@@ -20,13 +20,27 @@ class TestEventGridManagementDomainTopicEventSubscriptionsOperations(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_domain_topic_event_subscriptions_get_delivery_attributes(self, resource_group):
+        response = self.client.domain_topic_event_subscriptions.get_delivery_attributes(
+            resource_group_name=resource_group.name,
+            domain_name="str",
+            topic_name="str",
+            event_subscription_name="str",
+            api_version="2025-04-01-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_domain_topic_event_subscriptions_get(self, resource_group):
         response = self.client.domain_topic_event_subscriptions.get(
             resource_group_name=resource_group.name,
             domain_name="str",
             topic_name="str",
             event_subscription_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -44,11 +58,19 @@ class TestEventGridManagementDomainTopicEventSubscriptionsOperations(AzureMgmtRe
                 "deadLetterDestination": "dead_letter_destination",
                 "deadLetterWithResourceIdentity": {
                     "deadLetterDestination": "dead_letter_destination",
-                    "identity": {"type": "str", "userAssignedIdentity": "str"},
+                    "identity": {
+                        "federatedIdentityCredentialInfo": {"federatedClientId": "str"},
+                        "type": "str",
+                        "userAssignedIdentity": "str",
+                    },
                 },
                 "deliveryWithResourceIdentity": {
                     "destination": "event_subscription_destination",
-                    "identity": {"type": "str", "userAssignedIdentity": "str"},
+                    "identity": {
+                        "federatedIdentityCredentialInfo": {"federatedClientId": "str"},
+                        "type": "str",
+                        "userAssignedIdentity": "str",
+                    },
                 },
                 "destination": "event_subscription_destination",
                 "eventDeliverySchema": "str",
@@ -77,7 +99,7 @@ class TestEventGridManagementDomainTopicEventSubscriptionsOperations(AzureMgmtRe
                 "topic": "str",
                 "type": "str",
             },
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -91,7 +113,7 @@ class TestEventGridManagementDomainTopicEventSubscriptionsOperations(AzureMgmtRe
             domain_name="str",
             topic_name="str",
             event_subscription_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -109,11 +131,19 @@ class TestEventGridManagementDomainTopicEventSubscriptionsOperations(AzureMgmtRe
                 "deadLetterDestination": "dead_letter_destination",
                 "deadLetterWithResourceIdentity": {
                     "deadLetterDestination": "dead_letter_destination",
-                    "identity": {"type": "str", "userAssignedIdentity": "str"},
+                    "identity": {
+                        "federatedIdentityCredentialInfo": {"federatedClientId": "str"},
+                        "type": "str",
+                        "userAssignedIdentity": "str",
+                    },
                 },
                 "deliveryWithResourceIdentity": {
                     "destination": "event_subscription_destination",
-                    "identity": {"type": "str", "userAssignedIdentity": "str"},
+                    "identity": {
+                        "federatedIdentityCredentialInfo": {"federatedClientId": "str"},
+                        "type": "str",
+                        "userAssignedIdentity": "str",
+                    },
                 },
                 "destination": "event_subscription_destination",
                 "eventDeliverySchema": "str",
@@ -129,7 +159,7 @@ class TestEventGridManagementDomainTopicEventSubscriptionsOperations(AzureMgmtRe
                 "labels": ["str"],
                 "retryPolicy": {"eventTimeToLiveInMinutes": 1440, "maxDeliveryAttempts": 30},
             },
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -143,7 +173,7 @@ class TestEventGridManagementDomainTopicEventSubscriptionsOperations(AzureMgmtRe
             domain_name="str",
             topic_name="str",
             event_subscription_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -156,22 +186,8 @@ class TestEventGridManagementDomainTopicEventSubscriptionsOperations(AzureMgmtRe
             resource_group_name=resource_group.name,
             domain_name="str",
             topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_domain_topic_event_subscriptions_get_delivery_attributes(self, resource_group):
-        response = self.client.domain_topic_event_subscriptions.get_delivery_attributes(
-            resource_group_name=resource_group.name,
-            domain_name="str",
-            topic_name="str",
-            event_subscription_name="str",
-            api_version="2025-02-15",
-        )
-
         # please add some check logic here by yourself
         # ...

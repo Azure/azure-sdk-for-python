@@ -26,7 +26,7 @@ class TestEventGridManagementClientsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             namespace_name="str",
             client_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -59,7 +59,7 @@ class TestEventGridManagementClientsOperationsAsync(AzureMgmtRecordedTestCase):
                     },
                     "type": "str",
                 },
-                api_version="2025-02-15",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -74,7 +74,7 @@ class TestEventGridManagementClientsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 namespace_name="str",
                 client_name="str",
-                api_version="2025-02-15",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -87,7 +87,7 @@ class TestEventGridManagementClientsOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.clients.list_by_namespace(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
