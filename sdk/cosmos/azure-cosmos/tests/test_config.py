@@ -15,7 +15,7 @@ from azure.cosmos._routing.routing_range import Range
 from azure.cosmos.cosmos_client import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.http_constants import StatusCodes
-from azure.cosmos.partition_key import (PartitionKey, PartitionKeyKind, PartitionKeyVersion, _Undefined,
+from azure.cosmos.partition_key import (PartitionKey, _PartitionKeyKind, _PartitionKeyVersion, _Undefined,
                                         NonePartitionKeyValue)
 from azure.cosmos import (ContainerProxy, DatabaseProxy, documents, exceptions,
                           http_constants)
@@ -532,10 +532,10 @@ class MockConnectionRetryPolicyAsync(AsyncRetryPolicy):
 
 def hash_partition_key_value(
         pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]],
-        kind: str = PartitionKeyKind.HASH,
-        version: int = PartitionKeyVersion.V2,
+        kind: str = _PartitionKeyKind.HASH,
+        version: int = _PartitionKeyVersion.V2,
     ):
-    return PartitionKey.get_hashed_partition_key_string(
+    return PartitionKey._get_hashed_partition_key_string(
         pk_value=pk_value,
         kind=kind,
         version=version,
