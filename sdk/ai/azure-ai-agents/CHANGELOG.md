@@ -2,6 +2,12 @@
 
 # Release History
 
+## 1.1.0b5 (Unreleased)
+
+### Bugs Fixed
+
+- `AgentsResponseFormatOption`, `MessageInputContent`, `MessageAttachmentToolDefinition`, `AgentsToolChoiceOption` are now public.
+  
 ## 1.1.0b4 (2025-07-11)
 
 ### Features Added
@@ -12,7 +18,7 @@ the thread. Default value is None.
 
 ### Bugs Fixed
 
-- `_AgentsClientOperationsMixin` now it is private.
+- `_AgentsClientOperationsMixin` is now private.
 
 ### Sample updates
 
