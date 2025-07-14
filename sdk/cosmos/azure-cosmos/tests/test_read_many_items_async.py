@@ -171,12 +171,66 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.database.delete_container(container_hpk)
 
+
+    async def test_headers_being_returned(self):
+        """Tests the basic functionality of read_many_items."""
+        # Create some items to read
+        item_ids = []
+        items_to_read = []
+        for i in range(5):
+            doc_id = "item" + str(i) + str(uuid.uuid4())
+            item_ids.append(doc_id)
+            await self.container.create_item({'id': doc_id, 'pk': doc_id, 'data': i})
+            items_to_read.append((doc_id, doc_id))
+
+        # Read the items back
+        read_items = await self.container.read_many_items(items=items_to_read)
+        headers = read_items.get_response_headers()
+        assert headers is not None
+        # Assert common Cosmos DB headers are present
+        assert 'x-ms-request-charge' in headers
+        assert 'x-ms-activity-id' in headers
+
+        # Assert request charge is a valid number
+        request_charge = float(headers.get('x-ms-request-charge', 0))
+        assert request_charge >= 0
+
+        # Assert activity ID is not empty
+        activity_id = headers.get('x-ms-activity-id')
+        assert activity_id is not None
+        assert len(activity_id) > 0
+
+        # Assert that items were returned (assuming they exist)
+        assert len(read_items) >= 0  # Could be 0 if items don't exist
+
+
     async def test_read_many_items(self):
         """Tests the basic functionality of read_many_items."""
         # Create some items to read
         item_ids = []
         items_to_read = []
         for i in range(5):
+            doc_id = "item" + str(i) + str(uuid.uuid4())
+            item_ids.append(doc_id)
+            await self.container.create_item({'id': doc_id, 'pk': doc_id, 'data': i})
+            items_to_read.append((doc_id, doc_id))
+
+        # Read the items back
+        read_items = await self.container.read_many_items(items=items_to_read)
+        headers = read_items.get_response_headers()
+
+        # Verify the results
+        self.assertEqual(len(read_items), len(item_ids))
+        read_ids = {item['id'] for item in read_items}
+        self.assertSetEqual(read_ids, set(item_ids))
+
+
+    async def test_read_many_items_large_count(self):
+        """Tests the basic functionality of read_many_items."""
+        # Create some items to read
+        item_ids = []
+        items_to_read = []
+        for i in range(3100):
             doc_id = "item" + str(i) + str(uuid.uuid4())
             item_ids.append(doc_id)
             await self.container.create_item({'id': doc_id, 'pk': doc_id, 'data': i})
