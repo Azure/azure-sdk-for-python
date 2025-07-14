@@ -68,8 +68,8 @@
   - Added model `WebhookAuthenticationSettings`
   - Added model `WebhookPartnerDestinationInfo`
   - Added model `WebhookUpdatePartnerDestinationInfo`
-  - Added model `NetworkSecurityPerimeterConfigurationsOperations`
-  - Added model `PartnerDestinationsOperations`
+  - Added operation group `NetworkSecurityPerimeterConfigurationsOperations`
+  - Added operation group `PartnerDestinationsOperations`
 
 ## 10.4.0 (2025-03-24)
 
