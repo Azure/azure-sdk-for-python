@@ -834,37 +834,37 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         container_properties = self._get_properties_with_options(feed_options)
 
         # Update 'feed_options' from 'kwargs'
-        if "enable_cross_partition_query" in kwargs:
+        if utils.valid_key_value_exist(kwargs, "enable_cross_partition_query"):
             feed_options["enableCrossPartitionQuery"] = kwargs.pop("enable_cross_partition_query")
-        if "max_item_count" in kwargs:
+        if utils.valid_key_value_exist(kwargs, "max_item_count"):
             feed_options["maxItemCount"] = kwargs.pop("max_item_count")
-        if "populate_query_metrics" in kwargs:
+        if utils.valid_key_value_exist(kwargs, "populate_query_metrics"):
             feed_options["populateQueryMetrics"] = kwargs.pop("populate_query_metrics")
-        if "populate_index_metrics" in kwargs:
+        if utils.valid_key_value_exist(kwargs, "populate_index_metrics"):
             feed_options["populateIndexMetrics"] = kwargs.pop("populate_index_metrics")
-        if "enable_scan_in_query" in kwargs:
+        if utils.valid_key_value_exist(kwargs, "enable_scan_in_query"):
             feed_options["enableScanInQuery"] = kwargs.pop("enable_scan_in_query")
-        if "max_integrated_cache_staleness_in_ms" in kwargs:
+        if utils.valid_key_value_exist(kwargs, "max_integrated_cache_staleness_in_ms"):
             max_integrated_cache_staleness_in_ms = kwargs.pop("max_integrated_cache_staleness_in_ms")
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
-        if "continuation_token_limit" in kwargs:
+        if utils.valid_key_value_exist(kwargs, "continuation_token_limit"):
             feed_options["responseContinuationTokenLimitInKb"] = kwargs.pop("continuation_token_limit")
         feed_options["correlatedActivityId"] = GenerateGuidId()
         feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         # Set query with 'query' and 'parameters' from kwargs
-        if "parameters" in kwargs:
+        if utils.valid_key_value_exist(kwargs, "parameters"):
             query = {"query": kwargs.pop("query", None), "parameters": kwargs.pop("parameters", None)}
         else:
             query = kwargs.pop("query", None)
 
-        # Set range filters for query. Options are either 'feed_range' or 'partition_key'
+        # Set range filters for a query. Options are either 'feed_range' or 'partition_key'
         utils.verify_exclusive_arguments(["feed_range", "partition_key"], **kwargs)
-        if "feed_range" not in kwargs and "partition_key" in kwargs:
+        if utils.valid_key_value_exist(kwargs, "partition_key"):
             partition_key_value = self._set_partition_key(kwargs.pop("partition_key"))
             partition_key_obj = _build_partition_key_from_properties(container_properties)
-            if partition_key_obj.is_prefix_partition_key(partition_key_value):
+            if partition_key_obj._is_prefix_partition_key(partition_key_value):
                 kwargs["prefix_partition_key_object"] = partition_key_obj
                 kwargs["prefix_partition_key_value"] = cast(_SequentialPartitionKeyType, partition_key_value)
             else:

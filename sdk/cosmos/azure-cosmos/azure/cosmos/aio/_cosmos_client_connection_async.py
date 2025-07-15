@@ -2962,7 +2962,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             # check if query has prefix partition key
             partition_key_value = options["partitionKey"]
             partition_key_obj = _build_partition_key_from_properties(container_property)
-            if partition_key_obj.is_prefix_partition_key(partition_key_value):
+            if partition_key_obj._is_prefix_partition_key(partition_key_value):
                 req_headers.pop(http_constants.HttpHeaders.PartitionKey, None)
                 partition_key_value = cast(_SequentialPartitionKeyType, partition_key_value)
                 feed_range_epk = partition_key_obj._get_epk_range_for_prefix_partition_key(partition_key_value)

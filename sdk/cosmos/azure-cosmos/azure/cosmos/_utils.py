@@ -132,3 +132,17 @@ def verify_exclusive_arguments(
     if len(keys_in_kwargs) > 1:
         raise ValueError(f"{format_list_with_and(keys_in_kwargs)} are exclusive parameters, "
                          f"please only set one of them.")
+
+def valid_key_value_exist(
+        kwargs: Dict[str, Any],
+        key: str,
+        invalid_value: Any = None) -> bool:
+    """Check if a valid key and value exists in kwargs. By default, it checks if the value is not None.
+
+    :param Dict[str, Any] kwargs: The dictionary of keyword arguments.
+    :param str key: The key to check.
+    :param Any invalid_value: The value that is considered invalid. Default is None.
+    :return: True if the key exists and its value is not None, False otherwise.
+    :rtype: bool
+    """
+    return key in kwargs and kwargs[key] is not invalid_value

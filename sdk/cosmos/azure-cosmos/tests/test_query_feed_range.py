@@ -64,7 +64,6 @@ class TestQueryFeedRange():
         for feed_range in iter_feed_ranges:
             items = list(container.query_items(
                 query=query,
-                enable_cross_partition_query=True,
                 feed_range=feed_range
             ))
             add_all_pk_values_to_set(items, actual_pk_values)
@@ -82,7 +81,6 @@ class TestQueryFeedRange():
             feed_range = container.feed_range_from_partition_key(pk_value)
             items = list(container.query_items(
                 query=query,
-                enable_cross_partition_query=True,
                 feed_range=feed_range
             ))
             add_all_pk_values_to_set(items, actual_pk_values)
@@ -99,7 +97,6 @@ class TestQueryFeedRange():
         with pytest.raises(ValueError) as e:
             list(container.query_items(
                 query=query,
-                enable_cross_partition_query=True,
                 feed_range=feed_range,
                 partition_key=partition_key
             ))
@@ -121,7 +118,6 @@ class TestQueryFeedRange():
         feed_range = test_config.create_feed_range_in_dict(new_range)
         items = list(container.query_items(
             query=query,
-            enable_cross_partition_query=True,
             feed_range=feed_range
         ))
         add_all_pk_values_to_set(items, actual_pk_values)

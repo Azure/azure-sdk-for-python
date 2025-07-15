@@ -214,7 +214,7 @@ class PartitionKey(dict):
             self,
             pk_value: _PartitionKeyType
     ) -> _Range:
-        if self.is_prefix_partition_key(pk_value):
+        if self._is_prefix_partition_key(pk_value):
             return self._get_epk_range_for_prefix_partition_key(
                 cast(_SequentialPartitionKeyType, pk_value))
 
@@ -369,7 +369,7 @@ class PartitionKey(dict):
 
         return ''.join(sb).upper()
 
-    def is_prefix_partition_key(
+    def _is_prefix_partition_key(
             self,
             partition_key: _PartitionKeyType) -> bool:  # pylint: disable=line-too-long
         if self.kind != _PartitionKeyKind.MULTI_HASH:
@@ -516,7 +516,7 @@ def _write_for_binary_encoding(
     elif isinstance(value, _Undefined):
         binary_writer.write(bytes([_PartitionKeyComponentType.Undefined]))
 
-def get_partition_key_from_definition(
+def _get_partition_key_from_partition_key_definition(
     partition_key_definition: Union[Dict[str, Any], "PartitionKey"]
 ) -> "PartitionKey":
     """Internal method to create a PartitionKey instance from a dictionary or PartitionKey object.
@@ -533,4 +533,4 @@ def get_partition_key_from_definition(
 
 def _build_partition_key_from_properties(container_properties: Dict[str, Any]) -> PartitionKey:
     partition_key_definition = container_properties["partitionKey"]
-    return get_partition_key_from_definition(partition_key_definition)
+    return _get_partition_key_from_partition_key_definition(partition_key_definition)

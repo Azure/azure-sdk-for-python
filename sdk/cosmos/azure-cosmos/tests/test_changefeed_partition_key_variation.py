@@ -7,7 +7,7 @@ import pytest
 
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
-from azure.cosmos.partition_key import PartitionKey, get_partition_key_from_definition
+from azure.cosmos.partition_key import PartitionKey, _get_partition_key_from_partition_key_definition
 from azure.cosmos.container import get_epk_range_for_partition_key
 
 @pytest.mark.cosmosEmulator
@@ -249,7 +249,7 @@ class TestChangeFeedPKVariation(unittest.TestCase):
                                                                "in the partition key definition.")
 
             # Create a PartitionKey instance from the definition and validate
-            partition_key_instance = get_partition_key_from_definition(partition_key_definition)
+            partition_key_instance = _get_partition_key_from_partition_key_definition(partition_key_definition)
             assert partition_key_instance.kind == "Hash", "Partition key kind mismatch."
             assert partition_key_instance.version == 1, "Partition key version mismatch."
 

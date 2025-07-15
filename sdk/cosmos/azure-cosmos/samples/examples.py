@@ -145,7 +145,6 @@ import json
 for feed_range in container.read_feed_ranges():
     for queried_item in container.query_items(
         query='SELECT * FROM c',
-        enable_cross_partition_query=True,
         feed_range=feed_range,
     ):
         print(json.dumps(queried_item, indent=True))

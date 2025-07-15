@@ -53,7 +53,7 @@ from ..partition_key import (
     _return_undefined_or_empty_partition_key,
     _Empty,
     _Undefined,
-    get_partition_key_from_definition
+    _get_partition_key_from_partition_key_definition
 )
 
 __all__ = ("ContainerProxy",)
@@ -155,7 +155,7 @@ class ContainerProxy:
             feed_options: Optional[Dict[str, Any]] = None) -> Range:
         container_properties = await self._get_properties_with_options(feed_options)
         partition_key_definition = container_properties["partitionKey"]
-        partition_key = get_partition_key_from_definition(partition_key_definition)
+        partition_key = _get_partition_key_from_partition_key_definition(partition_key_definition)
 
         return partition_key._get_epk_range_for_partition_key(partition_key_value)
 
@@ -657,24 +657,24 @@ class ContainerProxy:
         feed_options = _build_options(kwargs)
 
         # Update 'feed_options' from 'kwargs'
-        if "max_item_count" in kwargs:
+        if utils.valid_key_value_exist(kwargs, "max_item_count"):
             feed_options["maxItemCount"] = kwargs.pop("max_item_count")
-        if "populate_query_metrics" in kwargs:
+        if utils.valid_key_value_exist(kwargs, "populate_query_metrics"):
             feed_options["populateQueryMetrics"] = kwargs.pop("populate_query_metrics")
-        if "populate_index_metrics" in kwargs:
+        if utils.valid_key_value_exist(kwargs, "populate_index_metrics"):
             feed_options["populateIndexMetrics"] = kwargs.pop("populate_index_metrics")
-        if "enable_scan_in_query" in kwargs:
+        if utils.valid_key_value_exist(kwargs, "enable_scan_in_query"):
             feed_options["enableScanInQuery"] = kwargs.pop("enable_scan_in_query")
-        if "max_integrated_cache_staleness_in_ms" in kwargs:
+        if utils.valid_key_value_exist(kwargs, "max_integrated_cache_staleness_in_ms"):
             max_integrated_cache_staleness_in_ms = kwargs.pop("max_integrated_cache_staleness_in_ms")
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
-        if "continuation_token_limit" in kwargs:
+        if utils.valid_key_value_exist(kwargs, "continuation_token_limit"):
             feed_options["responseContinuationTokenLimitInKb"] = kwargs.pop("continuation_token_limit")
         feed_options["correlatedActivityId"] = GenerateGuidId()
 
         # Set query with 'query' and 'parameters' from kwargs
-        if "parameters" in kwargs:
+        if utils.valid_key_value_exist(kwargs, "parameters"):
             query = {"query": kwargs.pop("query", None), "parameters": kwargs.pop("parameters", None)}
         else:
             query = kwargs.pop("query", None)
@@ -684,10 +684,12 @@ class ContainerProxy:
 
         utils.verify_exclusive_arguments(["feed_range", "partition_key"], **kwargs)
         partition_key = None
-        if "feed_range" not in kwargs and "partition_key" in kwargs:
-            partition_key_value = kwargs.pop("partition_key")
-            feed_options["partitionKey"] = self._set_partition_key(partition_key_value)
-        else:
+        # If 'partition_key' is provided, set 'partitionKey' in 'feed_options'
+        if utils.valid_key_value_exist(kwargs, "partition_key"):
+            partition_key = kwargs.pop("partition_key")
+            feed_options["partitionKey"] = self._set_partition_key(partition_key)
+        # If 'partition_key' or 'feed_range' is not provided, set 'enableCrossPartitionQuery' to True
+        elif not utils.valid_key_value_exist(kwargs, "feed_range"):
             feed_options["enableCrossPartitionQuery"] = True
 
         # Set 'response_hook'
