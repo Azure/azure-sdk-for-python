@@ -151,8 +151,8 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
 
     @distributed_trace
     def delete_digital_twin(
-        self, 
-        digital_twin_id: str, 
+        self,
+        digital_twin_id: str,
         *,
         etag: Optional[str] = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
@@ -354,9 +354,9 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
 
     @distributed_trace
     def delete_relationship(
-        self, 
-        digital_twin_id: str, 
-        relationship_id: str, 
+        self,
+        digital_twin_id: str,
+        relationship_id: str,
         *,
         etag: Optional[str] = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
@@ -506,8 +506,8 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
 
     @distributed_trace
     def get_model(
-        self, 
-        model_id: str, 
+        self,
+        model_id: str,
         *,
         include_model_definition: bool = False,
         **kwargs: Any
