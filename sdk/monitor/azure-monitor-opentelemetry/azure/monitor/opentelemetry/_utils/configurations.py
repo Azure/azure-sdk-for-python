@@ -36,6 +36,7 @@ from azure.monitor.opentelemetry._constants import (
     LOGGER_NAME_ARG,
     LOGGER_NAME_ENV_ARG,
     LOGGING_FORMATTER_ARG,
+    LOGGING_FORMAT_ENV_ARG,
     RESOURCE_ARG,
     SAMPLING_RATIO_ARG,
     SPAN_PROCESSORS_ARG,
@@ -113,9 +114,20 @@ def _default_logger_name(configurations):
 
 def _default_logging_formatter(configurations):
     formatter = configurations.get(LOGGING_FORMATTER_ARG)
-    if not isinstance(formatter, Formatter):
-        configurations[LOGGING_FORMATTER_ARG] = None
-
+    if formatter:
+        if not isinstance(formatter, Formatter):
+            configurations[LOGGING_FORMATTER_ARG] = None
+        return
+    elif LOGGING_FORMAT_ENV_ARG in environ:
+        try:
+            configurations[LOGGING_FORMATTER_ARG] = Formatter(environ[LOGGING_FORMAT_ENV_ARG])
+        except Exception as ex:
+            _logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
+                "Exception occurred when creating logging Formatter from format: %s, %s.",
+                environ[LOGGING_FORMAT_ENV_ARG],
+                ex,
+            )
+            configurations[LOGGING_FORMATTER_ARG] = None
 
 def _default_resource(configurations):
     environ.setdefault(OTEL_EXPERIMENTAL_RESOURCE_DETECTORS, ",".join(_SUPPORTED_RESOURCE_DETECTORS))
