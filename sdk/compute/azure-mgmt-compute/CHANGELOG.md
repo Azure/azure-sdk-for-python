@@ -1,8 +1,56 @@
 # Release History
 
-## 0.0.0 (2025-07-21)
+## 35.0.0 (2025-07-21)
 
-change log generation failed!!! You need to write it manually!!!
+### Features Added
+
+  - Model AccessUri has a new parameter security_metadata_access_sas
+  - Model AvailabilitySet has a new parameter system_data
+  - Model CapacityReservation has a new parameter system_data
+  - Model CapacityReservationGroup has a new parameter system_data
+  - Model CreationData has a new parameter instant_access_duration_minutes
+  - Model CreationData has a new parameter security_metadata_uri
+  - Model DedicatedHost has a new parameter system_data
+  - Model DedicatedHostGroup has a new parameter system_data
+  - Model DedicatedHostSizeListResult has a new parameter next_link
+  - Model Disk has a new parameter availability_policy
+  - Model Disk has a new parameter system_data
+  - Model DiskAccess has a new parameter system_data
+  - Model DiskEncryptionSet has a new parameter system_data
+  - Model DiskRestorePoint has a new parameter system_data
+  - Model DiskUpdate has a new parameter availability_policy
+  - Model Image has a new parameter system_data
+  - Model PrivateEndpointConnection has a new parameter system_data
+  - Model ProximityPlacementGroup has a new parameter system_data
+  - Model ProxyResource has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model RestorePoint has a new parameter system_data
+  - Model RestorePointCollection has a new parameter system_data
+  - Model RollingUpgradeStatusInfo has a new parameter system_data
+  - Model Snapshot has a new parameter snapshot_access_state
+  - Model Snapshot has a new parameter system_data
+  - Model SnapshotUpdate has a new parameter snapshot_access_state
+  - Model SshPublicKeyResource has a new parameter system_data
+  - Model SupportedCapabilities has a new parameter supported_security_option
+  - Model SystemData has a new parameter created_by
+  - Model SystemData has a new parameter created_by_type
+  - Model SystemData has a new parameter last_modified_by
+  - Model SystemData has a new parameter last_modified_by_type
+  - Model VirtualMachine has a new parameter system_data
+  - Model VirtualMachineExtension has a new parameter system_data
+  - Model VirtualMachineExtensionImage has a new parameter system_data
+  - Model VirtualMachineRunCommand has a new parameter system_data
+  - Model VirtualMachineScaleSet has a new parameter system_data
+  - Model VirtualMachineScaleSetVM has a new parameter system_data
+  - Model VirtualMachineSizeListResult has a new parameter next_link
+
+### Breaking Changes
+
+  - Model Resource no longer has parameter location
+  - Model Resource no longer has parameter tags
+  - Parameter location of model VirtualMachineExtension is now required
+  - Parameter value of model PrivateEndpointConnectionListResult is now required
+  - Parameter value of model RestorePointCollectionListResult is now required
 
 ## 34.1.0 (2025-03-24)
 
