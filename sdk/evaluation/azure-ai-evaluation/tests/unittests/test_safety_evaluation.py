@@ -87,10 +87,7 @@ def mock_eval_result_dict():
         "metrics": {},
         "studio_url": "some url",
     }
-    return {
-        "Mock_Jailbreak": jailbreak, 
-        "Mock_Regular": regular
-    }
+    return {"Mock_Jailbreak": jailbreak, "Mock_Regular": regular}
 
 
 @pytest.fixture
@@ -197,7 +194,7 @@ class TestSafetyEvaluation:
         mock_file = MagicMock()
         mock_open.return_value.__enter__.return_value = mock_file
         mock__call__.return_value = [JsonLineChatProtocol({"messages": []})]
-        
+
         results = await safety_eval._simulate(target=mock_target)
         assert isinstance(results, dict)
         # Test that it returns simulator data paths
@@ -250,7 +247,7 @@ class TestSafetyEvaluation:
         mock_file = MagicMock()
         mock_open.return_value.__enter__.return_value = mock_file
         mock_call.return_value = JsonLineList([{"messages": []}])
-        
+
         results = await safety_eval._simulate(
             target=mock_target, adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA
         )
@@ -282,11 +279,9 @@ class TestSafetyEvaluation:
         seed_value = 42
 
         await safety_eval._simulate(
-            target=mock_target, 
-            adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA,
-            randomization_seed=seed_value
+            target=mock_target, adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, randomization_seed=seed_value
         )
-        
+
         # Check if the simulator was called with the correct randomization_seed
         mock_call.assert_called_once()
         call_args, call_kwargs = mock_call.call_args
@@ -304,19 +299,15 @@ class TestSafetyEvaluation:
     async def test_call_with_async_target(self, mock_evaluate, mock_simulate, safety_eval, mock_async_target):
         # Setup mocks
         mock_simulate.return_value = {"MockSimulator": "MockSimulator_Data.jsonl"}
-        mock_evaluate.return_value = {
-            "metrics": {},
-            "rows": [],
-            "studio_url": "test_url"
-        }
-        
+        mock_evaluate.return_value = {"metrics": {}, "rows": [], "studio_url": "test_url"}
+
         # Call the __call__ method with an async target
         result = await safety_eval(target=mock_async_target)
-        
+
         # Verify the results
         assert isinstance(result, dict)
         assert "MockSimulator" in result
-        
+
         # Verify that _simulate was called with the async target
         mock_simulate.assert_called_once()
         assert mock_simulate.call_args[1]["target"] == mock_async_target

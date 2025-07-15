@@ -12,11 +12,9 @@ If Python SDK contains preview api-version (like "2020-01-01-preview"), its vers
 (1) For single-api package(for example: [confidentialledger](https://github.com/azure-sdk/azure-sdk-for-python/blob/a56c4b44911e173a89cb051aefc588e189e42654/sdk/confidentialledger/azure-mgmt-confidentialledger/azure/mgmt/confidentialledger/_configuration.py#L39)),
  as long as it contains preview api-version, the package version should be preview
 
-(2) For multi-api package(for example: [network](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/network/azure-mgmt-network)), 
-there will be `DEFAULT_API_VERSION`(for example: [`DEFAULT_API_VERSION` of network](https://github.com/Azure/azure-sdk-for-python/blob/0b3fb9ef0bee54f23beb7a4913faaaef5be90d9b/sdk/network/azure-mgmt-network/azure/mgmt/network/_network_management_client.py#L57)). 
+(2) For multi-api package(for example: [network](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/network/azure-mgmt-network)),
+there will be `DEFAULT_API_VERSION`(for example: [`DEFAULT_API_VERSION` of network](https://github.com/Azure/azure-sdk-for-python/blob/0b3fb9ef0bee54f23beb7a4913faaaef5be90d9b/sdk/network/azure-mgmt-network/azure/mgmt/network/_network_management_client.py#L57)).
 As long as it is preview, then the package version is preview.
-
-(note1: For more info about multi-api package, please refer to [multiapi.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/multiapi.md))
 
 (note2: preview package version contains `b`, for example: `1.0.0b1`)
 
@@ -40,4 +38,3 @@ According to the up rules, we could summarize all the possibilities in the follo
 ![img.png](version_summary.png)
 
 (`-` means that this item doesn't influence result)
- 

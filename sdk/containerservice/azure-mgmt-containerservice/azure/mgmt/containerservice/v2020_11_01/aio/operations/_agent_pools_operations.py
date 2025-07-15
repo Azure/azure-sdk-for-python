@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -69,7 +69,7 @@ class AgentPoolsOperations:
         self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
-    def list(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> AsyncIterable["_models.AgentPool"]:
+    def list(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> AsyncItemPaged["_models.AgentPool"]:
         """Gets a list of agent pools in the specified managed cluster.
 
         Gets a list of agent pools in the specified managed cluster. The operation returns properties

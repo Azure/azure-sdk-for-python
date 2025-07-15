@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-05-01",
+  "commit": "e411473e135e0f0f3c763565ee401be34ccd9f99",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/computeschedule/ComputeSchedule.Management",
+  "emitterVersion": "0.45.0"
+}

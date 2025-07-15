@@ -1,4 +1,4 @@
 -e ../../../tools/azure-sdk-tools
 requests
-../../identity/azure-identity
+-e ../../identity/azure-identity
 aiohttp

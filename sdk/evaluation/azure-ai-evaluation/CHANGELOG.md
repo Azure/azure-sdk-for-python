@@ -1,16 +1,40 @@
 # Release History
 
-## 1.8.0 (Unreleased)
+## 1.10.0 (Unreleased)
+
+### Breaking Changes
+- Added `_evaluate_query` parameter to `RaiServiceEvaluatorBase` class with a default value of `False`. This parameter controls whether queries are included in evaluation data when evaluating query-response pairs. Previously, queries were always included in evaluations. Existing code that relies on queries being evaluated will need to explicitly set `_evaluate_query=True` to maintain the previous behavior.
+
+### Features Added
+
+### Bugs Fixed
+
+- Significant improvements to TaskAdherence evaluator. New version has less variance, is much faster and consumes fewer tokens.
+- Significant improvements to Relevance evaluator. New version has more concrete rubrics and has less variance, is much faster and consumes fewer tokens.
+
+
+## 1.9.0 (2025-07-02)
+
+### Features Added
+
+- Added support for Azure Open AI evaluation via `AzureOpenAIScoreModelGrader` class, which serves as a wrapper around Azure Open AI score model configurations. This new grader object can be supplied to the main `evaluate` method as if it were a normal callable evaluator.
+- Added new experimental risk categories ProtectedMaterial and CodeVulnerability for redteam agent scan.
+
+
+### Bugs Fixed
+
+- Significant improvements to IntentResolution evaluator. New version has less variance, is nearly 2x faster and consumes fewer tokens.
+- Fixed MeteorScoreEvaluator and other threshold-based evaluators returning incorrect binary results due to integer conversion of decimal scores. Previously, decimal scores like 0.9375 were incorrectly converted to integers (0) before threshold comparison, causing them to fail even when above the threshold. [#41415](https://github.com/Azure/azure-sdk-for-python/issues/41415)
+- Added a new enum `ADVERSARIAL_QA_DOCUMENTS` which moves all the "file_content" type prompts away from `ADVERSARIAL_QA` to the new enum
+
+## 1.8.0 (2025-05-29)
 
 ### Features Added
 
 - Introduces `AttackStrategy.MultiTurn` and `AttackStrategy.Crescendo` to `RedTeam`. These strategies attack the target of a `RedTeam` scan over the course of multi-turn conversations. 
 
-### Breaking Changes
-
 ### Bugs Fixed
-
-### Other Changes
+- AdversarialSimulator in `ADVERSARIAL_CONVERSATION` mode was broken. It is now fixed.
 
 ## 1.7.0 (2025-05-12)
 

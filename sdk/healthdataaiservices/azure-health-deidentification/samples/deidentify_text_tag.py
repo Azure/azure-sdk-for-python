@@ -18,22 +18,21 @@ USAGE:
 """
 
 
-from azure.health.deidentification import DeidentificationClient
-from azure.health.deidentification.models import (
-    DeidentificationContent,
-    DeidentificationOperationType,
-    DeidentificationResult,
-)
-from azure.identity import DefaultAzureCredential
-import os
-
-
 def deidentify_text_tag():
+    # [START tag]
+    from azure.health.deidentification import DeidentificationClient
+    from azure.health.deidentification.models import (
+        DeidentificationContent,
+        DeidentificationOperationType,
+        DeidentificationResult,
+    )
+    from azure.identity import DefaultAzureCredential
+    import os
+
     endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
     credential = DefaultAzureCredential()
     client = DeidentificationClient(endpoint, credential)
 
-    # [START tag]
     body = DeidentificationContent(
         input_text="Hello, I'm Dr. John Smith.", operation_type=DeidentificationOperationType.TAG
     )

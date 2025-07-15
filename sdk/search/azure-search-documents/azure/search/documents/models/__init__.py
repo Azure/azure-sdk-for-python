@@ -26,6 +26,7 @@
 
 from .._generated.models import (
     AutocompleteMode,
+    DebugInfo,
     HybridCountAndFacetMode,
     HybridSearch,
     IndexAction,
@@ -60,6 +61,7 @@ from .._generated.models import (
 
 __all__ = (
     "AutocompleteMode",
+    "DebugInfo",
     "HybridCountAndFacetMode",
     "HybridSearch",
     "IndexAction",

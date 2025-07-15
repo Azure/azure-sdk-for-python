@@ -10,17 +10,14 @@
 import datetime
 from typing import Any, Dict, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .. import _model_base
-from .._model_base import rest_field
+from .._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class BackupSecretResult(_model_base.Model):
+class BackupSecretResult(_Model):
     """The backup secret result, containing the backup blob.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: The backup blob containing the backed up secret.
     :vartype value: bytes
@@ -30,11 +27,9 @@ class BackupSecretResult(_model_base.Model):
     """The backup blob containing the backed up secret."""
 
 
-class DeletedSecretBundle(_model_base.Model):
+class DeletedSecretBundle(_Model):
     """A Deleted Secret consisting of its previous id, attributes and its tags, as well as information
     on when it will be purged.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: The secret value.
     :vartype value: str
@@ -61,15 +56,19 @@ class DeletedSecretBundle(_model_base.Model):
     :vartype deleted_date: ~datetime.datetime
     """
 
-    value: Optional[str] = rest_field()
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The secret value."""
-    id: Optional[str] = rest_field()
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The secret id."""
-    content_type: Optional[str] = rest_field(name="contentType")
+    content_type: Optional[str] = rest_field(
+        name="contentType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The content type of the secret."""
-    attributes: Optional["_models.SecretAttributes"] = rest_field()
+    attributes: Optional["_models.SecretAttributes"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The secret management attributes."""
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
     kid: Optional[str] = rest_field(visibility=["read"])
     """If this is a secret backing a KV certificate, then this field specifies the corresponding key
@@ -77,7 +76,9 @@ class DeletedSecretBundle(_model_base.Model):
     managed: Optional[bool] = rest_field(visibility=["read"])
     """True if the secret's lifetime is managed by key vault. If this is a secret backing a
      certificate, then managed will be true."""
-    recovery_id: Optional[str] = rest_field(name="recoveryId")
+    recovery_id: Optional[str] = rest_field(
+        name="recoveryId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The url of the recovery object, used to identify and recover the deleted secret."""
     scheduled_purge_date: Optional[datetime.datetime] = rest_field(
         name="scheduledPurgeDate", visibility=["read"], format="unix-timestamp"
@@ -111,10 +112,8 @@ class DeletedSecretBundle(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DeletedSecretItem(_model_base.Model):
+class DeletedSecretItem(_Model):
     """The deleted secret item containing metadata about the deleted secret.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Secret identifier.
     :vartype id: str
@@ -136,18 +135,24 @@ class DeletedSecretItem(_model_base.Model):
     :vartype deleted_date: ~datetime.datetime
     """
 
-    id: Optional[str] = rest_field()
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Secret identifier."""
-    attributes: Optional["_models.SecretAttributes"] = rest_field()
+    attributes: Optional["_models.SecretAttributes"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The secret management attributes."""
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
-    content_type: Optional[str] = rest_field(name="contentType")
+    content_type: Optional[str] = rest_field(
+        name="contentType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Type of the secret value such as a password."""
     managed: Optional[bool] = rest_field(visibility=["read"])
     """True if the secret's lifetime is managed by key vault. If this is a key backing a certificate,
      then managed will be true."""
-    recovery_id: Optional[str] = rest_field(name="recoveryId")
+    recovery_id: Optional[str] = rest_field(
+        name="recoveryId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The url of the recovery object, used to identify and recover the deleted secret."""
     scheduled_purge_date: Optional[datetime.datetime] = rest_field(
         name="scheduledPurgeDate", visibility=["read"], format="unix-timestamp"
@@ -180,10 +185,8 @@ class DeletedSecretItem(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultError(_model_base.Model):
+class KeyVaultError(_Model):
     """The key vault error exception.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar error: The key vault server error.
     :vartype error: ~azure.keyvault.secrets._generated.models.KeyVaultErrorError
@@ -193,10 +196,8 @@ class KeyVaultError(_model_base.Model):
     """The key vault server error."""
 
 
-class KeyVaultErrorError(_model_base.Model):
+class KeyVaultErrorError(_Model):
     """KeyVaultErrorError.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar code: The error code.
     :vartype code: str
@@ -214,10 +215,8 @@ class KeyVaultErrorError(_model_base.Model):
     """The key vault server error."""
 
 
-class SecretAttributes(_model_base.Model):
+class SecretAttributes(_Model):
     """The secret management attributes.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar enabled: Determines whether the object is enabled.
     :vartype enabled: bool
@@ -241,11 +240,15 @@ class SecretAttributes(_model_base.Model):
     :vartype recovery_level: str or ~azure.keyvault.secrets._generated.models.DeletionRecoveryLevel
     """
 
-    enabled: Optional[bool] = rest_field()
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Determines whether the object is enabled."""
-    not_before: Optional[datetime.datetime] = rest_field(name="nbf", format="unix-timestamp")
+    not_before: Optional[datetime.datetime] = rest_field(
+        name="nbf", visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """Not before date in UTC."""
-    expires: Optional[datetime.datetime] = rest_field(name="exp", format="unix-timestamp")
+    expires: Optional[datetime.datetime] = rest_field(
+        name="exp", visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """Expiry date in UTC."""
     created: Optional[datetime.datetime] = rest_field(visibility=["read"], format="unix-timestamp")
     """Creation time in UTC."""
@@ -284,10 +287,8 @@ class SecretAttributes(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SecretBundle(_model_base.Model):
+class SecretBundle(_Model):
     """A secret consisting of a value, id and its attributes.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: The secret value.
     :vartype value: str
@@ -307,15 +308,19 @@ class SecretBundle(_model_base.Model):
     :vartype managed: bool
     """
 
-    value: Optional[str] = rest_field()
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The secret value."""
-    id: Optional[str] = rest_field()
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The secret id."""
-    content_type: Optional[str] = rest_field(name="contentType")
+    content_type: Optional[str] = rest_field(
+        name="contentType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The content type of the secret."""
-    attributes: Optional["_models.SecretAttributes"] = rest_field()
+    attributes: Optional["_models.SecretAttributes"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The secret management attributes."""
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
     kid: Optional[str] = rest_field(visibility=["read"])
     """If this is a secret backing a KV certificate, then this field specifies the corresponding key
@@ -346,10 +351,8 @@ class SecretBundle(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SecretItem(_model_base.Model):
+class SecretItem(_Model):
     """The secret item containing secret metadata.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Secret identifier.
     :vartype id: str
@@ -364,13 +367,17 @@ class SecretItem(_model_base.Model):
     :vartype managed: bool
     """
 
-    id: Optional[str] = rest_field()
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Secret identifier."""
-    attributes: Optional["_models.SecretAttributes"] = rest_field()
+    attributes: Optional["_models.SecretAttributes"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The secret management attributes."""
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
-    content_type: Optional[str] = rest_field(name="contentType")
+    content_type: Optional[str] = rest_field(
+        name="contentType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Type of the secret value such as a password."""
     managed: Optional[bool] = rest_field(visibility=["read"])
     """True if the secret's lifetime is managed by key vault. If this is a key backing a certificate,
@@ -397,16 +404,16 @@ class SecretItem(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SecretRestoreParameters(_model_base.Model):
+class SecretRestoreParameters(_Model):
     """The secret restore parameters.
-
-    All required parameters must be populated in order to send to server.
 
     :ivar secret_bundle_backup: The backup blob associated with a secret bundle. Required.
     :vartype secret_bundle_backup: bytes
     """
 
-    secret_bundle_backup: bytes = rest_field(name="value", format="base64url")
+    secret_bundle_backup: bytes = rest_field(
+        name="value", visibility=["read", "create", "update", "delete", "query"], format="base64url"
+    )
     """The backup blob associated with a secret bundle. Required."""
 
     @overload
@@ -427,10 +434,8 @@ class SecretRestoreParameters(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SecretSetParameters(_model_base.Model):
+class SecretSetParameters(_Model):
     """The secret set parameters.
-
-    All required parameters must be populated in order to send to server.
 
     :ivar value: The value of the secret. Required.
     :vartype value: str
@@ -442,13 +447,17 @@ class SecretSetParameters(_model_base.Model):
     :vartype secret_attributes: ~azure.keyvault.secrets._generated.models.SecretAttributes
     """
 
-    value: str = rest_field()
+    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The value of the secret. Required."""
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
-    content_type: Optional[str] = rest_field(name="contentType")
+    content_type: Optional[str] = rest_field(
+        name="contentType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Type of the secret value such as a password."""
-    secret_attributes: Optional["_models.SecretAttributes"] = rest_field(name="attributes")
+    secret_attributes: Optional["_models.SecretAttributes"] = rest_field(
+        name="attributes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The secret management attributes."""
 
     @overload
@@ -472,7 +481,7 @@ class SecretSetParameters(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SecretUpdateParameters(_model_base.Model):
+class SecretUpdateParameters(_Model):
     """The secret update parameters.
 
     :ivar content_type: Type of the secret value such as a password.
@@ -483,11 +492,15 @@ class SecretUpdateParameters(_model_base.Model):
     :vartype tags: dict[str, str]
     """
 
-    content_type: Optional[str] = rest_field(name="contentType")
+    content_type: Optional[str] = rest_field(
+        name="contentType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Type of the secret value such as a password."""
-    secret_attributes: Optional["_models.SecretAttributes"] = rest_field(name="attributes")
+    secret_attributes: Optional["_models.SecretAttributes"] = rest_field(
+        name="attributes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The secret management attributes."""
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
 
     @overload

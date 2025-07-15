@@ -7,8 +7,8 @@
 import pytest
 import azure.communication.phonenumbers._shared.models as models
 
-test_user_id = "test_user_id"
-test_unknown_id = "test_unknown_id"
+test_user_id = "test_userId"
+test_unknown_id = "test_unknownId"
 test_phone_number = "+123456789101"
 
 

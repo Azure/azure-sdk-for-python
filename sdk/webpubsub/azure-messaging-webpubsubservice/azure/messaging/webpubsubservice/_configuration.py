@@ -13,11 +13,10 @@ from azure.core.pipeline import policies
 from ._version import VERSION
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class WebPubSubServiceClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class WebPubSubServiceClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for WebPubSubServiceClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -30,13 +29,13 @@ class WebPubSubServiceClientConfiguration:  # pylint: disable=too-many-instance-
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Default value is "2024-01-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2024-12-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, hub: str, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-01-01")
+        api_version: str = kwargs.pop("api_version", "2024-12-01")
 
         if hub is None:
             raise ValueError("Parameter 'hub' must not be None.")

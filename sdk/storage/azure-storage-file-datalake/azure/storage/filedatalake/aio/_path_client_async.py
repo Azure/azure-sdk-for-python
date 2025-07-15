@@ -10,6 +10,7 @@ from typing import (
     Any, Awaitable, Callable, cast, Dict, Optional, Union,
     TYPE_CHECKING
 )
+from typing_extensions import Self
 
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -139,6 +140,29 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         self._datalake_client_for_blob_operation = self._build_generated_client(self._blob_client.url)
         self._loop = kwargs.get('loop', None)
 
+    async def __aenter__(self) -> Self:
+        await self._client.__aenter__()
+        await self._blob_client.__aenter__()
+        await self._datalake_client_for_blob_operation.__aenter__()
+        return self
+
+    async def __aexit__(self, *args: Any) -> None:
+        await self._datalake_client_for_blob_operation.__aexit__(*args)
+        await self._blob_client.__aexit__(*args)
+        await self._client.__aexit__(*args)
+
+    async def close(self) -> None:  # type: ignore
+        """
+        This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+
+        :return: None
+        :rtype: None
+        """
+        await self._datalake_client_for_blob_operation.close()
+        await self._blob_client.close()
+        await self._client.close()
+
     def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
         client = AzureDataLakeStorageRESTAPI(
             url,
@@ -149,18 +173,6 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         )
         client._config.version = self._api_version  # type: ignore [assignment] # pylint: disable=protected-access
         return client
-
-    async def __aexit__(self, *args: Any) -> None:
-        await self._blob_client.close()
-        await self._datalake_client_for_blob_operation.close()
-        await super(PathClient, self).__aexit__(*args)
-
-    async def close(self) -> None:
-        """
-        This method is to close the sockets opened by the client.
-        It need not be used when using with a context manager.
-        """
-        await self.__aexit__()
 
     def _format_url(self, hostname: str) -> str:
         return _format_url(self.scheme, hostname, self.file_system_name, self.path_name, self._query_str)
@@ -490,7 +502,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
             #other-client--per-operation-configuration>`_.
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
-        :rtype: :~azure.storage.filedatalake.AccessControlChangeResult`
+        :rtype: ~azure.storage.filedatalake.AccessControlChangeResult
         :raises ~azure.core.exceptions.AzureError:
             User can restart the operation using continuation_token field of AzureError if the token is available.
         """
@@ -544,7 +556,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
             #other-client--per-operation-configuration>`_.
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
-        :rtype: :~azure.storage.filedatalake.AccessControlChangeResult`
+        :rtype: ~azure.storage.filedatalake.AccessControlChangeResult
         :raises ~azure.core.exceptions.AzureError:
             User can restart the operation using continuation_token field of AzureError if the token is available.
         """
@@ -596,7 +608,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
             #other-client--per-operation-configuration>`_.
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
-        :rtype: :~azure.storage.filedatalake.AccessControlChangeResult`
+        :rtype: ~azure.storage.filedatalake.AccessControlChangeResult
         :raises ~azure.core.exceptions.AzureError:
             User can restart the operation using continuation_token field of AzureError if the token is available.
         """
@@ -772,7 +784,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
             Required if the file/directory was created with a customer-provided key.
         :keyword bool upn:
             If True, the user identity values returned in the x-ms-owner, x-ms-group,
-            and x-ms-acl response headers will be transformed from Azure Active Directory Object IDs to User 
+            and x-ms-acl response headers will be transformed from Azure Active Directory Object IDs to User
             Principal Names in the owner, group, and acl fields of the respective property object returned.
             If False, the values will be returned as Azure Active Directory Object IDs.
             The default value is False. Note that group and application Object IDs are not translate

@@ -1,5 +1,111 @@
 # Release History
 
+## 38.0.0 (2025-07-15)
+
+### Features Added
+
+  - Added operation MachinesOperations.begin_create_or_update
+  - Added operation ManagedClustersOperations.begin_rebalance_load_balancers
+  - Added operation ManagedClustersOperations.get_guardrails_versions
+  - Added operation ManagedClustersOperations.get_safeguards_versions
+  - Added operation ManagedClustersOperations.list_guardrails_versions
+  - Added operation ManagedClustersOperations.list_safeguards_versions
+  - Model AdvancedNetworkingSecurity has a new parameter advanced_network_policies
+  - Model AdvancedNetworkingSecurity has a new parameter transit_encryption
+  - Model AgentPool has a new parameter artifact_streaming_profile
+  - Model AgentPool has a new parameter enable_custom_ca_trust
+  - Model AgentPool has a new parameter local_dns_profile
+  - Model AgentPool has a new parameter node_initialization_taints
+  - Model AgentPoolSecurityProfile has a new parameter ssh_access
+  - Model AgentPoolUpgradeProfile has a new parameter components_by_releases
+  - Model AgentPoolUpgradeProfilePropertiesUpgradesItem has a new parameter is_out_of_support
+  - Model AgentPoolUpgradeSettings has a new parameter max_blocked_nodes
+  - Model ContainerServiceNetworkProfile has a new parameter kube_proxy_config
+  - Model ContainerServiceNetworkProfile has a new parameter pod_link_local_access
+  - Model GPUProfile has a new parameter driver_type
+  - Model IstioEgressGateway has a new parameter gateway_configuration_name
+  - Model IstioEgressGateway has a new parameter namespace
+  - Model KubeletConfig has a new parameter seccomp_default
+  - Model MachineNetworkProperties has a new parameter enable_node_public_ip
+  - Model MachineNetworkProperties has a new parameter node_public_ip_prefix_id
+  - Model MachineNetworkProperties has a new parameter node_public_ip_tags
+  - Model MachineNetworkProperties has a new parameter pod_subnet_id
+  - Model MachineNetworkProperties has a new parameter vnet_subnet_id
+  - Model MachineProperties has a new parameter e_tag
+  - Model MachineProperties has a new parameter hardware
+  - Model MachineProperties has a new parameter kubernetes
+  - Model MachineProperties has a new parameter mode
+  - Model MachineProperties has a new parameter node_image_version
+  - Model MachineProperties has a new parameter operating_system
+  - Model MachineProperties has a new parameter priority
+  - Model MachineProperties has a new parameter provisioning_state
+  - Model MachineProperties has a new parameter security
+  - Model MachineProperties has a new parameter status
+  - Model MachineProperties has a new parameter tags
+  - Model ManagedCluster has a new parameter ai_toolchain_operator_profile
+  - Model ManagedCluster has a new parameter creation_data
+  - Model ManagedCluster has a new parameter enable_namespace_resources
+  - Model ManagedCluster has a new parameter kind
+  - Model ManagedCluster has a new parameter node_provisioning_profile
+  - Model ManagedCluster has a new parameter scheduler_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter artifact_streaming_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter enable_custom_ca_trust
+  - Model ManagedClusterAgentPoolProfile has a new parameter local_dns_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter node_initialization_taints
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter artifact_streaming_profile
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter enable_custom_ca_trust
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter local_dns_profile
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter node_initialization_taints
+  - Model ManagedClusterAzureMonitorProfile has a new parameter app_monitoring
+  - Model ManagedClusterAzureMonitorProfile has a new parameter container_insights
+  - Model ManagedClusterHTTPProxyConfig has a new parameter effective_no_proxy
+  - Model ManagedClusterHTTPProxyConfig has a new parameter enabled
+  - Model ManagedClusterLoadBalancerProfile has a new parameter cluster_service_load_balancer_health_probe_mode
+  - Model ManagedClusterPoolUpgradeProfile has a new parameter components_by_releases
+  - Model ManagedClusterPoolUpgradeProfileUpgradesItem has a new parameter is_out_of_support
+  - Model ManagedClusterSecurityProfile has a new parameter image_integrity
+  - Model ManagedClusterSecurityProfile has a new parameter node_restriction
+  - Model ManagedClusterSecurityProfileDefender has a new parameter security_gating
+  - Model ManagedClusterStorageProfileDiskCSIDriver has a new parameter version
+  - Model ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler has a new parameter addon_autoscaling
+  - Model NamespaceProperties has a new parameter portal_fqdn
+  - Model ScaleProfile has a new parameter autoscale
+  - Operation ManagedClustersOperations.begin_delete has a new optional parameter ignore_pod_disruption_budget
+
+### Breaking Changes
+
+  - Model IstioEgressGateway has a new required parameter name
+
+## 37.0.0 (2025-06-11)
+
+### Features Added
+
+  - Added operation group ManagedNamespacesOperations
+  - Model AgentPool has a new parameter gateway_profile
+  - Model AgentPool has a new parameter pod_ip_allocation_mode
+  - Model AgentPool has a new parameter status
+  - Model AgentPool has a new parameter virtual_machine_nodes_status
+  - Model AgentPool has a new parameter virtual_machines_profile
+  - Model ContainerServiceNetworkProfile has a new parameter static_egress_gateway_profile
+  - Model Machine has a new parameter zones
+  - Model ManagedCluster has a new parameter status
+  - Model ManagedClusterAgentPoolProfile has a new parameter gateway_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter pod_ip_allocation_mode
+  - Model ManagedClusterAgentPoolProfile has a new parameter status
+  - Model ManagedClusterAgentPoolProfile has a new parameter virtual_machine_nodes_status
+  - Model ManagedClusterAgentPoolProfile has a new parameter virtual_machines_profile
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter gateway_profile
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter pod_ip_allocation_mode
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter status
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter virtual_machine_nodes_status
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter virtual_machines_profile
+  - Model ManagedClusterNodeProvisioningProfile has a new parameter default_node_pools
+
+### Breaking Changes
+
+  - Model ScaleProfile no longer has parameter autoscale
+  - Removed operation group NamespacesOperations
+
 ## 36.0.0 (2025-05-15)
 
 ### Features Added

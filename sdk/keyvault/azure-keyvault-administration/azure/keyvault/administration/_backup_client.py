@@ -14,7 +14,7 @@ from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated.models import PreBackupOperationParameters, PreRestoreOperationParameters, SASTokenParameter
-from ._models import KeyVaultBackupOperation, KeyVaultBackupResult, KeyVaultRestoreOperation
+from ._models import KeyVaultBackupResult
 from ._internal import KeyVaultClientBase, parse_folder_url
 from ._internal.polling import KeyVaultBackupClientPolling, KeyVaultBackupClientPollingMethod
 
@@ -250,7 +250,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         use_managed_identity: Literal[True],
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> LROPoller[KeyVaultBackupOperation]:
+    ) -> LROPoller[None]:
         ...
 
     @overload
@@ -261,19 +261,17 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         sas_token: str,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> LROPoller[KeyVaultBackupOperation]:
+    ) -> LROPoller[None]:
         ...
 
     @distributed_trace
     def begin_pre_backup(  # pylint: disable=docstring-keyword-should-match-keyword-only
         self, blob_storage_url: str, **kwargs: Any
-    ) -> LROPoller[KeyVaultBackupOperation]:
+    ) -> LROPoller[None]:
         """Initiates a pre-backup check of whether a full Key Vault backup can be performed.
 
-        A :class:`KeyVaultBackupOperation` instance will be returned by the poller's `result()` method. If the
-        pre-backup check is successful, the object will have a string `folder_url` attribute, pointing to the blob
-        storage container where the backup will be stored. If the check fails, the object will have a string `error`
-        attribute.
+        If the pre-backup check fails, calling `wait()` on the returned poller will raise an error. Otherwise, a full
+        backup can be performed.
 
         :param str blob_storage_url: URL of the blob storage container in which the backup will be stored, for example
             https://<account>.blob.core.windows.net/backup.
@@ -286,11 +284,9 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         :paramtype use_managed_identity: bool
         :keyword str continuation_token: A continuation token to restart polling from a saved state.
 
-        :returns: An :class:`~azure.core.polling.LROPoller` instance. Call `result()` on this object to wait for the
-            operation to complete and get a :class:`KeyVaultBackupOperation`. If the pre-backup check is successful, the
-            object will have a string `folder_url` attribute, pointing to the blob storage container where the backup
-            will be stored. If the check fails, the object will have a string `error` attribute.
-        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration.KeyVaultBackupOperation]
+        :returns: An :class:`~azure.core.polling.LROPoller` instance. Call `wait()` on this object to wait for the
+            operation to complete. If the check fails, an error will be raised.
+        :rtype: ~azure.core.polling.LROPoller[None]
         """
         polling_interval: int = kwargs.pop("_polling_interval", 5)
         continuation_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -306,7 +302,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
 
         return self._client.begin_pre_full_backup(
             pre_backup_operation_parameters=parameters,
-            cls=KeyVaultBackupOperation._from_generated,  # pylint: disable=protected-access
+            cls=lambda *_: None,  # poller.result() returns None
             polling=KeyVaultBackupClientPollingMethod(
                 lro_algorithms=[KeyVaultBackupClientPolling()], timeout=polling_interval, **kwargs
             ),
@@ -322,7 +318,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         use_managed_identity: Literal[True],
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> LROPoller[KeyVaultRestoreOperation]:
+    ) -> LROPoller[None]:
         ...
 
     @overload
@@ -333,17 +329,17 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         sas_token: str,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> LROPoller[KeyVaultRestoreOperation]:
+    ) -> LROPoller[None]:
         ...
 
     @distributed_trace
     def begin_pre_restore(  # pylint: disable=docstring-keyword-should-match-keyword-only
         self, folder_url: str, **kwargs: Any
-    ) -> LROPoller[KeyVaultRestoreOperation]:
+    ) -> LROPoller[None]:
         """Initiates a pre-restore check of whether a full Key Vault restore can be performed.
 
-        A :class:`KeyVaultRestoreOperation` instance will be returned by the poller's `result()` method. If the
-        pre-restore check fails, the object will have a string `error` attribute.
+        If the pre-restore check fails, calling `wait()` on the returned poller will raise an error. Otherwise, a full
+        restore can be performed.
 
         :param str folder_url: URL of the blob holding the backup. This would be the `folder_url` of a
             :class:`KeyVaultBackupResult` returned by :func:`begin_backup`, for example
@@ -357,10 +353,9 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         :paramtype use_managed_identity: bool
         :keyword str continuation_token: A continuation token to restart polling from a saved state.
 
-        :returns: An :class:`~azure.core.polling.LROPoller` instance. Call `result()` on this object to wait for the
-            operation to complete and get a :class:`KeyVaultRestoreOperation`. If the pre-restore check fails, the
-            object will have a string `error` attribute.
-        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration.KeyVaultRestoreOperation]
+        :returns: An :class:`~azure.core.polling.LROPoller` instance. Call `wait()` on this object to wait for the
+            operation to complete. If the check fails, an error will be raised.
+        :rtype: ~azure.core.polling.LROPoller[None]
         """
         polling_interval: int = kwargs.pop("_polling_interval", 5)
         continuation_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -380,7 +375,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
 
         return self._client.begin_pre_full_restore_operation(
             pre_restore_operation_parameters=parameters,
-            cls=KeyVaultRestoreOperation._from_generated,  # pylint: disable=protected-access
+            cls=lambda *_: None,  # poller.result() returns None
             polling=KeyVaultBackupClientPollingMethod(
                 lro_algorithms=[KeyVaultBackupClientPolling()], timeout=polling_interval, **kwargs
             ),

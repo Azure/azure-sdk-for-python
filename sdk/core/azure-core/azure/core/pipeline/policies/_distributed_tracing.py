@@ -101,6 +101,11 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
         self._instrumentation_config = instrumentation_config
 
     def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
+        """Starts a span for the network call.
+
+        :param request: The PipelineRequest object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        """
         ctxt = request.context.options
         try:
             tracing_options: TracingOptions = ctxt.pop("tracing_options", {})
@@ -161,8 +166,8 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
                 token = tracer._suppress_auto_http_instrumentation()  # pylint: disable=protected-access
                 request.context[self._SUPPRESSION_TOKEN] = token
 
-        except Exception as err:  # pylint: disable=broad-except
-            _LOGGER.warning("Unable to start network span: %s", err)
+        except Exception:  # pylint: disable=broad-except
+            _LOGGER.warning("Unable to start network span.")
 
     def end_span(
         self,
@@ -234,9 +239,21 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
         request: PipelineRequest[HTTPRequestType],
         response: PipelineResponse[HTTPRequestType, HTTPResponseType],
     ) -> None:
+        """Ends the span for the network call and updates its status.
+
+        :param request: The PipelineRequest object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :param response: The PipelineResponse object
+        :type response: ~azure.core.pipeline.PipelineResponse
+        """
         self.end_span(request, response=response.http_response)
 
     def on_exception(self, request: PipelineRequest[HTTPRequestType]) -> None:
+        """Ends the span for the network call and updates its status with exception info.
+
+        :param request: The PipelineRequest object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        """
         self.end_span(request, exc_info=sys.exc_info())
 
     def _set_http_client_span_attributes(

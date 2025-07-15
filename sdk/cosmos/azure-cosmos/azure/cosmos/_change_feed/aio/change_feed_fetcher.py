@@ -145,9 +145,11 @@ class ChangeFeedFetcherV2(object):
         except CosmosHttpResponseError as e:
             if exceptions._partition_range_is_gone(e) or exceptions._is_partition_split_or_merge(e):
                 # refresh change feed state
-                await self._change_feed_state.handle_feed_range_gone_async(
-                    self._client._routing_map_provider,
-                    self._resource_link)
+                options = None
+                if "excludedLocations" in self._feed_options:
+                    options = {'excludedLocations': self._feed_options["excludedLocations"]}
+                await self._change_feed_state.handle_feed_range_gone_async(self._client._routing_map_provider,
+                    self._resource_link, options)
             else:
                 raise e
 

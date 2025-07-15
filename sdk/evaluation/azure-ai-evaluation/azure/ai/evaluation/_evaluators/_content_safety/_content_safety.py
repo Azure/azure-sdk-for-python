@@ -22,9 +22,9 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
 
     :param credential: The credential for connecting to Azure AI project. Required
     :type credential: ~azure.core.credentials.TokenCredential
-    :param azure_ai_project: The scope of the Azure AI project.
-        It contains subscription id, resource group, and project name.
-    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
+    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name.
+    :type azure_ai_project: Union[str, ~azure.ai.evaluation.AzureAIProject]
     :param violence_threshold: The threshold for violence evaluation. Default is 3.
     :type violence_threshold: int
     :param sexual_threshold: The threshold for sexual content evaluation. Default is 3.
@@ -33,6 +33,8 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
     :type self_harm_threshold: int
     :param hate_unfairness_threshold: The threshold for hate/unfairness evaluation. Default is 3.
     :type hate_unfairness_threshold: int
+    :param _evaluate_query: Whether to also evaluate the query in addition to the response. Default is False.
+    :type _evaluate_query: bool
     :param kwargs: Additional arguments to pass to the evaluator.
     :type kwargs: Any
     :return: A function that evaluates content-safety metrics for "question-answering" scenario.
@@ -45,19 +47,19 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
             :language: python
             :dedent: 8
             :caption: Initialize and call ContentSafetyEvaluator using azure.ai.evaluation.AzureAIProject.
-    
+
     .. admonition:: Example using Azure AI Project URL:
-    
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
             :start-after: [START content_safety_evaluator]
             :end-before: [END content_safety_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call ContentSafetyEvaluator using Azure AI Project URL in the following format 
+            :caption: Initialize and call ContentSafetyEvaluator using Azure AI Project URL in the following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}.
-    
+
     .. admonition:: Example with Threshold:
-    
+
         .. literalinclude:: ../samples/evaluation_samples_threshold.py
             :start-after: [START threshold_content_safety_evaluator]
             :end-before: [END threshold_content_safety_evaluator]
@@ -68,17 +70,19 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
 
     id = "content_safety"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+    _OPTIONAL_PARAMS = ["query"]
 
     def __init__(
-        self, 
-        credential, 
+        self,
+        credential,
         azure_ai_project,
-        *, 
+        *,
         violence_threshold: int = 3,
         sexual_threshold: int = 3,
         self_harm_threshold: int = 3,
         hate_unfairness_threshold: int = 3,
-        **kwargs
+        _evaluate_query: bool = False,
+        **kwargs,
     ):
         # Type checking
         for name, value in [
@@ -89,12 +93,18 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
         ]:
             if not isinstance(value, int):
                 raise TypeError(f"{name} must be an int, got {type(value)}")
-        
+
         evaluators = [
-            ViolenceEvaluator(credential, azure_ai_project, threshold=violence_threshold),
-            SexualEvaluator(credential, azure_ai_project, threshold=sexual_threshold),
-            SelfHarmEvaluator(credential, azure_ai_project, threshold=self_harm_threshold),
-            HateUnfairnessEvaluator(credential, azure_ai_project, threshold=hate_unfairness_threshold),
+            ViolenceEvaluator(
+                credential, azure_ai_project, threshold=violence_threshold, _evaluate_query=_evaluate_query
+            ),
+            SexualEvaluator(credential, azure_ai_project, threshold=sexual_threshold, _evaluate_query=_evaluate_query),
+            SelfHarmEvaluator(
+                credential, azure_ai_project, threshold=self_harm_threshold, _evaluate_query=_evaluate_query
+            ),
+            HateUnfairnessEvaluator(
+                credential, azure_ai_project, threshold=hate_unfairness_threshold, _evaluate_query=_evaluate_query
+            ),
         ]
         super().__init__(evaluators=evaluators, **kwargs)
 
