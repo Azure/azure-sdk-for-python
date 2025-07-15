@@ -58,6 +58,7 @@ from .. import documents
 from .._change_feed.aio.change_feed_iterable import ChangeFeedIterable
 from .._change_feed.change_feed_state import ChangeFeedState
 from .._query_builder import _QueryBuilder
+from .._read_many_items_helper import ReadManyItemsHelper
 from .._routing import routing_range
 from ..documents import ConnectionPolicy, DatabaseAccount
 from .._constants import _Constants as Constants
@@ -2250,89 +2251,26 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if not partition_key_definition:
             raise ValueError("Could not find partition key definition for collection.")
 
-        # Get collection resource ID
-        collection_rid = base.GetResourceIdOrFullNameFromLink(collection_link)
-        # Create partition key object from definition
-        partition_key = _get_partition_key_from_partition_key_definition(partition_key_definition)
-        # Dictionary to group items by partition key range ID
-        items_by_partition: Dict[str, List[Tuple[str, PartitionKeyType]]] = {}
-
-        # Process each item and group by physical partition
-        for item_id, partition_key_value in items:
-            try:
-                # Get the EPK range for the given partition key value
-                epk_range = partition_key._get_epk_range_for_partition_key(partition_key_value)
-
-                # Get overlapping ranges for this EPK range
-                overlapping_ranges = await self._routing_map_provider.get_overlapping_ranges(
-                    collection_rid,
-                    [epk_range]
-                )
-
-                # Use the first overlapping range (there should be exactly one for a point lookup)
-                if overlapping_ranges:
-                    range_id = overlapping_ranges[0]["id"]
-
-                    # Group items by the partition key range ID
-                    if range_id not in items_by_partition:
-                        items_by_partition[range_id] = []
-                    items_by_partition[range_id].append((item_id, partition_key_value))
-
-
-            except Exception as e:
-                # Log the error but skip the item
-                logger.warning(f"Failed to process item {item_id}:{partition_key_value} - {e}")
-                continue  # Skip this item entirely
+        # Use helper to group items by partition range
+        helper = ReadManyItemsHelper(self)
+        items_by_partition = await helper.partition_items_by_range(
+            items,
+            collection_link,
+            partition_key_definition
+        )
 
         # Create query chunks for concurrency control
-        query_chunks = []
-        for partition_id, partition_items in items_by_partition.items():
-            # Split large partitions into chunks of max_items_per_query
-            for i in range(0, len(partition_items), max_items_per_query):
-                chunk = partition_items[i:i + max_items_per_query]
-                query_chunks.append({partition_id: chunk})
+        query_chunks = helper.create_query_chunks(items_by_partition, max_items_per_query)
 
-        # Create semaphore for internal concurrency control
-        semaphore = asyncio.Semaphore(max_concurrency)
-
-        async def execute_chunk_query(chunk_items):
-            async with semaphore:  # Acquire slot, auto-released on exit
-                # Get all items from this chunk
-                chunk_partition_items = list(chunk_items.values())[0]
-
-                # Use _can_use_id_in_query to determine which query building approach to use
-                if _QueryBuilder._can_optimize_with_id_in_clause(chunk_partition_items, partition_key_definition):
-                    query_obj = _QueryBuilder._build_id_in_query(chunk_partition_items)
-                else:
-                    query_obj = _QueryBuilder._build_parameterized_query_for_items({list(chunk_items.keys())[0]: chunk_partition_items},
-                                                            partition_key_definition)
-
-                # Execute query using existing QueryItems method
-                query_results = self.QueryItems(collection_link, query_obj, options, **kwargs)
-
-                individual_chunk_results = []
-                last_headers = CaseInsensitiveDict()
-
-                async for item in query_results:
-                    individual_chunk_results.append(item)
-                    # Get headers from the last response if available
-                    if hasattr(self, 'last_response_headers'):
-                        last_headers.update(self.last_response_headers)
-
-                return individual_chunk_results, last_headers
-
-        # Execute all chunks concurrently
-        chunk_tasks = [execute_chunk_query(chunk) for chunk in query_chunks]
-        chunk_results = await asyncio.gather(*chunk_tasks)
-
-        # Aggregate results
-        all_results = []
-        combined_headers = CaseInsensitiveDict()
-
-        for chunk_result, chunk_headers in chunk_results:
-            all_results.extend(chunk_result)
-            combined_headers.update(chunk_headers)
-
+        # Execute queries concurrently and aggregate results
+        all_results, combined_headers = await helper.execute_queries_concurrently(
+            query_chunks,
+            collection_link,
+            partition_key_definition,
+            options,
+            max_concurrency,
+            **kwargs
+        )
 
         return CosmosList(all_results, response_headers=combined_headers)
 
