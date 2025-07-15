@@ -117,7 +117,7 @@ def _default_logging_formatter(configurations):
     if formatter:
         if not isinstance(formatter, Formatter):
             configurations[LOGGING_FORMATTER_ARG] = None
-        return
+            return
     elif LOGGING_FORMAT_ENV_ARG in environ:
         try:
             configurations[LOGGING_FORMATTER_ARG] = Formatter(environ[LOGGING_FORMAT_ENV_ARG])

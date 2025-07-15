@@ -5,7 +5,7 @@
 ### Features Added
 
 - Add configuring of logging format and logger name via environment variables
-    ([#40988](https://github.com/Azure/azure-sdk-for-python/pull/40988))
+    ([#42035](https://github.com/Azure/azure-sdk-for-python/pull/42035))
 
 ### Breaking Changes
 
