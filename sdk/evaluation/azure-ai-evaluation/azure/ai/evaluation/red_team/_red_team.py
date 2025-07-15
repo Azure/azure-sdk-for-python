@@ -292,6 +292,7 @@ class RedTeam:
         self.failed_tasks = 0
         self.start_time = None
         self.scan_id = None
+        self.scan_session_id = None
         self.scan_output_dir = None
 
         self.generated_rai_client = GeneratedRAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager.credential)  # type: ignore
@@ -342,7 +343,7 @@ class RedTeam:
         if self._one_dp_project:
             response = self.generated_rai_client._evaluation_onedp_client.start_red_team_run(
                 red_team=RedTeamUpload(
-                    scan_name=run_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
+                    display_name=run_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
                 )
             )
 
@@ -476,16 +477,6 @@ class RedTeam:
                     if _skip_evals:
                         f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
                     elif redteam_result.scan_result:
-                        redteam_result.scan_result["redteaming_scorecard"] = redteam_result.scan_result.get(
-                            "scorecard", None
-                        )
-                        redteam_result.scan_result["redteaming_parameters"] = redteam_result.scan_result.get(
-                            "parameters", None
-                        )
-                        redteam_result.scan_result["redteaming_data"] = redteam_result.scan_result.get(
-                            "attack_details", None
-                        )
-
                         json.dump(redteam_result.scan_result, f)
 
                 # Copy all relevant files to the temp directory
@@ -498,6 +489,8 @@ class RedTeam:
                     if os.path.isdir(file_path):
                         continue
                     if file.endswith(".log") and not os.environ.get("DEBUG"):
+                        continue
+                    if file.endswith(".gitignore"):
                         continue
                     if file == artifact_name:
                         continue
@@ -561,7 +554,8 @@ class RedTeam:
                         name=eval_run.id,
                         red_team=RedTeamUpload(
                             id=eval_run.id,
-                            scan_name=eval_run.scan_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
+                            display_name=eval_run.display_name
+                            or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
                             status="Completed",
                             outputs={
                                 "evaluationResultId": create_evaluation_result_response.id,
@@ -741,7 +735,7 @@ class RedTeam:
 
         else:
             content_harm_risk = None
-            other_risk = None
+            other_risk = ""
             if risk_cat_value in ["hate_unfairness", "violence", "self_harm", "sexual"]:
                 content_harm_risk = risk_cat_value
             else:
@@ -759,6 +753,7 @@ class RedTeam:
                         risk_category=other_risk,
                         application_scenario=application_scenario or "",
                         strategy="tense",
+                        scan_session_id=self.scan_session_id,
                     )
                 else:
                     objectives_response = await self.generated_rai_client.get_attack_objectives(
@@ -766,6 +761,7 @@ class RedTeam:
                         risk_category=other_risk,
                         application_scenario=application_scenario or "",
                         strategy=None,
+                        scan_session_id=self.scan_session_id,
                     )
                 if isinstance(objectives_response, list):
                     self.logger.debug(f"API returned {len(objectives_response)} objectives")
@@ -775,7 +771,9 @@ class RedTeam:
                 # Handle jailbreak strategy - need to apply jailbreak prefixes to messages
                 if strategy == "jailbreak":
                     self.logger.debug("Applying jailbreak prefixes to objectives")
-                    jailbreak_prefixes = await self.generated_rai_client.get_jailbreak_prefixes()
+                    jailbreak_prefixes = await self.generated_rai_client.get_jailbreak_prefixes(
+                        scan_session_id=self.scan_session_id
+                    )
                     for objective in objectives_response:
                         if "messages" in objective and len(objective["messages"]) > 0:
                             message = objective["messages"][0]
@@ -1278,6 +1276,19 @@ class RedTeam:
         else:
             self.logger.debug("No converters specified")
 
+        # Initialize output path for memory labelling
+        base_path = str(uuid.uuid4())
+
+        # If scan output directory exists, place the file there
+        if hasattr(self, "scan_output_dir") and self.scan_output_dir:
+            # Ensure the directory exists
+            os.makedirs(self.scan_output_dir, exist_ok=True)
+            output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
+        else:
+            output_path = f"{base_path}{DATA_EXT}"
+
+        self.red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
+
         for prompt_idx, prompt in enumerate(all_prompts):
             prompt_start_time = datetime.now()
             self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}")
@@ -1316,17 +1327,6 @@ class RedTeam:
                 # Debug log the first few characters of the current prompt
                 self.logger.debug(f"Current prompt (truncated): {prompt[:50]}...")
 
-                # Initialize output path for memory labelling
-                base_path = str(uuid.uuid4())
-
-                # If scan output directory exists, place the file there
-                if hasattr(self, "scan_output_dir") and self.scan_output_dir:
-                    output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
-                else:
-                    output_path = f"{base_path}{DATA_EXT}"
-
-                self.red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
-
                 try:  # Create retry decorator for this specific call with enhanced retry strategy
 
                     @retry(**self._create_retry_config()["network_retry"])
@@ -1363,6 +1363,12 @@ class RedTeam:
                     self.logger.debug(
                         f"Successfully processed prompt {prompt_idx+1} for {strategy_name}/{risk_category_name} in {prompt_duration:.2f} seconds"
                     )
+                    self._write_pyrit_outputs_to_file(
+                        orchestrator=orchestrator,
+                        strategy_name=strategy_name,
+                        risk_category=risk_category_name,
+                        batch_idx=prompt_idx + 1,
+                    )
 
                     # Print progress to console
                     if prompt_idx < len(all_prompts) - 1:  # Don't print for the last prompt
@@ -1387,7 +1393,7 @@ class RedTeam:
                         orchestrator=orchestrator,
                         strategy_name=strategy_name,
                         risk_category=risk_category_name,
-                        batch_idx=1,
+                        batch_idx=prompt_idx + 1,
                     )
                     # Continue with partial results rather than failing completely
                     continue
@@ -1406,7 +1412,7 @@ class RedTeam:
                         orchestrator=orchestrator,
                         strategy_name=strategy_name,
                         risk_category=risk_category_name,
-                        batch_idx=1,
+                        batch_idx=prompt_idx + 1,
                     )
                     # Continue with other batches even if one fails
                     continue
@@ -2350,6 +2356,7 @@ class RedTeam:
                             project_scope=self.azure_ai_project,
                             credential=self.credential,
                             annotation_task=annotation_task,
+                            scan_session_id=self.scan_session_id,
                         )
                     except (
                         httpx.ConnectTimeout,
@@ -2692,7 +2699,7 @@ class RedTeam:
         application_scenario: Optional[str] = None,
         parallel_execution: bool = True,
         max_parallel_tasks: int = 5,
-        timeout: int = 120,
+        timeout: int = 3600,
         skip_evals: bool = False,
         **kwargs: Any,
     ) -> RedTeamResult:
@@ -2737,12 +2744,19 @@ class RedTeam:
         )
         self.scan_id = self.scan_id.replace(" ", "_")
 
+        self.scan_session_id = str(uuid.uuid4())  # Unique session ID for this scan
+
         # Create output directory for this scan
         # If DEBUG environment variable is set, use a regular folder name; otherwise, use a hidden folder
         is_debug = os.environ.get("DEBUG", "").lower() in ("true", "1", "yes", "y")
         folder_prefix = "" if is_debug else "."
         self.scan_output_dir = os.path.join(self.output_dir or ".", f"{folder_prefix}{self.scan_id}")
         os.makedirs(self.scan_output_dir, exist_ok=True)
+
+        if not is_debug:
+            gitignore_path = os.path.join(self.scan_output_dir, ".gitignore")
+            with open(gitignore_path, "w", encoding="utf-8") as f:
+                f.write("*\n")
 
         # Re-initialize logger with the scan output directory
         self.logger = setup_logger(output_dir=self.scan_output_dir)

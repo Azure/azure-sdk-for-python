@@ -187,6 +187,18 @@ class TestServiceRetryPolicies(unittest.TestCase):
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
 
+        # Now we try it out with a write request with retry write enabled - which should retry once
+        try:
+            # Reset the function to reset the counter
+            mf = self.MockExecuteServiceResponseException(Exception)
+            _retry_utility.ExecuteFunction = mf
+            container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())}, retry_write=True)
+            pytest.fail("Exception was not raised.")
+        except ServiceResponseError:
+            assert mf.counter == 2
+        finally:
+            _retry_utility.ExecuteFunction = self.original_execute_function
+
     def test_service_request_connection_retry_policy(self):
         # Mock the client retry policy to see the same-region retries that happen there
         exception = ServiceRequestError("mock exception")

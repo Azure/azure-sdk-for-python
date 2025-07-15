@@ -7,16 +7,15 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING, Union
+from typing import Any, TYPE_CHECKING
 from typing_extensions import Self
 
 from azure.core import PipelineClient
-from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import AIProjectClientConfiguration
-from ._serialization import Deserializer, Serializer
+from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     ConnectionsOperations,
     DatasetsOperations,
@@ -25,7 +24,6 @@ from .operations import (
     EvaluationsOperations,
     IndexesOperations,
     RedTeamsOperations,
-    ServicePatternsOperations,
 )
 
 if TYPE_CHECKING:
@@ -35,8 +33,6 @@ if TYPE_CHECKING:
 class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
 
-    :ivar service_patterns: ServicePatternsOperations operations
-    :vartype service_patterns: azure.ai.projects.onedp.operations.ServicePatternsOperations
     :ivar connections: ConnectionsOperations operations
     :vartype connections: azure.ai.projects.onedp.operations.ConnectionsOperations
     :ivar evaluations: EvaluationsOperations operations
@@ -51,22 +47,26 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     :vartype red_teams: azure.ai.projects.onedp.operations.RedTeamsOperations
     :ivar evaluation_results: EvaluationResultsOperations operations
     :vartype evaluation_results: azure.ai.projects.onedp.operations.EvaluationResultsOperations
-    :param endpoint: Project endpoint in the form of:
-     https://<aiservices-id>.services.ai.azure.com/api/projects/<project-name>. Required.
+    :param endpoint: Project endpoint. In the form
+     "https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/_project"
+     if your Foundry Hub has only one Project, or to use the default Project in your Hub. Or in the
+     form
+     "https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>"
+     if you want to explicitly
+     specify the Foundry Project name. Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a key
-     credential type or a token credential type. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials.TokenCredential
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2025-05-15-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
         self._config = AIProjectClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -89,9 +89,6 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.service_patterns = ServicePatternsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.evaluations = EvaluationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
