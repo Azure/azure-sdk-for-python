@@ -287,6 +287,53 @@ class TestSafetyEvaluation:
         call_args, call_kwargs = mock_call.call_args
         assert call_kwargs.get("randomization_seed") == seed_value
 
+    @pytest.mark.asyncio
+    @patch("azure.ai.evaluation.simulator.IndirectAttackSimulator.__init__", return_value=None)
+    @patch("azure.ai.evaluation.simulator.IndirectAttackSimulator.__call__", new_callable=AsyncMock)
+    @patch("pathlib.Path.open", new_callable=MagicMock)
+    async def test_simulate_passes_randomization_seed_to_indirect_attack(self, mock_open, mock_call, mock_init, safety_eval, mock_target):
+        """Tests if randomization_seed is passed correctly to IndirectAttackSimulator."""
+        mock_file = MagicMock()
+        mock_open.return_value.__enter__.return_value = mock_file
+        mock_call.return_value = JsonLineList([{"messages": []}])
+        seed_value = 123
+
+        await safety_eval._simulate(
+            target=mock_target, 
+            adversarial_scenario=AdversarialScenarioJailbreak.ADVERSARIAL_INDIRECT_JAILBREAK, 
+            randomization_seed=seed_value
+        )
+
+        # Check if the IndirectAttackSimulator was called with the correct randomization_seed
+        mock_call.assert_called_once()
+        call_args, call_kwargs = mock_call.call_args
+        assert call_kwargs.get("randomization_seed") == seed_value
+
+    @pytest.mark.asyncio
+    @patch("azure.ai.evaluation.simulator.Simulator.__init__", return_value=None)
+    @patch("azure.ai.evaluation.simulator.Simulator.__call__", new_callable=AsyncMock)
+    @patch("pathlib.Path.open", new_callable=MagicMock)
+    async def test_simulate_passes_randomization_seed_to_simulator(self, mock_open, mock_call, mock_init, safety_eval, mock_target):
+        """Tests if randomization_seed is passed correctly to regular Simulator."""
+        mock_file = MagicMock()
+        mock_open.return_value.__enter__.return_value = mock_file
+        mock_call.return_value = [JsonLineChatProtocol({"messages": []})]
+        seed_value = 456
+
+        # Create a safety evaluation with model config to trigger regular Simulator
+        safety_eval.model_config = {"azure_deployment": "test", "azure_endpoint": "https://test.com", "type": "azure_openai"}
+
+        await safety_eval._simulate(
+            target=mock_target, 
+            adversarial_scenario=None,  # This will trigger regular Simulator
+            randomization_seed=seed_value
+        )
+
+        # Check if the Simulator was called with the correct randomization_seed
+        mock_call.assert_called_once()
+        call_args, call_kwargs = mock_call.call_args
+        assert call_kwargs.get("randomization_seed") == seed_value
+
     def test_is_async_function(self, safety_eval, mock_target, mock_async_target):
         # Test that sync function returns False
         assert not safety_eval._is_async_function(mock_target)

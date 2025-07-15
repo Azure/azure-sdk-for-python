@@ -7,6 +7,7 @@ import asyncio
 import importlib.resources as pkg_resources
 import json
 import os
+import random
 import re
 import warnings
 from typing import Any, Callable, Dict, List, Optional, Union, Tuple
@@ -104,6 +105,7 @@ class Simulator:
         user_simulator_prompty_options: Dict[str, Any] = {},
         conversation_turns: List[List[Union[str, Dict[str, Any]]]] = [],
         concurrent_async_tasks: int = 5,
+        randomization_seed: Optional[int] = None,
         **kwargs,
     ) -> List[JsonLineChatProtocol]:
         """
@@ -134,6 +136,9 @@ class Simulator:
         :keyword concurrent_async_tasks: The number of asynchronous tasks to run concurrently during the simulation.
             Defaults to 5.
         :paramtype concurrent_async_tasks: int
+        :keyword randomization_seed: The seed used to randomize prompt selection. If unset, the system's
+            default seed is used. Defaults to None.
+        :paramtype randomization_seed: Optional[int]
         :return: A list of simulated conversations represented as JsonLineChatProtocol objects.
         :rtype: List[JsonLineChatProtocol]
 
@@ -147,6 +152,16 @@ class Simulator:
         """
         if conversation_turns and (text or tasks):
             raise ValueError("Cannot specify both conversation_turns and text/tasks")
+
+        # Apply randomization if seed is provided
+        if randomization_seed is not None:
+            random.seed(randomization_seed)
+            if tasks:
+                tasks = tasks.copy()  # Don't modify the original list
+                random.shuffle(tasks)
+            if conversation_turns:
+                conversation_turns = conversation_turns.copy()  # Don't modify the original list
+                random.shuffle(conversation_turns)
 
         if text and num_queries > len(tasks):
             warnings.warn(

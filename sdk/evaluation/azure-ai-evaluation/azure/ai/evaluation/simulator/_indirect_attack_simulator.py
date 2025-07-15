@@ -5,7 +5,8 @@
 # noqa: E501
 import asyncio
 import logging
-from typing import Callable, cast, Union
+import random
+from typing import Callable, cast, Union, Optional
 
 from tqdm import tqdm
 
@@ -105,6 +106,7 @@ class IndirectAttackSimulator(AdversarialSimulator):
         api_call_retry_sleep_sec: int = 1,
         api_call_delay_sec: int = 0,
         concurrent_async_task: int = 3,
+        randomization_seed: Optional[int] = None,
         **kwargs,
     ):
         """
@@ -130,6 +132,9 @@ class IndirectAttackSimulator(AdversarialSimulator):
         :keyword concurrent_async_task: The number of asynchronous tasks to run concurrently during the simulation.
             Defaults to 3.
         :paramtype concurrent_async_task: int
+        :keyword randomization_seed: The seed used to randomize prompt selection. If unset, the system's
+            default seed is used. Defaults to None.
+        :paramtype randomization_seed: Optional[int]
         :return: A list of dictionaries, each representing a simulated conversation. Each dictionary contains:
 
          - 'template_parameters': A dictionary with parameters used in the conversation template,
@@ -190,28 +195,39 @@ class IndirectAttackSimulator(AdversarialSimulator):
             ncols=100,
             unit="simulations",
         )
+        
+        # Collect all template-parameter pairs for potential randomization
+        template_parameter_pairs = []
         for template in templates:
             for parameter in template.template_parameters:
-                tasks.append(
-                    asyncio.create_task(
-                        self._simulate_async(
-                            target=target,
-                            template=template,
-                            parameters=parameter,
-                            max_conversation_turns=max_conversation_turns,
-                            api_call_retry_limit=api_call_retry_limit,
-                            api_call_retry_sleep_sec=api_call_retry_sleep_sec,
-                            api_call_delay_sec=api_call_delay_sec,
-                            language=language,
-                            semaphore=semaphore,
-                            scenario=scenario,
-                        )
+                template_parameter_pairs.append((template, parameter))
+        
+        # Randomize order if randomization_seed is provided
+        if randomization_seed is not None:
+            random.seed(randomization_seed)
+            random.shuffle(template_parameter_pairs)
+        
+        # Limit to max_simulation_results
+        template_parameter_pairs = template_parameter_pairs[:max_simulation_results]
+        
+        for template, parameter in template_parameter_pairs:
+            tasks.append(
+                asyncio.create_task(
+                    self._simulate_async(
+                        target=target,
+                        template=template,
+                        parameters=parameter,
+                        max_conversation_turns=max_conversation_turns,
+                        api_call_retry_limit=api_call_retry_limit,
+                        api_call_retry_sleep_sec=api_call_retry_sleep_sec,
+                        api_call_delay_sec=api_call_delay_sec,
+                        language=language,
+                        semaphore=semaphore,
+                        scenario=scenario,
                     )
                 )
-                if len(tasks) >= max_simulation_results:
-                    break
-            if len(tasks) >= max_simulation_results:
-                break
+            )
+        
         for task in asyncio.as_completed(tasks):
             completed_task = await task  # type: ignore
             template_parameters = completed_task.get("template_parameters", {})  # type: ignore
