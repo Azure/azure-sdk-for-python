@@ -533,7 +533,7 @@ def _check_instrumentation_span(span: ReadableSpan) -> None:
     # `azure-` or `azure.` is a prefix
     if span.instrumentation_scope.name.startswith("azure"):
         # spec-case for Azure AI SDKs - identified by `az.namespace` attribute
-        if (span.attributes.get(_AZURE_SDK_NAMESPACE_NAME) == "Microsoft.CognitiveServices"):
+        if (span.attributes and span.attributes.get(_AZURE_SDK_NAMESPACE_NAME) == "Microsoft.CognitiveServices"):
             _utils.add_instrumentation(_AZURE_AI_SDK_NAME)
         else:
             _utils.add_instrumentation(_AZURE_SDK_OPENTELEMETRY_NAME)
