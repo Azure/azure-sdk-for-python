@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+from typing import Any, List, MutableMapping, cast
 import uuid
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
@@ -90,8 +91,7 @@ try:
     service_client = DigitalTwinsClient(url, credential) # type: ignore
 
     # Create models
-    new_models = [temporary_component, temporary_model]
-    models = service_client.create_models(new_models)
+    models = service_client.create_models(cast(List[MutableMapping[str, Any]], [temporary_component, temporary_model]))
     print('Created Models:')
     print(models)
 

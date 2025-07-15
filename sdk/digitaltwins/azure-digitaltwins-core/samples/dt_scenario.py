@@ -4,7 +4,7 @@
 # ------------------------------------
 import os
 import uuid
-from typing import Any, Dict, List, cast
+from typing import Any, Dict, List, MutableMapping, cast
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 from azure.digitaltwins.core import DigitalTwinsClient, DigitalTwinsEventRoute
@@ -285,7 +285,7 @@ try:
     service_client = DigitalTwinsClient(url, credential) # type: ignore
 
     # Create models
-    models = service_client.create_models(cast(List[Dict[str, Any]], [building_model, floor_model, hvac_model, room_model, wifi_model]))
+    models = service_client.create_models(cast(List[MutableMapping[str, Any]], [building_model, floor_model, hvac_model, room_model, wifi_model]))
     print('Created Models:')
     print(models)
 
