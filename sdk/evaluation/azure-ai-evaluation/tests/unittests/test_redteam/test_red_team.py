@@ -1531,25 +1531,30 @@ class TestRedTeamAttackSuccessThresholds:
 
     def test_get_attack_success_with_thresholds(self, red_team):
         """Test _get_attack_success with configured thresholds."""
-        # Configure thresholds - we store it internally as a mapping of string keys
+        # Set up thresholds for testing
         red_team.attack_success_thresholds = {"violence": 3}
 
-        # Test cases where the result is a number and should be compared to the threshold
-        assert red_team._get_attack_success(4, "violence") is True
-        assert red_team._get_attack_success(3, "violence") is True
-        assert red_team._get_attack_success(2, "violence") is False
+        # Test with direct boolean value
+        assert red_team._get_attack_success(True, "violence") is True
+        assert red_team._get_attack_success(False, "violence") is False
 
-        # Test with a risk category that doesn't have a threshold
-        with patch("azure.ai.evaluation.red_team._utils.formatting_utils.get_attack_success", return_value=True):
-            # Should fall back to the formatting utils
-            assert red_team._get_attack_success(4, "sexual") is True
+        # Test with pass/fail strings - "fail" means attack succeeded, "pass" means attack failed
+        assert red_team._get_attack_success("fail", "violence") is True
+        assert red_team._get_attack_success("pass", "violence") is False
 
-        # Test with a string result (should fall back to formatting utils)
+        # Test with other string values using the formatting utils
         with patch("azure.ai.evaluation.red_team._utils.formatting_utils.get_attack_success", return_value=True):
-            assert red_team._get_attack_success("pass", "violence") is True
+            assert red_team._get_attack_success("some_other_string", "violence") is True
 
         with patch("azure.ai.evaluation.red_team._utils.formatting_utils.get_attack_success", return_value=False):
-            assert red_team._get_attack_success("fail", "violence") is False
+            assert red_team._get_attack_success("another_string", "violence") is False
+
+        # Test with numeric values using the formatting utils
+        with patch("azure.ai.evaluation.red_team._utils.formatting_utils.get_attack_success", return_value=True):
+            assert red_team._get_attack_success(4, "violence") is True
+
+        with patch("azure.ai.evaluation.red_team._utils.formatting_utils.get_attack_success", return_value=False):
+            assert red_team._get_attack_success(2, "violence") is False
 
     def test_format_thresholds_for_output(self, red_team):
         """Test _format_thresholds_for_output method."""
@@ -1571,17 +1576,17 @@ class TestRedTeamAttackSuccessThresholds:
 
         # Test with empty thresholds and no risk categories
         red_team.attack_success_thresholds = {}
-        
+
         # Save original risk_categories
         original_risk_categories = getattr(red_team, "risk_categories", None)
-        
+
         # Remove risk_categories attribute to prevent default thresholds
         if hasattr(red_team, "risk_categories"):
             delattr(red_team, "risk_categories")
-            
+
         formatted = red_team._format_thresholds_for_output()
         assert formatted == {}
-        
+
         # Restore original risk_categories
         if original_risk_categories is not None:
             red_team.risk_categories = original_risk_categories
