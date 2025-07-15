@@ -26,34 +26,65 @@ class AgeUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Time period of a day"""
 
 
-class AnalyzeTextLROResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The kind of the response object returned by the analyze-text long running task."""
+class AnalyzeTextErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Human-readable error code."""
 
-    SENTIMENT_ANALYSIS_LRO_RESULTS = "SentimentAnalysisLROResults"
-    """Sentiment analysis LRO results"""
-    ENTITY_RECOGNITION_LRO_RESULTS = "EntityRecognitionLROResults"
-    """Entity recognition LRO results"""
-    PII_ENTITY_RECOGNITION_LRO_RESULTS = "PiiEntityRecognitionLROResults"
-    """PII entity recognition LRO results"""
-    KEY_PHRASE_EXTRACTION_LRO_RESULTS = "KeyPhraseExtractionLROResults"
-    """Key phrase extraction LRO results"""
-    ENTITY_LINKING_LRO_RESULTS = "EntityLinkingLROResults"
-    """Entity linking LRO results"""
-    HEALTHCARE_LRO_RESULTS = "HealthcareLROResults"
-    """Healthcare LRO results"""
-    CUSTOM_ENTITY_RECOGNITION_LRO_RESULTS = "CustomEntityRecognitionLROResults"
-    """Custom entity recognition LRO results"""
-    CUSTOM_SINGLE_LABEL_CLASSIFICATION_LRO_RESULTS = "CustomSingleLabelClassificationLROResults"
-    """Custom single label classification LRO results"""
-    CUSTOM_MULTI_LABEL_CLASSIFICATION_LRO_RESULTS = "CustomMultiLabelClassificationLROResults"
-    """Custom multi label classification LRO results"""
-    EXTRACTIVE_SUMMARIZATION_LRO_RESULTS = "ExtractiveSummarizationLROResults"
-    """Extractive summarization LRO results"""
-    ABSTRACTIVE_SUMMARIZATION_LRO_RESULTS = "AbstractiveSummarizationLROResults"
-    """Abstractive summarization LRO results"""
+    INVALID_REQUEST = "InvalidRequest"
+    """Invalid request error"""
+    INVALID_ARGUMENT = "InvalidArgument"
+    """Invalid argument error"""
+    UNAUTHORIZED = "Unauthorized"
+    """Unauthorized access error"""
+    FORBIDDEN = "Forbidden"
+    """Forbidden access error"""
+    NOT_FOUND = "NotFound"
+    """Not found error"""
+    PROJECT_NOT_FOUND = "ProjectNotFound"
+    """Project not found error"""
+    OPERATION_NOT_FOUND = "OperationNotFound"
+    """Operation not found error"""
+    AZURE_COGNITIVE_SEARCH_NOT_FOUND = "AzureCognitiveSearchNotFound"
+    """Azure Cognitive Search not found error"""
+    AZURE_COGNITIVE_SEARCH_INDEX_NOT_FOUND = "AzureCognitiveSearchIndexNotFound"
+    """Azure Cognitive Search index not found error"""
+    TOO_MANY_REQUESTS = "TooManyRequests"
+    """Too many requests error"""
+    AZURE_COGNITIVE_SEARCH_THROTTLING = "AzureCognitiveSearchThrottling"
+    """Azure Cognitive Search throttling error"""
+    AZURE_COGNITIVE_SEARCH_INDEX_LIMIT_REACHED = "AzureCognitiveSearchIndexLimitReached"
+    """Azure Cognitive Search index limit reached error"""
+    INTERNAL_SERVER_ERROR = "InternalServerError"
+    """Internal server error"""
+    SERVICE_UNAVAILABLE = "ServiceUnavailable"
+    """Service unavailable error"""
+    TIMEOUT = "Timeout"
+    """Timeout error"""
+    QUOTA_EXCEEDED = "QuotaExceeded"
+    """Quota exceeded error"""
+    CONFLICT = "Conflict"
+    """Conflict error"""
+    WARNING = "Warning"
+    """Warning error"""
 
 
-class AnalyzeTextLROTaskKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class AnalyzeTextInputKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of the analyze-text tasks supported."""
+
+    SENTIMENT_ANALYSIS = "SentimentAnalysis"
+    """Sentiment analysis task"""
+    ENTITY_RECOGNITION = "EntityRecognition"
+    """Entity recognition task"""
+    PII_ENTITY_RECOGNITION = "PiiEntityRecognition"
+    """PII entity recognition task"""
+    KEY_PHRASE_EXTRACTION = "KeyPhraseExtraction"
+    """Key phrase extraction task"""
+    LANGUAGE_DETECTION = "LanguageDetection"
+    """Language detection task"""
+    ENTITY_LINKING = "EntityLinking"
+    """Entity linking task"""
+
+
+class AnalyzeTextOperationActionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of the long running analyze text tasks supported."""
 
     SENTIMENT_ANALYSIS = "SentimentAnalysis"
@@ -80,24 +111,34 @@ class AnalyzeTextLROTaskKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Abstractive summarization task"""
 
 
-class AnalyzeTextTaskKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The kind of the analyze-text tasks supported."""
+class AnalyzeTextOperationResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of the response object returned by the analyze-text long running task."""
 
-    SENTIMENT_ANALYSIS = "SentimentAnalysis"
-    """Sentiment analysis task"""
-    ENTITY_RECOGNITION = "EntityRecognition"
-    """Entity recognition task"""
-    PII_ENTITY_RECOGNITION = "PiiEntityRecognition"
-    """PII entity recognition task"""
-    KEY_PHRASE_EXTRACTION = "KeyPhraseExtraction"
-    """Key phrase extraction task"""
-    LANGUAGE_DETECTION = "LanguageDetection"
-    """Language detection task"""
-    ENTITY_LINKING = "EntityLinking"
-    """Entity linking task"""
+    SENTIMENT_ANALYSIS_OPERATION_RESULTS = "SentimentAnalysisLROResults"
+    """Sentiment analysis LRO results"""
+    ENTITY_RECOGNITION_OPERATION_RESULTS = "EntityRecognitionLROResults"
+    """Entity recognition LRO results"""
+    PII_ENTITY_RECOGNITION_OPERATION_RESULTS = "PiiEntityRecognitionLROResults"
+    """PII entity recognition LRO results"""
+    KEY_PHRASE_EXTRACTION_OPERATION_RESULTS = "KeyPhraseExtractionLROResults"
+    """Key phrase extraction LRO results"""
+    ENTITY_LINKING_OPERATION_RESULTS = "EntityLinkingLROResults"
+    """Entity linking LRO results"""
+    HEALTHCARE_OPERATION_RESULTS = "HealthcareLROResults"
+    """Healthcare LRO results"""
+    CUSTOM_ENTITY_RECOGNITION_OPERATION_RESULTS = "CustomEntityRecognitionLROResults"
+    """Custom entity recognition LRO results"""
+    CUSTOM_SINGLE_LABEL_CLASSIFICATION_OPERATION_RESULTS = "CustomSingleLabelClassificationLROResults"
+    """Custom single label classification LRO results"""
+    CUSTOM_MULTI_LABEL_CLASSIFICATION_OPERATION_RESULTS = "CustomMultiLabelClassificationLROResults"
+    """Custom multi label classification LRO results"""
+    EXTRACTIVE_SUMMARIZATION_OPERATION_RESULTS = "ExtractiveSummarizationLROResults"
+    """Extractive summarization LRO results"""
+    ABSTRACTIVE_SUMMARIZATION_OPERATION_RESULTS = "AbstractiveSummarizationLROResults"
+    """Abstractive summarization LRO results"""
 
 
-class AnalyzeTextTaskResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class AnalyzeTextResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of the response object returned by the analyze-text task."""
 
     SENTIMENT_ANALYSIS_RESULTS = "SentimentAnalysisResults"
@@ -145,40 +186,7 @@ class AreaUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Area unit in acres"""
 
 
-class Association(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Describes if the entity is the subject of the text or if it describes someone else."""
-
-    SUBJECT = "subject"
-    """Subject association"""
-    OTHER = "other"
-    """Other association"""
-
-
-class Certainty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Describes the entities certainty and polarity."""
-
-    POSITIVE = "positive"
-    """Positive certainty"""
-    POSITIVE_POSSIBLE = "positivePossible"
-    """Possibly positive certainty"""
-    NEUTRAL_POSSIBLE = "neutralPossible"
-    """Possibly neutral certainty"""
-    NEGATIVE_POSSIBLE = "negativePossible"
-    """Possibly negative certainty"""
-    NEGATIVE = "negative"
-    """Negative certainty"""
-
-
-class Conditionality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Describes any conditionality on the entity."""
-
-    HYPOTHETICAL = "hypothetical"
-    """Hypothetical conditionality"""
-    CONDITIONAL = "conditional"
-    """Conditional conditionality"""
-
-
-class DocumentSentimentValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class DocumentSentiment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Predicted sentiment for document (Negative, Neutral, Positive, or Mixed)."""
 
     POSITIVE = "positive"
@@ -258,7 +266,7 @@ class EntityCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Natural event-related values."""
     LOCATION = "Location"
     """Particular point or place in physical space."""
-    GPE = "GPE"
+    GEO_POLITICAL_ENTITY = "GPE"
     """Cities, countries/regions, states."""
     CITY = "City"
     """City-related values."""
@@ -292,9 +300,9 @@ class EntityCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Human roles classified by a group membership."""
     EMAIL = "Email"
     """Email addresses."""
-    URL = "URL"
+    URI = "URL"
     """URLs to websites."""
-    IP = "IP"
+    IP_ADDRESS = "IP"
     """network IP addresses."""
     PHONE_NUMBER = "PhoneNumber"
     """Phone numbers (US and EU phone numbers only)."""
@@ -304,47 +312,6 @@ class EntityCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Computing products."""
     SKILL = "Skill"
     """A capability, skill, or expertise."""
-
-
-class ErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Human-readable error code."""
-
-    INVALID_REQUEST = "InvalidRequest"
-    """Invalid request error"""
-    INVALID_ARGUMENT = "InvalidArgument"
-    """Invalid argument error"""
-    UNAUTHORIZED = "Unauthorized"
-    """Unauthorized access error"""
-    FORBIDDEN = "Forbidden"
-    """Forbidden access error"""
-    NOT_FOUND = "NotFound"
-    """Not found error"""
-    PROJECT_NOT_FOUND = "ProjectNotFound"
-    """Project not found error"""
-    OPERATION_NOT_FOUND = "OperationNotFound"
-    """Operation not found error"""
-    AZURE_COGNITIVE_SEARCH_NOT_FOUND = "AzureCognitiveSearchNotFound"
-    """Azure Cognitive Search not found error"""
-    AZURE_COGNITIVE_SEARCH_INDEX_NOT_FOUND = "AzureCognitiveSearchIndexNotFound"
-    """Azure Cognitive Search index not found error"""
-    TOO_MANY_REQUESTS = "TooManyRequests"
-    """Too many requests error"""
-    AZURE_COGNITIVE_SEARCH_THROTTLING = "AzureCognitiveSearchThrottling"
-    """Azure Cognitive Search throttling error"""
-    AZURE_COGNITIVE_SEARCH_INDEX_LIMIT_REACHED = "AzureCognitiveSearchIndexLimitReached"
-    """Azure Cognitive Search index limit reached error"""
-    INTERNAL_SERVER_ERROR = "InternalServerError"
-    """Internal server error"""
-    SERVICE_UNAVAILABLE = "ServiceUnavailable"
-    """Service unavailable error"""
-    TIMEOUT = "Timeout"
-    """Timeout error"""
-    QUOTA_EXCEEDED = "QuotaExceeded"
-    """Quota exceeded error"""
-    CONFLICT = "Conflict"
-    """Conflict error"""
-    WARNING = "Warning"
-    """Warning error"""
 
 
 class ExtractiveSummarizationSortingCriteria(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -362,6 +329,50 @@ class FhirVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENUM_4_0_1 = "4.0.1"
     """Version 4.0.1"""
+
+
+class HealthcareAssertionAssociation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes if the entity is the subject of the text or if it describes someone else."""
+
+    SUBJECT = "subject"
+    """Subject association"""
+    OTHER = "other"
+    """Other association"""
+
+
+class HealthcareAssertionCertainty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes the entities certainty and polarity."""
+
+    POSITIVE = "positive"
+    """Positive certainty"""
+    POSITIVE_POSSIBLE = "positivePossible"
+    """Possibly positive certainty"""
+    NEUTRAL_POSSIBLE = "neutralPossible"
+    """Possibly neutral certainty"""
+    NEGATIVE_POSSIBLE = "negativePossible"
+    """Possibly negative certainty"""
+    NEGATIVE = "negative"
+    """Negative certainty"""
+
+
+class HealthcareAssertionConditionality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes any conditionality on the entity."""
+
+    HYPOTHETICAL = "hypothetical"
+    """Hypothetical conditionality"""
+    CONDITIONAL = "conditional"
+    """Conditional conditionality"""
+
+
+class HealthcareAssertionTemporality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes temporal information regarding the entity."""
+
+    CURRENT = "current"
+    """Current temporality"""
+    PAST = "past"
+    """Past temporality"""
+    FUTURE = "future"
+    """Future temporality"""
 
 
 class HealthcareDocumentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -650,7 +661,7 @@ class PiiCategoriesExclude(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AT Tax Identification Number"""
     AT_VALUE_ADDED_TAX_NUMBER = "ATValueAddedTaxNumber"
     """AT Value Added Tax Number"""
-    AZURE_DOCUMENT_DB_AUTH_KEY = "AzureDocumentDBAuthKey"
+    AZURE_DOCUMENT_DBAUTH_KEY = "AzureDocumentDBAuthKey"
     """Azure Document DB Auth Key"""
     AZURE_IAAS_DATABASE_CONNECTION_AND_SQL_STRING = "AzureIAASDatabaseConnectionAndSQLString"
     """Azure IAAS Database Connection And SQL String"""
@@ -674,11 +685,11 @@ class PiiCategoriesExclude(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """BE National Number V2"""
     BE_VALUE_ADDED_TAX_NUMBER = "BEValueAddedTaxNumber"
     """BE Value Added Tax Number"""
-    BRCPF_NUMBER = "BRCPFNumber"
+    BR_CPF_NUMBER = "BRCPFNumber"
     """BR CPF Number"""
     BR_LEGAL_ENTITY_NUMBER = "BRLegalEntityNumber"
     """BR Legal Entity Number"""
-    BR_NATIONAL_IDRG = "BRNationalIDRG"
+    BR_NATIONAL_ID_RG = "BRNationalIDRG"
     """BR National ID RG"""
     BG_UNIFORM_CIVIL_NUMBER = "BGUniformCivilNumber"
     """BG Uniform Civil Number"""
@@ -728,7 +739,7 @@ class PiiCategoriesExclude(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """EU Debit Card Number"""
     EU_DRIVERS_LICENSE_NUMBER = "EUDriversLicenseNumber"
     """EU Driver's License Number"""
-    EUGPS_COORDINATES = "EUGPSCoordinates"
+    EU_GPS_COORDINATES = "EUGPSCoordinates"
     """EU GPS Coordinates"""
     EU_NATIONAL_IDENTIFICATION_NUMBER = "EUNationalIdentificationNumber"
     """EU National Identification Number"""
@@ -742,7 +753,7 @@ class PiiCategoriesExclude(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FI European Health Number"""
     FI_NATIONAL_ID = "FINationalID"
     """FI National ID"""
-    FI_NATIONAL_IDV2 = "FINationalIDV2"
+    FI_NATIONAL_ID_V2 = "FINationalIDV2"
     """FI National ID V2"""
     FI_PASSPORT_NUMBER = "FIPassportNumber"
     """FI Passport Number"""
@@ -772,7 +783,7 @@ class PiiCategoriesExclude(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DE Value Added Number"""
     GR_NATIONAL_ID_CARD = "GRNationalIDCard"
     """GR National ID Card"""
-    GR_NATIONAL_IDV2 = "GRNationalIDV2"
+    GR_NATIONAL_ID_V2 = "GRNationalIDV2"
     """GR National ID V2"""
     GR_TAX_IDENTIFICATION_NUMBER = "GRTaxIdentificationNumber"
     """GR Tax Identification Number"""
@@ -862,13 +873,13 @@ class PiiCategoriesExclude(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """PL Identity Card"""
     PL_NATIONAL_ID = "PLNationalID"
     """PL National ID"""
-    PL_NATIONAL_IDV2 = "PLNationalIDV2"
+    PL_NATIONAL_ID_V2 = "PLNationalIDV2"
     """PL National ID V2"""
     PL_PASSPORT_NUMBER = "PLPassportNumber"
     """PL Passport Number"""
     PL_TAX_IDENTIFICATION_NUMBER = "PLTaxIdentificationNumber"
     """PL Tax Identification Number"""
-    PLREGON_NUMBER = "PLREGONNumber"
+    PL_REGON_NUMBER = "PLREGONNumber"
     """PL REGON Number"""
     PT_CITIZEN_CARD_NUMBER = "PTCitizenCardNumber"
     """PT Citizen Card Number"""
@@ -896,7 +907,7 @@ class PiiCategoriesExclude(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ZA Identification Number"""
     KR_RESIDENT_REGISTRATION_NUMBER = "KRResidentRegistrationNumber"
     """KR Resident Registration Number"""
-    ESDNI = "ESDNI"
+    ES_DNI = "ESDNI"
     """ES DNI"""
     ES_SOCIAL_SECURITY_NUMBER = "ESSocialSecurityNumber"
     """ES Social Security Number"""
@@ -906,7 +917,7 @@ class PiiCategoriesExclude(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SQL Server Connection String"""
     SE_NATIONAL_ID = "SENationalID"
     """SE National ID"""
-    SE_NATIONAL_IDV2 = "SENationalIDV2"
+    SE_NATIONAL_ID_V2 = "SENationalIDV2"
     """SE National ID V2"""
     SE_PASSPORT_NUMBER = "SEPassportNumber"
     """SE Passport Number"""
@@ -936,7 +947,7 @@ class PiiCategoriesExclude(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """UK National Insurance Number"""
     UK_UNIQUE_TAXPAYER_NUMBER = "UKUniqueTaxpayerNumber"
     """UK Unique Taxpayer Number"""
-    USUK_PASSPORT_NUMBER = "USUKPassportNumber"
+    US_UK_PASSPORT_NUMBER = "USUKPassportNumber"
     """US UK Passport Number"""
     US_BANK_ACCOUNT_NUMBER = "USBankAccountNumber"
     """US Bank Account Number"""
@@ -1016,7 +1027,7 @@ class PiiCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AT Tax Identification Number"""
     AT_VALUE_ADDED_TAX_NUMBER = "ATValueAddedTaxNumber"
     """AT Value Added Tax Number"""
-    AZURE_DOCUMENT_DB_AUTH_KEY = "AzureDocumentDBAuthKey"
+    AZURE_DOCUMENT_DBAUTH_KEY = "AzureDocumentDBAuthKey"
     """Azure Document DB Auth Key"""
     AZURE_IAAS_DATABASE_CONNECTION_AND_SQL_STRING = "AzureIAASDatabaseConnectionAndSQLString"
     """Azure IAAS Database Connection And SQL String"""
@@ -1040,11 +1051,11 @@ class PiiCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """BE National Number V2"""
     BE_VALUE_ADDED_TAX_NUMBER = "BEValueAddedTaxNumber"
     """BE Value Added Tax Number"""
-    BRCPF_NUMBER = "BRCPFNumber"
+    BR_CPF_NUMBER = "BRCPFNumber"
     """BR CPF Number"""
     BR_LEGAL_ENTITY_NUMBER = "BRLegalEntityNumber"
     """BR Legal Entity Number"""
-    BR_NATIONAL_IDRG = "BRNationalIDRG"
+    BR_NATIONAL_ID_RG = "BRNationalIDRG"
     """BR National ID RG"""
     BG_UNIFORM_CIVIL_NUMBER = "BGUniformCivilNumber"
     """BG Uniform Civil Number"""
@@ -1094,7 +1105,7 @@ class PiiCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """EU Debit Card Number"""
     EU_DRIVERS_LICENSE_NUMBER = "EUDriversLicenseNumber"
     """EU Driver's License Number"""
-    EUGPS_COORDINATES = "EUGPSCoordinates"
+    EU_GPS_COORDINATES = "EUGPSCoordinates"
     """EU GPS Coordinates"""
     EU_NATIONAL_IDENTIFICATION_NUMBER = "EUNationalIdentificationNumber"
     """EU National Identification Number"""
@@ -1108,7 +1119,7 @@ class PiiCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FI European Health Number"""
     FI_NATIONAL_ID = "FINationalID"
     """FI National ID"""
-    FI_NATIONAL_IDV2 = "FINationalIDV2"
+    FI_NATIONAL_ID_V2 = "FINationalIDV2"
     """FI National ID V2"""
     FI_PASSPORT_NUMBER = "FIPassportNumber"
     """FI Passport Number"""
@@ -1138,7 +1149,7 @@ class PiiCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DE Value Added Number"""
     GR_NATIONAL_ID_CARD = "GRNationalIDCard"
     """GR National ID Card"""
-    GR_NATIONAL_IDV2 = "GRNationalIDV2"
+    GR_NATIONAL_ID_V2 = "GRNationalIDV2"
     """GR National ID V2"""
     GR_TAX_IDENTIFICATION_NUMBER = "GRTaxIdentificationNumber"
     """GR Tax Identification Number"""
@@ -1228,13 +1239,13 @@ class PiiCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """PL Identity Card"""
     PL_NATIONAL_ID = "PLNationalID"
     """PL National ID"""
-    PL_NATIONAL_IDV2 = "PLNationalIDV2"
+    PL_NATIONAL_ID_V2 = "PLNationalIDV2"
     """PL National ID V2"""
     PL_PASSPORT_NUMBER = "PLPassportNumber"
     """PL Passport Number"""
     PL_TAX_IDENTIFICATION_NUMBER = "PLTaxIdentificationNumber"
     """PL Tax Identification Number"""
-    PLREGON_NUMBER = "PLREGONNumber"
+    PL_REGON_NUMBER = "PLREGONNumber"
     """PL REGON Number"""
     PT_CITIZEN_CARD_NUMBER = "PTCitizenCardNumber"
     """PT Citizen Card Number"""
@@ -1262,7 +1273,7 @@ class PiiCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ZA Identification Number"""
     KR_RESIDENT_REGISTRATION_NUMBER = "KRResidentRegistrationNumber"
     """KR Resident Registration Number"""
-    ESDNI = "ESDNI"
+    ES_DNI = "ESDNI"
     """ES DNI"""
     ES_SOCIAL_SECURITY_NUMBER = "ESSocialSecurityNumber"
     """ES Social Security Number"""
@@ -1272,7 +1283,7 @@ class PiiCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SQL Server Connection String"""
     SE_NATIONAL_ID = "SENationalID"
     """SE National ID"""
-    SE_NATIONAL_IDV2 = "SENationalIDV2"
+    SE_NATIONAL_ID_V2 = "SENationalIDV2"
     """SE National ID V2"""
     SE_PASSPORT_NUMBER = "SEPassportNumber"
     """SE Passport Number"""
@@ -1302,7 +1313,7 @@ class PiiCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """UK National Insurance Number"""
     UK_UNIQUE_TAXPAYER_NUMBER = "UKUniqueTaxpayerNumber"
     """UK Unique Taxpayer Number"""
-    USUK_PASSPORT_NUMBER = "USUKPassportNumber"
+    US_UK_PASSPORT_NUMBER = "USUKPassportNumber"
     """US UK Passport Number"""
     US_BANK_ACCOUNT_NUMBER = "USBankAccountNumber"
     """US Bank Account Number"""
@@ -1737,25 +1748,6 @@ class SpeedUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Speed unit in Kilometers per millisecond."""
 
 
-class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of the task at the mentioned last update time."""
-
-    NOT_STARTED = "notStarted"
-    """Not started status"""
-    RUNNING = "running"
-    """Running status"""
-    SUCCEEDED = "succeeded"
-    """Succeeded status"""
-    PARTIALLY_COMPLETED = "partiallyCompleted"
-    """Partially completed status"""
-    FAILED = "failed"
-    """Failed status"""
-    CANCELLED = "cancelled"
-    """Cancelled status"""
-    CANCELLING = "cancelling"
-    """Cancelling status"""
-
-
 class StringIndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the method used to interpret string offsets.  Defaults to Text Elements (Graphemes)
     according to Unicode v8.0.0. For additional information see
@@ -1809,17 +1801,6 @@ class TemperatureUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Temperature unit in Celsius"""
 
 
-class Temporality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Describes temporal information regarding the entity."""
-
-    CURRENT = "current"
-    """Current temporality"""
-    PAST = "past"
-    """Past temporality"""
-    FUTURE = "future"
-    """Future temporality"""
-
-
 class TemporalModifier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """An optional modifier of a date/time instance."""
 
@@ -1861,7 +1842,26 @@ class TemporalModifier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """More than a specific time"""
 
 
-class TokenSentimentValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class TextActionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the task at the mentioned last update time."""
+
+    NOT_STARTED = "notStarted"
+    """Not started status"""
+    RUNNING = "running"
+    """Running status"""
+    SUCCEEDED = "succeeded"
+    """Succeeded status"""
+    PARTIALLY_COMPLETED = "partiallyCompleted"
+    """Partially completed status"""
+    FAILED = "failed"
+    """Failed status"""
+    CANCELLED = "cancelled"
+    """Cancelled status"""
+    CANCELLING = "cancelling"
+    """Cancelling status"""
+
+
+class TokenSentiment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The predicted Sentiment for the sentence."""
 
     POSITIVE = "positive"
@@ -1933,7 +1933,7 @@ class VolumeUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Volume unit in hogsheads."""
 
 
-class WarningCodeValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class WarningCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the list of the warning codes."""
 
     LONG_WORDS_IN_DOCUMENT = "LongWordsInDocument"

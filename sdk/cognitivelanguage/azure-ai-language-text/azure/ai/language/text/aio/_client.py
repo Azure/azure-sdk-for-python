@@ -17,14 +17,14 @@ from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import TextClientConfiguration
-from ._operations._operations import _TextClientOperationsMixin
+from ._configuration import TextAnalysisClientConfiguration
+from ._operations._operations import _TextAnalysisClientOperationsMixin
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class TextClient(_TextClientOperationsMixin):
+class TextAnalysisClient(_TextAnalysisClientOperationsMixin):
     """The language service API is a suite of natural language processing (NLP) skills built with
     best-in-class Microsoft machine learning algorithms.  The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
@@ -51,7 +51,7 @@ class TextClient(_TextClientOperationsMixin):
         self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
         _endpoint = "{Endpoint}/language"
-        self._config = TextClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = TextAnalysisClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:

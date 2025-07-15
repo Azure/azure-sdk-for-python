@@ -29,7 +29,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._configuration import TextClientConfiguration
+from .._configuration import TextAnalysisClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
@@ -43,7 +43,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_text_analyze_text_request(*, show_stats: Optional[bool] = None, **kwargs: Any) -> HttpRequest:
+def build_text_analysis_analyze_text_request(*, show_stats: Optional[bool] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -67,7 +67,7 @@ def build_text_analyze_text_request(*, show_stats: Optional[bool] = None, **kwar
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_analyze_text_job_status_request(  # pylint: disable=name-too-long
+def build_text_analysis_analyze_text_job_status_request(  # pylint: disable=name-too-long
     job_id: str,
     *,
     show_stats: Optional[bool] = None,
@@ -104,7 +104,7 @@ def build_text_analyze_text_job_status_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_analyze_text_submit_job_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_text_analysis_analyze_text_submit_job_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -126,7 +126,7 @@ def build_text_analyze_text_submit_job_request(**kwargs: Any) -> HttpRequest:  #
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_analyze_text_cancel_job_request(  # pylint: disable=name-too-long
+def build_text_analysis_analyze_text_cancel_job_request(  # pylint: disable=name-too-long
     job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -152,36 +152,38 @@ def build_text_analyze_text_cancel_job_request(  # pylint: disable=name-too-long
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class _TextClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], TextClientConfiguration]):
+class _TextAnalysisClientOperationsMixin(
+    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], TextAnalysisClientConfiguration]
+):
 
     @overload
     def analyze_text(
         self,
-        body: _models.AnalyzeTextTask,
+        body: _models.AnalyzeTextInput,
         *,
         show_stats: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.AnalyzeTextTaskResult:
+    ) -> _models.AnalyzeTextResult:
         """Request text analysis over a collection of documents.
 
         :param body: The input documents to analyze. Required.
-        :type body: ~azure.ai.language.text.models.AnalyzeTextTask
+        :type body: ~azure.ai.language.text.models.AnalyzeTextInput
         :keyword show_stats: (Optional) if set to true, response will contain request and document
          level statistics. Default value is None.
         :paramtype show_stats: bool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AnalyzeTextTaskResult. The AnalyzeTextTaskResult is compatible with MutableMapping
-        :rtype: ~azure.ai.language.text.models.AnalyzeTextTaskResult
+        :return: AnalyzeTextResult. The AnalyzeTextResult is compatible with MutableMapping
+        :rtype: ~azure.ai.language.text.models.AnalyzeTextResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def analyze_text(
         self, body: JSON, *, show_stats: Optional[bool] = None, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AnalyzeTextTaskResult:
+    ) -> _models.AnalyzeTextResult:
         """Request text analysis over a collection of documents.
 
         :param body: The input documents to analyze. Required.
@@ -192,8 +194,8 @@ class _TextClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, Http
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AnalyzeTextTaskResult. The AnalyzeTextTaskResult is compatible with MutableMapping
-        :rtype: ~azure.ai.language.text.models.AnalyzeTextTaskResult
+        :return: AnalyzeTextResult. The AnalyzeTextResult is compatible with MutableMapping
+        :rtype: ~azure.ai.language.text.models.AnalyzeTextResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -205,7 +207,7 @@ class _TextClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, Http
         show_stats: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.AnalyzeTextTaskResult:
+    ) -> _models.AnalyzeTextResult:
         """Request text analysis over a collection of documents.
 
         :param body: The input documents to analyze. Required.
@@ -216,25 +218,29 @@ class _TextClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, Http
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AnalyzeTextTaskResult. The AnalyzeTextTaskResult is compatible with MutableMapping
-        :rtype: ~azure.ai.language.text.models.AnalyzeTextTaskResult
+        :return: AnalyzeTextResult. The AnalyzeTextResult is compatible with MutableMapping
+        :rtype: ~azure.ai.language.text.models.AnalyzeTextResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def analyze_text(
-        self, body: Union[_models.AnalyzeTextTask, JSON, IO[bytes]], *, show_stats: Optional[bool] = None, **kwargs: Any
-    ) -> _models.AnalyzeTextTaskResult:
+        self,
+        body: Union[_models.AnalyzeTextInput, JSON, IO[bytes]],
+        *,
+        show_stats: Optional[bool] = None,
+        **kwargs: Any
+    ) -> _models.AnalyzeTextResult:
         """Request text analysis over a collection of documents.
 
-        :param body: The input documents to analyze. Is one of the following types: AnalyzeTextTask,
+        :param body: The input documents to analyze. Is one of the following types: AnalyzeTextInput,
          JSON, IO[bytes] Required.
-        :type body: ~azure.ai.language.text.models.AnalyzeTextTask or JSON or IO[bytes]
+        :type body: ~azure.ai.language.text.models.AnalyzeTextInput or JSON or IO[bytes]
         :keyword show_stats: (Optional) if set to true, response will contain request and document
          level statistics. Default value is None.
         :paramtype show_stats: bool
-        :return: AnalyzeTextTaskResult. The AnalyzeTextTaskResult is compatible with MutableMapping
-        :rtype: ~azure.ai.language.text.models.AnalyzeTextTaskResult
+        :return: AnalyzeTextResult. The AnalyzeTextResult is compatible with MutableMapping
+        :rtype: ~azure.ai.language.text.models.AnalyzeTextResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -249,7 +255,7 @@ class _TextClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, Http
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AnalyzeTextTaskResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AnalyzeTextResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -258,7 +264,7 @@ class _TextClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, Http
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_text_analyze_text_request(
+        _request = build_text_analysis_analyze_text_request(
             show_stats=show_stats,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -291,7 +297,7 @@ class _TextClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, Http
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AnalyzeTextTaskResult, response.json())
+            deserialized = _deserialize(_models.AnalyzeTextResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -341,7 +347,7 @@ class _TextClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, Http
 
         cls: ClsType[_models.AnalyzeTextJobState] = kwargs.pop("cls", None)
 
-        _request = build_text_analyze_text_job_status_request(
+        _request = build_text_analysis_analyze_text_job_status_request(
             job_id=job_id,
             show_stats=show_stats,
             top=top,
@@ -386,8 +392,8 @@ class _TextClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, Http
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        analysis_input: _models.MultiLanguageAnalysisInput = _Unset,
-        tasks: List[_models.AnalyzeTextLROTask] = _Unset,
+        text_input: _models.MultiLanguageTextInput = _Unset,
+        actions: List[_models.AnalyzeTextOperationAction] = _Unset,
         display_name: Optional[str] = None,
         default_language: Optional[str] = None,
         cancel_after: Optional[float] = None,
@@ -408,16 +414,16 @@ class _TextClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, Http
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if analysis_input is _Unset:
-                raise TypeError("missing required argument: analysis_input")
-            if tasks is _Unset:
-                raise TypeError("missing required argument: tasks")
+            if text_input is _Unset:
+                raise TypeError("missing required argument: text_input")
+            if actions is _Unset:
+                raise TypeError("missing required argument: actions")
             body = {
-                "analysisInput": analysis_input,
+                "analysisInput": text_input,
                 "cancelAfter": cancel_after,
                 "defaultLanguage": default_language,
                 "displayName": display_name,
-                "tasks": tasks,
+                "tasks": actions,
             }
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
@@ -427,7 +433,7 @@ class _TextClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, Http
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_text_analyze_text_submit_job_request(
+        _request = build_text_analysis_analyze_text_submit_job_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -469,8 +475,8 @@ class _TextClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, Http
     def begin_analyze_text_submit_job(
         self,
         *,
-        analysis_input: _models.MultiLanguageAnalysisInput,
-        tasks: List[_models.AnalyzeTextLROTask],
+        text_input: _models.MultiLanguageTextInput,
+        actions: List[_models.AnalyzeTextOperationAction],
         content_type: str = "application/json",
         display_name: Optional[str] = None,
         default_language: Optional[str] = None,
@@ -480,10 +486,10 @@ class _TextClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, Http
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
         executed as a long-running operation.
 
-        :keyword analysis_input: Contains the input to be analyzed. Required.
-        :paramtype analysis_input: ~azure.ai.language.text.models.MultiLanguageAnalysisInput
-        :keyword tasks: List of tasks to be performed as part of the LRO. Required.
-        :paramtype tasks: list[~azure.ai.language.text.models.AnalyzeTextLROTask]
+        :keyword text_input: Contains the input to be analyzed. Required.
+        :paramtype text_input: ~azure.ai.language.text.models.MultiLanguageTextInput
+        :keyword actions: List of tasks to be performed as part of the LRO. Required.
+        :paramtype actions: list[~azure.ai.language.text.models.AnalyzeTextOperationAction]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -539,8 +545,8 @@ class _TextClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, Http
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        analysis_input: _models.MultiLanguageAnalysisInput = _Unset,
-        tasks: List[_models.AnalyzeTextLROTask] = _Unset,
+        text_input: _models.MultiLanguageTextInput = _Unset,
+        actions: List[_models.AnalyzeTextOperationAction] = _Unset,
         display_name: Optional[str] = None,
         default_language: Optional[str] = None,
         cancel_after: Optional[float] = None,
@@ -551,10 +557,10 @@ class _TextClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, Http
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword analysis_input: Contains the input to be analyzed. Required.
-        :paramtype analysis_input: ~azure.ai.language.text.models.MultiLanguageAnalysisInput
-        :keyword tasks: List of tasks to be performed as part of the LRO. Required.
-        :paramtype tasks: list[~azure.ai.language.text.models.AnalyzeTextLROTask]
+        :keyword text_input: Contains the input to be analyzed. Required.
+        :paramtype text_input: ~azure.ai.language.text.models.MultiLanguageTextInput
+        :keyword actions: List of tasks to be performed as part of the LRO. Required.
+        :paramtype actions: list[~azure.ai.language.text.models.AnalyzeTextOperationAction]
         :keyword display_name: Name for the task. Default value is None.
         :paramtype display_name: str
         :keyword default_language: Default language to use for records requesting automatic language
@@ -578,8 +584,8 @@ class _TextClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, Http
         if cont_token is None:
             raw_result = self._analyze_text_submit_job_initial(
                 body=body,
-                analysis_input=analysis_input,
-                tasks=tasks,
+                text_input=text_input,
+                actions=actions,
                 display_name=display_name,
                 default_language=default_language,
                 cancel_after=cancel_after,
@@ -631,7 +637,7 @@ class _TextClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, Http
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_text_analyze_text_cancel_job_request(
+        _request = build_text_analysis_analyze_text_cancel_job_request(
             job_id=job_id,
             api_version=self._config.api_version,
             headers=_headers,

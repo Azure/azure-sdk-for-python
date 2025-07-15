@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.language.text import TextClient
+from azure.ai.language.text import TextAnalysisClient
 
 """
 # PREREQUISITES
@@ -17,7 +18,7 @@ from azure.ai.language.text import TextClient
 
 
 def main():
-    client = TextClient(
+    client = TextAnalysisClient(
         endpoint="{Endpoint}",
         credential="CREDENTIAL",
     )

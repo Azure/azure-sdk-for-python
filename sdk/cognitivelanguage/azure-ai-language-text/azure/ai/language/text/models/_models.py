@@ -13,10 +13,10 @@ from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, U
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import (
-    AnalyzeTextLROResultsKind,
-    AnalyzeTextLROTaskKind,
-    AnalyzeTextTaskKind,
-    AnalyzeTextTaskResultsKind,
+    AnalyzeTextInputKind,
+    AnalyzeTextOperationActionKind,
+    AnalyzeTextOperationResultsKind,
+    AnalyzeTextResultsKind,
     MetadataKind,
     PolicyKind,
     RedactionPolicyKind,
@@ -26,255 +26,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AnalyzeTextLROResult(_Model):
-    """Contains the AnalyzeText long running operation result object.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AbstractiveSummarizationLROResult, CustomEntityRecognitionLROResult,
-    CustomMultiLabelClassificationLROResult, CustomSingleLabelClassificationLROResult,
-    EntityLinkingLROResult, EntityRecognitionLROResult, ExtractiveSummarizationLROResult,
-    HealthcareLROResult, KeyPhraseExtractionLROResult, PiiEntityRecognitionLROResult,
-    SentimentLROResult
-
-    :ivar last_update_date_time: The last updated time in UTC for the task. Required.
-    :vartype last_update_date_time: ~datetime.datetime
-    :ivar status: The status of the task at the mentioned last update time. Required. Known values
-     are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
-     "cancelling".
-    :vartype status: str or ~azure.ai.language.text.models.State
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Known values are: "SentimentAnalysisLROResults",
-     "EntityRecognitionLROResults", "PiiEntityRecognitionLROResults",
-     "KeyPhraseExtractionLROResults", "EntityLinkingLROResults", "HealthcareLROResults",
-     "CustomEntityRecognitionLROResults", "CustomSingleLabelClassificationLROResults",
-     "CustomMultiLabelClassificationLROResults", "ExtractiveSummarizationLROResults", and
-     "AbstractiveSummarizationLROResults".
-    :vartype kind: str or ~azure.ai.language.text.models.AnalyzeTextLROResultsKind
-    """
-
-    __mapping__: Dict[str, _Model] = {}
-    last_update_date_time: datetime.datetime = rest_field(
-        name="lastUpdateDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The last updated time in UTC for the task. Required."""
-    status: Union[str, "_models.State"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The status of the task at the mentioned last update time. Required. Known values are:
-     \"notStarted\", \"running\", \"succeeded\", \"partiallyCompleted\", \"failed\", \"cancelled\",
-     and \"cancelling\"."""
-    task_name: Optional[str] = rest_field(name="taskName", visibility=["read", "create", "update", "delete", "query"])
-    """task name."""
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
-    """Kind of the task. Required. Known values are: \"SentimentAnalysisLROResults\",
-     \"EntityRecognitionLROResults\", \"PiiEntityRecognitionLROResults\",
-     \"KeyPhraseExtractionLROResults\", \"EntityLinkingLROResults\", \"HealthcareLROResults\",
-     \"CustomEntityRecognitionLROResults\", \"CustomSingleLabelClassificationLROResults\",
-     \"CustomMultiLabelClassificationLROResults\", \"ExtractiveSummarizationLROResults\", and
-     \"AbstractiveSummarizationLROResults\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        last_update_date_time: datetime.datetime,
-        status: Union[str, "_models.State"],
-        kind: str,
-        task_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AbstractiveSummarizationLROResult(AnalyzeTextLROResult, discriminator="AbstractiveSummarizationLROResults"):
-    """An object representing the results for an Abstractive Summarization task.
-
-    :ivar last_update_date_time: The last updated time in UTC for the task. Required.
-    :vartype last_update_date_time: ~datetime.datetime
-    :ivar status: The status of the task at the mentioned last update time. Required. Known values
-     are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
-     "cancelling".
-    :vartype status: str or ~azure.ai.language.text.models.State
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Abstractive summarization LRO results
-    :vartype kind: str or ~azure.ai.language.text.models.ABSTRACTIVE_SUMMARIZATION_LRO_RESULTS
-    :ivar results: Results of the task. Required.
-    :vartype results: ~azure.ai.language.text.models.AbstractiveSummarizationResult
-    """
-
-    kind: Literal[AnalyzeTextLROResultsKind.ABSTRACTIVE_SUMMARIZATION_LRO_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Abstractive summarization LRO results"""
-    results: "_models.AbstractiveSummarizationResult" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Results of the task. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        last_update_date_time: datetime.datetime,
-        status: Union[str, "_models.State"],
-        results: "_models.AbstractiveSummarizationResult",
-        task_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextLROResultsKind.ABSTRACTIVE_SUMMARIZATION_LRO_RESULTS, **kwargs)
-
-
-class AnalyzeTextLROTask(_Model):
-    """The long running task to be performed by the service on the input documents.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AbstractiveSummarizationLROTask, CustomEntitiesLROTask, CustomMultiLabelClassificationLROTask,
-    CustomSingleLabelClassificationLROTask, EntityLinkingLROTask, EntitiesLROTask,
-    ExtractiveSummarizationLROTask, HealthcareLROTask, KeyPhraseLROTask, PiiLROTask,
-    SentimentAnalysisLROTask
-
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: The kind of task to perform. Required. Known values are: "SentimentAnalysis",
-     "EntityRecognition", "PiiEntityRecognition", "KeyPhraseExtraction", "EntityLinking",
-     "Healthcare", "CustomEntityRecognition", "CustomSingleLabelClassification",
-     "CustomMultiLabelClassification", "ExtractiveSummarization", and "AbstractiveSummarization".
-    :vartype kind: str or ~azure.ai.language.text.models.AnalyzeTextLROTaskKind
-    """
-
-    __mapping__: Dict[str, _Model] = {}
-    task_name: Optional[str] = rest_field(name="taskName", visibility=["read", "create", "update", "delete", "query"])
-    """task name."""
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
-    """The kind of task to perform. Required. Known values are: \"SentimentAnalysis\",
-     \"EntityRecognition\", \"PiiEntityRecognition\", \"KeyPhraseExtraction\", \"EntityLinking\",
-     \"Healthcare\", \"CustomEntityRecognition\", \"CustomSingleLabelClassification\",
-     \"CustomMultiLabelClassification\", \"ExtractiveSummarization\", and
-     \"AbstractiveSummarization\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        kind: str,
-        task_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AbstractiveSummarizationLROTask(AnalyzeTextLROTask, discriminator="AbstractiveSummarization"):
-    """An object representing the task definition for an Abstractive Summarization task.
-
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: The Abstractive Summarization kind of the long running task. Required. Abstractive
-     summarization task
-    :vartype kind: str or ~azure.ai.language.text.models.ABSTRACTIVE_SUMMARIZATION
-    :ivar parameters: Parameters for the Abstractive Summarization task.
-    :vartype parameters: ~azure.ai.language.text.models.AbstractiveSummarizationTaskParameters
-    """
-
-    kind: Literal[AnalyzeTextLROTaskKind.ABSTRACTIVE_SUMMARIZATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The Abstractive Summarization kind of the long running task. Required. Abstractive
-     summarization task"""
-    parameters: Optional["_models.AbstractiveSummarizationTaskParameters"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Parameters for the Abstractive Summarization task."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        task_name: Optional[str] = None,
-        parameters: Optional["_models.AbstractiveSummarizationTaskParameters"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextLROTaskKind.ABSTRACTIVE_SUMMARIZATION, **kwargs)
-
-
-class AbstractiveSummarizationResult(_Model):
-    """An object representing the pre-built Abstractive Summarization results of each document.
-
-    :ivar errors: Errors by document id. Required.
-    :vartype errors: list[~azure.ai.language.text.models.DocumentError]
-    :ivar statistics: if showStats=true was specified in the request this field will contain
-     information about the request payload.
-    :vartype statistics: ~azure.ai.language.text.models.RequestStatistics
-    :ivar model_version: This field indicates which model is used for scoring. Required.
-    :vartype model_version: str
-    :ivar documents: Response by document. Required.
-    :vartype documents:
-     list[~azure.ai.language.text.models.AbstractiveSummaryDocumentResultWithDetectedLanguage]
-    """
-
-    errors: List["_models.DocumentError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Errors by document id. Required."""
-    statistics: Optional["_models.RequestStatistics"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """if showStats=true was specified in the request this field will contain information about the
-     request payload."""
-    model_version: str = rest_field(name="modelVersion", visibility=["read", "create", "update", "delete", "query"])
-    """This field indicates which model is used for scoring. Required."""
-    documents: List["_models.AbstractiveSummaryDocumentResultWithDetectedLanguage"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Response by document. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        errors: List["_models.DocumentError"],
-        model_version: str,
-        documents: List["_models.AbstractiveSummaryDocumentResultWithDetectedLanguage"],
-        statistics: Optional["_models.RequestStatistics"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AbstractiveSummarizationTaskParameters(_Model):
+class AbstractiveSummarizationActionContent(_Model):
     """Supported parameters for the pre-built Abstractive Summarization task.
 
     :ivar logging_opt_out: logging opt out.
@@ -341,6 +93,258 @@ class AbstractiveSummarizationTaskParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
+class AnalyzeTextOperationAction(_Model):
+    """The long running task to be performed by the service on the input documents.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AbstractiveSummarizationOperationAction, CustomEntitiesLROTask,
+    CustomMultiLabelClassificationOperationAction, CustomSingleLabelClassificationOperationAction,
+    EntityLinkingLROTask, EntitiesLROTask, ExtractiveSummarizationOperationAction,
+    HealthcareLROTask, KeyPhraseLROTask, PiiLROTask, SentimentAnalysisOperationAction
+
+    :ivar name: task name.
+    :vartype name: str
+    :ivar kind: The kind of task to perform. Required. Known values are: "SentimentAnalysis",
+     "EntityRecognition", "PiiEntityRecognition", "KeyPhraseExtraction", "EntityLinking",
+     "Healthcare", "CustomEntityRecognition", "CustomSingleLabelClassification",
+     "CustomMultiLabelClassification", "ExtractiveSummarization", and "AbstractiveSummarization".
+    :vartype kind: str or ~azure.ai.language.text.models.AnalyzeTextOperationActionKind
+    """
+
+    __mapping__: Dict[str, _Model] = {}
+    name: Optional[str] = rest_field(name="taskName", visibility=["read", "create", "update", "delete", "query"])
+    """task name."""
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    """The kind of task to perform. Required. Known values are: \"SentimentAnalysis\",
+     \"EntityRecognition\", \"PiiEntityRecognition\", \"KeyPhraseExtraction\", \"EntityLinking\",
+     \"Healthcare\", \"CustomEntityRecognition\", \"CustomSingleLabelClassification\",
+     \"CustomMultiLabelClassification\", \"ExtractiveSummarization\", and
+     \"AbstractiveSummarization\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+        name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AbstractiveSummarizationOperationAction(AnalyzeTextOperationAction, discriminator="AbstractiveSummarization"):
+    """An object representing the task definition for an Abstractive Summarization task.
+
+    :ivar name: task name.
+    :vartype name: str
+    :ivar kind: The Abstractive Summarization kind of the long running task. Required. Abstractive
+     summarization task
+    :vartype kind: str or ~azure.ai.language.text.models.ABSTRACTIVE_SUMMARIZATION
+    :ivar action_content: Parameters for the Abstractive Summarization task.
+    :vartype action_content: ~azure.ai.language.text.models.AbstractiveSummarizationActionContent
+    """
+
+    kind: Literal[AnalyzeTextOperationActionKind.ABSTRACTIVE_SUMMARIZATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Abstractive Summarization kind of the long running task. Required. Abstractive
+     summarization task"""
+    action_content: Optional["_models.AbstractiveSummarizationActionContent"] = rest_field(
+        name="parameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Parameters for the Abstractive Summarization task."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        action_content: Optional["_models.AbstractiveSummarizationActionContent"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind=AnalyzeTextOperationActionKind.ABSTRACTIVE_SUMMARIZATION, **kwargs)
+
+
+class AnalyzeTextLROResult(_Model):
+    """Contains the AnalyzeText long running operation result object.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AbstractiveSummarizationOperationResult, CustomEntityRecognitionOperationResult,
+    CustomMultiLabelClassificationOperationResult, CustomSingleLabelClassificationOperationResult,
+    EntityLinkingOperationResult, EntityRecognitionOperationResult,
+    ExtractiveSummarizationOperationResult, HealthcareLROResult,
+    KeyPhraseExtractionOperationResult, PiiEntityRecognitionOperationResult, SentimentLROResult
+
+    :ivar last_update_date_time: The last updated time in UTC for the task. Required.
+    :vartype last_update_date_time: ~datetime.datetime
+    :ivar status: The status of the task at the mentioned last update time. Required. Known values
+     are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
+     "cancelling".
+    :vartype status: str or ~azure.ai.language.text.models.TextActionState
+    :ivar task_name: task name.
+    :vartype task_name: str
+    :ivar kind: Kind of the task. Required. Known values are: "SentimentAnalysisLROResults",
+     "EntityRecognitionLROResults", "PiiEntityRecognitionLROResults",
+     "KeyPhraseExtractionLROResults", "EntityLinkingLROResults", "HealthcareLROResults",
+     "CustomEntityRecognitionLROResults", "CustomSingleLabelClassificationLROResults",
+     "CustomMultiLabelClassificationLROResults", "ExtractiveSummarizationLROResults", and
+     "AbstractiveSummarizationLROResults".
+    :vartype kind: str or ~azure.ai.language.text.models.AnalyzeTextOperationResultsKind
+    """
+
+    __mapping__: Dict[str, _Model] = {}
+    last_update_date_time: datetime.datetime = rest_field(
+        name="lastUpdateDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The last updated time in UTC for the task. Required."""
+    status: Union[str, "_models.TextActionState"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status of the task at the mentioned last update time. Required. Known values are:
+     \"notStarted\", \"running\", \"succeeded\", \"partiallyCompleted\", \"failed\", \"cancelled\",
+     and \"cancelling\"."""
+    task_name: Optional[str] = rest_field(name="taskName", visibility=["read", "create", "update", "delete", "query"])
+    """task name."""
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    """Kind of the task. Required. Known values are: \"SentimentAnalysisLROResults\",
+     \"EntityRecognitionLROResults\", \"PiiEntityRecognitionLROResults\",
+     \"KeyPhraseExtractionLROResults\", \"EntityLinkingLROResults\", \"HealthcareLROResults\",
+     \"CustomEntityRecognitionLROResults\", \"CustomSingleLabelClassificationLROResults\",
+     \"CustomMultiLabelClassificationLROResults\", \"ExtractiveSummarizationLROResults\", and
+     \"AbstractiveSummarizationLROResults\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        last_update_date_time: datetime.datetime,
+        status: Union[str, "_models.TextActionState"],
+        kind: str,
+        task_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AbstractiveSummarizationOperationResult(AnalyzeTextLROResult, discriminator="AbstractiveSummarizationLROResults"):
+    """An object representing the results for an Abstractive Summarization task.
+
+    :ivar last_update_date_time: The last updated time in UTC for the task. Required.
+    :vartype last_update_date_time: ~datetime.datetime
+    :ivar status: The status of the task at the mentioned last update time. Required. Known values
+     are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
+     "cancelling".
+    :vartype status: str or ~azure.ai.language.text.models.TextActionState
+    :ivar task_name: task name.
+    :vartype task_name: str
+    :ivar kind: Kind of the task. Required. Abstractive summarization LRO results
+    :vartype kind: str or
+     ~azure.ai.language.text.models.ABSTRACTIVE_SUMMARIZATION_OPERATION_RESULTS
+    :ivar results: Results of the task. Required.
+    :vartype results: ~azure.ai.language.text.models.AbstractiveSummarizationResult
+    """
+
+    kind: Literal[AnalyzeTextOperationResultsKind.ABSTRACTIVE_SUMMARIZATION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind of the task. Required. Abstractive summarization LRO results"""
+    results: "_models.AbstractiveSummarizationResult" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Results of the task. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        last_update_date_time: datetime.datetime,
+        status: Union[str, "_models.TextActionState"],
+        results: "_models.AbstractiveSummarizationResult",
+        task_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(
+            *args, kind=AnalyzeTextOperationResultsKind.ABSTRACTIVE_SUMMARIZATION_OPERATION_RESULTS, **kwargs
+        )
+
+
+class AbstractiveSummarizationResult(_Model):
+    """An object representing the pre-built Abstractive Summarization results of each document.
+
+    :ivar errors: Errors by document id. Required.
+    :vartype errors: list[~azure.ai.language.text.models.DocumentError]
+    :ivar statistics: if showStats=true was specified in the request this field will contain
+     information about the request payload.
+    :vartype statistics: ~azure.ai.language.text.models.RequestStatistics
+    :ivar model_version: This field indicates which model is used for scoring. Required.
+    :vartype model_version: str
+    :ivar documents: Response by document. Required.
+    :vartype documents: list[~azure.ai.language.text.models.AbstractiveSummaryActionResult]
+    """
+
+    errors: List["_models.DocumentError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Errors by document id. Required."""
+    statistics: Optional["_models.RequestStatistics"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """if showStats=true was specified in the request this field will contain information about the
+     request payload."""
+    model_version: str = rest_field(name="modelVersion", visibility=["read", "create", "update", "delete", "query"])
+    """This field indicates which model is used for scoring. Required."""
+    documents: List["_models.AbstractiveSummaryActionResult"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Response by document. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        errors: List["_models.DocumentError"],
+        model_version: str,
+        documents: List["_models.AbstractiveSummaryActionResult"],
+        statistics: Optional["_models.RequestStatistics"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AbstractiveSummary(_Model):
     """An object representing a single summary with context for given document.
 
@@ -376,7 +380,7 @@ class AbstractiveSummary(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AbstractiveSummaryDocumentResultWithDetectedLanguage(_Model):  # pylint: disable=name-too-long
+class AbstractiveSummaryActionResult(_Model):
     """An object representing the Abstractive Summarization result of a single document with detected
     language.
 
@@ -521,7 +525,7 @@ class AgeMetadata(BaseMetadata, discriminator="AgeMetadata"):
         super().__init__(*args, metadata_kind=MetadataKind.AGE_METADATA, **kwargs)
 
 
-class BaseEntityOverlapPolicy(_Model):
+class EntityOverlapPolicy(_Model):
     """The abstract base class for entity OverlapPolicy.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -555,7 +559,7 @@ class BaseEntityOverlapPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AllowOverlapEntityPolicyType(BaseEntityOverlapPolicy, discriminator="allowOverlap"):
+class AllowOverlapEntityPolicyType(EntityOverlapPolicy, discriminator="allowOverlap"):
     """Represents the allow overlap policy. Will apply no post processing logic for the entities.
     Whatever the model predicts is what will be returned to the user. This allows the user to get a
     full view of every single model's possible values and apply their own custom logic on entity
@@ -585,18 +589,186 @@ class AllowOverlapEntityPolicyType(BaseEntityOverlapPolicy, discriminator="allow
         super().__init__(*args, policy_kind=PolicyKind.ALLOW_OVERLAP, **kwargs)
 
 
-class AnalyzeTextTask(_Model):
+class AnalyzeTextResult(_Model):
+    """The result object for the analyze task.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AnalyzeTextEntityLinkingResult, AnalyzeTextEntitiesResult, AnalyzeTextKeyPhraseResult,
+    AnalyzeTextLanguageDetectionResult, AnalyzeTextPiiResult, AnalyzeTextSentimentResult
+
+    :ivar kind: The kind of task result. Required. Known values are: "SentimentAnalysisResults",
+     "EntityRecognitionResults", "PiiEntityRecognitionResults", "KeyPhraseExtractionResults",
+     "LanguageDetectionResults", and "EntityLinkingResults".
+    :vartype kind: str or ~azure.ai.language.text.models.AnalyzeTextResultsKind
+    """
+
+    __mapping__: Dict[str, _Model] = {}
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    """The kind of task result. Required. Known values are: \"SentimentAnalysisResults\",
+     \"EntityRecognitionResults\", \"PiiEntityRecognitionResults\", \"KeyPhraseExtractionResults\",
+     \"LanguageDetectionResults\", and \"EntityLinkingResults\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AnalyzeTextEntitiesResult(AnalyzeTextResult, discriminator="EntityRecognitionResults"):
+    """Contains the entity task.
+
+    :ivar kind: kind of the task. Required. Entity recognition results
+    :vartype kind: str or ~azure.ai.language.text.models.ENTITY_RECOGNITION_RESULTS
+    :ivar results: Results for entity recognition. Required.
+    :vartype results: ~azure.ai.language.text.models.EntitiesWithMetadataAutoResult
+    """
+
+    kind: Literal[AnalyzeTextResultsKind.ENTITY_RECOGNITION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """kind of the task. Required. Entity recognition results"""
+    results: "_models.EntitiesWithMetadataAutoResult" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Results for entity recognition. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        results: "_models.EntitiesWithMetadataAutoResult",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind=AnalyzeTextResultsKind.ENTITY_RECOGNITION_RESULTS, **kwargs)
+
+
+class AnalyzeTextEntityLinkingResult(AnalyzeTextResult, discriminator="EntityLinkingResults"):
+    """Contains the analyze text Entity linking task result.
+
+    :ivar kind: Kind of task result. Required. Entity linking results
+    :vartype kind: str or ~azure.ai.language.text.models.ENTITY_LINKING_RESULTS
+    :ivar results: Entity linking result. Required.
+    :vartype results: ~azure.ai.language.text.models.EntityLinkingResult
+    """
+
+    kind: Literal[AnalyzeTextResultsKind.ENTITY_LINKING_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind of task result. Required. Entity linking results"""
+    results: "_models.EntityLinkingResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Entity linking result. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        results: "_models.EntityLinkingResult",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind=AnalyzeTextResultsKind.ENTITY_LINKING_RESULTS, **kwargs)
+
+
+class AnalyzeTextError(_Model):
+    """The error response object returned when the service encounters some errors during processing
+    the request.
+
+    :ivar code: One of a server-defined set of error codes. Required. Known values are:
+     "InvalidRequest", "InvalidArgument", "Unauthorized", "Forbidden", "NotFound",
+     "ProjectNotFound", "OperationNotFound", "AzureCognitiveSearchNotFound",
+     "AzureCognitiveSearchIndexNotFound", "TooManyRequests", "AzureCognitiveSearchThrottling",
+     "AzureCognitiveSearchIndexLimitReached", "InternalServerError", "ServiceUnavailable",
+     "Timeout", "QuotaExceeded", "Conflict", and "Warning".
+    :vartype code: str or ~azure.ai.language.text.models.AnalyzeTextErrorCode
+    :ivar message: A human-readable representation of the error. Required.
+    :vartype message: str
+    :ivar target: The target of the error.
+    :vartype target: str
+    :ivar details: An array of details about specific errors that led to this reported error.
+    :vartype details: list[~azure.ai.language.text.models.AnalyzeTextError]
+    :ivar innererror: An object containing more specific information than the current object about
+     the error.
+    :vartype innererror: ~azure.ai.language.text.models.InnerErrorModel
+    """
+
+    code: Union[str, "_models.AnalyzeTextErrorCode"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """One of a server-defined set of error codes. Required. Known values are: \"InvalidRequest\",
+     \"InvalidArgument\", \"Unauthorized\", \"Forbidden\", \"NotFound\", \"ProjectNotFound\",
+     \"OperationNotFound\", \"AzureCognitiveSearchNotFound\", \"AzureCognitiveSearchIndexNotFound\",
+     \"TooManyRequests\", \"AzureCognitiveSearchThrottling\",
+     \"AzureCognitiveSearchIndexLimitReached\", \"InternalServerError\", \"ServiceUnavailable\",
+     \"Timeout\", \"QuotaExceeded\", \"Conflict\", and \"Warning\"."""
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A human-readable representation of the error. Required."""
+    target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target of the error."""
+    details: Optional[List["_models.AnalyzeTextError"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An array of details about specific errors that led to this reported error."""
+    innererror: Optional["_models.InnerErrorModel"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An object containing more specific information than the current object about the error."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Union[str, "_models.AnalyzeTextErrorCode"],
+        message: str,
+        target: Optional[str] = None,
+        details: Optional[List["_models.AnalyzeTextError"]] = None,
+        innererror: Optional["_models.InnerErrorModel"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AnalyzeTextInput(_Model):
     """Collection of documents to analyze and a single task to execute.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AnalyzeTextEntityLinkingInput, AnalyzeTextEntityRecognitionInput,
-    AnalyzeTextKeyPhraseExtractionInput, AnalyzeTextLanguageDetectionInput,
-    AnalyzeTextPiiEntitiesRecognitionInput, AnalyzeTextSentimentAnalysisInput
+    TextEntityLinkingInput, TextEntityRecognitionInput, TextKeyPhraseExtractionInput,
+    TextLanguageDetectionInput, TextPiiEntitiesRecognitionInput, TextSentimentAnalysisInput
 
     :ivar kind: The kind of task to perform. Required. Known values are: "SentimentAnalysis",
      "EntityRecognition", "PiiEntityRecognition", "KeyPhraseExtraction", "LanguageDetection", and
      "EntityLinking".
-    :vartype kind: str or ~azure.ai.language.text.models.AnalyzeTextTaskKind
+    :vartype kind: str or ~azure.ai.language.text.models.AnalyzeTextInputKind
     """
 
     __mapping__: Dict[str, _Model] = {}
@@ -623,110 +795,28 @@ class AnalyzeTextTask(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyzeTextEntityLinkingInput(AnalyzeTextTask, discriminator="EntityLinking"):
-    """Contains the analyze text Entity linking input.
-
-    :ivar kind: Kind for Entity linking input. Required. Entity linking task
-    :vartype kind: str or ~azure.ai.language.text.models.ENTITY_LINKING
-    :ivar analysis_input: Contains the analysis input to be handled by the service.
-    :vartype analysis_input: ~azure.ai.language.text.models.MultiLanguageAnalysisInput
-    :ivar parameters: Task parameters.
-    :vartype parameters: ~azure.ai.language.text.models.EntityLinkingTaskParameters
-    """
-
-    kind: Literal[AnalyzeTextTaskKind.ENTITY_LINKING] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind for Entity linking input. Required. Entity linking task"""
-    analysis_input: Optional["_models.MultiLanguageAnalysisInput"] = rest_field(
-        name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Contains the analysis input to be handled by the service."""
-    parameters: Optional["_models.EntityLinkingTaskParameters"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Task parameters."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        analysis_input: Optional["_models.MultiLanguageAnalysisInput"] = None,
-        parameters: Optional["_models.EntityLinkingTaskParameters"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextTaskKind.ENTITY_LINKING, **kwargs)
-
-
-class AnalyzeTextEntityRecognitionInput(AnalyzeTextTask, discriminator="EntityRecognition"):
-    """The entity recognition analyze text input task request.
-
-    :ivar kind: The kind of task. Required. Entity recognition task
-    :vartype kind: str or ~azure.ai.language.text.models.ENTITY_RECOGNITION
-    :ivar analysis_input: The input to be analyzed.
-    :vartype analysis_input: ~azure.ai.language.text.models.MultiLanguageAnalysisInput
-    :ivar parameters: Task parameters.
-    :vartype parameters: ~azure.ai.language.text.models.EntitiesTaskParameters
-    """
-
-    kind: Literal[AnalyzeTextTaskKind.ENTITY_RECOGNITION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The kind of task. Required. Entity recognition task"""
-    analysis_input: Optional["_models.MultiLanguageAnalysisInput"] = rest_field(
-        name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The input to be analyzed."""
-    parameters: Optional["_models.EntitiesTaskParameters"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Task parameters."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        analysis_input: Optional["_models.MultiLanguageAnalysisInput"] = None,
-        parameters: Optional["_models.EntitiesTaskParameters"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextTaskKind.ENTITY_RECOGNITION, **kwargs)
-
-
 class AnalyzeTextJobState(_Model):
     """The object containing the analyze job LRO job state.
 
     :ivar display_name: display name.
     :vartype display_name: str
-    :ivar created_date_time: Date and time job created. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar expiration_date_time: Date and time job expires.
-    :vartype expiration_date_time: ~datetime.datetime
+    :ivar created_at: Date and time job created. Required.
+    :vartype created_at: ~datetime.datetime
+    :ivar expires_on: Date and time job expires.
+    :vartype expires_on: ~datetime.datetime
     :ivar job_id: job ID. Required.
     :vartype job_id: str
-    :ivar last_updated_date_time: last updated date and time. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
+    :ivar last_updated_at: last updated date and time. Required.
+    :vartype last_updated_at: ~datetime.datetime
     :ivar status: status. Required. Known values are: "notStarted", "running", "succeeded",
      "partiallyCompleted", "failed", "cancelled", and "cancelling".
-    :vartype status: str or ~azure.ai.language.text.models.State
+    :vartype status: str or ~azure.ai.language.text.models.TextActionState
     :ivar errors: errors.
-    :vartype errors: list[~azure.ai.language.text.models.Error]
+    :vartype errors: list[~azure.ai.language.text.models.AnalyzeTextError]
     :ivar next_link: next link.
     :vartype next_link: str
     :ivar tasks: List of tasks. Required.
-    :vartype tasks: ~azure.ai.language.text.models.Tasks
+    :vartype tasks: ~azure.ai.language.text.models.TextActions
     :ivar statistics: if showStats=true was specified in the request this field will contain
      information about the request payload.
     :vartype statistics: ~azure.ai.language.text.models.RequestStatistics
@@ -736,28 +826,32 @@ class AnalyzeTextJobState(_Model):
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
     )
     """display name."""
-    created_date_time: datetime.datetime = rest_field(
+    created_at: datetime.datetime = rest_field(
         name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """Date and time job created. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(
+    expires_on: Optional[datetime.datetime] = rest_field(
         name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """Date and time job expires."""
     job_id: str = rest_field(name="jobId", visibility=["read"])
     """job ID. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(
+    last_updated_at: datetime.datetime = rest_field(
         name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """last updated date and time. Required."""
-    status: Union[str, "_models.State"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    status: Union[str, "_models.TextActionState"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
      \"partiallyCompleted\", \"failed\", \"cancelled\", and \"cancelling\"."""
-    errors: Optional[List["_models.Error"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    errors: Optional[List["_models.AnalyzeTextError"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """errors."""
     next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
     """next link."""
-    tasks: "_models.Tasks" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tasks: "_models.TextActions" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of tasks. Required."""
     statistics: Optional["_models.RequestStatistics"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -769,13 +863,13 @@ class AnalyzeTextJobState(_Model):
     def __init__(
         self,
         *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.State"],
-        tasks: "_models.Tasks",
+        created_at: datetime.datetime,
+        last_updated_at: datetime.datetime,
+        status: Union[str, "_models.TextActionState"],
+        tasks: "_models.TextActions",
         display_name: Optional[str] = None,
-        expiration_date_time: Optional[datetime.datetime] = None,
-        errors: Optional[List["_models.Error"]] = None,
+        expires_on: Optional[datetime.datetime] = None,
+        errors: Optional[List["_models.AnalyzeTextError"]] = None,
         next_link: Optional[str] = None,
         statistics: Optional["_models.RequestStatistics"] = None,
     ) -> None: ...
@@ -791,34 +885,25 @@ class AnalyzeTextJobState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyzeTextKeyPhraseExtractionInput(AnalyzeTextTask, discriminator="KeyPhraseExtraction"):
-    """Contains the analyze text KeyPhraseExtraction task input.
+class AnalyzeTextKeyPhraseResult(AnalyzeTextResult, discriminator="KeyPhraseExtractionResults"):
+    """Contains the analyze text KeyPhraseExtraction task result.
 
-    :ivar kind: Kind of the task. Required. Key phrase extraction task
-    :vartype kind: str or ~azure.ai.language.text.models.KEY_PHRASE_EXTRACTION
-    :ivar analysis_input: Contains the input documents.
-    :vartype analysis_input: ~azure.ai.language.text.models.MultiLanguageAnalysisInput
-    :ivar parameters: Key phrase extraction task parameters.
-    :vartype parameters: ~azure.ai.language.text.models.KeyPhraseTaskParameters
+    :ivar kind: Kind of the task results. Required. Key phrase extraction results
+    :vartype kind: str or ~azure.ai.language.text.models.KEY_PHRASE_EXTRACTION_RESULTS
+    :ivar results: The list of Key phrase extraction results. Required.
+    :vartype results: ~azure.ai.language.text.models.KeyPhraseResult
     """
 
-    kind: Literal[AnalyzeTextTaskKind.KEY_PHRASE_EXTRACTION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Key phrase extraction task"""
-    analysis_input: Optional["_models.MultiLanguageAnalysisInput"] = rest_field(
-        name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Contains the input documents."""
-    parameters: Optional["_models.KeyPhraseTaskParameters"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Key phrase extraction task parameters."""
+    kind: Literal[AnalyzeTextResultsKind.KEY_PHRASE_EXTRACTION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind of the task results. Required. Key phrase extraction results"""
+    results: "_models.KeyPhraseResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The list of Key phrase extraction results. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        analysis_input: Optional["_models.MultiLanguageAnalysisInput"] = None,
-        parameters: Optional["_models.KeyPhraseTaskParameters"] = None,
+        results: "_models.KeyPhraseResult",
     ) -> None: ...
 
     @overload
@@ -829,37 +914,28 @@ class AnalyzeTextKeyPhraseExtractionInput(AnalyzeTextTask, discriminator="KeyPhr
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextTaskKind.KEY_PHRASE_EXTRACTION, **kwargs)
+        super().__init__(*args, kind=AnalyzeTextResultsKind.KEY_PHRASE_EXTRACTION_RESULTS, **kwargs)
 
 
-class AnalyzeTextLanguageDetectionInput(AnalyzeTextTask, discriminator="LanguageDetection"):
-    """Contains the language detection document analysis task input.
+class AnalyzeTextLanguageDetectionResult(AnalyzeTextResult, discriminator="LanguageDetectionResults"):
+    """Contains the language detection task result for the request.
 
-    :ivar kind: Kind of the task. Required. Language detection task
-    :vartype kind: str or ~azure.ai.language.text.models.LANGUAGE_DETECTION
-    :ivar analysis_input: Documents to be analyzed.
-    :vartype analysis_input: ~azure.ai.language.text.models.LanguageDetectionAnalysisInput
-    :ivar parameters: task parameters.
-    :vartype parameters: ~azure.ai.language.text.models.LanguageDetectionTaskParameters
+    :ivar kind: Kind of the task result. Required. Language detection results
+    :vartype kind: str or ~azure.ai.language.text.models.LANGUAGE_DETECTION_RESULTS
+    :ivar results: Contains the language detection results. Required.
+    :vartype results: ~azure.ai.language.text.models.LanguageDetectionResult
     """
 
-    kind: Literal[AnalyzeTextTaskKind.LANGUAGE_DETECTION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Language detection task"""
-    analysis_input: Optional["_models.LanguageDetectionAnalysisInput"] = rest_field(
-        name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Documents to be analyzed."""
-    parameters: Optional["_models.LanguageDetectionTaskParameters"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """task parameters."""
+    kind: Literal[AnalyzeTextResultsKind.LANGUAGE_DETECTION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind of the task result. Required. Language detection results"""
+    results: "_models.LanguageDetectionResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Contains the language detection results. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        analysis_input: Optional["_models.LanguageDetectionAnalysisInput"] = None,
-        parameters: Optional["_models.LanguageDetectionTaskParameters"] = None,
+        results: "_models.LanguageDetectionResult",
     ) -> None: ...
 
     @overload
@@ -870,37 +946,28 @@ class AnalyzeTextLanguageDetectionInput(AnalyzeTextTask, discriminator="Language
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextTaskKind.LANGUAGE_DETECTION, **kwargs)
+        super().__init__(*args, kind=AnalyzeTextResultsKind.LANGUAGE_DETECTION_RESULTS, **kwargs)
 
 
-class AnalyzeTextPiiEntitiesRecognitionInput(AnalyzeTextTask, discriminator="PiiEntityRecognition"):
-    """Contains the analyze text PIIEntityRecognition task input.
+class AnalyzeTextPiiResult(AnalyzeTextResult, discriminator="PiiEntityRecognitionResults"):
+    """Contains the analyze text PIIEntityRecognition LRO task.
 
-    :ivar kind: Kind of the task. Required. PII entity recognition task
-    :vartype kind: str or ~azure.ai.language.text.models.PII_ENTITY_RECOGNITION
-    :ivar analysis_input: Contains the input documents.
-    :vartype analysis_input: ~azure.ai.language.text.models.MultiLanguageAnalysisInput
-    :ivar parameters: Pii task parameters.
-    :vartype parameters: ~azure.ai.language.text.models.PiiTaskParameters
+    :ivar kind: The kind of the task. Required. PII entity recognition results
+    :vartype kind: str or ~azure.ai.language.text.models.PII_ENTITY_RECOGNITION_RESULTS
+    :ivar results: The list of pii results. Required.
+    :vartype results: ~azure.ai.language.text.models.PiiResult
     """
 
-    kind: Literal[AnalyzeTextTaskKind.PII_ENTITY_RECOGNITION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. PII entity recognition task"""
-    analysis_input: Optional["_models.MultiLanguageAnalysisInput"] = rest_field(
-        name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Contains the input documents."""
-    parameters: Optional["_models.PiiTaskParameters"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Pii task parameters."""
+    kind: Literal[AnalyzeTextResultsKind.PII_ENTITY_RECOGNITION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The kind of the task. Required. PII entity recognition results"""
+    results: "_models.PiiResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The list of pii results. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        analysis_input: Optional["_models.MultiLanguageAnalysisInput"] = None,
-        parameters: Optional["_models.PiiTaskParameters"] = None,
+        results: "_models.PiiResult",
     ) -> None: ...
 
     @overload
@@ -911,37 +978,28 @@ class AnalyzeTextPiiEntitiesRecognitionInput(AnalyzeTextTask, discriminator="Pii
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextTaskKind.PII_ENTITY_RECOGNITION, **kwargs)
+        super().__init__(*args, kind=AnalyzeTextResultsKind.PII_ENTITY_RECOGNITION_RESULTS, **kwargs)
 
 
-class AnalyzeTextSentimentAnalysisInput(AnalyzeTextTask, discriminator="SentimentAnalysis"):
-    """Contains the analyze text SentimentAnalysis task input.
+class AnalyzeTextSentimentResult(AnalyzeTextResult, discriminator="SentimentAnalysisResults"):
+    """Contains the analyze text SentimentAnalysis LRO task result.
 
-    :ivar kind: Kind of the task. Required. Sentiment analysis task
-    :vartype kind: str or ~azure.ai.language.text.models.SENTIMENT_ANALYSIS
-    :ivar analysis_input: Contains the input documents.
-    :vartype analysis_input: ~azure.ai.language.text.models.MultiLanguageAnalysisInput
-    :ivar parameters: Sentiment Analysis task parameters.
-    :vartype parameters: ~azure.ai.language.text.models.SentimentAnalysisTaskParameters
+    :ivar kind: Kind of the task. Required. Sentiment analysis results
+    :vartype kind: str or ~azure.ai.language.text.models.SENTIMENT_ANALYSIS_RESULTS
+    :ivar results: The sentiment analysis results. Required.
+    :vartype results: ~azure.ai.language.text.models.SentimentResult
     """
 
-    kind: Literal[AnalyzeTextTaskKind.SENTIMENT_ANALYSIS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Sentiment analysis task"""
-    analysis_input: Optional["_models.MultiLanguageAnalysisInput"] = rest_field(
-        name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Contains the input documents."""
-    parameters: Optional["_models.SentimentAnalysisTaskParameters"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Sentiment Analysis task parameters."""
+    kind: Literal[AnalyzeTextResultsKind.SENTIMENT_ANALYSIS_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind of the task. Required. Sentiment analysis results"""
+    results: "_models.SentimentResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The sentiment analysis results. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        analysis_input: Optional["_models.MultiLanguageAnalysisInput"] = None,
-        parameters: Optional["_models.SentimentAnalysisTaskParameters"] = None,
+        results: "_models.SentimentResult",
     ) -> None: ...
 
     @overload
@@ -952,44 +1010,7 @@ class AnalyzeTextSentimentAnalysisInput(AnalyzeTextTask, discriminator="Sentimen
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextTaskKind.SENTIMENT_ANALYSIS, **kwargs)
-
-
-class AnalyzeTextTaskResult(_Model):
-    """The result object for the analyze task.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    EntityLinkingTaskResult, EntitiesTaskResult, KeyPhraseTaskResult, LanguageDetectionTaskResult,
-    PiiTaskResult, SentimentTaskResult
-
-    :ivar kind: The kind of task result. Required. Known values are: "SentimentAnalysisResults",
-     "EntityRecognitionResults", "PiiEntityRecognitionResults", "KeyPhraseExtractionResults",
-     "LanguageDetectionResults", and "EntityLinkingResults".
-    :vartype kind: str or ~azure.ai.language.text.models.AnalyzeTextTaskResultsKind
-    """
-
-    __mapping__: Dict[str, _Model] = {}
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
-    """The kind of task result. Required. Known values are: \"SentimentAnalysisResults\",
-     \"EntityRecognitionResults\", \"PiiEntityRecognitionResults\", \"KeyPhraseExtractionResults\",
-     \"LanguageDetectionResults\", and \"EntityLinkingResults\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        kind: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, kind=AnalyzeTextResultsKind.SENTIMENT_ANALYSIS_RESULTS, **kwargs)
 
 
 class AreaMetadata(BaseMetadata, discriminator="AreaMetadata"):
@@ -1111,7 +1132,7 @@ class CharacterMaskPolicyType(BaseRedactionPolicy, discriminator="characterMask"
         super().__init__(*args, policy_kind=RedactionPolicyKind.CHARACTER_MASK, **kwargs)
 
 
-class ClassificationDocumentResultWithDetectedLanguage(_Model):  # pylint: disable=name-too-long
+class ClassificationActionResult(_Model):
     """Contains the classification doc result for the task with detected language.
 
     :ivar id: Unique, non-empty document identifier. Required.
@@ -1253,99 +1274,7 @@ class CurrencyMetadata(BaseMetadata, discriminator="CurrencyMetadata"):
         super().__init__(*args, metadata_kind=MetadataKind.CURRENCY_METADATA, **kwargs)
 
 
-class CustomEntitiesLROTask(AnalyzeTextLROTask, discriminator="CustomEntityRecognition"):
-    """Contains the custom text LRO task.
-
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Custom entity recognition task
-    :vartype kind: str or ~azure.ai.language.text.models.CUSTOM_ENTITY_RECOGNITION
-    :ivar parameters: task parameters.
-    :vartype parameters: ~azure.ai.language.text.models.CustomEntitiesTaskParameters
-    """
-
-    kind: Literal[AnalyzeTextLROTaskKind.CUSTOM_ENTITY_RECOGNITION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Custom entity recognition task"""
-    parameters: Optional["_models.CustomEntitiesTaskParameters"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """task parameters."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        task_name: Optional[str] = None,
-        parameters: Optional["_models.CustomEntitiesTaskParameters"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextLROTaskKind.CUSTOM_ENTITY_RECOGNITION, **kwargs)
-
-
-class CustomEntitiesResult(_Model):
-    """Contains the list of detected custom entities result for the documents.
-
-    :ivar errors: Errors by document id. Required.
-    :vartype errors: list[~azure.ai.language.text.models.DocumentError]
-    :ivar statistics: if showStats=true was specified in the request this field will contain
-     information about the request payload.
-    :vartype statistics: ~azure.ai.language.text.models.RequestStatistics
-    :ivar project_name: This field indicates the project name for the model. Required.
-    :vartype project_name: str
-    :ivar deployment_name: This field indicates the deployment name for the model. Required.
-    :vartype deployment_name: str
-    :ivar documents: Enumeration of the document results. Required.
-    :vartype documents:
-     list[~azure.ai.language.text.models.EntitiesDocumentResultWithDetectedLanguage]
-    """
-
-    errors: List["_models.DocumentError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Errors by document id. Required."""
-    statistics: Optional["_models.RequestStatistics"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """if showStats=true was specified in the request this field will contain information about the
-     request payload."""
-    project_name: str = rest_field(name="projectName", visibility=["read", "create", "update", "delete", "query"])
-    """This field indicates the project name for the model. Required."""
-    deployment_name: str = rest_field(name="deploymentName", visibility=["read", "create", "update", "delete", "query"])
-    """This field indicates the deployment name for the model. Required."""
-    documents: List["_models.EntitiesDocumentResultWithDetectedLanguage"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Enumeration of the document results. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        errors: List["_models.DocumentError"],
-        project_name: str,
-        deployment_name: str,
-        documents: List["_models.EntitiesDocumentResultWithDetectedLanguage"],
-        statistics: Optional["_models.RequestStatistics"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CustomEntitiesTaskParameters(_Model):
+class CustomEntitiesActionContent(_Model):
     """Supported parameters for a Custom Entities task.
 
     :ivar logging_opt_out: logging opt out.
@@ -1396,7 +1325,155 @@ class CustomEntitiesTaskParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomEntityRecognitionLROResult(AnalyzeTextLROResult, discriminator="CustomEntityRecognitionLROResults"):
+class CustomEntitiesLROTask(AnalyzeTextOperationAction, discriminator="CustomEntityRecognition"):
+    """Contains the custom text LRO task.
+
+    :ivar name: task name.
+    :vartype name: str
+    :ivar kind: Kind of the task. Required. Custom entity recognition task
+    :vartype kind: str or ~azure.ai.language.text.models.CUSTOM_ENTITY_RECOGNITION
+    :ivar parameters: task parameters.
+    :vartype parameters: ~azure.ai.language.text.models.CustomEntitiesActionContent
+    """
+
+    kind: Literal[AnalyzeTextOperationActionKind.CUSTOM_ENTITY_RECOGNITION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind of the task. Required. Custom entity recognition task"""
+    parameters: Optional["_models.CustomEntitiesActionContent"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """task parameters."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        parameters: Optional["_models.CustomEntitiesActionContent"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind=AnalyzeTextOperationActionKind.CUSTOM_ENTITY_RECOGNITION, **kwargs)
+
+
+class CustomEntitiesResult(_Model):
+    """Contains the list of detected custom entities result for the documents.
+
+    :ivar errors: Errors by document id. Required.
+    :vartype errors: list[~azure.ai.language.text.models.DocumentError]
+    :ivar statistics: if showStats=true was specified in the request this field will contain
+     information about the request payload.
+    :vartype statistics: ~azure.ai.language.text.models.RequestStatistics
+    :ivar project_name: This field indicates the project name for the model. Required.
+    :vartype project_name: str
+    :ivar deployment_name: This field indicates the deployment name for the model. Required.
+    :vartype deployment_name: str
+    :ivar documents: Enumeration of the document results. Required.
+    :vartype documents: list[~azure.ai.language.text.models.CustomEntityActionResult]
+    """
+
+    errors: List["_models.DocumentError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Errors by document id. Required."""
+    statistics: Optional["_models.RequestStatistics"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """if showStats=true was specified in the request this field will contain information about the
+     request payload."""
+    project_name: str = rest_field(name="projectName", visibility=["read", "create", "update", "delete", "query"])
+    """This field indicates the project name for the model. Required."""
+    deployment_name: str = rest_field(name="deploymentName", visibility=["read", "create", "update", "delete", "query"])
+    """This field indicates the deployment name for the model. Required."""
+    documents: List["_models.CustomEntityActionResult"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Enumeration of the document results. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        errors: List["_models.DocumentError"],
+        project_name: str,
+        deployment_name: str,
+        documents: List["_models.CustomEntityActionResult"],
+        statistics: Optional["_models.RequestStatistics"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CustomEntityActionResult(_Model):
+    """Contains the entity recognition task result for the document with detected language.
+
+    :ivar id: Unique, non-empty document identifier. Required.
+    :vartype id: str
+    :ivar warnings: Warnings encountered while processing document. Required.
+    :vartype warnings: list[~azure.ai.language.text.models.DocumentWarning]
+    :ivar statistics: if showStats=true was specified in the request this field will contain
+     information about the document payload.
+    :vartype statistics: ~azure.ai.language.text.models.DocumentStatistics
+    :ivar entities: Recognized entities in the document. Required.
+    :vartype entities: list[~azure.ai.language.text.models.NamedEntity]
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+     field will contain a 2 letter ISO 639-1 representation of the language detected for this
+     document.
+    :vartype detected_language: ~azure.ai.language.text.models.DetectedLanguage
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Unique, non-empty document identifier. Required."""
+    warnings: List["_models.DocumentWarning"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Warnings encountered while processing document. Required."""
+    statistics: Optional["_models.DocumentStatistics"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """if showStats=true was specified in the request this field will contain information about the
+     document payload."""
+    entities: List["_models.NamedEntity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Recognized entities in the document. Required."""
+    detected_language: Optional["_models.DetectedLanguage"] = rest_field(
+        name="detectedLanguage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """If 'language' is set to 'auto' for the document in the request this field will contain a 2
+     letter ISO 639-1 representation of the language detected for this document."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        warnings: List["_models.DocumentWarning"],
+        entities: List["_models.NamedEntity"],
+        statistics: Optional["_models.DocumentStatistics"] = None,
+        detected_language: Optional["_models.DetectedLanguage"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CustomEntityRecognitionOperationResult(AnalyzeTextLROResult, discriminator="CustomEntityRecognitionLROResults"):
     """Contains the custom entity recognition job result.
 
     :ivar last_update_date_time: The last updated time in UTC for the task. Required.
@@ -1404,16 +1481,17 @@ class CustomEntityRecognitionLROResult(AnalyzeTextLROResult, discriminator="Cust
     :ivar status: The status of the task at the mentioned last update time. Required. Known values
      are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
      "cancelling".
-    :vartype status: str or ~azure.ai.language.text.models.State
+    :vartype status: str or ~azure.ai.language.text.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
     :ivar kind: Kind of the task. Required. Custom entity recognition LRO results
-    :vartype kind: str or ~azure.ai.language.text.models.CUSTOM_ENTITY_RECOGNITION_LRO_RESULTS
+    :vartype kind: str or
+     ~azure.ai.language.text.models.CUSTOM_ENTITY_RECOGNITION_OPERATION_RESULTS
     :ivar results: List of results. Required.
     :vartype results: ~azure.ai.language.text.models.CustomEntitiesResult
     """
 
-    kind: Literal[AnalyzeTextLROResultsKind.CUSTOM_ENTITY_RECOGNITION_LRO_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    kind: Literal[AnalyzeTextOperationResultsKind.CUSTOM_ENTITY_RECOGNITION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Kind of the task. Required. Custom entity recognition LRO results"""
     results: "_models.CustomEntitiesResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of results. Required."""
@@ -1423,7 +1501,7 @@ class CustomEntityRecognitionLROResult(AnalyzeTextLROResult, discriminator="Cust
         self,
         *,
         last_update_date_time: datetime.datetime,
-        status: Union[str, "_models.State"],
+        status: Union[str, "_models.TextActionState"],
         results: "_models.CustomEntitiesResult",
         task_name: Optional[str] = None,
     ) -> None: ...
@@ -1436,7 +1514,9 @@ class CustomEntityRecognitionLROResult(AnalyzeTextLROResult, discriminator="Cust
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextLROResultsKind.CUSTOM_ENTITY_RECOGNITION_LRO_RESULTS, **kwargs)
+        super().__init__(
+            *args, kind=AnalyzeTextOperationResultsKind.CUSTOM_ENTITY_RECOGNITION_OPERATION_RESULTS, **kwargs
+        )
 
 
 class CustomLabelClassificationResult(_Model):
@@ -1452,8 +1532,7 @@ class CustomLabelClassificationResult(_Model):
     :ivar deployment_name: This field indicates the deployment name for the model. Required.
     :vartype deployment_name: str
     :ivar documents: Response by document. Required.
-    :vartype documents:
-     list[~azure.ai.language.text.models.ClassificationDocumentResultWithDetectedLanguage]
+    :vartype documents: list[~azure.ai.language.text.models.ClassificationActionResult]
     """
 
     errors: List["_models.DocumentError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1467,7 +1546,7 @@ class CustomLabelClassificationResult(_Model):
     """This field indicates the project name for the model. Required."""
     deployment_name: str = rest_field(name="deploymentName", visibility=["read", "create", "update", "delete", "query"])
     """This field indicates the deployment name for the model. Required."""
-    documents: List["_models.ClassificationDocumentResultWithDetectedLanguage"] = rest_field(
+    documents: List["_models.ClassificationActionResult"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Response by document. Required."""
@@ -1479,7 +1558,7 @@ class CustomLabelClassificationResult(_Model):
         errors: List["_models.DocumentError"],
         project_name: str,
         deployment_name: str,
-        documents: List["_models.ClassificationDocumentResultWithDetectedLanguage"],
+        documents: List["_models.ClassificationActionResult"],
         statistics: Optional["_models.RequestStatistics"] = None,
     ) -> None: ...
 
@@ -1494,93 +1573,7 @@ class CustomLabelClassificationResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomMultiLabelClassificationLROResult(
-    AnalyzeTextLROResult, discriminator="CustomMultiLabelClassificationLROResults"
-):
-    """Contains the custom multi label classification job result.
-
-    :ivar last_update_date_time: The last updated time in UTC for the task. Required.
-    :vartype last_update_date_time: ~datetime.datetime
-    :ivar status: The status of the task at the mentioned last update time. Required. Known values
-     are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
-     "cancelling".
-    :vartype status: str or ~azure.ai.language.text.models.State
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Custom multi label classification LRO results
-    :vartype kind: str or
-     ~azure.ai.language.text.models.CUSTOM_MULTI_LABEL_CLASSIFICATION_LRO_RESULTS
-    :ivar results: List of results. Required.
-    :vartype results: ~azure.ai.language.text.models.CustomLabelClassificationResult
-    """
-
-    kind: Literal[AnalyzeTextLROResultsKind.CUSTOM_MULTI_LABEL_CLASSIFICATION_LRO_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Custom multi label classification LRO results"""
-    results: "_models.CustomLabelClassificationResult" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """List of results. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        last_update_date_time: datetime.datetime,
-        status: Union[str, "_models.State"],
-        results: "_models.CustomLabelClassificationResult",
-        task_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextLROResultsKind.CUSTOM_MULTI_LABEL_CLASSIFICATION_LRO_RESULTS, **kwargs)
-
-
-class CustomMultiLabelClassificationLROTask(AnalyzeTextLROTask, discriminator="CustomMultiLabelClassification"):
-    """Use custom models to classify text into multi label taxonomy.
-
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Custom multi label classification task
-    :vartype kind: str or ~azure.ai.language.text.models.CUSTOM_MULTI_LABEL_CLASSIFICATION
-    :ivar parameters: Task parameters.
-    :vartype parameters:
-     ~azure.ai.language.text.models.CustomMultiLabelClassificationTaskParameters
-    """
-
-    kind: Literal[AnalyzeTextLROTaskKind.CUSTOM_MULTI_LABEL_CLASSIFICATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Custom multi label classification task"""
-    parameters: Optional["_models.CustomMultiLabelClassificationTaskParameters"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Task parameters."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        task_name: Optional[str] = None,
-        parameters: Optional["_models.CustomMultiLabelClassificationTaskParameters"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextLROTaskKind.CUSTOM_MULTI_LABEL_CLASSIFICATION, **kwargs)
-
-
-class CustomMultiLabelClassificationTaskParameters(_Model):  # pylint: disable=name-too-long
+class CustomMultiLabelClassificationActionContent(_Model):  # pylint: disable=name-too-long
     """Supported parameters for a Custom Multi Classification task.
 
     :ivar logging_opt_out: logging opt out.
@@ -1620,28 +1613,68 @@ class CustomMultiLabelClassificationTaskParameters(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class CustomSingleLabelClassificationLROResult(
-    AnalyzeTextLROResult, discriminator="CustomSingleLabelClassificationLROResults"
-):
-    """Contains the custom single label classification job result.
+class CustomMultiLabelClassificationOperationAction(
+    AnalyzeTextOperationAction, discriminator="CustomMultiLabelClassification"
+):  # pylint: disable=name-too-long
+    """Use custom models to classify text into multi label taxonomy.
+
+    :ivar name: task name.
+    :vartype name: str
+    :ivar kind: Kind of the task. Required. Custom multi label classification task
+    :vartype kind: str or ~azure.ai.language.text.models.CUSTOM_MULTI_LABEL_CLASSIFICATION
+    :ivar action_content: Task parameters.
+    :vartype action_content:
+     ~azure.ai.language.text.models.CustomMultiLabelClassificationActionContent
+    """
+
+    kind: Literal[AnalyzeTextOperationActionKind.CUSTOM_MULTI_LABEL_CLASSIFICATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind of the task. Required. Custom multi label classification task"""
+    action_content: Optional["_models.CustomMultiLabelClassificationActionContent"] = rest_field(
+        name="parameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Task parameters."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        action_content: Optional["_models.CustomMultiLabelClassificationActionContent"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind=AnalyzeTextOperationActionKind.CUSTOM_MULTI_LABEL_CLASSIFICATION, **kwargs)
+
+
+class CustomMultiLabelClassificationOperationResult(
+    AnalyzeTextLROResult, discriminator="CustomMultiLabelClassificationLROResults"
+):  # pylint: disable=name-too-long
+    """Contains the custom multi label classification job result.
 
     :ivar last_update_date_time: The last updated time in UTC for the task. Required.
     :vartype last_update_date_time: ~datetime.datetime
     :ivar status: The status of the task at the mentioned last update time. Required. Known values
      are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
      "cancelling".
-    :vartype status: str or ~azure.ai.language.text.models.State
+    :vartype status: str or ~azure.ai.language.text.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Custom single label classification LRO results
+    :ivar kind: Kind of the task. Required. Custom multi label classification LRO results
     :vartype kind: str or
-     ~azure.ai.language.text.models.CUSTOM_SINGLE_LABEL_CLASSIFICATION_LRO_RESULTS
+     ~azure.ai.language.text.models.CUSTOM_MULTI_LABEL_CLASSIFICATION_OPERATION_RESULTS
     :ivar results: List of results. Required.
     :vartype results: ~azure.ai.language.text.models.CustomLabelClassificationResult
     """
 
-    kind: Literal[AnalyzeTextLROResultsKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION_LRO_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Custom single label classification LRO results"""
+    kind: Literal[AnalyzeTextOperationResultsKind.CUSTOM_MULTI_LABEL_CLASSIFICATION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind of the task. Required. Custom multi label classification LRO results"""
     results: "_models.CustomLabelClassificationResult" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1652,7 +1685,7 @@ class CustomSingleLabelClassificationLROResult(
         self,
         *,
         last_update_date_time: datetime.datetime,
-        status: Union[str, "_models.State"],
+        status: Union[str, "_models.TextActionState"],
         results: "_models.CustomLabelClassificationResult",
         task_name: Optional[str] = None,
     ) -> None: ...
@@ -1665,48 +1698,12 @@ class CustomSingleLabelClassificationLROResult(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextLROResultsKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION_LRO_RESULTS, **kwargs)
+        super().__init__(
+            *args, kind=AnalyzeTextOperationResultsKind.CUSTOM_MULTI_LABEL_CLASSIFICATION_OPERATION_RESULTS, **kwargs
+        )
 
 
-class CustomSingleLabelClassificationLROTask(AnalyzeTextLROTask, discriminator="CustomSingleLabelClassification"):
-    """Use custom models to classify text into single label taxonomy.
-
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Custom single label classification task
-    :vartype kind: str or ~azure.ai.language.text.models.CUSTOM_SINGLE_LABEL_CLASSIFICATION
-    :ivar parameters: Task parameters.
-    :vartype parameters:
-     ~azure.ai.language.text.models.CustomSingleLabelClassificationTaskParameters
-    """
-
-    kind: Literal[AnalyzeTextLROTaskKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Custom single label classification task"""
-    parameters: Optional["_models.CustomSingleLabelClassificationTaskParameters"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Task parameters."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        task_name: Optional[str] = None,
-        parameters: Optional["_models.CustomSingleLabelClassificationTaskParameters"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextLROTaskKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION, **kwargs)
-
-
-class CustomSingleLabelClassificationTaskParameters(_Model):  # pylint: disable=name-too-long
+class CustomSingleLabelClassificationActionContent(_Model):  # pylint: disable=name-too-long
     """Supported parameters for a Custom Single Classification task.
 
     :ivar logging_opt_out: logging opt out.
@@ -1746,16 +1743,106 @@ class CustomSingleLabelClassificationTaskParameters(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
+class CustomSingleLabelClassificationOperationAction(
+    AnalyzeTextOperationAction, discriminator="CustomSingleLabelClassification"
+):  # pylint: disable=name-too-long
+    """Use custom models to classify text into single label taxonomy.
+
+    :ivar name: task name.
+    :vartype name: str
+    :ivar kind: Kind of the task. Required. Custom single label classification task
+    :vartype kind: str or ~azure.ai.language.text.models.CUSTOM_SINGLE_LABEL_CLASSIFICATION
+    :ivar action_content: Task parameters.
+    :vartype action_content:
+     ~azure.ai.language.text.models.CustomSingleLabelClassificationActionContent
+    """
+
+    kind: Literal[AnalyzeTextOperationActionKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind of the task. Required. Custom single label classification task"""
+    action_content: Optional["_models.CustomSingleLabelClassificationActionContent"] = rest_field(
+        name="parameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Task parameters."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        action_content: Optional["_models.CustomSingleLabelClassificationActionContent"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind=AnalyzeTextOperationActionKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION, **kwargs)
+
+
+class CustomSingleLabelClassificationOperationResult(
+    AnalyzeTextLROResult, discriminator="CustomSingleLabelClassificationLROResults"
+):  # pylint: disable=name-too-long
+    """Contains the custom single label classification job result.
+
+    :ivar last_update_date_time: The last updated time in UTC for the task. Required.
+    :vartype last_update_date_time: ~datetime.datetime
+    :ivar status: The status of the task at the mentioned last update time. Required. Known values
+     are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
+     "cancelling".
+    :vartype status: str or ~azure.ai.language.text.models.TextActionState
+    :ivar task_name: task name.
+    :vartype task_name: str
+    :ivar kind: Kind of the task. Required. Custom single label classification LRO results
+    :vartype kind: str or
+     ~azure.ai.language.text.models.CUSTOM_SINGLE_LABEL_CLASSIFICATION_OPERATION_RESULTS
+    :ivar results: List of results. Required.
+    :vartype results: ~azure.ai.language.text.models.CustomLabelClassificationResult
+    """
+
+    kind: Literal[AnalyzeTextOperationResultsKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind of the task. Required. Custom single label classification LRO results"""
+    results: "_models.CustomLabelClassificationResult" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of results. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        last_update_date_time: datetime.datetime,
+        status: Union[str, "_models.TextActionState"],
+        results: "_models.CustomLabelClassificationResult",
+        task_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(
+            *args, kind=AnalyzeTextOperationResultsKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION_OPERATION_RESULTS, **kwargs
+        )
+
+
 class DateMetadata(BaseMetadata, discriminator="DateMetadata"):
     """A Metadata for date entity instances.
 
-    :ivar date_values: List of date values.
-    :vartype date_values: list[~azure.ai.language.text.models.DateValue]
+    :ivar dates: List of date values.
+    :vartype dates: list[~azure.ai.language.text.models.DateValue]
     :ivar metadata_kind: Kind of the metadata. Required. Metadata for date-related values.
     :vartype metadata_kind: str or ~azure.ai.language.text.models.DATE_METADATA
     """
 
-    date_values: Optional[List["_models.DateValue"]] = rest_field(
+    dates: Optional[List["_models.DateValue"]] = rest_field(
         name="dateValues", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of date values."""
@@ -1766,7 +1853,7 @@ class DateMetadata(BaseMetadata, discriminator="DateMetadata"):
     def __init__(
         self,
         *,
-        date_values: Optional[List["_models.DateValue"]] = None,
+        dates: Optional[List["_models.DateValue"]] = None,
     ) -> None: ...
 
     @overload
@@ -1783,13 +1870,13 @@ class DateMetadata(BaseMetadata, discriminator="DateMetadata"):
 class DateTimeMetadata(BaseMetadata, discriminator="DateTimeMetadata"):
     """A Metadata for datetime entity instances.
 
-    :ivar date_values: List of date values.
-    :vartype date_values: list[~azure.ai.language.text.models.DateValue]
+    :ivar dates: List of date values.
+    :vartype dates: list[~azure.ai.language.text.models.DateValue]
     :ivar metadata_kind: Kind of the metadata. Required. Metadata for date and time-related values.
     :vartype metadata_kind: str or ~azure.ai.language.text.models.DATE_TIME_METADATA
     """
 
-    date_values: Optional[List["_models.DateValue"]] = rest_field(
+    dates: Optional[List["_models.DateValue"]] = rest_field(
         name="dateValues", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of date values."""
@@ -1800,7 +1887,7 @@ class DateTimeMetadata(BaseMetadata, discriminator="DateTimeMetadata"):
     def __init__(
         self,
         *,
-        date_values: Optional[List["_models.DateValue"]] = None,
+        dates: Optional[List["_models.DateValue"]] = None,
     ) -> None: ...
 
     @overload
@@ -1950,12 +2037,12 @@ class DocumentError(_Model):
     :ivar id: The ID of the input document. Required.
     :vartype id: str
     :ivar error: Error encountered. Required.
-    :vartype error: ~azure.ai.language.text.models.Error
+    :vartype error: ~azure.ai.language.text.models.AnalyzeTextError
     """
 
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the input document. Required."""
-    error: "_models.Error" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    error: "_models.AnalyzeTextError" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Error encountered. Required."""
 
     @overload
@@ -1963,7 +2050,7 @@ class DocumentError(_Model):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        error: "_models.Error",
+        error: "_models.AnalyzeTextError",
     ) -> None: ...
 
     @overload
@@ -2020,16 +2107,14 @@ class DocumentWarning(_Model):
 
     :ivar code: Warning code. Required. Known values are: "LongWordsInDocument" and
      "DocumentTruncated".
-    :vartype code: str or ~azure.ai.language.text.models.WarningCodeValue
+    :vartype code: str or ~azure.ai.language.text.models.WarningCode
     :ivar message: Warning message. Required.
     :vartype message: str
     :ivar target_ref: A JSON pointer reference indicating the target object.
     :vartype target_ref: str
     """
 
-    code: Union[str, "_models.WarningCodeValue"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    code: Union[str, "_models.WarningCode"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Warning code. Required. Known values are: \"LongWordsInDocument\" and \"DocumentTruncated\"."""
     message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Warning message. Required."""
@@ -2040,7 +2125,7 @@ class DocumentWarning(_Model):
     def __init__(
         self,
         *,
-        code: Union[str, "_models.WarningCodeValue"],
+        code: Union[str, "_models.WarningCode"],
         message: str,
         target_ref: Optional[str] = None,
     ) -> None: ...
@@ -2056,259 +2141,7 @@ class DocumentWarning(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntitiesDocumentResultWithDetectedLanguage(_Model):  # pylint: disable=name-too-long
-    """Contains the entity recognition task result for the document with detected language.
-
-    :ivar id: Unique, non-empty document identifier. Required.
-    :vartype id: str
-    :ivar warnings: Warnings encountered while processing document. Required.
-    :vartype warnings: list[~azure.ai.language.text.models.DocumentWarning]
-    :ivar statistics: if showStats=true was specified in the request this field will contain
-     information about the document payload.
-    :vartype statistics: ~azure.ai.language.text.models.DocumentStatistics
-    :ivar entities: Recognized entities in the document. Required.
-    :vartype entities: list[~azure.ai.language.text.models.Entity]
-    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
-     field will contain a 2 letter ISO 639-1 representation of the language detected for this
-     document.
-    :vartype detected_language: ~azure.ai.language.text.models.DetectedLanguage
-    """
-
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Unique, non-empty document identifier. Required."""
-    warnings: List["_models.DocumentWarning"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Warnings encountered while processing document. Required."""
-    statistics: Optional["_models.DocumentStatistics"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """if showStats=true was specified in the request this field will contain information about the
-     document payload."""
-    entities: List["_models.Entity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Recognized entities in the document. Required."""
-    detected_language: Optional["_models.DetectedLanguage"] = rest_field(
-        name="detectedLanguage", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """If 'language' is set to 'auto' for the document in the request this field will contain a 2
-     letter ISO 639-1 representation of the language detected for this document."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        warnings: List["_models.DocumentWarning"],
-        entities: List["_models.Entity"],
-        statistics: Optional["_models.DocumentStatistics"] = None,
-        detected_language: Optional["_models.DetectedLanguage"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class EntitiesDocumentResultWithMetadata(_Model):
-    """Entity documents result with metadata.
-
-    :ivar id: Unique, non-empty document identifier. Required.
-    :vartype id: str
-    :ivar warnings: Warnings encountered while processing document. Required.
-    :vartype warnings: list[~azure.ai.language.text.models.DocumentWarning]
-    :ivar statistics: if showStats=true was specified in the request this field will contain
-     information about the document payload.
-    :vartype statistics: ~azure.ai.language.text.models.DocumentStatistics
-    :ivar entities: Recognized entities in the document. Required.
-    :vartype entities: list[~azure.ai.language.text.models.EntityWithMetadata]
-    """
-
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Unique, non-empty document identifier. Required."""
-    warnings: List["_models.DocumentWarning"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Warnings encountered while processing document. Required."""
-    statistics: Optional["_models.DocumentStatistics"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """if showStats=true was specified in the request this field will contain information about the
-     document payload."""
-    entities: List["_models.EntityWithMetadata"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Recognized entities in the document. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        warnings: List["_models.DocumentWarning"],
-        entities: List["_models.EntityWithMetadata"],
-        statistics: Optional["_models.DocumentStatistics"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class EntitiesDocumentResultWithMetadataDetectedLanguage(_Model):  # pylint: disable=name-too-long
-    """Contains the entity recognition task result for the document with metadata and detected
-    language.
-
-    :ivar id: Unique, non-empty document identifier. Required.
-    :vartype id: str
-    :ivar warnings: Warnings encountered while processing document. Required.
-    :vartype warnings: list[~azure.ai.language.text.models.DocumentWarning]
-    :ivar statistics: if showStats=true was specified in the request this field will contain
-     information about the document payload.
-    :vartype statistics: ~azure.ai.language.text.models.DocumentStatistics
-    :ivar entities: Recognized entities in the document. Required.
-    :vartype entities: list[~azure.ai.language.text.models.EntityWithMetadata]
-    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
-     field will contain a 2 letter ISO 639-1 representation of the language detected for this
-     document.
-    :vartype detected_language: ~azure.ai.language.text.models.DetectedLanguage
-    """
-
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Unique, non-empty document identifier. Required."""
-    warnings: List["_models.DocumentWarning"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Warnings encountered while processing document. Required."""
-    statistics: Optional["_models.DocumentStatistics"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """if showStats=true was specified in the request this field will contain information about the
-     document payload."""
-    entities: List["_models.EntityWithMetadata"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Recognized entities in the document. Required."""
-    detected_language: Optional["_models.DetectedLanguage"] = rest_field(
-        name="detectedLanguage", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """If 'language' is set to 'auto' for the document in the request this field will contain a 2
-     letter ISO 639-1 representation of the language detected for this document."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        warnings: List["_models.DocumentWarning"],
-        entities: List["_models.EntityWithMetadata"],
-        statistics: Optional["_models.DocumentStatistics"] = None,
-        detected_language: Optional["_models.DetectedLanguage"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class EntitiesLROTask(AnalyzeTextLROTask, discriminator="EntityRecognition"):
-    """An object representing the task definition for an Entities Recognition task.
-
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: The kind of task. Required. Entity recognition task
-    :vartype kind: str or ~azure.ai.language.text.models.ENTITY_RECOGNITION
-    :ivar parameters: Task parameters.
-    :vartype parameters: ~azure.ai.language.text.models.EntitiesTaskParameters
-    """
-
-    kind: Literal[AnalyzeTextLROTaskKind.ENTITY_RECOGNITION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The kind of task. Required. Entity recognition task"""
-    parameters: Optional["_models.EntitiesTaskParameters"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Task parameters."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        task_name: Optional[str] = None,
-        parameters: Optional["_models.EntitiesTaskParameters"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextLROTaskKind.ENTITY_RECOGNITION, **kwargs)
-
-
-class EntitiesResult(_Model):
-    """Contains the entity recognition task result.
-
-    :ivar errors: Errors by document id. Required.
-    :vartype errors: list[~azure.ai.language.text.models.DocumentError]
-    :ivar statistics: if showStats=true was specified in the request this field will contain
-     information about the request payload.
-    :vartype statistics: ~azure.ai.language.text.models.RequestStatistics
-    :ivar model_version: This field indicates which model is used for scoring. Required.
-    :vartype model_version: str
-    :ivar documents: Response by document. Required.
-    :vartype documents: list[~azure.ai.language.text.models.EntitiesDocumentResultWithMetadata]
-    """
-
-    errors: List["_models.DocumentError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Errors by document id. Required."""
-    statistics: Optional["_models.RequestStatistics"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """if showStats=true was specified in the request this field will contain information about the
-     request payload."""
-    model_version: str = rest_field(name="modelVersion", visibility=["read", "create", "update", "delete", "query"])
-    """This field indicates which model is used for scoring. Required."""
-    documents: List["_models.EntitiesDocumentResultWithMetadata"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Response by document. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        errors: List["_models.DocumentError"],
-        model_version: str,
-        documents: List["_models.EntitiesDocumentResultWithMetadata"],
-        statistics: Optional["_models.RequestStatistics"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class EntitiesTaskParameters(_Model):
+class EntitiesActionContent(_Model):
     """Supported parameters for an Entity Recognition task.
 
     :ivar logging_opt_out: logging opt out.
@@ -2319,19 +2152,19 @@ class EntitiesTaskParameters(_Model):
      interpret string offsets. Defaults to TextElements (Graphemes). Known values are:
      "TextElements_v8", "UnicodeCodePoint", and "Utf16CodeUnit".
     :vartype string_index_type: str or ~azure.ai.language.text.models.StringIndexType
-    :ivar inclusion_list: (Optional) request parameter that limits the output to the requested
-     entity types included in this list. We will apply inclusionList before exclusionList.
-    :vartype inclusion_list: list[str or ~azure.ai.language.text.models.EntityCategory]
-    :ivar exclusion_list: (Optional) request parameter that filters out any entities that are
-     included the excludeList. When a user specifies an excludeList, they cannot get a prediction
-     returned with an entity in that list. We will apply inclusionList before exclusionList.
-    :vartype exclusion_list: list[str or ~azure.ai.language.text.models.EntityCategory]
+    :ivar inclusions: (Optional) request parameter that limits the output to the requested entity
+     types included in this list. We will apply inclusionList before exclusionList.
+    :vartype inclusions: list[str or ~azure.ai.language.text.models.EntityCategory]
+    :ivar exclusions: (Optional) request parameter that filters out any entities that are included
+     the excludeList. When a user specifies an excludeList, they cannot get a prediction returned
+     with an entity in that list. We will apply inclusionList before exclusionList.
+    :vartype exclusions: list[str or ~azure.ai.language.text.models.EntityCategory]
     :ivar overlap_policy: (Optional) describes the type of overlap policy to apply to the ner
      output.
-    :vartype overlap_policy: ~azure.ai.language.text.models.BaseEntityOverlapPolicy
+    :vartype overlap_policy: ~azure.ai.language.text.models.EntityOverlapPolicy
     :ivar inference_options: (Optional) request parameter that allows the user to provide settings
      for running the inference.
-    :vartype inference_options: ~azure.ai.language.text.models.EntityInferenceOptions
+    :vartype inference_options: ~azure.ai.language.text.models.EntityInferenceConfig
     """
 
     logging_opt_out: Optional[bool] = rest_field(
@@ -2348,22 +2181,22 @@ class EntitiesTaskParameters(_Model):
     """(Optional) parameter to provide the string index type used to interpret string offsets.
      Defaults to TextElements (Graphemes). Known values are: \"TextElements_v8\",
      \"UnicodeCodePoint\", and \"Utf16CodeUnit\"."""
-    inclusion_list: Optional[List[Union[str, "_models.EntityCategory"]]] = rest_field(
+    inclusions: Optional[List[Union[str, "_models.EntityCategory"]]] = rest_field(
         name="inclusionList", visibility=["read", "create", "update", "delete", "query"]
     )
     """(Optional) request parameter that limits the output to the requested entity types included in
      this list. We will apply inclusionList before exclusionList."""
-    exclusion_list: Optional[List[Union[str, "_models.EntityCategory"]]] = rest_field(
+    exclusions: Optional[List[Union[str, "_models.EntityCategory"]]] = rest_field(
         name="exclusionList", visibility=["read", "create", "update", "delete", "query"]
     )
     """(Optional) request parameter that filters out any entities that are included the excludeList.
      When a user specifies an excludeList, they cannot get a prediction returned with an entity in
      that list. We will apply inclusionList before exclusionList."""
-    overlap_policy: Optional["_models.BaseEntityOverlapPolicy"] = rest_field(
+    overlap_policy: Optional["_models.EntityOverlapPolicy"] = rest_field(
         name="overlapPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
     """(Optional) describes the type of overlap policy to apply to the ner output."""
-    inference_options: Optional["_models.EntityInferenceOptions"] = rest_field(
+    inference_options: Optional["_models.EntityInferenceConfig"] = rest_field(
         name="inferenceOptions", visibility=["read", "create", "update", "delete", "query"]
     )
     """(Optional) request parameter that allows the user to provide settings for running the
@@ -2376,10 +2209,10 @@ class EntitiesTaskParameters(_Model):
         logging_opt_out: Optional[bool] = None,
         model_version: Optional[str] = None,
         string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
-        inclusion_list: Optional[List[Union[str, "_models.EntityCategory"]]] = None,
-        exclusion_list: Optional[List[Union[str, "_models.EntityCategory"]]] = None,
-        overlap_policy: Optional["_models.BaseEntityOverlapPolicy"] = None,
-        inference_options: Optional["_models.EntityInferenceOptions"] = None,
+        inclusions: Optional[List[Union[str, "_models.EntityCategory"]]] = None,
+        exclusions: Optional[List[Union[str, "_models.EntityCategory"]]] = None,
+        overlap_policy: Optional["_models.EntityOverlapPolicy"] = None,
+        inference_options: Optional["_models.EntityInferenceConfig"] = None,
     ) -> None: ...
 
     @overload
@@ -2393,27 +2226,30 @@ class EntitiesTaskParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntitiesTaskResult(AnalyzeTextTaskResult, discriminator="EntityRecognitionResults"):
-    """Contains the entity task.
+class EntitiesLROTask(AnalyzeTextOperationAction, discriminator="EntityRecognition"):
+    """An object representing the task definition for an Entities Recognition task.
 
-    :ivar kind: kind of the task. Required. Entity recognition results
-    :vartype kind: str or ~azure.ai.language.text.models.ENTITY_RECOGNITION_RESULTS
-    :ivar results: Results for entity recognition. Required.
-    :vartype results: ~azure.ai.language.text.models.EntitiesWithMetadataAutoResult
+    :ivar name: task name.
+    :vartype name: str
+    :ivar kind: The kind of task. Required. Entity recognition task
+    :vartype kind: str or ~azure.ai.language.text.models.ENTITY_RECOGNITION
+    :ivar parameters: Task parameters.
+    :vartype parameters: ~azure.ai.language.text.models.EntitiesActionContent
     """
 
-    kind: Literal[AnalyzeTextTaskResultsKind.ENTITY_RECOGNITION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """kind of the task. Required. Entity recognition results"""
-    results: "_models.EntitiesWithMetadataAutoResult" = rest_field(
+    kind: Literal[AnalyzeTextOperationActionKind.ENTITY_RECOGNITION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The kind of task. Required. Entity recognition task"""
+    parameters: Optional["_models.EntitiesActionContent"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Results for entity recognition. Required."""
+    """Task parameters."""
 
     @overload
     def __init__(
         self,
         *,
-        results: "_models.EntitiesWithMetadataAutoResult",
+        name: Optional[str] = None,
+        parameters: Optional["_models.EntitiesActionContent"] = None,
     ) -> None: ...
 
     @overload
@@ -2424,10 +2260,10 @@ class EntitiesTaskResult(AnalyzeTextTaskResult, discriminator="EntityRecognition
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextTaskResultsKind.ENTITY_RECOGNITION_RESULTS, **kwargs)
+        super().__init__(*args, kind=AnalyzeTextOperationActionKind.ENTITY_RECOGNITION, **kwargs)
 
 
-class EntitiesWithMetadataAutoResult(_Model):
+class EntitiesResult(_Model):
     """Contains the entity recognition task result.
 
     :ivar errors: Errors by document id. Required.
@@ -2438,8 +2274,7 @@ class EntitiesWithMetadataAutoResult(_Model):
     :ivar model_version: This field indicates which model is used for scoring. Required.
     :vartype model_version: str
     :ivar documents: Response by document. Required.
-    :vartype documents:
-     list[~azure.ai.language.text.models.EntitiesDocumentResultWithMetadataDetectedLanguage]
+    :vartype documents: list[~azure.ai.language.text.models.EntityActionResultWithMetadata]
     """
 
     errors: List["_models.DocumentError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2451,7 +2286,7 @@ class EntitiesWithMetadataAutoResult(_Model):
      request payload."""
     model_version: str = rest_field(name="modelVersion", visibility=["read", "create", "update", "delete", "query"])
     """This field indicates which model is used for scoring. Required."""
-    documents: List["_models.EntitiesDocumentResultWithMetadataDetectedLanguage"] = rest_field(
+    documents: List["_models.EntityActionResultWithMetadata"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Response by document. Required."""
@@ -2462,7 +2297,7 @@ class EntitiesWithMetadataAutoResult(_Model):
         *,
         errors: List["_models.DocumentError"],
         model_version: str,
-        documents: List["_models.EntitiesDocumentResultWithMetadataDetectedLanguage"],
+        documents: List["_models.EntityActionResultWithMetadata"],
         statistics: Optional["_models.RequestStatistics"] = None,
     ) -> None: ...
 
@@ -2477,53 +2312,42 @@ class EntitiesWithMetadataAutoResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Entity(_Model):
-    """Defines the detected entity object containing the entity category and entity text detected,
-    etc.
+class EntitiesWithMetadataAutoResult(_Model):
+    """Contains the entity recognition task result.
 
-    :ivar text: Entity text as appears in the request. Required.
-    :vartype text: str
-    :ivar category: Entity type. Required.
-    :vartype category: str
-    :ivar subcategory: (Optional) Entity sub type.
-    :vartype subcategory: str
-    :ivar offset: Start position for the entity text. Use of different 'stringIndexType' values can
-     affect the offset returned. Required.
-    :vartype offset: int
-    :ivar length: Length for the entity text. Use of different 'stringIndexType' values can affect
-     the length returned. Required.
-    :vartype length: int
-    :ivar confidence_score: Confidence score between 0 and 1 of the extracted entity. Required.
-    :vartype confidence_score: float
+    :ivar errors: Errors by document id. Required.
+    :vartype errors: list[~azure.ai.language.text.models.DocumentError]
+    :ivar statistics: if showStats=true was specified in the request this field will contain
+     information about the request payload.
+    :vartype statistics: ~azure.ai.language.text.models.RequestStatistics
+    :ivar model_version: This field indicates which model is used for scoring. Required.
+    :vartype model_version: str
+    :ivar documents: Response by document. Required.
+    :vartype documents: list[~azure.ai.language.text.models.EntityActionResult]
     """
 
-    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Entity text as appears in the request. Required."""
-    category: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Entity type. Required."""
-    subcategory: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """(Optional) Entity sub type."""
-    offset: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Start position for the entity text. Use of different 'stringIndexType' values can affect the
-     offset returned. Required."""
-    length: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Length for the entity text. Use of different 'stringIndexType' values can affect the length
-     returned. Required."""
-    confidence_score: float = rest_field(
-        name="confidenceScore", visibility=["read", "create", "update", "delete", "query"]
+    errors: List["_models.DocumentError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Errors by document id. Required."""
+    statistics: Optional["_models.RequestStatistics"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
-    """Confidence score between 0 and 1 of the extracted entity. Required."""
+    """if showStats=true was specified in the request this field will contain information about the
+     request payload."""
+    model_version: str = rest_field(name="modelVersion", visibility=["read", "create", "update", "delete", "query"])
+    """This field indicates which model is used for scoring. Required."""
+    documents: List["_models.EntityActionResult"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Response by document. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        text: str,
-        category: str,
-        offset: int,
-        length: int,
-        confidence_score: float,
-        subcategory: Optional[str] = None,
+        errors: List["_models.DocumentError"],
+        model_version: str,
+        documents: List["_models.EntityActionResult"],
+        statistics: Optional["_models.RequestStatistics"] = None,
     ) -> None: ...
 
     @overload
@@ -2537,7 +2361,116 @@ class Entity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityInferenceOptions(_Model):
+class EntityActionResult(_Model):
+    """Contains the entity recognition task result for the document with metadata and detected
+    language.
+
+    :ivar id: Unique, non-empty document identifier. Required.
+    :vartype id: str
+    :ivar warnings: Warnings encountered while processing document. Required.
+    :vartype warnings: list[~azure.ai.language.text.models.DocumentWarning]
+    :ivar statistics: if showStats=true was specified in the request this field will contain
+     information about the document payload.
+    :vartype statistics: ~azure.ai.language.text.models.DocumentStatistics
+    :ivar entities: Recognized entities in the document. Required.
+    :vartype entities: list[~azure.ai.language.text.models.NamedEntityWithMetadata]
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+     field will contain a 2 letter ISO 639-1 representation of the language detected for this
+     document.
+    :vartype detected_language: ~azure.ai.language.text.models.DetectedLanguage
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Unique, non-empty document identifier. Required."""
+    warnings: List["_models.DocumentWarning"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Warnings encountered while processing document. Required."""
+    statistics: Optional["_models.DocumentStatistics"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """if showStats=true was specified in the request this field will contain information about the
+     document payload."""
+    entities: List["_models.NamedEntityWithMetadata"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Recognized entities in the document. Required."""
+    detected_language: Optional["_models.DetectedLanguage"] = rest_field(
+        name="detectedLanguage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """If 'language' is set to 'auto' for the document in the request this field will contain a 2
+     letter ISO 639-1 representation of the language detected for this document."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        warnings: List["_models.DocumentWarning"],
+        entities: List["_models.NamedEntityWithMetadata"],
+        statistics: Optional["_models.DocumentStatistics"] = None,
+        detected_language: Optional["_models.DetectedLanguage"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EntityActionResultWithMetadata(_Model):
+    """Entity documents result with metadata.
+
+    :ivar id: Unique, non-empty document identifier. Required.
+    :vartype id: str
+    :ivar warnings: Warnings encountered while processing document. Required.
+    :vartype warnings: list[~azure.ai.language.text.models.DocumentWarning]
+    :ivar statistics: if showStats=true was specified in the request this field will contain
+     information about the document payload.
+    :vartype statistics: ~azure.ai.language.text.models.DocumentStatistics
+    :ivar entities: Recognized entities in the document. Required.
+    :vartype entities: list[~azure.ai.language.text.models.NamedEntityWithMetadata]
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Unique, non-empty document identifier. Required."""
+    warnings: List["_models.DocumentWarning"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Warnings encountered while processing document. Required."""
+    statistics: Optional["_models.DocumentStatistics"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """if showStats=true was specified in the request this field will contain information about the
+     document payload."""
+    entities: List["_models.NamedEntityWithMetadata"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Recognized entities in the document. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        warnings: List["_models.DocumentWarning"],
+        entities: List["_models.NamedEntityWithMetadata"],
+        statistics: Optional["_models.DocumentStatistics"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EntityInferenceConfig(_Model):
     """The class that houses the inference options allowed for named entity recognition.
 
     :ivar exclude_normalized_values: Option to include/exclude the detected entity values to be
@@ -2570,123 +2503,41 @@ class EntityInferenceOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityLinkingLROResult(AnalyzeTextLROResult, discriminator="EntityLinkingLROResults"):
-    """Contains the analyze text Entity linking task LRO result.
+class EntityLinkingActionContent(_Model):
+    """Supported parameters for an Entity Linking task.
 
-    :ivar last_update_date_time: The last updated time in UTC for the task. Required.
-    :vartype last_update_date_time: ~datetime.datetime
-    :ivar status: The status of the task at the mentioned last update time. Required. Known values
-     are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
-     "cancelling".
-    :vartype status: str or ~azure.ai.language.text.models.State
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Entity linking LRO results
-    :vartype kind: str or ~azure.ai.language.text.models.ENTITY_LINKING_LRO_RESULTS
-    :ivar results: Entity linking result. Required.
-    :vartype results: ~azure.ai.language.text.models.EntityLinkingResult
-    """
-
-    kind: Literal[AnalyzeTextLROResultsKind.ENTITY_LINKING_LRO_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Entity linking LRO results"""
-    results: "_models.EntityLinkingResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Entity linking result. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        last_update_date_time: datetime.datetime,
-        status: Union[str, "_models.State"],
-        results: "_models.EntityLinkingResult",
-        task_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextLROResultsKind.ENTITY_LINKING_LRO_RESULTS, **kwargs)
-
-
-class EntityLinkingLROTask(AnalyzeTextLROTask, discriminator="EntityLinking"):
-    """Contains the analyze text Entity linking LRO task.
-
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: Kind of task result. Required. Entity linking task
-    :vartype kind: str or ~azure.ai.language.text.models.ENTITY_LINKING
-    :ivar parameters: Task parameters.
-    :vartype parameters: ~azure.ai.language.text.models.EntityLinkingTaskParameters
-    """
-
-    kind: Literal[AnalyzeTextLROTaskKind.ENTITY_LINKING] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of task result. Required. Entity linking task"""
-    parameters: Optional["_models.EntityLinkingTaskParameters"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Task parameters."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        task_name: Optional[str] = None,
-        parameters: Optional["_models.EntityLinkingTaskParameters"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextLROTaskKind.ENTITY_LINKING, **kwargs)
-
-
-class EntityLinkingResult(_Model):
-    """Entity linking result.
-
-    :ivar errors: Errors by document id. Required.
-    :vartype errors: list[~azure.ai.language.text.models.DocumentError]
-    :ivar statistics: if showStats=true was specified in the request this field will contain
-     information about the request payload.
-    :vartype statistics: ~azure.ai.language.text.models.RequestStatistics
-    :ivar model_version: This field indicates which model is used for scoring. Required.
+    :ivar logging_opt_out: logging opt out.
+    :vartype logging_opt_out: bool
+    :ivar model_version: model version.
     :vartype model_version: str
-    :ivar documents: Response by document. Required.
-    :vartype documents:
-     list[~azure.ai.language.text.models.EntityLinkingResultWithDetectedLanguage]
+    :ivar string_index_type: Optional parameter to provide the string index type used to interpret
+     string offsets. Defaults to TextElements (Graphemes). Known values are: "TextElements_v8",
+     "UnicodeCodePoint", and "Utf16CodeUnit".
+    :vartype string_index_type: str or ~azure.ai.language.text.models.StringIndexType
     """
 
-    errors: List["_models.DocumentError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Errors by document id. Required."""
-    statistics: Optional["_models.RequestStatistics"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    logging_opt_out: Optional[bool] = rest_field(
+        name="loggingOptOut", visibility=["read", "create", "update", "delete", "query"]
     )
-    """if showStats=true was specified in the request this field will contain information about the
-     request payload."""
-    model_version: str = rest_field(name="modelVersion", visibility=["read", "create", "update", "delete", "query"])
-    """This field indicates which model is used for scoring. Required."""
-    documents: List["_models.EntityLinkingResultWithDetectedLanguage"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    """logging opt out."""
+    model_version: Optional[str] = rest_field(
+        name="modelVersion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Response by document. Required."""
+    """model version."""
+    string_index_type: Optional[Union[str, "_models.StringIndexType"]] = rest_field(
+        name="stringIndexType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional parameter to provide the string index type used to interpret string offsets. Defaults
+     to TextElements (Graphemes). Known values are: \"TextElements_v8\", \"UnicodeCodePoint\", and
+     \"Utf16CodeUnit\"."""
 
     @overload
     def __init__(
         self,
         *,
-        errors: List["_models.DocumentError"],
-        model_version: str,
-        documents: List["_models.EntityLinkingResultWithDetectedLanguage"],
-        statistics: Optional["_models.RequestStatistics"] = None,
+        logging_opt_out: Optional[bool] = None,
+        model_version: Optional[str] = None,
+        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
     ) -> None: ...
 
     @overload
@@ -2700,7 +2551,7 @@ class EntityLinkingResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityLinkingResultWithDetectedLanguage(_Model):
+class EntityLinkingActionResult(_Model):
     """Entity linking document result with auto language detection.
 
     :ivar id: Unique, non-empty document identifier. Required.
@@ -2757,41 +2608,77 @@ class EntityLinkingResultWithDetectedLanguage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityLinkingTaskParameters(_Model):
-    """Supported parameters for an Entity Linking task.
+class EntityLinkingLROTask(AnalyzeTextOperationAction, discriminator="EntityLinking"):
+    """Contains the analyze text Entity linking LRO task.
 
-    :ivar logging_opt_out: logging opt out.
-    :vartype logging_opt_out: bool
-    :ivar model_version: model version.
-    :vartype model_version: str
-    :ivar string_index_type: Optional parameter to provide the string index type used to interpret
-     string offsets. Defaults to TextElements (Graphemes). Known values are: "TextElements_v8",
-     "UnicodeCodePoint", and "Utf16CodeUnit".
-    :vartype string_index_type: str or ~azure.ai.language.text.models.StringIndexType
+    :ivar name: task name.
+    :vartype name: str
+    :ivar kind: Kind of task result. Required. Entity linking task
+    :vartype kind: str or ~azure.ai.language.text.models.ENTITY_LINKING
+    :ivar parameters: Task parameters.
+    :vartype parameters: ~azure.ai.language.text.models.EntityLinkingActionContent
     """
 
-    logging_opt_out: Optional[bool] = rest_field(
-        name="loggingOptOut", visibility=["read", "create", "update", "delete", "query"]
+    kind: Literal[AnalyzeTextOperationActionKind.ENTITY_LINKING] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind of task result. Required. Entity linking task"""
+    parameters: Optional["_models.EntityLinkingActionContent"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
-    """logging opt out."""
-    model_version: Optional[str] = rest_field(
-        name="modelVersion", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """model version."""
-    string_index_type: Optional[Union[str, "_models.StringIndexType"]] = rest_field(
-        name="stringIndexType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Optional parameter to provide the string index type used to interpret string offsets. Defaults
-     to TextElements (Graphemes). Known values are: \"TextElements_v8\", \"UnicodeCodePoint\", and
-     \"Utf16CodeUnit\"."""
+    """Task parameters."""
 
     @overload
     def __init__(
         self,
         *,
-        logging_opt_out: Optional[bool] = None,
-        model_version: Optional[str] = None,
-        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
+        name: Optional[str] = None,
+        parameters: Optional["_models.EntityLinkingActionContent"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind=AnalyzeTextOperationActionKind.ENTITY_LINKING, **kwargs)
+
+
+class EntityLinkingMatch(_Model):
+    """The Match object containing the detected entity text with the offset and the length.
+
+    :ivar confidence_score: If a well known item is recognized, a decimal number denoting the
+     confidence level between 0 and 1 will be returned. Required.
+    :vartype confidence_score: float
+    :ivar text: Entity text as appears in the request. Required.
+    :vartype text: str
+    :ivar offset: Start position for the entity match text. Required.
+    :vartype offset: int
+    :ivar length: Length for the entity match text. Required.
+    :vartype length: int
+    """
+
+    confidence_score: float = rest_field(
+        name="confidenceScore", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """If a well known item is recognized, a decimal number denoting the confidence level between 0
+     and 1 will be returned. Required."""
+    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Entity text as appears in the request. Required."""
+    offset: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Start position for the entity match text. Required."""
+    length: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Length for the entity match text. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        confidence_score: float,
+        text: str,
+        offset: int,
+        length: int,
     ) -> None: ...
 
     @overload
@@ -2805,17 +2692,25 @@ class EntityLinkingTaskParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityLinkingTaskResult(AnalyzeTextTaskResult, discriminator="EntityLinkingResults"):
-    """Contains the analyze text Entity linking task result.
+class EntityLinkingOperationResult(AnalyzeTextLROResult, discriminator="EntityLinkingLROResults"):
+    """Contains the analyze text Entity linking task LRO result.
 
-    :ivar kind: Kind of task result. Required. Entity linking results
-    :vartype kind: str or ~azure.ai.language.text.models.ENTITY_LINKING_RESULTS
+    :ivar last_update_date_time: The last updated time in UTC for the task. Required.
+    :vartype last_update_date_time: ~datetime.datetime
+    :ivar status: The status of the task at the mentioned last update time. Required. Known values
+     are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
+     "cancelling".
+    :vartype status: str or ~azure.ai.language.text.models.TextActionState
+    :ivar task_name: task name.
+    :vartype task_name: str
+    :ivar kind: Kind of the task. Required. Entity linking LRO results
+    :vartype kind: str or ~azure.ai.language.text.models.ENTITY_LINKING_OPERATION_RESULTS
     :ivar results: Entity linking result. Required.
     :vartype results: ~azure.ai.language.text.models.EntityLinkingResult
     """
 
-    kind: Literal[AnalyzeTextTaskResultsKind.ENTITY_LINKING_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of task result. Required. Entity linking results"""
+    kind: Literal[AnalyzeTextOperationResultsKind.ENTITY_LINKING_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind of the task. Required. Entity linking LRO results"""
     results: "_models.EntityLinkingResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Entity linking result. Required."""
 
@@ -2823,7 +2718,10 @@ class EntityLinkingTaskResult(AnalyzeTextTaskResult, discriminator="EntityLinkin
     def __init__(
         self,
         *,
+        last_update_date_time: datetime.datetime,
+        status: Union[str, "_models.TextActionState"],
         results: "_models.EntityLinkingResult",
+        task_name: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2834,7 +2732,56 @@ class EntityLinkingTaskResult(AnalyzeTextTaskResult, discriminator="EntityLinkin
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextTaskResultsKind.ENTITY_LINKING_RESULTS, **kwargs)
+        super().__init__(*args, kind=AnalyzeTextOperationResultsKind.ENTITY_LINKING_OPERATION_RESULTS, **kwargs)
+
+
+class EntityLinkingResult(_Model):
+    """Entity linking result.
+
+    :ivar errors: Errors by document id. Required.
+    :vartype errors: list[~azure.ai.language.text.models.DocumentError]
+    :ivar statistics: if showStats=true was specified in the request this field will contain
+     information about the request payload.
+    :vartype statistics: ~azure.ai.language.text.models.RequestStatistics
+    :ivar model_version: This field indicates which model is used for scoring. Required.
+    :vartype model_version: str
+    :ivar documents: Response by document. Required.
+    :vartype documents: list[~azure.ai.language.text.models.EntityLinkingActionResult]
+    """
+
+    errors: List["_models.DocumentError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Errors by document id. Required."""
+    statistics: Optional["_models.RequestStatistics"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """if showStats=true was specified in the request this field will contain information about the
+     request payload."""
+    model_version: str = rest_field(name="modelVersion", visibility=["read", "create", "update", "delete", "query"])
+    """This field indicates which model is used for scoring. Required."""
+    documents: List["_models.EntityLinkingActionResult"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Response by document. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        errors: List["_models.DocumentError"],
+        model_version: str,
+        documents: List["_models.EntityLinkingActionResult"],
+        statistics: Optional["_models.RequestStatistics"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class EntityMaskPolicyType(BaseRedactionPolicy, discriminator="entityMask"):
@@ -2864,7 +2811,7 @@ class EntityMaskPolicyType(BaseRedactionPolicy, discriminator="entityMask"):
         super().__init__(*args, policy_kind=RedactionPolicyKind.ENTITY_MASK, **kwargs)
 
 
-class EntityRecognitionLROResult(AnalyzeTextLROResult, discriminator="EntityRecognitionLROResults"):
+class EntityRecognitionOperationResult(AnalyzeTextLROResult, discriminator="EntityRecognitionLROResults"):
     """Contains the entity recognition job task result.
 
     :ivar last_update_date_time: The last updated time in UTC for the task. Required.
@@ -2872,16 +2819,16 @@ class EntityRecognitionLROResult(AnalyzeTextLROResult, discriminator="EntityReco
     :ivar status: The status of the task at the mentioned last update time. Required. Known values
      are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
      "cancelling".
-    :vartype status: str or ~azure.ai.language.text.models.State
+    :vartype status: str or ~azure.ai.language.text.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
     :ivar kind: Kind of the task. Required. Entity recognition LRO results
-    :vartype kind: str or ~azure.ai.language.text.models.ENTITY_RECOGNITION_LRO_RESULTS
+    :vartype kind: str or ~azure.ai.language.text.models.ENTITY_RECOGNITION_OPERATION_RESULTS
     :ivar results: Results for the task. Required.
     :vartype results: ~azure.ai.language.text.models.EntitiesResult
     """
 
-    kind: Literal[AnalyzeTextLROResultsKind.ENTITY_RECOGNITION_LRO_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    kind: Literal[AnalyzeTextOperationResultsKind.ENTITY_RECOGNITION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Kind of the task. Required. Entity recognition LRO results"""
     results: "_models.EntitiesResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Results for the task. Required."""
@@ -2891,7 +2838,7 @@ class EntityRecognitionLROResult(AnalyzeTextLROResult, discriminator="EntityReco
         self,
         *,
         last_update_date_time: datetime.datetime,
-        status: Union[str, "_models.State"],
+        status: Union[str, "_models.TextActionState"],
         results: "_models.EntitiesResult",
         task_name: Optional[str] = None,
     ) -> None: ...
@@ -2904,7 +2851,7 @@ class EntityRecognitionLROResult(AnalyzeTextLROResult, discriminator="EntityReco
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextLROResultsKind.ENTITY_RECOGNITION_LRO_RESULTS, **kwargs)
+        super().__init__(*args, kind=AnalyzeTextOperationResultsKind.ENTITY_RECOGNITION_OPERATION_RESULTS, **kwargs)
 
 
 class EntitySynonym(_Model):
@@ -3028,161 +2975,21 @@ class EntityTag(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityWithMetadata(_Model):
-    """Entity object with tags and metadata.
-
-    :ivar text: Entity text as appears in the request. Required.
-    :vartype text: str
-    :ivar category: Entity type. Required.
-    :vartype category: str
-    :ivar subcategory: (Optional) Entity sub type.
-    :vartype subcategory: str
-    :ivar offset: Start position for the entity text. Use of different 'stringIndexType' values can
-     affect the offset returned. Required.
-    :vartype offset: int
-    :ivar length: Length for the entity text. Use of different 'stringIndexType' values can affect
-     the length returned. Required.
-    :vartype length: int
-    :ivar confidence_score: Confidence score between 0 and 1 of the extracted entity. Required.
-    :vartype confidence_score: float
-    :ivar type: An entity type is the lowest (or finest) granularity at which the entity has been
-     detected. The type maps to the specific metadata attributes associated with the entity
-     detected.
-    :vartype type: str
-    :ivar tags: List of entity tags. Tags are to express some similarities/affinity between
-     entities.
-    :vartype tags: list[~azure.ai.language.text.models.EntityTag]
-    :ivar metadata: The entity metadata object.
-    :vartype metadata: ~azure.ai.language.text.models.BaseMetadata
-    """
-
-    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Entity text as appears in the request. Required."""
-    category: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Entity type. Required."""
-    subcategory: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """(Optional) Entity sub type."""
-    offset: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Start position for the entity text. Use of different 'stringIndexType' values can affect the
-     offset returned. Required."""
-    length: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Length for the entity text. Use of different 'stringIndexType' values can affect the length
-     returned. Required."""
-    confidence_score: float = rest_field(
-        name="confidenceScore", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Confidence score between 0 and 1 of the extracted entity. Required."""
-    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """An entity type is the lowest (or finest) granularity at which the entity has been detected. The
-     type maps to the specific metadata attributes associated with the entity detected."""
-    tags: Optional[List["_models.EntityTag"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """List of entity tags. Tags are to express some similarities/affinity between entities."""
-    metadata: Optional["_models.BaseMetadata"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The entity metadata object."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        text: str,
-        category: str,
-        offset: int,
-        length: int,
-        confidence_score: float,
-        subcategory: Optional[str] = None,
-        type: Optional[str] = None,
-        tags: Optional[List["_models.EntityTag"]] = None,
-        metadata: Optional["_models.BaseMetadata"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class Error(_Model):
-    """The error response object returned when the service encounters some errors during processing
-    the request.
-
-    :ivar code: One of a server-defined set of error codes. Required. Known values are:
-     "InvalidRequest", "InvalidArgument", "Unauthorized", "Forbidden", "NotFound",
-     "ProjectNotFound", "OperationNotFound", "AzureCognitiveSearchNotFound",
-     "AzureCognitiveSearchIndexNotFound", "TooManyRequests", "AzureCognitiveSearchThrottling",
-     "AzureCognitiveSearchIndexLimitReached", "InternalServerError", "ServiceUnavailable",
-     "Timeout", "QuotaExceeded", "Conflict", and "Warning".
-    :vartype code: str or ~azure.ai.language.text.models.ErrorCode
-    :ivar message: A human-readable representation of the error. Required.
-    :vartype message: str
-    :ivar target: The target of the error.
-    :vartype target: str
-    :ivar details: An array of details about specific errors that led to this reported error.
-    :vartype details: list[~azure.ai.language.text.models.Error]
-    :ivar innererror: An object containing more specific information than the current object about
-     the error.
-    :vartype innererror: ~azure.ai.language.text.models.InnerErrorModel
-    """
-
-    code: Union[str, "_models.ErrorCode"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """One of a server-defined set of error codes. Required. Known values are: \"InvalidRequest\",
-     \"InvalidArgument\", \"Unauthorized\", \"Forbidden\", \"NotFound\", \"ProjectNotFound\",
-     \"OperationNotFound\", \"AzureCognitiveSearchNotFound\", \"AzureCognitiveSearchIndexNotFound\",
-     \"TooManyRequests\", \"AzureCognitiveSearchThrottling\",
-     \"AzureCognitiveSearchIndexLimitReached\", \"InternalServerError\", \"ServiceUnavailable\",
-     \"Timeout\", \"QuotaExceeded\", \"Conflict\", and \"Warning\"."""
-    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A human-readable representation of the error. Required."""
-    target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The target of the error."""
-    details: Optional[List["_models.Error"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """An array of details about specific errors that led to this reported error."""
-    innererror: Optional["_models.InnerErrorModel"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """An object containing more specific information than the current object about the error."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: Union[str, "_models.ErrorCode"],
-        message: str,
-        target: Optional[str] = None,
-        details: Optional[List["_models.Error"]] = None,
-        innererror: Optional["_models.InnerErrorModel"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class ErrorResponse(_Model):
     """Error response.
 
     :ivar error: The error object. Required.
-    :vartype error: ~azure.ai.language.text.models.Error
+    :vartype error: ~azure.ai.language.text.models.AnalyzeTextError
     """
 
-    error: "_models.Error" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    error: "_models.AnalyzeTextError" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The error object. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        error: "_models.Error",
+        error: "_models.AnalyzeTextError",
     ) -> None: ...
 
     @overload
@@ -3196,7 +3003,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtractedSummaryDocumentResultWithDetectedLanguage(_Model):  # pylint: disable=name-too-long
+class ExtractedSummaryActionResult(_Model):
     """A ranked list of sentences representing the extracted summary.
 
     :ivar id: Unique, non-empty document identifier. Required.
@@ -3302,141 +3109,7 @@ class ExtractedSummarySentence(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtractiveSummarizationLROResult(AnalyzeTextLROResult, discriminator="ExtractiveSummarizationLROResults"):
-    """An object representing the results for an Extractive Summarization task.
-
-    :ivar last_update_date_time: The last updated time in UTC for the task. Required.
-    :vartype last_update_date_time: ~datetime.datetime
-    :ivar status: The status of the task at the mentioned last update time. Required. Known values
-     are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
-     "cancelling".
-    :vartype status: str or ~azure.ai.language.text.models.State
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Extractive summarization LRO results
-    :vartype kind: str or ~azure.ai.language.text.models.EXTRACTIVE_SUMMARIZATION_LRO_RESULTS
-    :ivar results: Results of the task. Required.
-    :vartype results: ~azure.ai.language.text.models.ExtractiveSummarizationResult
-    """
-
-    kind: Literal[AnalyzeTextLROResultsKind.EXTRACTIVE_SUMMARIZATION_LRO_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Extractive summarization LRO results"""
-    results: "_models.ExtractiveSummarizationResult" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Results of the task. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        last_update_date_time: datetime.datetime,
-        status: Union[str, "_models.State"],
-        results: "_models.ExtractiveSummarizationResult",
-        task_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextLROResultsKind.EXTRACTIVE_SUMMARIZATION_LRO_RESULTS, **kwargs)
-
-
-class ExtractiveSummarizationLROTask(AnalyzeTextLROTask, discriminator="ExtractiveSummarization"):
-    """An object representing the task definition for an Extractive Summarization task.
-
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: The Extractive Summarization kind of the long running task. Required. Extractive
-     summarization task
-    :vartype kind: str or ~azure.ai.language.text.models.EXTRACTIVE_SUMMARIZATION
-    :ivar parameters: Parameters for the Extractive Summarization task.
-    :vartype parameters: ~azure.ai.language.text.models.ExtractiveSummarizationTaskParameters
-    """
-
-    kind: Literal[AnalyzeTextLROTaskKind.EXTRACTIVE_SUMMARIZATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The Extractive Summarization kind of the long running task. Required. Extractive summarization
-     task"""
-    parameters: Optional["_models.ExtractiveSummarizationTaskParameters"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Parameters for the Extractive Summarization task."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        task_name: Optional[str] = None,
-        parameters: Optional["_models.ExtractiveSummarizationTaskParameters"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextLROTaskKind.EXTRACTIVE_SUMMARIZATION, **kwargs)
-
-
-class ExtractiveSummarizationResult(_Model):
-    """An object representing the pre-built Extractive Summarization results of each document.
-
-    :ivar errors: Errors by document id. Required.
-    :vartype errors: list[~azure.ai.language.text.models.DocumentError]
-    :ivar statistics: if showStats=true was specified in the request this field will contain
-     information about the request payload.
-    :vartype statistics: ~azure.ai.language.text.models.RequestStatistics
-    :ivar model_version: This field indicates which model is used for scoring. Required.
-    :vartype model_version: str
-    :ivar documents: Response by document. Required.
-    :vartype documents:
-     list[~azure.ai.language.text.models.ExtractedSummaryDocumentResultWithDetectedLanguage]
-    """
-
-    errors: List["_models.DocumentError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Errors by document id. Required."""
-    statistics: Optional["_models.RequestStatistics"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """if showStats=true was specified in the request this field will contain information about the
-     request payload."""
-    model_version: str = rest_field(name="modelVersion", visibility=["read", "create", "update", "delete", "query"])
-    """This field indicates which model is used for scoring. Required."""
-    documents: List["_models.ExtractedSummaryDocumentResultWithDetectedLanguage"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Response by document. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        errors: List["_models.DocumentError"],
-        model_version: str,
-        documents: List["_models.ExtractedSummaryDocumentResultWithDetectedLanguage"],
-        statistics: Optional["_models.RequestStatistics"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ExtractiveSummarizationTaskParameters(_Model):
+class ExtractiveSummarizationActionContent(_Model):
     """Supported parameters for an Extractive Summarization task.
 
     :ivar logging_opt_out: logging opt out.
@@ -3504,60 +3177,128 @@ class ExtractiveSummarizationTaskParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FhirBundle(_Model):
-    """JSON bundle containing a FHIR compatible object for consumption in other Healthcare tools. For
-    additional information see `https://www.hl7.org/fhir/overview.html
-    <https://www.hl7.org/fhir/overview.html>`_.
+class ExtractiveSummarizationOperationAction(AnalyzeTextOperationAction, discriminator="ExtractiveSummarization"):
+    """An object representing the task definition for an Extractive Summarization task.
 
+    :ivar name: task name.
+    :vartype name: str
+    :ivar kind: The Extractive Summarization kind of the long running task. Required. Extractive
+     summarization task
+    :vartype kind: str or ~azure.ai.language.text.models.EXTRACTIVE_SUMMARIZATION
+    :ivar action_content: Parameters for the Extractive Summarization task.
+    :vartype action_content: ~azure.ai.language.text.models.ExtractiveSummarizationActionContent
     """
 
-
-class HealthcareAssertion(_Model):
-    """Assertion of the entity.
-
-    :ivar conditionality: Describes any conditionality on the entity. Known values are:
-     "hypothetical" and "conditional".
-    :vartype conditionality: str or ~azure.ai.language.text.models.Conditionality
-    :ivar certainty: Describes the entities certainty and polarity. Known values are: "positive",
-     "positivePossible", "neutralPossible", "negativePossible", and "negative".
-    :vartype certainty: str or ~azure.ai.language.text.models.Certainty
-    :ivar association: Describes if the entity is the subject of the text or if it describes
-     someone else. Known values are: "subject" and "other".
-    :vartype association: str or ~azure.ai.language.text.models.Association
-    :ivar temporality: Describes temporal information regarding the entity. Known values are:
-     "current", "past", and "future".
-    :vartype temporality: str or ~azure.ai.language.text.models.Temporality
-    """
-
-    conditionality: Optional[Union[str, "_models.Conditionality"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    kind: Literal[AnalyzeTextOperationActionKind.EXTRACTIVE_SUMMARIZATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Extractive Summarization kind of the long running task. Required. Extractive summarization
+     task"""
+    action_content: Optional["_models.ExtractiveSummarizationActionContent"] = rest_field(
+        name="parameters", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Describes any conditionality on the entity. Known values are: \"hypothetical\" and
-     \"conditional\"."""
-    certainty: Optional[Union[str, "_models.Certainty"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Describes the entities certainty and polarity. Known values are: \"positive\",
-     \"positivePossible\", \"neutralPossible\", \"negativePossible\", and \"negative\"."""
-    association: Optional[Union[str, "_models.Association"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Describes if the entity is the subject of the text or if it describes someone else. Known
-     values are: \"subject\" and \"other\"."""
-    temporality: Optional[Union[str, "_models.Temporality"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Describes temporal information regarding the entity. Known values are: \"current\", \"past\",
-     and \"future\"."""
+    """Parameters for the Extractive Summarization task."""
 
     @overload
     def __init__(
         self,
         *,
-        conditionality: Optional[Union[str, "_models.Conditionality"]] = None,
-        certainty: Optional[Union[str, "_models.Certainty"]] = None,
-        association: Optional[Union[str, "_models.Association"]] = None,
-        temporality: Optional[Union[str, "_models.Temporality"]] = None,
+        name: Optional[str] = None,
+        action_content: Optional["_models.ExtractiveSummarizationActionContent"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind=AnalyzeTextOperationActionKind.EXTRACTIVE_SUMMARIZATION, **kwargs)
+
+
+class ExtractiveSummarizationOperationResult(AnalyzeTextLROResult, discriminator="ExtractiveSummarizationLROResults"):
+    """An object representing the results for an Extractive Summarization task.
+
+    :ivar last_update_date_time: The last updated time in UTC for the task. Required.
+    :vartype last_update_date_time: ~datetime.datetime
+    :ivar status: The status of the task at the mentioned last update time. Required. Known values
+     are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
+     "cancelling".
+    :vartype status: str or ~azure.ai.language.text.models.TextActionState
+    :ivar task_name: task name.
+    :vartype task_name: str
+    :ivar kind: Kind of the task. Required. Extractive summarization LRO results
+    :vartype kind: str or ~azure.ai.language.text.models.EXTRACTIVE_SUMMARIZATION_OPERATION_RESULTS
+    :ivar results: Results of the task. Required.
+    :vartype results: ~azure.ai.language.text.models.ExtractiveSummarizationResult
+    """
+
+    kind: Literal[AnalyzeTextOperationResultsKind.EXTRACTIVE_SUMMARIZATION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind of the task. Required. Extractive summarization LRO results"""
+    results: "_models.ExtractiveSummarizationResult" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Results of the task. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        last_update_date_time: datetime.datetime,
+        status: Union[str, "_models.TextActionState"],
+        results: "_models.ExtractiveSummarizationResult",
+        task_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(
+            *args, kind=AnalyzeTextOperationResultsKind.EXTRACTIVE_SUMMARIZATION_OPERATION_RESULTS, **kwargs
+        )
+
+
+class ExtractiveSummarizationResult(_Model):
+    """An object representing the pre-built Extractive Summarization results of each document.
+
+    :ivar errors: Errors by document id. Required.
+    :vartype errors: list[~azure.ai.language.text.models.DocumentError]
+    :ivar statistics: if showStats=true was specified in the request this field will contain
+     information about the request payload.
+    :vartype statistics: ~azure.ai.language.text.models.RequestStatistics
+    :ivar model_version: This field indicates which model is used for scoring. Required.
+    :vartype model_version: str
+    :ivar documents: Response by document. Required.
+    :vartype documents: list[~azure.ai.language.text.models.ExtractedSummaryActionResult]
+    """
+
+    errors: List["_models.DocumentError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Errors by document id. Required."""
+    statistics: Optional["_models.RequestStatistics"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """if showStats=true was specified in the request this field will contain information about the
+     request payload."""
+    model_version: str = rest_field(name="modelVersion", visibility=["read", "create", "update", "delete", "query"])
+    """This field indicates which model is used for scoring. Required."""
+    documents: List["_models.ExtractedSummaryActionResult"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Response by document. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        errors: List["_models.DocumentError"],
+        model_version: str,
+        documents: List["_models.ExtractedSummaryActionResult"],
+        statistics: Optional["_models.RequestStatistics"] = None,
     ) -> None: ...
 
     @overload
@@ -3571,7 +3312,15 @@ class HealthcareAssertion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HealthcareEntitiesDocumentResultWithDocumentDetectedLanguage(_Model):  # pylint: disable=name-too-long
+class FhirBundle(_Model):
+    """JSON bundle containing a FHIR compatible object for consumption in other Healthcare tools. For
+    additional information see `https://www.hl7.org/fhir/overview.html
+    <https://www.hl7.org/fhir/overview.html>`_.
+
+    """
+
+
+class HealthcareActionResult(_Model):
     """Result object for the processed Healthcare document with detected language.
 
     :ivar id: Unique, non-empty document identifier. Required.
@@ -3633,6 +3382,66 @@ class HealthcareEntitiesDocumentResultWithDocumentDetectedLanguage(_Model):  # p
         statistics: Optional["_models.DocumentStatistics"] = None,
         fhir_bundle: Optional["_models.FhirBundle"] = None,
         detected_language: Optional["_models.DetectedLanguage"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class HealthcareAssertion(_Model):
+    """Assertion of the entity.
+
+    :ivar conditionality: Describes any conditionality on the entity. Known values are:
+     "hypothetical" and "conditional".
+    :vartype conditionality: str or
+     ~azure.ai.language.text.models.HealthcareAssertionConditionality
+    :ivar certainty: Describes the entities certainty and polarity. Known values are: "positive",
+     "positivePossible", "neutralPossible", "negativePossible", and "negative".
+    :vartype certainty: str or ~azure.ai.language.text.models.HealthcareAssertionCertainty
+    :ivar association: Describes if the entity is the subject of the text or if it describes
+     someone else. Known values are: "subject" and "other".
+    :vartype association: str or ~azure.ai.language.text.models.HealthcareAssertionAssociation
+    :ivar temporality: Describes temporal information regarding the entity. Known values are:
+     "current", "past", and "future".
+    :vartype temporality: str or ~azure.ai.language.text.models.HealthcareAssertionTemporality
+    """
+
+    conditionality: Optional[Union[str, "_models.HealthcareAssertionConditionality"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Describes any conditionality on the entity. Known values are: \"hypothetical\" and
+     \"conditional\"."""
+    certainty: Optional[Union[str, "_models.HealthcareAssertionCertainty"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Describes the entities certainty and polarity. Known values are: \"positive\",
+     \"positivePossible\", \"neutralPossible\", \"negativePossible\", and \"negative\"."""
+    association: Optional[Union[str, "_models.HealthcareAssertionAssociation"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Describes if the entity is the subject of the text or if it describes someone else. Known
+     values are: \"subject\" and \"other\"."""
+    temporality: Optional[Union[str, "_models.HealthcareAssertionTemporality"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Describes temporal information regarding the entity. Known values are: \"current\", \"past\",
+     and \"future\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        conditionality: Optional[Union[str, "_models.HealthcareAssertionConditionality"]] = None,
+        certainty: Optional[Union[str, "_models.HealthcareAssertionCertainty"]] = None,
+        association: Optional[Union[str, "_models.HealthcareAssertionAssociation"]] = None,
+        temporality: Optional[Union[str, "_models.HealthcareAssertionTemporality"]] = None,
     ) -> None: ...
 
     @overload
@@ -3782,16 +3591,16 @@ class HealthcareLROResult(AnalyzeTextLROResult, discriminator="HealthcareLROResu
     :ivar status: The status of the task at the mentioned last update time. Required. Known values
      are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
      "cancelling".
-    :vartype status: str or ~azure.ai.language.text.models.State
+    :vartype status: str or ~azure.ai.language.text.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
     :ivar kind: Kind of the task. Required. Healthcare LRO results
-    :vartype kind: str or ~azure.ai.language.text.models.HEALTHCARE_LRO_RESULTS
+    :vartype kind: str or ~azure.ai.language.text.models.HEALTHCARE_OPERATION_RESULTS
     :ivar results: Results of the task. Required.
     :vartype results: ~azure.ai.language.text.models.HealthcareResult
     """
 
-    kind: Literal[AnalyzeTextLROResultsKind.HEALTHCARE_LRO_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    kind: Literal[AnalyzeTextOperationResultsKind.HEALTHCARE_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Kind of the task. Required. Healthcare LRO results"""
     results: "_models.HealthcareResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Results of the task. Required."""
@@ -3801,7 +3610,7 @@ class HealthcareLROResult(AnalyzeTextLROResult, discriminator="HealthcareLROResu
         self,
         *,
         last_update_date_time: datetime.datetime,
-        status: Union[str, "_models.State"],
+        status: Union[str, "_models.TextActionState"],
         results: "_models.HealthcareResult",
         task_name: Optional[str] = None,
     ) -> None: ...
@@ -3814,21 +3623,21 @@ class HealthcareLROResult(AnalyzeTextLROResult, discriminator="HealthcareLROResu
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextLROResultsKind.HEALTHCARE_LRO_RESULTS, **kwargs)
+        super().__init__(*args, kind=AnalyzeTextOperationResultsKind.HEALTHCARE_OPERATION_RESULTS, **kwargs)
 
 
-class HealthcareLROTask(AnalyzeTextLROTask, discriminator="Healthcare"):
+class HealthcareLROTask(AnalyzeTextOperationAction, discriminator="Healthcare"):
     """The long running task to be performed by the service on the Healthcare input documents.
 
-    :ivar task_name: task name.
-    :vartype task_name: str
+    :ivar name: task name.
+    :vartype name: str
     :ivar kind: Healthcare kind of the long running task. Required. Healthcare task
     :vartype kind: str or ~azure.ai.language.text.models.HEALTHCARE
     :ivar parameters: Parameters for the Healthcare task.
     :vartype parameters: ~azure.ai.language.text.models.HealthcareTaskParameters
     """
 
-    kind: Literal[AnalyzeTextLROTaskKind.HEALTHCARE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    kind: Literal[AnalyzeTextOperationActionKind.HEALTHCARE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Healthcare kind of the long running task. Required. Healthcare task"""
     parameters: Optional["_models.HealthcareTaskParameters"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -3839,7 +3648,7 @@ class HealthcareLROTask(AnalyzeTextLROTask, discriminator="Healthcare"):
     def __init__(
         self,
         *,
-        task_name: Optional[str] = None,
+        name: Optional[str] = None,
         parameters: Optional["_models.HealthcareTaskParameters"] = None,
     ) -> None: ...
 
@@ -3851,7 +3660,7 @@ class HealthcareLROTask(AnalyzeTextLROTask, discriminator="Healthcare"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextLROTaskKind.HEALTHCARE, **kwargs)
+        super().__init__(*args, kind=AnalyzeTextOperationActionKind.HEALTHCARE, **kwargs)
 
 
 class HealthcareRelation(_Model):
@@ -3970,8 +3779,7 @@ class HealthcareResult(_Model):
     :ivar model_version: This field indicates which model is used for scoring. Required.
     :vartype model_version: str
     :ivar documents: List of result objects for the processed Healthcare documents. Required.
-    :vartype documents:
-     list[~azure.ai.language.text.models.HealthcareEntitiesDocumentResultWithDocumentDetectedLanguage]
+    :vartype documents: list[~azure.ai.language.text.models.HealthcareActionResult]
     """
 
     errors: List["_models.DocumentError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3983,7 +3791,7 @@ class HealthcareResult(_Model):
      request payload."""
     model_version: str = rest_field(name="modelVersion", visibility=["read", "create", "update", "delete", "query"])
     """This field indicates which model is used for scoring. Required."""
-    documents: List["_models.HealthcareEntitiesDocumentResultWithDocumentDetectedLanguage"] = rest_field(
+    documents: List["_models.HealthcareActionResult"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of result objects for the processed Healthcare documents. Required."""
@@ -3994,7 +3802,7 @@ class HealthcareResult(_Model):
         *,
         errors: List["_models.DocumentError"],
         model_version: str,
-        documents: List["_models.HealthcareEntitiesDocumentResultWithDocumentDetectedLanguage"],
+        documents: List["_models.HealthcareActionResult"],
         statistics: Optional["_models.RequestStatistics"] = None,
     ) -> None: ...
 
@@ -4184,7 +3992,44 @@ class InnerErrorModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyPhraseExtractionLROResult(AnalyzeTextLROResult, discriminator="KeyPhraseExtractionLROResults"):
+class KeyPhraseActionContent(_Model):
+    """Supported parameters for a Key Phrase Extraction task.
+
+    :ivar logging_opt_out: logging opt out.
+    :vartype logging_opt_out: bool
+    :ivar model_version: model version.
+    :vartype model_version: str
+    """
+
+    logging_opt_out: Optional[bool] = rest_field(
+        name="loggingOptOut", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """logging opt out."""
+    model_version: Optional[str] = rest_field(
+        name="modelVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """model version."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        logging_opt_out: Optional[bool] = None,
+        model_version: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KeyPhraseExtractionOperationResult(AnalyzeTextLROResult, discriminator="KeyPhraseExtractionLROResults"):
     """Contains the analyze text KeyPhraseExtraction LRO task.
 
     :ivar last_update_date_time: The last updated time in UTC for the task. Required.
@@ -4192,16 +4037,16 @@ class KeyPhraseExtractionLROResult(AnalyzeTextLROResult, discriminator="KeyPhras
     :ivar status: The status of the task at the mentioned last update time. Required. Known values
      are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
      "cancelling".
-    :vartype status: str or ~azure.ai.language.text.models.State
+    :vartype status: str or ~azure.ai.language.text.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
     :ivar kind: Kind of the task. Required. Key phrase extraction LRO results
-    :vartype kind: str or ~azure.ai.language.text.models.KEY_PHRASE_EXTRACTION_LRO_RESULTS
+    :vartype kind: str or ~azure.ai.language.text.models.KEY_PHRASE_EXTRACTION_OPERATION_RESULTS
     :ivar results: The list of Key phrase extraction results. Required.
     :vartype results: ~azure.ai.language.text.models.KeyPhraseResult
     """
 
-    kind: Literal[AnalyzeTextLROResultsKind.KEY_PHRASE_EXTRACTION_LRO_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    kind: Literal[AnalyzeTextOperationResultsKind.KEY_PHRASE_EXTRACTION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Kind of the task. Required. Key phrase extraction LRO results"""
     results: "_models.KeyPhraseResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of Key phrase extraction results. Required."""
@@ -4211,7 +4056,7 @@ class KeyPhraseExtractionLROResult(AnalyzeTextLROResult, discriminator="KeyPhras
         self,
         *,
         last_update_date_time: datetime.datetime,
-        status: Union[str, "_models.State"],
+        status: Union[str, "_models.TextActionState"],
         results: "_models.KeyPhraseResult",
         task_name: Optional[str] = None,
     ) -> None: ...
@@ -4224,23 +4069,23 @@ class KeyPhraseExtractionLROResult(AnalyzeTextLROResult, discriminator="KeyPhras
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextLROResultsKind.KEY_PHRASE_EXTRACTION_LRO_RESULTS, **kwargs)
+        super().__init__(*args, kind=AnalyzeTextOperationResultsKind.KEY_PHRASE_EXTRACTION_OPERATION_RESULTS, **kwargs)
 
 
-class KeyPhraseLROTask(AnalyzeTextLROTask, discriminator="KeyPhraseExtraction"):
+class KeyPhraseLROTask(AnalyzeTextOperationAction, discriminator="KeyPhraseExtraction"):
     """An object representing the task definition for a Key Phrase Extraction task.
 
-    :ivar task_name: task name.
-    :vartype task_name: str
+    :ivar name: task name.
+    :vartype name: str
     :ivar kind: Kind of the task. Required. Key phrase extraction task
     :vartype kind: str or ~azure.ai.language.text.models.KEY_PHRASE_EXTRACTION
     :ivar parameters: Key phrase extraction task parameters.
-    :vartype parameters: ~azure.ai.language.text.models.KeyPhraseTaskParameters
+    :vartype parameters: ~azure.ai.language.text.models.KeyPhraseActionContent
     """
 
-    kind: Literal[AnalyzeTextLROTaskKind.KEY_PHRASE_EXTRACTION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    kind: Literal[AnalyzeTextOperationActionKind.KEY_PHRASE_EXTRACTION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Kind of the task. Required. Key phrase extraction task"""
-    parameters: Optional["_models.KeyPhraseTaskParameters"] = rest_field(
+    parameters: Optional["_models.KeyPhraseActionContent"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Key phrase extraction task parameters."""
@@ -4249,8 +4094,8 @@ class KeyPhraseLROTask(AnalyzeTextLROTask, discriminator="KeyPhraseExtraction"):
     def __init__(
         self,
         *,
-        task_name: Optional[str] = None,
-        parameters: Optional["_models.KeyPhraseTaskParameters"] = None,
+        name: Optional[str] = None,
+        parameters: Optional["_models.KeyPhraseActionContent"] = None,
     ) -> None: ...
 
     @overload
@@ -4261,7 +4106,7 @@ class KeyPhraseLROTask(AnalyzeTextLROTask, discriminator="KeyPhraseExtraction"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextLROTaskKind.KEY_PHRASE_EXTRACTION, **kwargs)
+        super().__init__(*args, kind=AnalyzeTextOperationActionKind.KEY_PHRASE_EXTRACTION, **kwargs)
 
 
 class KeyPhraseResult(_Model):
@@ -4275,8 +4120,7 @@ class KeyPhraseResult(_Model):
     :ivar model_version: This field indicates which model is used for scoring. Required.
     :vartype model_version: str
     :ivar documents: Response by document. Required.
-    :vartype documents:
-     list[~azure.ai.language.text.models.KeyPhrasesDocumentResultWithDetectedLanguage]
+    :vartype documents: list[~azure.ai.language.text.models.KeyPhrasesActionResult]
     """
 
     errors: List["_models.DocumentError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4288,7 +4132,7 @@ class KeyPhraseResult(_Model):
      request payload."""
     model_version: str = rest_field(name="modelVersion", visibility=["read", "create", "update", "delete", "query"])
     """This field indicates which model is used for scoring. Required."""
-    documents: List["_models.KeyPhrasesDocumentResultWithDetectedLanguage"] = rest_field(
+    documents: List["_models.KeyPhrasesActionResult"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Response by document. Required."""
@@ -4299,7 +4143,7 @@ class KeyPhraseResult(_Model):
         *,
         errors: List["_models.DocumentError"],
         model_version: str,
-        documents: List["_models.KeyPhrasesDocumentResultWithDetectedLanguage"],
+        documents: List["_models.KeyPhrasesActionResult"],
         statistics: Optional["_models.RequestStatistics"] = None,
     ) -> None: ...
 
@@ -4314,7 +4158,7 @@ class KeyPhraseResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyPhrasesDocumentResultWithDetectedLanguage(_Model):  # pylint: disable=name-too-long
+class KeyPhrasesActionResult(_Model):
     """A ranked list of sentences representing the extracted summary.
 
     :ivar id: Unique, non-empty document identifier. Required.
@@ -4373,8 +4217,8 @@ class KeyPhrasesDocumentResultWithDetectedLanguage(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class KeyPhraseTaskParameters(_Model):
-    """Supported parameters for a Key Phrase Extraction task.
+class LanguageDetectionActionContent(_Model):
+    """Supported parameters for a Language Detection task.
 
     :ivar logging_opt_out: logging opt out.
     :vartype logging_opt_out: bool
@@ -4397,68 +4241,6 @@ class KeyPhraseTaskParameters(_Model):
         *,
         logging_opt_out: Optional[bool] = None,
         model_version: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class KeyPhraseTaskResult(AnalyzeTextTaskResult, discriminator="KeyPhraseExtractionResults"):
-    """Contains the analyze text KeyPhraseExtraction task result.
-
-    :ivar kind: Kind of the task results. Required. Key phrase extraction results
-    :vartype kind: str or ~azure.ai.language.text.models.KEY_PHRASE_EXTRACTION_RESULTS
-    :ivar results: The list of Key phrase extraction results. Required.
-    :vartype results: ~azure.ai.language.text.models.KeyPhraseResult
-    """
-
-    kind: Literal[AnalyzeTextTaskResultsKind.KEY_PHRASE_EXTRACTION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task results. Required. Key phrase extraction results"""
-    results: "_models.KeyPhraseResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The list of Key phrase extraction results. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        results: "_models.KeyPhraseResult",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextTaskResultsKind.KEY_PHRASE_EXTRACTION_RESULTS, **kwargs)
-
-
-class LanguageDetectionAnalysisInput(_Model):
-    """Contains the language detection document analysis input.
-
-    :ivar documents: List of documents to be analyzed.
-    :vartype documents: list[~azure.ai.language.text.models.LanguageInput]
-    """
-
-    documents: Optional[List["_models.LanguageInput"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """List of documents to be analyzed."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        documents: Optional[List["_models.LanguageInput"]] = None,
     ) -> None: ...
 
     @overload
@@ -4570,30 +4352,23 @@ class LanguageDetectionResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LanguageDetectionTaskParameters(_Model):
-    """Supported parameters for a Language Detection task.
+class LanguageDetectionTextInput(_Model):
+    """Contains the language detection document analysis input.
 
-    :ivar logging_opt_out: logging opt out.
-    :vartype logging_opt_out: bool
-    :ivar model_version: model version.
-    :vartype model_version: str
+    :ivar language_inputs: List of documents to be analyzed.
+    :vartype language_inputs: list[~azure.ai.language.text.models.LanguageInput]
     """
 
-    logging_opt_out: Optional[bool] = rest_field(
-        name="loggingOptOut", visibility=["read", "create", "update", "delete", "query"]
+    language_inputs: Optional[List["_models.LanguageInput"]] = rest_field(
+        name="documents", visibility=["read", "create", "update", "delete", "query"]
     )
-    """logging opt out."""
-    model_version: Optional[str] = rest_field(
-        name="modelVersion", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """model version."""
+    """List of documents to be analyzed."""
 
     @overload
     def __init__(
         self,
         *,
-        logging_opt_out: Optional[bool] = None,
-        model_version: Optional[str] = None,
+        language_inputs: Optional[List["_models.LanguageInput"]] = None,
     ) -> None: ...
 
     @overload
@@ -4605,38 +4380,6 @@ class LanguageDetectionTaskParameters(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class LanguageDetectionTaskResult(AnalyzeTextTaskResult, discriminator="LanguageDetectionResults"):
-    """Contains the language detection task result for the request.
-
-    :ivar kind: Kind of the task result. Required. Language detection results
-    :vartype kind: str or ~azure.ai.language.text.models.LANGUAGE_DETECTION_RESULTS
-    :ivar results: Contains the language detection results. Required.
-    :vartype results: ~azure.ai.language.text.models.LanguageDetectionResult
-    """
-
-    kind: Literal[AnalyzeTextTaskResultsKind.LANGUAGE_DETECTION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task result. Required. Language detection results"""
-    results: "_models.LanguageDetectionResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Contains the language detection results. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        results: "_models.LanguageDetectionResult",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextTaskResultsKind.LANGUAGE_DETECTION_RESULTS, **kwargs)
 
 
 class LanguageInput(_Model):
@@ -4727,7 +4470,7 @@ class LinkedEntity(_Model):
     :ivar name: Entity Linking formal name. Required.
     :vartype name: str
     :ivar matches: List of instances this entity appears in the text. Required.
-    :vartype matches: list[~azure.ai.language.text.models.Match]
+    :vartype matches: list[~azure.ai.language.text.models.EntityLinkingMatch]
     :ivar language: Language used in the data source. Required.
     :vartype language: str
     :ivar id: Unique identifier of the recognized entity from the data source.
@@ -4742,7 +4485,7 @@ class LinkedEntity(_Model):
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Entity Linking formal name. Required."""
-    matches: List["_models.Match"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    matches: List["_models.EntityLinkingMatch"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of instances this entity appears in the text. Required."""
     language: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Language used in the data source. Required."""
@@ -4760,7 +4503,7 @@ class LinkedEntity(_Model):
         self,
         *,
         name: str,
-        matches: List["_models.Match"],
+        matches: List["_models.EntityLinkingMatch"],
         language: str,
         url: str,
         data_source: str,
@@ -4779,54 +4522,7 @@ class LinkedEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Match(_Model):
-    """The Match object containing the detected entity text with the offset and the length.
-
-    :ivar confidence_score: If a well known item is recognized, a decimal number denoting the
-     confidence level between 0 and 1 will be returned. Required.
-    :vartype confidence_score: float
-    :ivar text: Entity text as appears in the request. Required.
-    :vartype text: str
-    :ivar offset: Start position for the entity match text. Required.
-    :vartype offset: int
-    :ivar length: Length for the entity match text. Required.
-    :vartype length: int
-    """
-
-    confidence_score: float = rest_field(
-        name="confidenceScore", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """If a well known item is recognized, a decimal number denoting the confidence level between 0
-     and 1 will be returned. Required."""
-    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Entity text as appears in the request. Required."""
-    offset: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Start position for the entity match text. Required."""
-    length: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Length for the entity match text. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        confidence_score: float,
-        text: str,
-        offset: int,
-        length: int,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class MatchLongestEntityPolicyType(BaseEntityOverlapPolicy, discriminator="matchLongest"):
+class MatchLongestEntityPolicyType(EntityOverlapPolicy, discriminator="matchLongest"):
     """Represents the Match longest overlap policy. No overlapping entities as far as it is possible.
     1. If there are overlapping entities, the longest one will be returned. 2. If the set of
     characters predicted for 2 or more entities are exactly the same, select the entity that has
@@ -4856,36 +4552,6 @@ class MatchLongestEntityPolicyType(BaseEntityOverlapPolicy, discriminator="match
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, policy_kind=PolicyKind.MATCH_LONGEST, **kwargs)
-
-
-class MultiLanguageAnalysisInput(_Model):
-    """Collection of input documents to be analyzed by the service.
-
-    :ivar documents: The input documents to be analyzed.
-    :vartype documents: list[~azure.ai.language.text.models.MultiLanguageInput]
-    """
-
-    documents: Optional[List["_models.MultiLanguageInput"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The input documents to be analyzed."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        documents: Optional[List["_models.MultiLanguageInput"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class MultiLanguageInput(_Model):
@@ -4919,6 +4585,174 @@ class MultiLanguageInput(_Model):
         id: str,  # pylint: disable=redefined-builtin
         text: str,
         language: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MultiLanguageTextInput(_Model):
+    """Collection of input documents to be analyzed by the service.
+
+    :ivar multi_language_inputs: The input documents to be analyzed.
+    :vartype multi_language_inputs: list[~azure.ai.language.text.models.MultiLanguageInput]
+    """
+
+    multi_language_inputs: Optional[List["_models.MultiLanguageInput"]] = rest_field(
+        name="documents", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The input documents to be analyzed."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        multi_language_inputs: Optional[List["_models.MultiLanguageInput"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamedEntity(_Model):
+    """Defines the detected entity object containing the entity category and entity text detected,
+    etc.
+
+    :ivar text: Entity text as appears in the request. Required.
+    :vartype text: str
+    :ivar category: Entity type. Required.
+    :vartype category: str
+    :ivar subcategory: (Optional) Entity sub type.
+    :vartype subcategory: str
+    :ivar offset: Start position for the entity text. Use of different 'stringIndexType' values can
+     affect the offset returned. Required.
+    :vartype offset: int
+    :ivar length: Length for the entity text. Use of different 'stringIndexType' values can affect
+     the length returned. Required.
+    :vartype length: int
+    :ivar confidence_score: Confidence score between 0 and 1 of the extracted entity. Required.
+    :vartype confidence_score: float
+    """
+
+    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Entity text as appears in the request. Required."""
+    category: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Entity type. Required."""
+    subcategory: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """(Optional) Entity sub type."""
+    offset: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Start position for the entity text. Use of different 'stringIndexType' values can affect the
+     offset returned. Required."""
+    length: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Length for the entity text. Use of different 'stringIndexType' values can affect the length
+     returned. Required."""
+    confidence_score: float = rest_field(
+        name="confidenceScore", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Confidence score between 0 and 1 of the extracted entity. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text: str,
+        category: str,
+        offset: int,
+        length: int,
+        confidence_score: float,
+        subcategory: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamedEntityWithMetadata(_Model):
+    """Entity object with tags and metadata.
+
+    :ivar text: Entity text as appears in the request. Required.
+    :vartype text: str
+    :ivar category: Entity type. Required.
+    :vartype category: str
+    :ivar subcategory: (Optional) Entity sub type.
+    :vartype subcategory: str
+    :ivar offset: Start position for the entity text. Use of different 'stringIndexType' values can
+     affect the offset returned. Required.
+    :vartype offset: int
+    :ivar length: Length for the entity text. Use of different 'stringIndexType' values can affect
+     the length returned. Required.
+    :vartype length: int
+    :ivar confidence_score: Confidence score between 0 and 1 of the extracted entity. Required.
+    :vartype confidence_score: float
+    :ivar type: An entity type is the lowest (or finest) granularity at which the entity has been
+     detected. The type maps to the specific metadata attributes associated with the entity
+     detected.
+    :vartype type: str
+    :ivar tags: List of entity tags. Tags are to express some similarities/affinity between
+     entities.
+    :vartype tags: list[~azure.ai.language.text.models.EntityTag]
+    :ivar metadata: The entity metadata object.
+    :vartype metadata: ~azure.ai.language.text.models.BaseMetadata
+    """
+
+    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Entity text as appears in the request. Required."""
+    category: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Entity type. Required."""
+    subcategory: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """(Optional) Entity sub type."""
+    offset: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Start position for the entity text. Use of different 'stringIndexType' values can affect the
+     offset returned. Required."""
+    length: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Length for the entity text. Use of different 'stringIndexType' values can affect the length
+     returned. Required."""
+    confidence_score: float = rest_field(
+        name="confidenceScore", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Confidence score between 0 and 1 of the extracted entity. Required."""
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An entity type is the lowest (or finest) granularity at which the entity has been detected. The
+     type maps to the specific metadata attributes associated with the entity detected."""
+    tags: Optional[List["_models.EntityTag"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """List of entity tags. Tags are to express some similarities/affinity between entities."""
+    metadata: Optional["_models.BaseMetadata"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The entity metadata object."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text: str,
+        category: str,
+        offset: int,
+        length: int,
+        confidence_score: float,
+        subcategory: Optional[str] = None,
+        type: Optional[str] = None,
+        tags: Optional[List["_models.EntityTag"]] = None,
+        metadata: Optional["_models.BaseMetadata"] = None,
     ) -> None: ...
 
     @overload
@@ -5105,36 +4939,86 @@ class OrdinalMetadata(BaseMetadata, discriminator="OrdinalMetadata"):
         super().__init__(*args, metadata_kind=MetadataKind.ORDINAL_METADATA, **kwargs)
 
 
-class PiiEntityRecognitionLROResult(AnalyzeTextLROResult, discriminator="PiiEntityRecognitionLROResults"):
-    """Contains the PII LRO results.
+class PiiActionContent(_Model):
+    """Supported parameters for a PII Entities Recognition task.
 
-    :ivar last_update_date_time: The last updated time in UTC for the task. Required.
-    :vartype last_update_date_time: ~datetime.datetime
-    :ivar status: The status of the task at the mentioned last update time. Required. Known values
-     are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
-     "cancelling".
-    :vartype status: str or ~azure.ai.language.text.models.State
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: The kind of the task. Required. PII entity recognition LRO results
-    :vartype kind: str or ~azure.ai.language.text.models.PII_ENTITY_RECOGNITION_LRO_RESULTS
-    :ivar results: The list of pii results. Required.
-    :vartype results: ~azure.ai.language.text.models.PiiResult
+    :ivar logging_opt_out: logging opt out.
+    :vartype logging_opt_out: bool
+    :ivar model_version: model version.
+    :vartype model_version: str
+    :ivar domain: Domain for PII task. Known values are: "phi" and "none".
+    :vartype domain: str or ~azure.ai.language.text.models.PiiDomain
+    :ivar pii_categories: Enumeration of PII categories to be returned in the response.
+    :vartype pii_categories: list[str or ~azure.ai.language.text.models.PiiCategory]
+    :ivar string_index_type: StringIndexType to be used for analysis. Known values are:
+     "TextElements_v8", "UnicodeCodePoint", and "Utf16CodeUnit".
+    :vartype string_index_type: str or ~azure.ai.language.text.models.StringIndexType
+    :ivar exclude_pii_categories: Enumeration of PII categories to be excluded in the response.
+    :vartype exclude_pii_categories: list[str or
+     ~azure.ai.language.text.models.PiiCategoriesExclude]
+    :ivar redaction_policy: RedactionPolicy to be used on the input.
+    :vartype redaction_policy: ~azure.ai.language.text.models.BaseRedactionPolicy
+    :ivar value_exclusion_policy: Policy for specific words and terms that should be excluded from
+     detection by the PII detection service.
+    :vartype value_exclusion_policy: ~azure.ai.language.text.models.ValueExclusionPolicy
+    :ivar entity_synonyms: (Optional) request parameter that allows the user to provide synonyms
+     for context words that to enhance pii entity detection.
+    :vartype entity_synonyms: list[~azure.ai.language.text.models.EntitySynonyms]
     """
 
-    kind: Literal[AnalyzeTextLROResultsKind.PII_ENTITY_RECOGNITION_LRO_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The kind of the task. Required. PII entity recognition LRO results"""
-    results: "_models.PiiResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The list of pii results. Required."""
+    logging_opt_out: Optional[bool] = rest_field(
+        name="loggingOptOut", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """logging opt out."""
+    model_version: Optional[str] = rest_field(
+        name="modelVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """model version."""
+    domain: Optional[Union[str, "_models.PiiDomain"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Domain for PII task. Known values are: \"phi\" and \"none\"."""
+    pii_categories: Optional[List[Union[str, "_models.PiiCategory"]]] = rest_field(
+        name="piiCategories", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Enumeration of PII categories to be returned in the response."""
+    string_index_type: Optional[Union[str, "_models.StringIndexType"]] = rest_field(
+        name="stringIndexType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """StringIndexType to be used for analysis. Known values are: \"TextElements_v8\",
+     \"UnicodeCodePoint\", and \"Utf16CodeUnit\"."""
+    exclude_pii_categories: Optional[List[Union[str, "_models.PiiCategoriesExclude"]]] = rest_field(
+        name="excludePiiCategories", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Enumeration of PII categories to be excluded in the response."""
+    redaction_policy: Optional["_models.BaseRedactionPolicy"] = rest_field(
+        name="redactionPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """RedactionPolicy to be used on the input."""
+    value_exclusion_policy: Optional["_models.ValueExclusionPolicy"] = rest_field(
+        name="valueExclusionPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Policy for specific words and terms that should be excluded from detection by the PII detection
+     service."""
+    entity_synonyms: Optional[List["_models.EntitySynonyms"]] = rest_field(
+        name="entitySynonyms", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """(Optional) request parameter that allows the user to provide synonyms for context words that to
+     enhance pii entity detection."""
 
     @overload
     def __init__(
         self,
         *,
-        last_update_date_time: datetime.datetime,
-        status: Union[str, "_models.State"],
-        results: "_models.PiiResult",
-        task_name: Optional[str] = None,
+        logging_opt_out: Optional[bool] = None,
+        model_version: Optional[str] = None,
+        domain: Optional[Union[str, "_models.PiiDomain"]] = None,
+        pii_categories: Optional[List[Union[str, "_models.PiiCategory"]]] = None,
+        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
+        exclude_pii_categories: Optional[List[Union[str, "_models.PiiCategoriesExclude"]]] = None,
+        redaction_policy: Optional["_models.BaseRedactionPolicy"] = None,
+        value_exclusion_policy: Optional["_models.ValueExclusionPolicy"] = None,
+        entity_synonyms: Optional[List["_models.EntitySynonyms"]] = None,
     ) -> None: ...
 
     @overload
@@ -5145,10 +5029,10 @@ class PiiEntityRecognitionLROResult(AnalyzeTextLROResult, discriminator="PiiEnti
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextLROResultsKind.PII_ENTITY_RECOGNITION_LRO_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
-class PiiEntityWithTags(_Model):
+class PiiEntity(_Model):
     """Entity object with tags.
 
     :ivar text: Entity text as appears in the request. Required.
@@ -5248,30 +5132,36 @@ class PiiEntityWithTags(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PiiLROTask(AnalyzeTextLROTask, discriminator="PiiEntityRecognition"):
-    """Contains the analyze text PIIEntityRecognition LRO task.
+class PiiEntityRecognitionOperationResult(AnalyzeTextLROResult, discriminator="PiiEntityRecognitionLROResults"):
+    """Contains the PII LRO results.
 
+    :ivar last_update_date_time: The last updated time in UTC for the task. Required.
+    :vartype last_update_date_time: ~datetime.datetime
+    :ivar status: The status of the task at the mentioned last update time. Required. Known values
+     are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
+     "cancelling".
+    :vartype status: str or ~azure.ai.language.text.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
-    :ivar kind: Kind of the task. Required. PII entity recognition task
-    :vartype kind: str or ~azure.ai.language.text.models.PII_ENTITY_RECOGNITION
-    :ivar parameters: Pii task parameters.
-    :vartype parameters: ~azure.ai.language.text.models.PiiTaskParameters
+    :ivar kind: The kind of the task. Required. PII entity recognition LRO results
+    :vartype kind: str or ~azure.ai.language.text.models.PII_ENTITY_RECOGNITION_OPERATION_RESULTS
+    :ivar results: The list of pii results. Required.
+    :vartype results: ~azure.ai.language.text.models.PiiResult
     """
 
-    kind: Literal[AnalyzeTextLROTaskKind.PII_ENTITY_RECOGNITION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. PII entity recognition task"""
-    parameters: Optional["_models.PiiTaskParameters"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Pii task parameters."""
+    kind: Literal[AnalyzeTextOperationResultsKind.PII_ENTITY_RECOGNITION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The kind of the task. Required. PII entity recognition LRO results"""
+    results: "_models.PiiResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The list of pii results. Required."""
 
     @overload
     def __init__(
         self,
         *,
+        last_update_date_time: datetime.datetime,
+        status: Union[str, "_models.TextActionState"],
+        results: "_models.PiiResult",
         task_name: Optional[str] = None,
-        parameters: Optional["_models.PiiTaskParameters"] = None,
     ) -> None: ...
 
     @overload
@@ -5282,7 +5172,44 @@ class PiiLROTask(AnalyzeTextLROTask, discriminator="PiiEntityRecognition"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextLROTaskKind.PII_ENTITY_RECOGNITION, **kwargs)
+        super().__init__(*args, kind=AnalyzeTextOperationResultsKind.PII_ENTITY_RECOGNITION_OPERATION_RESULTS, **kwargs)
+
+
+class PiiLROTask(AnalyzeTextOperationAction, discriminator="PiiEntityRecognition"):
+    """Contains the analyze text PIIEntityRecognition LRO task.
+
+    :ivar name: task name.
+    :vartype name: str
+    :ivar kind: Kind of the task. Required. PII entity recognition task
+    :vartype kind: str or ~azure.ai.language.text.models.PII_ENTITY_RECOGNITION
+    :ivar parameters: Pii task parameters.
+    :vartype parameters: ~azure.ai.language.text.models.PiiActionContent
+    """
+
+    kind: Literal[AnalyzeTextOperationActionKind.PII_ENTITY_RECOGNITION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind of the task. Required. PII entity recognition task"""
+    parameters: Optional["_models.PiiActionContent"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Pii task parameters."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        parameters: Optional["_models.PiiActionContent"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind=AnalyzeTextOperationActionKind.PII_ENTITY_RECOGNITION, **kwargs)
 
 
 class PiiResult(_Model):
@@ -5347,7 +5274,7 @@ class PiiResultWithDetectedLanguage(_Model):
     :ivar redacted_text: Returns redacted text. Required.
     :vartype redacted_text: str
     :ivar entities: Recognized entities in the document. Required.
-    :vartype entities: list[~azure.ai.language.text.models.PiiEntityWithTags]
+    :vartype entities: list[~azure.ai.language.text.models.PiiEntity]
     :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
      field will contain a 2 letter ISO 639-1 representation of the language detected for this
      document.
@@ -5365,7 +5292,7 @@ class PiiResultWithDetectedLanguage(_Model):
      document payload."""
     redacted_text: str = rest_field(name="redactedText", visibility=["read", "create", "update", "delete", "query"])
     """Returns redacted text. Required."""
-    entities: List["_models.PiiEntityWithTags"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    entities: List["_models.PiiEntity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Recognized entities in the document. Required."""
     detected_language: Optional["_models.DetectedLanguage"] = rest_field(
         name="detectedLanguage", visibility=["read", "create", "update", "delete", "query"]
@@ -5380,7 +5307,7 @@ class PiiResultWithDetectedLanguage(_Model):
         id: str,  # pylint: disable=redefined-builtin
         warnings: List["_models.DocumentWarning"],
         redacted_text: str,
-        entities: List["_models.PiiEntityWithTags"],
+        entities: List["_models.PiiEntity"],
         statistics: Optional["_models.DocumentStatistics"] = None,
         detected_language: Optional["_models.DetectedLanguage"] = None,
     ) -> None: ...
@@ -5394,131 +5321,6 @@ class PiiResultWithDetectedLanguage(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class PiiTaskParameters(_Model):
-    """Supported parameters for a PII Entities Recognition task.
-
-    :ivar logging_opt_out: logging opt out.
-    :vartype logging_opt_out: bool
-    :ivar model_version: model version.
-    :vartype model_version: str
-    :ivar domain: Domain for PII task. Known values are: "phi" and "none".
-    :vartype domain: str or ~azure.ai.language.text.models.PiiDomain
-    :ivar pii_categories: Enumeration of PII categories to be returned in the response.
-    :vartype pii_categories: list[str or ~azure.ai.language.text.models.PiiCategory]
-    :ivar string_index_type: StringIndexType to be used for analysis. Known values are:
-     "TextElements_v8", "UnicodeCodePoint", and "Utf16CodeUnit".
-    :vartype string_index_type: str or ~azure.ai.language.text.models.StringIndexType
-    :ivar exclude_pii_categories: Enumeration of PII categories to be excluded in the response.
-    :vartype exclude_pii_categories: list[str or
-     ~azure.ai.language.text.models.PiiCategoriesExclude]
-    :ivar redaction_policy: RedactionPolicy to be used on the input.
-    :vartype redaction_policy: ~azure.ai.language.text.models.BaseRedactionPolicy
-    :ivar value_exclusion_policy: Policy for specific words and terms that should be excluded from
-     detection by the PII detection service.
-    :vartype value_exclusion_policy: ~azure.ai.language.text.models.ValueExclusionPolicy
-    :ivar entity_synonyms: (Optional) request parameter that allows the user to provide synonyms
-     for context words that to enhance pii entity detection.
-    :vartype entity_synonyms: list[~azure.ai.language.text.models.EntitySynonyms]
-    """
-
-    logging_opt_out: Optional[bool] = rest_field(
-        name="loggingOptOut", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """logging opt out."""
-    model_version: Optional[str] = rest_field(
-        name="modelVersion", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """model version."""
-    domain: Optional[Union[str, "_models.PiiDomain"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Domain for PII task. Known values are: \"phi\" and \"none\"."""
-    pii_categories: Optional[List[Union[str, "_models.PiiCategory"]]] = rest_field(
-        name="piiCategories", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Enumeration of PII categories to be returned in the response."""
-    string_index_type: Optional[Union[str, "_models.StringIndexType"]] = rest_field(
-        name="stringIndexType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """StringIndexType to be used for analysis. Known values are: \"TextElements_v8\",
-     \"UnicodeCodePoint\", and \"Utf16CodeUnit\"."""
-    exclude_pii_categories: Optional[List[Union[str, "_models.PiiCategoriesExclude"]]] = rest_field(
-        name="excludePiiCategories", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Enumeration of PII categories to be excluded in the response."""
-    redaction_policy: Optional["_models.BaseRedactionPolicy"] = rest_field(
-        name="redactionPolicy", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """RedactionPolicy to be used on the input."""
-    value_exclusion_policy: Optional["_models.ValueExclusionPolicy"] = rest_field(
-        name="valueExclusionPolicy", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Policy for specific words and terms that should be excluded from detection by the PII detection
-     service."""
-    entity_synonyms: Optional[List["_models.EntitySynonyms"]] = rest_field(
-        name="entitySynonyms", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """(Optional) request parameter that allows the user to provide synonyms for context words that to
-     enhance pii entity detection."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        logging_opt_out: Optional[bool] = None,
-        model_version: Optional[str] = None,
-        domain: Optional[Union[str, "_models.PiiDomain"]] = None,
-        pii_categories: Optional[List[Union[str, "_models.PiiCategory"]]] = None,
-        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
-        exclude_pii_categories: Optional[List[Union[str, "_models.PiiCategoriesExclude"]]] = None,
-        redaction_policy: Optional["_models.BaseRedactionPolicy"] = None,
-        value_exclusion_policy: Optional["_models.ValueExclusionPolicy"] = None,
-        entity_synonyms: Optional[List["_models.EntitySynonyms"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PiiTaskResult(AnalyzeTextTaskResult, discriminator="PiiEntityRecognitionResults"):
-    """Contains the analyze text PIIEntityRecognition LRO task.
-
-    :ivar kind: The kind of the task. Required. PII entity recognition results
-    :vartype kind: str or ~azure.ai.language.text.models.PII_ENTITY_RECOGNITION_RESULTS
-    :ivar results: The list of pii results. Required.
-    :vartype results: ~azure.ai.language.text.models.PiiResult
-    """
-
-    kind: Literal[AnalyzeTextTaskResultsKind.PII_ENTITY_RECOGNITION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The kind of the task. Required. PII entity recognition results"""
-    results: "_models.PiiResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The list of pii results. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        results: "_models.PiiResult",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextTaskResultsKind.PII_ENTITY_RECOGNITION_RESULTS, **kwargs)
 
 
 class RequestStatistics(_Model):
@@ -5580,7 +5382,7 @@ class SentenceAssessment(_Model):
 
     :ivar sentiment: The sentiment of the sentence. Required. Known values are: "positive",
      "mixed", and "negative".
-    :vartype sentiment: str or ~azure.ai.language.text.models.TokenSentimentValue
+    :vartype sentiment: str or ~azure.ai.language.text.models.TokenSentiment
     :ivar confidence_scores: Represents the confidence scores across all sentiment classes:
      positive and negative. Required.
     :vartype confidence_scores: ~azure.ai.language.text.models.TargetConfidenceScoreLabel
@@ -5594,7 +5396,7 @@ class SentenceAssessment(_Model):
     :vartype is_negated: bool
     """
 
-    sentiment: Union[str, "_models.TokenSentimentValue"] = rest_field(
+    sentiment: Union[str, "_models.TokenSentiment"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The sentiment of the sentence. Required. Known values are: \"positive\", \"mixed\", and
@@ -5616,7 +5418,7 @@ class SentenceAssessment(_Model):
     def __init__(
         self,
         *,
-        sentiment: Union[str, "_models.TokenSentimentValue"],
+        sentiment: Union[str, "_models.TokenSentiment"],
         confidence_scores: "_models.TargetConfidenceScoreLabel",
         offset: int,
         length: int,
@@ -5709,7 +5511,7 @@ class SentenceTarget(_Model):
 
     :ivar sentiment: The sentiment of the sentence. Required. Known values are: "positive",
      "mixed", and "negative".
-    :vartype sentiment: str or ~azure.ai.language.text.models.TokenSentimentValue
+    :vartype sentiment: str or ~azure.ai.language.text.models.TokenSentiment
     :ivar confidence_scores: Represents the confidence scores across all sentiment classes:
      positive and negative. Required.
     :vartype confidence_scores: ~azure.ai.language.text.models.TargetConfidenceScoreLabel
@@ -5724,7 +5526,7 @@ class SentenceTarget(_Model):
     :vartype relations: list[~azure.ai.language.text.models.TargetRelation]
     """
 
-    sentiment: Union[str, "_models.TokenSentimentValue"] = rest_field(
+    sentiment: Union[str, "_models.TokenSentiment"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The sentiment of the sentence. Required. Known values are: \"positive\", \"mixed\", and
@@ -5746,7 +5548,7 @@ class SentenceTarget(_Model):
     def __init__(
         self,
         *,
-        sentiment: Union[str, "_models.TokenSentimentValue"],
+        sentiment: Union[str, "_models.TokenSentiment"],
         confidence_scores: "_models.TargetConfidenceScoreLabel",
         offset: int,
         length: int,
@@ -5765,31 +5567,69 @@ class SentenceTarget(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SentimentAnalysisLROTask(AnalyzeTextLROTask, discriminator="SentimentAnalysis"):
-    """An object representing the task definition for a Sentiment Analysis task.
+class SentimentActionResult(_Model):
+    """Sentiment analysis per document.
 
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: The Sentiment Analysis kind of the long running task. Required. Sentiment analysis
-     task
-    :vartype kind: str or ~azure.ai.language.text.models.SENTIMENT_ANALYSIS
-    :ivar parameters: Parameters for the Sentiment Analysis task.
-    :vartype parameters: ~azure.ai.language.text.models.SentimentAnalysisTaskParameters
+    :ivar id: Unique, non-empty document identifier. Required.
+    :vartype id: str
+    :ivar warnings: Warnings encountered while processing document. Required.
+    :vartype warnings: list[~azure.ai.language.text.models.DocumentWarning]
+    :ivar statistics: if showStats=true was specified in the request this field will contain
+     information about the document payload.
+    :vartype statistics: ~azure.ai.language.text.models.DocumentStatistics
+    :ivar sentiment: Predicted sentiment for document (Negative, Neutral, Positive, or Mixed).
+     Required. Known values are: "positive", "neutral", "negative", and "mixed".
+    :vartype sentiment: str or ~azure.ai.language.text.models.DocumentSentiment
+    :ivar confidence_scores: The sentiment confidence score between 0 and 1 for the sentence for
+     all classes. Required.
+    :vartype confidence_scores: ~azure.ai.language.text.models.SentimentConfidenceScores
+    :ivar sentences: The document's sentences sentiment. Required.
+    :vartype sentences: list[~azure.ai.language.text.models.SentenceSentiment]
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+     field will contain a 2 letter ISO 639-1 representation of the language detected for this
+     document.
+    :vartype detected_language: ~azure.ai.language.text.models.DetectedLanguage
     """
 
-    kind: Literal[AnalyzeTextLROTaskKind.SENTIMENT_ANALYSIS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The Sentiment Analysis kind of the long running task. Required. Sentiment analysis task"""
-    parameters: Optional["_models.SentimentAnalysisTaskParameters"] = rest_field(
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Unique, non-empty document identifier. Required."""
+    warnings: List["_models.DocumentWarning"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Warnings encountered while processing document. Required."""
+    statistics: Optional["_models.DocumentStatistics"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Parameters for the Sentiment Analysis task."""
+    """if showStats=true was specified in the request this field will contain information about the
+     document payload."""
+    sentiment: Union[str, "_models.DocumentSentiment"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Predicted sentiment for document (Negative, Neutral, Positive, or Mixed). Required. Known
+     values are: \"positive\", \"neutral\", \"negative\", and \"mixed\"."""
+    confidence_scores: "_models.SentimentConfidenceScores" = rest_field(
+        name="confidenceScores", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The sentiment confidence score between 0 and 1 for the sentence for all classes. Required."""
+    sentences: List["_models.SentenceSentiment"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The document's sentences sentiment. Required."""
+    detected_language: Optional["_models.DetectedLanguage"] = rest_field(
+        name="detectedLanguage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """If 'language' is set to 'auto' for the document in the request this field will contain a 2
+     letter ISO 639-1 representation of the language detected for this document."""
 
     @overload
     def __init__(
         self,
         *,
-        task_name: Optional[str] = None,
-        parameters: Optional["_models.SentimentAnalysisTaskParameters"] = None,
+        id: str,  # pylint: disable=redefined-builtin
+        warnings: List["_models.DocumentWarning"],
+        sentiment: Union[str, "_models.DocumentSentiment"],
+        confidence_scores: "_models.SentimentConfidenceScores",
+        sentences: List["_models.SentenceSentiment"],
+        statistics: Optional["_models.DocumentStatistics"] = None,
+        detected_language: Optional["_models.DetectedLanguage"] = None,
     ) -> None: ...
 
     @overload
@@ -5800,10 +5640,10 @@ class SentimentAnalysisLROTask(AnalyzeTextLROTask, discriminator="SentimentAnaly
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextLROTaskKind.SENTIMENT_ANALYSIS, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
-class SentimentAnalysisTaskParameters(_Model):
+class SentimentAnalysisActionContent(_Model):
     """Supported parameters for a Sentiment Analysis task.
 
     :ivar logging_opt_out: logging opt out.
@@ -5856,6 +5696,44 @@ class SentimentAnalysisTaskParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
+class SentimentAnalysisOperationAction(AnalyzeTextOperationAction, discriminator="SentimentAnalysis"):
+    """An object representing the task definition for a Sentiment Analysis task.
+
+    :ivar name: task name.
+    :vartype name: str
+    :ivar kind: The Sentiment Analysis kind of the long running task. Required. Sentiment analysis
+     task
+    :vartype kind: str or ~azure.ai.language.text.models.SENTIMENT_ANALYSIS
+    :ivar parameters: Parameters for the Sentiment Analysis task.
+    :vartype parameters: ~azure.ai.language.text.models.SentimentAnalysisActionContent
+    """
+
+    kind: Literal[AnalyzeTextOperationActionKind.SENTIMENT_ANALYSIS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Sentiment Analysis kind of the long running task. Required. Sentiment analysis task"""
+    parameters: Optional["_models.SentimentAnalysisActionContent"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Parameters for the Sentiment Analysis task."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        parameters: Optional["_models.SentimentAnalysisActionContent"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind=AnalyzeTextOperationActionKind.SENTIMENT_ANALYSIS, **kwargs)
+
+
 class SentimentConfidenceScores(_Model):
     """Represents the confidence scores between 0 and 1 across all sentiment classes: positive,
     neutral, negative.
@@ -5895,82 +5773,6 @@ class SentimentConfidenceScores(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SentimentDocumentResultWithDetectedLanguage(_Model):  # pylint: disable=name-too-long
-    """Sentiment analysis per document.
-
-    :ivar id: Unique, non-empty document identifier. Required.
-    :vartype id: str
-    :ivar warnings: Warnings encountered while processing document. Required.
-    :vartype warnings: list[~azure.ai.language.text.models.DocumentWarning]
-    :ivar statistics: if showStats=true was specified in the request this field will contain
-     information about the document payload.
-    :vartype statistics: ~azure.ai.language.text.models.DocumentStatistics
-    :ivar sentiment: Predicted sentiment for document (Negative, Neutral, Positive, or Mixed).
-     Required. Known values are: "positive", "neutral", "negative", and "mixed".
-    :vartype sentiment: str or ~azure.ai.language.text.models.DocumentSentimentValue
-    :ivar confidence_scores: The sentiment confidence score between 0 and 1 for the sentence for
-     all classes. Required.
-    :vartype confidence_scores: ~azure.ai.language.text.models.SentimentConfidenceScores
-    :ivar sentences: The document's sentences sentiment. Required.
-    :vartype sentences: list[~azure.ai.language.text.models.SentenceSentiment]
-    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
-     field will contain a 2 letter ISO 639-1 representation of the language detected for this
-     document.
-    :vartype detected_language: ~azure.ai.language.text.models.DetectedLanguage
-    """
-
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Unique, non-empty document identifier. Required."""
-    warnings: List["_models.DocumentWarning"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Warnings encountered while processing document. Required."""
-    statistics: Optional["_models.DocumentStatistics"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """if showStats=true was specified in the request this field will contain information about the
-     document payload."""
-    sentiment: Union[str, "_models.DocumentSentimentValue"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Predicted sentiment for document (Negative, Neutral, Positive, or Mixed). Required. Known
-     values are: \"positive\", \"neutral\", \"negative\", and \"mixed\"."""
-    confidence_scores: "_models.SentimentConfidenceScores" = rest_field(
-        name="confidenceScores", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The sentiment confidence score between 0 and 1 for the sentence for all classes. Required."""
-    sentences: List["_models.SentenceSentiment"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The document's sentences sentiment. Required."""
-    detected_language: Optional["_models.DetectedLanguage"] = rest_field(
-        name="detectedLanguage", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """If 'language' is set to 'auto' for the document in the request this field will contain a 2
-     letter ISO 639-1 representation of the language detected for this document."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        warnings: List["_models.DocumentWarning"],
-        sentiment: Union[str, "_models.DocumentSentimentValue"],
-        confidence_scores: "_models.SentimentConfidenceScores",
-        sentences: List["_models.SentenceSentiment"],
-        statistics: Optional["_models.DocumentStatistics"] = None,
-        detected_language: Optional["_models.DetectedLanguage"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class SentimentLROResult(AnalyzeTextLROResult, discriminator="SentimentAnalysisLROResults"):
     """Contains the Sentiment Analysis LRO results.
 
@@ -5979,18 +5781,18 @@ class SentimentLROResult(AnalyzeTextLROResult, discriminator="SentimentAnalysisL
     :ivar status: The status of the task at the mentioned last update time. Required. Known values
      are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
      "cancelling".
-    :vartype status: str or ~azure.ai.language.text.models.State
+    :vartype status: str or ~azure.ai.language.text.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
     :ivar kind: Kind of the task. Required. Sentiment analysis LRO results
-    :vartype kind: str or ~azure.ai.language.text.models.SENTIMENT_ANALYSIS_LRO_RESULTS
+    :vartype kind: str or ~azure.ai.language.text.models.SENTIMENT_ANALYSIS_OPERATION_RESULTS
     :ivar results: The sentiment analysis results. Required.
-    :vartype results: ~azure.ai.language.text.models.SentimentResponse
+    :vartype results: ~azure.ai.language.text.models.SentimentResult
     """
 
-    kind: Literal[AnalyzeTextLROResultsKind.SENTIMENT_ANALYSIS_LRO_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    kind: Literal[AnalyzeTextOperationResultsKind.SENTIMENT_ANALYSIS_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Kind of the task. Required. Sentiment analysis LRO results"""
-    results: "_models.SentimentResponse" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    results: "_models.SentimentResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The sentiment analysis results. Required."""
 
     @overload
@@ -5998,8 +5800,8 @@ class SentimentLROResult(AnalyzeTextLROResult, discriminator="SentimentAnalysisL
         self,
         *,
         last_update_date_time: datetime.datetime,
-        status: Union[str, "_models.State"],
-        results: "_models.SentimentResponse",
+        status: Union[str, "_models.TextActionState"],
+        results: "_models.SentimentResult",
         task_name: Optional[str] = None,
     ) -> None: ...
 
@@ -6011,10 +5813,10 @@ class SentimentLROResult(AnalyzeTextLROResult, discriminator="SentimentAnalysisL
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextLROResultsKind.SENTIMENT_ANALYSIS_LRO_RESULTS, **kwargs)
+        super().__init__(*args, kind=AnalyzeTextOperationResultsKind.SENTIMENT_ANALYSIS_OPERATION_RESULTS, **kwargs)
 
 
-class SentimentResponse(_Model):
+class SentimentResult(_Model):
     """Sentiment analysis results for the input documents.
 
     :ivar errors: Errors by document id. Required.
@@ -6025,8 +5827,7 @@ class SentimentResponse(_Model):
     :ivar model_version: This field indicates which model is used for scoring. Required.
     :vartype model_version: str
     :ivar documents: The sentiment analysis results for each document in the input. Required.
-    :vartype documents:
-     list[~azure.ai.language.text.models.SentimentDocumentResultWithDetectedLanguage]
+    :vartype documents: list[~azure.ai.language.text.models.SentimentActionResult]
     """
 
     errors: List["_models.DocumentError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6038,7 +5839,7 @@ class SentimentResponse(_Model):
      request payload."""
     model_version: str = rest_field(name="modelVersion", visibility=["read", "create", "update", "delete", "query"])
     """This field indicates which model is used for scoring. Required."""
-    documents: List["_models.SentimentDocumentResultWithDetectedLanguage"] = rest_field(
+    documents: List["_models.SentimentActionResult"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The sentiment analysis results for each document in the input. Required."""
@@ -6049,7 +5850,7 @@ class SentimentResponse(_Model):
         *,
         errors: List["_models.DocumentError"],
         model_version: str,
-        documents: List["_models.SentimentDocumentResultWithDetectedLanguage"],
+        documents: List["_models.SentimentActionResult"],
         statistics: Optional["_models.RequestStatistics"] = None,
     ) -> None: ...
 
@@ -6062,38 +5863,6 @@ class SentimentResponse(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class SentimentTaskResult(AnalyzeTextTaskResult, discriminator="SentimentAnalysisResults"):
-    """Contains the analyze text SentimentAnalysis LRO task result.
-
-    :ivar kind: Kind of the task. Required. Sentiment analysis results
-    :vartype kind: str or ~azure.ai.language.text.models.SENTIMENT_ANALYSIS_RESULTS
-    :ivar results: The sentiment analysis results. Required.
-    :vartype results: ~azure.ai.language.text.models.SentimentResponse
-    """
-
-    kind: Literal[AnalyzeTextTaskResultsKind.SENTIMENT_ANALYSIS_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Sentiment analysis results"""
-    results: "_models.SentimentResponse" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The sentiment analysis results. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        results: "_models.SentimentResponse",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextTaskResultsKind.SENTIMENT_ANALYSIS_RESULTS, **kwargs)
 
 
 class SpeedMetadata(BaseMetadata, discriminator="SpeedMetadata"):
@@ -6245,56 +6014,6 @@ class TargetRelation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Tasks(_Model):
-    """Container for the tasks status for the LRO job.
-
-    :ivar completed: Count of completed tasks. Required.
-    :vartype completed: int
-    :ivar failed: Count of failed tasks. Required.
-    :vartype failed: int
-    :ivar in_progress: Count of inprogress tasks. Required.
-    :vartype in_progress: int
-    :ivar total: Count of total tasks. Required.
-    :vartype total: int
-    :ivar items_property: Enumerable of Analyze text job results.
-    :vartype items_property: list[~azure.ai.language.text.models.AnalyzeTextLROResult]
-    """
-
-    completed: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Count of completed tasks. Required."""
-    failed: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Count of failed tasks. Required."""
-    in_progress: int = rest_field(name="inProgress", visibility=["read", "create", "update", "delete", "query"])
-    """Count of inprogress tasks. Required."""
-    total: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Count of total tasks. Required."""
-    items_property: Optional[List["_models.AnalyzeTextLROResult"]] = rest_field(
-        name="items", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Enumerable of Analyze text job results."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        completed: int,
-        failed: int,
-        in_progress: int,
-        total: int,
-        items_property: Optional[List["_models.AnalyzeTextLROResult"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class TemperatureMetadata(BaseMetadata, discriminator="TemperatureMetadata"):
     """Represents the Information entity Metadata model.
 
@@ -6337,13 +6056,13 @@ class TemperatureMetadata(BaseMetadata, discriminator="TemperatureMetadata"):
 class TemporalSetMetadata(BaseMetadata, discriminator="TemporalSetMetadata"):
     """A Metadata for temporal set entity instances.
 
-    :ivar date_values: List of date values.
-    :vartype date_values: list[~azure.ai.language.text.models.DateValue]
+    :ivar dates: List of date values.
+    :vartype dates: list[~azure.ai.language.text.models.DateValue]
     :ivar metadata_kind: Kind of the metadata. Required. Metadata for set of time-related values.
     :vartype metadata_kind: str or ~azure.ai.language.text.models.TEMPORAL_SET_METADATA
     """
 
-    date_values: Optional[List["_models.DateValue"]] = rest_field(
+    dates: Optional[List["_models.DateValue"]] = rest_field(
         name="dateValues", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of date values."""
@@ -6354,7 +6073,7 @@ class TemporalSetMetadata(BaseMetadata, discriminator="TemporalSetMetadata"):
     def __init__(
         self,
         *,
-        date_values: Optional[List["_models.DateValue"]] = None,
+        dates: Optional[List["_models.DateValue"]] = None,
     ) -> None: ...
 
     @overload
@@ -6464,16 +6183,312 @@ class TemporalSpanValues(_Model):
         super().__init__(*args, **kwargs)
 
 
+class TextActions(_Model):
+    """Container for the tasks status for the LRO job.
+
+    :ivar completed: Count of completed tasks. Required.
+    :vartype completed: int
+    :ivar failed: Count of failed tasks. Required.
+    :vartype failed: int
+    :ivar in_progress: Count of inprogress tasks. Required.
+    :vartype in_progress: int
+    :ivar total: Count of total tasks. Required.
+    :vartype total: int
+    :ivar items_property: Enumerable of Analyze text job results.
+    :vartype items_property: list[~azure.ai.language.text.models.AnalyzeTextLROResult]
+    """
+
+    completed: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Count of completed tasks. Required."""
+    failed: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Count of failed tasks. Required."""
+    in_progress: int = rest_field(name="inProgress", visibility=["read", "create", "update", "delete", "query"])
+    """Count of inprogress tasks. Required."""
+    total: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Count of total tasks. Required."""
+    items_property: Optional[List["_models.AnalyzeTextLROResult"]] = rest_field(
+        name="items", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Enumerable of Analyze text job results."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        completed: int,
+        failed: int,
+        in_progress: int,
+        total: int,
+        items_property: Optional[List["_models.AnalyzeTextLROResult"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextEntityLinkingInput(AnalyzeTextInput, discriminator="EntityLinking"):
+    """Contains the analyze text Entity linking input.
+
+    :ivar kind: Kind for Entity linking input. Required. Entity linking task
+    :vartype kind: str or ~azure.ai.language.text.models.ENTITY_LINKING
+    :ivar text_input: Contains the analysis input to be handled by the service.
+    :vartype text_input: ~azure.ai.language.text.models.MultiLanguageTextInput
+    :ivar action_content: Task parameters.
+    :vartype action_content: ~azure.ai.language.text.models.EntityLinkingActionContent
+    """
+
+    kind: Literal[AnalyzeTextInputKind.ENTITY_LINKING] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind for Entity linking input. Required. Entity linking task"""
+    text_input: Optional["_models.MultiLanguageTextInput"] = rest_field(
+        name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Contains the analysis input to be handled by the service."""
+    action_content: Optional["_models.EntityLinkingActionContent"] = rest_field(
+        name="parameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Task parameters."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text_input: Optional["_models.MultiLanguageTextInput"] = None,
+        action_content: Optional["_models.EntityLinkingActionContent"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind=AnalyzeTextInputKind.ENTITY_LINKING, **kwargs)
+
+
+class TextEntityRecognitionInput(AnalyzeTextInput, discriminator="EntityRecognition"):
+    """The entity recognition analyze text input task request.
+
+    :ivar kind: The kind of task. Required. Entity recognition task
+    :vartype kind: str or ~azure.ai.language.text.models.ENTITY_RECOGNITION
+    :ivar text_input: The input to be analyzed.
+    :vartype text_input: ~azure.ai.language.text.models.MultiLanguageTextInput
+    :ivar action_content: Task parameters.
+    :vartype action_content: ~azure.ai.language.text.models.EntitiesActionContent
+    """
+
+    kind: Literal[AnalyzeTextInputKind.ENTITY_RECOGNITION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The kind of task. Required. Entity recognition task"""
+    text_input: Optional["_models.MultiLanguageTextInput"] = rest_field(
+        name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The input to be analyzed."""
+    action_content: Optional["_models.EntitiesActionContent"] = rest_field(
+        name="parameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Task parameters."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text_input: Optional["_models.MultiLanguageTextInput"] = None,
+        action_content: Optional["_models.EntitiesActionContent"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind=AnalyzeTextInputKind.ENTITY_RECOGNITION, **kwargs)
+
+
+class TextKeyPhraseExtractionInput(AnalyzeTextInput, discriminator="KeyPhraseExtraction"):
+    """Contains the analyze text KeyPhraseExtraction task input.
+
+    :ivar kind: Kind of the task. Required. Key phrase extraction task
+    :vartype kind: str or ~azure.ai.language.text.models.KEY_PHRASE_EXTRACTION
+    :ivar text_input: Contains the input documents.
+    :vartype text_input: ~azure.ai.language.text.models.MultiLanguageTextInput
+    :ivar action_content: Key phrase extraction task parameters.
+    :vartype action_content: ~azure.ai.language.text.models.KeyPhraseActionContent
+    """
+
+    kind: Literal[AnalyzeTextInputKind.KEY_PHRASE_EXTRACTION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind of the task. Required. Key phrase extraction task"""
+    text_input: Optional["_models.MultiLanguageTextInput"] = rest_field(
+        name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Contains the input documents."""
+    action_content: Optional["_models.KeyPhraseActionContent"] = rest_field(
+        name="parameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Key phrase extraction task parameters."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text_input: Optional["_models.MultiLanguageTextInput"] = None,
+        action_content: Optional["_models.KeyPhraseActionContent"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind=AnalyzeTextInputKind.KEY_PHRASE_EXTRACTION, **kwargs)
+
+
+class TextLanguageDetectionInput(AnalyzeTextInput, discriminator="LanguageDetection"):
+    """Contains the language detection document analysis task input.
+
+    :ivar kind: Kind of the task. Required. Language detection task
+    :vartype kind: str or ~azure.ai.language.text.models.LANGUAGE_DETECTION
+    :ivar text_input: Documents to be analyzed.
+    :vartype text_input: ~azure.ai.language.text.models.LanguageDetectionTextInput
+    :ivar action_content: task parameters.
+    :vartype action_content: ~azure.ai.language.text.models.LanguageDetectionActionContent
+    """
+
+    kind: Literal[AnalyzeTextInputKind.LANGUAGE_DETECTION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind of the task. Required. Language detection task"""
+    text_input: Optional["_models.LanguageDetectionTextInput"] = rest_field(
+        name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Documents to be analyzed."""
+    action_content: Optional["_models.LanguageDetectionActionContent"] = rest_field(
+        name="parameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """task parameters."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text_input: Optional["_models.LanguageDetectionTextInput"] = None,
+        action_content: Optional["_models.LanguageDetectionActionContent"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind=AnalyzeTextInputKind.LANGUAGE_DETECTION, **kwargs)
+
+
+class TextPiiEntitiesRecognitionInput(AnalyzeTextInput, discriminator="PiiEntityRecognition"):
+    """Contains the analyze text PIIEntityRecognition task input.
+
+    :ivar kind: Kind of the task. Required. PII entity recognition task
+    :vartype kind: str or ~azure.ai.language.text.models.PII_ENTITY_RECOGNITION
+    :ivar text_input: Contains the input documents.
+    :vartype text_input: ~azure.ai.language.text.models.MultiLanguageTextInput
+    :ivar action_content: Pii task parameters.
+    :vartype action_content: ~azure.ai.language.text.models.PiiActionContent
+    """
+
+    kind: Literal[AnalyzeTextInputKind.PII_ENTITY_RECOGNITION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind of the task. Required. PII entity recognition task"""
+    text_input: Optional["_models.MultiLanguageTextInput"] = rest_field(
+        name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Contains the input documents."""
+    action_content: Optional["_models.PiiActionContent"] = rest_field(
+        name="parameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Pii task parameters."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text_input: Optional["_models.MultiLanguageTextInput"] = None,
+        action_content: Optional["_models.PiiActionContent"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind=AnalyzeTextInputKind.PII_ENTITY_RECOGNITION, **kwargs)
+
+
+class TextSentimentAnalysisInput(AnalyzeTextInput, discriminator="SentimentAnalysis"):
+    """Contains the analyze text SentimentAnalysis task input.
+
+    :ivar kind: Kind of the task. Required. Sentiment analysis task
+    :vartype kind: str or ~azure.ai.language.text.models.SENTIMENT_ANALYSIS
+    :ivar text_input: Contains the input documents.
+    :vartype text_input: ~azure.ai.language.text.models.MultiLanguageTextInput
+    :ivar action_content: Sentiment Analysis task parameters.
+    :vartype action_content: ~azure.ai.language.text.models.SentimentAnalysisActionContent
+    """
+
+    kind: Literal[AnalyzeTextInputKind.SENTIMENT_ANALYSIS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind of the task. Required. Sentiment analysis task"""
+    text_input: Optional["_models.MultiLanguageTextInput"] = rest_field(
+        name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Contains the input documents."""
+    action_content: Optional["_models.SentimentAnalysisActionContent"] = rest_field(
+        name="parameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Sentiment Analysis task parameters."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text_input: Optional["_models.MultiLanguageTextInput"] = None,
+        action_content: Optional["_models.SentimentAnalysisActionContent"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind=AnalyzeTextInputKind.SENTIMENT_ANALYSIS, **kwargs)
+
+
 class TimeMetadata(BaseMetadata, discriminator="TimeMetadata"):
     """A Metadata for time entity instances.
 
-    :ivar date_values: List of date values.
-    :vartype date_values: list[~azure.ai.language.text.models.DateValue]
+    :ivar dates: List of date values.
+    :vartype dates: list[~azure.ai.language.text.models.DateValue]
     :ivar metadata_kind: Kind of the metadata. Required. Metadata for time-related values.
     :vartype metadata_kind: str or ~azure.ai.language.text.models.TIME_METADATA
     """
 
-    date_values: Optional[List["_models.DateValue"]] = rest_field(
+    dates: Optional[List["_models.DateValue"]] = rest_field(
         name="dateValues", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of date values."""
@@ -6484,7 +6499,7 @@ class TimeMetadata(BaseMetadata, discriminator="TimeMetadata"):
     def __init__(
         self,
         *,
-        date_values: Optional[List["_models.DateValue"]] = None,
+        dates: Optional[List["_models.DateValue"]] = None,
     ) -> None: ...
 
     @overload

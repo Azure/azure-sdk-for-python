@@ -17,8 +17,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class TextClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for TextClient.
+class TextAnalysisClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for TextAnalysisClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
