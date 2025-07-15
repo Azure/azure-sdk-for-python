@@ -39,4 +39,3 @@ def main():
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-05-01-preview/examples/UpdateManagedShortTermRetentionPolicyRestorableDropped.json
 if __name__ == "__main__":
     main()
-   main()
