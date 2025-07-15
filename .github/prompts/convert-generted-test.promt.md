@@ -57,6 +57,8 @@ This guide assumes the following package folder structure:
    ```bash
    az login
    ```
+   > **Note**: Run command in virtual environment
+
 
 ### Step 3: Identify Source Test File
 1. **Ask user** for the generated test file name in `generated_tests/`
@@ -130,6 +132,7 @@ This guide assumes the following package folder structure:
    pip install -e .   # Install package in editable mode
    pip install -r dev_requirements.txt  # Install development dependencies
    ```
+   > **Note**: Run command in virtual environment
 
 5. **Create data directory**: Create `tests/data/` folder if it doesn't exist
 
@@ -149,6 +152,7 @@ For **each test case** in the target test file:
    ```bash
    pytest tests/{test_file_name}.py::{test_method_name} -v
    ```
+   > **Note**: Run command in virtual environment
 
 2. **If test fails**:
    - Analyze error message
