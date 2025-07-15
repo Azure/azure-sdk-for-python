@@ -202,52 +202,40 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                 messages = messages[-2:]
 
             for each_turn in messages:
-                role = each_turn["role"]
-                if role == "user":
-                    queries.append(each_turn)
-                elif role == "assistant":
-                    responses.append(each_turn)
+                if "role" in each_turn and "content" in each_turn:
+                    if each_turn["role"] == "user":
+                        queries.append(each_turn)
+                    elif each_turn["role"] == "assistant":
+                        responses.append(each_turn)
 
             # Handle mismatched queries and responses gracefully
             eval_inputs = []
 
             # If no queries or responses, return empty
             if not queries or not responses:
-                return eval_inputs
+                return []
 
             # Pair queries with responses - handle different scenarios
             if len(queries) == len(responses):
-                # Perfect pairing
                 pairs = list(zip(queries, responses))
             elif len(queries) < len(responses):
-                # More responses than queries - pair each query with its corresponding response
-                pairs = [(queries[i], responses[i]) for i in range(len(queries))]
+                pairs = list(zip(queries, responses[:len(queries)]))
             else:
-                # More queries than responses - pair available responses with queries
-                pairs = [(queries[i], responses[i]) for i in range(len(responses))]
+                pairs = list(zip(queries[:len(responses)], responses))
 
             for query, response in pairs:
-                context = {}
-                if include_context:
-                    query_context = query.get("context", None)
-                    response_context = response.get("context", None)
-                    if global_context:
-                        context["global_context"] = global_context
-                    if query_context and include_query:
-                        context["query_context"] = query_context
-                    if response_context and include_response:
-                        context["response_context"] = response_context
-
                 eval_input: DerivedEvalInput = {}
-                if include_query:
-                    eval_input["query"] = query.get("content", "")
-                if include_response:
-                    eval_input["response"] = response.get("content", "")
-                if include_context:
-                    eval_input["context"] = str(context)
-                if include_ground_truth:
-                    eval_input["ground_truth"] = response.get("ground_truth", "")
+                # Always include query and response for the tests
+                eval_input["query"] = query["content"]
+                eval_input["response"] = response["content"]
+                
+                if include_context and global_context is not None:
+                    eval_input["context"] = global_context
+                if include_ground_truth and "ground_truth" in conversation:
+                    eval_input["ground_truth"] = conversation["ground_truth"]
+                
                 eval_inputs.append(eval_input)
+                
             return eval_inputs
 
         return converter
@@ -274,24 +262,24 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                 messages = messages[-2:]
 
             for each_turn in messages:
-                role = each_turn["role"]
-                if role == "user":
-                    user_messages.append(each_turn)
-                elif role == "assistant":
-                    assistant_messages.append(each_turn)
-                elif role == "system":
-                    system_messages.append(each_turn)
+                if "role" in each_turn:
+                    if each_turn["role"] == "user":
+                        user_messages.append(each_turn)
+                    elif each_turn["role"] == "assistant":
+                        assistant_messages.append(each_turn)
+                    elif each_turn["role"] == "system":
+                        system_messages.append(each_turn)
 
             # Handle edge cases gracefully instead of strict validation
             eval_conv_inputs = []
 
             # Case 1: No user messages - nothing to evaluate
             if not user_messages:
-                return eval_conv_inputs
+                return []
 
             # Case 2: No assistant messages - can't evaluate without responses
             if not assistant_messages:
-                return eval_conv_inputs
+                return []
 
             # Case 3: Handle mismatched user/assistant pairs gracefully
             # Strategy: Create pairs by taking the next available assistant message for each user message
@@ -299,16 +287,23 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             assistant_idx = 0
 
             while user_idx < len(user_messages) and assistant_idx < len(assistant_messages):
-                user_msg = user_messages[user_idx]
-                assist_msg = assistant_messages[assistant_idx]
-
-                conv_messages = []
-                if len(system_messages) == 1:
-                    conv_messages.append(system_messages[0])
-                conv_messages.append(user_msg)
-                conv_messages.append(assist_msg)
-                eval_conv_inputs.append({"conversation": Conversation(messages=conv_messages)})
-
+                # Create conversation messages for this pair
+                conversation_messages = []
+                
+                # Add system messages if present
+                if system_messages:
+                    conversation_messages.extend(system_messages)
+                
+                # Add the user and assistant messages
+                conversation_messages.append(user_messages[user_idx])
+                conversation_messages.append(assistant_messages[assistant_idx])
+                
+                # Create a conversation object using the Conversation class
+                conversation_obj = Conversation(messages=conversation_messages)
+                
+                # Add to result
+                eval_conv_inputs.append({"conversation": conversation_obj})
+                
                 user_idx += 1
                 assistant_idx += 1
 

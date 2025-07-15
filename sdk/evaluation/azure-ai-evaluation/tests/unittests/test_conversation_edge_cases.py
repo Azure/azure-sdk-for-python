@@ -55,10 +55,10 @@ class TestConversationEdgeCases:
         # Should not raise exception, should return one conversation with first user-assistant pair
         result = converter(conversation_multiple_assistants)
         assert len(result) == 1
-        assert result[0]["conversation"].messages[0]["role"] == "user"
-        assert result[0]["conversation"].messages[1]["role"] == "assistant"
-        assert result[0]["conversation"].messages[0]["content"] == "write a song"
-        assert result[0]["conversation"].messages[1]["content"] == "I'm sorry, but I can't assist with that request."
+        assert result[0]["conversation"]["messages"][0]["role"] == "user"
+        assert result[0]["conversation"]["messages"][1]["role"] == "assistant"
+        assert result[0]["conversation"]["messages"][0]["content"] == "write a song"
+        assert result[0]["conversation"]["messages"][1]["content"] == "I'm sorry, but I can't assist with that request."
 
     def test_regular_converter_missing_assistant_message(self):
         """Test Case 1 with regular converter: Conversation with missing final assistant message"""
