@@ -77,6 +77,12 @@ Given an input text, the de-identification service can perform three main operat
 - `Redact` returns output text where detected PHI entities are replaced with placeholder text. For example `John` replaced with `[name]`.
 - `Surrogate` returns output text where detected PHI entities are replaced with realistic replacement values. For example, `My name is John Smith` could become `My name is Tom Jones`.
 
+### String Encoding
+When using the `Tag` operation, the service will return the locations of PHI entities in the input text. These locations will be represented as offsets and lengths, each of which is a [StringIndex][string_index] containing
+three properties corresponding to three different text encodings. **Python applications should use the `CodePoint` property.**
+
+For more on text encoding, see [Character encoding in .NET][character_encoding].
+
 ### Available endpoints
 There are two ways to interact with the de-identification service. You can send text directly, or you can create jobs 
 to de-identify documents in Azure Storage.
@@ -349,6 +355,8 @@ additional questions or comments.
 [pip]: https://pypi.org/project/pip/
 [azure_sub]: https://azure.microsoft.com/free/
 [deid_quickstart]: https://learn.microsoft.com/azure/healthcare-apis/deidentification/quickstart
+[string_index]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/healthdataaiservices/azure-health-deidentification/azure/health/deidentification/models/_models.py#L548
+[character_encoding]: https://learn.microsoft.com/dotnet/standard/base-types/character-encoding-introduction
 [deid_redact]: https://learn.microsoft.com/azure/healthcare-apis/deidentification/redaction-format
 [deid_rbac]: https://learn.microsoft.com/azure/healthcare-apis/deidentification/manage-access-rbac
 [deid_managed_identity]: https://learn.microsoft.com/azure/healthcare-apis/deidentification/managed-identities
