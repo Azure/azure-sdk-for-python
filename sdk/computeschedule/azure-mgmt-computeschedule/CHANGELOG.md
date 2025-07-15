@@ -54,9 +54,9 @@
   - Model `ScheduledActionsOperations` added method `list_resources`
   - Model `ScheduledActionsOperations` added method `patch_resources`
   - Model `ScheduledActionsOperations` added method `trigger_manual_occurrence`
-  - Added model `OccurrenceExtensionOperations`
-  - Added model `OccurrencesOperations`
-  - Added model `ScheduledActionExtensionOperations`
+  - Added operation group `OccurrenceExtensionOperations`
+  - Added operation group `OccurrencesOperations`
+  - Added operation group `ScheduledActionExtensionOperations`
 
 ### Breaking Changes
 
