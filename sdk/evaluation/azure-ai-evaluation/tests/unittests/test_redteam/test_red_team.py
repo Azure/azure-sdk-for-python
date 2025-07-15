@@ -1569,7 +1569,19 @@ class TestRedTeamAttackSuccessThresholds:
         assert "sexual" in formatted
         assert formatted["sexual"] == 2
 
-        # Test with empty thresholds
+        # Test with empty thresholds and no risk categories
         red_team.attack_success_thresholds = {}
+        
+        # Save original risk_categories
+        original_risk_categories = getattr(red_team, "risk_categories", None)
+        
+        # Remove risk_categories attribute to prevent default thresholds
+        if hasattr(red_team, "risk_categories"):
+            delattr(red_team, "risk_categories")
+            
         formatted = red_team._format_thresholds_for_output()
         assert formatted == {}
+        
+        # Restore original risk_categories
+        if original_risk_categories is not None:
+            red_team.risk_categories = original_risk_categories
