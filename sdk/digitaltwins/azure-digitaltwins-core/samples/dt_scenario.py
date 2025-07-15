@@ -282,7 +282,7 @@ try:
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
     # - AZURE_CLIENT_SECRET: The client secret for the registered application
     credential = DefaultAzureCredential()
-    service_client = DigitalTwinsClient(url, credential) # type: ignore
+    service_client = DigitalTwinsClient(url, credential)
 
     # Create models
     models = service_client.create_models(cast(List[MutableMapping[str, Any]], [building_model, floor_model, hvac_model, room_model, wifi_model]))
