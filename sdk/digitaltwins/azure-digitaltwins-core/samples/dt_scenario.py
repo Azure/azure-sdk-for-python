@@ -2,10 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from ast import Dict
 import os
-from typing import Any, List, cast
 import uuid
+from typing import Any, Dict, List
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 from azure.digitaltwins.core import DigitalTwinsClient, DigitalTwinsEventRoute
@@ -38,7 +37,7 @@ from azure.digitaltwins.core import DigitalTwinsClient, DigitalTwinsEventRoute
 # - create a DigitalTwins Service Client using the DigitalTwinsClient constructor
 # - create models from file
 # - get created models by modelIds one by one
-# - get all models by listing them using the pagianted API
+# - get all models by listing them using the pagiated API
 # - delete the created eventRoutes
 # - delete the created relationships
 # - delete the created digital twins
@@ -238,7 +237,8 @@ try:
         }
     }
 
-    hospital_relationships: List[Dict[str, object]] = [
+    # These must be dictionaries with string keys and values that can be serialized to JSON
+    hospital_relationships: List[Dict[str, Any]] = [
         {
             "$relationshipId": "BuildingHasFloor",
             "$sourceId": building_twin_id,
@@ -271,13 +271,9 @@ try:
     # It attempts to use multiple credential types in an order until it finds a working credential.
 
     event_hub_endpoint_name = os.getenv("AZURE_EVENT_HUB_ENDPOINT_NAME")
-    if not event_hub_endpoint_name:
-        raise ValueError("AZURE_EVENT_HUB_ENDPOINT_NAME environment variable must be set")
 
     # - AZURE_URL: The tenant ID in Azure Active Directory
     url = os.getenv("AZURE_URL")
-    if url is None:
-        raise ValueError("AZURE_URL environment variable is not set")
 
     # DefaultAzureCredential expects the following three environment variables:
     # - AZURE_TENANT_ID: The tenant ID in Azure Active Directory
@@ -287,7 +283,8 @@ try:
     service_client = DigitalTwinsClient(url, credential) # type: ignore
 
     # Create models
-    models = service_client.create_models(cast(List[Dict[str, Any]], [building_model, floor_model, hvac_model, room_model, wifi_model]))
+    new_model_list = [building_model, floor_model, hvac_model, room_model, wifi_model]
+    models = service_client.create_models(new_model_list)
     print('Created Models:')
     print(models)
 
@@ -311,8 +308,8 @@ try:
     # Create digital relationships
     for relationship in hospital_relationships:
         service_client.upsert_relationship(
-            cast (str, relationship["$sourceId"]), 
-            cast (str, relationship["$relationshipId"]),
+            relationship["$sourceId"], # type: ignore
+            relationship["$relationshipId"], # type: ignore
             relationship
         )
 
@@ -335,8 +332,8 @@ try:
 
     for relationship in hospital_relationships:
         service_client.delete_relationship(
-            cast (str, relationship["$sourceId"]), 
-            cast (str, relationship["$relationshipId"]),
+        relationship["$sourceId"], # type: ignore
+        relationship["$relationshipId"] # type: ignore
     )
 
     service_client.delete_digital_twin(building_twin_id)
