@@ -28,7 +28,12 @@ from opentelemetry.trace.status import Status, StatusCode
 
 from azure.core.settings import settings
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
-from azure.core.instrumentation import get_tracer as get_azure_sdk_tracer
+
+try:
+    from azure.core.instrumentation import get_tracer as get_azure_sdk_tracer
+except ImportError:
+    # azure.core.instrumentation is not available in older versions of azure-core
+    get_azure_sdk_tracer = None
 from azure.monitor.opentelemetry.exporter.export._base import ExportResult
 from azure.monitor.opentelemetry.exporter.export.trace._exporter import (
     AzureMonitorTraceExporter,
@@ -1749,6 +1754,9 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
     @mock.patch("opentelemetry.trace.get_tracer_provider")
     def test_check_instrumentation_span_azure_sdk_get_tracer(self, mock_get_tracer_provider):
         mock_get_tracer_provider.return_value = self.get_tracer_provider()
+
+        if not get_azure_sdk_tracer:
+            self.skipTest("azure.core.instrumentation is not available")
 
         azure_sdk_tracer = get_azure_sdk_tracer(library_name="azure-foo-bar")
         azure_sdk_span = azure_sdk_tracer.start_span(name="test")
