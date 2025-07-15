@@ -90,7 +90,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         self,
         digital_twin_id: str,
         digital_twin: Dict[str, object],
-        **kwargs
+        *,
+        etag: Optional[str] = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any
     ) -> MutableMapping[str, Any]:
         """Create or update a digital twin.
 
@@ -109,8 +112,6 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
             If the digital twin already exists.
         """
         options = None
-        etag = kwargs.pop("etag", None)
-        match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_none_match, error_map = prep_if_none_match(etag, match_condition)
         if if_none_match:
             options = DigitalTwinsAddOptions(if_none_match=if_none_match)
@@ -127,7 +128,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         self,
         digital_twin_id: str,
         json_patch: Sequence[MutableMapping[str, Any]],
-        **kwargs
+        *,
+        etag: Optional[str] = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any
     ) -> None:
         """Update a digital twin using a JSON patch.
 
@@ -147,8 +151,6 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
             If there is no digital twin with the provided ID.
         """
         options = None
-        etag = kwargs.pop("etag", None)
-        match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_match, error_map = prep_if_match(etag, match_condition)
         if if_match:
             options = DigitalTwinsUpdateOptions(if_match=if_match)
@@ -165,7 +167,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
     async def delete_digital_twin(
         self,
         digital_twin_id: str,
-        **kwargs
+        *,
+        etag: Optional[str] = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any
     ) -> None:
         """Delete a digital twin.
 
@@ -182,8 +187,6 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
             If there is no digital twin with the provided ID.
         """
         options = None
-        etag = kwargs.pop("etag", None)
-        match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_match, error_map = prep_if_match(etag, match_condition)
         if if_match:
             options = DigitalTwinsDeleteOptions(if_match=if_match)
@@ -218,7 +221,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         digital_twin_id: str,
         component_name: str,
         json_patch: Sequence[MutableMapping[str, Any]],
-        **kwargs
+        *,
+        etag: Optional[str] = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any
     ) -> None:
         """Update properties of a component on a digital twin using a JSON patch.
 
@@ -237,8 +243,6 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
             digital twin with the provided ID or the component name is invalid.
         """
         options = None
-        etag = kwargs.pop("etag", None)
-        match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_match, error_map = prep_if_match(etag, match_condition)
         if if_match:
             options = DigitalTwinsUpdateComponentOptions(if_match=if_match)
@@ -281,7 +285,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         digital_twin_id: str,
         relationship_id: str,
         relationship: Dict[str, object],
-        **kwargs
+        *,
+        etag: Optional[str] = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any
     ) -> MutableMapping[str, Any]:
         """Create or update a relationship on a digital twin.
 
@@ -300,8 +307,6 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
             digital twin, target digital twin or relationship with the provided ID.
         """
         options = None
-        etag = kwargs.pop("etag", None)
-        match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_none_match, error_map = prep_if_none_match(etag, match_condition)
         if if_none_match:
             options = DigitalTwinsAddRelationshipOptions(if_none_match=if_none_match)
@@ -320,7 +325,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         digital_twin_id: str,
         relationship_id: str,
         json_patch: Sequence[MutableMapping[str, Any]],
-        **kwargs
+        *,
+        etag: Optional[str] = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any
     ) -> None:
         """Updates the properties of a relationship on a digital twin using a JSON patch.
 
@@ -340,8 +348,6 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
             digital twin or relationship with the provided ID.
         """
         options = None
-        etag = kwargs.pop("etag", None)
-        match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_match, error_map = prep_if_match(etag, match_condition)
         if if_match:
             options = DigitalTwinsUpdateRelationshipOptions(if_match=if_match)
@@ -360,7 +366,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         self,
         digital_twin_id: str,
         relationship_id: str,
-        **kwargs
+        *,
+        etag: Optional[str] = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any
     ) -> None:
         """Delete a relationship on a digital twin.
 
@@ -378,8 +387,6 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
             digital twin or relationship with the provided ID.
         """
         options = None
-        etag = kwargs.pop("etag", None)
-        match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if_match, error_map = prep_if_match(etag, match_condition)
         if if_match:
             options = DigitalTwinsDeleteRelationshipOptions(if_match=if_match)
@@ -440,7 +447,9 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         self,
         digital_twin_id: str,
         telemetry: MutableMapping[str, Any],
-        **kwargs
+        *,
+        message_id: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         """Publish telemetry from a digital twin. The result is then
         consumed by one or many destination endpoints (subscribers) defined under
@@ -456,7 +465,8 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is no
             digital twin with the provided ID.
         """
-        message_id = kwargs.pop('message_id', None) or str(uuid.uuid4())
+        if message_id is None:
+            message_id = str(uuid.uuid4())
         timestamp = Serializer.serialize_iso(datetime.utcnow())
         return await self._client.digital_twins.send_telemetry(
             id=digital_twin_id,
@@ -472,7 +482,9 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         digital_twin_id: str,
         component_name: str,
         telemetry: MutableMapping[str, Any],
-        **kwargs
+        *,
+        message_id: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         """Publish telemetry from a digital twin. The result is then
         consumed by one or many destination endpoints (subscribers) defined under
@@ -489,7 +501,8 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is no
             digital twin with the provided ID or the component name is invalid.
         """
-        message_id = kwargs.pop('message_id', None) or str(uuid.uuid4())
+        if message_id is None:
+            message_id = str(uuid.uuid4())
         timestamp = Serializer.serialize_iso(datetime.utcnow())
         return await self._client.digital_twins.send_component_telemetry(
             id=digital_twin_id,
@@ -501,7 +514,13 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace_async
-    async def get_model(self, model_id: str, **kwargs) -> DigitalTwinsModelData:
+    async def get_model(
+        self, 
+        model_id: str, 
+        *,
+        include_model_definition: bool = False,
+        **kwargs: Any
+    ) -> DigitalTwinsModelData:
         """Get a model, including the model metadata and the model definition.
 
         :param str model_id: The ID of the model.
@@ -513,7 +532,6 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is no
             model with the provided ID.
         """
-        include_model_definition = kwargs.pop("include_model_definition", False)
         return await self._client.digital_twin_models.get_by_id(
             model_id,
             include_model_definition=include_model_definition,
@@ -524,7 +542,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
     def list_models(
         self,
         dependencies_for: Optional[List[str]] = None,
-        **kwargs
+        *,
+        include_model_definition: bool = False,
+        results_per_page: Optional[int] = None,
+        **kwargs: Any
     ) -> AsyncItemPaged[DigitalTwinsModelData]:
         """Get the list of models.
 
@@ -538,8 +559,6 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :rtype: ~azure.core.paging.AsyncItemPaged[~azure.digitaltwins.core.DigitalTwinsModelData]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        include_model_definition = kwargs.pop('include_model_definition', False)
-        results_per_page = kwargs.pop('results_per_page', None)
         if results_per_page is not None:
             kwargs['max_item_count'] = results_per_page
 
@@ -550,7 +569,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace_async
-    async def create_models(self, dtdl_models: List[object], **kwargs) -> List[DigitalTwinsModelData]:
+    async def create_models(self, dtdl_models: List[object], **kwargs: Any) -> List[DigitalTwinsModelData]:
         """Create one or more models. When any error occurs, no models are uploaded.
 
         :param List[object] model_list: The set of models to create.
@@ -620,7 +639,12 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def list_event_routes(self, **kwargs) -> AsyncItemPaged['DigitalTwinsEventRoute']:
+    def list_event_routes(
+        self, 
+        *,
+        results_per_page: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged['DigitalTwinsEventRoute']:
         """Retrieves all event routes.
 
         :keyword int results_per_page: The maximum number of items to retrieve per request.
@@ -629,7 +653,6 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.digitaltwins.core.DigitalTwinsEventRoute]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        results_per_page = kwargs.pop('results_per_page', None)
         if results_per_page is not None:
             kwargs['max_item_count'] = results_per_page
 
