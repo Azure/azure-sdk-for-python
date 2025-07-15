@@ -3045,7 +3045,7 @@ class RedTeam:
                     progress_bar_lock=progress_bar_lock,
                     scan_name=scan_name,
                     skip_upload=skip_upload,
-                    output_path=output_path,
+                    output_path=None,  # Don't pass output_path to individual evaluations
                     risk_category=risk_category,
                     timeout=timeout,
                     _skip_evals=skip_evals,

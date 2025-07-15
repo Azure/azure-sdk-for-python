@@ -1476,3 +1476,115 @@ class TestRedTeamOrchestratorSelection:
             ValueError, match="MultiTurn and Crescendo strategies are not supported in composed attacks."
         ):
             red_team_instance._get_orchestrator_for_attack_strategy([AttackStrategy.Crescendo, AttackStrategy.Base64])
+
+
+@pytest.mark.unittest
+class TestRedTeamOutputPath:
+    """Test output_path handling in RedTeam."""
+
+    @pytest.mark.asyncio
+    async def test_output_path_not_passed_to_individual_evaluations(self, red_team):
+        """Test that output_path from scan is not passed to individual evaluations."""
+        import tempfile
+        import os
+        
+        # Create temporary directories
+        scan_output_dir = tempfile.mkdtemp(prefix="test_scan_")
+        final_output_path = tempfile.mktemp(suffix=".json")
+        
+        try:
+            # Set up the scan output directory  
+            red_team.scan_output_dir = scan_output_dir
+            red_team.risk_categories = [RiskCategory.Violence]
+            
+            # Track calls to _evaluate to ensure output_path is not passed to individual evaluations
+            evaluate_calls = []
+            
+            async def mock_evaluate(*args, **kwargs):
+                evaluate_calls.append(kwargs.copy())
+                # Simulate writing a unique evaluation result file
+                strategy_name = red_team._get_strategy_name(kwargs['strategy'])
+                risk_category = kwargs['risk_category'].value
+                result_filename = f"{strategy_name}_{risk_category}_eval.json"
+                result_path = os.path.join(scan_output_dir, result_filename)
+                
+                import json
+                eval_result = {
+                    "strategy": strategy_name,
+                    "risk_category": risk_category,
+                    "rows": [{"test": "data"}]
+                }
+                
+                with open(result_path, 'w') as f:
+                    json.dump(eval_result, f)
+                
+                # Update red_team_info as the real method would
+                if strategy_name not in red_team.red_team_info:
+                    red_team.red_team_info[strategy_name] = {}
+                if risk_category not in red_team.red_team_info[strategy_name]:
+                    red_team.red_team_info[strategy_name][risk_category] = {}
+                    
+                red_team.red_team_info[strategy_name][risk_category]["evaluation_result_file"] = result_path
+                red_team.red_team_info[strategy_name][risk_category]["evaluation_result"] = eval_result
+                red_team.red_team_info[strategy_name][risk_category]["status"] = "COMPLETED"
+                
+            # Mock the _evaluate method
+            with patch.object(red_team, '_evaluate', side_effect=mock_evaluate):
+                # Mock other methods that would be called
+                with patch.object(red_team, '_get_attack_objectives', return_value=["test_prompt"]), \
+                     patch.object(red_team, '_get_chat_target', return_value=MagicMock()), \
+                     patch.object(red_team, '_start_redteam_mlflow_run', return_value=MagicMock()), \
+                     patch.object(red_team, '_log_redteam_results_to_mlflow', return_value=None), \
+                     patch.object(red_team, '_prompt_sending_orchestrator', return_value=MagicMock()), \
+                     patch.object(red_team, '_write_pyrit_outputs_to_file', return_value="test_data.jsonl"), \
+                     patch.object(red_team, '_to_red_team_result', return_value={"scorecard": {}, "parameters": {}, "attack_details": [], "studio_url": None}), \
+                     patch.object(red_team, '_to_scorecard', return_value="Test scorecard"), \
+                     patch('azure.ai.evaluation.red_team._red_team._write_output'):
+                    
+                    # Mock the orchestrator creation
+                    async def mock_process_attack(*args, **kwargs):
+                        strategy = kwargs['strategy']
+                        risk_category = kwargs['risk_category']
+                        output_path = kwargs.get('output_path')
+                        
+                        # This is the key test: output_path should be None for individual evaluations
+                        assert output_path is None, f"output_path should be None for individual evaluations, got {output_path}"
+                        
+                        # Call _evaluate as the real method would
+                        await red_team._evaluate(
+                            data_path="test_data.jsonl",
+                            risk_category=risk_category, 
+                            strategy=strategy,
+                            output_path=output_path,  # This should be None
+                            _skip_evals=False
+                        )
+                        
+                    with patch.object(red_team, '_process_attack', side_effect=mock_process_attack):
+                        # Run the scan with an output_path
+                        result = await red_team.scan(
+                            target=MagicMock(),
+                            scan_name="test_scan",
+                            attack_strategies=[AttackStrategy.Baseline],
+                            output_path=final_output_path,  # This should only be used for final output
+                            parallel_execution=False  # Use sequential for easier testing
+                        )
+            
+            # Verify that _evaluate was called
+            assert len(evaluate_calls) > 0, "Expected _evaluate to be called"
+            
+            # Verify that none of the _evaluate calls received the final output_path
+            for call in evaluate_calls:
+                assert call.get('output_path') is None, f"_evaluate should not receive output_path, got {call.get('output_path')}"
+            
+            # Verify that evaluation result files were created in scan directory
+            scan_files = os.listdir(scan_output_dir)
+            eval_files = [f for f in scan_files if f.endswith('_eval.json')]
+            assert len(eval_files) > 0, f"Expected evaluation result files in scan directory, found: {scan_files}"
+            
+        finally:
+            # Cleanup
+            for file in os.listdir(scan_output_dir):
+                os.unlink(os.path.join(scan_output_dir, file))
+            os.rmdir(scan_output_dir)
+            if os.path.exists(final_output_path):
+                os.unlink(final_output_path)
