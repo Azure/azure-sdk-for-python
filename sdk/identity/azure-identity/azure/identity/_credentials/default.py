@@ -8,8 +8,9 @@ from typing import List, Any, Optional, cast
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions, SupportsTokenInfo, TokenCredential
 from .._constants import EnvironmentVariables
-from .._internal import get_default_authority, normalize_authority, within_dac, process_credential_exclusions
+from .._internal.utils import get_default_authority, normalize_authority, within_dac, process_credential_exclusions
 from .azure_powershell import AzurePowerShellCredential
+from .broker import BrokerCredential
 from .browser import InteractiveBrowserCredential
 from .chained import ChainedTokenCredential
 from .environment import EnvironmentCredential
@@ -42,6 +43,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
     5. The identity currently logged in to the Azure CLI.
     6. The identity currently logged in to Azure PowerShell.
     7. The identity currently logged in to the Azure Developer CLI.
+    8. Brokered authentication. On Windows and WSL, this uses an authentication broker such as
+       Web Account Manager (WAM). On other platforms or when the azure-identity-broker package is not installed,
+       this credential will raise CredentialUnavailableError.
 
     This default behavior is configurable with keyword arguments.
 
@@ -64,6 +68,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
         **False**.
     :keyword bool exclude_interactive_browser_credential: Whether to exclude interactive browser authentication (see
         :class:`~azure.identity.InteractiveBrowserCredential`). Defaults to **True**.
+    :keyword bool exclude_broker_credential: Whether to exclude the broker credential from the credential chain.
+        Defaults to **False**. When False, the broker credential is always included in the chain but will raise
+        CredentialUnavailableError if the azure-identity-broker package is not installed.
     :keyword str interactive_browser_tenant_id: Tenant ID to use when authenticating a user through
         :class:`~azure.identity.InteractiveBrowserCredential`. Defaults to the value of environment variable
         AZURE_TENANT_ID, if any. If unspecified, users will authenticate in their home tenants.
@@ -147,6 +154,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
             },
             "visual_studio_code": {
                 "exclude_param": "exclude_visual_studio_code_credential",
+                "env_name": "visualstudiocodecredential",
                 "default_exclude": False,
             },
             "cli": {
@@ -168,6 +176,11 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 "exclude_param": "exclude_interactive_browser_credential",
                 "env_name": "interactivebrowsercredential",
                 "default_exclude": True,
+            },
+            "broker": {
+                "exclude_param": "exclude_broker_credential",
+                "env_name": "interactivebrowserbrokercredential",
+                "default_exclude": False,
             },
         }
 
@@ -192,6 +205,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_developer_cli_credential = exclude_flags["developer_cli"]
         exclude_powershell_credential = exclude_flags["powershell"]
         exclude_interactive_browser_credential = exclude_flags["interactive_browser"]
+        exclude_broker_credential = exclude_flags["broker"]
 
         credentials: List[SupportsTokenInfo] = []
         within_dac.set(True)
@@ -242,6 +256,12 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 )
             else:
                 credentials.append(InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id, **kwargs))
+        if not exclude_broker_credential:
+            broker_credential_args = {"tenant_id": interactive_browser_tenant_id, **kwargs}
+            if interactive_browser_client_id:
+                broker_credential_args["client_id"] = interactive_browser_client_id
+            credentials.append(BrokerCredential(**broker_credential_args))
+
         within_dac.set(False)
         super(DefaultAzureCredential, self).__init__(*credentials)
 
