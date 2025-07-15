@@ -8,6 +8,7 @@
 
 ### Breaking Changes
 
+  - This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
   - Model `Cluster` deleted or renamed its instance variable `provisioning_state`
   - Model `Destination` deleted or renamed its instance variable `identity`
   - Model `EHNamespace` deleted or renamed its instance variable `geo_data_replication`
