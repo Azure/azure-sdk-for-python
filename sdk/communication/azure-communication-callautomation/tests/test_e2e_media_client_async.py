@@ -13,10 +13,9 @@ from azure.communication.callautomation import (
     FileSource,
     MediaStreamingOptions,
     MediaStreamingContentType,
-    MediaStreamingTransportType,
+    StreamingTransportType,
     MediaStreamingAudioChannelType,
     TranscriptionOptions,
-    TranscriptionTransportType,
     TextSource,
 )   
 from azure.communication.callautomation._shared.models import identifier_from_raw_id
@@ -173,7 +172,7 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
         media_streaming_options = MediaStreamingOptions(
             transport_url=self.transport_url,
-            transport_type=MediaStreamingTransportType.WEBSOCKET,
+            transport_type=StreamingTransportType.WEBSOCKET,
             content_type=MediaStreamingContentType.AUDIO,
             audio_channel_type=MediaStreamingAudioChannelType.MIXED,
             start_media_streaming=False
@@ -232,7 +231,7 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
         transcription_options = TranscriptionOptions(
             transport_url=self.transport_url,
-            transport_type=TranscriptionTransportType.WEBSOCKET,
+            transport_type=StreamingTransportType.WEBSOCKET,
             locale="en-US",
             start_transcription=False
         )
