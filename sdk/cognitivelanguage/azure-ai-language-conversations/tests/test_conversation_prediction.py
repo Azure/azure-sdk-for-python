@@ -8,20 +8,23 @@ from azure.ai.language.conversations.models import *
 from azure.core.credentials import AzureKeyCredential
 
 ConversationsPreparer = functools.partial(
-    PowerShellPreparer, 'conversations',
+    PowerShellPreparer,
+    "conversations",
     conversations_endpoint="fake_resource.servicebus.windows.net/",
-    conversations_key="fake_key"
+    conversations_key="fake_key",
 )
+
 
 class TestConversations(AzureRecordedTestCase):
 
-# Start with any helper functions you might need, for example a client creation method:
+    # Start with any helper functions you might need, for example a client creation method:
     def create_client(self, endpoint, key):
         credential = AzureKeyCredential(key)
         client = ConversationsClient(endpoint, credential)
         return client
 
     ...
+
 
 class TestConversationsCase(TestConversations):
     @ConversationsPreparer()
@@ -39,14 +42,14 @@ class TestConversationsCase(TestConversations):
                 conversation_item={
                     "id": "1",
                     "participant_id": "participant1",
-                    "text": "Send an email to Carol about tomorrow's demo"
+                    "text": "Send an email to Carol about tomorrow's demo",
                 }
             ),
             parameters=ConversationLanguageUnderstandingAction(
                 project_name=project_name,
                 deployment_name=deployment_name,
-                string_index_type=StringIndexType.UTF16CODE_UNIT
-            )
+                string_index_type=StringIndexType.UTF16CODE_UNIT,
+            ),
         )
 
         result = client.analyze_conversation(data)

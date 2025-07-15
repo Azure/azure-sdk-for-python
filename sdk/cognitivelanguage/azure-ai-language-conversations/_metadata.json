@@ -1,7 +1,3 @@
 {
-  "apiVersion": "2025-05-15-preview",
-  "commit": "681db46dd0a9bf82b91c91687f2bb600278a8c5c",
-  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "typespec_src": "specification/cognitiveservices/Language.Conversations",
-  "emitterVersion": "0.46.0"
+  "apiVersion": "2025-05-15-preview"
 }
