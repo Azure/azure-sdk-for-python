@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.hardwaresecuritymodules import HardwareSecurityModulesMgmtClient
     pip install azure-identity
     pip install azure-mgmt-hardwaresecuritymodules
 # USAGE
-    python payment_hsm_list_by_resource_group.py
+    python cloud_hsm_cluster_create_or_update_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +31,25 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.dedicated_hsm.list_by_resource_group(
-        resource_group_name="hsm-group",
-    )
-    for item in response:
-        print(item)
+    response = client.cloud_hsm_clusters.begin_create_or_update(
+        resource_group_name="rgcloudhsm",
+        cloud_hsm_cluster_name="chsm1",
+        body={
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/contoso-resources/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identity-1": {}
+                },
+            },
+            "location": "eastus2",
+            "properties": {"publicNetworkAccess": "Disabled"},
+            "sku": {"family": "B", "name": "Standard_B1"},
+            "tags": {"Dept": "hsm", "Environment": "dogfood"},
+        },
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: 2025-03-31/PaymentHsm_ListByResourceGroup.json
+# x-ms-original-file: 2025-03-31/CloudHsmCluster_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
