@@ -1,6 +1,6 @@
 # Release History
 
-## 38.0.0 (2025-07-20)
+## 38.0.0 (2025-07-15)
 
 ### Features Added
 
