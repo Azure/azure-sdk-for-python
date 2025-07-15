@@ -52,7 +52,7 @@ GEN_AI_RUN_STEP_END_TIMESTAMP = "gen_ai.run_step.end.timestamp"
 GEN_AI_RUN_STEP_STATUS = "gen_ai.run_step.status"
 ERROR_TYPE = "error.type"
 ERROR_MESSAGE = "error.message"
-GEN_AI_SEMCONV_SCHEMA_VERSION = "1.34.0"
+GEN_AI_SEMANTIC_CONVENTIONS_SCHEMA_VERSION = "1.34.0"
 
 class OperationName(Enum):
     CREATE_AGENT = "create_agent"
@@ -117,7 +117,7 @@ def start_span(
             return None
 
 
-    span = _span_impl_type(name=span_name or operation_name.value, kind=kind, schema_version=GEN_AI_SEMCONV_SCHEMA_VERSION)
+    span = _span_impl_type(name=span_name or operation_name.value, kind=kind, schema_version=GEN_AI_SEMANTIC_CONVENTIONS_SCHEMA_VERSION)
 
     if span and span.span_instance.is_recording:
         span.add_attribute(AZ_NAMESPACE, AZ_NAMESPACE_VALUE)
