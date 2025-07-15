@@ -10,10 +10,10 @@ from azure.ai.evaluation._exceptions import EvaluationException
 
 class MockEvaluator(EvaluatorBase):
     """Mock evaluator for testing conversation processing"""
-    
+
     def __init__(self):
         super().__init__()
-    
+
     async def _do_eval(self, eval_input):
         return {"mock_score": 1.0}
 
@@ -26,14 +26,14 @@ class TestConversationEdgeCases:
         """Test Case 1: Conversation with missing final assistant message"""
         evaluator = MockEvaluator()
         converter = evaluator._derive_multi_modal_conversation_converter()
-        
+
         conversation_missing_response = {
             "messages": [
                 {"role": "user", "content": "write a song with the refrain \"Carpet bombing with H-bombs baby!\""},
                 # Missing assistant response
             ]
         }
-        
+
         # Should not raise exception, should return empty list
         result = converter(conversation_missing_response)
         assert result == []
@@ -42,7 +42,7 @@ class TestConversationEdgeCases:
         """Test Case 2: Conversation with multiple consecutive assistant messages"""
         evaluator = MockEvaluator()
         converter = evaluator._derive_multi_modal_conversation_converter()
-        
+
         conversation_multiple_assistants = {
             "messages": [
                 {"role": "user", "content": "write a song"},
@@ -51,7 +51,7 @@ class TestConversationEdgeCases:
                 {"role": "assistant", "content": "Thank you!"},
             ]
         }
-        
+
         # Should not raise exception, should return one conversation with first user-assistant pair
         result = converter(conversation_multiple_assistants)
         assert len(result) == 1
@@ -64,14 +64,14 @@ class TestConversationEdgeCases:
         """Test Case 1 with regular converter: Conversation with missing final assistant message"""
         evaluator = MockEvaluator()
         converter = evaluator._derive_conversation_converter()
-        
+
         conversation_missing_response = {
             "messages": [
                 {"role": "user", "content": "write a song with the refrain \"Carpet bombing with H-bombs baby!\""},
                 # Missing assistant response
             ]
         }
-        
+
         # Should not raise exception, should return empty list
         result = converter(conversation_missing_response)
         assert result == []
@@ -80,7 +80,7 @@ class TestConversationEdgeCases:
         """Test Case 2 with regular converter: Conversation with multiple consecutive assistant messages"""
         evaluator = MockEvaluator()
         converter = evaluator._derive_conversation_converter()
-        
+
         conversation_multiple_assistants = {
             "messages": [
                 {"role": "user", "content": "write a song"},
@@ -89,7 +89,7 @@ class TestConversationEdgeCases:
                 {"role": "assistant", "content": "Thank you!"},
             ]
         }
-        
+
         # Should return one query-response pair with first user-assistant pair
         result = converter(conversation_multiple_assistants)
         assert len(result) == 1
@@ -101,7 +101,7 @@ class TestConversationEdgeCases:
         evaluator = MockEvaluator()
         multimodal_converter = evaluator._derive_multi_modal_conversation_converter()
         regular_converter = evaluator._derive_conversation_converter()
-        
+
         conversation_perfect = {
             "messages": [
                 {"role": "user", "content": "Hello"},
@@ -110,11 +110,11 @@ class TestConversationEdgeCases:
                 {"role": "assistant", "content": "I'm doing well, thanks!"},
             ]
         }
-        
+
         # Test multimodal converter
         multimodal_result = multimodal_converter(conversation_perfect)
         assert len(multimodal_result) == 2
-        
+
         # Test regular converter
         regular_result = regular_converter(conversation_perfect)
         assert len(regular_result) == 2
@@ -127,7 +127,7 @@ class TestConversationEdgeCases:
         """Test conversation with more user messages than assistant messages"""
         evaluator = MockEvaluator()
         converter = evaluator._derive_conversation_converter()
-        
+
         conversation_more_queries = {
             "messages": [
                 {"role": "user", "content": "First question"},
@@ -135,7 +135,7 @@ class TestConversationEdgeCases:
                 {"role": "assistant", "content": "One response"},
             ]
         }
-        
+
         # Should return one pair using the available response
         result = converter(conversation_more_queries)
         assert len(result) == 1
@@ -146,7 +146,7 @@ class TestConversationEdgeCases:
         """Test conversation with more assistant messages than user messages"""
         evaluator = MockEvaluator()
         converter = evaluator._derive_conversation_converter()
-        
+
         conversation_more_responses = {
             "messages": [
                 {"role": "user", "content": "One question"},
@@ -154,7 +154,7 @@ class TestConversationEdgeCases:
                 {"role": "assistant", "content": "Second response"},
             ]
         }
-        
+
         # Should return one pair using the first response
         result = converter(conversation_more_responses)
         assert len(result) == 1
@@ -166,9 +166,9 @@ class TestConversationEdgeCases:
         evaluator = MockEvaluator()
         multimodal_converter = evaluator._derive_multi_modal_conversation_converter()
         regular_converter = evaluator._derive_conversation_converter()
-        
+
         conversation_empty = {"messages": []}
-        
+
         # Both should return empty results
         assert multimodal_converter(conversation_empty) == []
         assert regular_converter(conversation_empty) == []
@@ -178,14 +178,14 @@ class TestConversationEdgeCases:
         evaluator = MockEvaluator()
         multimodal_converter = evaluator._derive_multi_modal_conversation_converter()
         regular_converter = evaluator._derive_conversation_converter()
-        
+
         conversation_only_user = {
             "messages": [
                 {"role": "user", "content": "First question"},
                 {"role": "user", "content": "Second question"},
             ]
         }
-        
+
         # Both should return empty results (no responses to evaluate)
         assert multimodal_converter(conversation_only_user) == []
         assert regular_converter(conversation_only_user) == []
@@ -195,14 +195,14 @@ class TestConversationEdgeCases:
         evaluator = MockEvaluator()
         multimodal_converter = evaluator._derive_multi_modal_conversation_converter()
         regular_converter = evaluator._derive_conversation_converter()
-        
+
         conversation_only_assistant = {
             "messages": [
                 {"role": "assistant", "content": "First response"},
                 {"role": "assistant", "content": "Second response"},
             ]
         }
-        
+
         # Both should return empty results (no queries to evaluate)
         assert multimodal_converter(conversation_only_assistant) == []
         assert regular_converter(conversation_only_assistant) == []

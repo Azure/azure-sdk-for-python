@@ -207,14 +207,14 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                     queries.append(each_turn)
                 elif role == "assistant":
                     responses.append(each_turn)
-            
+
             # Handle mismatched queries and responses gracefully
             eval_inputs = []
-            
+
             # If no queries or responses, return empty
             if not queries or not responses:
                 return eval_inputs
-            
+
             # Pair queries with responses - handle different scenarios
             if len(queries) == len(responses):
                 # Perfect pairing
@@ -225,7 +225,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             else:
                 # More queries than responses - pair available responses with queries
                 pairs = [(queries[i], responses[i]) for i in range(len(responses))]
-            
+
             for query, response in pairs:
                 context = {}
                 if include_context:
@@ -284,34 +284,34 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
 
             # Handle edge cases gracefully instead of strict validation
             eval_conv_inputs = []
-            
+
             # Case 1: No user messages - nothing to evaluate
             if not user_messages:
                 return eval_conv_inputs
-                
+
             # Case 2: No assistant messages - can't evaluate without responses
             if not assistant_messages:
                 return eval_conv_inputs
-            
+
             # Case 3: Handle mismatched user/assistant pairs gracefully
             # Strategy: Create pairs by taking the next available assistant message for each user message
             user_idx = 0
             assistant_idx = 0
-            
+
             while user_idx < len(user_messages) and assistant_idx < len(assistant_messages):
                 user_msg = user_messages[user_idx]
                 assist_msg = assistant_messages[assistant_idx]
-                
+
                 conv_messages = []
                 if len(system_messages) == 1:
                     conv_messages.append(system_messages[0])
                 conv_messages.append(user_msg)
                 conv_messages.append(assist_msg)
                 eval_conv_inputs.append({"conversation": Conversation(messages=conv_messages)})
-                
+
                 user_idx += 1
                 assistant_idx += 1
-            
+
             return eval_conv_inputs
 
         return multi_modal_converter
