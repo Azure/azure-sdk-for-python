@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.dashboard import DashboardManagementClient
 
 """
@@ -40,6 +42,7 @@ def main():
                 "deterministicOutboundIP": "Enabled",
                 "enterpriseConfigurations": {"marketplaceAutoRenew": "Enabled", "marketplacePlanId": "myPlanId"},
                 "grafanaConfigurations": {
+                    "security": {"csrfAlwaysCheck": False},
                     "smtp": {
                         "enabled": True,
                         "fromAddress": "test@sendemail.com",
@@ -49,7 +52,10 @@ def main():
                         "skipVerify": True,
                         "startTLSPolicy": "OpportunisticStartTLS",
                         "user": "username",
-                    }
+                    },
+                    "snapshots": {"externalEnabled": True},
+                    "unifiedAlertingScreenshots": {"captureEnabled": False},
+                    "users": {"editorsCanAdmin": True, "viewersCanEdit": True},
                 },
                 "grafanaIntegrations": {
                     "azureMonitorWorkspaceIntegrations": [
@@ -70,6 +76,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/dashboard/resource-manager/Microsoft.Dashboard/stable/2023-09-01/examples/Grafana_Create.json
+# x-ms-original-file: specification/dashboard/resource-manager/Microsoft.Dashboard/preview/2024-11-01-preview/examples/Grafana_Create.json
 if __name__ == "__main__":
     main()
