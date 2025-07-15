@@ -37,7 +37,7 @@ from azure.digitaltwins.core import DigitalTwinsClient, DigitalTwinsEventRoute
 # - create a DigitalTwins Service Client using the DigitalTwinsClient constructor
 # - create models from file
 # - get created models by modelIds one by one
-# - get all models by listing them using the pagiated API
+# - get all models by listing them using the paginated API
 # - delete the created eventRoutes
 # - delete the created relationships
 # - delete the created digital twins
