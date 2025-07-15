@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from ctypes import cast
+from typing import cast
 import os
 from typing import Any, List, MutableMapping
 from azure.identity import DefaultAzureCredential
