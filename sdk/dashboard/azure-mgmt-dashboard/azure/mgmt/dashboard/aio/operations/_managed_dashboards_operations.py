@@ -125,6 +125,7 @@ class ManagedDashboardsOperations:
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -144,9 +145,6 @@ class ManagedDashboardsOperations:
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedDashboard]:
         """Create or update a dashboard for grafana resource. This API is idempotent, so user can either
-        create a new dashboard or update an existing dashboard.
-
-        Create or update a dashboard for grafana resource. This API is idempotent, so user can either
         create a new dashboard or update an existing dashboard.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -178,9 +176,6 @@ class ManagedDashboardsOperations:
         """Create or update a dashboard for grafana resource. This API is idempotent, so user can either
         create a new dashboard or update an existing dashboard.
 
-        Create or update a dashboard for grafana resource. This API is idempotent, so user can either
-        create a new dashboard or update an existing dashboard.
-
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
@@ -206,9 +201,6 @@ class ManagedDashboardsOperations:
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedDashboard]:
         """Create or update a dashboard for grafana resource. This API is idempotent, so user can either
-        create a new dashboard or update an existing dashboard.
-
-        Create or update a dashboard for grafana resource. This API is idempotent, so user can either
         create a new dashboard or update an existing dashboard.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -286,8 +278,6 @@ class ManagedDashboardsOperations:
     ) -> _models.ManagedDashboard:
         """Update a dashboard for Grafana resource.
 
-        Update a dashboard for Grafana resource.
-
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
@@ -315,8 +305,6 @@ class ManagedDashboardsOperations:
     ) -> _models.ManagedDashboard:
         """Update a dashboard for Grafana resource.
 
-        Update a dashboard for Grafana resource.
-
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
@@ -341,8 +329,6 @@ class ManagedDashboardsOperations:
         **kwargs: Any
     ) -> _models.ManagedDashboard:
         """Update a dashboard for Grafana resource.
-
-        Update a dashboard for Grafana resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -415,8 +401,6 @@ class ManagedDashboardsOperations:
     @distributed_trace_async
     async def delete(self, resource_group_name: str, dashboard_name: str, **kwargs: Any) -> None:
         """Delete a dashboard for Grafana resource.
-
-        Delete a dashboard for Grafana resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.

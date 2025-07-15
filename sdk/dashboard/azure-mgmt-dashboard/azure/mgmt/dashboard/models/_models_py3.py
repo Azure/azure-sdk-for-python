@@ -530,13 +530,19 @@ class IntegrationFabric(TrackedResource):
 
 
 class IntegrationFabricListResponse(_serialization.Model):
-    """IntegrationFabricListResponse.
+    """Paged collection of IntegrationFabric items.
 
-    :ivar value:
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The IntegrationFabric items on this page. Required.
     :vartype value: list[~azure.mgmt.dashboard.models.IntegrationFabric]
-    :ivar next_link:
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[IntegrationFabric]"},
@@ -544,16 +550,12 @@ class IntegrationFabricListResponse(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.IntegrationFabric"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
+        self, *, value: List["_models.IntegrationFabric"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value:
+        :keyword value: The IntegrationFabric items on this page. Required.
         :paramtype value: list[~azure.mgmt.dashboard.models.IntegrationFabric]
-        :keyword next_link:
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -728,13 +730,19 @@ class ManagedDashboard(TrackedResource):
 
 
 class ManagedDashboardListResponse(_serialization.Model):
-    """ManagedDashboardListResponse.
+    """Paged collection of ManagedDashboard items.
 
-    :ivar value:
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The ManagedDashboard items on this page. Required.
     :vartype value: list[~azure.mgmt.dashboard.models.ManagedDashboard]
-    :ivar next_link:
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[ManagedDashboard]"},
@@ -742,16 +750,12 @@ class ManagedDashboardListResponse(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ManagedDashboard"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
+        self, *, value: List["_models.ManagedDashboard"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value:
+        :keyword value: The ManagedDashboard items on this page. Required.
         :paramtype value: list[~azure.mgmt.dashboard.models.ManagedDashboard]
-        :keyword next_link:
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -779,29 +783,34 @@ class ManagedDashboardUpdateParameters(_serialization.Model):
         self.tags = tags
 
 
-class ManagedGrafana(_serialization.Model):
+class ManagedGrafana(TrackedResource):
     """The grafana resource type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: ARM id of the grafana resource.
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Name of the grafana resource.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the grafana resource.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.dashboard.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar sku: The Sku of the grafana resource.
     :vartype sku: ~azure.mgmt.dashboard.models.ResourceSku
     :ivar properties: Properties specific to the grafana resource.
     :vartype properties: ~azure.mgmt.dashboard.models.ManagedGrafanaProperties
-    :ivar identity: The managed identity of the grafana resource.
+    :ivar identity: The managed service identities assigned to this resource.
     :vartype identity: ~azure.mgmt.dashboard.models.ManagedServiceIdentity
-    :ivar system_data: The system meta data relating to this grafana resource.
-    :vartype system_data: ~azure.mgmt.dashboard.models.SystemData
-    :ivar tags: The tags for grafana resource.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the grafana resource lives.
-    :vartype location: str
     """
 
     _validation = {
@@ -809,62 +818,63 @@ class ManagedGrafana(_serialization.Model):
         "name": {"readonly": True},
         "type": {"readonly": True},
         "system_data": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "sku": {"key": "sku", "type": "ResourceSku"},
-        "properties": {"key": "properties", "type": "ManagedGrafanaProperties"},
-        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
+        "sku": {"key": "sku", "type": "ResourceSku"},
+        "properties": {"key": "properties", "type": "ManagedGrafanaProperties"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
     }
 
     def __init__(
         self,
         *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
         sku: Optional["_models.ResourceSku"] = None,
         properties: Optional["_models.ManagedGrafanaProperties"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
-        tags: Optional[Dict[str, str]] = None,
-        location: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword sku: The Sku of the grafana resource.
         :paramtype sku: ~azure.mgmt.dashboard.models.ResourceSku
         :keyword properties: Properties specific to the grafana resource.
         :paramtype properties: ~azure.mgmt.dashboard.models.ManagedGrafanaProperties
-        :keyword identity: The managed identity of the grafana resource.
+        :keyword identity: The managed service identities assigned to this resource.
         :paramtype identity: ~azure.mgmt.dashboard.models.ManagedServiceIdentity
-        :keyword tags: The tags for grafana resource.
-        :paramtype tags: dict[str, str]
-        :keyword location: The geo-location where the grafana resource lives.
-        :paramtype location: str
         """
-        super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.name: Optional[str] = None
-        self.type: Optional[str] = None
+        super().__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
         self.properties = properties
         self.identity = identity
-        self.system_data: Optional["_models.SystemData"] = None
-        self.tags = tags
-        self.location = location
 
 
 class ManagedGrafanaListResponse(_serialization.Model):
-    """ManagedGrafanaListResponse.
+    """Paged collection of ManagedGrafana items.
 
-    :ivar value:
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The ManagedGrafana items on this page. Required.
     :vartype value: list[~azure.mgmt.dashboard.models.ManagedGrafana]
-    :ivar next_link:
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[ManagedGrafana]"},
@@ -872,12 +882,12 @@ class ManagedGrafanaListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ManagedGrafana"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: List["_models.ManagedGrafana"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value:
+        :keyword value: The ManagedGrafana items on this page. Required.
         :paramtype value: list[~azure.mgmt.dashboard.models.ManagedGrafana]
-        :keyword next_link:
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -963,10 +973,10 @@ class ManagedGrafanaProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        public_network_access: Union[str, "_models.PublicNetworkAccess"] = "Enabled",
-        zone_redundancy: Union[str, "_models.ZoneRedundancy"] = "Disabled",
-        api_key: Union[str, "_models.ApiKey"] = "Disabled",
-        deterministic_outbound_ip: Union[str, "_models.DeterministicOutboundIP"] = "Disabled",
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
+        zone_redundancy: Optional[Union[str, "_models.ZoneRedundancy"]] = None,
+        api_key: Optional[Union[str, "_models.ApiKey"]] = None,
+        deterministic_outbound_ip: Optional[Union[str, "_models.DeterministicOutboundIP"]] = None,
         auto_generated_domain_name_label_scope: Optional[
             Union[str, "_models.AutoGeneratedDomainNameLabelScope"]
         ] = None,
@@ -1073,10 +1083,10 @@ class ManagedGrafanaPropertiesUpdateParameters(_serialization.Model):
     def __init__(
         self,
         *,
-        zone_redundancy: Union[str, "_models.ZoneRedundancy"] = "Disabled",
-        api_key: Union[str, "_models.ApiKey"] = "Disabled",
-        deterministic_outbound_ip: Union[str, "_models.DeterministicOutboundIP"] = "Disabled",
-        public_network_access: Union[str, "_models.PublicNetworkAccess"] = "Enabled",
+        zone_redundancy: Optional[Union[str, "_models.ZoneRedundancy"]] = None,
+        api_key: Optional[Union[str, "_models.ApiKey"]] = None,
+        deterministic_outbound_ip: Optional[Union[str, "_models.DeterministicOutboundIP"]] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         grafana_integrations: Optional["_models.GrafanaIntegrations"] = None,
         enterprise_configurations: Optional["_models.EnterpriseConfigurations"] = None,
         grafana_configurations: Optional["_models.GrafanaConfigurations"] = None,
@@ -1128,7 +1138,7 @@ class ManagedGrafanaPropertiesUpdateParameters(_serialization.Model):
 class ManagedGrafanaUpdateParameters(_serialization.Model):
     """The parameters for a PATCH request to a grafana resource.
 
-    :ivar sku:
+    :ivar sku: Represents the SKU of a resource.
     :vartype sku: ~azure.mgmt.dashboard.models.ResourceSku
     :ivar identity: The managed identity of the grafana resource.
     :vartype identity: ~azure.mgmt.dashboard.models.ManagedServiceIdentity
@@ -1155,7 +1165,7 @@ class ManagedGrafanaUpdateParameters(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword sku:
+        :keyword sku: Represents the SKU of a resource.
         :paramtype sku: ~azure.mgmt.dashboard.models.ResourceSku
         :keyword identity: The managed identity of the grafana resource.
         :paramtype identity: ~azure.mgmt.dashboard.models.ManagedServiceIdentity
@@ -1320,11 +1330,17 @@ class ManagedPrivateEndpointModel(TrackedResource):
 class ManagedPrivateEndpointModelListResponse(_serialization.Model):
     """The list of managed private endpoints of a grafana resource.
 
-    :ivar value:
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The ManagedPrivateEndpointModel items on this page. Required.
     :vartype value: list[~azure.mgmt.dashboard.models.ManagedPrivateEndpointModel]
-    :ivar next_link:
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[ManagedPrivateEndpointModel]"},
@@ -1332,16 +1348,12 @@ class ManagedPrivateEndpointModelListResponse(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ManagedPrivateEndpointModel"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
+        self, *, value: List["_models.ManagedPrivateEndpointModel"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value:
+        :keyword value: The ManagedPrivateEndpointModel items on this page. Required.
         :paramtype value: list[~azure.mgmt.dashboard.models.ManagedPrivateEndpointModel]
-        :keyword next_link:
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -1624,7 +1636,27 @@ class PrivateEndpoint(_serialization.Model):
         self.id: Optional[str] = None
 
 
-class PrivateEndpointConnection(Resource):
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.dashboard.models.SystemData
+    """
+
+
+class PrivateEndpointConnection(ProxyResource):
     """The Private Endpoint Connection resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1702,18 +1734,18 @@ class PrivateEndpointConnection(Resource):
 
 
 class PrivateEndpointConnectionListResult(_serialization.Model):
-    """List of private endpoint connection associated with the specified storage account.
+    """The response of a PrivateEndpointConnection list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to server.
 
-    :ivar value: Array of private endpoint connections.
+    :ivar value: The PrivateEndpointConnection items on this page. Required.
     :vartype value: list[~azure.mgmt.dashboard.models.PrivateEndpointConnection]
-    :ivar next_link: URL to get the next set of operation list results (if there are any).
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "next_link": {"readonly": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
@@ -1721,17 +1753,21 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, value: List["_models.PrivateEndpointConnection"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
-        :keyword value: Array of private endpoint connections.
+        :keyword value: The PrivateEndpointConnection items on this page. Required.
         :paramtype value: list[~azure.mgmt.dashboard.models.PrivateEndpointConnection]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link: Optional[str] = None
+        self.next_link = next_link
 
 
-class PrivateLinkResource(Resource):
+class PrivateLinkResource(ProxyResource):
     """A private link resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1793,18 +1829,18 @@ class PrivateLinkResource(Resource):
 
 
 class PrivateLinkResourceListResult(_serialization.Model):
-    """A list of private link resources.
+    """The response of a PrivateLinkResource list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to server.
 
-    :ivar value: Array of private link resources.
+    :ivar value: The PrivateLinkResource items on this page. Required.
     :vartype value: list[~azure.mgmt.dashboard.models.PrivateLinkResource]
-    :ivar next_link: URL to get the next set of operation list results (if there are any).
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "next_link": {"readonly": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
@@ -1812,14 +1848,18 @@ class PrivateLinkResourceListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, value: List["_models.PrivateLinkResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
-        :keyword value: Array of private link resources.
+        :keyword value: The PrivateLinkResource items on this page. Required.
         :paramtype value: list[~azure.mgmt.dashboard.models.PrivateLinkResource]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link: Optional[str] = None
+        self.next_link = next_link
 
 
 class PrivateLinkServiceConnectionState(_serialization.Model):
@@ -1867,11 +1907,11 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
 
 
 class ResourceSku(_serialization.Model):
-    """ResourceSku.
+    """Represents the SKU of a resource.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar name: Required.
+    :ivar name: The name of the SKU. Required.
     :vartype name: str
     """
 
@@ -1885,7 +1925,7 @@ class ResourceSku(_serialization.Model):
 
     def __init__(self, *, name: str, **kwargs: Any) -> None:
         """
-        :keyword name: Required.
+        :keyword name: The name of the SKU. Required.
         :paramtype name: str
         """
         super().__init__(**kwargs)

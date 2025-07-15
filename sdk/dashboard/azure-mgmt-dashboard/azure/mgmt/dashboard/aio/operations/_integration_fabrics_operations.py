@@ -69,7 +69,7 @@ class IntegrationFabricsOperations:
     def list(
         self, resource_group_name: str, workspace_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.IntegrationFabric"]:
-        """list.
+        """List IntegrationFabric resources by ManagedGrafana.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -153,7 +153,7 @@ class IntegrationFabricsOperations:
     async def get(
         self, resource_group_name: str, workspace_name: str, integration_fabric_name: str, **kwargs: Any
     ) -> _models.IntegrationFabric:
-        """get.
+        """Get a IntegrationFabric.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -277,6 +277,7 @@ class IntegrationFabricsOperations:
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -296,7 +297,7 @@ class IntegrationFabricsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.IntegrationFabric]:
-        """create.
+        """Create a IntegrationFabric.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -327,7 +328,7 @@ class IntegrationFabricsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.IntegrationFabric]:
-        """create.
+        """Create a IntegrationFabric.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -356,7 +357,7 @@ class IntegrationFabricsOperations:
         request_body_parameters: Union[_models.IntegrationFabric, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.IntegrationFabric]:
-        """create.
+        """Create a IntegrationFabric.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -488,7 +489,10 @@ class IntegrationFabricsOperations:
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -508,7 +512,7 @@ class IntegrationFabricsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.IntegrationFabric]:
-        """update.
+        """Update a IntegrationFabric.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -539,7 +543,7 @@ class IntegrationFabricsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.IntegrationFabric]:
-        """update.
+        """Update a IntegrationFabric.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -568,7 +572,7 @@ class IntegrationFabricsOperations:
         request_body_parameters: Union[_models.IntegrationFabricUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.IntegrationFabric]:
-        """update.
+        """Update a IntegrationFabric.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -684,7 +688,10 @@ class IntegrationFabricsOperations:
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -697,7 +704,7 @@ class IntegrationFabricsOperations:
     async def begin_delete(
         self, resource_group_name: str, workspace_name: str, integration_fabric_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """delete.
+        """Delete a IntegrationFabric.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.

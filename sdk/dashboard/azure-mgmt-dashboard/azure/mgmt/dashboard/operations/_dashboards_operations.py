@@ -149,8 +149,6 @@ class DashboardsOperations:
     def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.ManagedDashboard"]:
         """List all resources of dashboards under the specified subscription.
 
-        List all resources of dashboards under the specified subscription.
-
         :return: An iterator like instance of either ManagedDashboard or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.dashboard.models.ManagedDashboard]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -225,8 +223,6 @@ class DashboardsOperations:
     @distributed_trace
     def list(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.ManagedDashboard"]:
         """List all resources of dashboards under the specified resource group.
-
-        List all resources of dashboards under the specified resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -306,8 +302,6 @@ class DashboardsOperations:
     @distributed_trace
     def get(self, resource_group_name: str, dashboard_name: str, **kwargs: Any) -> _models.ManagedDashboard:
         """Get the properties of a specific dashboard for grafana resource.
-
-        Get the properties of a specific dashboard for grafana resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.

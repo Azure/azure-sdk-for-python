@@ -1,5 +1,51 @@
 # Release History
 
+## 2.0.0b1 (2025-07-21)
+
+### Features Added
+
+  - Client `DashboardManagementClient` added operation group `dashboards`
+  - Client `DashboardManagementClient` added operation group `managed_dashboards`
+  - Client `DashboardManagementClient` added operation group `integration_fabrics`
+  - Model `GrafanaConfigurations` added property `snapshots`
+  - Model `GrafanaConfigurations` added property `users`
+  - Model `GrafanaConfigurations` added property `security`
+  - Model `GrafanaConfigurations` added property `unified_alerting_screenshots`
+  - Added model `IntegrationFabric`
+  - Added model `IntegrationFabricListResponse`
+  - Added model `IntegrationFabricProperties`
+  - Added model `IntegrationFabricPropertiesUpdateParameters`
+  - Added model `IntegrationFabricUpdateParameters`
+  - Added model `ManagedDashboard`
+  - Added model `ManagedDashboardListResponse`
+  - Added model `ManagedDashboardUpdateParameters`
+  - Added model `ProxyResource`
+  - Added model `Security`
+  - Added model `Snapshots`
+  - Added model `UnifiedAlertingScreenshots`
+  - Added model `Users`
+  - Model `GrafanaOperations` added method `begin_update`
+  - Added model `DashboardsOperations`
+  - Added model `IntegrationFabricsOperations`
+  - Added model `ManagedDashboardsOperations`
+
+### Breaking Changes
+
+  - Method `ManagedGrafana.__init__` removed default value `None` from its parameter `location`
+  - Method `ManagedGrafanaListResponse.__init__` removed default value `None` from its parameter `value`
+  - Method `ManagedGrafanaProperties.__init__` parameter `public_network_access` changed default value from `str` to `none`
+  - Method `ManagedGrafanaProperties.__init__` parameter `zone_redundancy` changed default value from `str` to `none`
+  - Method `ManagedGrafanaProperties.__init__` parameter `api_key` changed default value from `str` to `none`
+  - Method `ManagedGrafanaProperties.__init__` parameter `deterministic_outbound_ip` changed default value from `str` to `none`
+  - Method `ManagedGrafanaPropertiesUpdateParameters.__init__` parameter `zone_redundancy` changed default value from `str` to `none`
+  - Method `ManagedGrafanaPropertiesUpdateParameters.__init__` parameter `api_key` changed default value from `str` to `none`
+  - Method `ManagedGrafanaPropertiesUpdateParameters.__init__` parameter `deterministic_outbound_ip` changed default value from `str` to `none`
+  - Method `ManagedGrafanaPropertiesUpdateParameters.__init__` parameter `public_network_access` changed default value from `str` to `none`
+  - Method `ManagedPrivateEndpointModelListResponse.__init__` removed default value `None` from its parameter `value`
+  - Method `PrivateEndpointConnectionListResult.__init__` removed default value `None` from its parameter `value`
+  - Method `PrivateLinkResourceListResult.__init__` removed default value `None` from its parameter `value`
+  - Deleted or renamed method `GrafanaOperations.update`
+
 ## 1.1.0 (2023-11-20)
 
 ### Features Added

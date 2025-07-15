@@ -40,22 +40,22 @@ class DashboardManagementClient:  # pylint: disable=too-many-instance-attributes
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.dashboard.operations.Operations
+    :ivar dashboards: DashboardsOperations operations
+    :vartype dashboards: azure.mgmt.dashboard.operations.DashboardsOperations
     :ivar grafana: GrafanaOperations operations
     :vartype grafana: azure.mgmt.dashboard.operations.GrafanaOperations
+    :ivar managed_dashboards: ManagedDashboardsOperations operations
+    :vartype managed_dashboards: azure.mgmt.dashboard.operations.ManagedDashboardsOperations
+    :ivar integration_fabrics: IntegrationFabricsOperations operations
+    :vartype integration_fabrics: azure.mgmt.dashboard.operations.IntegrationFabricsOperations
+    :ivar managed_private_endpoints: ManagedPrivateEndpointsOperations operations
+    :vartype managed_private_endpoints:
+     azure.mgmt.dashboard.operations.ManagedPrivateEndpointsOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections:
      azure.mgmt.dashboard.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources: azure.mgmt.dashboard.operations.PrivateLinkResourcesOperations
-    :ivar managed_private_endpoints: ManagedPrivateEndpointsOperations operations
-    :vartype managed_private_endpoints:
-     azure.mgmt.dashboard.operations.ManagedPrivateEndpointsOperations
-    :ivar integration_fabrics: IntegrationFabricsOperations operations
-    :vartype integration_fabrics: azure.mgmt.dashboard.operations.IntegrationFabricsOperations
-    :ivar dashboards: DashboardsOperations operations
-    :vartype dashboards: azure.mgmt.dashboard.operations.DashboardsOperations
-    :ivar managed_dashboards: ManagedDashboardsOperations operations
-    :vartype managed_dashboards: azure.mgmt.dashboard.operations.ManagedDashboardsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
@@ -106,21 +106,21 @@ class DashboardManagementClient:  # pylint: disable=too-many-instance-attributes
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.dashboards = DashboardsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.grafana = GrafanaOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.private_link_resources = PrivateLinkResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.managed_private_endpoints = ManagedPrivateEndpointsOperations(
+        self.managed_dashboards = ManagedDashboardsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.integration_fabrics = IntegrationFabricsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.dashboards = DashboardsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.managed_dashboards = ManagedDashboardsOperations(
+        self.managed_private_endpoints = ManagedPrivateEndpointsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

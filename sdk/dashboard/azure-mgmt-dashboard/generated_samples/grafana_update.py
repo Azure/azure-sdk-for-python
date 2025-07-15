@@ -31,7 +31,7 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.grafana.update(
+    response = client.grafana.begin_update(
         resource_group_name="myResourceGroup",
         workspace_name="myWorkspace",
         request_body_parameters={
@@ -68,7 +68,7 @@ def main():
             "sku": {"name": "Standard"},
             "tags": {"Environment": "Dev 2"},
         },
-    )
+    ).result()
     print(response)
 
 

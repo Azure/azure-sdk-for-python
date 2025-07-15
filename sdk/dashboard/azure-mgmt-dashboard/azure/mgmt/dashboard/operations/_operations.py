@@ -76,9 +76,7 @@ class Operations:
 
     @distributed_trace
     def list(self, **kwargs: Any) -> ItemPaged["_models.Operation"]:
-        """List all available API operations provided by Microsoft.Dashboard.
-
-        List all available API operations provided by Microsoft.Dashboard.
+        """List the operations for the provider.
 
         :return: An iterator like instance of either Operation or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.dashboard.models.Operation]
