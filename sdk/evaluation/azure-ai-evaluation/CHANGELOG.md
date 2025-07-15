@@ -9,6 +9,7 @@
 
 ### Bugs Fixed
 
+- Fixed inconsistent `randomization_seed` behavior in `IndirectAttackSimulator` and `Simulator` classes. Previously, these simulators ignored the `randomization_seed` parameter passed from `_SafetyEvaluation`, causing different query sets to be generated even when using the same seed. Both classes now properly support the `randomization_seed` parameter to ensure deterministic behavior across all simulator types.
 - Significant improvements to TaskAdherence evaluator. New version has less variance, is much faster and consumes fewer tokens.
 - Significant improvements to Relevance evaluator. New version has more concrete rubrics and has less variance, is much faster and consumes fewer tokens.
 
