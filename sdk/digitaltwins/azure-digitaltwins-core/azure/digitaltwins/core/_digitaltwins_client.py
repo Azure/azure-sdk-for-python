@@ -5,6 +5,8 @@
 # --------------------------------------------------------------------------
 
 from collections.abc import Sequence
+from io import BytesIO
+import json
 import uuid
 from datetime import datetime
 from typing import Dict, List, Any, TYPE_CHECKING, MutableMapping, Optional
@@ -226,10 +228,11 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         if_match, error_map = prep_if_match(etag, match_condition)
         if if_match:
             options = DigitalTwinsUpdateComponentOptions(if_match=if_match)
+        patch_document = BytesIO(json.dumps(json_patch).encode('utf-8'))
         return self._client.digital_twins.update_component(
             digital_twin_id,
             component_name,
-            patch_document=json_patch,
+            patch_document=patch_document,
             digital_twins_update_component_options=options,
             error_map=error_map,
             **kwargs
@@ -328,10 +331,11 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         if_match, error_map = prep_if_match(etag, match_condition)
         if if_match:
             options = DigitalTwinsUpdateRelationshipOptions(if_match=if_match)
+        patch_document = BytesIO(json.dumps(json_patch).encode('utf-8'))
         return self._client.digital_twins.update_relationship(
             id=digital_twin_id,
             relationship_id=relationship_id,
-            patch_document=json_patch,
+            patch_document=patch_document,
             digital_twins_update_relationship_options=options,
             error_map=error_map,
             **kwargs
@@ -528,10 +532,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
 
     @distributed_trace
     def create_models(self, dtdl_models, **kwargs):
-        # type: (List[Dict[str, object]], **Any) -> List[DigitalTwinsModelData]
+        # type: (List[MutableMapping[str, object]], **Any) -> List[DigitalTwinsModelData]
         """Create one or more models. When any error occurs, no models are uploaded.
 
-        :param Sequence[MutableMapping[str, Any]] dtdl_models: The set of models to create.
+        :param List[MutableMapping[str, Any]] dtdl_models: The set of models to create.
             Each dict corresponds to exactly one model.
         :return: The list of created models.
         :rtype: List[~azure.digitaltwins.core.DigitalTwinsModelData]

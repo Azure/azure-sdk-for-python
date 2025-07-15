@@ -4,6 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from io import BytesIO
+import json
 import uuid
 from datetime import datetime
 from typing import Any, Dict, List, MutableMapping, Optional, TYPE_CHECKING, Sequence
@@ -150,9 +152,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         if_match, error_map = prep_if_match(etag, match_condition)
         if if_match:
             options = DigitalTwinsUpdateOptions(if_match=if_match)
+        patch_document = BytesIO(json.dumps(json_patch).encode('utf-8'))
         return await self._client.digital_twins.update(
             digital_twin_id,
-            json_patch,
+            patch_document=patch_document,
             digital_twins_update_options=options,
             error_map=error_map,
             **kwargs
@@ -239,10 +242,11 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         if_match, error_map = prep_if_match(etag, match_condition)
         if if_match:
             options = DigitalTwinsUpdateComponentOptions(if_match=if_match)
+        patch_document = BytesIO(json.dumps(json_patch).encode('utf-8'))
         return await self._client.digital_twins.update_component(
             digital_twin_id,
             component_name,
-            patch_document=json_patch,
+            patch_document=patch_document,
             digital_twins_update_component_options=options,
             error_map=error_map,
             **kwargs
@@ -341,10 +345,11 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         if_match, error_map = prep_if_match(etag, match_condition)
         if if_match:
             options = DigitalTwinsUpdateRelationshipOptions(if_match=if_match)
+        patch_document = BytesIO(json.dumps(json_patch).encode('utf-8'))
         return await self._client.digital_twins.update_relationship(
             id=digital_twin_id,
             relationship_id=relationship_id,
-            patch_document=json_patch,
+            patch_document=patch_document,
             digital_twins_update_relationship_options=options,
             error_map=error_map,
             **kwargs
@@ -577,7 +582,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         json_patch = [{'op': 'replace', 'path': '/decommissioned', 'value': True}]
         return await self._client.digital_twin_models.update(
             model_id,
-            json_patch,
+            update_model=json_patch,
             **kwargs
         )
 
