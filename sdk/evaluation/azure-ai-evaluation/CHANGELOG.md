@@ -9,6 +9,7 @@
 
 ### Bugs Fixed
 
+- Fixed content safety evaluators returning `NaN` for `evaluation_per_turn` when processing conversations with mismatched user/assistant message patterns. The conversation processing logic now handles edge cases gracefully instead of throwing exceptions, resolving up to 24% of evaluation failures in production scenarios.
 - Significant improvements to TaskAdherence evaluator. New version has less variance, is much faster and consumes fewer tokens.
 - Significant improvements to Relevance evaluator. New version has more concrete rubrics and has less variance, is much faster and consumes fewer tokens.
 
