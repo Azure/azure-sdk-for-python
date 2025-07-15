@@ -536,8 +536,8 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
 
     @distributed_trace
     def create_models(
-        self, 
-        dtdl_models: List[MutableMapping[str, Any]], 
+        self,
+        dtdl_models: List[MutableMapping[str, Any]],
         **kwargs: Any
     ) -> List["DigitalTwinsModelData"]:
         """Create one or more models. When any error occurs, no models are uploaded.
