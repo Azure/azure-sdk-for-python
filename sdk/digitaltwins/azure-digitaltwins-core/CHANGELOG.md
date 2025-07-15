@@ -9,6 +9,7 @@
 
 ### Other Changes
 - Migrated from AutoRest v2 to AutoRest v3 for code generation, improving code quality and maintainability.
+- Updated service API version to use API version 2023-10-31 by default.
 - Updated internal implementation while maintaining API compatibility.
 - Improved type annotations throughout the library.
 
