@@ -195,21 +195,21 @@ class IndirectAttackSimulator(AdversarialSimulator):
             ncols=100,
             unit="simulations",
         )
-        
+
         # Collect all template-parameter pairs for potential randomization
         template_parameter_pairs = []
         for template in templates:
             for parameter in template.template_parameters:
                 template_parameter_pairs.append((template, parameter))
-        
+
         # Randomize order if randomization_seed is provided
         if randomization_seed is not None:
             random.seed(randomization_seed)
             random.shuffle(template_parameter_pairs)
-        
+
         # Limit to max_simulation_results
         template_parameter_pairs = template_parameter_pairs[:max_simulation_results]
-        
+
         for template, parameter in template_parameter_pairs:
             tasks.append(
                 asyncio.create_task(
@@ -227,7 +227,7 @@ class IndirectAttackSimulator(AdversarialSimulator):
                     )
                 )
             )
-        
+
         for task in asyncio.as_completed(tasks):
             completed_task = await task  # type: ignore
             template_parameters = completed_task.get("template_parameters", {})  # type: ignore

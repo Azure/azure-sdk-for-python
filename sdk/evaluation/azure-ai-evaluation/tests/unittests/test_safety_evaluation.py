@@ -291,7 +291,9 @@ class TestSafetyEvaluation:
     @patch("azure.ai.evaluation.simulator.IndirectAttackSimulator.__init__", return_value=None)
     @patch("azure.ai.evaluation.simulator.IndirectAttackSimulator.__call__", new_callable=AsyncMock)
     @patch("pathlib.Path.open", new_callable=MagicMock)
-    async def test_simulate_passes_randomization_seed_to_indirect_attack(self, mock_open, mock_call, mock_init, safety_eval, mock_target):
+    async def test_simulate_passes_randomization_seed_to_indirect_attack(
+        self, mock_open, mock_call, mock_init, safety_eval, mock_target
+    ):
         """Tests if randomization_seed is passed correctly to IndirectAttackSimulator."""
         mock_file = MagicMock()
         mock_open.return_value.__enter__.return_value = mock_file
@@ -299,9 +301,9 @@ class TestSafetyEvaluation:
         seed_value = 123
 
         await safety_eval._simulate(
-            target=mock_target, 
-            adversarial_scenario=AdversarialScenarioJailbreak.ADVERSARIAL_INDIRECT_JAILBREAK, 
-            randomization_seed=seed_value
+            target=mock_target,
+            adversarial_scenario=AdversarialScenarioJailbreak.ADVERSARIAL_INDIRECT_JAILBREAK,
+            randomization_seed=seed_value,
         )
 
         # Check if the IndirectAttackSimulator was called with the correct randomization_seed
@@ -313,7 +315,9 @@ class TestSafetyEvaluation:
     @patch("azure.ai.evaluation.simulator.Simulator.__init__", return_value=None)
     @patch("azure.ai.evaluation.simulator.Simulator.__call__", new_callable=AsyncMock)
     @patch("pathlib.Path.open", new_callable=MagicMock)
-    async def test_simulate_passes_randomization_seed_to_simulator(self, mock_open, mock_call, mock_init, safety_eval, mock_target):
+    async def test_simulate_passes_randomization_seed_to_simulator(
+        self, mock_open, mock_call, mock_init, safety_eval, mock_target
+    ):
         """Tests if randomization_seed is passed correctly to regular Simulator."""
         mock_file = MagicMock()
         mock_open.return_value.__enter__.return_value = mock_file
@@ -321,12 +325,16 @@ class TestSafetyEvaluation:
         seed_value = 456
 
         # Create a safety evaluation with model config to trigger regular Simulator
-        safety_eval.model_config = {"azure_deployment": "test", "azure_endpoint": "https://test.com", "type": "azure_openai"}
+        safety_eval.model_config = {
+            "azure_deployment": "test",
+            "azure_endpoint": "https://test.com",
+            "type": "azure_openai",
+        }
 
         await safety_eval._simulate(
-            target=mock_target, 
+            target=mock_target,
             adversarial_scenario=None,  # This will trigger regular Simulator
-            randomization_seed=seed_value
+            randomization_seed=seed_value,
         )
 
         # Check if the Simulator was called with the correct randomization_seed
