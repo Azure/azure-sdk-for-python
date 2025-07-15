@@ -138,9 +138,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         if_match, error_map = prep_if_match(etag, match_condition)
         if if_match:
             options = DigitalTwinsUpdateOptions(if_match=if_match)
+        patch_document = BytesIO(json.dumps(json_patch).encode('utf-8'))
         return self._client.digital_twins.update(
             digital_twin_id,
-            json_patch,
+            patch_document=patch_document,
             digital_twins_update_options=options,
             error_map=error_map,
             **kwargs
@@ -519,16 +520,15 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         """
         include_model_definition = kwargs.pop('include_model_definition', False)
         results_per_page = kwargs.pop('results_per_page', None)
-        digital_twin_models_list_options = None
         if results_per_page is not None:
-            digital_twin_models_list_options = {'max_item_count': results_per_page}
+            kwargs['max_item_count'] = results_per_page
 
         return self._client.digital_twin_models.list(
             dependencies_for=dependencies_for,
             include_model_definition=include_model_definition,
-            digital_twin_models_list_options=digital_twin_models_list_options,
             **kwargs
         )
+    
 
     @distributed_trace
     def create_models(self, dtdl_models, **kwargs):
@@ -560,9 +560,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
             with the provided ID.
         """
         json_patch = [{'op': 'replace', 'path': '/decommissioned', 'value': True}]
+        patch_document = BytesIO(json.dumps(json_patch).encode('utf-8'))
         return self._client.digital_twin_models.update(
             model_id,
-            update_model=json_patch,
+            update_model=patch_document,
             **kwargs
         )
 
@@ -610,13 +611,11 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.core.DigitalTwinsEventRoute]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        event_routes_list_options = None
         results_per_page = kwargs.pop('results_per_page', None)
         if results_per_page is not None:
-            event_routes_list_options = {'max_item_count': results_per_page}
+            kwargs['max_item_count'] = results_per_page
 
         return self._client.event_routes.list(
-            event_routes_list_options=event_routes_list_options,
             **kwargs
         )
 

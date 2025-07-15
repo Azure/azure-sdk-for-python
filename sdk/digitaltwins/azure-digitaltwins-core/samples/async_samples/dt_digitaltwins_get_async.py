@@ -42,6 +42,8 @@ async def digitaltwins_get():
     # service_client = await create_digitaltwins_service_client()
 
     url = os.getenv("AZURE_URL")
+    if url is None:
+        raise ValueError("AZURE_URL environment variable is not set")
     credential = DefaultAzureCredential()
 
     digital_twint_id = "BuildingTwin" # from the samples: BuildingTwin, FloorTwin, HVACTwin, RoomTwin
