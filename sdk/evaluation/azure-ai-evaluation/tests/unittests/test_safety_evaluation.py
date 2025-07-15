@@ -312,8 +312,8 @@ class TestSafetyEvaluation:
         assert call_kwargs.get("randomization_seed") == seed_value
 
     @pytest.mark.asyncio
-    @patch("azure.ai.evaluation.simulator.Simulator.__init__", return_value=None)
-    @patch("azure.ai.evaluation.simulator.Simulator.__call__", new_callable=AsyncMock)
+    @patch("azure.ai.evaluation.simulator._simulator.Simulator.__init__", return_value=None)
+    @patch("azure.ai.evaluation.simulator._simulator.Simulator.__call__", new_callable=AsyncMock)
     @patch("pathlib.Path.open", new_callable=MagicMock)
     async def test_simulate_passes_randomization_seed_to_simulator(
         self, mock_open, mock_call, mock_init, safety_eval, mock_target
@@ -331,9 +331,10 @@ class TestSafetyEvaluation:
             "type": "azure_openai",
         }
 
+        # Use None for adversarial_scenario to trigger the regular Simulator
         await safety_eval._simulate(
             target=mock_target,
-            adversarial_scenario=None,  # This will trigger regular Simulator
+            adversarial_scenario=None,  # Use None to trigger regular Simulator
             randomization_seed=seed_value,
         )
 
