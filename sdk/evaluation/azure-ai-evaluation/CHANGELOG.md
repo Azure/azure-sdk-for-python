@@ -9,6 +9,7 @@
 
 ### Bugs Fixed
 
+- Fixed red team scan `output_path` issue where individual evaluation results were overwriting each other instead of being preserved as separate files. Individual evaluations now create unique files while the user's `output_path` is reserved for final aggregated results.
 - Significant improvements to TaskAdherence evaluator. New version has less variance, is much faster and consumes fewer tokens.
 - Significant improvements to Relevance evaluator. New version has more concrete rubrics and has less variance, is much faster and consumes fewer tokens.
 
