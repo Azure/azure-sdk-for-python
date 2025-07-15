@@ -7,7 +7,7 @@ import uuid
 import pytest
 
 import test_config
-from azure.cosmos import CosmosClient, PartitionKey, DatabaseProxy
+from azure.cosmos import CosmosClient, PartitionKey,ContainerProxy, DatabaseProxy
 from azure.cosmos.http_constants import HttpHeaders
 
 
@@ -70,28 +70,38 @@ class TestCosmosResponses(unittest.TestCase):
         assert int(lsn) + 1 < int(batch_response.get_response_headers()['lsn'])
 
     def test_create_database_headers(self):
-        first_response = self.client.create_database(id="responses_test" + str(uuid.uuid4()))
+        first_response = self.client.create_database(id="responses_test" + str(uuid.uuid4()), return_type="CosmosDict")
+
         assert len(first_response.get_response_headers()) > 0
 
+    def test_create_database_returns_database_proxy(self):
+        first_response = self.client.create_database(id="responses_test" + str(uuid.uuid4()))
+        assert isinstance(first_response, DatabaseProxy)
+
     def test_create_database_if_not_exists_headers(self):
-        first_response = self.client.create_database_if_not_exists(id="responses_test" + str(uuid.uuid4()))
+        first_response = self.client.create_database_if_not_exists(id="responses_test" + str(uuid.uuid4()), return_type="CosmosDict")
         assert len(first_response.get_response_headers()) > 0
 
     def test_create_container_headers(self):
         first_response = self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),
-                                                        partition_key=PartitionKey(path="/company"))
+                                                        partition_key=PartitionKey(path="/company"), return_type="CosmosDict")
         assert len(first_response.get_response_headers()) > 0
+
+    def test_create_container_returns_container_proxy(self):
+        first_response = self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),
+                                                        partition_key=PartitionKey(path="/company"))
+        assert isinstance(first_response, ContainerProxy)
 
     def test_create_container_if_not_exists_headers(self):
         first_response = self.test_database.create_container_if_not_exists(id="responses_test" + str(uuid.uuid4()),
-                                                        partition_key=PartitionKey(path="/company"))
+                                                        partition_key=PartitionKey(path="/company"), return_type="CosmosDict")
         assert len(first_response.get_response_headers()) > 0
 
     def test_replace_container_headers(self):
         first_response = self.test_database.create_container_if_not_exists(id="responses_test" + str(uuid.uuid4()),
                                                         partition_key=PartitionKey(path="/company"))
         second_response = self.test_database.replace_container(first_response.id,
-                                                               partition_key=PartitionKey(path="/company"))
+                                                               partition_key=PartitionKey(path="/company"), return_type="CosmosDict")
         assert len(second_response.get_response_headers()) > 0
 
     def test_database_read_headers(self):

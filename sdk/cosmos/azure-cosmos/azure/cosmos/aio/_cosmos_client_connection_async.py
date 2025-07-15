@@ -484,7 +484,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         database: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Creates a database.
 
         :param dict database:
@@ -536,7 +536,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ):
+    ) -> CosmosDict:
         """Creates a collection in a database.
 
         :param str database_link:
@@ -1327,7 +1327,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Replaces a collection and return it.
 
         :param str collection_link:
