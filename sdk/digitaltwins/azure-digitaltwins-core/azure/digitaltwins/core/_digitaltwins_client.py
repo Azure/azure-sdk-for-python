@@ -78,7 +78,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         digital_twin_id: str,
         digital_twin: Dict[str, object],
         *,
-        etag: Optional[str] = None,
+        etag: str = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any
     ) -> MutableMapping[str, Any]:
@@ -115,7 +115,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         digital_twin_id: str,
         json_patch: Sequence[MutableMapping[str, Any]],
         *,
-        etag: Optional[str] = None,
+        etag: str = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any
     ) -> None:
@@ -154,7 +154,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         self,
         digital_twin_id: str,
         *,
-        etag: Optional[str] = None,
+        etag: str = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any
     ) -> None:
@@ -213,7 +213,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         component_name: str,
         json_patch: Sequence[MutableMapping[str, Any]],
         *,
-        etag: Optional[str] = None,
+        etag: str = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any
     ) -> None:
@@ -277,7 +277,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         relationship_id: str,
         relationship: Dict[str, object],
         *,
-        etag: Optional[str] = None,
+        etag: str = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any
     ) -> MutableMapping[str, Any]:
@@ -317,7 +317,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         relationship_id: str,
         json_patch: Sequence[MutableMapping[str, Any]],
         *,
-        etag: Optional[str] = None,
+        etag: str = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any
     ) -> None:
@@ -358,7 +358,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         digital_twin_id: str,
         relationship_id: str,
         *,
-        etag: Optional[str] = None,
+        etag: str = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any
     ) -> None:
@@ -530,7 +530,14 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def list_models(self, dependencies_for: Optional[List[str]] = None, **kwargs: Any) -> ItemPaged["DigitalTwinsModelData"]:
+    def list_models(
+        self,
+        dependencies_for: Optional[List[str]] = None,
+        *,
+        include_model_definition: bool = False,
+        results_per_page: int = None,
+        **kwargs: Any
+    ) -> ItemPaged["DigitalTwinsModelData"]:
         """Get the list of models.
 
         :param List[str] dependencies_for: The model IDs to have dependencies retrieved.
@@ -543,8 +550,6 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.core.DigitalTwinsModelData]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        include_model_definition = kwargs.pop('include_model_definition', False)
-        results_per_page = kwargs.pop('results_per_page', None)
         if results_per_page is not None:
             kwargs['max_item_count'] = results_per_page
 
@@ -555,7 +560,11 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
     
     @distributed_trace
-    def create_models(self, dtdl_models: List[MutableMapping[str, object]], **kwargs: Any) -> List["DigitalTwinsModelData"]:
+    def create_models(
+        self,
+        dtdl_models: List[MutableMapping[str, object]],
+        **kwargs: Any
+    ) -> List["DigitalTwinsModelData"]:
         """Create one or more models. When any error occurs, no models are uploaded.
 
         :param List[MutableMapping[str, Any]] dtdl_models: The set of models to create.

@@ -91,7 +91,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         digital_twin_id: str,
         digital_twin: Dict[str, object],
         *,
-        etag: Optional[str] = None,
+        etag: str = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any
     ) -> MutableMapping[str, Any]:
@@ -129,7 +129,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         digital_twin_id: str,
         json_patch: Sequence[MutableMapping[str, Any]],
         *,
-        etag: Optional[str] = None,
+        etag: str = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any
     ) -> None:
@@ -168,7 +168,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         self,
         digital_twin_id: str,
         *,
-        etag: Optional[str] = None,
+        etag: str = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any
     ) -> None:
@@ -222,7 +222,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         component_name: str,
         json_patch: Sequence[MutableMapping[str, Any]],
         *,
-        etag: Optional[str] = None,
+        etag: str = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any
     ) -> None:
@@ -286,7 +286,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         relationship_id: str,
         relationship: Dict[str, object],
         *,
-        etag: Optional[str] = None,
+        etag: str = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any
     ) -> MutableMapping[str, Any]:
@@ -326,7 +326,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         relationship_id: str,
         json_patch: Sequence[MutableMapping[str, Any]],
         *,
-        etag: Optional[str] = None,
+        etag: str = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any
     ) -> None:
@@ -367,7 +367,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         digital_twin_id: str,
         relationship_id: str,
         *,
-        etag: Optional[str] = None,
+        etag: str = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any
     ) -> None:
@@ -569,10 +569,14 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace_async
-    async def create_models(self, dtdl_models: List[MutableMapping[str, object]], **kwargs: Any) -> List[DigitalTwinsModelData]:
+    async def create_models(
+        self,
+        dtdl_models: List[MutableMapping[str, object]],
+        **kwargs: Any
+    ) -> List[DigitalTwinsModelData]:
         """Create one or more models. When any error occurs, no models are uploaded.
 
-        :param List[MutableMapping[str, object]] model_list: The set of models to create.
+        :param List[MutableMapping[str, object]] dtdl_models: The set of models to create.
             Each dict corresponds to exactly one model.
         :return: The list of created models
         :rtype: List[~azure.digitaltwins.core.DigitalTwinsModelData]
