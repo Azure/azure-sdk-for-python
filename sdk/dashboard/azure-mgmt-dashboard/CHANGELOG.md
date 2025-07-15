@@ -25,25 +25,25 @@
   - Added model `UnifiedAlertingScreenshots`
   - Added model `Users`
   - Model `GrafanaOperations` added method `begin_update`
-  - Added model `DashboardsOperations`
-  - Added model `IntegrationFabricsOperations`
-  - Added model `ManagedDashboardsOperations`
+  - Added operation group `DashboardsOperations`
+  - Added operation group `IntegrationFabricsOperations`
+  - Added operation group `ManagedDashboardsOperations`
 
 ### Breaking Changes
 
-  - Method `ManagedGrafana.__init__` removed default value `None` from its parameter `location`
-  - Method `ManagedGrafanaListResponse.__init__` removed default value `None` from its parameter `value`
-  - Method `ManagedGrafanaProperties.__init__` parameter `public_network_access` changed default value from `str` to `none`
-  - Method `ManagedGrafanaProperties.__init__` parameter `zone_redundancy` changed default value from `str` to `none`
-  - Method `ManagedGrafanaProperties.__init__` parameter `api_key` changed default value from `str` to `none`
-  - Method `ManagedGrafanaProperties.__init__` parameter `deterministic_outbound_ip` changed default value from `str` to `none`
-  - Method `ManagedGrafanaPropertiesUpdateParameters.__init__` parameter `zone_redundancy` changed default value from `str` to `none`
-  - Method `ManagedGrafanaPropertiesUpdateParameters.__init__` parameter `api_key` changed default value from `str` to `none`
-  - Method `ManagedGrafanaPropertiesUpdateParameters.__init__` parameter `deterministic_outbound_ip` changed default value from `str` to `none`
-  - Method `ManagedGrafanaPropertiesUpdateParameters.__init__` parameter `public_network_access` changed default value from `str` to `none`
-  - Method `ManagedPrivateEndpointModelListResponse.__init__` removed default value `None` from its parameter `value`
-  - Method `PrivateEndpointConnectionListResult.__init__` removed default value `None` from its parameter `value`
-  - Method `PrivateLinkResourceListResult.__init__` removed default value `None` from its parameter `value`
+  - Parameter `location` of method `ManagedGrafana.__init__` is now required
+  - Parameter `value` of method `ManagedGrafanaListResponse.__init__` is now required
+  - Parameter `public_network_access` of method `ManagedGrafanaProperties.__init__` is now optional
+  - Parameter `zone_redundancy` of method `ManagedGrafanaProperties.__init__` is now optional
+  - Parameter `api_key` of method `ManagedGrafanaProperties.__init__` is now optional
+  - Parameter `deterministic_outbound_ip` of method `ManagedGrafanaProperties.__init__` is now optional
+  - Parameter `zone_redundancy` of method `ManagedGrafanaPropertiesUpdateParameters.__init__` is now optional
+  - Parameter `api_key` of method `ManagedGrafanaPropertiesUpdateParameters.__init__` is now optional
+  - Parameter `deterministic_outbound_ip` of method `ManagedGrafanaPropertiesUpdateParameters.__init__` is now optional
+  - Parameter `public_network_access` of method `ManagedGrafanaPropertiesUpdateParameters.__init__` is now optional
+  - Parameter `value` of method `ManagedPrivateEndpointModelListResponse.__init__` is now required
+  - Parameter `value` of method `PrivateEndpointConnectionListResult.__init__` is now required
+  - Parameter `value` of method `PrivateLinkResourceListResult.__init__` is now required
   - Deleted or renamed method `GrafanaOperations.update`
 
 ## 1.1.0 (2023-11-20)
