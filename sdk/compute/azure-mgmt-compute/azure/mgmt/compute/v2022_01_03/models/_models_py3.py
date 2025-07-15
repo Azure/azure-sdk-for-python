@@ -10,7 +10,7 @@
 import datetime
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -137,9 +137,9 @@ class PirCommunityGalleryResource(_serialization.Model):
         :paramtype unique_id: str
         """
         super().__init__(**kwargs)
-        self.name = None
-        self.location = None
-        self.type = None
+        self.name: Optional[str] = None
+        self.location: Optional[str] = None
+        self.type: Optional[str] = None
         self.unique_id = unique_id
 
 
@@ -515,8 +515,8 @@ class CommunityGalleryInfo(_serialization.Model):
         self.publisher_contact = publisher_contact
         self.eula = eula
         self.public_name_prefix = public_name_prefix
-        self.community_gallery_enabled = None
-        self.public_names = None
+        self.community_gallery_enabled: Optional[bool] = None
+        self.public_names: Optional[List[str]] = None
 
 
 class DiskImageEncryption(_serialization.Model):
@@ -706,9 +706,9 @@ class Resource(_serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
 
@@ -800,10 +800,10 @@ class Gallery(Resource):
         super().__init__(location=location, tags=tags, **kwargs)
         self.description = description
         self.identifier = identifier
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.GalleryProvisioningState"]] = None
         self.sharing_profile = sharing_profile
         self.soft_delete_policy = soft_delete_policy
-        self.sharing_status = None
+        self.sharing_status: Optional["_models.SharingStatus"] = None
 
 
 class GalleryApplication(Resource):
@@ -981,9 +981,9 @@ class UpdateResourceDefinition(_serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.tags = tags
 
 
@@ -1151,8 +1151,8 @@ class GalleryApplicationVersion(Resource):
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.publishing_profile = publishing_profile
-        self.provisioning_state = None
-        self.replication_status = None
+        self.provisioning_state: Optional[Union[str, "_models.GalleryProvisioningState"]] = None
+        self.replication_status: Optional["_models.ReplicationStatus"] = None
 
 
 class GalleryApplicationVersionList(_serialization.Model):
@@ -1282,7 +1282,7 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
         self.target_regions = target_regions
         self.replica_count = replica_count
         self.exclude_from_latest = exclude_from_latest
-        self.published_date = None
+        self.published_date: Optional[datetime.datetime] = None
         self.end_of_life_date = end_of_life_date
         self.storage_account_type = storage_account_type
         self.replication_mode = replication_mode
@@ -1492,8 +1492,8 @@ class GalleryApplicationVersionUpdate(UpdateResourceDefinition):
         """
         super().__init__(tags=tags, **kwargs)
         self.publishing_profile = publishing_profile
-        self.provisioning_state = None
-        self.replication_status = None
+        self.provisioning_state: Optional[Union[str, "_models.GalleryProvisioningState"]] = None
+        self.replication_status: Optional["_models.ReplicationStatus"] = None
 
 
 class GalleryArtifactSource(_serialization.Model):
@@ -1593,7 +1593,7 @@ class GalleryDiskImage(_serialization.Model):
         :paramtype source: ~azure.mgmt.compute.v2022_01_03.models.GalleryArtifactVersionSource
         """
         super().__init__(**kwargs)
-        self.size_in_gb = None
+        self.size_in_gb: Optional[int] = None
         self.host_caching = host_caching
         self.source = source
 
@@ -1706,7 +1706,7 @@ class GalleryIdentifier(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.unique_name = None
+        self.unique_name: Optional[str] = None
 
 
 class GalleryImage(Resource):
@@ -1881,7 +1881,7 @@ class GalleryImage(Resource):
         self.recommended = recommended
         self.disallowed = disallowed
         self.purchase_plan = purchase_plan
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.GalleryProvisioningState"]] = None
         self.features = features
         self.architecture = architecture
 
@@ -2149,7 +2149,7 @@ class GalleryImageUpdate(UpdateResourceDefinition):
         self.recommended = recommended
         self.disallowed = disallowed
         self.purchase_plan = purchase_plan
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.GalleryProvisioningState"]] = None
         self.features = features
         self.architecture = architecture
 
@@ -2229,9 +2229,9 @@ class GalleryImageVersion(Resource):
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.publishing_profile = publishing_profile
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.GalleryProvisioningState"]] = None
         self.storage_profile = storage_profile
-        self.replication_status = None
+        self.replication_status: Optional["_models.ReplicationStatus"] = None
 
 
 class GalleryImageVersionList(_serialization.Model):
@@ -2409,9 +2409,9 @@ class GalleryImageVersionUpdate(UpdateResourceDefinition):
         """
         super().__init__(tags=tags, **kwargs)
         self.publishing_profile = publishing_profile
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.GalleryProvisioningState"]] = None
         self.storage_profile = storage_profile
-        self.replication_status = None
+        self.replication_status: Optional["_models.ReplicationStatus"] = None
 
 
 class GalleryList(_serialization.Model):
@@ -2603,10 +2603,10 @@ class GalleryUpdate(UpdateResourceDefinition):
         super().__init__(tags=tags, **kwargs)
         self.description = description
         self.identifier = identifier
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.GalleryProvisioningState"]] = None
         self.sharing_profile = sharing_profile
         self.soft_delete_policy = soft_delete_policy
-        self.sharing_status = None
+        self.sharing_status: Optional["_models.SharingStatus"] = None
 
 
 class ImagePurchasePlan(_serialization.Model):
@@ -2795,8 +2795,8 @@ class PirResource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.location = None
+        self.name: Optional[str] = None
+        self.location: Optional[str] = None
 
 
 class PirSharedGalleryResource(PirResource):
@@ -2898,10 +2898,10 @@ class RegionalReplicationStatus(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.region = None
-        self.state = None
-        self.details = None
-        self.progress = None
+        self.region: Optional[str] = None
+        self.state: Optional[Union[str, "_models.ReplicationState"]] = None
+        self.details: Optional[str] = None
+        self.progress: Optional[int] = None
 
 
 class RegionalSharingStatus(_serialization.Model):
@@ -2937,7 +2937,7 @@ class RegionalSharingStatus(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.region = region
-        self.state = None
+        self.state: Optional[Union[str, "_models.SharingState"]] = None
         self.details = details
 
 
@@ -2967,8 +2967,8 @@ class ReplicationStatus(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.aggregated_state = None
-        self.summary = None
+        self.aggregated_state: Optional[Union[str, "_models.AggregatedReplicationState"]] = None
+        self.summary: Optional[List["_models.RegionalReplicationStatus"]] = None
 
 
 class ResourceRange(_serialization.Model):
@@ -3043,9 +3043,9 @@ class ResourceWithOptionalLocation(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.location = location
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.tags = tags
 
 
@@ -3093,7 +3093,7 @@ class SharedGalleryDiskImage(_serialization.Model):
         :paramtype host_caching: str or ~azure.mgmt.compute.v2022_01_03.models.SharedGalleryHostCaching
         """
         super().__init__(**kwargs)
-        self.disk_size_gb = None
+        self.disk_size_gb: Optional[int] = None
         self.host_caching = host_caching
 
 
@@ -3543,7 +3543,7 @@ class SharingProfile(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.permissions = permissions
-        self.groups = None
+        self.groups: Optional[List["_models.SharingProfileGroup"]] = None
         self.community_gallery_info = community_gallery_info
 
 
@@ -3610,7 +3610,7 @@ class SharingStatus(_serialization.Model):
         :paramtype summary: list[~azure.mgmt.compute.v2022_01_03.models.RegionalSharingStatus]
         """
         super().__init__(**kwargs)
-        self.aggregated_state = None
+        self.aggregated_state: Optional[Union[str, "_models.SharingState"]] = None
         self.summary = summary
 
 
@@ -3722,7 +3722,7 @@ class SubResourceReadOnly(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
 
 
 class TargetRegion(_serialization.Model):
@@ -3930,5 +3930,5 @@ class UserAssignedIdentitiesValue(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None

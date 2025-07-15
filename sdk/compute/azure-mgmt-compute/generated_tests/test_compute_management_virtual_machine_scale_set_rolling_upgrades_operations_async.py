@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.compute.aio import ComputeManagementClient
+from azure.mgmt.compute.v2024_11_01.aio import ComputeManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -21,9 +21,9 @@ class TestComputeManagementVirtualMachineScaleSetRollingUpgradesOperationsAsync(
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_virtual_machine_scale_set_rolling_upgrades_begin_cancel(self, resource_group):
+    async def test_virtual_machine_scale_set_rolling_upgrades_begin_start_extension_upgrade(self, resource_group):
         response = await (
-            await self.client.virtual_machine_scale_set_rolling_upgrades.begin_cancel(
+            await self.client.virtual_machine_scale_set_rolling_upgrades.begin_start_extension_upgrade(
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
                 api_version="2024-11-01",
@@ -49,9 +49,9 @@ class TestComputeManagementVirtualMachineScaleSetRollingUpgradesOperationsAsync(
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_virtual_machine_scale_set_rolling_upgrades_begin_start_extension_upgrade(self, resource_group):
+    async def test_virtual_machine_scale_set_rolling_upgrades_begin_cancel(self, resource_group):
         response = await (
-            await self.client.virtual_machine_scale_set_rolling_upgrades.begin_start_extension_upgrade(
+            await self.client.virtual_machine_scale_set_rolling_upgrades.begin_cancel(
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
                 api_version="2024-11-01",

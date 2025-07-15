@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,19 +8,12 @@
 # --------------------------------------------------------------------------
 
 import datetime
-import sys
 from typing import Any, Dict, List, Literal, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class AdditionalCapabilities(_serialization.Model):
@@ -334,7 +327,7 @@ class AutomaticOSUpgradePolicy(_serialization.Model):
      applied to scale set instances in a rolling fashion when a newer version of the OS image
      becomes available. Default value is false. If this is set to true for Windows based scale sets,
      `enableAutomaticUpdates
-     <https://docs.microsoft.com/dotnet/api/microsoft.azure.management.compute.models.windowsconfiguration.enableautomaticupdates?view=azure-dotnet>`_  # pylint: disable=line-too-long
+     <https://docs.microsoft.com/dotnet/api/microsoft.azure.management.compute.models.windowsconfiguration.enableautomaticupdates?view=azure-dotnet>`_
      is automatically set to false and cannot be set to true.
     :vartype enable_automatic_os_upgrade: bool
     :ivar disable_automatic_rollback: Whether OS image rollback feature should be disabled. Default
@@ -372,7 +365,7 @@ class AutomaticOSUpgradePolicy(_serialization.Model):
          applied to scale set instances in a rolling fashion when a newer version of the OS image
          becomes available. Default value is false. If this is set to true for Windows based scale sets,
          `enableAutomaticUpdates
-         <https://docs.microsoft.com/dotnet/api/microsoft.azure.management.compute.models.windowsconfiguration.enableautomaticupdates?view=azure-dotnet>`_  # pylint: disable=line-too-long
+         <https://docs.microsoft.com/dotnet/api/microsoft.azure.management.compute.models.windowsconfiguration.enableautomaticupdates?view=azure-dotnet>`_
          is automatically set to false and cannot be set to true.
         :paramtype enable_automatic_os_upgrade: bool
         :keyword disable_automatic_rollback: Whether OS image rollback feature should be disabled.
@@ -526,28 +519,76 @@ class AutomaticZoneRebalancingPolicy(_serialization.Model):
 
 
 class Resource(_serialization.Model):
-    """The Resource model definition.
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_11_01.models.SystemData
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
+
+
+class TrackedResource(Resource):
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_11_01.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
     }
 
@@ -555,26 +596,24 @@ class Resource(_serialization.Model):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = location
         self.tags = tags
+        self.location = location
 
 
-class AvailabilitySet(Resource):
+class AvailabilitySet(TrackedResource):
     """Specifies information about the availability set that the virtual machine should be assigned
     to. Virtual machines specified in the same availability set are allocated to different nodes to
     maximize availability. For more information about availability sets, see `Availability sets
@@ -589,16 +628,21 @@ class AvailabilitySet(Resource):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_11_01.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar sku: Sku of the availability set, only name is required to be set. See
      AvailabilitySetSkuTypes for possible set of values. Use 'Aligned' for virtual machines with
      managed disks and 'Classic' for virtual machines with unmanaged disks. Default value is
@@ -629,6 +673,7 @@ class AvailabilitySet(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
         "statuses": {"readonly": True},
         "virtual_machine_scale_set_migration_info": {"readonly": True},
@@ -638,8 +683,9 @@ class AvailabilitySet(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "sku": {"key": "sku", "type": "Sku"},
         "platform_update_domain_count": {"key": "properties.platformUpdateDomainCount", "type": "int"},
         "platform_fault_domain_count": {"key": "properties.platformFaultDomainCount", "type": "int"},
@@ -667,10 +713,10 @@ class AvailabilitySet(Resource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword sku: Sku of the availability set, only name is required to be set. See
          AvailabilitySetSkuTypes for possible set of values. Use 'Aligned' for virtual machines with
          managed disks and 'Classic' for virtual machines with unmanaged disks. Default value is
@@ -692,15 +738,15 @@ class AvailabilitySet(Resource):
         :paramtype scheduled_events_policy:
          ~azure.mgmt.compute.v2024_11_01.models.ScheduledEventsPolicy
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
         self.platform_update_domain_count = platform_update_domain_count
         self.platform_fault_domain_count = platform_fault_domain_count
         self.virtual_machines = virtual_machines
         self.proximity_placement_group = proximity_placement_group
-        self.statuses = None
+        self.statuses: Optional[List["_models.InstanceViewStatus"]] = None
         self.scheduled_events_policy = scheduled_events_policy
-        self.virtual_machine_scale_set_migration_info = None
+        self.virtual_machine_scale_set_migration_info: Optional["_models.VirtualMachineScaleSetMigrationInfo"] = None
 
 
 class AvailabilitySetListResult(_serialization.Model):
@@ -849,9 +895,9 @@ class AvailabilitySetUpdate(UpdateResource):
         self.platform_fault_domain_count = platform_fault_domain_count
         self.virtual_machines = virtual_machines
         self.proximity_placement_group = proximity_placement_group
-        self.statuses = None
+        self.statuses: Optional[List["_models.InstanceViewStatus"]] = None
         self.scheduled_events_policy = scheduled_events_policy
-        self.virtual_machine_scale_set_migration_info = None
+        self.virtual_machine_scale_set_migration_info: Optional["_models.VirtualMachineScaleSetMigrationInfo"] = None
 
 
 class AvailablePatchSummary(_serialization.Model):
@@ -910,14 +956,14 @@ class AvailablePatchSummary(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.status = None
-        self.assessment_activity_id = None
-        self.reboot_pending = None
-        self.critical_and_security_patch_count = None
-        self.other_patch_count = None
-        self.start_time = None
-        self.last_modified_time = None
-        self.error = None
+        self.status: Optional[Union[str, "_models.PatchOperationStatus"]] = None
+        self.assessment_activity_id: Optional[str] = None
+        self.reboot_pending: Optional[bool] = None
+        self.critical_and_security_patch_count: Optional[int] = None
+        self.other_patch_count: Optional[int] = None
+        self.start_time: Optional[datetime.datetime] = None
+        self.last_modified_time: Optional[datetime.datetime] = None
+        self.error: Optional["_models.ApiError"] = None
 
 
 class BillingProfile(_serialization.Model):
@@ -1026,39 +1072,40 @@ class BootDiagnosticsInstanceView(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.console_screenshot_blob_uri = None
-        self.serial_console_log_blob_uri = None
-        self.status = None
+        self.console_screenshot_blob_uri: Optional[str] = None
+        self.serial_console_log_blob_uri: Optional[str] = None
+        self.status: Optional["_models.InstanceViewStatus"] = None
 
 
-class CapacityReservation(Resource):
+class CapacityReservation(TrackedResource):
     """Specifies information about the capacity reservation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_11_01.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar sku: SKU of the resource for which capacity needs be reserved. The SKU name and capacity
      is required to be set. Currently VM Skus with the capability called
      'CapacityReservationSupported' set to true are supported. Refer to List Microsoft.Compute SKUs
      in a region (https://docs.microsoft.com/rest/api/compute/resourceskus/list) for supported
      values. Required.
     :vartype sku: ~azure.mgmt.compute.v2024_11_01.models.Sku
-    :ivar zones: Availability Zone to use for this capacity reservation. The zone has to be single
-     value and also should be part for the list of zones specified during the capacity reservation
-     group creation. The zone can be assigned only during creation. If not provided, the reservation
-     supports only non-zonal deployments. If provided, enforces VM/VMSS using this capacity
-     reservation to be in same zone.
+    :ivar zones: The availability zones.
     :vartype zones: list[str]
     :ivar reservation_id: A unique id generated and assigned to the capacity reservation by the
      platform which does not change throughout the lifetime of the resource.
@@ -1087,6 +1134,7 @@ class CapacityReservation(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
         "sku": {"required": True},
         "reservation_id": {"readonly": True},
@@ -1102,8 +1150,9 @@ class CapacityReservation(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "sku": {"key": "sku", "type": "Sku"},
         "zones": {"key": "zones", "type": "[str]"},
         "reservation_id": {"key": "properties.reservationId", "type": "str"},
@@ -1125,36 +1174,32 @@ class CapacityReservation(Resource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword sku: SKU of the resource for which capacity needs be reserved. The SKU name and
          capacity is required to be set. Currently VM Skus with the capability called
          'CapacityReservationSupported' set to true are supported. Refer to List Microsoft.Compute SKUs
          in a region (https://docs.microsoft.com/rest/api/compute/resourceskus/list) for supported
          values. Required.
         :paramtype sku: ~azure.mgmt.compute.v2024_11_01.models.Sku
-        :keyword zones: Availability Zone to use for this capacity reservation. The zone has to be
-         single value and also should be part for the list of zones specified during the capacity
-         reservation group creation. The zone can be assigned only during creation. If not provided, the
-         reservation supports only non-zonal deployments. If provided, enforces VM/VMSS using this
-         capacity reservation to be in same zone.
+        :keyword zones: The availability zones.
         :paramtype zones: list[str]
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
         self.zones = zones
-        self.reservation_id = None
-        self.platform_fault_domain_count = None
-        self.virtual_machines_associated = None
-        self.provisioning_time = None
-        self.provisioning_state = None
-        self.instance_view = None
-        self.time_created = None
+        self.reservation_id: Optional[str] = None
+        self.platform_fault_domain_count: Optional[int] = None
+        self.virtual_machines_associated: Optional[List["_models.SubResourceReadOnly"]] = None
+        self.provisioning_time: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[str] = None
+        self.instance_view: Optional["_models.CapacityReservationInstanceView"] = None
+        self.time_created: Optional[datetime.datetime] = None
 
 
-class CapacityReservationGroup(Resource):
+class CapacityReservationGroup(TrackedResource):
     """Specifies information about the capacity reservation group that the capacity reservations
     should be assigned to. Currently, a capacity reservation can only be added to a capacity
     reservation group at creation time. An existing capacity reservation cannot be added or moved
@@ -1164,20 +1209,22 @@ class CapacityReservationGroup(Resource):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_11_01.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar zones: Availability Zones to use for this capacity reservation group. The zones can be
-     assigned only during creation. If not provided, the group supports only regional resources in
-     the region. If provided, enforces each capacity reservation in the group to be in one of the
-     zones.
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar zones: The availability zones.
     :vartype zones: list[str]
     :ivar capacity_reservations: A list of all capacity reservation resource ids that belong to
      capacity reservation group.
@@ -1204,6 +1251,7 @@ class CapacityReservationGroup(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
         "capacity_reservations": {"readonly": True},
         "virtual_machines_associated": {"readonly": True},
@@ -1214,8 +1262,9 @@ class CapacityReservationGroup(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "zones": {"key": "zones", "type": "[str]"},
         "capacity_reservations": {"key": "properties.capacityReservations", "type": "[SubResourceReadOnly]"},
         "virtual_machines_associated": {"key": "properties.virtualMachinesAssociated", "type": "[SubResourceReadOnly]"},
@@ -1233,14 +1282,11 @@ class CapacityReservationGroup(Resource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword zones: Availability Zones to use for this capacity reservation group. The zones can be
-         assigned only during creation. If not provided, the group supports only regional resources in
-         the region. If provided, enforces each capacity reservation in the group to be in one of the
-         zones.
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword zones: The availability zones.
         :paramtype zones: list[str]
         :keyword sharing_profile: Specifies the settings to enable sharing across subscriptions for the
          capacity reservation group resource. Pls. keep in mind the capacity reservation group resource
@@ -1250,11 +1296,11 @@ class CapacityReservationGroup(Resource):
          more details.
         :paramtype sharing_profile: ~azure.mgmt.compute.v2024_11_01.models.ResourceSharingProfile
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.zones = zones
-        self.capacity_reservations = None
-        self.virtual_machines_associated = None
-        self.instance_view = None
+        self.capacity_reservations: Optional[List["_models.SubResourceReadOnly"]] = None
+        self.virtual_machines_associated: Optional[List["_models.SubResourceReadOnly"]] = None
+        self.instance_view: Optional["_models.CapacityReservationGroupInstanceView"] = None
         self.sharing_profile = sharing_profile
 
 
@@ -1287,8 +1333,8 @@ class CapacityReservationGroupInstanceView(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.capacity_reservations = None
-        self.shared_subscription_ids = None
+        self.capacity_reservations: Optional[List["_models.CapacityReservationInstanceViewWithName"]] = None
+        self.shared_subscription_ids: Optional[List["_models.SubResourceReadOnly"]] = None
 
 
 class CapacityReservationGroupListResult(_serialization.Model):
@@ -1388,9 +1434,9 @@ class CapacityReservationGroupUpdate(UpdateResource):
         :paramtype sharing_profile: ~azure.mgmt.compute.v2024_11_01.models.ResourceSharingProfile
         """
         super().__init__(tags=tags, **kwargs)
-        self.capacity_reservations = None
-        self.virtual_machines_associated = None
-        self.instance_view = None
+        self.capacity_reservations: Optional[List["_models.SubResourceReadOnly"]] = None
+        self.virtual_machines_associated: Optional[List["_models.SubResourceReadOnly"]] = None
+        self.instance_view: Optional["_models.CapacityReservationGroupInstanceView"] = None
         self.sharing_profile = sharing_profile
 
 
@@ -1470,7 +1516,7 @@ class CapacityReservationInstanceViewWithName(CapacityReservationInstanceView):
         :paramtype statuses: list[~azure.mgmt.compute.v2024_11_01.models.InstanceViewStatus]
         """
         super().__init__(utilization_info=utilization_info, statuses=statuses, **kwargs)
-        self.name = None
+        self.name: Optional[str] = None
 
 
 class CapacityReservationListResult(_serialization.Model):
@@ -1609,13 +1655,13 @@ class CapacityReservationUpdate(UpdateResource):
         """
         super().__init__(tags=tags, **kwargs)
         self.sku = sku
-        self.reservation_id = None
-        self.platform_fault_domain_count = None
-        self.virtual_machines_associated = None
-        self.provisioning_time = None
-        self.provisioning_state = None
-        self.instance_view = None
-        self.time_created = None
+        self.reservation_id: Optional[str] = None
+        self.platform_fault_domain_count: Optional[int] = None
+        self.virtual_machines_associated: Optional[List["_models.SubResourceReadOnly"]] = None
+        self.provisioning_time: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[str] = None
+        self.instance_view: Optional["_models.CapacityReservationInstanceView"] = None
+        self.time_created: Optional[datetime.datetime] = None
 
 
 class CapacityReservationUtilization(_serialization.Model):
@@ -1646,79 +1692,8 @@ class CapacityReservationUtilization(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.current_capacity = None
-        self.virtual_machines_allocated = None
-
-
-class ComputeOperationListResult(_serialization.Model):
-    """The List Compute Operation operation response.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: The list of compute operations.
-    :vartype value: list[~azure.mgmt.compute.v2024_11_01.models.ComputeOperationValue]
-    """
-
-    _validation = {
-        "value": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[ComputeOperationValue]"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.value = None
-
-
-class ComputeOperationValue(_serialization.Model):
-    """Describes the properties of a Compute Operation value.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar origin: The origin of the compute operation.
-    :vartype origin: str
-    :ivar name: The name of the compute operation.
-    :vartype name: str
-    :ivar operation: The display name of the compute operation.
-    :vartype operation: str
-    :ivar resource: The display name of the resource the operation applies to.
-    :vartype resource: str
-    :ivar description: The description of the operation.
-    :vartype description: str
-    :ivar provider: The resource provider for the operation.
-    :vartype provider: str
-    """
-
-    _validation = {
-        "origin": {"readonly": True},
-        "name": {"readonly": True},
-        "operation": {"readonly": True},
-        "resource": {"readonly": True},
-        "description": {"readonly": True},
-        "provider": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "origin": {"key": "origin", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "operation": {"key": "display.operation", "type": "str"},
-        "resource": {"key": "display.resource", "type": "str"},
-        "description": {"key": "display.description", "type": "str"},
-        "provider": {"key": "display.provider", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.origin = None
-        self.name = None
-        self.operation = None
-        self.resource = None
-        self.description = None
-        self.provider = None
+        self.current_capacity: Optional[int] = None
+        self.virtual_machines_allocated: Optional[List["_models.SubResourceReadOnly"]] = None
 
 
 class ConvertToVirtualMachineScaleSetInput(_serialization.Model):
@@ -1805,8 +1780,8 @@ class DataDisk(_serialization.Model):
      previous detachment attempt of the data disk did not complete due to an unexpected failure from
      the virtual machine and the disk is still not released then use force-detach as a last resort
      option to detach the disk forcibly from the VM. All writes might not have been flushed when
-     using this detach behavior. To force-detach a data disk update toBeDetached to 'true' along
-     with setting detachOption: 'ForceDetach'. "ForceDetach"
+     using this detach behavior. **This feature is still in preview**. To force-detach a data disk
+     update toBeDetached to 'true' along with setting detachOption: 'ForceDetach'. "ForceDetach"
     :vartype detach_option: str or ~azure.mgmt.compute.v2024_11_01.models.DiskDetachOptionTypes
     :ivar delete_option: Specifies whether data disk should be deleted or detached upon VM
      deletion. Possible values are: **Delete.** If this value is used, the data disk is deleted when
@@ -1906,8 +1881,8 @@ class DataDisk(_serialization.Model):
          previous detachment attempt of the data disk did not complete due to an unexpected failure from
          the virtual machine and the disk is still not released then use force-detach as a last resort
          option to detach the disk forcibly from the VM. All writes might not have been flushed when
-         using this detach behavior. To force-detach a data disk update toBeDetached to 'true' along
-         with setting detachOption: 'ForceDetach'. "ForceDetach"
+         using this detach behavior. **This feature is still in preview**. To force-detach a data disk
+         update toBeDetached to 'true' along with setting detachOption: 'ForceDetach'. "ForceDetach"
         :paramtype detach_option: str or ~azure.mgmt.compute.v2024_11_01.models.DiskDetachOptionTypes
         :keyword delete_option: Specifies whether data disk should be deleted or detached upon VM
          deletion. Possible values are: **Delete.** If this value is used, the data disk is deleted when
@@ -1927,8 +1902,8 @@ class DataDisk(_serialization.Model):
         self.managed_disk = managed_disk
         self.source_resource = source_resource
         self.to_be_detached = to_be_detached
-        self.disk_iops_read_write = None
-        self.disk_m_bps_read_write = None
+        self.disk_iops_read_write: Optional[int] = None
+        self.disk_m_bps_read_write: Optional[int] = None
         self.detach_option = detach_option
         self.delete_option = delete_option
 
@@ -1954,7 +1929,7 @@ class DataDiskImage(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.lun = None
+        self.lun: Optional[int] = None
 
 
 class DataDisksToAttach(_serialization.Model):
@@ -2083,23 +2058,28 @@ class DataDisksToDetach(_serialization.Model):
         self.detach_option = detach_option
 
 
-class DedicatedHost(Resource):
+class DedicatedHost(TrackedResource):
     """Specifies information about the Dedicated host.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_11_01.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar sku: SKU of the dedicated host for Hardware Generation and VM family. Only name is
      required to be set. List Microsoft.Compute SKUs for a list of possible values. Required.
     :vartype sku: ~azure.mgmt.compute.v2024_11_01.models.Sku
@@ -2133,9 +2113,9 @@ class DedicatedHost(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
         "sku": {"required": True},
-        "platform_fault_domain": {"minimum": 0},
         "host_id": {"readonly": True},
         "virtual_machines": {"readonly": True},
         "provisioning_time": {"readonly": True},
@@ -2148,8 +2128,9 @@ class DedicatedHost(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "sku": {"key": "sku", "type": "Sku"},
         "platform_fault_domain": {"key": "properties.platformFaultDomain", "type": "int"},
         "auto_replace_on_failure": {"key": "properties.autoReplaceOnFailure", "type": "bool"},
@@ -2174,10 +2155,10 @@ class DedicatedHost(Resource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword sku: SKU of the dedicated host for Hardware Generation and VM family. Only name is
          required to be set. List Microsoft.Compute SKUs for a list of possible values. Required.
         :paramtype sku: ~azure.mgmt.compute.v2024_11_01.models.Sku
@@ -2194,17 +2175,17 @@ class DedicatedHost(Resource):
         :paramtype license_type: str or
          ~azure.mgmt.compute.v2024_11_01.models.DedicatedHostLicenseTypes
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
         self.platform_fault_domain = platform_fault_domain
         self.auto_replace_on_failure = auto_replace_on_failure
-        self.host_id = None
-        self.virtual_machines = None
+        self.host_id: Optional[str] = None
+        self.virtual_machines: Optional[List["_models.SubResourceReadOnly"]] = None
         self.license_type = license_type
-        self.provisioning_time = None
-        self.provisioning_state = None
-        self.instance_view = None
-        self.time_created = None
+        self.provisioning_time: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[str] = None
+        self.instance_view: Optional["_models.DedicatedHostInstanceView"] = None
+        self.time_created: Optional[datetime.datetime] = None
 
 
 class DedicatedHostAllocatableVM(_serialization.Model):
@@ -2261,7 +2242,7 @@ class DedicatedHostAvailableCapacity(_serialization.Model):
         self.allocatable_v_ms = allocatable_v_ms
 
 
-class DedicatedHostGroup(Resource):
+class DedicatedHostGroup(TrackedResource):
     """Specifies information about the dedicated host group that the dedicated hosts should be
     assigned to. Currently, a dedicated host can only be added to a dedicated host group at
     creation time. An existing dedicated host cannot be added to another dedicated host group.
@@ -2270,19 +2251,22 @@ class DedicatedHostGroup(Resource):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_11_01.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar zones: Availability Zone to use for this host group. Only single zone is supported. The
-     zone can be assigned only during creation. If not provided, the group supports all zones in the
-     region. If provided, enforces each host in the group to be in the same zone.
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar zones: The availability zones.
     :vartype zones: list[str]
     :ivar platform_fault_domain_count: Number of fault domains that the host group can span.
     :vartype platform_fault_domain_count: int
@@ -2306,6 +2290,7 @@ class DedicatedHostGroup(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
         "platform_fault_domain_count": {"minimum": 1},
         "hosts": {"readonly": True},
@@ -2316,8 +2301,9 @@ class DedicatedHostGroup(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "zones": {"key": "zones", "type": "[str]"},
         "platform_fault_domain_count": {"key": "properties.platformFaultDomainCount", "type": "int"},
         "hosts": {"key": "properties.hosts", "type": "[SubResourceReadOnly]"},
@@ -2341,13 +2327,11 @@ class DedicatedHostGroup(Resource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword zones: Availability Zone to use for this host group. Only single zone is supported.
-         The zone can be assigned only during creation. If not provided, the group supports all zones in
-         the region. If provided, enforces each host in the group to be in the same zone.
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword zones: The availability zones.
         :paramtype zones: list[str]
         :keyword platform_fault_domain_count: Number of fault domains that the host group can span.
         :paramtype platform_fault_domain_count: int
@@ -2361,11 +2345,11 @@ class DedicatedHostGroup(Resource):
         :paramtype additional_capabilities:
          ~azure.mgmt.compute.v2024_11_01.models.DedicatedHostGroupPropertiesAdditionalCapabilities
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.zones = zones
         self.platform_fault_domain_count = platform_fault_domain_count
-        self.hosts = None
-        self.instance_view = None
+        self.hosts: Optional[List["_models.SubResourceReadOnly"]] = None
+        self.instance_view: Optional["_models.DedicatedHostGroupInstanceView"] = None
         self.support_automatic_placement = support_automatic_placement
         self.additional_capabilities = additional_capabilities
 
@@ -2542,8 +2526,8 @@ class DedicatedHostGroupUpdate(UpdateResource):
         super().__init__(tags=tags, **kwargs)
         self.zones = zones
         self.platform_fault_domain_count = platform_fault_domain_count
-        self.hosts = None
-        self.instance_view = None
+        self.hosts: Optional[List["_models.SubResourceReadOnly"]] = None
+        self.instance_view: Optional["_models.DedicatedHostGroupInstanceView"] = None
         self.support_automatic_placement = support_automatic_placement
         self.additional_capabilities = additional_capabilities
 
@@ -2588,7 +2572,7 @@ class DedicatedHostInstanceView(_serialization.Model):
         :paramtype statuses: list[~azure.mgmt.compute.v2024_11_01.models.InstanceViewStatus]
         """
         super().__init__(**kwargs)
-        self.asset_id = None
+        self.asset_id: Optional[str] = None
         self.available_capacity = available_capacity
         self.statuses = statuses
 
@@ -2638,7 +2622,7 @@ class DedicatedHostInstanceViewWithName(DedicatedHostInstanceView):
         :paramtype statuses: list[~azure.mgmt.compute.v2024_11_01.models.InstanceViewStatus]
         """
         super().__init__(available_capacity=available_capacity, statuses=statuses, **kwargs)
-        self.name = None
+        self.name: Optional[str] = None
 
 
 class DedicatedHostListResult(_serialization.Model):
@@ -2680,19 +2664,25 @@ class DedicatedHostSizeListResult(_serialization.Model):
 
     :ivar value: The list of dedicated host sizes.
     :vartype value: list[str]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
     """
 
     _attribute_map = {
         "value": {"key": "value", "type": "[str]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[List[str]] = None, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of dedicated host sizes.
         :paramtype value: list[str]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
+        self.next_link = next_link
 
 
 class DedicatedHostUpdate(UpdateResource):
@@ -2734,7 +2724,6 @@ class DedicatedHostUpdate(UpdateResource):
     """
 
     _validation = {
-        "platform_fault_domain": {"minimum": 0},
         "host_id": {"readonly": True},
         "virtual_machines": {"readonly": True},
         "provisioning_time": {"readonly": True},
@@ -2791,13 +2780,13 @@ class DedicatedHostUpdate(UpdateResource):
         self.sku = sku
         self.platform_fault_domain = platform_fault_domain
         self.auto_replace_on_failure = auto_replace_on_failure
-        self.host_id = None
-        self.virtual_machines = None
+        self.host_id: Optional[str] = None
+        self.virtual_machines: Optional[List["_models.SubResourceReadOnly"]] = None
         self.license_type = license_type
-        self.provisioning_time = None
-        self.provisioning_state = None
-        self.instance_view = None
-        self.time_created = None
+        self.provisioning_time: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[str] = None
+        self.instance_view: Optional["_models.DedicatedHostInstanceView"] = None
+        self.time_created: Optional[datetime.datetime] = None
 
 
 class DefaultVirtualMachineScaleSetInfo(_serialization.Model):
@@ -2829,8 +2818,8 @@ class DefaultVirtualMachineScaleSetInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.constrained_maximum_capacity = None
-        self.default_virtual_machine_scale_set = None
+        self.constrained_maximum_capacity: Optional[bool] = None
+        self.default_virtual_machine_scale_set: Optional["_models.SubResource"] = None
 
 
 class DiagnosticsProfile(_serialization.Model):
@@ -3064,7 +3053,7 @@ class SubResourceReadOnly(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
 
 
 class DiskRestorePointAttributes(SubResourceReadOnly):
@@ -3391,7 +3380,7 @@ class HostEndpointSettings(_serialization.Model):
     :vartype mode: str or ~azure.mgmt.compute.v2024_11_01.models.Modes
     :ivar in_vm_access_control_profile_reference_id: Specifies the InVMAccessControlProfileVersion
      resource id in the format of
-     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/inVMAccessControlProfiles/{profile}/versions/{version}.  # pylint: disable=line-too-long
+     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/inVMAccessControlProfiles/{profile}/versions/{version}.
     :vartype in_vm_access_control_profile_reference_id: str
     """
 
@@ -3416,7 +3405,7 @@ class HostEndpointSettings(_serialization.Model):
         :paramtype mode: str or ~azure.mgmt.compute.v2024_11_01.models.Modes
         :keyword in_vm_access_control_profile_reference_id: Specifies the
          InVMAccessControlProfileVersion resource id in the format of
-         /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/inVMAccessControlProfiles/{profile}/versions/{version}.  # pylint: disable=line-too-long
+         /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/inVMAccessControlProfiles/{profile}/versions/{version}.
         :paramtype in_vm_access_control_profile_reference_id: str
         """
         super().__init__(**kwargs)
@@ -3424,7 +3413,7 @@ class HostEndpointSettings(_serialization.Model):
         self.in_vm_access_control_profile_reference_id = in_vm_access_control_profile_reference_id
 
 
-class Image(Resource):
+class Image(TrackedResource):
     """The source user image virtual hard disk. The virtual hard disk will be copied before being
     attached to the virtual machine. If SourceImage is provided, the destination virtual hard drive
     must not exist.
@@ -3433,16 +3422,21 @@ class Image(Resource):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_11_01.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar extended_location: The extended location of the Image.
     :vartype extended_location: ~azure.mgmt.compute.v2024_11_01.models.ExtendedLocation
     :ivar source_virtual_machine: The source virtual machine from which Image is created.
@@ -3464,6 +3458,7 @@ class Image(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
         "provisioning_state": {"readonly": True},
     }
@@ -3472,8 +3467,9 @@ class Image(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
         "source_virtual_machine": {"key": "properties.sourceVirtualMachine", "type": "SubResource"},
         "storage_profile": {"key": "properties.storageProfile", "type": "ImageStorageProfile"},
@@ -3493,10 +3489,10 @@ class Image(Resource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword extended_location: The extended location of the Image.
         :paramtype extended_location: ~azure.mgmt.compute.v2024_11_01.models.ExtendedLocation
         :keyword source_virtual_machine: The source virtual machine from which Image is created.
@@ -3511,11 +3507,11 @@ class Image(Resource):
         :paramtype hyper_v_generation: str or
          ~azure.mgmt.compute.v2024_11_01.models.HyperVGenerationTypes
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.extended_location = extended_location
         self.source_virtual_machine = source_virtual_machine
         self.storage_profile = storage_profile
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.hyper_v_generation = hyper_v_generation
 
 
@@ -3932,7 +3928,7 @@ class ImageReference(SubResource):
      time even if a new version becomes available. Please do not use field 'version' for gallery
      image deployment, gallery image should always use 'id' field for deployment, to use 'latest'
      version of gallery image, just set
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageName}'  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageName}'
      in the 'id' field without version input.
     :vartype version: str
     :ivar exact_version: Specifies in decimal numbers, the version of platform image or marketplace
@@ -3991,7 +3987,7 @@ class ImageReference(SubResource):
          after deploy time even if a new version becomes available. Please do not use field 'version'
          for gallery image deployment, gallery image should always use 'id' field for deployment, to use
          'latest' version of gallery image, just set
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageName}'  # pylint: disable=line-too-long
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageName}'
          in the 'id' field without version input.
         :paramtype version: str
         :keyword shared_gallery_image_id: Specified the shared gallery image unique id for vm
@@ -4006,7 +4002,7 @@ class ImageReference(SubResource):
         self.offer = offer
         self.sku = sku
         self.version = version
-        self.exact_version = None
+        self.exact_version: Optional[str] = None
         self.shared_gallery_image_id = shared_gallery_image_id
         self.community_gallery_image_id = community_gallery_image_id
 
@@ -4125,7 +4121,7 @@ class ImageUpdate(UpdateResource):
         super().__init__(tags=tags, **kwargs)
         self.source_virtual_machine = source_virtual_machine
         self.storage_profile = storage_profile
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.hyper_v_generation = hyper_v_generation
 
 
@@ -4345,17 +4341,17 @@ class LastPatchInstallationSummary(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.status = None
-        self.installation_activity_id = None
-        self.maintenance_window_exceeded = None
-        self.not_selected_patch_count = None
-        self.excluded_patch_count = None
-        self.pending_patch_count = None
-        self.installed_patch_count = None
-        self.failed_patch_count = None
-        self.start_time = None
-        self.last_modified_time = None
-        self.error = None
+        self.status: Optional[Union[str, "_models.PatchOperationStatus"]] = None
+        self.installation_activity_id: Optional[str] = None
+        self.maintenance_window_exceeded: Optional[bool] = None
+        self.not_selected_patch_count: Optional[int] = None
+        self.excluded_patch_count: Optional[int] = None
+        self.pending_patch_count: Optional[int] = None
+        self.installed_patch_count: Optional[int] = None
+        self.failed_patch_count: Optional[int] = None
+        self.start_time: Optional[datetime.datetime] = None
+        self.last_modified_time: Optional[datetime.datetime] = None
+        self.error: Optional["_models.ApiError"] = None
 
 
 class LinuxConfiguration(_serialization.Model):
@@ -4731,7 +4727,7 @@ class LogAnalyticsOperationResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.properties = None
+        self.properties: Optional["_models.LogAnalyticsOutput"] = None
 
 
 class LogAnalyticsOutput(_serialization.Model):
@@ -4754,7 +4750,7 @@ class LogAnalyticsOutput(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.output = None
+        self.output: Optional[str] = None
 
 
 class MaintenanceRedeployStatus(_serialization.Model):
@@ -5057,13 +5053,133 @@ class NetworkProfile(_serialization.Model):
         self.network_interface_configurations = network_interface_configurations
 
 
+class Operation(_serialization.Model):
+    """Details of a REST API operation, returned from the Resource Provider Operations API.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
+     "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
+    :vartype name: str
+    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
+     data-plane operations and "false" for ARM/control-plane operations.
+    :vartype is_data_action: bool
+    :ivar display: Localized display information for this particular operation.
+    :vartype display: ~azure.mgmt.compute.v2024_11_01.models.OperationDisplay
+    :ivar origin: The intended executor of the operation; as in Resource Based Access Control
+     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
+     and "user,system".
+    :vartype origin: str or ~azure.mgmt.compute.v2024_11_01.models.Origin
+    :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
+     internal only APIs. "Internal"
+    :vartype action_type: str or ~azure.mgmt.compute.v2024_11_01.models.ActionType
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+        "is_data_action": {"readonly": True},
+        "origin": {"readonly": True},
+        "action_type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "action_type": {"key": "actionType", "type": "str"},
+    }
+
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
+        """
+        :keyword display: Localized display information for this particular operation.
+        :paramtype display: ~azure.mgmt.compute.v2024_11_01.models.OperationDisplay
+        """
+        super().__init__(**kwargs)
+        self.name: Optional[str] = None
+        self.is_data_action: Optional[bool] = None
+        self.display = display
+        self.origin: Optional[Union[str, "_models.Origin"]] = None
+        self.action_type: Optional[Union[str, "_models.ActionType"]] = None
+
+
+class OperationDisplay(_serialization.Model):
+    """Localized display information for this particular operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
+     Monitoring Insights" or "Microsoft Compute".
+    :vartype provider: str
+    :ivar resource: The localized friendly name of the resource type related to this operation.
+     E.g. "Virtual Machines" or "Job Schedule Collections".
+    :vartype resource: str
+    :ivar operation: The concise, localized friendly name for the operation; suitable for
+     dropdowns. E.g. "Create or Update Virtual Machine", "Restart Virtual Machine".
+    :vartype operation: str
+    :ivar description: The short, localized friendly description of the operation; suitable for
+     tool tips and detailed views.
+    :vartype description: str
+    """
+
+    _validation = {
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.provider: Optional[str] = None
+        self.resource: Optional[str] = None
+        self.operation: Optional[str] = None
+        self.description: Optional[str] = None
+
+
+class OperationListResult(_serialization.Model):
+    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link
+    to get the next set of results.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of operations supported by the resource provider.
+    :vartype value: list[~azure.mgmt.compute.v2024_11_01.models.Operation]
+    :ivar next_link: URL to get the next set of operation list results (if there are any).
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value: Optional[List["_models.Operation"]] = None
+        self.next_link: Optional[str] = None
+
+
 class OrchestrationServiceStateInput(_serialization.Model):
     """The input for OrchestrationServiceState.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar service_name: The name of the service. Required. Known values are: "AutomaticRepairs" and
-     "DummyOrchestrationServiceName".
+    :ivar service_name: The name of the service. Required. "AutomaticRepairs"
     :vartype service_name: str or ~azure.mgmt.compute.v2024_11_01.models.OrchestrationServiceNames
     :ivar action: The action to be performed. Required. Known values are: "Resume" and "Suspend".
     :vartype action: str or ~azure.mgmt.compute.v2024_11_01.models.OrchestrationServiceStateAction
@@ -5087,8 +5203,7 @@ class OrchestrationServiceStateInput(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword service_name: The name of the service. Required. Known values are: "AutomaticRepairs"
-         and "DummyOrchestrationServiceName".
+        :keyword service_name: The name of the service. Required. "AutomaticRepairs"
         :paramtype service_name: str or
          ~azure.mgmt.compute.v2024_11_01.models.OrchestrationServiceNames
         :keyword action: The action to be performed. Required. Known values are: "Resume" and
@@ -5106,8 +5221,7 @@ class OrchestrationServiceSummary(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar service_name: The name of the service. Known values are: "AutomaticRepairs" and
-     "DummyOrchestrationServiceName".
+    :ivar service_name: The name of the service. "AutomaticRepairs"
     :vartype service_name: str or ~azure.mgmt.compute.v2024_11_01.models.OrchestrationServiceNames
     :ivar service_state: The current state of the service. Known values are: "NotRunning",
      "Running", and "Suspended".
@@ -5127,8 +5241,8 @@ class OrchestrationServiceSummary(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.service_name = None
-        self.service_state = None
+        self.service_name: Optional[Union[str, "_models.OrchestrationServiceNames"]] = None
+        self.service_state: Optional[Union[str, "_models.OrchestrationServiceState"]] = None
 
 
 class OSDisk(_serialization.Model):
@@ -5626,12 +5740,12 @@ class PatchInstallationDetail(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.patch_id = None
-        self.name = None
-        self.version = None
-        self.kb_id = None
-        self.classifications = None
-        self.installation_state = None
+        self.patch_id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.version: Optional[str] = None
+        self.kb_id: Optional[str] = None
+        self.classifications: Optional[List[str]] = None
+        self.installation_state: Optional[Union[str, "_models.PatchInstallationState"]] = None
 
 
 class PatchSettings(_serialization.Model):
@@ -5847,8 +5961,7 @@ class PriorityMixPolicy(_serialization.Model):
     """
 
     _validation = {
-        "base_regular_priority_count": {"minimum": 0},
-        "regular_priority_percentage_above_base": {"maximum": 100, "minimum": 0},
+        "regular_priority_percentage_above_base": {"maximum": 100},
     }
 
     _attribute_map = {
@@ -5876,25 +5989,29 @@ class PriorityMixPolicy(_serialization.Model):
         self.regular_priority_percentage_above_base = regular_priority_percentage_above_base
 
 
-class ProximityPlacementGroup(Resource):
+class ProximityPlacementGroup(TrackedResource):
     """Specifies information about the proximity placement group.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_11_01.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar zones: Specifies the Availability Zone where virtual machine, virtual machine scale set
-     or availability set associated with the  proximity placement group can be created.
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar zones: The availability zones.
     :vartype zones: list[str]
     :ivar proximity_placement_group_type: Specifies the type of the proximity placement group.
      Possible values are: **Standard** : Co-locate resources within an Azure region or Availability
@@ -5923,6 +6040,7 @@ class ProximityPlacementGroup(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
         "virtual_machines": {"readonly": True},
         "virtual_machine_scale_sets": {"readonly": True},
@@ -5933,8 +6051,9 @@ class ProximityPlacementGroup(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "zones": {"key": "zones", "type": "[str]"},
         "proximity_placement_group_type": {"key": "properties.proximityPlacementGroupType", "type": "str"},
         "virtual_machines": {"key": "properties.virtualMachines", "type": "[SubResourceWithColocationStatus]"},
@@ -5959,12 +6078,11 @@ class ProximityPlacementGroup(Resource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword zones: Specifies the Availability Zone where virtual machine, virtual machine scale
-         set or availability set associated with the  proximity placement group can be created.
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword zones: The availability zones.
         :paramtype zones: list[str]
         :keyword proximity_placement_group_type: Specifies the type of the proximity placement group.
          Possible values are: **Standard** : Co-locate resources within an Azure region or Availability
@@ -5977,12 +6095,12 @@ class ProximityPlacementGroup(Resource):
         :paramtype intent:
          ~azure.mgmt.compute.v2024_11_01.models.ProximityPlacementGroupPropertiesIntent
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.zones = zones
         self.proximity_placement_group_type = proximity_placement_group_type
-        self.virtual_machines = None
-        self.virtual_machine_scale_sets = None
-        self.availability_sets = None
+        self.virtual_machines: Optional[List["_models.SubResourceWithColocationStatus"]] = None
+        self.virtual_machine_scale_sets: Optional[List["_models.SubResourceWithColocationStatus"]] = None
+        self.availability_sets: Optional[List["_models.SubResourceWithColocationStatus"]] = None
         self.colocation_status = colocation_status
         self.intent = intent
 
@@ -6117,38 +6235,24 @@ class ProxyAgentSettings(_serialization.Model):
         self.imds = imds
 
 
-class ProxyResource(_serialization.Model):
-    """The resource model definition for an Azure Resource Manager proxy resource. It will not have
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
     tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_11_01.models.SystemData
     """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
 
 
 class PublicIPAddressSku(_serialization.Model):
@@ -6251,8 +6355,8 @@ class RecoveryWalkResponse(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.walk_performed = None
-        self.next_platform_update_domain = None
+        self.walk_performed: Optional[bool] = None
+        self.next_platform_update_domain: Optional[int] = None
 
 
 class RequestRateByIntervalInput(LogAnalyticsInputBase):
@@ -6450,6 +6554,55 @@ class ResilientVMDeletionPolicy(_serialization.Model):
         self.enabled = enabled
 
 
+class ResourceAutoGenerated(_serialization.Model):
+    """The Resource model definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar location: Resource location. Required.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword location: Resource location. Required.
+        :paramtype location: str
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.location = location
+        self.tags = tags
+
+
 class ResourceSharingProfile(_serialization.Model):
     """ResourceSharingProfile.
 
@@ -6514,9 +6667,55 @@ class ResourceWithOptionalLocation(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.location = location
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.tags = tags
+
+
+class ResourceWithOptionalLocationAutoGenerated(_serialization.Model):  # pylint: disable=name-too-long
+    """The Resource model definition with location property as optional.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "location": {"key": "location", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.location = location
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.tags = tags
 
 
@@ -6525,12 +6724,17 @@ class RestorePoint(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_11_01.models.SystemData
     :ivar exclude_disks: List of disk resource ids that the customer wishes to exclude from the
      restore point. If no disks are specified, all disks will be included.
     :vartype exclude_disks: list[~azure.mgmt.compute.v2024_11_01.models.ApiEntityReference]
@@ -6557,6 +6761,7 @@ class RestorePoint(ProxyResource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "provisioning_state": {"readonly": True},
         "instance_view": {"readonly": True},
     }
@@ -6565,6 +6770,7 @@ class RestorePoint(ProxyResource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "exclude_disks": {"key": "properties.excludeDisks", "type": "[ApiEntityReference]"},
         "source_metadata": {"key": "properties.sourceMetadata", "type": "RestorePointSourceMetadata"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
@@ -6605,30 +6811,35 @@ class RestorePoint(ProxyResource):
         super().__init__(**kwargs)
         self.exclude_disks = exclude_disks
         self.source_metadata = source_metadata
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.consistency_mode = consistency_mode
         self.time_created = time_created
         self.source_restore_point = source_restore_point
-        self.instance_view = None
+        self.instance_view: Optional["_models.RestorePointInstanceView"] = None
 
 
-class RestorePointCollection(Resource):
+class RestorePointCollection(TrackedResource):
     """Create or update Restore Point collection parameters.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_11_01.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar source: The properties of the source resource that this restore point collection is
      created from.
     :vartype source: ~azure.mgmt.compute.v2024_11_01.models.RestorePointCollectionSourceProperties
@@ -6645,6 +6856,7 @@ class RestorePointCollection(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
         "provisioning_state": {"readonly": True},
         "restore_point_collection_id": {"readonly": True},
@@ -6655,8 +6867,9 @@ class RestorePointCollection(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "source": {"key": "properties.source", "type": "RestorePointCollectionSourceProperties"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "restore_point_collection_id": {"key": "properties.restorePointCollectionId", "type": "str"},
@@ -6672,31 +6885,37 @@ class RestorePointCollection(Resource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword source: The properties of the source resource that this restore point collection is
          created from.
         :paramtype source:
          ~azure.mgmt.compute.v2024_11_01.models.RestorePointCollectionSourceProperties
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.source = source
-        self.provisioning_state = None
-        self.restore_point_collection_id = None
-        self.restore_points = None
+        self.provisioning_state: Optional[str] = None
+        self.restore_point_collection_id: Optional[str] = None
+        self.restore_points: Optional[List["_models.RestorePoint"]] = None
 
 
 class RestorePointCollectionListResult(_serialization.Model):
     """The List restore point collection operation response.
 
-    :ivar value: Gets the list of restore point collections.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: Gets the list of restore point collections. Required.
     :vartype value: list[~azure.mgmt.compute.v2024_11_01.models.RestorePointCollection]
     :ivar next_link: The uri to fetch the next page of RestorePointCollections. Call ListNext()
      with this to fetch the next page of RestorePointCollections.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[RestorePointCollection]"},
@@ -6704,14 +6923,10 @@ class RestorePointCollectionListResult(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.RestorePointCollection"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
+        self, *, value: List["_models.RestorePointCollection"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: Gets the list of restore point collections.
+        :keyword value: Gets the list of restore point collections. Required.
         :paramtype value: list[~azure.mgmt.compute.v2024_11_01.models.RestorePointCollection]
         :keyword next_link: The uri to fetch the next page of RestorePointCollections. Call ListNext()
          with this to fetch the next page of RestorePointCollections.
@@ -6748,7 +6963,7 @@ class RestorePointCollectionSourceProperties(_serialization.Model):
         :paramtype id: str
         """
         super().__init__(**kwargs)
-        self.location = None
+        self.location: Optional[str] = None
         self.id = id
 
 
@@ -6802,9 +7017,9 @@ class RestorePointCollectionUpdate(UpdateResource):
         """
         super().__init__(tags=tags, **kwargs)
         self.source = source
-        self.provisioning_state = None
-        self.restore_point_collection_id = None
-        self.restore_points = None
+        self.provisioning_state: Optional[str] = None
+        self.restore_point_collection_id: Optional[str] = None
+        self.restore_points: Optional[List["_models.RestorePoint"]] = None
 
 
 class RestorePointEncryption(_serialization.Model):
@@ -6953,16 +7168,16 @@ class RestorePointSourceMetadata(_serialization.Model):
          ~azure.mgmt.compute.v2024_11_01.models.RestorePointSourceVMStorageProfile
         """
         super().__init__(**kwargs)
-        self.hardware_profile = None
+        self.hardware_profile: Optional["_models.HardwareProfile"] = None
         self.storage_profile = storage_profile
-        self.os_profile = None
-        self.diagnostics_profile = None
-        self.license_type = None
-        self.vm_id = None
-        self.security_profile = None
-        self.location = None
-        self.user_data = None
-        self.hyper_v_generation = None
+        self.os_profile: Optional["_models.OSProfile"] = None
+        self.diagnostics_profile: Optional["_models.DiagnosticsProfile"] = None
+        self.license_type: Optional[str] = None
+        self.vm_id: Optional[str] = None
+        self.security_profile: Optional["_models.SecurityProfile"] = None
+        self.location: Optional[str] = None
+        self.user_data: Optional[str] = None
+        self.hyper_v_generation: Optional[Union[str, "_models.HyperVGenerationTypes"]] = None
 
 
 class RestorePointSourceVMDataDisk(_serialization.Model):
@@ -7020,13 +7235,13 @@ class RestorePointSourceVMDataDisk(_serialization.Model):
          ~azure.mgmt.compute.v2024_11_01.models.DiskRestorePointAttributes
         """
         super().__init__(**kwargs)
-        self.lun = None
-        self.name = None
-        self.caching = None
-        self.disk_size_gb = None
+        self.lun: Optional[int] = None
+        self.name: Optional[str] = None
+        self.caching: Optional[Union[str, "_models.CachingTypes"]] = None
+        self.disk_size_gb: Optional[int] = None
         self.managed_disk = managed_disk
         self.disk_restore_point = disk_restore_point
-        self.write_accelerator_enabled = None
+        self.write_accelerator_enabled: Optional[bool] = None
 
 
 class RestorePointSourceVMOSDisk(_serialization.Model):
@@ -7087,14 +7302,14 @@ class RestorePointSourceVMOSDisk(_serialization.Model):
          ~azure.mgmt.compute.v2024_11_01.models.DiskRestorePointAttributes
         """
         super().__init__(**kwargs)
-        self.os_type = None
-        self.encryption_settings = None
-        self.name = None
-        self.caching = None
-        self.disk_size_gb = None
+        self.os_type: Optional[Union[str, "_models.OperatingSystemType"]] = None
+        self.encryption_settings: Optional["_models.DiskEncryptionSettings"] = None
+        self.name: Optional[str] = None
+        self.caching: Optional[Union[str, "_models.CachingTypes"]] = None
+        self.disk_size_gb: Optional[int] = None
         self.managed_disk = managed_disk
         self.disk_restore_point = disk_restore_point
-        self.write_accelerator_enabled = None
+        self.write_accelerator_enabled: Optional[bool] = None
 
 
 class RestorePointSourceVMStorageProfile(_serialization.Model):
@@ -7142,7 +7357,7 @@ class RestorePointSourceVMStorageProfile(_serialization.Model):
         super().__init__(**kwargs)
         self.os_disk = os_disk
         self.data_disks = data_disks
-        self.disk_controller_type = None
+        self.disk_controller_type: Optional[Union[str, "_models.DiskControllerTypes"]] = None
 
 
 class RetrieveBootDiagnosticsDataResult(_serialization.Model):
@@ -7169,8 +7384,8 @@ class RetrieveBootDiagnosticsDataResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.console_screenshot_blob_uri = None
-        self.serial_console_log_blob_uri = None
+        self.console_screenshot_blob_uri: Optional[str] = None
+        self.serial_console_log_blob_uri: Optional[str] = None
 
 
 class RollbackStatusInfo(_serialization.Model):
@@ -7202,9 +7417,9 @@ class RollbackStatusInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.successfully_rolledback_instance_count = None
-        self.failed_rolledback_instance_count = None
-        self.rollback_error = None
+        self.successfully_rolledback_instance_count: Optional[int] = None
+        self.failed_rolledback_instance_count: Optional[int] = None
+        self.rollback_error: Optional["_models.ApiError"] = None
 
 
 class RollingUpgradePolicy(_serialization.Model):
@@ -7249,7 +7464,7 @@ class RollingUpgradePolicy(_serialization.Model):
     _validation = {
         "max_batch_instance_percent": {"maximum": 100, "minimum": 5},
         "max_unhealthy_instance_percent": {"maximum": 100, "minimum": 5},
-        "max_unhealthy_upgraded_instance_percent": {"maximum": 100, "minimum": 0},
+        "max_unhealthy_upgraded_instance_percent": {"maximum": 100},
     }
 
     _attribute_map = {
@@ -7356,10 +7571,10 @@ class RollingUpgradeProgressInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.successful_instance_count = None
-        self.failed_instance_count = None
-        self.in_progress_instance_count = None
-        self.pending_instance_count = None
+        self.successful_instance_count: Optional[int] = None
+        self.failed_instance_count: Optional[int] = None
+        self.in_progress_instance_count: Optional[int] = None
+        self.pending_instance_count: Optional[int] = None
 
 
 class RollingUpgradeRunningStatus(_serialization.Model):
@@ -7396,29 +7611,34 @@ class RollingUpgradeRunningStatus(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.start_time = None
-        self.last_action = None
-        self.last_action_time = None
+        self.code: Optional[Union[str, "_models.RollingUpgradeStatusCode"]] = None
+        self.start_time: Optional[datetime.datetime] = None
+        self.last_action: Optional[Union[str, "_models.RollingUpgradeActionType"]] = None
+        self.last_action_time: Optional[datetime.datetime] = None
 
 
-class RollingUpgradeStatusInfo(Resource):
+class RollingUpgradeStatusInfo(TrackedResource):
     """The status of the latest virtual machine scale set rolling upgrade.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_11_01.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar policy: The rolling upgrade policies applied for this upgrade.
     :vartype policy: ~azure.mgmt.compute.v2024_11_01.models.RollingUpgradePolicy
     :ivar running_status: Information about the current running state of the overall upgrade.
@@ -7434,6 +7654,7 @@ class RollingUpgradeStatusInfo(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
         "policy": {"readonly": True},
         "running_status": {"readonly": True},
@@ -7445,8 +7666,9 @@ class RollingUpgradeStatusInfo(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "policy": {"key": "properties.policy", "type": "RollingUpgradePolicy"},
         "running_status": {"key": "properties.runningStatus", "type": "RollingUpgradeRunningStatus"},
         "progress": {"key": "properties.progress", "type": "RollingUpgradeProgressInfo"},
@@ -7455,16 +7677,16 @@ class RollingUpgradeStatusInfo(Resource):
 
     def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         """
-        super().__init__(location=location, tags=tags, **kwargs)
-        self.policy = None
-        self.running_status = None
-        self.progress = None
-        self.error = None
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.policy: Optional["_models.RollingUpgradePolicy"] = None
+        self.running_status: Optional["_models.RollingUpgradeRunningStatus"] = None
+        self.progress: Optional["_models.RollingUpgradeProgressInfo"] = None
+        self.error: Optional["_models.ApiError"] = None
 
 
 class RunCommandDocumentBase(_serialization.Model):
@@ -7785,7 +8007,13 @@ class RunCommandParameterDefinition(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: str, type: str, default_value: Optional[str] = None, required: bool = False, **kwargs: Any
+        self,
+        *,
+        name: str,
+        type: str,
+        default_value: Optional[str] = None,
+        required: Optional[bool] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword name: The run command parameter name. Required.
@@ -8027,7 +8255,7 @@ class SecurityPostureReference(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar id: The security posture reference id in the form of
-     /CommunityGalleries/{communityGalleryName}/securityPostures/{securityPostureName}/versions/{major.minor.patch}|latest.  # pylint: disable=line-too-long
+     /CommunityGalleries/{communityGalleryName}/securityPostures/{securityPostureName}/versions/{major.minor.patch}|latest.
      Required.
     :vartype id: str
     :ivar exclude_extensions: The list of virtual machine extension names to exclude when applying
@@ -8057,7 +8285,7 @@ class SecurityPostureReference(_serialization.Model):
     ) -> None:
         """
         :keyword id: The security posture reference id in the form of
-         /CommunityGalleries/{communityGalleryName}/securityPostures/{securityPostureName}/versions/{major.minor.patch}|latest.  # pylint: disable=line-too-long
+         /CommunityGalleries/{communityGalleryName}/securityPostures/{securityPostureName}/versions/{major.minor.patch}|latest.
          Required.
         :paramtype id: str
         :keyword exclude_extensions: The list of virtual machine extension names to exclude when
@@ -8076,7 +8304,7 @@ class SecurityPostureReferenceUpdate(_serialization.Model):
     """Specifies the security posture to be used in the scale set. Minimum api-version: 2023-03-01.
 
     :ivar id: The security posture reference id in the form of
-     /CommunityGalleries/{communityGalleryName}/securityPostures/{securityPostureName}/versions/{major.minor.patch}|latest.  # pylint: disable=line-too-long
+     /CommunityGalleries/{communityGalleryName}/securityPostures/{securityPostureName}/versions/{major.minor.patch}|latest.
     :vartype id: str
     :ivar exclude_extensions: The list of virtual machine extension names to exclude when applying
      the security posture.
@@ -8101,7 +8329,7 @@ class SecurityPostureReferenceUpdate(_serialization.Model):
     ) -> None:
         """
         :keyword id: The security posture reference id in the form of
-         /CommunityGalleries/{communityGalleryName}/securityPostures/{securityPostureName}/versions/{major.minor.patch}|latest.  # pylint: disable=line-too-long
+         /CommunityGalleries/{communityGalleryName}/securityPostures/{securityPostureName}/versions/{major.minor.patch}|latest.
         :paramtype id: str
         :keyword exclude_extensions: The list of virtual machine extension names to exclude when
          applying the security posture.
@@ -8191,7 +8419,7 @@ class ServiceArtifactReference(_serialization.Model):
     machines in the scale set when using 'latest' image version. Minimum api-version: 2022-11-01.
 
     :ivar id: The service artifact reference id in the form of
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.
     :vartype id: str
     """
 
@@ -8202,7 +8430,7 @@ class ServiceArtifactReference(_serialization.Model):
     def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: The service artifact reference id in the form of
-         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.  # pylint: disable=line-too-long
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.
         :paramtype id: str
         """
         super().__init__(**kwargs)
@@ -8295,10 +8523,6 @@ class SkuProfileVMSize(_serialization.Model):
     :ivar rank: Specifies the rank (a.k.a priority) associated with the VM Size.
     :vartype rank: int
     """
-
-    _validation = {
-        "rank": {"minimum": 0},
-    }
 
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
@@ -8446,7 +8670,7 @@ class SshPublicKeyGenerateKeyPairResult(_serialization.Model):
      through ssh. The public key is in ssh-rsa format. Required.
     :vartype public_key: str
     :ivar id: The ARM resource id in the form of
-     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/sshPublicKeys/{SshPublicKeyName}.  # pylint: disable=line-too-long
+     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/sshPublicKeys/{SshPublicKeyName}.
      Required.
     :vartype id: str
     """
@@ -8475,7 +8699,7 @@ class SshPublicKeyGenerateKeyPairResult(_serialization.Model):
          machine through ssh. The public key is in ssh-rsa format. Required.
         :paramtype public_key: str
         :keyword id: The ARM resource id in the form of
-         /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/sshPublicKeys/{SshPublicKeyName}.  # pylint: disable=line-too-long
+         /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/sshPublicKeys/{SshPublicKeyName}.
          Required.
         :paramtype id: str
         """
@@ -8485,23 +8709,28 @@ class SshPublicKeyGenerateKeyPairResult(_serialization.Model):
         self.id = id
 
 
-class SshPublicKeyResource(Resource):
+class SshPublicKeyResource(TrackedResource):
     """Specifies information about the SSH public key.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_11_01.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar public_key: SSH public key used to authenticate to a virtual machine through ssh. If this
      property is not initially provided when the resource is created, the publicKey property will be
      populated when generateKeyPair is called. If the public key is provided upon resource creation,
@@ -8513,6 +8742,7 @@ class SshPublicKeyResource(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
     }
 
@@ -8520,8 +8750,9 @@ class SshPublicKeyResource(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "public_key": {"key": "properties.publicKey", "type": "str"},
     }
 
@@ -8529,17 +8760,17 @@ class SshPublicKeyResource(Resource):
         self, *, location: str, tags: Optional[Dict[str, str]] = None, public_key: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword public_key: SSH public key used to authenticate to a virtual machine through ssh. If
          this property is not initially provided when the resource is created, the publicKey property
          will be populated when generateKeyPair is called. If the public key is provided upon resource
          creation, the provided public key needs to be at least 2048-bit and in ssh-rsa format.
         :paramtype public_key: str
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.public_key = public_key
 
 
@@ -8731,6 +8962,70 @@ class SubResourceWithColocationStatus(SubResource):
 
 
 class SystemData(_serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.compute.v2024_11_01.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.compute.v2024_11_01.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.compute.v2024_11_01.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.compute.v2024_11_01.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
+
+
+class SystemDataAutoGenerated(_serialization.Model):
     """The system meta data relating to this resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8756,8 +9051,8 @@ class SystemData(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.created_at = None
-        self.last_modified_at = None
+        self.created_at: Optional[datetime.datetime] = None
+        self.last_modified_at: Optional[datetime.datetime] = None
 
 
 class TerminateNotificationProfile(_serialization.Model):
@@ -8881,9 +9176,9 @@ class UpgradeOperationHistoricalStatusInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.properties = None
-        self.type = None
-        self.location = None
+        self.properties: Optional["_models.UpgradeOperationHistoricalStatusInfoProperties"] = None
+        self.type: Optional[str] = None
+        self.location: Optional[str] = None
 
 
 class UpgradeOperationHistoricalStatusInfoProperties(_serialization.Model):  # pylint: disable=name-too-long
@@ -8927,12 +9222,12 @@ class UpgradeOperationHistoricalStatusInfoProperties(_serialization.Model):  # p
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.running_status = None
-        self.progress = None
-        self.error = None
-        self.started_by = None
-        self.target_image_reference = None
-        self.rollback_info = None
+        self.running_status: Optional["_models.UpgradeOperationHistoryStatus"] = None
+        self.progress: Optional["_models.RollingUpgradeProgressInfo"] = None
+        self.error: Optional["_models.ApiError"] = None
+        self.started_by: Optional[Union[str, "_models.UpgradeOperationInvoker"]] = None
+        self.target_image_reference: Optional["_models.ImageReference"] = None
+        self.rollback_info: Optional["_models.RollbackStatusInfo"] = None
 
 
 class UpgradeOperationHistoryStatus(_serialization.Model):
@@ -8964,9 +9259,9 @@ class UpgradeOperationHistoryStatus(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.start_time = None
-        self.end_time = None
+        self.code: Optional[Union[str, "_models.UpgradeState"]] = None
+        self.start_time: Optional[datetime.datetime] = None
+        self.end_time: Optional[datetime.datetime] = None
 
 
 class UpgradePolicy(_serialization.Model):
@@ -9123,8 +9418,36 @@ class UserAssignedIdentitiesValue(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
+
+
+class UserAssignedIdentitiesValueAutoGenerated(_serialization.Model):
+    """UserAssignedIdentitiesValueAutoGenerated.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client id of user assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
 
 
 class UserInitiatedReboot(_serialization.Model):
@@ -9284,23 +9607,28 @@ class VirtualHardDisk(_serialization.Model):
         self.uri = uri
 
 
-class VirtualMachine(Resource):
+class VirtualMachine(TrackedResource):
     """Describes a Virtual Machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_11_01.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar plan: Specifies information about the marketplace image used to create the virtual
      machine. This element is only used for marketplace images. Before you can use a marketplace
      image from an API, you must enable the image for programmatic use.  In the Azure portal, find
@@ -9311,7 +9639,7 @@ class VirtualMachine(Resource):
     :vartype resources: list[~azure.mgmt.compute.v2024_11_01.models.VirtualMachineExtension]
     :ivar identity: The identity of the virtual machine, if configured.
     :vartype identity: ~azure.mgmt.compute.v2024_11_01.models.VirtualMachineIdentity
-    :ivar zones: The virtual machine zones.
+    :ivar zones: The availability zones.
     :vartype zones: list[str]
     :ivar extended_location: The extended location of the Virtual Machine.
     :vartype extended_location: ~azure.mgmt.compute.v2024_11_01.models.ExtendedLocation
@@ -9443,6 +9771,7 @@ class VirtualMachine(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
         "resources": {"readonly": True},
         "managed_by": {"readonly": True},
@@ -9457,8 +9786,9 @@ class VirtualMachine(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "plan": {"key": "plan", "type": "Plan"},
         "resources": {"key": "resources", "type": "[VirtualMachineExtension]"},
         "identity": {"key": "identity", "type": "VirtualMachineIdentity"},
@@ -9532,10 +9862,10 @@ class VirtualMachine(Resource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword plan: Specifies information about the marketplace image used to create the virtual
          machine. This element is only used for marketplace images. Before you can use a marketplace
          image from an API, you must enable the image for programmatic use.  In the Azure portal, find
@@ -9544,7 +9874,7 @@ class VirtualMachine(Resource):
         :paramtype plan: ~azure.mgmt.compute.v2024_11_01.models.Plan
         :keyword identity: The identity of the virtual machine, if configured.
         :paramtype identity: ~azure.mgmt.compute.v2024_11_01.models.VirtualMachineIdentity
-        :keyword zones: The virtual machine zones.
+        :keyword zones: The availability zones.
         :paramtype zones: list[str]
         :keyword extended_location: The extended location of the Virtual Machine.
         :paramtype extended_location: ~azure.mgmt.compute.v2024_11_01.models.ExtendedLocation
@@ -9656,14 +9986,14 @@ class VirtualMachine(Resource):
          to the VM/VMSS.
         :paramtype application_profile: ~azure.mgmt.compute.v2024_11_01.models.ApplicationProfile
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.plan = plan
-        self.resources = None
+        self.resources: Optional[List["_models.VirtualMachineExtension"]] = None
         self.identity = identity
         self.zones = zones
         self.extended_location = extended_location
-        self.managed_by = None
-        self.etag = None
+        self.managed_by: Optional[str] = None
+        self.etag: Optional[str] = None
         self.placement = placement
         self.hardware_profile = hardware_profile
         self.scheduled_events_policy = scheduled_events_policy
@@ -9681,17 +10011,17 @@ class VirtualMachine(Resource):
         self.billing_profile = billing_profile
         self.host = host
         self.host_group = host_group
-        self.provisioning_state = None
-        self.instance_view = None
+        self.provisioning_state: Optional[str] = None
+        self.instance_view: Optional["_models.VirtualMachineInstanceView"] = None
         self.license_type = license_type
-        self.vm_id = None
+        self.vm_id: Optional[str] = None
         self.extensions_time_budget = extensions_time_budget
         self.platform_fault_domain = platform_fault_domain
         self.scheduled_events_profile = scheduled_events_profile
         self.user_data = user_data
         self.capacity_reservation = capacity_reservation
         self.application_profile = application_profile
-        self.time_created = None
+        self.time_created: Optional[datetime.datetime] = None
 
 
 class VirtualMachineAgentInstanceView(_serialization.Model):
@@ -9793,14 +10123,14 @@ class VirtualMachineAssessPatchesResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.status = None
-        self.assessment_activity_id = None
-        self.reboot_pending = None
-        self.critical_and_security_patch_count = None
-        self.other_patch_count = None
-        self.start_date_time = None
-        self.available_patches = None
-        self.error = None
+        self.status: Optional[Union[str, "_models.PatchOperationStatus"]] = None
+        self.assessment_activity_id: Optional[str] = None
+        self.reboot_pending: Optional[bool] = None
+        self.critical_and_security_patch_count: Optional[int] = None
+        self.other_patch_count: Optional[int] = None
+        self.start_date_time: Optional[datetime.datetime] = None
+        self.available_patches: Optional[List["_models.VirtualMachineSoftwarePatchProperties"]] = None
+        self.error: Optional["_models.ApiError"] = None
 
 
 class VirtualMachineCaptureParameters(_serialization.Model):
@@ -9859,9 +10189,9 @@ class VirtualMachineCaptureResult(SubResource):
     :ivar content_version: the version of the content.
     :vartype content_version: str
     :ivar parameters: parameters of the captured virtual machine.
-    :vartype parameters: JSON
+    :vartype parameters: any
     :ivar resources: a list of resource items of the captured virtual machine.
-    :vartype resources: list[JSON]
+    :vartype resources: list[any]
     """
 
     _validation = {
@@ -9885,27 +10215,34 @@ class VirtualMachineCaptureResult(SubResource):
         :paramtype id: str
         """
         super().__init__(id=id, **kwargs)
-        self.schema = None
-        self.content_version = None
-        self.parameters = None
-        self.resources = None
+        self.schema: Optional[str] = None
+        self.content_version: Optional[str] = None
+        self.parameters: Optional[Any] = None
+        self.resources: Optional[List[Any]] = None
 
 
-class VirtualMachineExtension(ResourceWithOptionalLocation):
+class VirtualMachineExtension(TrackedResource):
     """Describes a Virtual Machine Extension.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar location: Resource location.
-    :vartype location: str
-    :ivar id: Resource Id.
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_11_01.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar force_update_tag: How the extension handler should be forced to update even if the
      extension configuration has not changed.
     :vartype force_update_tag: str
@@ -9924,10 +10261,10 @@ class VirtualMachineExtension(ResourceWithOptionalLocation):
      upgraded by the platform if there is a newer version of the extension available.
     :vartype enable_automatic_upgrade: bool
     :ivar settings: Json formatted public settings for the extension.
-    :vartype settings: JSON
+    :vartype settings: any
     :ivar protected_settings: The extension can contain either protectedSettings or
      protectedSettingsFromKeyVault or no protected settings at all.
-    :vartype protected_settings: JSON
+    :vartype protected_settings: any
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
     :ivar instance_view: The virtual machine extension instance view.
@@ -9950,15 +10287,18 @@ class VirtualMachineExtension(ResourceWithOptionalLocation):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
         "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        "location": {"key": "location", "type": "str"},
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "force_update_tag": {"key": "properties.forceUpdateTag", "type": "str"},
         "publisher": {"key": "properties.publisher", "type": "str"},
         "type_properties_type": {"key": "properties.type", "type": "str"},
@@ -9980,7 +10320,7 @@ class VirtualMachineExtension(ResourceWithOptionalLocation):
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
+        location: str,
         tags: Optional[Dict[str, str]] = None,
         force_update_tag: Optional[str] = None,
         publisher: Optional[str] = None,
@@ -9988,8 +10328,8 @@ class VirtualMachineExtension(ResourceWithOptionalLocation):
         type_handler_version: Optional[str] = None,
         auto_upgrade_minor_version: Optional[bool] = None,
         enable_automatic_upgrade: Optional[bool] = None,
-        settings: Optional[JSON] = None,
-        protected_settings: Optional[JSON] = None,
+        settings: Optional[Any] = None,
+        protected_settings: Optional[Any] = None,
         instance_view: Optional["_models.VirtualMachineExtensionInstanceView"] = None,
         suppress_failures: Optional[bool] = None,
         protected_settings_from_key_vault: Optional["_models.KeyVaultSecretReference"] = None,
@@ -9997,10 +10337,10 @@ class VirtualMachineExtension(ResourceWithOptionalLocation):
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource location.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword force_update_tag: How the extension handler should be forced to update even if the
          extension configuration has not changed.
         :paramtype force_update_tag: str
@@ -10019,10 +10359,10 @@ class VirtualMachineExtension(ResourceWithOptionalLocation):
          upgraded by the platform if there is a newer version of the extension available.
         :paramtype enable_automatic_upgrade: bool
         :keyword settings: Json formatted public settings for the extension.
-        :paramtype settings: JSON
+        :paramtype settings: any
         :keyword protected_settings: The extension can contain either protectedSettings or
          protectedSettingsFromKeyVault or no protected settings at all.
-        :paramtype protected_settings: JSON
+        :paramtype protected_settings: any
         :keyword instance_view: The virtual machine extension instance view.
         :paramtype instance_view:
          ~azure.mgmt.compute.v2024_11_01.models.VirtualMachineExtensionInstanceView
@@ -10038,7 +10378,7 @@ class VirtualMachineExtension(ResourceWithOptionalLocation):
          needs to be provisioned.
         :paramtype provision_after_extensions: list[str]
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.force_update_tag = force_update_tag
         self.publisher = publisher
         self.type_properties_type = type_properties_type
@@ -10047,7 +10387,7 @@ class VirtualMachineExtension(ResourceWithOptionalLocation):
         self.enable_automatic_upgrade = enable_automatic_upgrade
         self.settings = settings
         self.protected_settings = protected_settings
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.instance_view = instance_view
         self.suppress_failures = suppress_failures
         self.protected_settings_from_key_vault = protected_settings_from_key_vault
@@ -10093,23 +10433,28 @@ class VirtualMachineExtensionHandlerInstanceView(_serialization.Model):  # pylin
         self.status = status
 
 
-class VirtualMachineExtensionImage(Resource):
+class VirtualMachineExtensionImage(TrackedResource):
     """Describes a Virtual Machine Extension Image.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_11_01.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar operating_system: The operating system this extension supports.
     :vartype operating_system: str
     :ivar compute_role: The type of role (IaaS or PaaS) this extension supports.
@@ -10129,6 +10474,7 @@ class VirtualMachineExtensionImage(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
     }
 
@@ -10136,8 +10482,9 @@ class VirtualMachineExtensionImage(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "operating_system": {"key": "properties.operatingSystem", "type": "str"},
         "compute_role": {"key": "properties.computeRole", "type": "str"},
         "handler_schema": {"key": "properties.handlerSchema", "type": "str"},
@@ -10158,10 +10505,10 @@ class VirtualMachineExtensionImage(Resource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword operating_system: The operating system this extension supports.
         :paramtype operating_system: str
         :keyword compute_role: The type of role (IaaS or PaaS) this extension supports.
@@ -10176,7 +10523,7 @@ class VirtualMachineExtensionImage(Resource):
         :keyword supports_multiple_extensions: Whether the handler can support multiple extensions.
         :paramtype supports_multiple_extensions: bool
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.operating_system = operating_system
         self.compute_role = compute_role
         self.handler_schema = handler_schema
@@ -10279,10 +10626,10 @@ class VirtualMachineExtensionUpdate(UpdateResource):
      upgraded by the platform if there is a newer version of the extension available.
     :vartype enable_automatic_upgrade: bool
     :ivar settings: Json formatted public settings for the extension.
-    :vartype settings: JSON
+    :vartype settings: any
     :ivar protected_settings: The extension can contain either protectedSettings or
      protectedSettingsFromKeyVault or no protected settings at all.
-    :vartype protected_settings: JSON
+    :vartype protected_settings: any
     :ivar suppress_failures: Indicates whether failures stemming from the extension will be
      suppressed (Operational failures such as not connecting to the VM will not be suppressed
      regardless of this value). The default is false.
@@ -10320,8 +10667,8 @@ class VirtualMachineExtensionUpdate(UpdateResource):
         type_handler_version: Optional[str] = None,
         auto_upgrade_minor_version: Optional[bool] = None,
         enable_automatic_upgrade: Optional[bool] = None,
-        settings: Optional[JSON] = None,
-        protected_settings: Optional[JSON] = None,
+        settings: Optional[Any] = None,
+        protected_settings: Optional[Any] = None,
         suppress_failures: Optional[bool] = None,
         protected_settings_from_key_vault: Optional["_models.KeyVaultSecretReference"] = None,
         **kwargs: Any
@@ -10346,10 +10693,10 @@ class VirtualMachineExtensionUpdate(UpdateResource):
          upgraded by the platform if there is a newer version of the extension available.
         :paramtype enable_automatic_upgrade: bool
         :keyword settings: Json formatted public settings for the extension.
-        :paramtype settings: JSON
+        :paramtype settings: any
         :keyword protected_settings: The extension can contain either protectedSettings or
          protectedSettingsFromKeyVault or no protected settings at all.
-        :paramtype protected_settings: JSON
+        :paramtype protected_settings: any
         :keyword suppress_failures: Indicates whether failures stemming from the extension will be
          suppressed (Operational failures such as not connecting to the VM will not be suppressed
          regardless of this value). The default is false.
@@ -10392,7 +10739,7 @@ class VirtualMachineHealthStatus(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.status = None
+        self.status: Optional["_models.InstanceViewStatus"] = None
 
 
 class VirtualMachineIdentity(_serialization.Model):
@@ -10413,7 +10760,7 @@ class VirtualMachineIdentity(_serialization.Model):
     :vartype type: str or ~azure.mgmt.compute.v2024_11_01.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user identities associated with the Virtual
      Machine. The user identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.compute.v2024_11_01.models.UserAssignedIdentitiesValue]
     """
@@ -10445,13 +10792,13 @@ class VirtualMachineIdentity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.compute.v2024_11_01.models.ResourceIdentityType
         :keyword user_assigned_identities: The list of user identities associated with the Virtual
          Machine. The user identity dictionary key references will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.compute.v2024_11_01.models.UserAssignedIdentitiesValue]
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
@@ -10541,7 +10888,7 @@ class VirtualMachineImage(VirtualMachineImageResource):
     :vartype plan: ~azure.mgmt.compute.v2024_11_01.models.PurchasePlan
     :ivar os_disk_image: Contains the os disk image information.
     :vartype os_disk_image: ~azure.mgmt.compute.v2024_11_01.models.OSDiskImage
-    :ivar data_disk_images:
+    :ivar data_disk_images: The list of data disk images information.
     :vartype data_disk_images: list[~azure.mgmt.compute.v2024_11_01.models.DataDiskImage]
     :ivar automatic_os_upgrade_properties: Describes automatic OS upgrade properties on the image.
     :vartype automatic_os_upgrade_properties:
@@ -10623,7 +10970,7 @@ class VirtualMachineImage(VirtualMachineImageResource):
         :paramtype plan: ~azure.mgmt.compute.v2024_11_01.models.PurchasePlan
         :keyword os_disk_image: Contains the os disk image information.
         :paramtype os_disk_image: ~azure.mgmt.compute.v2024_11_01.models.OSDiskImage
-        :keyword data_disk_images:
+        :keyword data_disk_images: The list of data disk images information.
         :paramtype data_disk_images: list[~azure.mgmt.compute.v2024_11_01.models.DataDiskImage]
         :keyword automatic_os_upgrade_properties: Describes automatic OS upgrade properties on the
          image.
@@ -10682,40 +11029,6 @@ class VirtualMachineImageFeature(_serialization.Model):
         self.value = value
 
 
-class VirtualMachineImagesWithPropertiesListResult(_serialization.Model):  # pylint: disable=name-too-long
-    """The List Virtual Machine Images operation response.
-
-    :ivar value: The list of virtual machine images.
-    :vartype value: list[~azure.mgmt.compute.v2024_11_01.models.VirtualMachineImage]
-    :ivar next_link: The URI to fetch the next page of virtual machine images. Call ListNext() with
-     this URI to fetch the next page of virtual machine images.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[VirtualMachineImage]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.VirtualMachineImage"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: The list of virtual machine images.
-        :paramtype value: list[~azure.mgmt.compute.v2024_11_01.models.VirtualMachineImage]
-        :keyword next_link: The URI to fetch the next page of virtual machine images. Call ListNext()
-         with this URI to fetch the next page of virtual machine images.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
 class VirtualMachineInstallPatchesParameters(_serialization.Model):
     """Input for InstallPatches as directly received by the API.
 
@@ -10723,7 +11036,7 @@ class VirtualMachineInstallPatchesParameters(_serialization.Model):
 
     :ivar maximum_duration: Specifies the maximum amount of time that the operation will run. It
      must be an ISO 8601-compliant duration string such as PT4H (4 hours).
-    :vartype maximum_duration: str
+    :vartype maximum_duration: ~datetime.timedelta
     :ivar reboot_setting: Defines when it is acceptable to reboot a VM during a software update
      operation. Required. Known values are: "IfRequired", "Never", and "Always".
     :vartype reboot_setting: str or
@@ -10741,7 +11054,7 @@ class VirtualMachineInstallPatchesParameters(_serialization.Model):
     }
 
     _attribute_map = {
-        "maximum_duration": {"key": "maximumDuration", "type": "str"},
+        "maximum_duration": {"key": "maximumDuration", "type": "duration"},
         "reboot_setting": {"key": "rebootSetting", "type": "str"},
         "windows_parameters": {"key": "windowsParameters", "type": "WindowsParameters"},
         "linux_parameters": {"key": "linuxParameters", "type": "LinuxParameters"},
@@ -10751,7 +11064,7 @@ class VirtualMachineInstallPatchesParameters(_serialization.Model):
         self,
         *,
         reboot_setting: Union[str, "_models.VMGuestPatchRebootSetting"],
-        maximum_duration: Optional[str] = None,
+        maximum_duration: Optional[datetime.timedelta] = None,
         windows_parameters: Optional["_models.WindowsParameters"] = None,
         linux_parameters: Optional["_models.LinuxParameters"] = None,
         **kwargs: Any
@@ -10759,7 +11072,7 @@ class VirtualMachineInstallPatchesParameters(_serialization.Model):
         """
         :keyword maximum_duration: Specifies the maximum amount of time that the operation will run. It
          must be an ISO 8601-compliant duration string such as PT4H (4 hours).
-        :paramtype maximum_duration: str
+        :paramtype maximum_duration: ~datetime.timedelta
         :keyword reboot_setting: Defines when it is acceptable to reboot a VM during a software update
          operation. Required. Known values are: "IfRequired", "Never", and "Always".
         :paramtype reboot_setting: str or
@@ -10854,18 +11167,18 @@ class VirtualMachineInstallPatchesResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.status = None
-        self.installation_activity_id = None
-        self.reboot_status = None
-        self.maintenance_window_exceeded = None
-        self.excluded_patch_count = None
-        self.not_selected_patch_count = None
-        self.pending_patch_count = None
-        self.installed_patch_count = None
-        self.failed_patch_count = None
-        self.patches = None
-        self.start_date_time = None
-        self.error = None
+        self.status: Optional[Union[str, "_models.PatchOperationStatus"]] = None
+        self.installation_activity_id: Optional[str] = None
+        self.reboot_status: Optional[Union[str, "_models.VMGuestPatchRebootStatus"]] = None
+        self.maintenance_window_exceeded: Optional[bool] = None
+        self.excluded_patch_count: Optional[int] = None
+        self.not_selected_patch_count: Optional[int] = None
+        self.pending_patch_count: Optional[int] = None
+        self.installed_patch_count: Optional[int] = None
+        self.failed_patch_count: Optional[int] = None
+        self.patches: Optional[List["_models.PatchInstallationDetail"]] = None
+        self.start_date_time: Optional[datetime.datetime] = None
+        self.error: Optional["_models.ApiError"] = None
 
 
 class VirtualMachineInstanceView(_serialization.Model):
@@ -10898,8 +11211,7 @@ class VirtualMachineInstanceView(_serialization.Model):
     :ivar extensions: The extensions information.
     :vartype extensions:
      list[~azure.mgmt.compute.v2024_11_01.models.VirtualMachineExtensionInstanceView]
-    :ivar vm_health: The application health status for the VM, provided through Application Health
-     Extension.
+    :ivar vm_health: The health status for the VM.
     :vartype vm_health: ~azure.mgmt.compute.v2024_11_01.models.VirtualMachineHealthStatus
     :ivar boot_diagnostics: Boot Diagnostics is a debugging feature which allows you to view
      Console Output and Screenshot to diagnose VM status. You can easily view the output of your
@@ -11011,12 +11323,12 @@ class VirtualMachineInstanceView(_serialization.Model):
         self.maintenance_redeploy_status = maintenance_redeploy_status
         self.disks = disks
         self.extensions = extensions
-        self.vm_health = None
+        self.vm_health: Optional["_models.VirtualMachineHealthStatus"] = None
         self.boot_diagnostics = boot_diagnostics
-        self.assigned_host = None
+        self.assigned_host: Optional[str] = None
         self.statuses = statuses
         self.patch_status = patch_status
-        self.is_vm_in_standby_pool = None
+        self.is_vm_in_standby_pool: Optional[bool] = None
 
 
 class VirtualMachineIpTag(_serialization.Model):
@@ -11408,7 +11720,7 @@ class VirtualMachinePatchStatus(_serialization.Model):
         super().__init__(**kwargs)
         self.available_patch_summary = available_patch_summary
         self.last_patch_installation_summary = last_patch_installation_summary
-        self.configuration_statuses = None
+        self.configuration_statuses: Optional[List["_models.InstanceViewStatus"]] = None
 
 
 class VirtualMachinePublicIPAddressConfiguration(_serialization.Model):  # pylint: disable=name-too-long
@@ -11610,23 +11922,28 @@ class VirtualMachineReimageParameters(_serialization.Model):
         self.os_profile = os_profile
 
 
-class VirtualMachineRunCommand(Resource):
+class VirtualMachineRunCommand(TrackedResource):
     """Describes a Virtual Machine run command.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_11_01.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar source: The source of the run command script.
     :vartype source: ~azure.mgmt.compute.v2024_11_01.models.VirtualMachineRunCommandScriptSource
     :ivar parameters: The parameters used by the script.
@@ -11692,6 +12009,7 @@ class VirtualMachineRunCommand(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
         "provisioning_state": {"readonly": True},
         "instance_view": {"readonly": True},
@@ -11701,8 +12019,9 @@ class VirtualMachineRunCommand(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "source": {"key": "properties.source", "type": "VirtualMachineRunCommandScriptSource"},
         "parameters": {"key": "properties.parameters", "type": "[RunCommandInputParameter]"},
         "protected_parameters": {"key": "properties.protectedParameters", "type": "[RunCommandInputParameter]"},
@@ -11733,7 +12052,7 @@ class VirtualMachineRunCommand(Resource):
         source: Optional["_models.VirtualMachineRunCommandScriptSource"] = None,
         parameters: Optional[List["_models.RunCommandInputParameter"]] = None,
         protected_parameters: Optional[List["_models.RunCommandInputParameter"]] = None,
-        async_execution: bool = False,
+        async_execution: Optional[bool] = None,
         run_as_user: Optional[str] = None,
         run_as_password: Optional[str] = None,
         timeout_in_seconds: Optional[int] = None,
@@ -11741,14 +12060,14 @@ class VirtualMachineRunCommand(Resource):
         error_blob_uri: Optional[str] = None,
         output_blob_managed_identity: Optional["_models.RunCommandManagedIdentity"] = None,
         error_blob_managed_identity: Optional["_models.RunCommandManagedIdentity"] = None,
-        treat_failure_as_deployment_failure: bool = False,
+        treat_failure_as_deployment_failure: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword source: The source of the run command script.
         :paramtype source: ~azure.mgmt.compute.v2024_11_01.models.VirtualMachineRunCommandScriptSource
         :keyword parameters: The parameters used by the script.
@@ -11798,7 +12117,7 @@ class VirtualMachineRunCommand(Resource):
          error: https://aka.ms/runcommandmanaged#get-execution-status-and-results.
         :paramtype treat_failure_as_deployment_failure: bool
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.source = source
         self.parameters = parameters
         self.protected_parameters = protected_parameters
@@ -11810,8 +12129,8 @@ class VirtualMachineRunCommand(Resource):
         self.error_blob_uri = error_blob_uri
         self.output_blob_managed_identity = output_blob_managed_identity
         self.error_blob_managed_identity = error_blob_managed_identity
-        self.provisioning_state = None
-        self.instance_view = None
+        self.provisioning_state: Optional[str] = None
+        self.instance_view: Optional["_models.VirtualMachineRunCommandInstanceView"] = None
         self.treat_failure_as_deployment_failure = treat_failure_as_deployment_failure
 
 
@@ -12089,7 +12408,7 @@ class VirtualMachineRunCommandUpdate(UpdateResource):
         source: Optional["_models.VirtualMachineRunCommandScriptSource"] = None,
         parameters: Optional[List["_models.RunCommandInputParameter"]] = None,
         protected_parameters: Optional[List["_models.RunCommandInputParameter"]] = None,
-        async_execution: bool = False,
+        async_execution: Optional[bool] = None,
         run_as_user: Optional[str] = None,
         run_as_password: Optional[str] = None,
         timeout_in_seconds: Optional[int] = None,
@@ -12097,7 +12416,7 @@ class VirtualMachineRunCommandUpdate(UpdateResource):
         error_blob_uri: Optional[str] = None,
         output_blob_managed_identity: Optional["_models.RunCommandManagedIdentity"] = None,
         error_blob_managed_identity: Optional["_models.RunCommandManagedIdentity"] = None,
-        treat_failure_as_deployment_failure: bool = False,
+        treat_failure_as_deployment_failure: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -12164,28 +12483,33 @@ class VirtualMachineRunCommandUpdate(UpdateResource):
         self.error_blob_uri = error_blob_uri
         self.output_blob_managed_identity = output_blob_managed_identity
         self.error_blob_managed_identity = error_blob_managed_identity
-        self.provisioning_state = None
-        self.instance_view = None
+        self.provisioning_state: Optional[str] = None
+        self.instance_view: Optional["_models.VirtualMachineRunCommandInstanceView"] = None
         self.treat_failure_as_deployment_failure = treat_failure_as_deployment_failure
 
 
-class VirtualMachineScaleSet(Resource):
+class VirtualMachineScaleSet(TrackedResource):
     """Describes a Virtual Machine Scale Set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_11_01.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar sku: The virtual machine scale set sku.
     :vartype sku: ~azure.mgmt.compute.v2024_11_01.models.Sku
     :ivar plan: Specifies information about the marketplace image used to create the virtual
@@ -12196,7 +12520,7 @@ class VirtualMachineScaleSet(Resource):
     :vartype plan: ~azure.mgmt.compute.v2024_11_01.models.Plan
     :ivar identity: The identity of the virtual machine scale set, if configured.
     :vartype identity: ~azure.mgmt.compute.v2024_11_01.models.VirtualMachineScaleSetIdentity
-    :ivar zones: The virtual machine scale set zones.
+    :ivar zones: The availability zones.
     :vartype zones: list[str]
     :ivar extended_location: The extended location of the Virtual Machine Scale Set.
     :vartype extended_location: ~azure.mgmt.compute.v2024_11_01.models.ExtendedLocation
@@ -12277,6 +12601,7 @@ class VirtualMachineScaleSet(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
         "etag": {"readonly": True},
         "provisioning_state": {"readonly": True},
@@ -12288,8 +12613,9 @@ class VirtualMachineScaleSet(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "sku": {"key": "sku", "type": "Sku"},
         "plan": {"key": "plan", "type": "Plan"},
         "identity": {"key": "identity", "type": "VirtualMachineScaleSetIdentity"},
@@ -12365,10 +12691,10 @@ class VirtualMachineScaleSet(Resource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword sku: The virtual machine scale set sku.
         :paramtype sku: ~azure.mgmt.compute.v2024_11_01.models.Sku
         :keyword plan: Specifies information about the marketplace image used to create the virtual
@@ -12379,7 +12705,7 @@ class VirtualMachineScaleSet(Resource):
         :paramtype plan: ~azure.mgmt.compute.v2024_11_01.models.Plan
         :keyword identity: The identity of the virtual machine scale set, if configured.
         :paramtype identity: ~azure.mgmt.compute.v2024_11_01.models.VirtualMachineScaleSetIdentity
-        :keyword zones: The virtual machine scale set zones.
+        :keyword zones: The availability zones.
         :paramtype zones: list[str]
         :keyword extended_location: The extended location of the Virtual Machine Scale Set.
         :paramtype extended_location: ~azure.mgmt.compute.v2024_11_01.models.ExtendedLocation
@@ -12449,21 +12775,21 @@ class VirtualMachineScaleSet(Resource):
         :keyword sku_profile: Specifies the sku profile for the virtual machine scale set.
         :paramtype sku_profile: ~azure.mgmt.compute.v2024_11_01.models.SkuProfile
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
         self.plan = plan
         self.identity = identity
         self.zones = zones
         self.extended_location = extended_location
-        self.etag = None
+        self.etag: Optional[str] = None
         self.upgrade_policy = upgrade_policy
         self.scheduled_events_policy = scheduled_events_policy
         self.automatic_repairs_policy = automatic_repairs_policy
         self.virtual_machine_profile = virtual_machine_profile
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.overprovision = overprovision
         self.do_not_run_extensions_on_overprovisioned_v_ms = do_not_run_extensions_on_overprovisioned_v_ms
-        self.unique_id = None
+        self.unique_id: Optional[str] = None
         self.single_placement_group = single_placement_group
         self.zone_balance = zone_balance
         self.platform_fault_domain_count = platform_fault_domain_count
@@ -12474,7 +12800,7 @@ class VirtualMachineScaleSet(Resource):
         self.orchestration_mode = orchestration_mode
         self.spot_restore_policy = spot_restore_policy
         self.priority_mix_policy = priority_mix_policy
-        self.time_created = None
+        self.time_created: Optional[datetime.datetime] = None
         self.constrained_maximum_capacity = constrained_maximum_capacity
         self.resiliency_policy = resiliency_policy
         self.zonal_platform_fault_domain_align_mode = zonal_platform_fault_domain_align_mode
@@ -12621,10 +12947,10 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :ivar name: The name of the extension.
-    :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar name: Resource name.
+    :vartype name: str
     :ivar force_update_tag: If a value is provided and is different from the previous value, the
      extension handler will be forced to update even if the extension configuration has not changed.
     :vartype force_update_tag: str
@@ -12643,10 +12969,10 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
      upgraded by the platform if there is a newer version of the extension available.
     :vartype enable_automatic_upgrade: bool
     :ivar settings: Json formatted public settings for the extension.
-    :vartype settings: JSON
+    :vartype settings: any
     :ivar protected_settings: The extension can contain either protectedSettings or
      protectedSettingsFromKeyVault or no protected settings at all.
-    :vartype protected_settings: JSON
+    :vartype protected_settings: any
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
     :ivar provision_after_extensions: Collection of extension names after which this extension
@@ -12670,8 +12996,8 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
         "force_update_tag": {"key": "properties.forceUpdateTag", "type": "str"},
         "publisher": {"key": "properties.publisher", "type": "str"},
         "type_properties_type": {"key": "properties.type", "type": "str"},
@@ -12699,15 +13025,15 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
         type_handler_version: Optional[str] = None,
         auto_upgrade_minor_version: Optional[bool] = None,
         enable_automatic_upgrade: Optional[bool] = None,
-        settings: Optional[JSON] = None,
-        protected_settings: Optional[JSON] = None,
+        settings: Optional[Any] = None,
+        protected_settings: Optional[Any] = None,
         provision_after_extensions: Optional[List[str]] = None,
         suppress_failures: Optional[bool] = None,
         protected_settings_from_key_vault: Optional["_models.KeyVaultSecretReference"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword name: The name of the extension.
+        :keyword name: Resource name.
         :paramtype name: str
         :keyword force_update_tag: If a value is provided and is different from the previous value, the
          extension handler will be forced to update even if the extension configuration has not changed.
@@ -12727,10 +13053,10 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
          upgraded by the platform if there is a newer version of the extension available.
         :paramtype enable_automatic_upgrade: bool
         :keyword settings: Json formatted public settings for the extension.
-        :paramtype settings: JSON
+        :paramtype settings: any
         :keyword protected_settings: The extension can contain either protectedSettings or
          protectedSettingsFromKeyVault or no protected settings at all.
-        :paramtype protected_settings: JSON
+        :paramtype protected_settings: any
         :keyword provision_after_extensions: Collection of extension names after which this extension
          needs to be provisioned.
         :paramtype provision_after_extensions: list[str]
@@ -12744,8 +13070,8 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
          ~azure.mgmt.compute.v2024_11_01.models.KeyVaultSecretReference
         """
         super().__init__(**kwargs)
+        self.type: Optional[str] = None
         self.name = name
-        self.type = None
         self.force_update_tag = force_update_tag
         self.publisher = publisher
         self.type_properties_type = type_properties_type
@@ -12754,7 +13080,7 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
         self.enable_automatic_upgrade = enable_automatic_upgrade
         self.settings = settings
         self.protected_settings = protected_settings
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.provision_after_extensions = provision_after_extensions
         self.suppress_failures = suppress_failures
         self.protected_settings_from_key_vault = protected_settings_from_key_vault
@@ -12863,10 +13189,10 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
      upgraded by the platform if there is a newer version of the extension available.
     :vartype enable_automatic_upgrade: bool
     :ivar settings: Json formatted public settings for the extension.
-    :vartype settings: JSON
+    :vartype settings: any
     :ivar protected_settings: The extension can contain either protectedSettings or
      protectedSettingsFromKeyVault or no protected settings at all.
-    :vartype protected_settings: JSON
+    :vartype protected_settings: any
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
     :ivar provision_after_extensions: Collection of extension names after which this extension
@@ -12919,8 +13245,8 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
         type_handler_version: Optional[str] = None,
         auto_upgrade_minor_version: Optional[bool] = None,
         enable_automatic_upgrade: Optional[bool] = None,
-        settings: Optional[JSON] = None,
-        protected_settings: Optional[JSON] = None,
+        settings: Optional[Any] = None,
+        protected_settings: Optional[Any] = None,
         provision_after_extensions: Optional[List[str]] = None,
         suppress_failures: Optional[bool] = None,
         protected_settings_from_key_vault: Optional["_models.KeyVaultSecretReference"] = None,
@@ -12945,10 +13271,10 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
          upgraded by the platform if there is a newer version of the extension available.
         :paramtype enable_automatic_upgrade: bool
         :keyword settings: Json formatted public settings for the extension.
-        :paramtype settings: JSON
+        :paramtype settings: any
         :keyword protected_settings: The extension can contain either protectedSettings or
          protectedSettingsFromKeyVault or no protected settings at all.
-        :paramtype protected_settings: JSON
+        :paramtype protected_settings: any
         :keyword provision_after_extensions: Collection of extension names after which this extension
          needs to be provisioned.
         :paramtype provision_after_extensions: list[str]
@@ -12962,8 +13288,8 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
          ~azure.mgmt.compute.v2024_11_01.models.KeyVaultSecretReference
         """
         super().__init__(**kwargs)
-        self.name = None
-        self.type = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.force_update_tag = force_update_tag
         self.publisher = publisher
         self.type_properties_type = type_properties_type
@@ -12972,7 +13298,7 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
         self.enable_automatic_upgrade = enable_automatic_upgrade
         self.settings = settings
         self.protected_settings = protected_settings
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.provision_after_extensions = provision_after_extensions
         self.suppress_failures = suppress_failures
         self.protected_settings_from_key_vault = protected_settings_from_key_vault
@@ -13021,7 +13347,7 @@ class VirtualMachineScaleSetIdentity(_serialization.Model):
     :vartype type: str or ~azure.mgmt.compute.v2024_11_01.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user identities associated with the virtual machine
      scale set. The user identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.compute.v2024_11_01.models.UserAssignedIdentitiesValue]
     """
@@ -13055,13 +13381,13 @@ class VirtualMachineScaleSetIdentity(_serialization.Model):
         :keyword user_assigned_identities: The list of user identities associated with the virtual
          machine scale set. The user identity dictionary key references will be ARM resource ids in the
          form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.compute.v2024_11_01.models.UserAssignedIdentitiesValue]
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
@@ -13103,10 +13429,10 @@ class VirtualMachineScaleSetInstanceView(_serialization.Model):
         :paramtype statuses: list[~azure.mgmt.compute.v2024_11_01.models.InstanceViewStatus]
         """
         super().__init__(**kwargs)
-        self.virtual_machine = None
-        self.extensions = None
+        self.virtual_machine: Optional["_models.VirtualMachineScaleSetInstanceViewStatusesSummary"] = None
+        self.extensions: Optional[List["_models.VirtualMachineScaleSetVMExtensionsSummary"]] = None
         self.statuses = statuses
-        self.orchestration_services = None
+        self.orchestration_services: Optional[List["_models.OrchestrationServiceSummary"]] = None
 
 
 class VirtualMachineScaleSetInstanceViewStatusesSummary(_serialization.Model):  # pylint: disable=name-too-long
@@ -13130,7 +13456,7 @@ class VirtualMachineScaleSetInstanceViewStatusesSummary(_serialization.Model):  
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.statuses_summary = None
+        self.statuses_summary: Optional[List["_models.VirtualMachineStatusCodeCount"]] = None
 
 
 class VirtualMachineScaleSetIPConfiguration(_serialization.Model):
@@ -13519,8 +13845,8 @@ class VirtualMachineScaleSetMigrationInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.default_virtual_machine_scale_set_info = None
-        self.migrate_to_virtual_machine_scale_set = None
+        self.default_virtual_machine_scale_set_info: Optional["_models.DefaultVirtualMachineScaleSetInfo"] = None
+        self.migrate_to_virtual_machine_scale_set: Optional["_models.SubResource"] = None
 
 
 class VirtualMachineScaleSetNetworkConfiguration(_serialization.Model):  # pylint: disable=name-too-long
@@ -13679,15 +14005,14 @@ class VirtualMachineScaleSetNetworkProfile(_serialization.Model):
 
     :ivar health_probe: A reference to a load balancer probe used to determine the health of an
      instance in the virtual machine scale set. The reference will be in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.
     :vartype health_probe: ~azure.mgmt.compute.v2024_11_01.models.ApiEntityReference
     :ivar network_interface_configurations: The list of network configurations.
     :vartype network_interface_configurations:
      list[~azure.mgmt.compute.v2024_11_01.models.VirtualMachineScaleSetNetworkConfiguration]
-    :ivar network_api_version: Specifies the Microsoft.Network API version used when creating
+    :ivar network_api_version: specifies the Microsoft.Network API version used when creating
      networking resources in the Network Interface Configurations for Virtual Machine Scale Set with
-     orchestration mode 'Flexible'. For support of all network properties, use '2022-11-01'. Known
-     values are: "2020-11-01" and "2022-11-01".
+     orchestration mode 'Flexible'. Known values are: "2020-11-01" and "2022-11-01".
     :vartype network_api_version: str or ~azure.mgmt.compute.v2024_11_01.models.NetworkApiVersion
     """
 
@@ -13711,15 +14036,14 @@ class VirtualMachineScaleSetNetworkProfile(_serialization.Model):
         """
         :keyword health_probe: A reference to a load balancer probe used to determine the health of an
          instance in the virtual machine scale set. The reference will be in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.  # pylint: disable=line-too-long
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.
         :paramtype health_probe: ~azure.mgmt.compute.v2024_11_01.models.ApiEntityReference
         :keyword network_interface_configurations: The list of network configurations.
         :paramtype network_interface_configurations:
          list[~azure.mgmt.compute.v2024_11_01.models.VirtualMachineScaleSetNetworkConfiguration]
-        :keyword network_api_version: Specifies the Microsoft.Network API version used when creating
+        :keyword network_api_version: specifies the Microsoft.Network API version used when creating
          networking resources in the Network Interface Configurations for Virtual Machine Scale Set with
-         orchestration mode 'Flexible'. For support of all network properties, use '2022-11-01'. Known
-         values are: "2020-11-01" and "2022-11-01".
+         orchestration mode 'Flexible'. Known values are: "2020-11-01" and "2022-11-01".
         :paramtype network_api_version: str or ~azure.mgmt.compute.v2024_11_01.models.NetworkApiVersion
         """
         super().__init__(**kwargs)
@@ -14316,9 +14640,9 @@ class VirtualMachineScaleSetSku(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.resource_type = None
-        self.sku = None
-        self.capacity = None
+        self.resource_type: Optional[str] = None
+        self.sku: Optional["_models.Sku"] = None
+        self.capacity: Optional["_models.VirtualMachineScaleSetSkuCapacity"] = None
 
 
 class VirtualMachineScaleSetSkuCapacity(_serialization.Model):
@@ -14355,10 +14679,10 @@ class VirtualMachineScaleSetSkuCapacity(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.minimum = None
-        self.maximum = None
-        self.default_capacity = None
-        self.scale_type = None
+        self.minimum: Optional[int] = None
+        self.maximum: Optional[int] = None
+        self.default_capacity: Optional[int] = None
+        self.scale_type: Optional[Union[str, "_models.VirtualMachineScaleSetSkuScaleType"]] = None
 
 
 class VirtualMachineScaleSetStorageProfile(_serialization.Model):
@@ -14380,8 +14704,11 @@ class VirtualMachineScaleSetStorageProfile(_serialization.Model):
      <https://docs.microsoft.com/azure/virtual-machines/managed-disks-overview>`_.
     :vartype data_disks:
      list[~azure.mgmt.compute.v2024_11_01.models.VirtualMachineScaleSetDataDisk]
-    :ivar disk_controller_type:
-    :vartype disk_controller_type: str
+    :ivar disk_controller_type: Specifies the disk controller type configured for the virtual
+     machines in the scale set. Minimum api-version: 2022-08-01. Known values are: "SCSI" and
+     "NVMe".
+    :vartype disk_controller_type: str or
+     ~azure.mgmt.compute.v2024_11_01.models.DiskControllerTypes
     """
 
     _attribute_map = {
@@ -14397,7 +14724,7 @@ class VirtualMachineScaleSetStorageProfile(_serialization.Model):
         image_reference: Optional["_models.ImageReference"] = None,
         os_disk: Optional["_models.VirtualMachineScaleSetOSDisk"] = None,
         data_disks: Optional[List["_models.VirtualMachineScaleSetDataDisk"]] = None,
-        disk_controller_type: Optional[str] = None,
+        disk_controller_type: Optional[Union[str, "_models.DiskControllerTypes"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -14417,8 +14744,11 @@ class VirtualMachineScaleSetStorageProfile(_serialization.Model):
          <https://docs.microsoft.com/azure/virtual-machines/managed-disks-overview>`_.
         :paramtype data_disks:
          list[~azure.mgmt.compute.v2024_11_01.models.VirtualMachineScaleSetDataDisk]
-        :keyword disk_controller_type:
-        :paramtype disk_controller_type: str
+        :keyword disk_controller_type: Specifies the disk controller type configured for the virtual
+         machines in the scale set. Minimum api-version: 2022-08-01. Known values are: "SCSI" and
+         "NVMe".
+        :paramtype disk_controller_type: str or
+         ~azure.mgmt.compute.v2024_11_01.models.DiskControllerTypes
         """
         super().__init__(**kwargs)
         self.image_reference = image_reference
@@ -14868,15 +15198,14 @@ class VirtualMachineScaleSetUpdateNetworkProfile(_serialization.Model):  # pylin
 
     :ivar health_probe: A reference to a load balancer probe used to determine the health of an
      instance in the virtual machine scale set. The reference will be in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.
     :vartype health_probe: ~azure.mgmt.compute.v2024_11_01.models.ApiEntityReference
     :ivar network_interface_configurations: The list of network configurations.
     :vartype network_interface_configurations:
      list[~azure.mgmt.compute.v2024_11_01.models.VirtualMachineScaleSetUpdateNetworkConfiguration]
-    :ivar network_api_version: Specifies the Microsoft.Network API version used when creating
+    :ivar network_api_version: specifies the Microsoft.Network API version used when creating
      networking resources in the Network Interface Configurations for Virtual Machine Scale Set with
-     orchestration mode 'Flexible'. For support of all network properties, use '2022-11-01'. Known
-     values are: "2020-11-01" and "2022-11-01".
+     orchestration mode 'Flexible'. Known values are: "2020-11-01" and "2022-11-01".
     :vartype network_api_version: str or ~azure.mgmt.compute.v2024_11_01.models.NetworkApiVersion
     """
 
@@ -14902,15 +15231,14 @@ class VirtualMachineScaleSetUpdateNetworkProfile(_serialization.Model):  # pylin
         """
         :keyword health_probe: A reference to a load balancer probe used to determine the health of an
          instance in the virtual machine scale set. The reference will be in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.  # pylint: disable=line-too-long
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.
         :paramtype health_probe: ~azure.mgmt.compute.v2024_11_01.models.ApiEntityReference
         :keyword network_interface_configurations: The list of network configurations.
         :paramtype network_interface_configurations:
          list[~azure.mgmt.compute.v2024_11_01.models.VirtualMachineScaleSetUpdateNetworkConfiguration]
-        :keyword network_api_version: Specifies the Microsoft.Network API version used when creating
+        :keyword network_api_version: specifies the Microsoft.Network API version used when creating
          networking resources in the Network Interface Configurations for Virtual Machine Scale Set with
-         orchestration mode 'Flexible'. For support of all network properties, use '2022-11-01'. Known
-         values are: "2020-11-01" and "2022-11-01".
+         orchestration mode 'Flexible'. Known values are: "2020-11-01" and "2022-11-01".
         :paramtype network_api_version: str or ~azure.mgmt.compute.v2024_11_01.models.NetworkApiVersion
         """
         super().__init__(**kwargs)
@@ -15140,8 +15468,12 @@ class VirtualMachineScaleSetUpdateStorageProfile(_serialization.Model):  # pylin
     :ivar data_disks: The data disks.
     :vartype data_disks:
      list[~azure.mgmt.compute.v2024_11_01.models.VirtualMachineScaleSetDataDisk]
-    :ivar disk_controller_type:
-    :vartype disk_controller_type: str
+    :ivar disk_controller_type: Specifies the disk controller type configured for the virtual
+     machines in the scale set. **Note:** You need to deallocate the virtual machines in the scale
+     set before updating its disk controller type based on the upgrade mode configured for the scale
+     set. Minimum api-version: 2022-08-01. Known values are: "SCSI" and "NVMe".
+    :vartype disk_controller_type: str or
+     ~azure.mgmt.compute.v2024_11_01.models.DiskControllerTypes
     """
 
     _attribute_map = {
@@ -15157,7 +15489,7 @@ class VirtualMachineScaleSetUpdateStorageProfile(_serialization.Model):  # pylin
         image_reference: Optional["_models.ImageReference"] = None,
         os_disk: Optional["_models.VirtualMachineScaleSetUpdateOSDisk"] = None,
         data_disks: Optional[List["_models.VirtualMachineScaleSetDataDisk"]] = None,
-        disk_controller_type: Optional[str] = None,
+        disk_controller_type: Optional[Union[str, "_models.DiskControllerTypes"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -15168,8 +15500,12 @@ class VirtualMachineScaleSetUpdateStorageProfile(_serialization.Model):  # pylin
         :keyword data_disks: The data disks.
         :paramtype data_disks:
          list[~azure.mgmt.compute.v2024_11_01.models.VirtualMachineScaleSetDataDisk]
-        :keyword disk_controller_type:
-        :paramtype disk_controller_type: str
+        :keyword disk_controller_type: Specifies the disk controller type configured for the virtual
+         machines in the scale set. **Note:** You need to deallocate the virtual machines in the scale
+         set before updating its disk controller type based on the upgrade mode configured for the scale
+         set. Minimum api-version: 2022-08-01. Known values are: "SCSI" and "NVMe".
+        :paramtype disk_controller_type: str or
+         ~azure.mgmt.compute.v2024_11_01.models.DiskControllerTypes
         """
         super().__init__(**kwargs)
         self.image_reference = image_reference
@@ -15300,23 +15636,28 @@ class VirtualMachineScaleSetUpdateVMProfile(_serialization.Model):
         self.hardware_profile = hardware_profile
 
 
-class VirtualMachineScaleSetVM(Resource):
+class VirtualMachineScaleSetVM(TrackedResource):
     """Describes a virtual machine scale set virtual machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.v2024_11_01.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar instance_id: The virtual machine instance ID.
     :vartype instance_id: str
     :ivar sku: The virtual machine SKU.
@@ -15412,6 +15753,7 @@ class VirtualMachineScaleSetVM(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
         "instance_id": {"readonly": True},
         "sku": {"readonly": True},
@@ -15430,8 +15772,9 @@ class VirtualMachineScaleSetVM(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "instance_id": {"key": "instanceId", "type": "str"},
         "sku": {"key": "sku", "type": "Sku"},
         "plan": {"key": "plan", "type": "Plan"},
@@ -15486,10 +15829,10 @@ class VirtualMachineScaleSetVM(Resource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword plan: Specifies information about the marketplace image used to create the virtual
          machine. This element is only used for marketplace images. Before you can use a marketplace
          image from an API, you must enable the image for programmatic use.  In the Azure portal, find
@@ -15554,17 +15897,17 @@ class VirtualMachineScaleSetVM(Resource):
          pass any secrets in here. Minimum api-version: 2021-03-01.
         :paramtype user_data: str
         """
-        super().__init__(location=location, tags=tags, **kwargs)
-        self.instance_id = None
-        self.sku = None
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.instance_id: Optional[str] = None
+        self.sku: Optional["_models.Sku"] = None
         self.plan = plan
-        self.resources = None
-        self.zones = None
+        self.resources: Optional[List["_models.VirtualMachineExtension"]] = None
+        self.zones: Optional[List[str]] = None
         self.identity = identity
-        self.etag = None
-        self.latest_model_applied = None
-        self.vm_id = None
-        self.instance_view = None
+        self.etag: Optional[str] = None
+        self.latest_model_applied: Optional[bool] = None
+        self.vm_id: Optional[str] = None
+        self.instance_view: Optional["_models.VirtualMachineScaleSetVMInstanceView"] = None
         self.hardware_profile = hardware_profile
         self.resilient_vm_deletion_status = resilient_vm_deletion_status
         self.storage_profile = storage_profile
@@ -15575,12 +15918,12 @@ class VirtualMachineScaleSetVM(Resource):
         self.network_profile_configuration = network_profile_configuration
         self.diagnostics_profile = diagnostics_profile
         self.availability_set = availability_set
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.license_type = license_type
-        self.model_definition_applied = None
+        self.model_definition_applied: Optional[str] = None
         self.protection_policy = protection_policy
         self.user_data = user_data
-        self.time_created = None
+        self.time_created: Optional[datetime.datetime] = None
 
 
 class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
@@ -15590,12 +15933,12 @@ class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :ivar name: The name of the extension.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
     :ivar location: The location of the extension.
     :vartype location: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar name: Resource name.
+    :vartype name: str
     :ivar force_update_tag: How the extension handler should be forced to update even if the
      extension configuration has not changed.
     :vartype force_update_tag: str
@@ -15614,10 +15957,10 @@ class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
      upgraded by the platform if there is a newer version of the extension available.
     :vartype enable_automatic_upgrade: bool
     :ivar settings: Json formatted public settings for the extension.
-    :vartype settings: JSON
+    :vartype settings: any
     :ivar protected_settings: The extension can contain either protectedSettings or
      protectedSettingsFromKeyVault or no protected settings at all.
-    :vartype protected_settings: JSON
+    :vartype protected_settings: any
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
     :ivar instance_view: The virtual machine extension instance view.
@@ -15638,16 +15981,16 @@ class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
 
     _validation = {
         "id": {"readonly": True},
-        "name": {"readonly": True},
         "type": {"readonly": True},
+        "name": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
         "location": {"key": "location", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
         "force_update_tag": {"key": "properties.forceUpdateTag", "type": "str"},
         "publisher": {"key": "properties.publisher", "type": "str"},
         "type_properties_type": {"key": "properties.type", "type": "str"},
@@ -15676,8 +16019,8 @@ class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
         type_handler_version: Optional[str] = None,
         auto_upgrade_minor_version: Optional[bool] = None,
         enable_automatic_upgrade: Optional[bool] = None,
-        settings: Optional[JSON] = None,
-        protected_settings: Optional[JSON] = None,
+        settings: Optional[Any] = None,
+        protected_settings: Optional[Any] = None,
         instance_view: Optional["_models.VirtualMachineExtensionInstanceView"] = None,
         suppress_failures: Optional[bool] = None,
         protected_settings_from_key_vault: Optional["_models.KeyVaultSecretReference"] = None,
@@ -15705,10 +16048,10 @@ class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
          upgraded by the platform if there is a newer version of the extension available.
         :paramtype enable_automatic_upgrade: bool
         :keyword settings: Json formatted public settings for the extension.
-        :paramtype settings: JSON
+        :paramtype settings: any
         :keyword protected_settings: The extension can contain either protectedSettings or
          protectedSettingsFromKeyVault or no protected settings at all.
-        :paramtype protected_settings: JSON
+        :paramtype protected_settings: any
         :keyword instance_view: The virtual machine extension instance view.
         :paramtype instance_view:
          ~azure.mgmt.compute.v2024_11_01.models.VirtualMachineExtensionInstanceView
@@ -15725,9 +16068,9 @@ class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
         :paramtype provision_after_extensions: list[str]
         """
         super().__init__(**kwargs)
-        self.name = None
-        self.type = None
         self.location = location
+        self.type: Optional[str] = None
+        self.name: Optional[str] = None
         self.force_update_tag = force_update_tag
         self.publisher = publisher
         self.type_properties_type = type_properties_type
@@ -15736,7 +16079,7 @@ class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
         self.enable_automatic_upgrade = enable_automatic_upgrade
         self.settings = settings
         self.protected_settings = protected_settings
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.instance_view = instance_view
         self.suppress_failures = suppress_failures
         self.protected_settings_from_key_vault = protected_settings_from_key_vault
@@ -15791,8 +16134,8 @@ class VirtualMachineScaleSetVMExtensionsSummary(_serialization.Model):  # pylint
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.statuses_summary = None
+        self.name: Optional[str] = None
+        self.statuses_summary: Optional[List["_models.VirtualMachineStatusCodeCount"]] = None
 
 
 class VirtualMachineScaleSetVMExtensionUpdate(SubResourceReadOnly):
@@ -15824,10 +16167,10 @@ class VirtualMachineScaleSetVMExtensionUpdate(SubResourceReadOnly):
      upgraded by the platform if there is a newer version of the extension available.
     :vartype enable_automatic_upgrade: bool
     :ivar settings: Json formatted public settings for the extension.
-    :vartype settings: JSON
+    :vartype settings: any
     :ivar protected_settings: The extension can contain either protectedSettings or
      protectedSettingsFromKeyVault or no protected settings at all.
-    :vartype protected_settings: JSON
+    :vartype protected_settings: any
     :ivar suppress_failures: Indicates whether failures stemming from the extension will be
      suppressed (Operational failures such as not connecting to the VM will not be suppressed
      regardless of this value). The default is false.
@@ -15872,8 +16215,8 @@ class VirtualMachineScaleSetVMExtensionUpdate(SubResourceReadOnly):
         type_handler_version: Optional[str] = None,
         auto_upgrade_minor_version: Optional[bool] = None,
         enable_automatic_upgrade: Optional[bool] = None,
-        settings: Optional[JSON] = None,
-        protected_settings: Optional[JSON] = None,
+        settings: Optional[Any] = None,
+        protected_settings: Optional[Any] = None,
         suppress_failures: Optional[bool] = None,
         protected_settings_from_key_vault: Optional["_models.KeyVaultSecretReference"] = None,
         **kwargs: Any
@@ -15897,10 +16240,10 @@ class VirtualMachineScaleSetVMExtensionUpdate(SubResourceReadOnly):
          upgraded by the platform if there is a newer version of the extension available.
         :paramtype enable_automatic_upgrade: bool
         :keyword settings: Json formatted public settings for the extension.
-        :paramtype settings: JSON
+        :paramtype settings: any
         :keyword protected_settings: The extension can contain either protectedSettings or
          protectedSettingsFromKeyVault or no protected settings at all.
-        :paramtype protected_settings: JSON
+        :paramtype protected_settings: any
         :keyword suppress_failures: Indicates whether failures stemming from the extension will be
          suppressed (Operational failures such as not connecting to the VM will not be suppressed
          regardless of this value). The default is false.
@@ -15911,8 +16254,8 @@ class VirtualMachineScaleSetVMExtensionUpdate(SubResourceReadOnly):
          ~azure.mgmt.compute.v2024_11_01.models.KeyVaultSecretReference
         """
         super().__init__(**kwargs)
-        self.name = None
-        self.type = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.force_update_tag = force_update_tag
         self.publisher = publisher
         self.type_properties_type = type_properties_type
@@ -15996,8 +16339,7 @@ class VirtualMachineScaleSetVMInstanceView(_serialization.Model):
     :ivar extensions: The extensions information.
     :vartype extensions:
      list[~azure.mgmt.compute.v2024_11_01.models.VirtualMachineExtensionInstanceView]
-    :ivar vm_health: The application health status for the VM, provided through Application Health
-     Extension or Load Balancer Health Probes.
+    :ivar vm_health: The health status for the VM.
     :vartype vm_health: ~azure.mgmt.compute.v2024_11_01.models.VirtualMachineHealthStatus
     :ivar boot_diagnostics: Boot Diagnostics is a debugging feature which allows you to view
      Console Output and Screenshot to diagnose VM status. You can easily view the output of your
@@ -16017,7 +16359,7 @@ class VirtualMachineScaleSetVMInstanceView(_serialization.Model):
      **Max-length (Windows):** 15 characters :code:`<br>`\\ :code:`<br>` **Max-length (Linux):** 64
      characters. :code:`<br>`\\ :code:`<br>` For naming conventions and restrictions see `Azure
      infrastructure services implementation guidelines
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-infrastructure-subscription-accounts-guidelines?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#1-naming-conventions>`_.  # pylint: disable=line-too-long
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-infrastructure-subscription-accounts-guidelines?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#1-naming-conventions>`_.
     :vartype computer_name: str
     :ivar os_name: The Operating System running on the hybrid machine.
     :vartype os_name: str
@@ -16102,7 +16444,7 @@ class VirtualMachineScaleSetVMInstanceView(_serialization.Model):
          **Max-length (Windows):** 15 characters :code:`<br>`\\ :code:`<br>` **Max-length (Linux):** 64
          characters. :code:`<br>`\\ :code:`<br>` For naming conventions and restrictions see `Azure
          infrastructure services implementation guidelines
-         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-infrastructure-subscription-accounts-guidelines?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#1-naming-conventions>`_.  # pylint: disable=line-too-long
+         <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-infrastructure-subscription-accounts-guidelines?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#1-naming-conventions>`_.
         :paramtype computer_name: str
         :keyword os_name: The Operating System running on the hybrid machine.
         :paramtype os_name: str
@@ -16120,10 +16462,10 @@ class VirtualMachineScaleSetVMInstanceView(_serialization.Model):
         self.maintenance_redeploy_status = maintenance_redeploy_status
         self.disks = disks
         self.extensions = extensions
-        self.vm_health = None
+        self.vm_health: Optional["_models.VirtualMachineHealthStatus"] = None
         self.boot_diagnostics = boot_diagnostics
         self.statuses = statuses
-        self.assigned_host = None
+        self.assigned_host: Optional[str] = None
         self.placement_group_id = placement_group_id
         self.computer_name = computer_name
         self.os_name = os_name
@@ -16417,7 +16759,7 @@ class VirtualMachineScaleSetVMProfile(_serialization.Model):
         self.hardware_profile = hardware_profile
         self.service_artifact_reference = service_artifact_reference
         self.security_posture_reference = security_posture_reference
-        self.time_created = None
+        self.time_created: Optional[datetime.datetime] = None
 
 
 class VirtualMachineScaleSetVMProtectionPolicy(_serialization.Model):
@@ -16535,19 +16877,31 @@ class VirtualMachineSizeListResult(_serialization.Model):
 
     :ivar value: The list of virtual machine sizes.
     :vartype value: list[~azure.mgmt.compute.v2024_11_01.models.VirtualMachineSize]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
     """
 
     _attribute_map = {
         "value": {"key": "value", "type": "[VirtualMachineSize]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.VirtualMachineSize"]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.VirtualMachineSize"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of virtual machine sizes.
         :paramtype value: list[~azure.mgmt.compute.v2024_11_01.models.VirtualMachineSize]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
+        self.next_link = next_link
 
 
 class VirtualMachineSoftwarePatchProperties(_serialization.Model):
@@ -16610,16 +16964,16 @@ class VirtualMachineSoftwarePatchProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.patch_id = None
-        self.name = None
-        self.version = None
-        self.kb_id = None
-        self.classifications = None
-        self.reboot_behavior = None
-        self.activity_id = None
-        self.published_date = None
-        self.last_modified_date_time = None
-        self.assessment_state = None
+        self.patch_id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.version: Optional[str] = None
+        self.kb_id: Optional[str] = None
+        self.classifications: Optional[List[str]] = None
+        self.reboot_behavior: Optional[Union[str, "_models.VMGuestPatchRebootBehavior"]] = None
+        self.activity_id: Optional[str] = None
+        self.published_date: Optional[datetime.datetime] = None
+        self.last_modified_date_time: Optional[datetime.datetime] = None
+        self.assessment_state: Optional[Union[str, "_models.PatchAssessmentState"]] = None
 
 
 class VirtualMachineStatusCodeCount(_serialization.Model):
@@ -16646,8 +17000,8 @@ class VirtualMachineStatusCodeCount(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.count = None
+        self.code: Optional[str] = None
+        self.count: Optional[int] = None
 
 
 class VirtualMachineUpdate(UpdateResource):
@@ -16990,17 +17344,17 @@ class VirtualMachineUpdate(UpdateResource):
         self.billing_profile = billing_profile
         self.host = host
         self.host_group = host_group
-        self.provisioning_state = None
-        self.instance_view = None
+        self.provisioning_state: Optional[str] = None
+        self.instance_view: Optional["_models.VirtualMachineInstanceView"] = None
         self.license_type = license_type
-        self.vm_id = None
+        self.vm_id: Optional[str] = None
         self.extensions_time_budget = extensions_time_budget
         self.platform_fault_domain = platform_fault_domain
         self.scheduled_events_profile = scheduled_events_profile
         self.user_data = user_data
         self.capacity_reservation = capacity_reservation
         self.application_profile = application_profile
-        self.time_created = None
+        self.time_created: Optional[datetime.datetime] = None
 
 
 class VMDiskSecurityProfile(_serialization.Model):
@@ -17064,7 +17418,7 @@ class VMGalleryApplication(_serialization.Model):
     :ivar order: Optional, Specifies the order in which the packages have to be installed.
     :vartype order: int
     :ivar package_reference_id: Specifies the GalleryApplicationVersion resource id on the form of
-     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/applications/{application}/versions/{version}.  # pylint: disable=line-too-long
+     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/applications/{application}/versions/{version}.
      Required.
     :vartype package_reference_id: str
     :ivar configuration_reference: Optional, Specifies the uri to an azure blob that will replace
@@ -17109,7 +17463,7 @@ class VMGalleryApplication(_serialization.Model):
         :paramtype order: int
         :keyword package_reference_id: Specifies the GalleryApplicationVersion resource id on the form
          of
-         /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/applications/{application}/versions/{version}.  # pylint: disable=line-too-long
+         /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/applications/{application}/versions/{version}.
          Required.
         :paramtype package_reference_id: str
         :keyword configuration_reference: Optional, Specifies the uri to an azure blob that will
@@ -17327,7 +17681,7 @@ class WindowsConfiguration(_serialization.Model):
         self.additional_unattend_content = additional_unattend_content
         self.patch_settings = patch_settings
         self.win_rm = win_rm
-        self.enable_vm_agent_platform_updates = None
+        self.enable_vm_agent_platform_updates: Optional[bool] = None
 
 
 class WindowsParameters(_serialization.Model):
