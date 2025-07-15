@@ -72,7 +72,7 @@ class QueueAnalyticsLogging(GeneratedLogging):
     :keyword ~azure.storage.queue.RetentionPolicy retention_policy: The retention policy for the metrics.
     """
 
-    version: str = '1.0'
+    version: str = "1.0"
     """The version of Storage Analytics to configure."""
     delete: bool = False
     """Indicates whether all delete requests should be logged."""
@@ -84,11 +84,11 @@ class QueueAnalyticsLogging(GeneratedLogging):
     """The retention policy for the metrics."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.version = kwargs.get('version', '1.0')
-        self.delete = kwargs.get('delete', False)
-        self.read = kwargs.get('read', False)
-        self.write = kwargs.get('write', False)
-        self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
+        self.version = kwargs.get("version", "1.0")
+        self.delete = kwargs.get("delete", False)
+        self.read = kwargs.get("read", False)
+        self.write = kwargs.get("write", False)
+        self.retention_policy = kwargs.get("retention_policy") or RetentionPolicy()
 
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:
@@ -99,7 +99,9 @@ class QueueAnalyticsLogging(GeneratedLogging):
             delete=generated.delete,
             read=generated.read,
             write=generated.write,
-            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
+            retention_policy=RetentionPolicy._from_generated(  # pylint: disable=protected-access
+                generated.retention_policy
+            ),
         )
 
 
@@ -115,7 +117,7 @@ class Metrics(GeneratedMetrics):
     :keyword ~azure.storage.queue.RetentionPolicy retention_policy: The retention policy for the metrics.
     """
 
-    version: str = '1.0'
+    version: str = "1.0"
     """The version of Storage Analytics to configure."""
     enabled: bool = False
     """Indicates whether metrics are enabled for the service."""
@@ -125,10 +127,10 @@ class Metrics(GeneratedMetrics):
     """The retention policy for the metrics."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.version = kwargs.get('version', '1.0')
-        self.enabled = kwargs.get('enabled', False)
-        self.include_apis = kwargs.get('include_apis')
-        self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
+        self.version = kwargs.get("version", "1.0")
+        self.enabled = kwargs.get("enabled", False)
+        self.include_apis = kwargs.get("include_apis")
+        self.retention_policy = kwargs.get("retention_policy") or RetentionPolicy()
 
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:
@@ -138,7 +140,9 @@ class Metrics(GeneratedMetrics):
             version=generated.version,
             enabled=generated.enabled,
             include_apis=generated.include_apis,
-            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
+            retention_policy=RetentionPolicy._from_generated(  # pylint: disable=protected-access
+                generated.retention_policy
+            ),
         )
 
 
@@ -187,11 +191,11 @@ class CorsRule(GeneratedCorsRule):
         request."""
 
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
-        self.allowed_origins = ','.join(allowed_origins)
-        self.allowed_methods = ','.join(allowed_methods)
-        self.allowed_headers = ','.join(kwargs.get('allowed_headers', []))
-        self.exposed_headers = ','.join(kwargs.get('exposed_headers', []))
-        self.max_age_in_seconds = kwargs.get('max_age_in_seconds', 0)
+        self.allowed_origins = ",".join(allowed_origins)
+        self.allowed_methods = ",".join(allowed_methods)
+        self.allowed_headers = ",".join(kwargs.get("allowed_headers", []))
+        self.exposed_headers = ",".join(kwargs.get("exposed_headers", []))
+        self.max_age_in_seconds = kwargs.get("max_age_in_seconds", 0)
 
     @staticmethod
     def _to_generated(rules: Optional[List["CorsRule"]]) -> Optional[List[GeneratedCorsRule]]:
@@ -205,7 +209,7 @@ class CorsRule(GeneratedCorsRule):
                 allowed_methods=cors_rule.allowed_methods,
                 allowed_headers=cors_rule.allowed_headers,
                 exposed_headers=cors_rule.exposed_headers,
-                max_age_in_seconds=cors_rule.max_age_in_seconds
+                max_age_in_seconds=cors_rule.max_age_in_seconds,
             )
             generated_cors_list.append(generated_cors)
 
@@ -247,20 +251,17 @@ class QueueSasPermissions(object):
     process: bool = False
     """Get and delete messages from the queue."""
 
-    def __init__(
-        self, read: bool = False,
-        add: bool = False,
-        update: bool = False,
-        process: bool = False
-    ) -> None:
+    def __init__(self, read: bool = False, add: bool = False, update: bool = False, process: bool = False) -> None:
         self.read = read
         self.add = add
         self.update = update
         self.process = process
-        self._str = (('r' if self.read else '') +
-                     ('a' if self.add else '') +
-                     ('u' if self.update else '') +
-                     ('p' if self.process else ''))
+        self._str = (
+            ("r" if self.read else "")
+            + ("a" if self.add else "")
+            + ("u" if self.update else "")
+            + ("p" if self.process else "")
+        )
 
     def __str__(self):
         return self._str
@@ -278,10 +279,10 @@ class QueueSasPermissions(object):
         :return: A QueueSasPermissions object
         :rtype: ~azure.storage.queue.QueueSasPermissions
         """
-        p_read = 'r' in permission
-        p_add = 'a' in permission
-        p_update = 'u' in permission
-        p_process = 'p' in permission
+        p_read = "r" in permission
+        p_add = "a" in permission
+        p_update = "u" in permission
+        p_process = "p" in permission
 
         parsed = cls(p_read, p_add, p_update, p_process)
 
@@ -328,18 +329,19 @@ class AccessPolicy(GenAccessPolicy):
         be interpreted as UTC.
     """
 
-    permission: Optional[Union[QueueSasPermissions, str]] #type: ignore [assignment]
+    permission: Optional[Union[QueueSasPermissions, str]]  # type: ignore [assignment]
     """The permissions associated with the shared access signature. The user is restricted to
         operations allowed by the permissions."""
-    expiry: Optional[Union["datetime", str]] #type: ignore [assignment]
+    expiry: Optional[Union["datetime", str]]  # type: ignore [assignment]
     """The time at which the shared access signature becomes invalid."""
-    start: Optional[Union["datetime", str]] #type: ignore [assignment]
+    start: Optional[Union["datetime", str]]  # type: ignore [assignment]
     """The time at which the shared access signature becomes valid."""
 
     def __init__(
-        self, permission: Optional[Union[QueueSasPermissions, str]] = None,
+        self,
+        permission: Optional[Union[QueueSasPermissions, str]] = None,
         expiry: Optional[Union["datetime", str]] = None,
-        start: Optional[Union["datetime", str]] = None
+        start: Optional[Union["datetime", str]] = None,
     ) -> None:
         self.start = start
         self.expiry = expiry
@@ -374,13 +376,13 @@ class QueueMessage(DictMixin):
         Only returned by receive messages operations. Set to None for peek messages."""
 
     def __init__(self, content: Optional[Any] = None, **kwargs: Any) -> None:
-        self.id = kwargs.pop('id', None)
-        self.inserted_on = kwargs.pop('inserted_on', None)
-        self.expires_on = kwargs.pop('expires_on', None)
-        self.dequeue_count = kwargs.pop('dequeue_count', None)
+        self.id = kwargs.pop("id", None)
+        self.inserted_on = kwargs.pop("inserted_on", None)
+        self.expires_on = kwargs.pop("expires_on", None)
+        self.dequeue_count = kwargs.pop("dequeue_count", None)
         self.content = content
-        self.pop_receipt = kwargs.pop('pop_receipt', None)
-        self.next_visible_on = kwargs.pop('next_visible_on', None)
+        self.pop_receipt = kwargs.pop("pop_receipt", None)
+        self.next_visible_on = kwargs.pop("next_visible_on", None)
 
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:
@@ -389,7 +391,7 @@ class QueueMessage(DictMixin):
         message.inserted_on = generated.insertion_time
         message.expires_on = generated.expiration_time
         message.dequeue_count = generated.dequeue_count
-        if hasattr(generated, 'pop_receipt'):
+        if hasattr(generated, "pop_receipt"):
             message.pop_receipt = generated.pop_receipt
             message.next_visible_on = generated.time_next_visible
         return message
@@ -413,10 +415,11 @@ class MessagesPaged(PageIterator):
     """The maximum number of messages to retrieve from the queue."""
 
     def __init__(
-        self, command: Callable,
+        self,
+        command: Callable,
         results_per_page: Optional[int] = None,
         continuation_token: Optional[str] = None,
-        max_messages: Optional[int] = None
+        max_messages: Optional[int] = None,
     ) -> None:
         if continuation_token is not None:
             raise ValueError("This operation does not support continuation token")
@@ -469,9 +472,9 @@ class QueueProperties(DictMixin):
 
     def __init__(self, **kwargs: Any) -> None:
         # The name property will always be set to a non-None value after construction.
-        self.name = None #type: ignore [assignment]
-        self.metadata = kwargs.get('metadata')
-        self.approximate_message_count = kwargs.get('x-ms-approximate-messages-count')
+        self.name = None  # type: ignore [assignment]
+        self.metadata = kwargs.get("metadata")
+        self.approximate_message_count = kwargs.get("x-ms-approximate-messages-count")
 
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:
@@ -510,15 +513,14 @@ class QueuePropertiesPaged(PageIterator):
     """Function to retrieve the next page of items."""
 
     def __init__(
-        self, command: Callable,
+        self,
+        command: Callable,
         prefix: Optional[str] = None,
         results_per_page: Optional[int] = None,
-        continuation_token: Optional[str] = None
+        continuation_token: Optional[str] = None,
     ) -> None:
         super(QueuePropertiesPaged, self).__init__(
-            self._get_next_cb,
-            self._extract_data_cb, #type: ignore
-            continuation_token=continuation_token or ""
+            self._get_next_cb, self._extract_data_cb, continuation_token=continuation_token or ""  # type: ignore
         )
         self._command = command
         self.service_endpoint = None
@@ -533,7 +535,8 @@ class QueuePropertiesPaged(PageIterator):
                 marker=continuation_token or None,
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
-                use_location=self.location_mode)
+                use_location=self.location_mode,
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -543,7 +546,9 @@ class QueuePropertiesPaged(PageIterator):
         self.prefix = self._response.prefix
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
-        props_list = [QueueProperties._from_generated(q) for q in self._response.queue_items] # pylint: disable=protected-access
+        props_list = [
+            QueueProperties._from_generated(q) for q in self._response.queue_items  # pylint: disable=protected-access
+        ]
         return self._response.next_marker or None, props_list
 
 
@@ -555,9 +560,9 @@ def service_stats_deserialize(generated: Any) -> Dict[str, Any]:
     :rtype: Dict[str, Any]
     """
     return {
-        'geo_replication': {
-            'status': generated.geo_replication.status,
-            'last_sync_time': generated.geo_replication.last_sync_time,
+        "geo_replication": {
+            "status": generated.geo_replication.status,
+            "last_sync_time": generated.geo_replication.last_sync_time,
         }
     }
 
@@ -570,8 +575,10 @@ def service_properties_deserialize(generated: Any) -> Dict[str, Any]:
     :rtype: Dict[str, Any]
     """
     return {
-        'analytics_logging': QueueAnalyticsLogging._from_generated(generated.logging),  # pylint: disable=protected-access
-        'hour_metrics': Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
-        'minute_metrics': Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
-        'cors': [CorsRule._from_generated(cors) for cors in generated.cors],  # pylint: disable=protected-access
+        "analytics_logging": QueueAnalyticsLogging._from_generated(  # pylint: disable=protected-access
+            generated.logging
+        ),
+        "hour_metrics": Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
+        "minute_metrics": Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
+        "cors": [CorsRule._from_generated(cors) for cors in generated.cors],  # pylint: disable=protected-access
     }
