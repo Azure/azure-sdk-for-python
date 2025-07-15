@@ -812,6 +812,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted', 'deletedwithversions',
             'tags', 'versions', 'immutabilitypolicy', 'legalhold'.
         :type include: list[str] or str
+        :keyword int results_per_page:
+            Controls the maximum number of Blobs that will be included in each page of results if using
+            :func: `ItemPaged.by_page()`.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
