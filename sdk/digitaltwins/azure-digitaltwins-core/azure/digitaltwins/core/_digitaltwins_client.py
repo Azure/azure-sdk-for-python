@@ -486,7 +486,8 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def get_model(self, model_id: str, **kwargs) -> DigitalTwinsModelData:
+    def get_model(self, model_id, **kwargs):
+        # type: (str, **Any) -> DigitalTwinsModelData
         """Get a model, including the model metadata and the model definition.
 
         :param str model_id: The ID of the model.
@@ -506,11 +507,8 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace
-    def list_models(
-        self,
-        dependencies_for: Optional[List[str]] = None,
-        **kwargs: Any
-    ) -> ItemPaged["DigitalTwinsModelData"]:   
+    def list_models(self, dependencies_for=None, **kwargs):
+        # type: (Optional[List[str]], **Any) -> ItemPaged[DigitalTwinsModelData]
         """Get the list of models.
 
         :param List[str] dependencies_for: The model IDs to have dependencies retrieved.
@@ -536,11 +534,8 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
     
 
     @distributed_trace
-    def create_models(
-        self,
-        dtdl_models: List[MutableMapping[str, object]],
-        **kwargs: Any
-    ) -> List["DigitalTwinsModelData"]:
+    def create_models(self, dtdl_models, **kwargs):
+        # type: (List[MutableMapping[str, object]], **Any) -> List[DigitalTwinsModelData]
         """Create one or more models. When any error occurs, no models are uploaded.
 
         :param List[MutableMapping[str, Any]] dtdl_models: The set of models to create.
