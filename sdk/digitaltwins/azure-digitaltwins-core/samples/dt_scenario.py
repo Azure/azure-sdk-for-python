@@ -4,7 +4,7 @@
 # ------------------------------------
 import os
 import uuid
-from typing import Any, Dict, List
+from typing import Any, Dict, List, cast
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 from azure.digitaltwins.core import DigitalTwinsClient, DigitalTwinsEventRoute
@@ -271,10 +271,12 @@ try:
     # It attempts to use multiple credential types in an order until it finds a working credential.
 
     event_hub_endpoint_name = os.getenv("AZURE_EVENT_HUB_ENDPOINT_NAME")
-
+    if event_hub_endpoint_name is None:
+        raise ValueError("AZURE_EVENT_HUB_ENDPOINT_NAME environment variable is not set")
     # - AZURE_URL: The tenant ID in Azure Active Directory
     url = os.getenv("AZURE_URL")
-
+    if url is None:
+        raise ValueError("AZURE_URL environment variable is not set")
     # DefaultAzureCredential expects the following three environment variables:
     # - AZURE_TENANT_ID: The tenant ID in Azure Active Directory
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
@@ -283,8 +285,7 @@ try:
     service_client = DigitalTwinsClient(url, credential) # type: ignore
 
     # Create models
-    new_model_list = [building_model, floor_model, hvac_model, room_model, wifi_model]
-    models = service_client.create_models(new_model_list)
+    models = service_client.create_models(cast(List[Dict[str, Any]], [building_model, floor_model, hvac_model, room_model, wifi_model]))
     print('Created Models:')
     print(models)
 
