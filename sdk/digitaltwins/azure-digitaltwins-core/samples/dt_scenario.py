@@ -238,7 +238,7 @@ try:
         }
     }
 
-    hospital_relationshipss: List[Dict[str, object]] = [
+    hospital_relationships: List[Dict[str, object]] = [
         {
             "$relationshipId": "BuildingHasFloor",
             "$sourceId": building_twin_id,
