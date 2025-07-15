@@ -48,10 +48,10 @@ Here's an example of setting an environment variable in Bash using Azure CLI:
 
 ```bash
 # Get the service URL for the resource
-export AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT=$(az deidservice show --name "<resource-name>" --resource-group "<resource-group-name>" --query "properties.serviceUrl")
+export HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT=$(az deidservice show --name "<resource-name>" --resource-group "<resource-group-name>" --query "properties.serviceUrl")
 ```
 
-Optionally, save the service URL as an environment variable named `AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT` for the sample client initialization code.
+Optionally, save the service URL as an environment variable named `HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT` for the sample client initialization code.
 
 Create a client with the endpoint and credential:
 <!-- SNIPPET: examples.create_client -->
@@ -62,7 +62,7 @@ from azure.identity import DefaultAzureCredential
 import os
 
 
-endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
+endpoint = os.environ["HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT"]
 credential = DefaultAzureCredential()
 client = DeidentificationClient(endpoint, credential)
 ```
@@ -100,7 +100,7 @@ from azure.health.deidentification.models import (
 from azure.identity import DefaultAzureCredential
 import os
 
-endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
+endpoint = os.environ["HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT"]
 credential = DefaultAzureCredential()
 client = DeidentificationClient(endpoint, credential)
 
@@ -142,7 +142,7 @@ Your target Azure Storage account and container where documents will be written 
 
 Set the following environment variables, updating the storage account and container with real values:
 ```bash
-export AZURE_STORAGE_ACCOUNT_LOCATION="https://<storageaccount>.blob.core.windows.net/<container>"
+export HEALTHDATAAISERVICES_STORAGE_ACCOUNT_LOCATION="https://<storageaccount>.blob.core.windows.net/<container>"
 export INPUT_PREFIX="example_patient_1"
 export OUTPUT_PREFIX="_output"
 ```
@@ -162,9 +162,9 @@ from azure.identity import DefaultAzureCredential
 import os
 import uuid
 
-endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
-storage_location = os.environ["AZURE_STORAGE_ACCOUNT_LOCATION"]
-inputPrefix = os.environ["INPUT_PREFIX"]
+endpoint = os.environ["HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT"]
+storage_location = os.environ["HEALTHDATAAISERVICES_STORAGE_ACCOUNT_LOCATION"]
+inputPrefix = os.environ.get("INPUT_PREFIX", "example_patient_1")
 outputPrefix = os.environ.get("OUTPUT_PREFIX", "_output")
 
 credential = DefaultAzureCredential()
@@ -214,7 +214,7 @@ from azure.health.deidentification.models import (
 from azure.identity import DefaultAzureCredential
 import os
 
-endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
+endpoint = os.environ["HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT"]
 credential = DefaultAzureCredential()
 client = DeidentificationClient(endpoint, credential)
 
@@ -250,7 +250,7 @@ from azure.health.deidentification.models import (
 from azure.identity import DefaultAzureCredential
 import os
 
-endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
+endpoint = os.environ["HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT"]
 credential = DefaultAzureCredential()
 client = DeidentificationClient(endpoint, credential)
 
@@ -278,7 +278,7 @@ from azure.health.deidentification.models import (
 from azure.identity import DefaultAzureCredential
 import os
 
-endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
+endpoint = os.environ["HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT"]
 credential = DefaultAzureCredential()
 client = DeidentificationClient(endpoint, credential)
 
