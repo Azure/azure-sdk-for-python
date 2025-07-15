@@ -110,7 +110,7 @@ def _default_logger_name(configurations):
     if LOGGER_NAME_ENV_ARG in environ:
         configurations[LOGGER_NAME_ARG] = environ[LOGGER_NAME_ENV_ARG]
     else:
-        configurations.setdefault(LOGGER_NAME_ARG, "")
+        configurations.setdefault(LOGGER_NAME_ARG, None)
 
 def _default_logging_formatter(configurations):
     formatter = configurations.get(LOGGING_FORMATTER_ARG)
