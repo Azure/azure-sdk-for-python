@@ -12,6 +12,11 @@ This version and all future versions will require Python 3.9+. Python 3.8 is no 
 - Added support for service version 2025-11-05.
 - Added support for better error handling for copy operations.
 
+## 12.22.0 (2025-07-16)
+
+### Features Added
+- Stable release of features from 12.22.0b1
+
 ## 12.22.0b1 (2025-05-06)
 
 ### Features Added
