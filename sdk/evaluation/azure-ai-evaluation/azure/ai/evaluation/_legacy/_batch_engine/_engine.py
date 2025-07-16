@@ -283,6 +283,13 @@ class BatchEngine:
                 # TODO ralphe: set logger to use here
             )
 
+    def __preprocess_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
+
+        func_params = inspect.signature(self._func).parameters
+
+        filtered_params = {key: value for key, value in inputs.items() if key in func_params}
+        return filtered_params
+
     async def _exec_line_async(
         self,
         run_id: str,
@@ -313,13 +320,15 @@ class BatchEngine:
                     #       For now we will just run the function in the current process, but in the future we may
                     #       want to consider running the function in a separate process for isolation reasons.
                     output: Any
+
+                    processed_inputs = self.__preprocess_inputs(inputs)
                     if is_async_callable(self._func):
-                        output = await self._func(**inputs)
+                        output = await self._func(**processed_inputs)
                     else:
                         # to maximize the parallelism, we run the synchronous function in a separate thread
                         # and await its result
                         output = await asyncio.get_event_loop().run_in_executor(
-                            self._executor, partial(self._func, **inputs)
+                            self._executor, partial(self._func, **processed_inputs)
                         )
 
                     # This should in theory never happen but as an extra precaution, let's check if the output
