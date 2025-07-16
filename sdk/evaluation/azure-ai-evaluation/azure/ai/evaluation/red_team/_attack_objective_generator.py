@@ -55,8 +55,8 @@ class _AttackObjectiveGenerator:
 
         # If custom_attack_seed_prompts is provided, validate and load them
         self.custom_prompts = None
-        self.validated_prompts = []
-        self.valid_prompts_by_category = {}
+        self.validated_prompts: List[Any] = []
+        self.valid_prompts_by_category: Dict[str, Any] = {}
 
         if custom_attack_seed_prompts:
             self._load_and_validate_custom_prompts()
