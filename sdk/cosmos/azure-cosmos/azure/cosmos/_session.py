@@ -122,7 +122,7 @@ class SessionContainer(object):
                                 session_token = "{0}:{1}".format(partition_key_range_id, vector_session_token)
                     return session_token
                 return ""
-            except Exception as e:  # pylint: disable=broad-except
+            except (KeyError, AttributeError) as e:  # pylint: disable=broad-except
                 logger.debug("Error while resolving session token: %s", e)
                 return ""
 
