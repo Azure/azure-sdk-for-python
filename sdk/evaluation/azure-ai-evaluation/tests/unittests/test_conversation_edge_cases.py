@@ -16,6 +16,9 @@ class MockEvaluator(EvaluatorBase):
 
     async def _do_eval(self, eval_input):
         return {"mock_score": 1.0}
+    
+    def __call__(self, *, query=None, response=None, **kwargs):
+        return super().__call__(query=query, response=response, **kwargs)
 
 
 @pytest.mark.unittest
