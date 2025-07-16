@@ -123,11 +123,9 @@ class BatchEngine:
         data = data[:max_lines] if max_lines else data
 
         inputs: Sequence[Mapping[str, Any]] = []
-        line: int = 0
         defaults = cast(Mapping[str, Any], column_mapping.get(DEFAULTS_KEY, {}))
 
-        for input in data:
-            line += 1
+        for line_number, input in enumerate(data, start=1):
             mapped: Dict[str, Any] = {}
             missing_inputs: Set[str] = set()
 
@@ -159,7 +157,7 @@ class BatchEngine:
 
             if missing_inputs:
                 missing = ", ".join(missing_inputs)
-                raise BatchEngineValidationError(f"Missing inputs for line {line}: '{missing}'")
+                raise BatchEngineValidationError(f"Missing inputs for line {line_number}: '{missing}'")
 
             inputs.append(mapped)
 
