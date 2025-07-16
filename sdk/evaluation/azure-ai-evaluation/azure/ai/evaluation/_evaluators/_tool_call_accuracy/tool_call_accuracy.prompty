@@ -125,10 +125,10 @@ TOOL DEFINITION: {{tool_definition}}
 Your output should consist only of a JSON object, as provided in the examples, that has the following keys:
   - chain_of_thought: a string that explains your thought process to decide on the tool call accuracy level. Start this string with 'Let's think step by step:', and think deeply and precisely about which level should be chosen based on the agent's tool calls and how they were able to address the user's query.
   - tool_calls_success_level: a integer value between 1 and 5 that represents the level of tool call success, based on the level definitions mentioned before. You need to be very precise when deciding on this level. Ensure you are correctly following the rating system based on the description of each level.
-  - additional_details: a dictionary that contains the following keys:
+  - details: a dictionary that contains the following keys:
         - tool_calls_made_by_agent: total number of tool calls made by the agent
         - correct_tool_calls_made_by_agent: total number of correct tool calls made by the agent
-        - details: a list of dictionaries, each containing:
+        - per_tool_call_details: a list of dictionaries, each containing:
           - tool_name: name of the tool
           - total_calls_required: total number of calls required for the tool
           - correct_calls_made_by_agent: number of correct calls made by the agent
