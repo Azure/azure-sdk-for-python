@@ -58,25 +58,34 @@ def record_dep(dependencies: Dict[str, Dict[str, Any]], req_name: str, spec: str
 def get_lib_deps(base_dir: str) -> Tuple[Dict[str, Dict[str, Any]], Dict[str, Dict[str, Any]]]:
     packages = {}
     dependencies = {}
+
+    def parse_setup(setup_path: str) -> None:
+        parsed = ParsedSetup.from_path(setup_path)
+        lib_name, version, requires = parsed.name, parsed.version, parsed.requires
+
+        packages[lib_name] = {"version": version, "source": lib_dir, "deps": []}
+
+        for req in requires:
+            req_obj = parse_require(req)
+            req_name = req_obj.name
+            spec = req_obj.specifier if len(req_obj.specifier) else None
+            if spec is None:
+                spec = ""
+
+            packages[lib_name]["deps"].append({"name": req_name, "version": str(spec)})
+            record_dep(dependencies, req_name, str(spec), lib_name)
+
     for lib_dir in discover_targeted_packages("azure*", base_dir):
         setup_path = os.path.join(lib_dir, "setup.py")
         try:
-            parsed = ParsedSetup.from_path(setup_path)
-            lib_name, version, requires = parsed.name, parsed.version, parsed.requires
-
-            packages[lib_name] = {"version": version, "source": lib_dir, "deps": []}
-
-            for req in requires:
-                req_obj = parse_require(req)
-                req_name = req_obj.name
-                spec = req_obj.specifier if len(req_obj.specifier) else None
-                if spec is None:
-                    spec = ""
-
-                packages[lib_name]["deps"].append({"name": req_name, "version": str(spec)})
-                record_dep(dependencies, req_name, str(spec), lib_name)
+            parse_setup(setup_path)
         except:
-            print("Failed to parse %s" % (setup_path))
+            pass
+        pyproject_path = os.path.join(lib_dir, "pyproject.toml")
+        try:
+            parse_setup(pyproject_path)
+        except:
+            print(f"Failed to parse {setup_path} or {pyproject_path}")
     return packages, dependencies
 
 
