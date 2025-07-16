@@ -800,7 +800,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         :type include: list[str] or str
         :keyword int results_per_page:
             Controls the maximum number of Blobs that will be included in each page of results if using
-            :func:`~ItemPaged.by_page()`.
+            :func:`~azure.core.async_paging.AsyncItemPaged.by_page()`.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -856,7 +856,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             begin with the specified prefix.
         :keyword int results_per_page:
             Controls the maximum number of Blobs that will be included in each page of results if using
-            :func:`~ItemPaged.by_page()`.
+            :func:`~azure.core.async_paging.AsyncItemPaged.by_page()`.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
