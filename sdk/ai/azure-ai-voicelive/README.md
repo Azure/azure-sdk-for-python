@@ -1,5 +1,6 @@
 # Azure Ai Voicelive client library for Python
-<!-- write necessary description of service -->
+
+Azure AI VoiceLive provides real-time voice and audio processing capabilities through WebSocket connections, allowing applications to perform bi-directional streaming of audio data and receive real-time responses.
 
 ## Getting started
 
@@ -9,12 +10,129 @@
 python -m pip install azure-ai-voicelive
 ```
 
+For WebSocket support, install with websockets extras:
+
+```bash
+python -m pip install azure-ai-voicelive[websockets]
+```
+
 #### Prequisites
 
 - Python 3.9 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing Azure Ai Voicelive instance.
 
+### Authentication
+
+VoiceLive uses API keys for authentication. You can obtain your API key from the Azure portal.
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.voicelive import VoiceLiveClient
+
+# Create a VoiceLive client
+client = VoiceLiveClient(
+    credential=AzureKeyCredential("<your-api-key>"),
+    endpoint="<your-endpoint>"
+)
+```
+
+## Key concepts
+
+### HTTP-based API
+
+The VoiceLive client provides HTTP-based APIs for non-streaming operations.
+
+### WebSocket-based streaming
+
+For real-time, bi-directional communication, VoiceLive supports WebSocket connections. This enables:
+
+- Real-time audio streaming
+- Low-latency processing
+- Bidirectional communication
+- Event-based communication
+
+## Examples
+
+### Create a WebSocket connection
+
+```python
+from azure.ai.voicelive import VoiceLiveClient, WebsocketConnectionOptions
+from azure.core.credentials import AzureKeyCredential
+
+# Create client
+client = VoiceLiveClient(
+    credential=AzureKeyCredential("<your-api-key>"),
+    endpoint="<your-endpoint>"
+)
+
+# Connect to the WebSocket API
+with client.connect(model="voicelive-model-name") as connection:
+    # Send a session update event
+    connection.send({
+        "type": "session.update",
+        "session": {
+            "modalities": ["audio", "text"]
+        }
+    })
+    
+    # Receive events
+    for event in connection:
+        print(f"Received event: {event}")
+        
+        # Exit after session is updated
+        if event.get('type') == 'session.updated':
+            break
+```
+
+### Stream audio data
+
+```python
+import base64
+
+# Inside your WebSocket connection context
+with client.connect(model="voicelive-model-name") as connection:
+    # Initialize session
+    connection.send({
+        "type": "session.update",
+        "session": {
+            "modalities": ["audio"],
+            "audio": {
+                "format": "wav",
+                "sample_rate": 16000
+            }
+        }
+    })
+    
+    # Wait for session to be established...
+    
+    # Stream audio chunks
+    for audio_chunk in audio_stream:
+        # Encode audio data as base64
+        encoded_chunk = base64.b64encode(audio_chunk).decode('utf-8')
+        
+        # Send audio data
+        connection.send({
+            "type": "audio.data",
+            "audio": {
+                "data": encoded_chunk
+            }
+        })
+        
+        # Process any received events
+        try:
+            event = connection.recv()
+            print(f"Received: {event}")
+        except:
+            pass
+    
+    # Signal end of audio
+    connection.send({
+        "type": "audio.end"
+    })
+```
+
+More examples can be found in the [samples](samples/) directory.
 
 ## Contributing
 

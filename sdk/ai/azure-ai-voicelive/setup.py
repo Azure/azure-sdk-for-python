@@ -68,4 +68,7 @@ setup(
         "typing-extensions>=4.6.0",
     ],
     python_requires=">=3.9",
+    extras_require={
+        "websockets": ["websockets>=10.0", "httpx>=0.21.0"],
+    },
 )
