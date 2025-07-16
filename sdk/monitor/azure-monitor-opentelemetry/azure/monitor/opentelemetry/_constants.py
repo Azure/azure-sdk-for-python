@@ -33,6 +33,9 @@ METRIC_EXPORTER_NAMES_ARG = "metric_exporter_names"
 SAMPLER_ARG = "sampler"
 TRACE_EXPORTER_NAMES_ARG = "trace_exporter_names"
 
+LOGGER_NAME_ENV_ARG = "PYTHON_APPLICATIONINSIGHTS_LOGGER_NAME"
+LOGGING_FORMAT_ENV_ARG = "PYTHON_APPLICATIONINSIGHTS_LOGGING_FORMAT"
+
 
 # --------------------Diagnostic/status logging------------------------------
 
