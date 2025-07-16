@@ -41,6 +41,7 @@ from ._base import (
     _build_properties_cache
 )
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
+from ._constants import _Constants as Constants
 from ._cosmos_client_connection import CosmosClientConnection
 from ._cosmos_responses import CosmosDict, CosmosList
 from ._routing.routing_range import Range
@@ -904,6 +905,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
+        retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
         **kwargs: Any
@@ -931,6 +933,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip
             sending response payloads. When not specified explicitly here, the default value will be determined from
             kwargs or when also not specified there from client-level kwargs.
+        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+            the operation is not guaranteed to be idempotent. This should only be enabled if the application can
+            tolerate such risks or has logic to safely detect and handle duplicate operations.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -959,6 +964,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['match_condition'] = match_condition
         if no_response is not None:
             kwargs['no_response'] = no_response
+        if retry_write is not None:
+            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if response_hook is not None:
@@ -995,6 +1002,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
+        retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
         **kwargs: Any
@@ -1021,6 +1029,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip sending
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or
             when also not specified there from client-level kwargs.
+        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+            the operation is not guaranteed to be idempotent. This should only be enabled if the application can
+            tolerate such risks or has logic to safely detect and handle duplicate operations.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1050,6 +1061,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs["throughput_bucket"] = throughput_bucket
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
+        if retry_write is not None:
+            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         request_options = build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         if populate_query_metrics is not None:
@@ -1083,6 +1096,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         initial_headers: Optional[Dict[str, str]] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
+        retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
         **kwargs: Any
@@ -1110,6 +1124,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip sending
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or
             when also not specified there from client-level kwargs.
+        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+            the operation is not guaranteed to be idempotent. This should only be enabled if the application can
+            tolerate such risks or has logic to safely detect and handle duplicate operations.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1144,6 +1161,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['priority'] = priority
         if no_response is not None:
             kwargs['no_response'] = no_response
+        if retry_write is not None:
+            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if response_hook is not None:
@@ -1179,6 +1198,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
+        retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
         **kwargs: Any
@@ -1209,6 +1229,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip sending
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or
             when also not specified there from client-level kwargs.
+        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+            the operation is not guaranteed to be idempotent. This should only be enabled if the application can
+            tolerate such risks or has logic to safely detect and handle duplicate operations.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1234,6 +1257,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['match_condition'] = match_condition
         if no_response is not None:
             kwargs['no_response'] = no_response
+        if retry_write is not None:
+            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if response_hook is not None:
@@ -1339,6 +1364,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
+        retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], None], None]] = None,
         **kwargs: Any
@@ -1361,6 +1387,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+            the operation is not guaranteed to be idempotent. This should only be enabled if the application can
+            tolerate such risks or has logic to safely detect and handle duplicate operations.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1382,6 +1411,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['match_condition'] = match_condition
         if priority is not None:
             kwargs['priority'] = priority
+        if retry_write is not None:
+            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if response_hook is not None:

@@ -1,12 +1,18 @@
 # Release History
 
-## 1.23.1 (Unreleased)
+## 1.24.0b1 (Unreleased)
 
 ### Features Added
+
+- Expanded the set of acceptable values for environment variable `AZURE_TOKEN_CREDENTIALS` to allow for selection of a specific credential in the `DefaultAzureCredential` chain. At runtime, only the specified credential will be used when acquiring tokens with `DefaultAzureCredential`. For example, setting `AZURE_TOKEN_CREDENTIALS=WorkloadIdentityCredential` will make `DefaultAzureCredential` use only `WorkloadIdentityCredential`.
+  - Valid values are `EnvironmentCredential`, `WorkloadIdentityCredential`, `ManagedIdentityCredential`, `AzureCliCredential`, `AzurePowershellCredential`, `AzureDeveloperCliCredential`, and `InteractiveBrowserCredential`. ([#41709](https://github.com/Azure/azure-sdk-for-python/pull/41709))
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- Fixed an issue with `AzurePowerShellCredential` not working correctly for users still using older versions of PowerShell (e.g., Windows PowerShell 5.1) where `-AsPlainText` is not supported in the `ConvertFrom-SecureString` cmdlet.  ([#41675](https://github.com/Azure/azure-sdk-for-python/pull/41675))
+- Fixed an issue with `AzureCliCredential` being unable to find the correct `az` executable for certain Python versions on Windows. ([#41806](https://github.com/Azure/azure-sdk-for-python/pull/41806))
 
 ### Other Changes
 
