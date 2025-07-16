@@ -97,7 +97,7 @@ with project_client:
         for event_type, event_data, _ in stream:
 
             if isinstance(event_data, MessageDeltaChunk):
-                #print(f"Text delta received: {event_data.text}")
+                print(f"Text delta received: {event_data.text}")
                 if event_data.delta.content and isinstance(event_data.delta.content[0], MessageDeltaTextContent):
                     delta_text_content = event_data.delta.content[0]
                     if delta_text_content.text and delta_text_content.text.annotations:
