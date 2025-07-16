@@ -121,8 +121,8 @@ def _default_logging_formatter(configurations):
     elif LOGGING_FORMAT_ENV_ARG in environ:
         try:
             configurations[LOGGING_FORMATTER_ARG] = Formatter(environ[LOGGING_FORMAT_ENV_ARG])
-        except Exception as ex:  # pylint: disable=do-not-log-exceptions-if-not-debug,broad-exception-caught
-            _logger.warning(
+        except Exception as ex:  # pylint: disable=broad-exception-caught
+            _logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
                 "Exception occurred when creating logging Formatter from format: %s, %s.",
                 environ[LOGGING_FORMAT_ENV_ARG],
                 ex,
