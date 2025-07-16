@@ -80,12 +80,11 @@ def get_lib_deps(base_dir: str) -> Tuple[Dict[str, Dict[str, Any]], Dict[str, Di
         try:
             parse_setup(setup_path)
         except:
-            pass
-        pyproject_path = os.path.join(lib_dir, "pyproject.toml")
-        try:
-            parse_setup(pyproject_path)
-        except:
-            print(f"Failed to parse {setup_path} or {pyproject_path}")
+            pyproject_path = os.path.join(lib_dir, "pyproject.toml")
+            try:
+                parse_setup(pyproject_path)
+            except:
+                print(f"Failed to parse {setup_path} or {pyproject_path}")
     return packages, dependencies
 
 
