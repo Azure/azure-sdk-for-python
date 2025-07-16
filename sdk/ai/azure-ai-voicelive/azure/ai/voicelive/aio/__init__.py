@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 
 from ._client import OpenAIClient  # type: ignore
 from .voice_live_client import AsyncVoiceLiveClient  # Custom async client for WebSocket support
+from .connection import AsyncVoiceLiveConnection, AsyncVoiceLiveConnectionManager  # Async WebSocket connection classes
 
 try:
     from ._patch import __all__ as _patch_all
@@ -25,6 +26,8 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "OpenAIClient",
     "AsyncVoiceLiveClient",  # Added our custom async client
+    "AsyncVoiceLiveConnection",  # Added async WebSocket connection class
+    "AsyncVoiceLiveConnectionManager",  # Added async WebSocket connection manager
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 

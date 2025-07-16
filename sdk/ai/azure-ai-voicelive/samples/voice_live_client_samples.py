@@ -19,6 +19,7 @@ USAGE:
 """
 
 import os
+import time
 import asyncio
 from azure.identity import DefaultAzureCredential
 from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
@@ -38,15 +39,25 @@ def sync_voice_live_client_sample():
     client = VoiceLiveClient(credential=credential, endpoint=endpoint)
     
     # Connect to the service
-    client.connect()
-    print(f"Connected to {endpoint}")
+    connection = client.connect()
+    print(f"Connected to {endpoint} with connection ID: {connection.connection_id}")
     
-    # Add your code to interact with the service here
-    # ...
-    
-    # Disconnect when done
-    client.disconnect()
-    print("Disconnected from service")
+    # Receive events for a short period
+    try:
+        # Iterate through events for a few seconds
+        start_time = time.time()
+        for event in connection:
+            print(f"Received event: {event.event_type}")
+            
+            # Stop after 5 seconds
+            if time.time() - start_time > 5:
+                break
+    except Exception as e:
+        print(f"Error receiving events: {e}")
+    finally:
+        # Disconnect when done
+        client.disconnect()
+        print("Disconnected from service")
 
 
 async def async_voice_live_client_sample():
@@ -61,15 +72,25 @@ async def async_voice_live_client_sample():
     client = AsyncVoiceLiveClient(credential=credential, endpoint=endpoint)
     
     # Connect to the service
-    await client.connect()
-    print(f"Connected to {endpoint}")
+    connection = await client.connect()
+    print(f"Connected to {endpoint} with connection ID: {connection.connection_id}")
     
-    # Add your code to interact with the service here
-    # ...
-    
-    # Disconnect when done
-    await client.disconnect()
-    print("Disconnected from service")
+    # Receive events for a short period
+    try:
+        # Use async iterator to receive events for a few seconds
+        start_time = time.time()
+        async for event in connection:
+            print(f"Received event: {event.event_type}")
+            
+            # Stop after 5 seconds
+            if time.time() - start_time > 5:
+                break
+    except Exception as e:
+        print(f"Error receiving events: {e}")
+    finally:
+        # Disconnect when done
+        await client.disconnect()
+        print("Disconnected from service")
 
 
 async def main():

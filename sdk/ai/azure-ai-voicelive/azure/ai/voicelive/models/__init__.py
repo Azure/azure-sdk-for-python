@@ -41,6 +41,16 @@ from ._models import (  # type: ignore
     VoiceLiveTurnDetection,
 )
 
+# Import WebSocket event models
+from .events import (
+    BaseEvent,
+    ErrorEvent,
+    EventType,
+    ConnectionEstablishedEvent,
+    RecognitionResultEvent,
+    create_event_from_json
+)
+
 from ._enums import (  # type: ignore
     CreateSpeechResponseStreamEventType,
     TranscriptTextUsageType,
@@ -105,6 +115,13 @@ __all__ = [
     "VoiceLiveToolChoiceLiteral",
     "VoiceLiveToolType",
     "VoiceLiveTurnDetectionType",
+    # WebSocket event models
+    "BaseEvent",
+    "ErrorEvent",
+    "EventType",
+    "ConnectionEstablishedEvent",
+    "RecognitionResultEvent",
+    "create_event_from_json"
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

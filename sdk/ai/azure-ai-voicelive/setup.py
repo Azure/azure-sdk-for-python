@@ -66,6 +66,7 @@ setup(
         "isodate>=0.6.1",
         "azure-core>=1.30.0",
         "typing-extensions>=4.6.0",
+        "websockets>=11.0.0",
     ],
     python_requires=">=3.9",
 )

@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 from ._client import OpenAIClient  # type: ignore
 from ._version import VERSION
 from .voice_live_client import VoiceLiveClient  # Custom client for WebSocket support
+from .connection import VoiceLiveConnection, VoiceLiveConnectionManager  # WebSocket connection classes
 
 __version__ = VERSION
 
@@ -28,6 +29,8 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "OpenAIClient",
     "VoiceLiveClient",  # Added our custom client
+    "VoiceLiveConnection",  # Added WebSocket connection class
+    "VoiceLiveConnectionManager",  # Added WebSocket connection manager
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 

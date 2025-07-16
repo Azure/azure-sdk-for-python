@@ -15,6 +15,7 @@ from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
 from .voice_live_configuration import VoiceLiveClientConfiguration
+from .connection import VoiceLiveConnectionManager, VoiceLiveConnection
 from ._version import VERSION
 
 logger = logging.getLogger(__name__)
@@ -79,36 +80,51 @@ class VoiceLiveClient:
         self.endpoint = self._config.endpoint
         self.api_version = self._config.api_version
 
-    def connect(self, **kwargs: Any) -> None:
+    def connect(self, **kwargs: Any) -> VoiceLiveConnection:
         """Establishes a WebSocket connection to the VoiceLive service.
         
         This method establishes a real-time connection to the VoiceLive service
-        for transmitting and receiving audio data.
+        for transmitting and receiving audio data. It returns a VoiceLiveConnection
+        object that can be used to send and receive events.
         
         :keyword str connection_id: Optional identifier for the connection.
         :keyword Dict[str, str] additional_headers: Optional additional headers to include in the connection request.
-        :keyword int timeout: Optional timeout for connection establishment in seconds.
-        :raises: ~azure.core.exceptions.HttpResponseError if the connection cannot be established.
+        :keyword float connection_timeout: Optional timeout for connection establishment in seconds.
+        :return: A connection object for interacting with the VoiceLive service.
+        :rtype: ~azure.ai.voicelive.connection.VoiceLiveConnection
+        :raises: ~azure.core.exceptions.ServiceRequestError if the connection cannot be established.
         """
-        # Placeholder for WebSocket connection implementation
-        # This will be implemented to create a WebSocket connection using the azure-core transport
-        logger.info("WebSocket connection placeholder - implementation pending")
-        self._connection_id = kwargs.get("connection_id")
+        # Extract connection parameters from kwargs
+        connection_id = kwargs.get("connection_id", None)
+        additional_headers = kwargs.get("additional_headers", {})
+        connection_timeout = kwargs.get("connection_timeout", 30.0)
         
-        # Future implementation will include:
-        # 1. Authentication token acquisition
-        # 2. WebSocket connection establishment 
-        # 3. Connection event handlers
-        # 4. Error handling
+        # Create a connection manager
+        connection_manager = VoiceLiveConnectionManager(
+            credential=self._config.credential,
+            endpoint=self.endpoint,
+            api_version=self.api_version,
+            connection_id=connection_id,
+            additional_headers=additional_headers,
+            connection_timeout=connection_timeout
+        )
+        
+        # Establish connection and return the connection object
+        connection = connection_manager.__enter__()
+        self._websocket_connection = connection
+        self._connection_id = connection.connection_id
+        
+        logger.info(f"WebSocket connection established with ID: {self._connection_id}")
+        return connection
 
     def disconnect(self) -> None:
         """Closes the active WebSocket connection.
         
         This method gracefully closes any active WebSocket connection.
         """
-        # Placeholder for WebSocket disconnection implementation
         if self._websocket_connection:
-            logger.info("WebSocket disconnection placeholder - implementation pending")
+            logger.info(f"Closing WebSocket connection with ID: {self._connection_id}")
+            self._websocket_connection.close()
             self._websocket_connection = None
             self._connection_id = None
 
