@@ -1,0 +1,58 @@
+# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------
+
+from typing import Any, Optional, Union
+
+from azure.core.credentials import TokenCredential
+from azure.core.pipeline import policies
+
+from ._version import VERSION
+
+
+class VoiceLiveClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for VoiceLiveClient.
+
+    Note that all parameters used to create this instance are saved as instance
+    attributes.
+
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :param endpoint: Service host. Default value is "wss://voicelive.azure.com".
+    :type endpoint: str
+    :keyword api_version: API version to use for requests. Default value is "2023-12-01-preview".
+    :paramtype api_version: str
+    """
+
+    def __init__(
+        self, 
+        credential: TokenCredential, 
+        endpoint: str = "wss://voicelive.azure.com", 
+        **kwargs: Any
+    ) -> None:
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
+        if endpoint is None:
+            raise ValueError("Parameter 'endpoint' must not be None.")
+
+        self.credential = credential
+        self.endpoint = endpoint
+        self.api_version = kwargs.pop("api_version", "2023-12-01-preview")
+        kwargs.setdefault("sdk_moniker", "ai-voicelive/{}".format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
+        self._configure(**kwargs)
+
+    def _configure(self, **kwargs: Any) -> None:
+        self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
+        self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
+        self.authentication_policy = kwargs.get("authentication_policy")
+        if self.credential and not self.authentication_policy:
+            self.authentication_policy = policies.BearerTokenCredentialPolicy(self.credential, "https://voicelive.azure.com/.default")

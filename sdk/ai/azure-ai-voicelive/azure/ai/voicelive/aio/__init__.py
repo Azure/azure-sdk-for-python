@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
 from ._client import OpenAIClient  # type: ignore
+from .voice_live_client import AsyncVoiceLiveClient  # Custom async client for WebSocket support
 
 try:
     from ._patch import __all__ as _patch_all
@@ -23,6 +24,7 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "OpenAIClient",
+    "AsyncVoiceLiveClient",  # Added our custom async client
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 
