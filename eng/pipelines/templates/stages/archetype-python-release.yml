@@ -24,7 +24,7 @@ stages:
         jobs:
           - job: TagRepository
             displayName: "Create release tag"
-            condition: ne(variables['Skip.TagRepository'], 'true')
+            condition: and(succeeded(), ne(variables['Skip.TagRepository'], 'true'))
 
             pool:
               image: ubuntu-24.04
