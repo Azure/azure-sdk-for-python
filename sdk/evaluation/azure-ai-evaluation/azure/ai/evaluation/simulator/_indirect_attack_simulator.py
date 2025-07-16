@@ -195,13 +195,13 @@ class IndirectAttackSimulator(AdversarialSimulator):
             ncols=100,
             unit="simulations",
         )
-        
+
         # Apply randomization to templates if seed is provided
         if randomization_seed is not None:
             # Create a local random instance to avoid polluting global state
             local_random = random.Random(randomization_seed)
             local_random.shuffle(templates)
-        
+
         for template in templates:
             for parameter in template.template_parameters:
                 tasks.append(
