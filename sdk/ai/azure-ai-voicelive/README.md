@@ -52,13 +52,31 @@ For real-time, bi-directional communication, VoiceLive supports WebSocket connec
 - Bidirectional communication
 - Event-based communication
 
+### Typed Events
+
+The SDK provides typed event classes for easier handling of server responses:
+
+- `VoiceLiveServerEvent`: Base class for all server events
+- `VoiceLiveClientEvent`: Base class for all client events
+- Specific event types like `VoiceLiveServerEventSessionUpdated` and `VoiceLiveServerEventError`
+
+### Resource Classes
+
+The SDK provides resource classes to simplify common operations:
+
+- `VoiceLiveSessionResource`: Manages session configuration
+
 ## Examples
 
-### Create a WebSocket connection
+### Create a WebSocket connection with Typed Events
 
 ```python
-from azure.ai.voicelive import VoiceLiveClient, WebsocketConnectionOptions
 from azure.core.credentials import AzureKeyCredential
+from azure.ai.voicelive import VoiceLiveClient
+from azure.ai.voicelive.models import (
+    VoiceLiveServerEventSessionUpdated, 
+    VoiceLiveServerEventError
+)
 
 # Create client
 client = VoiceLiveClient(
@@ -67,22 +85,90 @@ client = VoiceLiveClient(
 )
 
 # Connect to the WebSocket API
-with client.connect(model="voicelive-model-name") as connection:
-    # Send a session update event
-    connection.send({
-        "type": "session.update",
-        "session": {
-            "modalities": ["audio", "text"]
+with client.connect(model="gpt-4o-realtime-preview") as connection:
+    # Update session using the session resource
+    connection.session.update(
+        session={
+            "modalities": ["audio", "text"],
+            "turn_detection": {"type": "server_vad"}
         }
-    })
+    )
     
-    # Receive events
+    # Receive typed events
     for event in connection:
-        print(f"Received event: {event}")
+        print(f"Received event type: {event.type}")
         
-        # Exit after session is updated
-        if event.get('type') == 'session.updated':
+        # Type-specific handling
+        if isinstance(event, VoiceLiveServerEventSessionUpdated):
+            print(f"Session updated with ID: {event.session.id}")
             break
+            
+        elif isinstance(event, VoiceLiveServerEventError):
+            print(f"Error: {event.error.message}")
+            break
+```
+
+### Session Management
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.voicelive import VoiceLiveClient
+from azure.ai.voicelive.models import VoiceLiveServerEventSessionUpdated
+
+# Create client
+client = VoiceLiveClient(
+    credential=AzureKeyCredential("<your-api-key>"),
+    endpoint="<your-endpoint>"
+)
+
+with client.connect(model="gpt-4o-realtime-preview") as connection:
+    # Update session configuration using the session resource
+    connection.session.update(
+        session={
+            "modalities": ["text", "audio"],
+            "voice": "alloy",
+            "turn_detection": {"type": "server_vad"},
+            "input_audio_noise_reduction": {"type": "near_field"}
+        },
+        event_id="config-update-1"  # Optional ID for tracking this event
+    )
+    
+    # Wait for confirmation
+    for event in connection:
+        if isinstance(event, VoiceLiveServerEventSessionUpdated):
+            print(f"Session updated with ID: {event.session.id}")
+            print(f"Current modalities: {event.session.modalities}")
+            print(f"Voice: {event.session.voice}")
+            break
+```
+
+### Error Handling
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.voicelive import (
+    VoiceLiveClient,
+    VoiceLiveConnectionError,
+    VoiceLiveConnectionClosed
+)
+
+try:
+    client = VoiceLiveClient(
+        credential=AzureKeyCredential("<your-api-key>"),
+        endpoint="<your-endpoint>"
+    )
+    
+    with client.connect(model="gpt-4o-realtime-preview") as connection:
+        # Your code here
+        pass
+        
+except ImportError as e:
+    print(f"Required package not installed: {e}")
+    print("Please install the 'websockets' package with 'pip install websockets'")
+except VoiceLiveConnectionClosed as e:
+    print(f"Connection closed: Code {e.code}, Reason: {e.reason}")
+except VoiceLiveConnectionError as e:
+    print(f"Connection error: {e}")
 ```
 
 ### Stream audio data
@@ -91,45 +177,33 @@ with client.connect(model="voicelive-model-name") as connection:
 import base64
 
 # Inside your WebSocket connection context
-with client.connect(model="voicelive-model-name") as connection:
+with client.connect(model="gpt-4o-realtime-preview") as connection:
     # Initialize session
-    connection.send({
-        "type": "session.update",
-        "session": {
+    connection.session.update(
+        session={
             "modalities": ["audio"],
-            "audio": {
-                "format": "wav",
-                "sample_rate": 16000
-            }
+            "input_audio_format": "pcm16",
+            "output_audio_format": "pcm16"
         }
-    })
+    )
     
     # Wait for session to be established...
     
     # Stream audio chunks
     for audio_chunk in audio_stream:
-        # Encode audio data as base64
-        encoded_chunk = base64.b64encode(audio_chunk).decode('utf-8')
-        
         # Send audio data
         connection.send({
-            "type": "audio.data",
-            "audio": {
-                "data": encoded_chunk
-            }
+            "type": "input_audio_buffer.append",
+            "audio": base64.b64encode(audio_chunk).decode('utf-8')
         })
         
         # Process any received events
-        try:
-            event = connection.recv()
-            print(f"Received: {event}")
-        except:
-            pass
-    
-    # Signal end of audio
-    connection.send({
-        "type": "audio.end"
-    })
+        for event in connection:
+            print(f"Received event type: {event.type}")
+            # Process specific event types as needed
+            if event.type == "input_audio_buffer.speech_stopped":
+                # Commit the buffer when speech is detected as stopped
+                connection.send({"type": "input_audio_buffer.commit"})
 ```
 
 More examples can be found in the [samples](samples/) directory.
