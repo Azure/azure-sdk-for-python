@@ -24,7 +24,7 @@ Copilot will automatically:
 
 1. **Verify environment** - Check dependencies and virtual environment
 2. **Generate SDK** - Run TypeSpec generation (~5-6 minutes)
-3. **Validate code** - Run Pylint, MyPy, Pyright, Verifytypes (~3-5 minutes each)
+3. **Validate code** - Run Pylint, MyPy, Pyright, Verifytypes, Sphinx, Mindependency, Bandit, Black, Samples, Breaking changes (~3-5 minutes each)
 4. **Update docs** - Create/update CHANGELOG.md and version files
 5. **Commit changes** - Add, commit, and push to your branch
 6. **Create PR** - Generate pull request in draft mode

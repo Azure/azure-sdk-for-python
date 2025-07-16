@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, List, Optional, TYPE_CHECKING, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TYPE_CHECKING, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -1389,7 +1389,7 @@ class ThreadsOperations:
         order: Optional[Union[str, _models.ListSortOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> Iterable["_models.AgentThread"]:
+    ) -> ItemPaged["_models.AgentThread"]:
         """Gets a list of threads that were previously created.
 
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
@@ -1966,7 +1966,7 @@ class MessagesOperations:
         order: Optional[Union[str, _models.ListSortOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> Iterable["_models.ThreadMessage"]:
+    ) -> ItemPaged["_models.ThreadMessage"]:
         """Gets a list of messages that exist on a thread.
 
         :param thread_id: Identifier of the thread. Required.
@@ -2300,6 +2300,7 @@ class RunsOperations:
         additional_instructions: Optional[str] = None,
         additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         stream_parameter: Optional[bool] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -2342,6 +2343,9 @@ class RunsOperations:
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
+        :keyword tool_resources: The overridden enabled tool resources that the agent should use to run
+         the thread. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
         :keyword stream_parameter: If ``true``, returns a stream of events that happen during the Run
          as server-sent events,
          terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
@@ -2471,6 +2475,7 @@ class RunsOperations:
         additional_instructions: Optional[str] = None,
         additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         stream_parameter: Optional[bool] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -2512,6 +2517,9 @@ class RunsOperations:
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
+        :keyword tool_resources: The overridden enabled tool resources that the agent should use to run
+         the thread. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
         :keyword stream_parameter: If ``true``, returns a stream of events that happen during the Run
          as server-sent events,
          terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
@@ -2600,6 +2608,7 @@ class RunsOperations:
                 "stream": stream_parameter,
                 "temperature": temperature,
                 "tool_choice": tool_choice,
+                "tool_resources": tool_resources,
                 "tools": tools,
                 "top_p": top_p,
                 "truncation_strategy": truncation_strategy,
@@ -2662,7 +2671,7 @@ class RunsOperations:
         order: Optional[Union[str, _models.ListSortOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> Iterable["_models.ThreadRun"]:
+    ) -> ItemPaged["_models.ThreadRun"]:
         """Gets a list of runs for a specified thread.
 
         :param thread_id: Identifier of the thread. Required.
@@ -2969,8 +2978,9 @@ class RunsOperations:
         thread_id: str,
         run_id: str,
         *,
-        tool_outputs: List[_models.ToolOutput],
         content_type: str = "application/json",
+        tool_outputs: Optional[List[_models.ToolOutput]] = None,
+        tool_approvals: Optional[List[_models.ToolApproval]] = None,
         stream_parameter: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.ThreadRun:
@@ -2980,11 +2990,15 @@ class RunsOperations:
         :type thread_id: str
         :param run_id: Identifier of the run. Required.
         :type run_id: str
-        :keyword tool_outputs: A list of tools for which the outputs are being submitted. Required.
-        :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
+         is None.
+        :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
+        :keyword tool_approvals: A list of tool approvals allowing data to be sent to tools. Default
+         value is None.
+        :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
         :keyword stream_parameter: If true, returns a stream of events that happen during the Run as
          SSE, terminating at ``[DONE]``. Default value is None.
         :paramtype stream_parameter: bool
@@ -3040,7 +3054,8 @@ class RunsOperations:
         run_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        tool_outputs: List[_models.ToolOutput] = _Unset,
+        tool_outputs: Optional[List[_models.ToolOutput]] = None,
+        tool_approvals: Optional[List[_models.ToolApproval]] = None,
         stream_parameter: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.ThreadRun:
@@ -3052,8 +3067,12 @@ class RunsOperations:
         :type run_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword tool_outputs: A list of tools for which the outputs are being submitted. Required.
+        :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
+         is None.
         :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
+        :keyword tool_approvals: A list of tool approvals allowing data to be sent to tools. Default
+         value is None.
+        :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
         :keyword stream_parameter: If true, returns a stream of events that happen during the Run as
          SSE, terminating at ``[DONE]``. Default value is None.
         :paramtype stream_parameter: bool
@@ -3076,9 +3095,7 @@ class RunsOperations:
         cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if tool_outputs is _Unset:
-                raise TypeError("missing required argument: tool_outputs")
-            body = {"stream": stream_parameter, "tool_outputs": tool_outputs}
+            body = {"stream": stream_parameter, "tool_approvals": tool_approvals, "tool_outputs": tool_outputs}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -3302,7 +3319,7 @@ class RunStepsOperations:
         order: Optional[Union[str, _models.ListSortOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> Iterable["_models.RunStep"]:
+    ) -> ItemPaged["_models.RunStep"]:
         """Gets a list of run steps from a thread run.
 
         :param thread_id: Identifier of the thread. Required.
@@ -3749,7 +3766,7 @@ class VectorStoresOperations:
         order: Optional[Union[str, _models.ListSortOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> Iterable["_models.VectorStore"]:
+    ) -> ItemPaged["_models.VectorStore"]:
         """Returns a list of vector stores.
 
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
@@ -4315,7 +4332,7 @@ class VectorStoreFilesOperations:
         order: Optional[Union[str, _models.ListSortOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> Iterable["_models.VectorStoreFile"]:
+    ) -> ItemPaged["_models.VectorStoreFile"]:
         """Returns a list of vector store files.
 
         :param vector_store_id: Identifier of the vector store. Required.
@@ -5003,7 +5020,7 @@ class VectorStoreFileBatchesOperations:
         order: Optional[Union[str, _models.ListSortOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> Iterable["_models.VectorStoreFile"]:
+    ) -> ItemPaged["_models.VectorStoreFile"]:
         """Returns a list of vector store files in a batch.
 
         :param vector_store_id: Identifier of the vector store. Required.
@@ -5087,7 +5104,9 @@ class VectorStoreFileBatchesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AgentsClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], AgentsClientConfiguration]):
+class _AgentsClientOperationsMixin(
+    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], AgentsClientConfiguration]
+):
 
     @overload
     def create_agent(
@@ -5327,7 +5346,7 @@ class AgentsClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, Htt
         order: Optional[Union[str, _models.ListSortOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> Iterable["_models.Agent"]:
+    ) -> ItemPaged["_models.Agent"]:
         """Gets a list of agents that were previously created.
 
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and

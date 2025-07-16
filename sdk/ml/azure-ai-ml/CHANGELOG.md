@@ -1,9 +1,14 @@
 # Release History
-## 1.28.0 (unreleased)
+## 1.29.0 (unreleased)
 
 ### Features Added
 
 ### Bugs Fixed
+
+## 1.28.1 (2025-07-08)
+
+### Features Added
+- Added a workflow to create GitHub issues in case a major version of a dependency is released
 
 ## 1.27.1 (2025-05-13)
 

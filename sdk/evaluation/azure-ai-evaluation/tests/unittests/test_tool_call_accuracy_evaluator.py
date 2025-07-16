@@ -63,16 +63,14 @@ class TestToolCallAccuracyEvaluator:
                 "arguments": {"type": "raincoat"},
             },
         ]
-        tool_definitions=[
+        tool_definitions = [
             {
                 "name": "fetch_weather",
                 "type": "function",
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
                     "type": "object",
-                    "properties": {
-                        "location": {"type": "string", "description": "The location to fetch weather for."}
-                    },
+                    "properties": {"location": {"type": "string", "description": "The location to fetch weather for."}},
                 },
             },
             {
@@ -81,9 +79,7 @@ class TestToolCallAccuracyEvaluator:
                 "description": "Buy a jacket of the given type.",
                 "parameters": {
                     "type": "object",
-                    "properties": {
-                        "type": {"type": "string", "description": "The type of jacket to buy."}
-                    },
+                    "properties": {"type": {"type": "string", "description": "The type of jacket to buy."}},
                 },
             },
         ]
@@ -119,16 +115,14 @@ class TestToolCallAccuracyEvaluator:
                 "arguments": {"type": "raincoat"},
             },
         ]
-        tool_definitions=[
+        tool_definitions = [
             {
                 "name": "fetch_weather",
                 "type": "function",
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
                     "type": "object",
-                    "properties": {
-                        "location": {"type": "string", "description": "The location to fetch weather for."}
-                    },
+                    "properties": {"location": {"type": "string", "description": "The location to fetch weather for."}},
                 },
             },
             {
@@ -137,9 +131,7 @@ class TestToolCallAccuracyEvaluator:
                 "description": "Buy a jacket of the given type.",
                 "parameters": {
                     "type": "object",
-                    "properties": {
-                        "type": {"type": "string", "description": "The type of jacket to buy."}
-                    },
+                    "properties": {"type": {"type": "string", "description": "The type of jacket to buy."}},
                 },
             },
         ]
@@ -175,16 +167,14 @@ class TestToolCallAccuracyEvaluator:
                 "arguments": {"type": "jacket"},
             },
         ]
-        tool_definitions=[
+        tool_definitions = [
             {
                 "name": "fetch_weather",
                 "type": "function",
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
                     "type": "object",
-                    "properties": {
-                        "location": {"type": "string", "description": "The location to fetch weather for."}
-                    },
+                    "properties": {"location": {"type": "string", "description": "The location to fetch weather for."}},
                 },
             },
             {
@@ -193,9 +183,7 @@ class TestToolCallAccuracyEvaluator:
                 "description": "Buy a jacket of the given type.",
                 "parameters": {
                     "type": "object",
-                    "properties": {
-                        "type": {"type": "string", "description": "The type of jacket to buy."}
-                    },
+                    "properties": {"type": {"type": "string", "description": "The type of jacket to buy."}},
                 },
             },
         ]
@@ -226,7 +214,7 @@ class TestToolCallAccuracyEvaluator:
                     "arguments": {"location": "Tokyo"},
                 },
             ]
-            tool_definitions=[
+            tool_definitions = [
                 {
                     "name": "fetch_weather",
                     "type": "function",
@@ -263,16 +251,14 @@ class TestToolCallAccuracyEvaluator:
                 "arguments": {"type": "raincoat"},
             },
         ]
-        tool_definitions=[
+        tool_definitions = [
             {
                 "name": "fetch_weather",
                 "type": "function",
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
                     "type": "object",
-                    "properties": {
-                        "location": {"type": "string", "description": "The location to fetch weather for."}
-                    },
+                    "properties": {"location": {"type": "string", "description": "The location to fetch weather for."}},
                 },
             },
             {
@@ -281,9 +267,7 @@ class TestToolCallAccuracyEvaluator:
                 "description": "Buy a jacket of the given type.",
                 "parameters": {
                     "type": "object",
-                    "properties": {
-                        "type": {"type": "string", "description": "The type of jacket to buy."}
-                    },
+                    "properties": {"type": {"type": "string", "description": "The type of jacket to buy."}},
                 },
             },
         ]
@@ -311,16 +295,14 @@ class TestToolCallAccuracyEvaluator:
                 "arguments": {"location": "Tokyo"},
             },
         ]
-        tool_definitions=[
+        tool_definitions = [
             {
                 "name": "fetch_weather",
                 "type": "some_built_in", # Not a 'function' type
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
                     "type": "object",
-                    "properties": {
-                        "location": {"type": "string", "description": "The location to fetch weather for."}
-                    },
+                    "properties": {"location": {"type": "string", "description": "The location to fetch weather for."}},
                 },
             },
         ]
@@ -348,9 +330,7 @@ class TestToolCallAccuracyEvaluator:
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
                     "type": "object",
-                    "properties": {
-                        "location": {"type": "string", "description": "The location to fetch weather for."}
-                    },
+                    "properties": {"location": {"type": "string", "description": "The location to fetch weather for."}},
                 },
             },
         ]

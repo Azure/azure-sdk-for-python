@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 T_EvalValue = TypeVar("T_EvalValue")
 
+
 @experimental
 class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """The Tool Call Accuracy evaluator assesses how accurately an AI uses tools by examining:
@@ -48,13 +49,13 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :caption: Initialize and call a ToolCallAccuracyEvaluator.
 
     .. admonition:: Example using Azure AI Project URL:
-        
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
             :start-after: [START tool_call_accuracy_evaluator]
             :end-before: [END tool_call_accuracy_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call ToolCallAccuracyEvaluator using Azure AI Project URL in the following format 
+            :caption: Initialize and call ToolCallAccuracyEvaluator using Azure AI Project URL in the following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     .. note::
@@ -82,15 +83,11 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *,
-                 threshold=_DEFAULT_TOOL_CALL_ACCURACY_SCORE,
-                 **kwargs):
+    def __init__(self, model_config, *, threshold=_DEFAULT_TOOL_CALL_ACCURACY_SCORE, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
-        super().__init__(model_config=model_config, prompty_file=prompty_path,
-                         result_key=self._RESULT_KEY,
-                         **kwargs)
+        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY, **kwargs)
 
     @overload
     def __call__(
@@ -98,8 +95,8 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         *,
         query: Union[str, List[dict]],
         tool_definitions: Union[dict, List[dict]],
-        tool_calls: Union[dict, List[dict]]  = None,
-        response: Union[str, List[dict]] = None
+        tool_calls: Union[dict, List[dict]] = None,
+        response: Union[str, List[dict]] = None,
     ) -> Dict[str, Union[str, float]]:
         """
         Evaluate tool call accuracy. Accepts a query, tool definitions, and tool calls for evaluation.

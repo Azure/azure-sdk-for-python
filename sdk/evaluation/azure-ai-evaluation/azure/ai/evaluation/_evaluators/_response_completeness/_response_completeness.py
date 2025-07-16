@@ -37,24 +37,24 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
-    
+
     .. admonition:: Example:
-    
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate.py
             :start-after: [START completeness_evaluator]
             :end-before: [END completeness_evaluator]
             :language: python
             :dedent: 8
             :caption: Initialize and call a CompletenessEvaluator with a response and groundtruth.
-    
+
     .. admonition:: Example using Azure AI Project URL:
-        
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
             :start-after: [START completeness_evaluator]
             :end-before: [END completeness_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call CompletenessEvaluator using Azure AI Project URL in the following format 
+            :caption: Initialize and call CompletenessEvaluator using Azure AI Project URL in the following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     """
@@ -73,23 +73,18 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *,
-                 threshold: Optional[float] = _DEFAULT_COMPLETENESS_THRESHOLD,
-                 **kwargs):
+    def __init__(self, model_config, *, threshold: Optional[float] = _DEFAULT_COMPLETENESS_THRESHOLD, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
-        super().__init__(model_config=model_config,
-                         prompty_file=prompty_path,
-                         result_key=self._RESULT_KEY,
-                         **kwargs)
+        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY, **kwargs)
 
     @overload
     def __call__(
-            self,
-            *,
-            ground_truth: str,
-            response: str,
+        self,
+        *,
+        ground_truth: str,
+        response: str,
     ) -> Dict[str, Union[str, float]]:
         """Evaluate completeness in given response. Accepts ground truth and response for evaluation.
         Example usage:
@@ -111,9 +106,9 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     @overload
     def __call__(
-            self,
-            *,
-            conversation: Conversation,
+        self,
+        *,
+        conversation: Conversation,
     ) -> Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]:
         """Evaluate completeness for a conversation
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
@@ -126,9 +121,9 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     @override
     def __call__(  # pylint: disable=docstring-missing-param
-            self,
-            *args,
-            **kwargs,
+        self,
+        *args,
+        **kwargs,
     ):
         """
         Invokes the instance using the overloaded __call__ signature.
@@ -151,7 +146,7 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             raise EvaluationException(
                 message=f"Both ground_truth and response must be provided as input to the completeness evaluator.",
                 internal_message=f"Both ground_truth and response must be provided as input to the completeness"
-                                 f" evaluator.",
+                f" evaluator.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.COMPLETENESS_EVALUATOR,
@@ -163,7 +158,7 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if llm_output:
             score, reason = parse_quality_evaluator_reason_score(llm_output, valid_score_range="[1-5]")
 
-            score_result = 'pass' if score >= self.threshold else 'fail'
+            score_result = "pass" if score >= self.threshold else "fail"
 
             # updating the result key and threshold to int based on the schema
             return {
@@ -172,5 +167,5 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_threshold": int(self.threshold),
                 f"{self._result_key}_reason": reason,
             }
-        
+
         return {self._result_key: math.nan}
