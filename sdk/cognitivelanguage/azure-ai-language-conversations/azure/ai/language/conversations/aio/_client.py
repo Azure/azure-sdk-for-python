@@ -16,14 +16,14 @@ from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import ConversationAnalysisClientConfiguration
-from ._operations._operations import _ConversationAnalysisClientOperationsMixin
+from ._configuration import ConversationsClientConfiguration
+from ._operations._operations import _ConversationsClientOperationsMixin
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ConversationAnalysisClient(_ConversationAnalysisClientOperationsMixin):
+class ConversationsClient(_ConversationsClientOperationsMixin):
     """The language service conversations API is a suite of natural language processing (NLP) skills
     that can be used to analyze structured conversations (textual or spoken). The synchronous API
     in this suite accepts a request and mediates among multiple language projects, such as LUIS
@@ -52,7 +52,7 @@ class ConversationAnalysisClient(_ConversationAnalysisClientOperationsMixin):
         self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
         _endpoint = "{Endpoint}/language"
-        self._config = ConversationAnalysisClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = ConversationsClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:

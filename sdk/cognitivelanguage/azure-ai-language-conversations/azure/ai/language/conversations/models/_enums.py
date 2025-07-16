@@ -25,16 +25,7 @@ class AgeUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Day age unit"""
 
 
-class AnalyzeConversationInputKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enumeration of supported Conversation tasks."""
-
-    CONVERSATION = "Conversation"
-    """Conversation task kind"""
-    CONVERSATIONAL_AI = "ConversationalAI"
-    """Conversation task kind"""
-
-
-class AnalyzeConversationOperationActionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class AnalyzeConversationLROTaskKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enumeration of supported analysis tasks on a collection of conversations."""
 
     CONVERSATIONAL_SUMMARIZATION_TASK = "ConversationalSummarizationTask"
@@ -45,18 +36,27 @@ class AnalyzeConversationOperationActionKind(str, Enum, metaclass=CaseInsensitiv
     """Custom Conversational Summarization Task"""
 
 
-class AnalyzeConversationOperationResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class AnalyzeConversationResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enumeration of results for supported conversation analysis Results."""
 
-    SUMMARIZATION_OPERATION_RESULTS = "conversationalSummarizationResults"
+    CONVERSATIONAL_SUMMARIZATION_RESULTS = "conversationalSummarizationResults"
     """Conversational Summarization Results"""
-    PII_OPERATION_RESULTS = "conversationalPIIResults"
+    CONVERSATIONAL_PII_RESULTS = "conversationalPIIResults"
     """Conversational PII Results"""
-    CUSTOM_SUMMARIZATION_OPERATION_RESULTS = "customConversationalSummarizationResults"
+    CUSTOM_CONVERSATIONAL_SUMMARIZATION_RESULTS = "customConversationalSummarizationResults"
     """Custom Conversational Summarization Results"""
 
 
-class AnalyzeConversationResultKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class AnalyzeConversationTaskKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enumeration of supported Conversation tasks."""
+
+    CONVERSATION = "Conversation"
+    """Conversation task kind"""
+    CONVERSATIONAL_AI = "ConversationalAI"
+    """Conversation task kind"""
+
+
+class AnalyzeConversationTaskResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enumeration of supported conversational task results."""
 
     CONVERSATION_RESULT = "ConversationResult"
@@ -96,25 +96,6 @@ class AreaUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Acre area unit"""
 
 
-class ConversationActionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of the task at the mentioned last update time."""
-
-    NOT_STARTED = "notStarted"
-    """Not started state"""
-    RUNNING = "running"
-    """Running state"""
-    SUCCEEDED = "succeeded"
-    """Succeeded state"""
-    PARTIALLY_COMPLETED = "partiallyCompleted"
-    """Partially completed state"""
-    FAILED = "failed"
-    """Failed state"""
-    CANCELLED = "cancelled"
-    """Cancelled state"""
-    CANCELLING = "cancelling"
-    """Cancelling state"""
-
-
 class ConversationDomain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enumeration of supported conversational domains."""
 
@@ -126,7 +107,68 @@ class ConversationDomain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enumeration of supported conversational domains."""
 
 
-class ConversationErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ConversationPiiCategories(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes the PII categories to return for detection. If not provided, 'default' categories
+    will be returned which will vary with the language.
+    """
+
+    ADDRESS = "Address"
+    """Address category"""
+    CREDIT_CARD = "CreditCard"
+    """Credit card category"""
+    EMAIL = "Email"
+    """Email category"""
+    PERSON = "Person"
+    """Person category"""
+    NUMERIC_IDENTIFIER = "NumericIdentifier"
+    """Numeric identifier category"""
+    PHONE = "Phone"
+    """Phone category"""
+    US_SOCIAL_SECURITY_NUMBER = "USSocialSecurityNumber"
+    """US social security number category"""
+    ALL = "All"
+    """All categories"""
+    DEFAULT = "Default"
+    """Default categories"""
+
+
+class ConversationPiiCategoriesExclude(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes the PII categories to exclude for detection. If not provided, 'default' categories
+    will be returned which will vary with the language.
+    """
+
+    ADDRESS = "Address"
+    """Address category"""
+    CREDIT_CARD = "CreditCard"
+    """Credit card category"""
+    EMAIL = "Email"
+    """Email category"""
+    PERSON = "Person"
+    """Person category"""
+    NUMERIC_IDENTIFIER = "NumericIdentifier"
+    """Numeric identifier category"""
+    PHONE = "Phone"
+    """Phone category"""
+    US_SOCIAL_SECURITY_NUMBER = "USSocialSecurityNumber"
+    """US social security number category"""
+
+
+class DateTimeSubKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Datetime SubKind."""
+
+    TIME = "Time"
+    """Time subkind"""
+    DATE = "Date"
+    """Date subkind"""
+    DATE_TIME = "DateTime"
+    """DateTime subkind"""
+    DURATION = "Duration"
+    """Duration subkind"""
+    SET = "Set"
+    """Set subkind"""
+
+
+class ErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Human-readable error code."""
 
     INVALID_REQUEST = "InvalidRequest"
@@ -165,67 +207,6 @@ class ConversationErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Conflict error"""
     WARNING = "Warning"
     """Warning error"""
-
-
-class ConversationPiiCategories(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Describes the PII categories to return for detection. If not provided, 'default' categories
-    will be returned which will vary with the language.
-    """
-
-    ADDRESS = "Address"
-    """Address category"""
-    CREDIT_CARD = "CreditCard"
-    """Credit card category"""
-    EMAIL = "Email"
-    """Email category"""
-    PERSON = "Person"
-    """Person category"""
-    NUMERIC_IDENTIFIER = "NumericIdentifier"
-    """Numeric identifier category"""
-    PHONE = "Phone"
-    """Phone category"""
-    US_SOCIAL_SECURITY_NUMBER = "USSocialSecurityNumber"
-    """US social security number category"""
-    ALL = "All"
-    """All categories"""
-    DEFAULT = "Default"
-    """Default categories"""
-
-
-class ConversationPiiCategoryExclusions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Describes the PII categories to exclude for detection. If not provided, 'default' categories
-    will be returned which will vary with the language.
-    """
-
-    ADDRESS = "Address"
-    """Address category"""
-    CREDIT_CARD = "CreditCard"
-    """Credit card category"""
-    EMAIL = "Email"
-    """Email category"""
-    PERSON = "Person"
-    """Person category"""
-    NUMERIC_IDENTIFIER = "NumericIdentifier"
-    """Numeric identifier category"""
-    PHONE = "Phone"
-    """Phone category"""
-    US_SOCIAL_SECURITY_NUMBER = "USSocialSecurityNumber"
-    """US social security number category"""
-
-
-class DateTimeSubKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The Datetime SubKind."""
-
-    TIME = "Time"
-    """Time subkind"""
-    DATE = "Date"
-    """Date subkind"""
-    DATE_TIME = "DateTime"
-    """DateTime subkind"""
-    DURATION = "Duration"
-    """Duration subkind"""
-    SET = "Set"
-    """Set subkind"""
 
 
 class ExtraInformationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -347,7 +328,7 @@ class LengthUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Foot length unit"""
     LIGHT_YEAR = "LightYear"
     """Light year length unit"""
-    POINT = "Pt"
+    PT = "Pt"
     """Point length unit"""
 
 
@@ -375,17 +356,6 @@ class NumberKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Percent number"""
     UNSPECIFIED = "Unspecified"
     """Unspecified number kind"""
-
-
-class ParticipantRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Role of the participant."""
-
-    CUSTOMER = "customer"
-    """The participant is a customer."""
-    AGENT = "agent"
-    """The participant is an agent."""
-    GENERIC = "generic"
-    """The is a generic participant."""
 
 
 class ProjectKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -444,7 +414,7 @@ class RedactionCharacter(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Number sign character"""
     DOLLAR = "$"
     """Dollar sign character"""
-    PERCENT = "%"
+    PER_CENT = "%"
     """Percent sign character"""
     AMPERSAND = "&"
     """Ampersand character"""
@@ -525,6 +495,17 @@ class ResolutionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resolution of a temporal span entity"""
 
 
+class Role(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Role of the participant."""
+
+    CUSTOMER = "customer"
+    """The participant is a customer."""
+    AGENT = "agent"
+    """The participant is an agent."""
+    GENERIC = "generic"
+    """The is a generic participant."""
+
+
 class SpeedUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The speed Unit of measurement."""
 
@@ -556,6 +537,25 @@ class SpeedUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Centimeters per millisecond speed unit"""
     KILOMETERS_PER_MILLISECOND = "KilometersPerMillisecond"
     """Kilometers per millisecond speed unit"""
+
+
+class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the task at the mentioned last update time."""
+
+    NOT_STARTED = "notStarted"
+    """Not started state"""
+    RUNNING = "running"
+    """Running state"""
+    SUCCEEDED = "succeeded"
+    """Succeeded state"""
+    PARTIALLY_COMPLETED = "partiallyCompleted"
+    """Partially completed state"""
+    FAILED = "failed"
+    """Failed state"""
+    CANCELLED = "cancelled"
+    """Cancelled state"""
+    CANCELLING = "cancelling"
+    """Cancelling state"""
 
 
 class StringIndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -641,13 +641,13 @@ class TemperatureUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class TemporalModifier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """An optional modifier of a date/time instance."""
 
-    AFTER_APPROXIMATE = "AfterApprox"
+    AFTER_APPROX = "AfterApprox"
     """AfterApprox temporal modifier"""
     BEFORE = "Before"
     """Before temporal modifier"""
     BEFORE_START = "BeforeStart"
     """BeforeStart temporal modifier"""
-    APPROXIMATE = "Approx"
+    APPROX = "Approx"
     """Approx temporal modifier"""
     REFERENCE_UNDEFINED = "ReferenceUndefined"
     """ReferenceUndefined temporal modifier"""
@@ -671,7 +671,7 @@ class TemporalModifier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Since temporal modifier"""
     AFTER_START = "AfterStart"
     """AfterStart temporal modifier"""
-    BEFORE_APPROXIMATE = "BeforeApprox"
+    BEFORE_APPROX = "BeforeApprox"
     """BeforeApprox temporal modifier"""
     MID = "Mid"
     """Mid temporal modifier"""

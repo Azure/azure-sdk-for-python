@@ -29,7 +29,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._configuration import ConversationAnalysisClientConfiguration
+from .._configuration import ConversationsClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
@@ -43,9 +43,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_conversation_analysis_analyze_conversation_request(  # pylint: disable=name-too-long
-    **kwargs: Any,
-) -> HttpRequest:
+def build_conversations_analyze_conversations_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -67,7 +65,7 @@ def build_conversation_analysis_analyze_conversation_request(  # pylint: disable
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_analysis_get_analyze_conversation_job_status_request(  # pylint: disable=name-too-long
+def build_conversations_analyze_conversations_job_status_request(  # pylint: disable=name-too-long
     job_id: str, *, show_stats: Optional[bool] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -95,7 +93,7 @@ def build_conversation_analysis_get_analyze_conversation_job_status_request(  # 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_analysis_analyze_conversation_submit_operation_request(  # pylint: disable=name-too-long
+def build_conversations_analyze_conversations_submit_job_request(  # pylint: disable=name-too-long
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -119,7 +117,7 @@ def build_conversation_analysis_analyze_conversation_submit_operation_request(  
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_analysis_cancel_analyze_conversations_request(  # pylint: disable=name-too-long
+def build_conversations_analyze_conversations_cancel_job_request(  # pylint: disable=name-too-long
     job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -145,31 +143,31 @@ def build_conversation_analysis_cancel_analyze_conversations_request(  # pylint:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class _ConversationAnalysisClientOperationsMixin(
-    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], ConversationAnalysisClientConfiguration]
+class _ConversationsClientOperationsMixin(
+    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], ConversationsClientConfiguration]
 ):
 
     @overload
-    def analyze_conversation(
-        self, body: _models.AnalyzeConversationInput, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AnalyzeConversationActionResult:
+    def analyze_conversations(
+        self, body: _models.AnalyzeConversationTask, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AnalyzeConversationTaskResult:
         """Analyzes the input conversation utterance.
 
         :param body: The input for the analyze conversations operation. Required.
-        :type body: ~azure.ai.language.conversations.models.AnalyzeConversationInput
+        :type body: ~azure.ai.language.conversations.models.AnalyzeConversationTask
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AnalyzeConversationActionResult. The AnalyzeConversationActionResult is compatible
-         with MutableMapping
-        :rtype: ~azure.ai.language.conversations.models.AnalyzeConversationActionResult
+        :return: AnalyzeConversationTaskResult. The AnalyzeConversationTaskResult is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.language.conversations.models.AnalyzeConversationTaskResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def analyze_conversation(
+    def analyze_conversations(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AnalyzeConversationActionResult:
+    ) -> _models.AnalyzeConversationTaskResult:
         """Analyzes the input conversation utterance.
 
         :param body: The input for the analyze conversations operation. Required.
@@ -177,16 +175,16 @@ class _ConversationAnalysisClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AnalyzeConversationActionResult. The AnalyzeConversationActionResult is compatible
-         with MutableMapping
-        :rtype: ~azure.ai.language.conversations.models.AnalyzeConversationActionResult
+        :return: AnalyzeConversationTaskResult. The AnalyzeConversationTaskResult is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.language.conversations.models.AnalyzeConversationTaskResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def analyze_conversation(
+    def analyze_conversations(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AnalyzeConversationActionResult:
+    ) -> _models.AnalyzeConversationTaskResult:
         """Analyzes the input conversation utterance.
 
         :param body: The input for the analyze conversations operation. Required.
@@ -194,25 +192,25 @@ class _ConversationAnalysisClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AnalyzeConversationActionResult. The AnalyzeConversationActionResult is compatible
-         with MutableMapping
-        :rtype: ~azure.ai.language.conversations.models.AnalyzeConversationActionResult
+        :return: AnalyzeConversationTaskResult. The AnalyzeConversationTaskResult is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.language.conversations.models.AnalyzeConversationTaskResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def analyze_conversation(
-        self, body: Union[_models.AnalyzeConversationInput, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.AnalyzeConversationActionResult:
+    def analyze_conversations(
+        self, body: Union[_models.AnalyzeConversationTask, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.AnalyzeConversationTaskResult:
         """Analyzes the input conversation utterance.
 
         :param body: The input for the analyze conversations operation. Is one of the following types:
-         AnalyzeConversationInput, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.language.conversations.models.AnalyzeConversationInput or JSON or
+         AnalyzeConversationTask, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.language.conversations.models.AnalyzeConversationTask or JSON or
          IO[bytes]
-        :return: AnalyzeConversationActionResult. The AnalyzeConversationActionResult is compatible
-         with MutableMapping
-        :rtype: ~azure.ai.language.conversations.models.AnalyzeConversationActionResult
+        :return: AnalyzeConversationTaskResult. The AnalyzeConversationTaskResult is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.language.conversations.models.AnalyzeConversationTaskResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -227,7 +225,7 @@ class _ConversationAnalysisClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AnalyzeConversationActionResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AnalyzeConversationTaskResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -236,7 +234,7 @@ class _ConversationAnalysisClientOperationsMixin(
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_conversation_analysis_analyze_conversation_request(
+        _request = build_conversations_analyze_conversations_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -268,7 +266,7 @@ class _ConversationAnalysisClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AnalyzeConversationActionResult, response.json())
+            deserialized = _deserialize(_models.AnalyzeConversationTaskResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -281,9 +279,9 @@ class _ConversationAnalysisClientOperationsMixin(
         params_added_on={"2023-04-01": ["api_version", "job_id", "show_stats", "accept"]},
         api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
     )
-    def get_analyze_conversation_job_status(
+    def analyze_conversations_job_status(
         self, job_id: str, *, show_stats: Optional[bool] = None, **kwargs: Any
-    ) -> _models.AnalyzeConversationOperationState:
+    ) -> _models.AnalyzeConversationJobState:
         """Get analysis status and results.
 
         Get the status of an analysis job. A job can consist of one or more tasks. After all tasks
@@ -294,9 +292,9 @@ class _ConversationAnalysisClientOperationsMixin(
         :keyword show_stats: (Optional) if set to true, response will contain request and document
          level statistics. Default value is None.
         :paramtype show_stats: bool
-        :return: AnalyzeConversationOperationState. The AnalyzeConversationOperationState is compatible
-         with MutableMapping
-        :rtype: ~azure.ai.language.conversations.models.AnalyzeConversationOperationState
+        :return: AnalyzeConversationJobState. The AnalyzeConversationJobState is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.language.conversations.models.AnalyzeConversationJobState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -310,9 +308,9 @@ class _ConversationAnalysisClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AnalyzeConversationOperationState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AnalyzeConversationJobState] = kwargs.pop("cls", None)
 
-        _request = build_conversation_analysis_get_analyze_conversation_job_status_request(
+        _request = build_conversations_analyze_conversations_job_status_request(
             job_id=job_id,
             show_stats=show_stats,
             api_version=self._config.api_version,
@@ -344,7 +342,7 @@ class _ConversationAnalysisClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AnalyzeConversationOperationState, response.json())
+            deserialized = _deserialize(_models.AnalyzeConversationJobState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -356,8 +354,8 @@ class _ConversationAnalysisClientOperationsMixin(
         params_added_on={"2023-04-01": ["api_version", "content_type", "accept"]},
         api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
     )
-    def _analyze_conversation_submit_operation_initial(  # pylint: disable=name-too-long
-        self, body: Union[_models.AnalyzeConversationOperationInput, JSON, IO[bytes]], **kwargs: Any
+    def _analyze_conversations_submit_job_initial(  # pylint: disable=name-too-long
+        self, body: Union[_models.AnalyzeConversationJobsInput, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -380,7 +378,7 @@ class _ConversationAnalysisClientOperationsMixin(
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_conversation_analysis_analyze_conversation_submit_operation_request(
+        _request = build_conversations_analyze_conversations_submit_job_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -419,13 +417,13 @@ class _ConversationAnalysisClientOperationsMixin(
         return deserialized  # type: ignore
 
     @overload
-    def begin_analyze_conversation_submit_operation(  # pylint: disable=name-too-long
-        self, body: _models.AnalyzeConversationOperationInput, *, content_type: str = "application/json", **kwargs: Any
+    def begin_analyze_conversations_submit_job(
+        self, body: _models.AnalyzeConversationJobsInput, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Analyzes the input conversation utterance.
 
         :param body: The input for the analyze conversations operation. Required.
-        :type body: ~azure.ai.language.conversations.models.AnalyzeConversationOperationInput
+        :type body: ~azure.ai.language.conversations.models.AnalyzeConversationJobsInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -435,7 +433,7 @@ class _ConversationAnalysisClientOperationsMixin(
         """
 
     @overload
-    def begin_analyze_conversation_submit_operation(  # pylint: disable=name-too-long
+    def begin_analyze_conversations_submit_job(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Analyzes the input conversation utterance.
@@ -451,7 +449,7 @@ class _ConversationAnalysisClientOperationsMixin(
         """
 
     @overload
-    def begin_analyze_conversation_submit_operation(  # pylint: disable=name-too-long
+    def begin_analyze_conversations_submit_job(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Analyzes the input conversation utterance.
@@ -472,15 +470,15 @@ class _ConversationAnalysisClientOperationsMixin(
         params_added_on={"2023-04-01": ["api_version", "content_type", "accept"]},
         api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
     )
-    def begin_analyze_conversation_submit_operation(  # pylint: disable=name-too-long
-        self, body: Union[_models.AnalyzeConversationOperationInput, JSON, IO[bytes]], **kwargs: Any
+    def begin_analyze_conversations_submit_job(
+        self, body: Union[_models.AnalyzeConversationJobsInput, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Analyzes the input conversation utterance.
 
         :param body: The input for the analyze conversations operation. Is one of the following types:
-         AnalyzeConversationOperationInput, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.language.conversations.models.AnalyzeConversationOperationInput or JSON
-         or IO[bytes]
+         AnalyzeConversationJobsInput, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.language.conversations.models.AnalyzeConversationJobsInput or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -494,7 +492,7 @@ class _ConversationAnalysisClientOperationsMixin(
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._analyze_conversation_submit_operation_initial(
+            raw_result = self._analyze_conversations_submit_job_initial(
                 body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             raw_result.http_response.read()  # type: ignore
@@ -530,7 +528,9 @@ class _ConversationAnalysisClientOperationsMixin(
         params_added_on={"2023-04-01": ["api_version", "job_id", "accept"]},
         api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
     )
-    def _cancel_analyze_conversations_initial(self, job_id: str, **kwargs: Any) -> Iterator[bytes]:
+    def _analyze_conversations_cancel_job_initial(  # pylint: disable=name-too-long
+        self, job_id: str, **kwargs: Any
+    ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -544,7 +544,7 @@ class _ConversationAnalysisClientOperationsMixin(
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_conversation_analysis_cancel_analyze_conversations_request(
+        _request = build_conversations_analyze_conversations_cancel_job_request(
             job_id=job_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -587,7 +587,7 @@ class _ConversationAnalysisClientOperationsMixin(
         params_added_on={"2023-04-01": ["api_version", "job_id", "accept"]},
         api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
     )
-    def begin_cancel_analyze_conversations(self, job_id: str, **kwargs: Any) -> LROPoller[None]:
+    def begin_analyze_conversations_cancel_job(self, job_id: str, **kwargs: Any) -> LROPoller[None]:
         """Cancel a long-running Text Analysis conversations job.
 
         Cancel a long-running job for text analysis of conversations.
@@ -606,7 +606,7 @@ class _ConversationAnalysisClientOperationsMixin(
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._cancel_analyze_conversations_initial(
+            raw_result = self._analyze_conversations_cancel_job_initial(
                 job_id=job_id, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             raw_result.http_response.read()  # type: ignore

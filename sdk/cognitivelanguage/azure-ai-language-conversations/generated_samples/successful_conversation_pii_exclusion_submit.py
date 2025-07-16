@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.language.conversations import ConversationAnalysisClient
+from azure.ai.language.conversations import ConversationsClient
 
 """
 # PREREQUISITES
@@ -17,12 +17,12 @@ from azure.ai.language.conversations import ConversationAnalysisClient
 
 
 def main():
-    client = ConversationAnalysisClient(
+    client = ConversationsClient(
         endpoint="{Endpoint}",
         credential="CREDENTIAL",
     )
 
-    client.begin_analyze_conversation_submit_operation(
+    client.begin_analyze_conversations_submit_job(
         body={
             "analysisInput": {
                 "conversations": [

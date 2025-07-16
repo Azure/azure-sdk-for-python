@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.language.conversations import ConversationAnalysisClient
+from azure.ai.language.conversations import ConversationsClient
 
 """
 # PREREQUISITES
@@ -17,12 +17,12 @@ from azure.ai.language.conversations import ConversationAnalysisClient
 
 
 def main():
-    client = ConversationAnalysisClient(
+    client = ConversationsClient(
         endpoint="{Endpoint}",
         credential="CREDENTIAL",
     )
 
-    response = client.analyze_conversation(
+    response = client.analyze_conversations(
         body={
             "analysisInput": {"conversationItem": {"id": "1", "participantId": "1", "text": "Ports and connectors"}},
             "kind": "Conversation",

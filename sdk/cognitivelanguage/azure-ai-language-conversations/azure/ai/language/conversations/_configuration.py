@@ -17,8 +17,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ConversationAnalysisClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for ConversationAnalysisClient.
+class ConversationsClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for ConversationsClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
