@@ -65,9 +65,9 @@ setup(
         "pytyped": ["py.typed"],
     },
     install_requires=[
-        "msrest>=0.7.1",
-        "azure-core>=1.29.5",
-        "typing-extensions>=4.3.0",
+        "isodate>=0.6.1",
+        "azure-core>=1.30.0",
+        "typing-extensions>=4.6.0",
     ],
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
