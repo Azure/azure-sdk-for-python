@@ -25,6 +25,12 @@ __all__: List[str] = [
     "VoiceLiveConnectionClosed",
     "VoiceLiveConnection",
     "VoiceLiveSessionResource",
+    "VoiceLiveResponseResource",
+    "VoiceLiveInputAudioBufferResource",
+    "VoiceLiveOutputAudioBufferResource",
+    "VoiceLiveConversationResource",
+    "VoiceLiveConversationItemResource",
+    "VoiceLiveTranscriptionSessionResource",
 ]  # Add all objects you want publicly available to users at this package level
 
 log = logging.getLogger(__name__)
@@ -85,6 +91,301 @@ class VoiceLiveSessionResource:
         self._connection.send(event)
 
 
+class VoiceLiveResponseResource:
+    """Resource for response management."""
+    
+    def __init__(self, connection: "VoiceLiveConnection") -> None:
+        """Initialize a response resource.
+        
+        :param connection: The VoiceLiveConnection to use.
+        :type connection: ~azure.ai.voicelive.VoiceLiveConnection
+        """
+        self._connection = connection
+        
+    def create(self, *, response: Optional[Dict[str, Any]] = None, event_id: Optional[str] = None) -> None:
+        """Create a response from the model.
+        
+        This event instructs the server to create a Response, which means triggering
+        model inference. When in Server VAD mode, the server will create Responses
+        automatically.
+        
+        :param response: Optional response configuration.
+        :type response: Optional[Dict[str, Any]]
+        :param event_id: Optional ID for the event.
+        :type event_id: Optional[str]
+        """
+        event = {"type": "response.create"}
+        if response:
+            event["response"] = response
+        if event_id:
+            event["event_id"] = event_id
+            
+        self._connection.send(event)
+        
+    def cancel(self, *, response_id: Optional[str] = None, event_id: Optional[str] = None) -> None:
+        """Cancel an in-progress response.
+        
+        The server will respond with a `response.cancelled` event or an error
+        if there is no response to cancel.
+        
+        :param response_id: Optional ID of the response to cancel.
+        :type response_id: Optional[str]
+        :param event_id: Optional ID for the event.
+        :type event_id: Optional[str]
+        """
+        event = {"type": "response.cancel"}
+        if response_id:
+            event["response_id"] = response_id
+        if event_id:
+            event["event_id"] = event_id
+            
+        self._connection.send(event)
+
+
+class VoiceLiveInputAudioBufferResource:
+    """Resource for input audio buffer management."""
+    
+    def __init__(self, connection: "VoiceLiveConnection") -> None:
+        """Initialize an input audio buffer resource.
+        
+        :param connection: The VoiceLiveConnection to use.
+        :type connection: ~azure.ai.voicelive.VoiceLiveConnection
+        """
+        self._connection = connection
+        
+    def append(self, *, audio: str, event_id: Optional[str] = None) -> None:
+        """Append audio to the input buffer.
+        
+        The audio buffer is temporary storage you can write to and later commit.
+        In Server VAD mode, the audio buffer is used to detect speech and the
+        server will decide when to commit.
+        
+        :param audio: Base64-encoded audio data.
+        :type audio: str
+        :param event_id: Optional ID for the event.
+        :type event_id: Optional[str]
+        """
+        event = {
+            "type": "input_audio_buffer.append",
+            "audio": audio
+        }
+        if event_id:
+            event["event_id"] = event_id
+            
+        self._connection.send(event)
+        
+    def commit(self, *, event_id: Optional[str] = None) -> None:
+        """Commit the input audio buffer.
+        
+        This will create a new user message item in the conversation.
+        When in Server VAD mode, the client does not need to send this event,
+        the server will commit the audio buffer automatically.
+        
+        :param event_id: Optional ID for the event.
+        :type event_id: Optional[str]
+        """
+        event = {"type": "input_audio_buffer.commit"}
+        if event_id:
+            event["event_id"] = event_id
+            
+        self._connection.send(event)
+        
+    def clear(self, *, event_id: Optional[str] = None) -> None:
+        """Clear the input audio buffer.
+        
+        The server will respond with an `input_audio_buffer.cleared` event.
+        
+        :param event_id: Optional ID for the event.
+        :type event_id: Optional[str]
+        """
+        event = {"type": "input_audio_buffer.clear"}
+        if event_id:
+            event["event_id"] = event_id
+            
+        self._connection.send(event)
+
+
+class VoiceLiveOutputAudioBufferResource:
+    """Resource for output audio buffer management."""
+    
+    def __init__(self, connection: "VoiceLiveConnection") -> None:
+        """Initialize an output audio buffer resource.
+        
+        :param connection: The VoiceLiveConnection to use.
+        :type connection: ~azure.ai.voicelive.VoiceLiveConnection
+        """
+        self._connection = connection
+        
+    def clear(self, *, event_id: Optional[str] = None) -> None:
+        """Clear the output audio buffer.
+        
+        This will trigger the server to stop generating audio and emit
+        an `output_audio_buffer.cleared` event.
+        
+        :param event_id: Optional ID for the event.
+        :type event_id: Optional[str]
+        """
+        event = {"type": "output_audio_buffer.clear"}
+        if event_id:
+            event["event_id"] = event_id
+            
+        self._connection.send(event)
+
+
+class VoiceLiveConversationItemResource:
+    """Resource for conversation item management."""
+    
+    def __init__(self, connection: "VoiceLiveConnection") -> None:
+        """Initialize a conversation item resource.
+        
+        :param connection: The VoiceLiveConnection to use.
+        :type connection: ~azure.ai.voicelive.VoiceLiveConnection
+        """
+        self._connection = connection
+        
+    def create(
+        self, 
+        *, 
+        item: Dict[str, Any],
+        previous_item_id: Optional[str] = None,
+        event_id: Optional[str] = None
+    ) -> None:
+        """Create a new conversation item.
+        
+        Add a new Item to the Conversation's context, including messages,
+        function calls, and function call responses.
+        
+        :param item: The item to create.
+        :type item: Dict[str, Any]
+        :param previous_item_id: Optional ID of the item after which to insert this item.
+        :type previous_item_id: Optional[str]
+        :param event_id: Optional ID for the event.
+        :type event_id: Optional[str]
+        """
+        event = {
+            "type": "conversation.item.create",
+            "item": item
+        }
+        if previous_item_id:
+            event["previous_item_id"] = previous_item_id
+        if event_id:
+            event["event_id"] = event_id
+            
+        self._connection.send(event)
+        
+    def delete(self, *, item_id: str, event_id: Optional[str] = None) -> None:
+        """Delete a conversation item.
+        
+        Remove an item from the conversation history.
+        
+        :param item_id: ID of the item to delete.
+        :type item_id: str
+        :param event_id: Optional ID for the event.
+        :type event_id: Optional[str]
+        """
+        event = {
+            "type": "conversation.item.delete",
+            "item_id": item_id
+        }
+        if event_id:
+            event["event_id"] = event_id
+            
+        self._connection.send(event)
+        
+    def retrieve(self, *, item_id: str, event_id: Optional[str] = None) -> None:
+        """Retrieve a conversation item.
+        
+        Get the server's representation of a specific item in the conversation history.
+        
+        :param item_id: ID of the item to retrieve.
+        :type item_id: str
+        :param event_id: Optional ID for the event.
+        :type event_id: Optional[str]
+        """
+        event = {
+            "type": "conversation.item.retrieve",
+            "item_id": item_id
+        }
+        if event_id:
+            event["event_id"] = event_id
+            
+        self._connection.send(event)
+        
+    def truncate(
+        self, 
+        *, 
+        item_id: str, 
+        audio_end_ms: int, 
+        content_index: int, 
+        event_id: Optional[str] = None
+    ) -> None:
+        """Truncate a conversation item's audio.
+        
+        Truncate a previous assistant message's audio, useful when the user interrupts.
+        
+        :param item_id: ID of the item to truncate.
+        :type item_id: str
+        :param audio_end_ms: Time in milliseconds where to truncate the audio.
+        :type audio_end_ms: int
+        :param content_index: Index of the content to truncate.
+        :type content_index: int
+        :param event_id: Optional ID for the event.
+        :type event_id: Optional[str]
+        """
+        event = {
+            "type": "conversation.item.truncate",
+            "item_id": item_id,
+            "audio_end_ms": audio_end_ms,
+            "content_index": content_index
+        }
+        if event_id:
+            event["event_id"] = event_id
+            
+        self._connection.send(event)
+
+
+class VoiceLiveConversationResource:
+    """Resource for conversation management."""
+    
+    def __init__(self, connection: "VoiceLiveConnection") -> None:
+        """Initialize a conversation resource.
+        
+        :param connection: The VoiceLiveConnection to use.
+        :type connection: ~azure.ai.voicelive.VoiceLiveConnection
+        """
+        self._connection = connection
+        self.item = VoiceLiveConversationItemResource(connection)
+
+
+class VoiceLiveTranscriptionSessionResource:
+    """Resource for transcription session management."""
+    
+    def __init__(self, connection: "VoiceLiveConnection") -> None:
+        """Initialize a transcription session resource.
+        
+        :param connection: The VoiceLiveConnection to use.
+        :type connection: ~azure.ai.voicelive.VoiceLiveConnection
+        """
+        self._connection = connection
+        
+    def update(self, *, session: Dict[str, Any], event_id: Optional[str] = None) -> None:
+        """Update the transcription session.
+        
+        :param session: Transcription session configuration.
+        :type session: Dict[str, Any]
+        :param event_id: Optional ID for the event.
+        :type event_id: Optional[str]
+        """
+        event = {
+            "type": "transcription_session.update",
+            "session": session
+        }
+        if event_id:
+            event["event_id"] = event_id
+            
+        self._connection.send(event)
+
+
 class VoiceLiveConnection:
     """Represents a live WebSocket connection to the Voice Live API."""
     
@@ -94,7 +395,14 @@ class VoiceLiveConnection:
         :param connection: The underlying WebSocket connection.
         """
         self._connection = connection
+        
+        # Add all resource attributes
         self.session = VoiceLiveSessionResource(self)
+        self.response = VoiceLiveResponseResource(self)
+        self.input_audio_buffer = VoiceLiveInputAudioBufferResource(self)
+        self.conversation = VoiceLiveConversationResource(self)
+        self.output_audio_buffer = VoiceLiveOutputAudioBufferResource(self)
+        self.transcription_session = VoiceLiveTranscriptionSessionResource(self)
         
     def __iter__(self) -> Iterator[VoiceLiveServerEvent]:
         """Yield typed events until the connection is closed.
