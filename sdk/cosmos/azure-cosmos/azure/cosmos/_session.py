@@ -70,6 +70,7 @@ class SessionContainer(object):
         with self.session_lock:
             is_name_based = _base.IsNameBased(resource_path)
             session_token = ""
+            collection_name = ""
 
             try:
                 if is_name_based:
