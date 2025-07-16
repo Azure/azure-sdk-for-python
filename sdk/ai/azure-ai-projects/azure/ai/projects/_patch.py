@@ -59,16 +59,12 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     :vartype inference: azure.ai.projects.operations.InferenceOperations
     :ivar telemetry: TelemetryOperations operations
     :vartype telemetry: azure.ai.projects.operations.TelemetryOperations
-    :ivar evaluations: EvaluationsOperations operations
-    :vartype evaluations: azure.ai.projects.operations.EvaluationsOperations
     :ivar datasets: DatasetsOperations operations
     :vartype datasets: azure.ai.projects.operations.DatasetsOperations
     :ivar indexes: IndexesOperations operations
     :vartype indexes: azure.ai.projects.operations.IndexesOperations
     :ivar deployments: DeploymentsOperations operations
     :vartype deployments: azure.ai.projects.operations.DeploymentsOperations
-    :ivar red_teams: RedTeamsOperations operations
-    :vartype red_teams: azure.ai.projects.operations.RedTeamsOperations
     :param endpoint: Project endpoint. In the form
      "https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/_project"
      if your Foundry Hub has only one Project, or to use the default Project in your Hub. Or in the
@@ -78,7 +74,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2025-05-15-preview". Note that overriding this default value may result in unsupported
+     "v1". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """

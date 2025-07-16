@@ -10,17 +10,9 @@ resources in your Azure AI Foundry Project. Use it to:
 * **Upload documents and create Datasets** to reference them using the `.datasets` operations.
 * **Create and enumerate Search Indexes** using the `.indexes` operations.
 * **Read a Prompty file or string** and render messages for inference clients, using the `PromptTemplate` class.
-* **Run Evaluations** to assess the performance of generative AI applications, using the `evaluations` operations.
 * **Enable OpenTelemetry tracing** using the `enable_telemetry` function.
 
-The client library uses version `2025-05-15-preview` of the AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects/rest-api-reference).
-
-> **Note:** There have been significant updates with the release of version 1.0.0b11, including breaking changes.
-please see new code snippets below and the samples folder. Agents are now implemented in a separate package `azure-ai-agents`
-which will get installed automatically when you install `azure-ai-projects`. You can continue using ".agents"
-operations on the `AIProjectsClient` to create, run and delete agents, as before.
-See [full set of Agents samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents/samples)
-in their new location. Also see the [change log for the 1.0.0b11 release](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/CHANGELOG.md).
+The client library uses the version `v1` of the AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects/ga-rest-api-reference).
 
 [Product documentation](https://aka.ms/azsdk/azure-ai-projects/product-doc)
 | [Samples][samples]
@@ -30,7 +22,7 @@ in their new location. Also see the [change log for the 1.0.0b11 release](https:
 
 ## Reporting issues
 
-To report an issue with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues). Mention the package name "azure-ai-projects" in the title or content.
+To report an issue with the client library, or request additional features, please open a [GitHub issue here](https://github.com/Azure/azure-sdk-for-python/issues). Mention the package name "azure-ai-projects" in the title or content.
 
 ## Getting started
 
@@ -329,73 +321,6 @@ project_client.indexes.delete(name=index_name, version=index_version)
 
 <!-- END SNIPPET -->
 
-### Evaluation
-
-Evaluation in Azure AI Project client library provides quantitive, AI-assisted quality and safety metrics to asses performance and Evaluate LLM Models, GenAI Application and Agents. Metrics are defined as evaluators. Built-in or custom evaluators can provide comprehensive evaluation insights.
-
-The code below shows some evaluation operations. Full list of sample can be found under "evaluation" folder in the [package samples][samples]
-
-<!-- SNIPPET:sample_evaluations.evaluations_sample-->
-
-```python
-print("Upload a single file and create a new Dataset to reference the file.")
-dataset: DatasetVersion = project_client.datasets.upload_file(
-    name=dataset_name,
-    version=dataset_version,
-    file_path=data_file,
-)
-print(dataset)
-
-print("Create an evaluation")
-evaluation: Evaluation = Evaluation(
-    display_name="Sample Evaluation Test",
-    description="Sample evaluation for testing",
-    # Sample Dataset Id : azureai://accounts/<account_name>/projects/<project_name>/data/<dataset_name>/versions/<version>
-    data=InputDataset(id=dataset.id if dataset.id else ""),
-    evaluators={
-        "relevance": EvaluatorConfiguration(
-            id=EvaluatorIds.RELEVANCE.value,
-            init_params={
-                "deployment_name": model_deployment_name,
-            },
-            data_mapping={
-                "query": "${data.query}",
-                "response": "${data.response}",
-            },
-        ),
-        "violence": EvaluatorConfiguration(
-            id=EvaluatorIds.VIOLENCE.value,
-            init_params={
-                "azure_ai_project": endpoint,
-            },
-        ),
-        "bleu_score": EvaluatorConfiguration(
-            id=EvaluatorIds.BLEU_SCORE.value,
-        ),
-    },
-)
-
-evaluation_response: Evaluation = project_client.evaluations.create(
-    evaluation,
-    headers={
-        "model-endpoint": model_endpoint,
-        "api-key": model_api_key,
-    },
-)
-print(evaluation_response)
-
-print("Get evaluation")
-get_evaluation_response: Evaluation = project_client.evaluations.get(evaluation_response.name)
-
-print(get_evaluation_response)
-
-print("List evaluations")
-for evaluation in project_client.evaluations.list():
-    print(evaluation)
-```
-
-<!-- END SNIPPET -->
-
 ## Troubleshooting
 
 ### Exceptions
@@ -465,7 +390,7 @@ For more information, see [Configure logging in the Azure libraries for Python](
 
 ### Reporting issues
 
-To report an issue with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues). Mention the package name "azure-ai-projects" in the title or content.
+To report an issue with the client library, or request additional features, please open a [GitHub issue here](https://github.com/Azure/azure-sdk-for-python/issues). Mention the package name "azure-ai-projects" in the title or content.
 
 ## Next steps
 
@@ -493,5 +418,4 @@ additional questions or comments.
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [azure_sub]: https://azure.microsoft.com/free/
 [evaluators]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk
-[azure_ai_evaluation]: https://learn.microsoft.com/python/api/overview/azure/ai-evaluation-readme
 [evaluator_library]: https://learn.microsoft.com/azure/ai-studio/how-to/evaluate-generative-ai-app#view-and-manage-the-evaluators-in-the-evaluator-library
