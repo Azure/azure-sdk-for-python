@@ -121,18 +121,14 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         not_singleton_inputs: List[str] = ["conversation", "kwargs"],
         eval_last_turn: bool = False,
         conversation_aggregation_type: _AggregationType = _AggregationType.MEAN,
-        conversation_aggregator_override: Optional[
-            Callable[[List[float]], float]
-        ] = None,
+        conversation_aggregator_override: Optional[Callable[[List[float]], float]] = None,
         _higher_is_better: Optional[bool] = True,
     ):
         self._not_singleton_inputs = not_singleton_inputs
         self._eval_last_turn = eval_last_turn
         self._singleton_inputs = self._derive_singleton_inputs()
         self._async_evaluator = AsyncEvaluatorBase(self._real_call)
-        self._conversation_aggregation_function = GetAggregator(
-            conversation_aggregation_type
-        )
+        self._conversation_aggregation_function = GetAggregator(conversation_aggregation_type)
         self._higher_is_better = _higher_is_better
         self._threshold = threshold
         if conversation_aggregator_override is not None:
@@ -194,10 +190,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         singletons = []
         for call_signature in call_signatures:
             params = call_signature.parameters
-            if any(
-                not_singleton_input in params
-                for not_singleton_input in self._not_singleton_inputs
-            ):
+            if any(not_singleton_input in params for not_singleton_input in self._not_singleton_inputs):
                 continue
             # exclude self since it is not a singleton input
             singletons.extend([p for p in params if p != "self"])
@@ -300,16 +293,12 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             if len(user_messages) != len(assistant_messages):
                 raise EvaluationException(
                     message="Mismatched number of user and assistant messages.",
-                    internal_message=(
-                        "Mismatched number of user and assistant messages."
-                    ),
+                    internal_message=("Mismatched number of user and assistant messages."),
                 )
             if len(assistant_messages) > 1:
                 raise EvaluationException(
                     message="Conversation can have only one assistant message.",
-                    internal_message=(
-                        "Conversation can have only one assistant message."
-                    ),
+                    internal_message=("Conversation can have only one assistant message."),
                 )
             eval_conv_inputs = []
             for user_msg, assist_msg in zip(user_messages, assistant_messages):
@@ -318,16 +307,12 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                     conv_messages.append(system_messages[0])
                 conv_messages.append(user_msg)
                 conv_messages.append(assist_msg)
-                eval_conv_inputs.append(
-                    {"conversation": Conversation(messages=conv_messages)}
-                )
+                eval_conv_inputs.append({"conversation": Conversation(messages=conv_messages)})
             return eval_conv_inputs
 
         return multi_modal_converter
 
-    def _convert_kwargs_to_eval_input(
-        self, **kwargs
-    ) -> Union[List[Dict], List[DerivedEvalInput], Dict[str, Any]]:
+    def _convert_kwargs_to_eval_input(self, **kwargs) -> Union[List[Dict], List[DerivedEvalInput], Dict[str, Any]]:
         """Convert an arbitrary input into a list of inputs for evaluators.
         It is assumed that evaluators generally make use of their inputs in one of two ways.
         Either they receive a collection of keyname inputs that are all single values
@@ -392,17 +377,11 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             if "content" in message:
                 content = message.get("content", "")
                 if isinstance(content, list):
-                    if any(
-                        item.get("type") == "image_url"
-                        and "url" in item.get("image_url", {})
-                        for item in content
-                    ):
+                    if any(item.get("type") == "image_url" and "url" in item.get("image_url", {}) for item in content):
                         return True
         return False
 
-    def _aggregate_results(
-        self, per_turn_results: List[DoEvalResult[T_EvalValue]]
-    ) -> AggregateResult[T_EvalValue]:
+    def _aggregate_results(self, per_turn_results: List[DoEvalResult[T_EvalValue]]) -> AggregateResult[T_EvalValue]:
         """Aggregate the evaluation results of each conversation turn into a single result.
 
         Exact implementation might need to vary slightly depending on the results produced.
@@ -432,16 +411,12 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         # Find and average all numeric values
         for metric, values in evaluation_per_turn.items():
             if all(isinstance(value, (int, float)) for value in values):
-                aggregated[metric] = self._conversation_aggregation_function(
-                    cast(List[Union[int, float]], values)
-                )
+                aggregated[metric] = self._conversation_aggregation_function(cast(List[Union[int, float]], values))
         # Slap the per-turn results back in.
         aggregated["evaluation_per_turn"] = evaluation_per_turn
         return aggregated
 
-    async def _real_call(
-        self, **kwargs
-    ) -> Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]:
+    async def _real_call(self, **kwargs) -> Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]:
         """The asynchronous call where real end-to-end evaluation logic is performed.
 
         :keyword kwargs: The inputs to evaluate.
@@ -494,9 +469,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
 
     @experimental
     @final
-    def _set_conversation_aggregation_type(
-        self, conversation_aggregation_type: _AggregationType
-    ) -> None:
+    def _set_conversation_aggregation_type(self, conversation_aggregation_type: _AggregationType) -> None:
         """Input a conversation aggregation type to re-assign the aggregator function used by this evaluator for
         multi-turn conversations. This aggregator is used to combine numeric outputs from each evaluation of a
         multi-turn conversation into a single top-level result.
@@ -505,15 +478,11 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             results of a conversation to produce a single result.
         :type conversation_aggregation_type: ~azure.ai.evaluation._AggregationType
         """
-        self._conversation_aggregation_function = GetAggregator(
-            conversation_aggregation_type
-        )
+        self._conversation_aggregation_function = GetAggregator(conversation_aggregation_type)
 
     @experimental
     @final
-    def _set_conversation_aggregator(
-        self, aggregator: Callable[[List[float]], float]
-    ) -> None:
+    def _set_conversation_aggregator(self, aggregator: Callable[[List[float]], float]) -> None:
         """Set the conversation aggregator function directly. This function will be applied to all numeric outputs
         of an evaluator when it evaluates a conversation with multiple-turns thus ends up with multiple results per
         evaluation that is needs to coalesce into a single result. Use when built-in aggregators do not
@@ -543,9 +512,7 @@ class AsyncEvaluatorBase:
     to ensure that no one ever needs to extend or otherwise modify this class directly.
     """
 
-    def __init__(
-        self, real_call
-    ):  # DO NOT ADD TYPEHINT PROMPT FLOW WILL SCREAM AT YOU ABOUT META GENERATION
+    def __init__(self, real_call):  # DO NOT ADD TYPEHINT PROMPT FLOW WILL SCREAM AT YOU ABOUT META GENERATION
         self._real_call = real_call
 
     # Don't look at my shame. Nothing to see here....

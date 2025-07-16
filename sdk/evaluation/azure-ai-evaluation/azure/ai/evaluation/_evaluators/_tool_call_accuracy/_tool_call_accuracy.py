@@ -79,9 +79,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _NO_TOOL_CALLS_MESSAGE = "No tool calls found in response or provided tool_calls."
     _NO_TOOL_DEFINITIONS_MESSAGE = "Tool definitions must be provided."
-    _TOOL_DEFINITIONS_MISSING_MESSAGE = (
-        "Tool definitions for all tool calls must be provided."
-    )
+    _TOOL_DEFINITIONS_MISSING_MESSAGE = "Tool definitions for all tool calls must be provided."
     _INVALID_SCORE_MESSAGE = "Tool call accuracy score must be between 1 and 5."
 
     _LLM_SCORE_KEY = "tool_calls_success_level"
@@ -90,9 +88,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(
-        self, model_config, *, threshold=_DEFAULT_TOOL_CALL_ACCURACY_SCORE, **kwargs
-    ):
+    def __init__(self, model_config, *, threshold=_DEFAULT_TOOL_CALL_ACCURACY_SCORE, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
@@ -178,9 +174,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             tool_definitions = [tool_definitions]
 
         try:
-            needed_tool_definitions = self._extract_needed_tool_definitions(
-                tool_calls, tool_definitions
-            )
+            needed_tool_definitions = self._extract_needed_tool_definitions(tool_calls, tool_definitions)
         except EvaluationException as e:
             return {"error_message": self._TOOL_DEFINITIONS_MISSING_MESSAGE}
         if len(needed_tool_definitions) == 0:
@@ -286,28 +280,17 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if isinstance(response, list):
             for message in response:
                 # Extract tool calls from assistant messages
-                if message.get("role") == "assistant" and isinstance(
-                    message.get("content"), list
-                ):
+                if message.get("role") == "assistant" and isinstance(message.get("content"), list):
                     for content_item in message.get("content"):
-                        if (
-                            isinstance(content_item, dict)
-                            and content_item.get("type") == "tool_call"
-                        ):
+                        if isinstance(content_item, dict) and content_item.get("type") == "tool_call":
                             tool_calls.append(content_item)
 
                 # Extract tool results from tool messages
                 elif message.get("role") == "tool" and message.get("tool_call_id"):
                     tool_call_id = message.get("tool_call_id")
-                    if (
-                        isinstance(message.get("content"), list)
-                        and len(message.get("content")) > 0
-                    ):
+                    if isinstance(message.get("content"), list) and len(message.get("content")) > 0:
                         result_content = message.get("content")[0]
-                        if (
-                            isinstance(result_content, dict)
-                            and result_content.get("type") == "tool_result"
-                        ):
+                        if isinstance(result_content, dict) and result_content.get("type") == "tool_result":
                             tool_results_map[tool_call_id] = result_content
 
         # Attach results to their corresponding calls
@@ -334,8 +317,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 tool_definition = [
                     tool
                     for tool in tool_definitions
-                    if tool.get("name") == tool_name
-                    and tool.get("type", "function") == "function"
+                    if tool.get("name") == tool_name and tool.get("type", "function") == "function"
                 ]
                 if len(tool_definition) > 0:
                     needed_tool_definitions.extend(tool_definition)
