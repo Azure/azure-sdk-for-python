@@ -26,6 +26,11 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
+
+
+
+
+
 class ChangesClient:
     """The Resource Changes Client.
 
