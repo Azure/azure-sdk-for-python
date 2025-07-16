@@ -1,11 +1,6 @@
 # Release History
 
-## 1.3.0 (Unreleased)
-
-### Features Added
-
-	@@ -9,6 +9,9 @@
-### Bugs Fixed
+## 1.3.0 (2025-07-16)
 
 ### Other Changes
 - Migrated from AutoRest v2 to AutoRest v3 for code generation, improving code quality and maintainability.
