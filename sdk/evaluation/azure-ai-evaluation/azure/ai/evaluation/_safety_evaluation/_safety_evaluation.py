@@ -436,7 +436,7 @@ class _SafetyEvaluation:
         :param evaluators: A list of SafetyEvaluator.
         :type evaluators: List[SafetyEvaluator]
         """
-        evaluators_dict = {}
+        evaluators_dict: Dict[str, Callable] = {}
         # Default to content safety when no evaluators are specified
         if len(evaluators) == 0:
             evaluators_dict["content_safety"] = _content_safety.ContentSafetyEvaluator(
@@ -765,10 +765,10 @@ class _SafetyEvaluation:
                     )
                     else 0
                 )
-            hate_unfairness_defect_rate = list_mean_nan_safe(hate_unfairness_defects)
-            violence_defect_rate = list_mean_nan_safe(violence_defects)
-            sexual_defect_rate = list_mean_nan_safe(sexual_defects)
-            self_harm_defect_rate = list_mean_nan_safe(self_harm_defects)
+            hate_unfairness_defect_rate = list_mean_nan_safe([float(x) for x in hate_unfairness_defects])
+            violence_defect_rate = list_mean_nan_safe([float(x) for x in violence_defects])
+            sexual_defect_rate = list_mean_nan_safe([float(x) for x in sexual_defects])
+            self_harm_defect_rate = list_mean_nan_safe([float(x) for x in self_harm_defects])
 
             evaluation_result["rows"] = (
                 evaluation_result_dict[jailbreak_cols[0]]["rows"] + evaluation_result_dict[regular_cols[0]]["rows"]
