@@ -242,7 +242,7 @@ class MicrosoftTeamsUserIdentifier:
         :param str user_id: Microsoft Teams user id.
         :keyword bool is_anonymous: `True` if the identifier is anonymous. Default value is `False`.
         :keyword cloud: Cloud environment that the user belongs to. Default value is `PUBLIC`.
-        :paramtype cloud: str or ~azure.communication.identity.CommunicationCloudEnvironment
+        :paramtype cloud: str or ~azure.communication.callautomation.CommunicationCloudEnvironment
         :keyword str raw_id: The raw ID of the identifier. If not specified, this value will be constructed from
          the other properties.
         """
@@ -313,7 +313,7 @@ class MicrosoftTeamsAppIdentifier:
         """
         :param str app_id: Microsoft Teams application id.
         :keyword cloud: Cloud environment that the application belongs to. Default value is `PUBLIC`.
-        :paramtype cloud: str or ~azure.communication.identity.CommunicationCloudEnvironment
+        :paramtype cloud: str or ~azure.communication.callautomation.CommunicationCloudEnvironment
         :keyword str raw_id: The raw ID of the identifier. If not specified, this value will be constructed
          from the other properties.
         """
@@ -357,7 +357,7 @@ class _MicrosoftBotIdentifier(MicrosoftTeamsAppIdentifier):
         :keyword bool is_resource_account_configured: `False` if the identifier is global.
          Default value is `True` for tennantzed bots.
         :keyword cloud: Cloud environment that the bot belongs to. Default value is `PUBLIC`.
-        :paramtype cloud: str or ~azure.communication.identity.CommunicationCloudEnvironment
+        :paramtype cloud: str or ~azure.communication.callautomation.CommunicationCloudEnvironment
         """
         warnings.warn(
             "The MicrosoftBotIdentifier is deprecated and has been replaced by MicrosoftTeamsAppIdentifier.",
@@ -391,6 +391,7 @@ class TeamsExtensionUserIdentifier:
 
     def __init__(
         self,
+        *,
         user_id: str,
         tenant_id: str,
         resource_id: str,
@@ -401,7 +402,7 @@ class TeamsExtensionUserIdentifier:
         :param str tenant_id: Tenant id associated with the user.
         :param str resource_id: The Communication Services resource id.
         :keyword cloud: Cloud environment that the user belongs to. Default value is `PUBLIC`.
-        :paramtype cloud: str or ~azure.communication.identity.CommunicationCloudEnvironment
+        :paramtype cloud: str or ~azure.communication.callautomation.CommunicationCloudEnvironment
         :keyword str raw_id: The raw ID of the identifier.
          If not specified, this value will be constructed from the other properties.
         """
@@ -446,7 +447,7 @@ def try_create_teams_extension_user(prefix: str, suffix: str) -> Optional[TeamsE
         cloud = CommunicationCloudEnvironment.GCCH
     else:
         raise ValueError("Invalid MRI")
-    return TeamsExtensionUserIdentifier(user_id, tenant_id, resource_id, cloud=cloud)
+    return TeamsExtensionUserIdentifier(user_id=user_id, tenant_id=tenant_id, resource_id=resource_id, cloud=cloud)
 
 def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: disable=too-many-return-statements
     """
