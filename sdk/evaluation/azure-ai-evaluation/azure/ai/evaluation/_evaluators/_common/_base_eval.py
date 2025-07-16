@@ -224,16 +224,26 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                 pairs = list(zip(queries[:len(responses)], responses))
 
             for query, response in pairs:
+                context = {}
+                if include_context:
+                    query_context = query.get("context", None)
+                    response_context = response.get("context", None)
+                    if global_context:
+                        context["global_context"] = global_context
+                    if query_context and include_query:
+                        context["query_context"] = query_context
+                    if response_context and include_response:
+                        context["response_context"] = response_context
+
                 eval_input: DerivedEvalInput = {}
-                # Always include query and response for the tests
-                eval_input["query"] = query["content"]
-                eval_input["response"] = response["content"]
-                
-                if include_context and global_context is not None:
-                    eval_input["context"] = global_context
-                if include_ground_truth and "ground_truth" in conversation:
-                    eval_input["ground_truth"] = conversation["ground_truth"]
-                
+                if include_query:
+                    eval_input["query"] = query.get("content", "")
+                if include_response:
+                    eval_input["response"] = response.get("content", "")
+                if include_context:
+                    eval_input["context"] = str(context)
+                if include_ground_truth:
+                    eval_input["ground_truth"] = response.get("ground_truth", "")
                 eval_inputs.append(eval_input)
                 
             return eval_inputs
