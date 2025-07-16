@@ -9,9 +9,7 @@ DESCRIPTION:
     This sample demonstrates how to use agent operations with the
     Model Context Protocol (MCP) tool from the Azure Agents service, and 
     iteration in streaming. It uses a synchronous client.
-
     To learn more about Model Context Protocol, visit https://modelcontextprotocol.io/
-    This sample demonstrates how to use Agent operations with the Bing grounding
 
 USAGE:
     python sample_agents_stream_iteration_with_mcp.py
