@@ -79,3 +79,62 @@ class TestEvalRunContext:
         # Custom timeouts should not be reset after exiting EvalRunContext
         after_timeout = int(os.environ.get(PF_BATCH_TIMEOUT_SEC))
         assert after_timeout == custom_timeout
+
+
+@pytest.mark.unittest
+class TestProxyClient:
+    @pytest.mark.skipif(MISSING_LEGACY_SDK, reason="This test has a promptflow dependency")
+    def test_get_details_handles_failed_values(self, mocker):
+        """Test that get_details properly handles '(Failed)' values without generating warnings."""
+        import pandas as pd
+        import math
+        import warnings
+        
+        # Mock the PFClient and its get_details method
+        mock_pf_client = MagicMock(spec=PFClient)
+        mock_run = MagicMock()
+        
+        # Create test data that simulates real output with "(Failed)" values
+        test_df = pd.DataFrame({
+            'outputs.score': [0.85, 0.92, "(Failed)", 0.78],
+            'outputs.relevance': [4.0, "(Failed)", 3.0, 5.0],
+            'line_number': [1, 2, 3, 4]
+        })
+        
+        mock_pf_client.get_details.return_value = test_df
+        
+        # Create ProxyClient instance and mock the PFClient
+        proxy_client = ProxyClient()
+        proxy_client._pf_client = mock_pf_client
+        
+        # Mock the get_result method to return our mock run
+        mock_client_run = MagicMock()
+        mocker.patch.object(ProxyClient, 'get_result', return_value=mock_run)
+        
+        # Capture warnings to ensure no FutureWarning is generated
+        with warnings.catch_warnings(record=True) as warning_list:
+            warnings.simplefilter("always")
+            
+            # Call the method under test
+            result_df = proxy_client.get_details(mock_client_run)
+            
+            # Check that no FutureWarning about downcasting was generated
+            future_warnings = [w for w in warning_list if issubclass(w.category, FutureWarning)]
+            downcasting_warnings = [w for w in future_warnings if "Downcasting behavior" in str(w.message)]
+            
+            assert len(downcasting_warnings) == 0, f"Unexpected FutureWarning about downcasting: {downcasting_warnings}"
+        
+        # Verify the results are as expected
+        assert result_df is not None
+        assert isinstance(result_df, pd.DataFrame)
+        
+        # Check that "(Failed)" values were replaced with NaN
+        assert result_df.isna().sum().sum() == 2  # Two "(Failed)" values should become NaN
+        
+        # Verify specific positions have NaN
+        assert pd.isna(result_df.loc[2, 'outputs.score'])  # Row 2, score column
+        assert pd.isna(result_df.loc[1, 'outputs.relevance'])  # Row 1, relevance column
+        
+        # Verify non-failed values are preserved
+        assert result_df.loc[0, 'outputs.score'] == 0.85
+        assert result_df.loc[0, 'outputs.relevance'] == 4.0
