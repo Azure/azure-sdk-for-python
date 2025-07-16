@@ -79,7 +79,7 @@ from ._models import MessageDeltaChunk as MessageDeltaChunkGenerated
 from ._models import ThreadMessage as ThreadMessageGenerated
 from ._models import MessageAttachment as MessageAttachmentGenerated
 
-from .. import _types
+from .. import types as _types
 
 
 logger = logging.getLogger(__name__)
