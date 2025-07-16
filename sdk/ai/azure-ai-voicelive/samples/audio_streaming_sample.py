@@ -23,9 +23,21 @@ import os
 import base64
 import time
 import wave
+import sys
 from typing import Iterator, Optional
+
+# Add the parent directory to sys.path to import utils
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from samples.utils import load_env_vars, check_samples_prerequisites
+
 from azure.ai.voicelive import VoiceLiveClient, WebsocketConnectionOptions
 from azure.core.credentials import AzureKeyCredential
+
+# Check prerequisites
+check_samples_prerequisites()
+
+# Load environment variables from .env file if available
+load_env_vars()
 
 # Helper function to stream audio data from a WAV file
 def stream_audio_file(filepath: str, chunk_size: int = 4000) -> Iterator[bytes]:
@@ -49,11 +61,14 @@ def stream_audio_file(filepath: str, chunk_size: int = 4000) -> Iterator[bytes]:
 
 def main():
     # Get credentials from environment variables
-    api_key = os.environ.get("AZURE_VOICELIVE_API_KEY", "your-api-key")
+    api_key = os.environ.get("AZURE_VOICELIVE_KEY", "your-api-key")
     endpoint = os.environ.get("AZURE_VOICELIVE_ENDPOINT", "wss://api.voicelive.com/v1")
     
     # Default test audio file path (should be replaced with actual file)
     audio_file = os.environ.get("AUDIO_FILE", "test_audio.wav")
+    
+    # Define model to use
+    model = os.environ.get("VOICELIVE_MODEL", "voicelive-model-name")  # Replace with actual model name
     
     print(f"Using endpoint: {endpoint}")
     
@@ -62,9 +77,6 @@ def main():
         credential=AzureKeyCredential(api_key),
         endpoint=endpoint
     )
-    
-    # Define model to use
-    model = "voicelive-model-name"  # Replace with actual model name
     
     # Define WebSocket options
     ws_options: WebsocketConnectionOptions = {

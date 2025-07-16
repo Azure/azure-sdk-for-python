@@ -27,6 +27,17 @@ import time
 import argparse
 from typing import Optional, List, Dict, Any
 import wave
+import sys
+
+# Add the parent directory to sys.path to import utils
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from samples.utils import load_env_vars, check_samples_prerequisites
+
+# Check prerequisites
+check_samples_prerequisites()
+
+# Load environment variables from .env file if available
+load_env_vars()
 
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
@@ -53,26 +64,26 @@ async def main():
         "--model",
         help="VoiceLive model to use",
         type=str,
-        default="gpt-4o-realtime-preview",
+        default=os.environ.get("VOICELIVE_MODEL", "gpt-4o-realtime-preview"),
     )
     parser.add_argument(
         "--voice",
         help="Voice to use for the assistant",
         type=str,
-        default="alloy",
+        default=os.environ.get("VOICELIVE_VOICE", "alloy"),
         choices=["alloy", "echo", "fable", "onyx", "nova", "shimmer"],
     )
     parser.add_argument(
         "--endpoint",
         help="Azure VoiceLive endpoint",
         type=str,
-        default="wss://api.voicelive.com/v1",
+        default=os.environ.get("AZURE_VOICELIVE_ENDPOINT", "wss://api.voicelive.com/v1"),
     )
     parser.add_argument(
         "--instructions",
         help="System instructions for the AI model",
         type=str,
-        default="You are a helpful assistant. Keep your responses concise.",
+        default=os.environ.get("VOICELIVE_INSTRUCTIONS", "You are a helpful assistant. Keep your responses concise."),
     )
     
     args = parser.parse_args()
