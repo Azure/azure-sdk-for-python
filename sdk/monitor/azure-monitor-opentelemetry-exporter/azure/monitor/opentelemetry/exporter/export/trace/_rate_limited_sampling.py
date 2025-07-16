@@ -105,7 +105,10 @@ class RateLimitedSampler(Sampler):
                 # Check if parent was dropped/record-only first
                 if not parent_span.is_recording():
                     # Parent was dropped, drop this child too
-                    new_attributes = {} if attributes is None else dict(attributes)
+                    if attributes is None:
+                        new_attributes = {}
+                    else:
+                        new_attributes = dict(attributes)
                     new_attributes[_SAMPLE_RATE_KEY] = 0.0
 
                     return SamplingResult(
@@ -120,7 +123,10 @@ class RateLimitedSampler(Sampler):
 
                 if parent_sample_rate is not None:
                     # Honor parent's sampling rate
-                    new_attributes = {} if attributes is None else dict(attributes)
+                    if attributes is None:
+                        new_attributes = {}
+                    else:
+                        new_attributes = dict(attributes)
                     new_attributes[_SAMPLE_RATE_KEY] = parent_sample_rate
 
                     return SamplingResult(
@@ -137,7 +143,10 @@ class RateLimitedSampler(Sampler):
         else:
             decision = Decision.DROP
 
-        new_attributes = {} if attributes is None else dict(attributes)
+        if attributes is None:
+            new_attributes = {}
+        else:
+            new_attributes = dict(attributes)
         new_attributes[_SAMPLE_RATE_KEY] = sampling_percentage
 
         return SamplingResult(
