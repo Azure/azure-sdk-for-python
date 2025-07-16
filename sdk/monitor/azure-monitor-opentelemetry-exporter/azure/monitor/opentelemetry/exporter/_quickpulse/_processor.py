@@ -17,7 +17,7 @@ class _QuickpulseLogRecordProcessor(LogRecordProcessor):
         qpm = _QuickpulseManager._instance
         if qpm:
             qpm._record_log_record(log_data)
-        
+
         if self.call_on_emit:
             super().on_emit(log_data)  # type: ignore[safe-super]
         else:
