@@ -1,5 +1,5 @@
 {
-  "main": "dist/src/index.js",
+  "name": "dist/src/index.js",
   "dependencies": {
     "@azure-tools/typespec-python": "0.46.0"
   },
