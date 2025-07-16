@@ -20,8 +20,8 @@ class TestCallAutomationClientAutomatedLiveTestAsync(CallAutomationRecordedTestC
     @recorded_by_proxy_async
     async def test_create_VOIP_call_and_answer_then_hangup(self):
         # try to establish the call
-        caller = self.identity_client.create_user()
-        target = self.identity_client.create_user()
+        caller = await self.identity_client.create_user()
+        target = await self.identity_client.create_user()
         unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target)
 
         # check returned events
@@ -42,9 +42,9 @@ class TestCallAutomationClientAutomatedLiveTestAsync(CallAutomationRecordedTestC
 
     @recorded_by_proxy_async
     async def test_add_participant_then_cancel_request_async(self):
-        caller = self.identity_client.create_user()
-        target = self.identity_client.create_user()
-        participant_to_add = identifier_from_raw_id((self.identity_client.create_user()).raw_id)
+        caller = await self.identity_client.create_user()
+        target = await self.identity_client.create_user()
+        participant_to_add = identifier_from_raw_id((await self.identity_client.create_user()).raw_id)
         call_connection_id, call_connection, _ = await self.establish_callconnection_voip(caller, target)
 
         connected_event = self.check_for_event(
@@ -72,8 +72,8 @@ class TestCallAutomationClientAutomatedLiveTestAsync(CallAutomationRecordedTestC
     @recorded_by_proxy_async
     async def test_create_VOIP_call_and_connect_call_then_hangup_async(self):
         # try to establish the call
-        caller = self.identity_client.create_user()
-        target = self.identity_client.create_user()
+        caller = await self.identity_client.create_user()
+        target = await self.identity_client.create_user()
         unique_id, call_connection, _, call_automation_client, callback_url = await self.establish_callconnection_voip_connect_call(caller, target)
 
         # check returned events
@@ -104,8 +104,8 @@ class TestCallAutomationClientAutomatedLiveTestAsync(CallAutomationRecordedTestC
     @recorded_by_proxy_async
     async def test_start_recording_with_call_connection_id_async(self):
         # try to establish the call
-        caller = self.identity_client.create_user()
-        target = self.identity_client.create_user()
+        caller = await self.identity_client.create_user()
+        target = await self.identity_client.create_user()
         unique_id, call_connection, _, call_automation_client, callback_url = await self.establish_callconnection_voip_connect_call(caller, target)
 
         # check returned events
@@ -143,8 +143,8 @@ class TestCallAutomationClientAutomatedLiveTestAsync(CallAutomationRecordedTestC
     @recorded_by_proxy_async
     async def test_start_recording_with_server_call_id_async(self):
         # try to establish the call
-        caller = self.identity_client.create_user()
-        target = self.identity_client.create_user()
+        caller = await self.identity_client.create_user()
+        target = await self.identity_client.create_user()
         unique_id, call_connection, _, call_automation_client, callback_url = await self.establish_callconnection_voip_connect_call(caller, target)
 
         # check returned events

@@ -26,7 +26,7 @@ from azure.communication.callautomation.aio import (
     CallConnectionClient
 )
 from azure.communication.callautomation._shared.models import identifier_from_raw_id
-from azure.communication.identity import CommunicationIdentityClient
+from azure.communication.identity.aio import CommunicationIdentityClient
 from azure.communication.phonenumbers import PhoneNumbersClient
 
 class CallAutomationRecordedTestCaseAsync(AzureRecordedTestCase):
@@ -64,10 +64,10 @@ class CallAutomationRecordedTestCaseAsync(AzureRecordedTestCase):
         cls.open_call_connections: Dict[str, CallConnectionClient] = {}
 
     @classmethod
-    def teardown_class(cls):
+    async def teardown_class(cls):
         cls.wait_for_event_flags.clear()
         for cc in cls.open_call_connections.values():
-            cc.hang_up(is_for_everyone=True)
+            await cc.hang_up(is_for_everyone=True)
 
     def setup_method(self, method):
         self.test_name = get_test_id().split("/")[-1]
