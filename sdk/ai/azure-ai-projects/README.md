@@ -82,9 +82,9 @@ and update the code above to import `asyncio`, and import `AIProjectClient` from
 import os
 import asyncio
 from azure.ai.projects.aio import AIProjectClient
-from azure.core.credentials import AzureKeyCredential
+from azure.identity import DefaultAzureCredential
 
-project_client = AIProjectClient.from_connection_string(
+project_client = AIProjectClient(
     credential=DefaultAzureCredential(),
     endpoint=os.environ["PROJECT_ENDPOINT"],
 )
