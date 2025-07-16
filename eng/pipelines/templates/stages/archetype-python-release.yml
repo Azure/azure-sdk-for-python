@@ -93,7 +93,7 @@ stages:
                   RepoId: Azure/azure-sdk-for-python
                   WorkingDirectory: $(System.DefaultWorkingDirectory)
 
-          - ${{if ne(artifact.skipPublishPackage, 'true')}}:
+          - ${{if and(ne(artifact.skipPublishPackage, 'true'), eq(dependencies.Build.result, 'succeeded')) }}:
             - deployment: PublishPackage
               displayName: "Publish to ${{ parameters.PublicFeed }}"
               condition: and(succeeded(), ne(variables['Skip.PublishPackage'], 'true'))
