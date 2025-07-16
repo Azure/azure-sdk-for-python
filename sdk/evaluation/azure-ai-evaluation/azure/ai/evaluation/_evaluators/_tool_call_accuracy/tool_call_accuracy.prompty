@@ -44,7 +44,7 @@ user:
 # Ratings
 ## [Tool Call Accuracy: 1] (Irrelevant)
 **Definition:**
-Tool calls were not relevant to the user's query, resulting in anirrelevant or unhelpful final output.
+Tool calls were not relevant to the user's query, resulting in an irrelevant or unhelpful final output.
 This level is a 'fail'.
 
 **Example:**

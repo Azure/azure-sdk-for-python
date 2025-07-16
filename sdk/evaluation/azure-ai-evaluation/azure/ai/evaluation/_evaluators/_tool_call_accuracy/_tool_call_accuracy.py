@@ -8,7 +8,12 @@ import re
 from typing import Dict, List, Union, TypeVar, cast
 from typing_extensions import overload, override
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._exceptions import (
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+    EvaluationException,
+)
 from ..._common.utils import check_score_is_valid
 from azure.ai.evaluation._common._experimental import experimental
 
@@ -74,7 +79,9 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _NO_TOOL_CALLS_MESSAGE = "No tool calls found in response or provided tool_calls."
     _NO_TOOL_DEFINITIONS_MESSAGE = "Tool definitions must be provided."
-    _TOOL_DEFINITIONS_MISSING_MESSAGE = "Tool definitions for all tool calls must be provided."
+    _TOOL_DEFINITIONS_MISSING_MESSAGE = (
+        "Tool definitions for all tool calls must be provided."
+    )
     _INVALID_SCORE_MESSAGE = "Tool call accuracy score must be between 1 and 5."
 
     _LLM_SCORE_KEY = "tool_calls_success_level"
@@ -83,11 +90,18 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold=_DEFAULT_TOOL_CALL_ACCURACY_SCORE, **kwargs):
+    def __init__(
+        self, model_config, *, threshold=_DEFAULT_TOOL_CALL_ACCURACY_SCORE, **kwargs
+    ):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
-        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY, **kwargs)
+        super().__init__(
+            model_config=model_config,
+            prompty_file=prompty_path,
+            result_key=self._RESULT_KEY,
+            **kwargs,
+        )
 
     @overload
     def __call__(
@@ -164,7 +178,9 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             tool_definitions = [tool_definitions]
 
         try:
-            needed_tool_definitions = self._extract_needed_tool_definitions(tool_calls, tool_definitions)
+            needed_tool_definitions = self._extract_needed_tool_definitions(
+                tool_calls, tool_definitions
+            )
         except EvaluationException as e:
             return {"error_message": self._TOOL_DEFINITIONS_MISSING_MESSAGE}
         if len(needed_tool_definitions) == 0:
@@ -173,9 +189,8 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         return {
             "query": query,
             "tool_calls": tool_calls,
-            "tool_definitions": needed_tool_definitions
+            "tool_definitions": needed_tool_definitions,
         }
-        
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:  # type: ignore[override]
@@ -192,35 +207,39 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         if isinstance(llm_output, dict):
             score = llm_output.get(self._LLM_SCORE_KEY, None)
-            if not score or not check_score_is_valid(score, ToolCallAccuracyEvaluator._MIN_TOOL_CALL_ACCURACY_SCORE, ToolCallAccuracyEvaluator._MAX_TOOL_CALL_ACCURACY_SCORE):
+            if not score or not check_score_is_valid(
+                score,
+                ToolCallAccuracyEvaluator._MIN_TOOL_CALL_ACCURACY_SCORE,
+                ToolCallAccuracyEvaluator._MAX_TOOL_CALL_ACCURACY_SCORE,
+            ):
                 raise EvaluationException(
                     message=f"Invalid score value: {score}. Expected a number in range [{ToolCallAccuracyEvaluator._MIN_TOOL_CALL_ACCURACY_SCORE}, {ToolCallAccuracyEvaluator._MAX_TOOL_CALL_ACCURACY_SCORE}].",
                     internal_message="Invalid score value.",
                     category=ErrorCategory.FAILED_EXECUTION,
                     blame=ErrorBlame.SYSTEM_ERROR,
                 )
-            
+
             # Format the output
             reason = llm_output.get("chain_of_thought", "")
             score = float(score)
-            score_result = 'pass' if score >= self.threshold else 'fail'
+            score_result = "pass" if score >= self.threshold else "fail"
             response_dict = {
                 self._result_key: score,
                 f"{self._result_key}_result": score_result,
                 f"{self._result_key}_threshold": self.threshold,
                 f"{self._result_key}_reason": reason,
-                'details': llm_output.get('details', {}),
+                "details": llm_output.get("details", {}),
             }
             return response_dict
-            
+
         else:
             raise EvaluationException(
-            message="Tool call accuracy evaluator returned invalid output.",
-            blame=ErrorBlame.SYSTEM_ERROR,
-            category=ErrorCategory.FAILED_EXECUTION,
-            target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
-        )
-    
+                message="Tool call accuracy evaluator returned invalid output.",
+                blame=ErrorBlame.SYSTEM_ERROR,
+                category=ErrorCategory.FAILED_EXECUTION,
+                target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+            )
+
     async def _real_call(self, **kwargs):
         """The asynchronous call where real end-to-end evaluation logic is performed.
 
@@ -231,14 +250,14 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
         # Convert inputs into list of evaluable inputs.
         eval_input = self._convert_kwargs_to_eval_input(**kwargs)
-        if isinstance(eval_input, dict) and eval_input.get('error_message'):
+        if isinstance(eval_input, dict) and eval_input.get("error_message"):
             # If there is an error message, return not applicable result
-            return self._not_applicable_result(eval_input.get('error_message'))
+            return self._not_applicable_result(eval_input.get("error_message"))
         # Do the evaluation
         result = await self._do_eval(eval_input)
         # Return the result
         return result
-    
+
     def _not_applicable_result(self, error_message):
         """Return a result indicating that the tool call is not applicable for evaluation.
         :param eval_input: The input to the evaluator.
@@ -249,13 +268,12 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # If no tool calls were made or tool call type is not supported, return not applicable result
         return {
             self._result_key: self._NOT_APPLICABLE_RESULT,
-            f"{self._result_key}_result": 'pass',
+            f"{self._result_key}_result": "pass",
             f"{self._result_key}_threshold": self.threshold,
             f"{self._result_key}_reason": error_message,
             "details": {},
-
         }
-    
+
     def _parse_tools_from_response(self, response):
         """Parse the response to extract tool calls and results.
         :param response: The response to parse.
@@ -266,29 +284,40 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         tool_calls = []
         tool_results_map = {}
         if isinstance(response, list):
-            for message in response:                
+            for message in response:
                 # Extract tool calls from assistant messages
-                if message.get("role") == "assistant" and isinstance(message.get("content"), list):
+                if message.get("role") == "assistant" and isinstance(
+                    message.get("content"), list
+                ):
                     for content_item in message.get("content"):
-                        if isinstance(content_item, dict) and content_item.get("type") == "tool_call":
+                        if (
+                            isinstance(content_item, dict)
+                            and content_item.get("type") == "tool_call"
+                        ):
                             tool_calls.append(content_item)
 
                 # Extract tool results from tool messages
                 elif message.get("role") == "tool" and message.get("tool_call_id"):
                     tool_call_id = message.get("tool_call_id")
-                    if isinstance(message.get("content"), list) and len(message.get("content")) > 0:
+                    if (
+                        isinstance(message.get("content"), list)
+                        and len(message.get("content")) > 0
+                    ):
                         result_content = message.get("content")[0]
-                        if isinstance(result_content, dict) and result_content.get("type") == "tool_result":
+                        if (
+                            isinstance(result_content, dict)
+                            and result_content.get("type") == "tool_result"
+                        ):
                             tool_results_map[tool_call_id] = result_content
 
         # Attach results to their corresponding calls
         for tool_call in tool_calls:
             tool_call_id = tool_call.get("tool_call_id")
             if tool_call_id in tool_results_map:
-                tool_call["tool_result"] = tool_results_map[tool_call_id]['tool_result']
+                tool_call["tool_result"] = tool_results_map[tool_call_id]["tool_result"]
 
         return tool_calls
-    
+
     def _extract_needed_tool_definitions(self, tool_calls, tool_definitions):
         """Extract the tool definitions that are needed for the provided tool calls.
         :param tool_calls: List of tool calls to evaluate.
@@ -302,9 +331,12 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         for tool_call in tool_calls:
             if isinstance(tool_call, dict) and tool_call.get("type") == "tool_call":
                 tool_name = tool_call.get("name")
-                tool_definition = [tool for tool in tool_definitions
-                                   if tool.get("name") == tool_name and
-                                   tool.get("type", "function") == "function"]
+                tool_definition = [
+                    tool
+                    for tool in tool_definitions
+                    if tool.get("name") == tool_name
+                    and tool.get("type", "function") == "function"
+                ]
                 if len(tool_definition) > 0:
                     needed_tool_definitions.extend(tool_definition)
                 else:
